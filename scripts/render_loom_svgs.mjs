@@ -6,23 +6,31 @@
 // entries point at. These ARE loom figures (react-flow export), not a custom
 // renderer.
 //
-// Run from a workbench worktree that has playwright installed, e.g.:
-//   cd /Users/eranagmon/code/vivarium-workbench--serve-latest/vivarium_workbench/loom
-//   node /Users/eranagmon/code/viva-meta-modelers-guide/scripts/render_loom_svgs.mjs
-//
-// Env overrides: LOOM_BASE (default http://127.0.0.1:8790), PLAYWRIGHT_FROM
-// (a loom dir whose node_modules has playwright).
+// Playwright must be resolvable: either run this from a dir whose
+// node_modules has `playwright` (e.g. a workbench worktree's loom/), or set
+// PLAYWRIGHT_FROM=<that dir>. LOOM_BASE overrides the workbench URL.
+//   PLAYWRIGHT_FROM=<workbench>/vivarium_workbench/loom node scripts/render_loom_svgs.mjs
 import { createRequire } from 'module';
 import { mkdirSync, writeFileSync } from 'fs';
 import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const PW_FROM = process.env.PLAYWRIGHT_FROM
-  || '/Users/eranagmon/code/vivarium-workbench--serve-latest/vivarium_workbench/loom';
-const require = createRequire(`${PW_FROM}/package.json`);
-const { chromium } = require('playwright');
+// Repo root = the parent of this script's own directory (scripts/).
+const WS = dirname(dirname(fileURLToPath(import.meta.url)));
+
+let chromium;
+try {
+  ({ chromium } = await import('playwright'));
+} catch {
+  const from = process.env.PLAYWRIGHT_FROM;
+  if (!from) {
+    console.error('playwright not found — set PLAYWRIGHT_FROM=<dir with node_modules/playwright> or run from such a dir.');
+    process.exit(1);
+  }
+  ({ chromium } = createRequire(`${from}/package.json`)('playwright'));
+}
 
 const BASE = process.env.LOOM_BASE || 'http://127.0.0.1:8790';
-const WS = '/Users/eranagmon/code/viva-meta-modelers-guide';
 const PKG = 'viva_meta_modelers_guide.composites';
 
 // [studySlug, compositeStem]  (svg stem == compositeStem, matching study viz addrs)
