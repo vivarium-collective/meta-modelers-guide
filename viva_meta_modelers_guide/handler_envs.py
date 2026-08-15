@@ -7,6 +7,12 @@ Fig 6 ships TWO envs over the SAME interface (law #4: handler independence).
 """
 from __future__ import annotations
 
+# Per-figure handler environments live beside their handlers (handlers_fig*.py);
+# aggregate them here so compile.py / build_executables.py see one ENVS map.
+from .handlers_fig04b import ENV as _FIG04B_ENV
+from .handlers_fig05 import ENV as _FIG05_ENV
+from .handlers_fig09b import ENV as _FIG09B_ENV
+
 ENVS: dict[str, dict] = {
     # Fig 6 grain-swap — same CoarseGrainedMetabolism interface, two handlers.
     "fig06-coarse": {
@@ -36,3 +42,8 @@ ENVS: dict[str, dict] = {
         },
     },
 }
+
+# Figures 4b / 5 / 9b (defined next to their handlers).
+ENVS["fig04b"] = _FIG04B_ENV
+ENVS["fig05"] = _FIG05_ENV
+ENVS["fig09b"] = _FIG09B_ENV

@@ -15,7 +15,7 @@ from process_bigraph import Composite
 
 from viva_meta_modelers_guide.core import build_core
 from viva_meta_modelers_guide.compile import (
-    compile_composite, check_conformance, interface_of,
+    compile_composite, check_conformance, interface_of, _refined_ports,
 )
 from viva_meta_modelers_guide.handler_envs import ENVS
 
@@ -41,9 +41,12 @@ def test_env_conforms_compiles_and_runs(env_name, sem_stem, out_stem):
     core = build_core()
     sem = _semantic(sem_stem)
 
-    # 1. conformance — every handled draft's handler satisfies its signature.
+    # 1. conformance — every handled draft's handler satisfies its signature,
+    #    allowing the env's declared store refinements (e.g. scalar→grid, Fig 5).
+    refined = _refined_ports(sem, ENVS[env_name])
     for draft, spec in ENVS[env_name].items():
-        rep = check_conformance(core, draft, spec["handler"])
+        rep = check_conformance(core, draft, spec["handler"],
+                                allow_refine=refined.get(draft, set()))
         assert rep.ok, str(rep)
 
     ex = compile_composite(sem, ENVS[env_name], core)
