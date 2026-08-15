@@ -62,11 +62,16 @@ composites and investigations; regenerate any time with
 |---|---|
 | `fig04a-interaction-modalities` | Fig 4a — four interaction-modality cards of the cellular interface: nutrient exchange (chemical flux), motile force (mechanical), growth rate, and electrical signaling. |
 | `fig04b-cellular-interface` | Fig 4b — the minimal cellular interface. |
+| `fig04b-executable` | EXECUTABLE compilation of fig04b-cellular-interface under handler environment 'fig04b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig05-cell-environment` | Fig 5b — cell–environment coupling. |
+| `fig05-executable` | EXECUTABLE compilation of fig05-cell-environment under handler environment 'fig05' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig06-disintegration` | Fig 6b — cell disintegration as a grain-swap equivalence. |
+| `fig06-executable-coarse` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-coarse' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig06-executable-kinetic` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-kinetic' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig07-molecular-mechanism` | Fig 7b/7c — a molecular mechanism as a process with typed physical channels. |
 | `fig08-nested-hierarchy` | Fig 8b — molecular compositions as a nested hierarchical composite. |
 | `fig09a-coarse-graining` | Fig 9a — self-organized processes, coarse-graining, and autopoiesis. |
+| `fig09b-executable` | EXECUTABLE compilation of fig09b-minimal-cell under handler environment 'fig09b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig09b-minimal-cell` | Fig 9b — minimal cell composition. |
 | `fig10-1-division` | Fig 10.1 (panel b) — division as a compositional rewrite. |
 | `fig10-2-development` | Fig 10.2 (panels c/d) — biofilm development as a hierarchical reorganization. |

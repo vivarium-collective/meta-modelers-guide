@@ -46,6 +46,12 @@ const JOBS = [
   ['fig-10-1', 'fig10-1-division'],
   ['fig-10-2', 'fig10-2-development'],
   ['fig-10-3', 'fig10-3-evolution'],
+  // executable compilations (fig-compilation study)
+  ['fig-compilation', 'fig06-executable-coarse'],
+  ['fig-compilation', 'fig06-executable-kinetic'],
+  ['fig-compilation', 'fig04b-executable'],
+  ['fig-compilation', 'fig05-executable'],
+  ['fig-compilation', 'fig09b-executable'],
 ];
 
 const ONLY = process.env.ONLY;  // optional: render just the composites whose stem includes this
