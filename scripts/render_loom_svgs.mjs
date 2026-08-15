@@ -40,15 +40,25 @@ const JOBS = [
   ['fig-10-3', 'fig10-3-evolution'],
 ];
 
+const ONLY = process.env.ONLY;  // optional: render just the composites whose stem includes this
+const jobs = ONLY ? JOBS.filter(([, stem]) => stem.includes(ONLY)) : JOBS;
+
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1700, height: 1200 }, deviceScaleFactor: 2 });
 let ok = 0;
-for (const [slug, stem] of JOBS) {
+for (const [slug, stem] of jobs) {
   const id = `${PKG}.${stem}`;
   const out = `${WS}/workspace/studies/${slug}/visualizations/${stem}.svg`;
   const outPng = `${WS}/workspace/studies/${slug}/visualizations/${stem}.png`;
   const url = `${BASE}/bigraph-loom/?id=${encodeURIComponent(id)}&tabs=explore,document&nopersist=1`;
   try {
+    // Default every composite to loom's "Tree" layout (mode: flow-down —
+    // a vertical store place-graph). Persisted server-side so the interactive
+    // Composite Explorer AND this render both default to the tree view.
+    await fetch(`${BASE}/api/composite-default-view`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, view: { v: 1, mode: 'flow-down', positions: {} } }),
+    }).catch(() => {});
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForSelector('.react-flow__node', { timeout: 40000 });
     await page.waitForTimeout(5000);  // settle: layout + fitView + font load
@@ -78,4 +88,4 @@ for (const [slug, stem] of JOBS) {
   }
 }
 await browser.close();
-console.log(`rendered ${ok}/${JOBS.length} loom figures`);
+console.log(`rendered ${ok}/${jobs.length} loom figures`);
