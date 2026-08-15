@@ -1,0 +1,49 @@
+{
+  "name": "fig04b-cellular-interface",
+  "description": "Fig 4b — the minimal cellular interface. One cell (DRAFT process) senses environmental drivers and exposes physical exchange ports (chemical, mechanical, electrical, thermal) plus higher-level cellular ports (growth rate, shape, signaling, objective, viability). Chemical and mechanical ports refine into subports (named in the contract). All ports carry biological units.",
+  "requires": {
+    "processes": ["CellularInterface"],
+    "types": ["concentration", "force", "voltage", "temperature", "chemical_flux", "current", "heat_flux", "growth_rate", "volume", "signaling_rate", "objective", "viability"]
+  },
+  "state": {
+    "cell": {
+      "_type": "process",
+      "address": "local:CellularInterface",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "chemical_ext": ["environment", "chemical"],
+        "mechanical_ext": ["environment", "mechanical"],
+        "electrical_ext": ["environment", "electrical"],
+        "thermal_ext": ["environment", "thermal"]
+      },
+      "outputs": {
+        "chemical": ["interface", "chemical"],
+        "mechanical": ["interface", "mechanical"],
+        "electrical": ["interface", "electrical"],
+        "thermal": ["interface", "thermal"],
+        "growth_rate": ["interface", "growth_rate"],
+        "shape": ["interface", "shape"],
+        "signaling": ["interface", "signaling"],
+        "objective": ["interface", "objective"],
+        "viability": ["interface", "viability"]
+      }
+    },
+    "environment": {
+      "chemical": {"_type": "concentration", "_value": 0.0},
+      "mechanical": {"_type": "force", "_value": 0.0},
+      "electrical": {"_type": "voltage", "_value": 0.0},
+      "thermal": {"_type": "temperature", "_value": 37.0}
+    },
+    "interface": {
+      "chemical": {"_type": "chemical_flux", "_value": 0.0},
+      "mechanical": {"_type": "force", "_value": 0.0},
+      "electrical": {"_type": "current", "_value": 0.0},
+      "thermal": {"_type": "heat_flux", "_value": 0.0},
+      "growth_rate": {"_type": "growth_rate", "_value": 0.0},
+      "shape": {"_type": "volume", "_value": 1.0},
+      "signaling": {"_type": "signaling_rate", "_value": 0.0},
+      "objective": {"_type": "objective", "_value": 0.0},
+      "viability": {"_type": "viability", "_value": 1.0}
+    }
+  }
+}
