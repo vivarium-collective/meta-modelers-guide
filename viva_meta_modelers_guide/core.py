@@ -90,8 +90,18 @@ def build_core(core=None):
     This is the canonical core for the workspace: composites that address
     ``local:<ProcessName>`` (and the test suite) must build their ``Composite``
     against a core returned from here, not a bare ``allocate_core()``.
+
+    In addition to the workspace's Process/Step classes, this registers the
+    biological interface types (``chemical_flux``, ``force``, ``growth_rate`` …)
+    the draft-process figures wire their ports to. See ``_types.register_types``.
     """
     if core is None:
         core = allocate_core()
+    try:
+        from ._types import register_types
+        register_types(core)
+    except Exception:
+        # A missing/broken _types module must never break core construction.
+        pass
     register_workspace_processes(core)
     return core

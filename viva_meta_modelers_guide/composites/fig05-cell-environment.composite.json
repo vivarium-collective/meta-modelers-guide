@@ -1,0 +1,60 @@
+{
+  "name": "fig05-cell-environment",
+  "description": "Fig 5b — cell–environment coupling. Environmental processes (reaction–diffusion, production/degradation, mechanical stress) act on shared chemical and mechanical fields; the single cell senses those fields and acts back on them through uptake and traction, updating its own location, mass, and shape. This closes the minimal sense/act feedback loop. All DRAFT processes: unit-bearing ports + behavior contracts, no dynamics.",
+  "requires": {
+    "processes": ["ReactionDiffusion", "ProductionDegradation", "MechanicalStress", "SingleCellProcesses"],
+    "types": ["concentration", "force", "chemical_flux", "mass", "volume"]
+  },
+  "state": {
+    "reaction_diffusion": {
+      "_type": "process",
+      "address": "local:ReactionDiffusion",
+      "config": {"interval": 1.0},
+      "inputs": {"chemical_field": ["environment", "chemical_field"]},
+      "outputs": {"chemical_field": ["environment", "chemical_field"]}
+    },
+    "production_degradation": {
+      "_type": "process",
+      "address": "local:ProductionDegradation",
+      "config": {"interval": 1.0},
+      "inputs": {"chemical_field": ["environment", "chemical_field"]},
+      "outputs": {"chemical_field": ["environment", "chemical_field"]}
+    },
+    "mechanical_stress": {
+      "_type": "process",
+      "address": "local:MechanicalStress",
+      "config": {"interval": 1.0},
+      "inputs": {"mechanical_field": ["environment", "mechanical_field"], "barriers": ["environment", "barriers"]},
+      "outputs": {"mechanical_field": ["environment", "mechanical_field"]}
+    },
+    "single_cell_processes": {
+      "_type": "process",
+      "address": "local:SingleCellProcesses",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "chemical_field": ["environment", "chemical_field"],
+        "mechanical_field": ["environment", "mechanical_field"],
+        "location": ["single_cell", "location"]
+      },
+      "outputs": {
+        "location": ["single_cell", "location"],
+        "mass": ["single_cell", "mass"],
+        "shape": ["single_cell", "shape"],
+        "uptake": ["environment", "uptake_flux"],
+        "traction": ["environment", "traction"]
+      }
+    },
+    "environment": {
+      "chemical_field": {"_type": "concentration", "_value": 1.0},
+      "mechanical_field": {"_type": "force", "_value": 0.0},
+      "barriers": {"_type": "force", "_value": 0.0},
+      "uptake_flux": {"_type": "chemical_flux", "_value": 0.0},
+      "traction": {"_type": "force", "_value": 0.0}
+    },
+    "single_cell": {
+      "location": {"_type": "volume", "_value": 0.0},
+      "mass": {"_type": "mass", "_value": 1.0},
+      "shape": {"_type": "volume", "_value": 1.0}
+    }
+  }
+}

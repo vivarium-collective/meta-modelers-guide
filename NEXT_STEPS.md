@@ -98,7 +98,7 @@ Empty Discovered view usually means the venv isn't built (`uv pip install -e ".[
 
 ## 3 — Composites
 
-Composite documents — process-bigraph state trees — live here. Pick one, inspect its wiring (process tree, store paths, emitters), and run it from the **Composite Explorer** sub-page to confirm it produces sensible output before wiring it into an investigation. Composites you write directly into `pbg_meta_modelers_guide/composites/` show up automatically.
+Composite documents — process-bigraph state trees — live here. Pick one, inspect its wiring (process tree, store paths, emitters), and run it from the **Composite Explorer** sub-page to confirm it produces sensible output before wiring it into an investigation. Composites you write directly into `viva_meta_modelers_guide/composites/` show up automatically.
 
 ## 4 — Studies and Investigations
 
@@ -170,7 +170,7 @@ compare.
 Charts rendered from observable trajectories. Two creation paths:
 
 - **Configure a registered class** — pick from the Visualization classes discovered in the Registry (subclasses of `pbg_superpowers.visualization.Visualization` in any installed viva-* package), give it settings.
-- **Generate from natural language** — describe what you want; the dashboard writes a request file and prompts you to run `/viva-viz <name>`, which scaffolds a new Visualization function into `pbg_meta_modelers_guide/visualizations/` and commits it on a stage branch.
+- **Generate from natural language** — describe what you want; the dashboard writes a request file and prompts you to run `/viva-viz <name>`, which scaffolds a new Visualization function into `viva_meta_modelers_guide/visualizations/` and commits it on a stage branch.
 
 ## 6 — GitHub Branches
 
@@ -230,7 +230,7 @@ Skills in Claude Code can `open <url>` to surface a focused interaction without 
 Use this path to run a composite on a remote sms-api instance (e.g. AWS
 GovCloud via `vivarium-workbench`).  Because the container runner installs
 the workspace from git, **all processes must live in the committed
-`pbg_meta_modelers_guide` package and the HEAD must be pushed.**
+`viva_meta_modelers_guide` package and the HEAD must be pushed.**
 
 1. Commit everything and push the branch:
    ```bash
@@ -244,9 +244,9 @@ the workspace from git, **all processes must live in the committed
    This will:
    - Verify the working tree is clean and HEAD is on the remote.
    - Export the composite to a portable `.pbg` file (full import-path
-     addresses: `local:!pbg_meta_modelers_guide.<Module>.<ClassName>`).
+     addresses: `local:!viva_meta_modelers_guide.<Module>.<ClassName>`).
    - Submit to sms-api with `extra_pip_deps=["git+<origin>@<sha>"]` so
-     the Singularity container installs `pbg_meta_modelers_guide` from the
+     the Singularity container installs `viva_meta_modelers_guide` from the
      exact committed revision.
    - Poll until the job completes, then download `results.zip` containing
      `final_state.json` and any emitter output.
