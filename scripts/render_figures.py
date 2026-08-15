@@ -19,7 +19,7 @@ from viva_meta_modelers_guide.core import build_core
 from viva_meta_modelers_guide.figure_render import render_composite
 
 ROOT = Path(__file__).resolve().parent.parent
-COMPOSITES = ROOT / "workspace" / "composites"
+COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
 
 # concise figure caption per composite (falls back to the spec description)
 CAPTIONS = {
