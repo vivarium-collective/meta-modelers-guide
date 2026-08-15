@@ -10,10 +10,10 @@
       "_type": "process",
       "address": "local:NutrientExchange",
       "config": {"interval": 1.0},
-      "inputs": {"nutrient_ext": ["nutrient_card", "nutrient_ext"], "boundary": ["nutrient_card", "boundary"]},
-      "outputs": {"nutrient_uptake": ["nutrient_card", "nutrient_uptake"], "secretion": ["nutrient_card", "secretion"]}
+      "inputs": {"nutrient_ext": ["chemical_exchange", "nutrient_ext"], "boundary": ["chemical_exchange", "boundary"]},
+      "outputs": {"nutrient_uptake": ["chemical_exchange", "nutrient_uptake"], "secretion": ["chemical_exchange", "secretion"]}
     },
-    "nutrient_card": {
+    "chemical_exchange": {
       "nutrient_ext": {"_type": "concentration", "_value": 0.0},
       "boundary": {"_type": "area", "_value": 0.0},
       "nutrient_uptake": {"_type": "chemical_flux", "_value": 0.0},
@@ -23,10 +23,10 @@
       "_type": "process",
       "address": "local:MotileForce",
       "config": {"interval": 1.0},
-      "inputs": {"energy": ["motility_card", "energy"]},
-      "outputs": {"force": ["motility_card", "force"]}
+      "inputs": {"energy": ["motility", "energy"]},
+      "outputs": {"force": ["motility", "force"]}
     },
-    "motility_card": {
+    "motility": {
       "energy": {"_type": "energy", "_value": 0.0},
       "force": {"_type": "force", "_value": 0.0}
     },
@@ -34,10 +34,10 @@
       "_type": "process",
       "address": "local:Growth",
       "config": {"interval": 1.0},
-      "inputs": {"substrate": ["growth_card", "substrate"]},
-      "outputs": {"growth_rate": ["growth_card", "growth_rate"], "mass": ["growth_card", "mass"]}
+      "inputs": {"substrate": ["biomass", "substrate"]},
+      "outputs": {"growth_rate": ["biomass", "growth_rate"], "mass": ["biomass", "mass"]}
     },
-    "growth_card": {
+    "biomass": {
       "substrate": {"_type": "chemical_flux", "_value": 0.0},
       "growth_rate": {"_type": "growth_rate", "_value": 0.0},
       "mass": {"_type": "mass", "_value": 0.0}
@@ -46,10 +46,10 @@
       "_type": "process",
       "address": "local:ElectricalSignaling",
       "config": {"interval": 1.0},
-      "inputs": {"membrane_potential": ["signaling_card", "membrane_potential"]},
-      "outputs": {"signal": ["signaling_card", "signal"], "current": ["signaling_card", "current"]}
+      "inputs": {"membrane_potential": ["bioelectricity", "membrane_potential"]},
+      "outputs": {"signal": ["bioelectricity", "signal"], "current": ["bioelectricity", "current"]}
     },
-    "signaling_card": {
+    "bioelectricity": {
       "membrane_potential": {"_type": "voltage", "_value": 0.0},
       "signal": {"_type": "signaling_rate", "_value": 0.0},
       "current": {"_type": "current", "_value": 0.0}
