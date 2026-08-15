@@ -1,0 +1,194 @@
+# paper-figures/investigation.yaml — schema v2
+#
+# An investigation groups Studies under a shared research question. A
+# complete investigation pairs the study list with a narrative spine that
+# mirrors the per-study spine at a level up: executive panel, scientific
+# argument, biological story, evaluator guides, glossary, investigation-
+# wide guidelines.
+#
+# The required fields (schema_version, name, title) are populated below;
+# the rest of the narrative spine is commented out — uncomment + fill the
+# sections that matter as the investigation matures. See NEXT_STEPS.md
+# and docs/concepts/vivarium-dashboard-model.md for the full pattern.
+
+schema_version: 2
+name: paper-figures
+title: "paper-figures"
+created: '2026-08-15'
+status: planning
+
+# runtime — execution defaults inherited by this investigation's studies.
+# default_emitter is the persistence backend every run uses so its trajectory
+# is recorded (not just a summary). sqlite is the portable default; xarray
+# suits large ensembles. A per-study runtime.emitter overrides this.
+runtime:
+  default_emitter: sqlite           # sqlite | xarray
+
+# object_of_evaluation: model       # critique #1 — what this investigation
+#                                    # primarily evaluates: method | model |
+#                                    # hypothesis | composition-protocol. Names the
+#                                    # thing the investigation's rigor section judges
+#                                    # ("how well the method defends its claims").
+
+# ─── Front matter ────────────────────────────────────────────────────
+#
+# question: |
+#   (the overarching research question)
+#
+# hypothesis: |
+#   (predicted outcome across the full study sequence)
+#
+# lead: |
+#   (3-4 sentence front-of-textbook intro — first thing a reader sees)
+
+description: |
+  One study per compositional figure of *A meta-modeler's guide to the cellular interface* (Agmon). Each figure is rebuilt as a process-bigraph composite of DRAFT processes — typed, unit-bearing ports plus behavior contracts, with no committed mechanism — and rendered in the paper's visual language alongside the original illustration.
+
+
+executive:
+  what_is_this: An executable atlas of the compositional figures in *A meta-modeler's guide to the cellular
+    interface* (Agmon). Figures 4-10 are each rebuilt as a process-bigraph composite of DRAFT processes
+    and rendered in the paper's visual language beside the original illustration.
+  verdict: All 11 figure composites build and render; the atlas traces the paper's argument from the cellular
+    interface through cell-environment coupling, disintegration, molecular mechanisms and composition,
+    autopoiesis, and growth -> division / development / evolution.
+  verdict_status: not-yet-run
+  decisions_needed: []
+scientific_argument:
+  main_claim: 'The paper''s recurring composition patterns can be expressed directly as typed process-bigraph
+    composites: interfaces as unit-bearing ports, coupling as shared stores, and shifts in level-of-description
+    as grain swaps and event-driven rewrites - all specifiable as an interface (draft) before any mechanism
+    is committed.'
+  evidence_for:
+  - Fig 4 - the cellular interface is a set of typed ports with units (chemical mol/s, mechanical N, electrical
+    A, thermal W, growth 1/hr, viability).
+  - Fig 5 - cell-environment coupling closes as processes reading/writing shared field stores.
+  - Fig 6 - one exchange interface is realized by a coarse metabolism process OR a molecular reaction
+    network (grain swap).
+  - Fig 8 - molecular composition is a nested place-graph of compartments with processes wired to leaves.
+  - Fig 9 - mutual closure of metabolism, containment, and replication expresses autopoiesis.
+  - Fig 10 - division, biofilm development, and evolution are compositional rewrites (state partition,
+    hierarchical embedding, port addition).
+  caveats:
+  - 'Figures are conceptual: draft processes declare ports + behavior contracts with NO update dynamics,
+    so studies render/structure-check rather than simulate.'
+biological_story: 'A cell is modelled from the outside as a bounded, goal-directed system exchanging matter,
+  energy, and information across a small set of interface variables, and from the inside as coupled molecular
+  processes that construct and maintain that interface. The atlas walks this two-sided view: the interface
+  and its ports (Fig 4), how it becomes operational by coupling to environmental fields (Fig 5), what
+  happens when regulation fails and the description drops to molecules (Fig 6-7), how molecular mechanisms
+  compose into nested, self-maintaining organization (Fig 8-9), and how that organization is rewritten
+  across time through division, development, and evolution (Fig 10).
+
+  '
+at_a_glance:
+- study: fig-04
+  role: the cellular interface and its ports (with units)
+- study: fig-05
+  role: cell-environment coupling as a sense/act loop
+- study: fig-06
+  role: disintegration as a grain swap over one interface
+- study: fig-07
+  role: molecular mechanisms and their typed channels
+- study: fig-08
+  role: molecular composition as a nested hierarchy
+- study: fig-09
+  role: self-organization, coarse-graining, autopoiesis
+- study: fig-10-1
+  role: division as a compositional rewrite
+- study: fig-10-2
+  role: development - biofilm reorganization
+- study: fig-10-3
+  role: evolution - variation, selection, new ports
+
+# ─── Narrative spine ─────────────────────────────────────────────────
+#
+# REQUIRED (lint-gated): executive · scientific_argument · biological_story.
+# A reviewer-ready investigation report must carry these three authored
+# sections. The linter (investigation_narrative_spine_required) emits a
+# warning for each missing one. For a GENUINELY SLIM investigation you may
+# explicitly opt out per-section:
+#
+#   narrative_spine_skip: [scientific_argument, biological_story]
+#   narrative_spine_skip_reason: "single-study screen; full narrative not warranted"
+#
+# (executive / scientific_argument / biological_story are the AUTHORED
+#  sections; "Decisions needed" + "Suggested additions" are framework-computed
+#  and never author-required.)
+#
+# executive:                        # ★REQUIRED — headline panel at the top of the report
+#   what_is_this: ""
+#   verdict: ""
+#   verdict_status: in-progress     # in-progress | passing | passing-with-caveats | failing | inconclusive | not-yet-run
+#   decisions_needed: []
+#
+# scientific_argument:              # ★REQUIRED — structured claim/evidence
+#   main_claim: ""
+#   evidence_for: []
+#   evidence_against: []
+#   key_figures: []
+#   caveats: []
+#   interpretation_ref: ""
+#
+# biological_story: |               # ★REQUIRED — multi-paragraph plain-English mechanism narrative
+#   (multi-paragraph plain-English mechanism narrative)
+#
+# at_a_glance:                      # one-line role per member study
+#   - {study: study-slug, role: "what this study contributes"}
+#
+# how_to_read: |
+#   (evaluator tips: how to read the report, which study to start with)
+#
+# glossary:
+#   - {term: "TERM", definition: "one-sentence definition"}
+#
+# guidelines:                       # investigation-wide rules
+#   literature_anchors: []
+#   parameter_catalog: []
+#   calibration_targets: []
+#   naming_conventions: ""
+
+# ─── RIGOR (the comparative-framing dimension; the rigor scorecard reads this).
+#     An investigation scores a comparative_framing GAP until it names the
+#     competing frameworks it discriminates AND includes >=1 adversarial study.
+#
+# competing_frameworks:             # rival models/hypotheses this investigation tests against
+#   - name: ""                      # e.g. "alternative mechanism / null model X"
+#     prediction: ""                # what it would predict, that we discriminate
+#     discriminated_by: ""          # which study/control rules it out
+#
+# hypotheses:                       # critique #6/#16 — the competing hypotheses this
+#                                   # investigation discriminates. `statement` +
+#                                   # `predictions` are AUTHORED; `support_log` is
+#                                   # COMPUTED (folded from each study's findings +
+#                                   # discovery_implications.alternate_hypotheses that
+#                                   # carry a matching hypothesis_id).
+#   - id: H1
+#     statement: ""                 # one-line competing explanation
+#     predictions:                  # what this hypothesis predicts, per observable
+#       - observable: closure_gap   # an emitted measure / finding-evidence key
+#         expected: ""              # e.g. "< 0.1" / "increases with rate" / a band
+#     required_controls: []         # controls[].name needed to test it
+#     failure_modes: []             # what observation would weaken/exclude it
+#     status: open                  # open | supported | weakened | excluded
+#     # support_log: []             # COMPUTED — list of per-study entries
+#     #                             #   (study, observation, delta) where
+#     #                             #   delta is supports | weakens | excludes
+#
+# NOTE: include at least one member study with `kind: adversarial` (a study
+# designed to break the main claim) so the investigation satisfies the
+# adversarial-study rigor dimension.
+
+studies:
+- fig-04
+- fig-05
+- fig-06
+- fig-07
+- fig-08
+- fig-09
+- fig-10-1
+- fig-10-2
+- fig-10-3
+expert_docs: []
+
+acceptance_criteria: []
