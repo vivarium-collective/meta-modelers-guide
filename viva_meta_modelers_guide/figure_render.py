@@ -8,11 +8,11 @@ arrow into the process) and write (arrow out to the store).
 
 Self-contained: emits an SVG string with hand-drawn vector glyphs (no external
 fonts/emoji, so it rasterizes identically everywhere). Build a composite's core
-with :func:`pbg_meta_modelers_guide.core.build_core` and pass the spec's
+with :func:`viva_meta_modelers_guide.core.build_core` and pass the spec's
 ``state`` dict.
 
-    from pbg_meta_modelers_guide.core import build_core
-    from pbg_meta_modelers_guide.figure_render import render_composite
+    from viva_meta_modelers_guide.core import build_core
+    from viva_meta_modelers_guide.figure_render import render_composite
     svg = render_composite(spec["state"], build_core(), title=spec["name"])
 """
 from __future__ import annotations

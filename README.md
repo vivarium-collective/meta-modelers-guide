@@ -73,7 +73,7 @@ Project code lives at the repo root; research state is grouped under `workspace/
 come from the `layout:` map in `workspace.yaml` — edit it to move things.
 
 - `workspace.yaml` — canonical state (validated against `.pbg/schemas/workspace.schema.json`).
-- `pbg_meta_modelers_guide/` — your Python package (`core.py` exposes `build_core()`).
+- `viva_meta_modelers_guide/` — your Python package (`core.py` exposes `build_core()`).
 - `scripts/` — `lint-workspace.py`, `serve.sh`, helpers.
 - `workspace/studies/`, `workspace/composites/`, `workspace/references/`, `workspace/datasets/` — research artifacts.
 - `workspace/notes/` — friction logs, walkthroughs, agent transcripts, ADRs. See `workspace/notes/README.md` for the

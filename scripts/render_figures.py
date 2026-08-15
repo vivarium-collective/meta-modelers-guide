@@ -15,8 +15,8 @@ import json
 import subprocess
 from pathlib import Path
 
-from pbg_meta_modelers_guide.core import build_core
-from pbg_meta_modelers_guide.figure_render import render_composite
+from viva_meta_modelers_guide.core import build_core
+from viva_meta_modelers_guide.figure_render import render_composite
 
 ROOT = Path(__file__).resolve().parent.parent
 COMPOSITES = ROOT / "workspace" / "composites"
