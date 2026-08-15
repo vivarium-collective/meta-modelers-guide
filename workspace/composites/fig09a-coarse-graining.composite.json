@@ -1,0 +1,104 @@
+{
+  "name": "fig09a-coarse-graining",
+  "description": "Fig 9a — self-organized processes, coarse-graining, and autopoiesis. Three functional COLUMNS — metabolism, containment, replication — each described at several GRAINS. In each column a coarse-grained CLOSURE process (sustains metabolites far from equilibrium; maintains a boundary; maintains/copies template information) is exactly what you get when the finer self-organized process (autocatalysis; membrane self-assembly; template replication) — and, below that, the molecular process (lipid aggregation; template-directed synthesis) — are lumped. Climbing each column is one rung of the coarse-graining ladder. The three columns are laid out side by side because their MUTUAL CLOSURE — metabolism supplying the energy and precursors that build the boundary and copy the template, containment holding the compartment that concentrates metabolism and replication, replication reproducing the machinery both need — is autopoiesis: the processes collectively produce and sustain the organization that enables them. All DRAFT processes: unit-bearing ports + behavior contracts, no update dynamics. Ports are wired to labeled stores so each quantity (and its unit) appears as a node.",
+  "requires": {
+    "processes": ["MetabolismClosure", "Autocatalysis", "ContainmentClosure", "MembraneSelfAssembly", "LipidAggregation", "ReplicationClosure", "TemplateReplication", "TemplateDirectedSynthesis"],
+    "types": ["chemical_flux", "energy", "concentration", "entropy", "area", "fraction", "count", "sequence"]
+  },
+  "state": {
+    "metabolism_closure": {
+      "_type": "process",
+      "address": "local:MetabolismClosure",
+      "config": {"interval": 1.0},
+      "inputs": {"nutrients": ["metabolism_coarse", "nutrients"], "energy": ["metabolism_coarse", "energy"]},
+      "outputs": {"metabolites": ["metabolism_coarse", "metabolites"], "entropy": ["metabolism_coarse", "entropy"]}
+    },
+    "metabolism_coarse": {
+      "nutrients": {"_type": "chemical_flux", "_value": 0.0},
+      "energy": {"_type": "energy", "_value": 0.0},
+      "metabolites": {"_type": "concentration", "_value": 0.0},
+      "entropy": {"_type": "entropy", "_value": 0.0}
+    },
+    "autocatalysis": {
+      "_type": "process",
+      "address": "local:Autocatalysis",
+      "config": {"interval": 1.0},
+      "inputs": {"substrates": ["metabolism_selforg", "substrates"]},
+      "outputs": {"products": ["metabolism_selforg", "products"], "catalysts": ["metabolism_selforg", "catalysts"]}
+    },
+    "metabolism_selforg": {
+      "substrates": {"_type": "concentration", "_value": 0.0},
+      "products": {"_type": "concentration", "_value": 0.0},
+      "catalysts": {"_type": "concentration", "_value": 0.0}
+    },
+    "containment_closure": {
+      "_type": "process",
+      "address": "local:ContainmentClosure",
+      "config": {"interval": 1.0},
+      "inputs": {"lipids": ["containment_coarse", "lipids"]},
+      "outputs": {"boundary": ["containment_coarse", "boundary"], "permeability": ["containment_coarse", "permeability"]}
+    },
+    "containment_coarse": {
+      "lipids": {"_type": "concentration", "_value": 0.0},
+      "boundary": {"_type": "area", "_value": 0.0},
+      "permeability": {"_type": "fraction", "_value": 0.0}
+    },
+    "membrane_self_assembly": {
+      "_type": "process",
+      "address": "local:MembraneSelfAssembly",
+      "config": {"interval": 1.0},
+      "inputs": {"lipids": ["containment_selforg", "lipids"]},
+      "outputs": {"membrane": ["containment_selforg", "membrane"]}
+    },
+    "containment_selforg": {
+      "lipids": {"_type": "concentration", "_value": 0.0},
+      "membrane": {"_type": "area", "_value": 0.0}
+    },
+    "lipid_aggregation": {
+      "_type": "process",
+      "address": "local:LipidAggregation",
+      "config": {"interval": 1.0},
+      "inputs": {"lipid_monomers": ["containment_molecular", "lipid_monomers"]},
+      "outputs": {"aggregate": ["containment_molecular", "aggregate"]}
+    },
+    "containment_molecular": {
+      "lipid_monomers": {"_type": "concentration", "_value": 0.0},
+      "aggregate": {"_type": "count", "_value": 0.0}
+    },
+    "replication_closure": {
+      "_type": "process",
+      "address": "local:ReplicationClosure",
+      "config": {"interval": 1.0},
+      "inputs": {"template": ["replication_coarse", "template"], "energy": ["replication_coarse", "energy"]},
+      "outputs": {"template": ["replication_coarse", "template"], "copies": ["replication_coarse", "copies"]}
+    },
+    "replication_coarse": {
+      "template": {"_type": "sequence", "_value": ""},
+      "energy": {"_type": "energy", "_value": 0.0},
+      "copies": {"_type": "count", "_value": 0.0}
+    },
+    "template_replication": {
+      "_type": "process",
+      "address": "local:TemplateReplication",
+      "config": {"interval": 1.0},
+      "inputs": {"template": ["replication_selforg", "template"]},
+      "outputs": {"copies": ["replication_selforg", "copies"]}
+    },
+    "replication_selforg": {
+      "template": {"_type": "sequence", "_value": ""},
+      "copies": {"_type": "count", "_value": 0.0}
+    },
+    "template_directed_synthesis": {
+      "_type": "process",
+      "address": "local:TemplateDirectedSynthesis",
+      "config": {"interval": 1.0},
+      "inputs": {"monomers": ["replication_molecular", "monomers"], "template": ["replication_molecular", "template"]},
+      "outputs": {"polymer": ["replication_molecular", "polymer"]}
+    },
+    "replication_molecular": {
+      "monomers": {"_type": "concentration", "_value": 0.0},
+      "template": {"_type": "sequence", "_value": ""},
+      "polymer": {"_type": "sequence", "_value": ""}
+    }
+  }
+}

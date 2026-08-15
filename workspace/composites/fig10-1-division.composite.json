@@ -1,0 +1,51 @@
+{
+  "name": "fig10-1-division",
+  "description": "Fig 10.1 (panel b) — division as a compositional rewrite. A prokaryotic cell replicates its chromosome (DNAReplication), segregates the copies toward the two poles (SegregateChromosome), and then splits — an event-driven graph rewrite (Divide) — partitioning state (DNA, biomass) into two daughters and incrementing the cell count. The daughters live as sibling stores under the shared environment, each re-coupling its own interface to it: division does not sever the coupling, it partitions the composition while the daughters remain coupled through the shared environment. All DRAFT processes: unit-bearing ports + behavior contracts, no dynamics (division/segregation described as event rewrites in the contracts, not implemented).",
+  "requires": {
+    "processes": ["DNAReplication", "SegregateChromosome", "Divide"],
+    "types": ["concentration", "energy", "mass", "cell_count"]
+  },
+  "state": {
+    "dna_replication": {
+      "_type": "process",
+      "address": "local:DNAReplication",
+      "config": {"interval": 1.0},
+      "inputs": {"dna": ["environ", "cell", "dna"], "energy": ["environ", "cell", "energy"]},
+      "outputs": {"dna": ["environ", "cell", "dna"]}
+    },
+    "segregate_chromosome": {
+      "_type": "process",
+      "address": "local:SegregateChromosome",
+      "config": {"interval": 1.0},
+      "inputs": {"dna": ["environ", "cell", "dna"]},
+      "outputs": {"dna_1": ["environ", "daughter_1", "dna"], "dna_2": ["environ", "daughter_2", "dna"]}
+    },
+    "divide": {
+      "_type": "process",
+      "address": "local:Divide",
+      "config": {"interval": 1.0},
+      "inputs": {"biomass": ["environ", "cell", "biomass"]},
+      "outputs": {
+        "biomass_1": ["environ", "daughter_1", "biomass"],
+        "biomass_2": ["environ", "daughter_2", "biomass"],
+        "cell_count": ["environ", "cell_count"]
+      }
+    },
+    "environ": {
+      "cell": {
+        "dna": {"_type": "concentration", "_value": 1.0},
+        "biomass": {"_type": "mass", "_value": 1.0},
+        "energy": {"_type": "energy", "_value": 1.0}
+      },
+      "daughter_1": {
+        "dna": {"_type": "concentration", "_value": 0.0},
+        "biomass": {"_type": "mass", "_value": 0.0}
+      },
+      "daughter_2": {
+        "dna": {"_type": "concentration", "_value": 0.0},
+        "biomass": {"_type": "mass", "_value": 0.0}
+      },
+      "cell_count": {"_type": "cell_count", "_value": 1.0}
+    }
+  }
+}

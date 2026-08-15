@@ -46,6 +46,11 @@ UNITS: dict[str, str] = {
     "cell_count":      "cells",
     "fraction":        "dimensionless",
     "rate":            "s⁻¹",
+    # thermodynamic / spatial / temporal (used by Figs 6–10)
+    "entropy":         "J·K⁻¹·s⁻¹",
+    "information":     "bits",
+    "length":          "m",
+    "time":            "s",
 }
 
 # structural/string interface variables (no numeric unit).

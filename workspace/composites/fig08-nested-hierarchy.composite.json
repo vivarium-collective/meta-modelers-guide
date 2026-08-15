@@ -1,0 +1,127 @@
+{
+  "name": "fig08-nested-hierarchy",
+  "description": "Fig 8b — molecular compositions as a nested hierarchical composite. Molecular structure is organized as a nested place-graph across scales: an extracellular matrix, a membrane, and a cytoplasm containing a nucleus (chromosome → chromatin → nucleosome → DNA/histone), organelles (a ribosomal complex, mitochondria, secretory organelles), and cytoplasmic pools (proteins, RNA, enzymes, metabolites, nutrients). Six DRAFT processes act on leaves deep inside this hierarchy — transmembrane transport across the membrane, replication/repair and transcription in the nucleus, metabolism and translation in the cytoplasm, and assembly of subunits into the ribosomal complex — so the topology reads like Fig 8b. All DRAFT processes: unit-bearing ports + behavior contracts, no dynamics.",
+  "requires": {
+    "processes": ["TransmembraneTransport", "ReplicationAndRepair", "CellMetabolism", "Transcription", "Translation", "SubunitAssembly"],
+    "types": ["concentration", "chemical_flux", "mass", "count", "energy"]
+  },
+  "state": {
+    "transmembrane_transport": {
+      "_type": "process",
+      "address": "local:TransmembraneTransport",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "nutrients_ext": ["extracellular_matrix", "interstitial_matrix"],
+        "transporters": ["membrane", "transmembrane_transporters"]
+      },
+      "outputs": {
+        "nutrients": ["cytoplasm", "nutrients"],
+        "metabolites": ["cytoplasm", "metabolites"],
+        "flux": ["membrane", "transport_flux"]
+      }
+    },
+    "replication_and_repair": {
+      "_type": "process",
+      "address": "local:ReplicationAndRepair",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "dna": ["cytoplasm", "nucleus", "chromosome", "chromatin", "nucleosome", "DNA"],
+        "genes": ["cytoplasm", "nucleus", "genes"]
+      },
+      "outputs": {
+        "dna": ["cytoplasm", "nucleus", "chromosome", "chromatin", "nucleosome", "DNA"]
+      }
+    },
+    "cell_metabolism": {
+      "_type": "process",
+      "address": "local:CellMetabolism",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "nutrients": ["cytoplasm", "nutrients"],
+        "enzymes": ["cytoplasm", "enzymes"]
+      },
+      "outputs": {
+        "metabolites": ["cytoplasm", "metabolites"],
+        "energy": ["cytoplasm", "energy"]
+      }
+    },
+    "transcription": {
+      "_type": "process",
+      "address": "local:Transcription",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "dna": ["cytoplasm", "nucleus", "chromosome", "chromatin", "nucleosome", "DNA"],
+        "genes": ["cytoplasm", "nucleus", "genes"],
+        "regulation": ["cytoplasm", "nucleus", "transcription_regulation_complex"]
+      },
+      "outputs": {
+        "rna": ["cytoplasm", "rna"]
+      }
+    },
+    "translation": {
+      "_type": "process",
+      "address": "local:Translation",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "rna": ["cytoplasm", "rna"],
+        "metabolites": ["cytoplasm", "metabolites"],
+        "ribosome": ["cytoplasm", "organelles", "ribosomal_complex", "ribosome"]
+      },
+      "outputs": {
+        "proteins": ["cytoplasm", "proteins"]
+      }
+    },
+    "subunit_assembly": {
+      "_type": "process",
+      "address": "local:SubunitAssembly",
+      "config": {"interval": 1.0},
+      "inputs": {
+        "proteins": ["cytoplasm", "proteins"],
+        "ribosomal_subunits": ["cytoplasm", "organelles", "ribosomal_complex", "ribosomal_subunits"]
+      },
+      "outputs": {
+        "ribosome": ["cytoplasm", "organelles", "ribosomal_complex", "ribosome"]
+      }
+    },
+    "extracellular_matrix": {
+      "interstitial_matrix": {"_type": "concentration", "_value": 1.0},
+      "basement_matrix": {"_type": "concentration", "_value": 0.5},
+      "collagen_fibers": {"_type": "mass", "_value": 1.0},
+      "fibronectin": {"_type": "concentration", "_value": 0.2},
+      "collagen": {"_type": "concentration", "_value": 0.5}
+    },
+    "membrane": {
+      "transmembrane_transporters": {"_type": "concentration", "_value": 0.1},
+      "lipids": {"_type": "concentration", "_value": 2.0},
+      "transport_flux": {"_type": "chemical_flux", "_value": 0.0}
+    },
+    "cytoplasm": {
+      "nucleus": {
+        "chromosome": {
+          "chromatin": {
+            "nucleosome": {
+              "DNA": {"_type": "concentration", "_value": 1.0},
+              "histone": {"_type": "concentration", "_value": 1.0}
+            }
+          }
+        },
+        "genes": {"_type": "concentration", "_value": 1.0},
+        "transcription_regulation_complex": {"_type": "concentration", "_value": 0.1}
+      },
+      "organelles": {
+        "ribosomal_complex": {
+          "ribosome": {"_type": "count", "_value": 100.0},
+          "ribosomal_subunits": {"_type": "count", "_value": 50.0}
+        },
+        "mitochondria": {"_type": "count", "_value": 20.0},
+        "secretory_organelles": {"_type": "count", "_value": 10.0}
+      },
+      "proteins": {"_type": "concentration", "_value": 1.0},
+      "rna": {"_type": "concentration", "_value": 0.5},
+      "enzymes": {"_type": "concentration", "_value": 0.3},
+      "metabolites": {"_type": "concentration", "_value": 0.5},
+      "nutrients": {"_type": "concentration", "_value": 0.5},
+      "energy": {"_type": "energy", "_value": 1.0}
+    }
+  }
+}
