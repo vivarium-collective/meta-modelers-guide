@@ -1,5 +1,10 @@
 # meta-modelers-guide
 
+<!-- BEGIN dashboard -->
+> ## 📊 [**Live dashboard →**](https://vivarium-collective.github.io/viva-meta-modelers-guide/dashboard/)
+> Browse every investigation & study interactively, or read the [published investigation reports](https://vivarium-collective.github.io/viva-meta-modelers-guide/). Auto-published from `main` on every merge.
+<!-- END dashboard -->
+
 <!-- BEGIN:dashboard -->
 <!-- `vivarium-workbench gen-readme` fills this with a prominent link to the
      live read-only dashboard (URL derived from the git remote). Before the repo
