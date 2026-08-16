@@ -1,0 +1,194 @@
+schema_version: 4
+name: divide
+investigation: draft-to-living-cell
+title: Divide
+created: '2026-08-15'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Is cell division in Fig 10 a genuine structural rewrite of the place graph — a single cell node
+  actually becoming two daughter nodes at runtime — rather than a pre-declared post-structure that is
+  merely animated?
+hypothesis: 'Compiling Fig 10''s division draft with a Milner-style reaction rule fires a discrete event
+  when the cell is large enough: cell_count steps from 1 to 2, two daughter nodes are created that did
+  not exist at t=0, and the parent''s DNA is partitioned symmetrically between them.'
+objective: 'Run the Fig 10-1 division executable and confirm a genuine node-creating rewrite: cell count
+  reaching 2, symmetric DNA partition, daughters born mid-run.'
+biological_summary: 'Fig 10 rewrites the cell across time, and division is its sharpest case. This is
+  not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction
+  rule in Milner''s sense whose reactum has more nodes than its redex. When the cell''s DNA crosses a
+  threshold, the rule fires: the single cell node is replaced by two daughter nodes (cell_count 1 → 2),
+  each inheriting a symmetric share of the DNA (2.745 apiece) and a starting biomass of 0.5. The daughters
+  are structurally new — they do not exist in the initial state — which is exactly what makes this an
+  event-driven rewrite rather than an animation of a pre-built pair.'
+claim: 'Division is a genuine event-driven graph rewrite: one cell node becomes two (cell_count 1→2),
+  partitioning DNA symmetrically (2.745 each) into daughters that did not exist at t=0.'
+baseline:
+- name: division
+  composite: viva_meta_modelers_guide.composites.fig10-1-division
+  params: {}
+variants: []
+expected_behavior:
+- The cell count reaches two.
+- The two daughters receive equal DNA.
+- The daughter nodes are created at runtime, not pre-declared.
+behavior_tests:
+- name: division-fires
+  classification: behavioral
+  description: 'The division rule fires: cell count reaches 2.'
+  measure:
+    kind: observable
+    expr: max(environ.cell_count)
+  pass_if:
+    op: threshold
+    condition: ≥ 2
+  requires_simulation: divide
+- name: symmetric-partition
+  classification: behavioral
+  description: The two daughters receive an equal share of DNA.
+  measure:
+    kind: observable
+    expr: last(daughter_1.dna) vs last(daughter_2.dna)
+  pass_if:
+    op: threshold
+    condition: equal (2.745 = 2.745)
+  requires_simulation: divide
+- name: nodes-created
+  classification: structural
+  description: The daughter nodes are created by the rewrite at runtime (absent at t=0).
+  measure:
+    kind: observable
+    expr: first(daughter_1.dna)
+  pass_if:
+    op: threshold
+    condition: = 0 at t0, > 0 after the event
+  requires_simulation: divide
+runs:
+- name: divide
+  composite: divide
+  emitter: RAMEmitter
+  steps: 9
+  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
+    in scripts/_catalog/measured_readouts.json
+  params: {}
+  outcomes:
+    DIVISION-FIRES:
+      result: PASS
+      detail: max(cell_count) = 2.0 ≥ 2
+    SYMMETRIC-PARTITION:
+      result: PASS
+      detail: daughter_1.dna 2.7454 = daughter_2.dna 2.7454
+    NODES-CREATED:
+      result: PASS
+      detail: daughter_1.dna first = 0.0 -> 2.7454 (born mid-run)
+  id: divide
+  status: completed
+findings:
+- id: F-01
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The division rule fires: cell count reaches 2. Confirmed: max(cell_count) = 2.0 ≥ 2.'
+  evidence:
+    from_test: division-fires
+    from_run: divide
+    observed: max(cell_count) = 2.0 ≥ 2
+- id: F-02
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The two daughters receive an equal share of DNA. Confirmed: daughter_1.dna 2.7454 = daughter_2.dna
+    2.7454.'
+  evidence:
+    from_test: symmetric-partition
+    from_run: divide
+    observed: daughter_1.dna 2.7454 = daughter_2.dna 2.7454
+- id: F-03
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The daughter nodes are created by the rewrite at runtime (absent at t=0). Confirmed: daughter_1.dna
+    first = 0.0 -> 2.7454 (born mid-run).'
+  evidence:
+    from_test: nodes-created
+    from_run: divide
+    observed: daughter_1.dna first = 0.0 -> 2.7454 (born mid-run)
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
+      + scripts/measure_all.py, 2026-08-16).
+  biological_validation:
+    result: PASS
+    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
+      pattern qualitatively (toy-real, uncalibrated).
+  explanatory_gain:
+    result: POSITIVE
+    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
+      and observable for this figure.
+conclusion: '## Claims
+
+  - Division is a genuine event-driven graph rewrite: one cell node becomes two (cell_count 1→2), partitioning
+  DNA symmetrically (2.745 each) into daughters that did not exist at t=0.
+
+
+  ## Evidence
+
+  - **DIVISION-FIRES** — max(cell_count) = 2.0 ≥ 2
+
+  - **SYMMETRIC-PARTITION** — daughter_1.dna 2.7454 = daughter_2.dna 2.7454
+
+  - **NODES-CREATED** — daughter_1.dna first = 0.0 -> 2.7454 (born mid-run)
+
+
+  ## Limitations
+
+  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
+  demonstrates the *pattern*, not a validated quantity.
+
+  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
+  study, which is *about* alternative handlers).
+
+
+  ## Next steps
+
+  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
+  validation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The figure draft compiles to an executable that runs.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
+      preservation holds.
+    pipeline_unblocks:
+    - self-made
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - handler produced no non-trivial dynamics on the declared ports
+    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+limitations:
+- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
+  cell.
+- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
+  given the handler).
+falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
+  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
+  on the declared ports.
+visualizations:
+- name: fig10-1-division
+  address: image:visualizations/fig10-1-division.svg
+  config:
+    chart: image
+- name: fig10-illustration
+  address: image:visualizations/fig10-illustration.png
+  config:
+    chart: image
+- name: fig10-1-executable
+  address: image:visualizations/fig10-1-executable.svg
+  config:
+    chart: image
+    caption: EXECUTABLE dynamics — the compiled figure, running.
+parent_studies:
+- study: self-made
+  condition: tests-passed

@@ -1,0 +1,309 @@
+schema_version: 4
+name: the-living-atlas
+investigation: draft-to-living-cell
+title: The Living Atlas
+created: '2026-08-15'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: 'Do all of the paper''s semantic figures actually compile to executables that run, and — the
+  real test of composition — can the independently-authored figure mechanisms be assembled into a single
+  whole cell that lives the paper''s full arc: grow, divide, and die?'
+hypothesis: 'All 12 executable composites build and produce non-trivial dynamics, and a whole-cell composite
+  assembled from the figure mechanisms (uptake+growth, metabolism, viability, division, disintegration)
+  runs the full arc in one trajectory: biomass rises and peaks, cell_count reaches 2, then a thermal shock
+  drives viability toward 0 and debris accumulates.'
+objective: Render a dynamics figure for every executable (the gallery) and run the composed whole cell
+  for 20 time units, measuring peak biomass, division time, minimum viability, and final debris.
+biological_summary: This is the payoff. The nine figure studies each showed one pattern compiling from
+  draft to executable; this study shows the whole atlas running at once and, more importantly, composing.
+  The gallery renders the dynamics of all twelve executables side by side — each compiled figure, actually
+  moving. Then the figures are assembled into a single cell. It takes up nutrients and grows (biomass
+  0.3 → 5.1); when its biomass crosses threshold it divides (cell_count → 2 at t ≈ 3.4); and when a thermal
+  shock pushes its temperature to 50° — outside the viable band — it loses viability (→ 0.018), stops
+  maintaining its boundary, and disintegrates into molecular debris (→ 4.87). The paper's arc — interface,
+  coupling, metabolism, closure, division, disintegration — runs end to end in one composite. A cell,
+  assembled from drafts, that lives and dies.
+claim: Every draft in the atlas compiles to a running executable (12/12 with dynamics), and the figures
+  compose into ONE whole cell that grows (biomass→5.1), divides (cell_count→2 at t≈3.4), then loses viability
+  under thermal shock (→0.02) and disintegrates into molecular debris (→4.87).
+baseline:
+- name: fig06-exec-coarse
+  composite: viva_meta_modelers_guide.composites.fig06-executable-coarse
+  params: {}
+- name: fig06-exec-kinetic
+  composite: viva_meta_modelers_guide.composites.fig06-executable-kinetic
+  params: {}
+- name: fig04b-exec
+  composite: viva_meta_modelers_guide.composites.fig04b-executable
+  params: {}
+- name: fig05-exec-spatial
+  composite: viva_meta_modelers_guide.composites.fig05-executable
+  params: {}
+- name: fig06-exec-fba
+  composite: viva_meta_modelers_guide.composites.fig06-executable-fba
+  params: {}
+- name: fig07-exec-molecular
+  composite: viva_meta_modelers_guide.composites.fig07-executable
+  params: {}
+- name: fig08-exec-hierarchy
+  composite: viva_meta_modelers_guide.composites.fig08-executable
+  params: {}
+- name: fig09a-exec-coarse-graining
+  composite: viva_meta_modelers_guide.composites.fig09a-executable
+  params: {}
+- name: fig09b-exec-minimal-cell
+  composite: viva_meta_modelers_guide.composites.fig09b-executable
+  params: {}
+- name: fig10-1-exec-division
+  composite: viva_meta_modelers_guide.composites.fig10-1-executable
+  params: {}
+- name: fig10-2-exec-development
+  composite: viva_meta_modelers_guide.composites.fig10-2-executable
+  params: {}
+- name: fig10-3-exec-evolution
+  composite: viva_meta_modelers_guide.composites.fig10-3-executable
+  params: {}
+variants: []
+expected_behavior:
+- All 12 executables build and produce dynamics.
+- The composed cell grows and peaks in biomass.
+- The composed cell divides.
+- A thermal shock drives viability to ~0 and debris rises.
+- Grow->divide->shock->disintegrate happen in one run.
+behavior_tests:
+- name: all-executables-run
+  classification: structural
+  description: Every executable composite builds and produces non-trivial dynamics.
+  measure:
+    kind: observable
+    expr: count of executables with a rendered dynamics series
+  pass_if:
+    op: threshold
+    condition: = 12 / 12
+  requires_simulation: the-living-atlas
+- name: whole-cell-grows
+  classification: behavioral
+  description: The composed whole cell grows and peaks in biomass.
+  measure:
+    kind: observable
+    expr: max(biomass)
+  pass_if:
+    op: threshold
+    condition: '> 3.0 (5.108)'
+  requires_simulation: the-living-atlas
+- name: whole-cell-divides
+  classification: behavioral
+  description: The composed whole cell divides during the run.
+  measure:
+    kind: observable
+    expr: max(cell_count)
+  pass_if:
+    op: threshold
+    condition: ≥ 2 (at t ≈ 3.4)
+  requires_simulation: the-living-atlas
+- name: whole-cell-dies
+  classification: behavioral
+  description: A thermal shock drives viability toward zero and molecular debris accumulates.
+  measure:
+    kind: observable
+    expr: min(viability) and last(debris)
+  pass_if:
+    op: threshold
+    condition: viability < 0.1 AND debris > 1 (0.018 / 4.87)
+  requires_simulation: the-living-atlas
+runs:
+- name: the-living-atlas
+  composite: the-living-atlas
+  emitter: RAMEmitter
+  steps: 9
+  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
+    in scripts/_catalog/measured_readouts.json
+  params: {}
+  outcomes:
+    ALL-EXECUTABLES-RUN:
+      result: PASS
+      detail: 12 / 12 executables rendered dynamics (measure_all.py)
+    WHOLE-CELL-GROWS:
+      result: PASS
+      detail: peak biomass 5.108 > 3.0
+    WHOLE-CELL-DIVIDES:
+      result: PASS
+      detail: cell_count -> 2.0 at t ≈ 3.4
+    WHOLE-CELL-DIES:
+      result: PASS
+      detail: min viability 0.018 < 0.1; final debris 4.87 > 1
+  id: the-living-atlas
+  status: completed
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Every executable composite builds and produces non-trivial dynamics. Confirmed: 12 / 12
+    executables rendered dynamics (measure_all.py).'
+  evidence:
+    from_test: all-executables-run
+    from_run: the-living-atlas
+    observed: 12 / 12 executables rendered dynamics (measure_all.py)
+- id: F-02
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The composed whole cell grows and peaks in biomass. Confirmed: peak biomass 5.108 > 3.0.'
+  evidence:
+    from_test: whole-cell-grows
+    from_run: the-living-atlas
+    observed: peak biomass 5.108 > 3.0
+- id: F-03
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The composed whole cell divides during the run. Confirmed: cell_count -> 2.0 at t ≈ 3.4.'
+  evidence:
+    from_test: whole-cell-divides
+    from_run: the-living-atlas
+    observed: cell_count -> 2.0 at t ≈ 3.4
+- id: F-04
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'A thermal shock drives viability toward zero and molecular debris accumulates. Confirmed:
+    min viability 0.018 < 0.1; final debris 4.87 > 1.'
+  evidence:
+    from_test: whole-cell-dies
+    from_run: the-living-atlas
+    observed: min viability 0.018 < 0.1; final debris 4.87 > 1
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
+      + scripts/measure_all.py, 2026-08-16).
+  biological_validation:
+    result: PASS
+    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
+      pattern qualitatively (toy-real, uncalibrated).
+  explanatory_gain:
+    result: POSITIVE
+    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
+      and observable for this figure.
+conclusion: '## Claims
+
+  - Every draft in the atlas compiles to a running executable (12/12 with dynamics), and the figures compose
+  into ONE whole cell that grows (biomass→5.1), divides (cell_count→2 at t≈3.4), then loses viability
+  under thermal shock (→0.02) and disintegrates into molecular debris (→4.87).
+
+
+  ## Evidence
+
+  - **ALL-EXECUTABLES-RUN** — 12 / 12 executables rendered dynamics (measure_all.py)
+
+  - **WHOLE-CELL-GROWS** — peak biomass 5.108 > 3.0
+
+  - **WHOLE-CELL-DIVIDES** — cell_count -> 2.0 at t ≈ 3.4
+
+  - **WHOLE-CELL-DIES** — min viability 0.018 < 0.1; final debris 4.87 > 1
+
+
+  ## Limitations
+
+  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
+  demonstrates the *pattern*, not a validated quantity.
+
+  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
+  study, which is *about* alternative handlers).
+
+
+  ## Next steps
+
+  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
+  validation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The figure draft compiles to an executable that runs.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
+      preservation holds.
+    pipeline_unblocks:
+    - typed-interface
+    - one-interface-three-mechanisms
+    - self-made
+    - divide
+    - evolve
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - handler produced no non-trivial dynamics on the declared ports
+    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+limitations:
+- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
+  cell.
+- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
+  given the handler).
+falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
+  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
+  on the declared ports.
+visualizations:
+- name: fig04b-executable
+  address: image:visualizations/fig04b-executable.svg
+  config:
+    chart: image
+- name: fig05-executable
+  address: image:visualizations/fig05-executable.svg
+  config:
+    chart: image
+- name: fig06-executable-coarse
+  address: image:visualizations/fig06-executable-coarse.svg
+  config:
+    chart: image
+- name: fig06-executable-kinetic
+  address: image:visualizations/fig06-executable-kinetic.svg
+  config:
+    chart: image
+- name: fig06-executable-fba
+  address: image:visualizations/fig06-executable-fba.svg
+  config:
+    chart: image
+- name: fig07-executable
+  address: image:visualizations/fig07-executable.svg
+  config:
+    chart: image
+- name: fig08-executable
+  address: image:visualizations/fig08-executable.svg
+  config:
+    chart: image
+- name: fig09a-executable
+  address: image:visualizations/fig09a-executable.svg
+  config:
+    chart: image
+- name: fig09b-executable
+  address: image:visualizations/fig09b-executable.svg
+  config:
+    chart: image
+- name: fig10-1-executable
+  address: image:visualizations/fig10-1-executable.svg
+  config:
+    chart: image
+- name: fig10-2-executable
+  address: image:visualizations/fig10-2-executable.svg
+  config:
+    chart: image
+- name: fig10-3-executable
+  address: image:visualizations/fig10-3-executable.svg
+  config:
+    chart: image
+- name: wholecell
+  address: image:visualizations/wholecell.svg
+  config:
+    chart: image
+parent_studies:
+- study: typed-interface
+  condition: tests-passed
+- study: one-interface-three-mechanisms
+  condition: tests-passed
+- study: self-made
+  condition: tests-passed
+- study: divide
+  condition: tests-passed
+- study: evolve
+  condition: tests-passed

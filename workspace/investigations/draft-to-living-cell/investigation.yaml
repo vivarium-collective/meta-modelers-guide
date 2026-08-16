@@ -1,0 +1,326 @@
+schema_version: 2
+name: draft-to-living-cell
+title: From Draft to Living Cell
+created: '2026-08-15'
+status: complete
+object_of_evaluation: composition-protocol
+runtime:
+  default_emitter: sqlite
+question: 'How far can a cell be built compositionally — assembled from typed interfaces,
+
+  each specified as a *draft* before any mechanism is chosen, then compiled into
+
+  something that actually runs — and does that composition hold together into a
+
+  whole cell that lives and dies?
+
+  '
+hypothesis: 'Every recurring composition pattern in the cellular-interface paper can be
+
+  authored as an inert draft (typed, unit-bearing ports + a behavior contract, with
+
+  no dynamics) and then *compiled* — by installing one conforming mechanism per
+
+  draft — into an executable that preserves the paper''s interface exactly and
+
+  produces genuine dynamics. The same signature admits many mechanisms; the figures
+
+  compose; and the composition sustains a whole cell across growth, division, and
+
+  disintegration.
+
+  '
+lead: 'A cell, seen from the outside, is a small set of interfaces — the variables through
+
+  which it exchanges matter, energy, and information with its world. Agmon''s paper
+
+  reads the cell as compositions of such interfaces and names the recurring patterns
+
+  by which they connect, fail, and reorganize. This investigation makes that reading
+
+  *executable*. Each figure begins life as a draft: an interface with typed ports and
+
+  a stated intent, but no mechanism — it builds and renders, yet does nothing if run.
+
+  A compiler then installs a conforming mechanism for each draft, and the figure comes
+
+  alive — while its interface is preserved, unchanged, by construction. Follow the arc
+
+  and a cell assembles itself, from a single exchange port to a bounded agent that
+
+  grows, divides when it is large enough, and disintegrates when its world turns
+
+  hostile.
+
+  '
+executive:
+  what_is_this: 'An executable atlas of *A meta-modeler''s guide to the cellular interface* (Agmon).
+
+    Each compositional figure (4–10) is rebuilt twice: as a semantic DRAFT composite —
+
+    typed interface ports + a behavior contract, no dynamics, rendered in the paper''s
+
+    visual language beside the original illustration — and as a compiled EXECUTABLE
+
+    that runs. The two layers and the compiler between them (an algebraic effect
+
+    system) are the subject; the terminus is a composed whole cell.
+
+    '
+  verdict: 'The reading holds, and it runs. All 11 figure composites build and render, and all
+
+    11 compile to executables that run: every draft signature has a conforming handler,
+
+    every compiled composite preserves the paper''s interface (compiler law 2) and
+
+    produces non-trivial dynamics (law 3). One exchange interface (Fig 6 metabolism)
+
+    carries THREE mechanisms — coarse, saturating-kinetic, and real COBRApy flux-balance
+
+    analysis — over one unchanged interface (law 4). Figure 10 introduces event-driven
+
+    rewrites: division fires as a discrete event, a cell node genuinely becoming two.
+
+    And the figures compose: a single whole cell grows on nutrients, divides when its
+
+    biomass crosses threshold, then loses viability under thermal shock and disintegrates
+
+    into molecular debris — the paper''s full arc in one run.
+
+    '
+  verdict_status: passed
+  decisions_needed: []
+scientific_argument:
+  main_claim: 'A cell can be assembled compositionally from typed interfaces, each specifiable as
+
+    a draft (an interface with no committed mechanism) and then compiled — by installing
+
+    a conforming mechanism — into a running model whose *external interface is preserved
+
+    unchanged*. This is the paper''s central claim (mechanism can be refined or replaced
+
+    behind a stable interface) made mechanical, as a compiler whose laws enforce it.
+
+    '
+  evidence_for:
+  - Fig 4 — the cellular interface is a set of typed, unit-bearing ports (chemical mol·s⁻¹, mechanical
+    N, electrical A, thermal W, growth hr⁻¹, viability); a draft declares them, a handler makes a bounded
+    goal-directed cell out of them.
+  - Fig 5 — cell–environment coupling closes as a sense/act loop over a shared field store; the executable
+    diffuses a real spatial (map[float]) chemical field.
+  - Fig 6 — one metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is realized by
+    a coarse process, a saturating-kinetic process, OR real COBRApy FBA — three mechanisms, one interface
+    (handler independence, law 4).
+  - Fig 8 — molecular composition is a six-level-deep nested place graph (ECM → membrane → cytoplasm →
+    nucleus → chromosome …) with a coupled gene-expression cascade wired to its leaves; the interface
+    survives the deepest nesting (law 2).
+  - Fig 9 — the mutual closure of metabolism, containment, and replication expresses autopoiesis; the
+    same functions appear at coarse, self-organized, and molecular grains.
+  - Fig 10 — division, biofilm development, and evolution are compositional rewrites; division is a genuine
+    event-driven graph rewrite (one cell node → two daughter nodes).
+  - The whole cell — Figs 5 + 6 + viability + division + disintegration compose into one run that grows,
+    divides, and dies — composition is not a metaphor but a working assembly.
+  evidence_against:
+  - The figures are toy-real, not calibrated — handlers use plausible constants, not fitted ones, so the
+    dynamics demonstrate the *pattern* (ultrasensitivity, closure, division, disintegration) rather than
+    a quantitatively validated cell.
+  - Fig 4a (interaction modalities) is illustrative — a vocabulary of ports, not a mechanism — and remains
+    draft-only by design.
+  key_figures:
+  - one-interface-three-mechanisms
+  - divide
+  - the-living-atlas
+  caveats:
+  - 'Two layers, read deliberately: the DRAFT composites are inert (ports + contract, no dynamics) and
+    are rendered in loom; the EXECUTABLE composites run and are shown as dynamics figures. A study''s
+    draft render and its executable dynamics are the same interface at two stages, not two different models.'
+  - The compiler is the binding stage only — it installs a conforming mechanism per draft; it does not
+    fit parameters or invent mechanisms.
+  interpretation_ref: docs/concepts/semantic-to-executable-compilation.md
+biological_story: 'A cell is two things at once. From the outside it is a bounded, goal-directed agent
+
+  that exchanges matter, energy, and information with its environment across a small set
+
+  of interface variables, and stays alive only while those variables sit inside its
+
+  viability bounds. From the inside it is a dense web of coupled molecular processes that
+
+  build and maintain the very interface the outside view depends on. Neither view is
+
+  complete alone, and the interesting biology lives in how they are connected — which is
+
+  exactly what a compositional model must make explicit.
+
+
+  This atlas walks that two-sided view as an arc, and at every step the same discipline
+
+  applies: first draw the *interface* (the ports through which a process couples to the
+
+  rest of the cell), commit to no mechanism yet, and only then install one. We begin at
+
+  the cellular interface itself (Fig 4) — chemical, mechanical, electrical, and thermal
+
+  exchange ports plus higher-level cellular variables like growth rate, shape, objective,
+
+  and viability. We make it operational by closing the loop with the environment (Fig 5):
+
+  the cell senses environmental fields and acts back on them, so sensing and acting become
+
+  two sides of one coupling. When regulation fails, the cellular description stops being
+
+  valid and the right level of description drops to molecules (Fig 6–7) — the disintegration
+
+  pattern, and its inverse, coarse-graining a molecular network back into a cell-level
+
+  exchange process. We then ask how a maintained interface arises in the first place: from
+
+  molecular mechanisms composing into nested, self-producing organization (Fig 8–9) — the
+
+  closure of metabolism, containment, and replication that Maturana and Varela called
+
+  autopoiesis. Finally, that organization is rewritten across time: a cell divides, cells
+
+  build a biofilm, and lineages evolve new interface capabilities (Fig 10).
+
+
+  The move this investigation adds is to make each step *run*. A draft process is an
+
+  interface with a promise and no mechanism; compiling it installs a mechanism that keeps
+
+  the promise (the ports and their wiring are preserved exactly) while giving the figure
+
+  real dynamics. Because the interface is what is held fixed, the same figure can be run
+
+  under different mechanisms — Fig 6''s metabolism as a lumped yield, a saturating kinetic
+
+  law, or a genuine flux-balance optimization — and a reader can watch the mechanism change
+
+  underneath a boundary that does not. The arc closes by composing the figures into a
+
+  single cell: it takes up nutrients and grows, divides once its biomass is large enough,
+
+  and — when a thermal shock pushes its temperature outside the viable band — loses
+
+  viability, stops maintaining its boundary, and disintegrates into molecular debris. A
+
+  cell, assembled from drafts, that lives and dies.
+
+  '
+at_a_glance:
+- study: typed-interface
+  role: The interface itself — a cell as its typed exchange ports (draft), and a bounded goal-directed
+    cell that runs on them (executable).
+- study: closing-the-loop
+  role: Making the interface operational — the sense/act loop with the environment, closed over a real
+    diffusing spatial field.
+- study: one-interface-three-mechanisms
+  role: When a description fails — disintegration as a grain swap, and one metabolism interface run three
+    ways (coarse, kinetic, real FBA).
+- study: molecular-channels
+  role: Down at the molecules — a molecular mechanism as a transducer of typed chemical, electrical, mechanical,
+    and thermal channels.
+- study: the-nested-cell
+  role: How molecules compose — a six-level nested place graph with a coupled gene-expression cascade;
+    the deepest test of interface preservation.
+- study: self-made
+  role: How a cell holds itself together — self-organization and coarse-graining across three grains;
+    the closure that is autopoiesis.
+- study: divide
+  role: 'Rewriting the cell in time (1/3) — division as a genuine event-driven rewrite: one cell node
+    becomes two.'
+- study: biofilm
+  role: 'Rewriting the cell in time (2/3) — development: cells reorganize into a biofilm as a higher-level
+    composite.'
+- study: evolve
+  role: 'Rewriting the cell in time (3/3) — evolution: variation, selection, and the addition of a new
+    interface port.'
+- study: the-living-atlas
+  role: The payoff — every draft compiled to a running executable, the gallery of them in motion, and
+    the composed whole cell that grows, divides, and dies.
+how_to_read: 'Read the arc in order, fig-04 → fig-10-3, then fig-compilation. In each study, look at
+
+  two things side by side: the DRAFT render (the loom figure — the interface and its
+
+  contract, no dynamics) and, in fig-compilation, that figure''s EXECUTABLE dynamics (the
+
+  same interface, now running). The three studies to start with if you are short on time:
+
+  fig-06 (one interface, three mechanisms — the whole thesis in one figure), fig-10-1
+
+  (a genuine structural rewrite), and fig-compilation (the executables in motion + the
+
+  whole-cell arc). Throughout, the question to hold is the compiler''s law 2: did the
+
+  mechanism change while the interface stayed the same?
+
+  '
+glossary:
+- term: Cellular interface
+  definition: The set of typed, unit-bearing variables through which a cellular description couples to
+    its environment (fluxes, forces, currents, heat, plus growth, shape, objective, viability).
+- term: Draft process
+  definition: An interface with a behavior contract but no dynamics — typed ports + intent, an inert update;
+    it builds and renders but does nothing if run.
+- term: Handler
+  definition: An executable Process that implements a draft's interface with real dynamics; the compiler
+    installs one per draft.
+- term: Conformance (H ⊢ S)
+  definition: A handler conforms to a signature when it supplies every interface port with a compatible
+    type; the compiler refuses to install a non-conforming handler.
+- term: Interface preservation (law 2)
+  definition: Compilation changes a figure's internal mechanism but leaves its external interface — port
+    names and wired store paths — identical.
+- term: Grain swap
+  definition: Realizing one interface at a different level of description (a lumped process vs. a resolved
+    network) without changing the interface — Fig 6.
+- term: Autopoiesis
+  definition: A composition whose processes collectively produce and sustain the very organization that
+    enables them — Fig 9's mutual closure of metabolism, containment, and replication.
+- term: Viability bounds
+  definition: The region of state space within which a cellular description stays valid; crossing them
+    (e.g. a thermal shock) breaks the interface and forces a shift to a molecular description.
+- term: Event-driven rewrite
+  definition: A discrete change to the place graph itself — division, engulfment, bursting — that adds
+    or removes nodes at runtime (Fig 10; Fig 3c).
+- term: Place graph
+  definition: The nesting of stores in the state tree; the bigraph structure that represents compartments
+    and containment.
+guidelines:
+  literature_anchors:
+  - Agmon — A meta-modeler's guide to the cellular interface and its composition patterns (the source
+    paper).
+  - Agmon & Spangler — Process Bigraphs and the Architecture of Compositional Systems Biology (arXiv:2512.23754).
+  - Maturana & Varela — Autopoiesis and Cognition (Fig 9 closure).
+  - Milner — bigraphical reactive systems (the reaction rules behind Fig 10 division).
+  naming_conventions: 'Studies are named fig-<n> after the paper''s figures; composites are
+
+    <package>.composites.fig<n>-<slug>; each figure has a SEMANTIC composite
+
+    (fig<n>-<slug>) and, where compiled, an EXECUTABLE (fig<n>-executable[-variant]).
+
+    '
+competing_frameworks:
+- name: Monolithic whole-cell model
+  prediction: A cell must be modeled as one large integrated system; components cannot be swapped without
+    rebuilding it.
+  discriminated_by: fig-06 — the same metabolism interface is realized by three independent handlers (coarse/kinetic/FBA)
+    with no change to the rest of the composite; and the whole cell is assembled from independently-authored
+    figure mechanisms.
+- name: Datatype interchange (SBML-style)
+  prediction: A model is a fixed datatype to be read, not a program; refining a component means editing
+    the datatype.
+  discriminated_by: The draft→executable compiler treats each figure as a program whose mechanism is installed
+    behind a preserved interface — refinement is a handler swap, not a datatype edit.
+studies:
+- typed-interface
+- closing-the-loop
+- one-interface-three-mechanisms
+- molecular-channels
+- the-nested-cell
+- self-made
+- divide
+- biofilm
+- evolve
+- the-living-atlas
+expert_docs: []
+acceptance_criteria: []

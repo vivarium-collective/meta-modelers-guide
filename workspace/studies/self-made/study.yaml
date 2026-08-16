@@ -1,0 +1,224 @@
+schema_version: 4
+name: self-made
+investigation: draft-to-living-cell
+title: Self-Made
+created: '2026-08-15'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: How does a cell hold itself together? Does the Fig 9 composition express autopoiesis — metabolism,
+  containment, and replication mutually producing one another — and does that same closure appear when
+  each function is realized at a coarse, a self-organized, or a molecular grain?
+hypothesis: 'The Fig 9 executables show all three closure functions simultaneously active and expressible
+  at multiple grains: a coarse metabolism/containment/replication triad and a molecular minimal cell (Fig
+  9b) that grows its own membrane and proteins — the mutual closure Maturana & Varela called autopoiesis.'
+objective: Run the Fig 9a (three-grain closure) and Fig 9b (minimal cell) executables and confirm metabolism,
+  containment, and replication are all productive at more than one grain.
+biological_summary: 'Fig 9 asks where a maintained interface comes from in the first place, and answers
+  with autopoiesis: a cell is a network of processes that collectively produce and sustain the very organization
+  that lets them run. Three functions close the loop — metabolism builds the parts (metabolites → 4.8,
+  products → 2.4), containment builds the boundary that holds them (membrane → 1.6, boundary → 1.2), and
+  replication copies the blueprint (copies → 1.6 coarse, 1.2 self-organized). The same triad is drawn
+  at three grains — coarse lumped processes, self-organizing processes, and molecular detail — showing
+  that closure is a pattern, not a particular mechanism. Fig 9b makes it concrete as a minimal cell whose
+  membrane area grows to 1.2 and whose protein pool reaches 1.27 from its own gene→enzyme→metabolite economy.'
+claim: Metabolism, containment, and replication close on one another (autopoiesis) and the same three
+  functions appear at coarse, self-organized, and molecular grains — metabolites 4.8, membrane 1.6, replication
+  copies 1.6/1.2.
+baseline:
+- name: coarse-graining
+  composite: viva_meta_modelers_guide.composites.fig09a-coarse-graining
+  params: {}
+- name: minimal-cell
+  composite: viva_meta_modelers_guide.composites.fig09b-minimal-cell
+  params: {}
+variants: []
+expected_behavior:
+- Metabolism, containment, and replication are all productive.
+- The closure appears at more than one grain.
+- The Fig 9b minimal cell grows membrane and proteins.
+behavior_tests:
+- name: closure-active
+  classification: behavioral
+  description: All three autopoietic functions produce output (metabolism, containment, replication).
+  measure:
+    kind: observable
+    expr: last(metabolism_selforg.products), containment_selforg.membrane, replication_coarse.copies
+  pass_if:
+    op: threshold
+    condition: all > 0 (2.4 / 1.6 / 1.6)
+  requires_simulation: self-made
+- name: multi-grain
+  classification: structural
+  description: Each function is realized at more than one grain (coarse AND self-organized nonzero).
+  measure:
+    kind: observable
+    expr: coarse and selforg variants of each function
+  pass_if:
+    op: threshold
+    condition: both > 0
+  requires_simulation: self-made
+- name: minimal-cell-grows
+  classification: behavioral
+  description: The Fig 9b minimal cell grows its own membrane and protein pool.
+  measure:
+    kind: observable
+    expr: last(membrane.area) and last(proteins.concentration)
+  pass_if:
+    op: threshold
+    condition: both > 1.0 (1.2 / 1.27)
+  requires_simulation: self-made
+runs:
+- name: self-made
+  composite: self-made
+  emitter: RAMEmitter
+  steps: 9
+  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
+    in scripts/_catalog/measured_readouts.json
+  params: {}
+  outcomes:
+    CLOSURE-ACTIVE:
+      result: PASS
+      detail: metabolism 2.4, containment 1.6, replication 1.6 — all > 0
+    MULTI-GRAIN:
+      result: PASS
+      detail: coarse + self-organized variants both nonzero for each function
+    MINIMAL-CELL-GROWS:
+      result: PASS
+      detail: membrane.area->1.2, proteins->1.2687
+  id: self-made
+  status: completed
+- name: fig09b-executable
+  composite: fig09b-executable
+  emitter: RAMEmitter
+  steps: 9
+  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
+    in scripts/_catalog/measured_readouts.json
+  params: {}
+  outcomes: {}
+  id: fig09b-executable
+  status: completed
+findings:
+- id: F-01
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'All three autopoietic functions produce output (metabolism, containment, replication). Confirmed:
+    metabolism 2.4, containment 1.6, replication 1.6 — all > 0.'
+  evidence:
+    from_test: closure-active
+    from_run: self-made
+    observed: metabolism 2.4, containment 1.6, replication 1.6 — all > 0
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Each function is realized at more than one grain (coarse AND self-organized nonzero). Confirmed:
+    coarse + self-organized variants both nonzero for each function.'
+  evidence:
+    from_test: multi-grain
+    from_run: self-made
+    observed: coarse + self-organized variants both nonzero for each function
+- id: F-03
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The Fig 9b minimal cell grows its own membrane and protein pool. Confirmed: membrane.area->1.2,
+    proteins->1.2687.'
+  evidence:
+    from_test: minimal-cell-grows
+    from_run: self-made
+    observed: membrane.area->1.2, proteins->1.2687
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
+      + scripts/measure_all.py, 2026-08-16).
+  biological_validation:
+    result: PASS
+    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
+      pattern qualitatively (toy-real, uncalibrated).
+  explanatory_gain:
+    result: POSITIVE
+    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
+      and observable for this figure.
+conclusion: '## Claims
+
+  - Metabolism, containment, and replication close on one another (autopoiesis) and the same three functions
+  appear at coarse, self-organized, and molecular grains — metabolites 4.8, membrane 1.6, replication
+  copies 1.6/1.2.
+
+
+  ## Evidence
+
+  - **CLOSURE-ACTIVE** — metabolism 2.4, containment 1.6, replication 1.6 — all > 0
+
+  - **MULTI-GRAIN** — coarse + self-organized variants both nonzero for each function
+
+  - **MINIMAL-CELL-GROWS** — membrane.area->1.2, proteins->1.2687
+
+
+  ## Limitations
+
+  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
+  demonstrates the *pattern*, not a validated quantity.
+
+  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
+  study, which is *about* alternative handlers).
+
+
+  ## Next steps
+
+  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
+  validation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The figure draft compiles to an executable that runs.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
+      preservation holds.
+    pipeline_unblocks:
+    - the-nested-cell
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - handler produced no non-trivial dynamics on the declared ports
+    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+limitations:
+- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
+  cell.
+- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
+  given the handler).
+falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
+  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
+  on the declared ports.
+visualizations:
+- name: fig09a-coarse-graining
+  address: image:visualizations/fig09a-coarse-graining.svg
+  config:
+    chart: image
+- name: fig09b-minimal-cell
+  address: image:visualizations/fig09b-minimal-cell.svg
+  config:
+    chart: image
+- name: fig09-illustration
+  address: image:visualizations/fig09-illustration.png
+  config:
+    chart: image
+- name: fig09-illustration-2
+  address: image:visualizations/fig09-illustration-2.png
+  config:
+    chart: image
+- name: fig09a-executable
+  address: image:visualizations/fig09a-executable.svg
+  config:
+    chart: image
+    caption: EXECUTABLE dynamics — the compiled figure, running.
+- name: fig09b-executable
+  address: image:visualizations/fig09b-executable.svg
+  config:
+    chart: image
+    caption: EXECUTABLE dynamics — the compiled figure, running.
+parent_studies:
+- study: the-nested-cell
+  condition: tests-passed

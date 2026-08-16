@@ -1,0 +1,167 @@
+schema_version: 4
+name: biofilm
+investigation: draft-to-living-cell
+title: Biofilm
+created: '2026-08-15'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Can multicellular development (Fig 10) be expressed as compositional reorganization — individual
+  cells attaching, secreting extracellular matrix, and assembling into a biofilm that is itself a higher-level
+  composite with its own aggregate observables?
+hypothesis: 'The Fig 10-2 development executable grows a biofilm as a higher-level composite: attached-cell
+  count, adhesion, and ECM all rise, and an aggregate biofilm_mass accumulates — development as composition,
+  not a single process.'
+objective: Run the Fig 10-2 development executable and measure attachment, ECM secretion, and aggregate
+  biofilm mass.
+biological_summary: 'If division makes two cells from one, development makes a community from many. Fig
+  10-2 treats a biofilm as a composite at a level above the single cell: cells adhere to a surface (attached
+  → 1.35, adhesion → 0.675), secrete a shared extracellular matrix (ecm → 1.8), and the whole assembly
+  acquires an aggregate property — biofilm_mass → 2.25 — that no single cell has. The compositional point
+  is that the same modelling apparatus that describes one cell describes their collective by nesting:
+  the biofilm is a store containing cells, with processes that act on the group.'
+claim: 'Development is composition at a higher level: cells attach (1.35), secrete ECM (1.8), and accumulate
+  into a biofilm whose mass grows to 2.25.'
+baseline:
+- name: development
+  composite: viva_meta_modelers_guide.composites.fig10-2-development
+  params: {}
+variants: []
+expected_behavior:
+- Aggregate biofilm mass grows.
+- Cells attach and secrete ECM.
+behavior_tests:
+- name: biofilm-accumulates
+  classification: behavioral
+  description: The aggregate biofilm mass accumulates over the run.
+  measure:
+    kind: observable
+    expr: last(environ.biofilm.biofilm_mass)
+  pass_if:
+    op: threshold
+    condition: '> 1.0 (2.25)'
+  requires_simulation: biofilm
+- name: cells-attach-secrete
+  classification: behavioral
+  description: Cells attach to the surface and secrete extracellular matrix.
+  measure:
+    kind: observable
+    expr: last(biofilm.attached) and last(biofilm.ecm)
+  pass_if:
+    op: threshold
+    condition: both > 0 (1.35 / 1.8)
+  requires_simulation: biofilm
+runs:
+- name: biofilm
+  composite: biofilm
+  emitter: RAMEmitter
+  steps: 9
+  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
+    in scripts/_catalog/measured_readouts.json
+  params: {}
+  outcomes:
+    BIOFILM-ACCUMULATES:
+      result: PASS
+      detail: biofilm_mass->2.2493 > 1.0
+    CELLS-ATTACH-SECRETE:
+      result: PASS
+      detail: attached 1.3496, ecm 1.7994
+  id: biofilm
+  status: completed
+findings:
+- id: F-01
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The aggregate biofilm mass accumulates over the run. Confirmed: biofilm_mass->2.2493 > 1.0.'
+  evidence:
+    from_test: biofilm-accumulates
+    from_run: biofilm
+    observed: biofilm_mass->2.2493 > 1.0
+- id: F-02
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'Cells attach to the surface and secrete extracellular matrix. Confirmed: attached 1.3496,
+    ecm 1.7994.'
+  evidence:
+    from_test: cells-attach-secrete
+    from_run: biofilm
+    observed: attached 1.3496, ecm 1.7994
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
+      + scripts/measure_all.py, 2026-08-16).
+  biological_validation:
+    result: PASS
+    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
+      pattern qualitatively (toy-real, uncalibrated).
+  explanatory_gain:
+    result: POSITIVE
+    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
+      and observable for this figure.
+conclusion: '## Claims
+
+  - Development is composition at a higher level: cells attach (1.35), secrete ECM (1.8), and accumulate
+  into a biofilm whose mass grows to 2.25.
+
+
+  ## Evidence
+
+  - **BIOFILM-ACCUMULATES** — biofilm_mass->2.2493 > 1.0
+
+  - **CELLS-ATTACH-SECRETE** — attached 1.3496, ecm 1.7994
+
+
+  ## Limitations
+
+  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
+  demonstrates the *pattern*, not a validated quantity.
+
+  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
+  study, which is *about* alternative handlers).
+
+
+  ## Next steps
+
+  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
+  validation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The figure draft compiles to an executable that runs.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
+      preservation holds.
+    pipeline_unblocks:
+    - divide
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - handler produced no non-trivial dynamics on the declared ports
+    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+limitations:
+- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
+  cell.
+- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
+  given the handler).
+falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
+  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
+  on the declared ports.
+visualizations:
+- name: fig10-2-development
+  address: image:visualizations/fig10-2-development.svg
+  config:
+    chart: image
+- name: fig10-illustration-2
+  address: image:visualizations/fig10-illustration-2.png
+  config:
+    chart: image
+- name: fig10-2-executable
+  address: image:visualizations/fig10-2-executable.svg
+  config:
+    chart: image
+    caption: EXECUTABLE dynamics — the compiled figure, running.
+parent_studies:
+- study: divide
+  condition: tests-passed
