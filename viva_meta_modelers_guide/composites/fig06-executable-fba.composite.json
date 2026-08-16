@@ -1,18 +1,18 @@
 {
-  "name": "fig06-executable-kinetic",
-  "description": "EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-kinetic' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
+  "name": "fig06-executable-fba",
+  "description": "EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-fba' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
   "requires": {
     "processes": [
-      "KineticMetabolism",
+      "FBAMetabolism",
       "KineticReactionNetwork"
     ]
   },
   "provenance": {
     "figure": "fig06-disintegration",
-    "environment": "fig06-kinetic",
+    "environment": "fig06-fba",
     "handlers": {
       "CoarseGrainedMetabolism": {
-        "handler": "KineticMetabolism",
+        "handler": "FBAMetabolism",
         "process_term": "GO:0008152"
       },
       "CatalyzedReactionNetwork": {
@@ -24,10 +24,10 @@
   "state": {
     "coarse_grained_metabolism": {
       "_type": "process",
-      "address": "local:KineticMetabolism",
+      "address": "local:FBAMetabolism",
       "config": {
-        "vmax": 1.0,
-        "km": 0.5,
+        "uptake_scale": 1.0,
+        "biomass_capacity": 0.8,
         "biomass_yield": 0.5,
         "energy_yield": 0.3,
         "entropy_rate": 0.1,

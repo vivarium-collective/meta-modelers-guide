@@ -1,0 +1,411 @@
+<title>Compiling the Meta-Modeler's Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#eef1ef; --panel:#ffffff; --panel-2:#f5f7f5;
+    --ink:#16211f; --ink-2:#3c4a47; --muted:#657572; --faint:#8b9995;
+    --line:#dce3df; --line-2:#c8d2cd;
+    --teal:#0d6e6b; --teal-ink:#0a4f4c; --amber:#a5620f; --amber-soft:#c98a3a;
+    --code-bg:#f2f5f3; --code-ink:#204542; --grid:#e6ebe8;
+    --done:#2f8f6b; --plan:#a5620f;
+    --font-serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --font-sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"SF Mono",ui-monospace,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#0d1413; --panel:#141e1c; --panel-2:#101917; --ink:#e7ece9; --ink-2:#bcc8c4;
+    --muted:#8d9c98; --faint:#657572; --line:#25332f; --line-2:#31423d;
+    --teal:#54cfc6; --teal-ink:#7fe0d8; --amber:#e0a95e; --amber-soft:#caa06a;
+    --code-bg:#101917; --code-ink:#a9ddd7; --grid:#1c2926; --done:#5fc79a; --plan:#e0a95e;
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0d1413; --panel:#141e1c; --panel-2:#101917; --ink:#e7ece9; --ink-2:#bcc8c4;
+    --muted:#8d9c98; --faint:#657572; --line:#25332f; --line-2:#31423d;
+    --teal:#54cfc6; --teal-ink:#7fe0d8; --amber:#e0a95e; --amber-soft:#caa06a;
+    --code-bg:#101917; --code-ink:#a9ddd7; --grid:#1c2926; --done:#5fc79a; --plan:#e0a95e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-serif);
+    font-size:18px; line-height:1.62; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 24px}
+  .col{max-width:706px; margin:0 auto}
+  header.mast{padding:60px 0 32px; border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:var(--font-sans); font-size:12px; font-weight:600; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--teal); margin:0 0 18px}
+  h1{font-size:clamp(32px,5.4vw,52px); line-height:1.05; margin:0; font-weight:600; letter-spacing:-.015em; text-wrap:balance}
+  .dek{font-size:20px; color:var(--ink-2); margin:20px 0 0; max-width:54ch; text-wrap:pretty}
+  .byline{font-family:var(--font-sans); font-size:13px; color:var(--muted); margin:26px 0 0; display:flex; flex-wrap:wrap; gap:6px 20px}
+  .byline b{color:var(--ink-2); font-weight:600}
+  .abstract{background:var(--panel-2); border:1px solid var(--line); border-radius:14px; padding:20px 24px; margin:30px 0 0}
+  .abstract .lab{font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--teal); margin:0 0 8px}
+  .abstract p{margin:0; font-size:16.5px; color:var(--ink-2)}
+  section{padding:38px 0}
+  section + section{border-top:1px solid var(--line)}
+  h2{font-size:clamp(23px,3.5vw,30px); line-height:1.12; margin:0 0 10px; font-weight:600; letter-spacing:-.01em; text-wrap:balance}
+  h2 .sn{color:var(--teal); font-variant-numeric:tabular-nums; margin-right:14px}
+  h3{font-size:19px; margin:28px 0 4px; font-weight:600}
+  p{margin:14px 0} .lede{font-size:20px; color:var(--ink-2); line-height:1.5}
+  a{color:var(--teal)} strong{font-weight:600} em{font-style:italic}
+  .fn{color:var(--muted); font-size:15px}
+  p code,li code,td code{background:var(--code-bg); padding:1px 5px; border-radius:5px; font-family:var(--font-mono); font-size:.82em; color:var(--code-ink)}
+  pre{margin:0; background:var(--code-bg); border:1px solid var(--line); border-radius:12px; padding:15px 17px; overflow-x:auto}
+  code{font-family:var(--font-mono); font-size:13px; line-height:1.6; color:var(--code-ink)}
+  .cmt{color:var(--muted)}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px; margin:22px 0}
+  figure{margin:24px 0} figure.wide{max-width:940px; margin:24px auto}
+  figcaption{font-family:var(--font-sans); font-size:13.5px; color:var(--muted); line-height:1.5; margin-top:12px; text-wrap:pretty}
+  figcaption b{color:var(--ink-2); font-weight:600} figcaption .fnum{color:var(--teal); font-weight:700}
+  svg{display:block; width:100%; height:auto; overflow:visible}
+  .fig-svg text{fill:var(--ink); font-family:var(--font-sans)}
+  .s-panel{fill:var(--panel)} .s-panel2{fill:var(--panel-2)} .s-nofill{fill:none}
+  .s-line{stroke:var(--line-2); stroke-width:1.5} .s-teal{stroke:var(--teal); stroke-width:2}
+  .s-amber{stroke:var(--amber); stroke-width:2} .s-mut{stroke:var(--muted); stroke-width:1.5}
+  .f-teal{fill:var(--teal)} .f-amber{fill:var(--amber)} .f-mut{fill:var(--muted)}
+  .fig-svg .t-ink{fill:var(--ink)} .fig-svg .t-inkb{fill:var(--ink-2)} .fig-svg .t-mut{fill:var(--muted)}
+  .fig-svg .t-teal{fill:var(--teal)} .fig-svg .t-amber{fill:var(--amber)} .fig-svg .mono{font-family:var(--font-mono)}
+  .tbl-scroll{overflow-x:auto; margin:20px 0}
+  table{border-collapse:collapse; width:100%; font-family:var(--font-sans); font-size:13.5px}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  thead th{font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); font-weight:700; border-bottom:1px solid var(--line-2)}
+  tbody tr:last-child td{border-bottom:none}
+  .chk{font-weight:700; color:var(--done)} .todo{font-weight:700; color:var(--plan)}
+  .tag{display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.04em; padding:2px 8px; border-radius:20px; font-family:var(--font-sans)}
+  .tag.done{background:color-mix(in srgb,var(--done) 18%,transparent); color:var(--done)}
+  .tag.plan{background:color-mix(in srgb,var(--plan) 18%,transparent); color:var(--plan)}
+  .note{border-left:3px solid var(--amber); background:var(--panel-2); padding:14px 20px; border-radius:0 10px 10px 0; margin:20px 0}
+  .note .lab{font-family:var(--font-sans); font-size:11.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--amber); margin:0 0 4px}
+  .phase{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin:16px 0; position:relative}
+  .phase .ph{font-family:var(--font-sans); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); margin:0 0 6px; display:flex; gap:12px; align-items:baseline}
+  .phase .ph .num{font-size:22px; font-variant-numeric:tabular-nums; color:var(--teal-ink)}
+  .phase h3{margin:0 0 8px; font-size:20px}
+  .phase p{margin:8px 0; font-size:16.5px}
+  .phase .deliv{font-family:var(--font-sans); font-size:13px; color:var(--muted); margin-top:10px; border-top:1px dashed var(--line-2); padding-top:10px}
+  .phase .deliv b{color:var(--ink-2)}
+  ol.refs{font-family:var(--font-sans); font-size:13px; color:var(--ink-2); line-height:1.5; padding-left:26px}
+  ol.refs li{margin:8px 0} ol.refs li::marker{color:var(--teal); font-weight:700}
+  .pill{display:inline-block; font-family:var(--font-mono); font-size:12px; color:var(--code-ink); background:var(--code-bg); border:1px solid var(--line); border-radius:6px; padding:1px 7px}
+  footer{padding:40px 0 76px; border-top:2px solid var(--ink); color:var(--muted); font-family:var(--font-sans); font-size:13.5px}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="mast"><div class="wrap col">
+  <p class="eyebrow">viva-meta-modelers-guide · a compilation plan</p>
+  <h1>Compiling the meta-modeler's guide</h1>
+  <p class="dek">The paper's figures are already a semantic layer of draft processes; a working
+    compiler already turns five of them into running simulations. Here is the plan to finish the
+    job — and to make the atlas a whole cell that lives, divides, and dies.</p>
+  <div class="byline">
+    <span><b>Source biology</b> Agmon, <em>A meta-modeler's guide to the cellular interface</em></span>
+    <span><b>Repo</b> <span class="pill">viva-meta-modelers-guide</span></span>
+    <span><b>Investigation</b> <span class="pill">paper-figures</span></span>
+  </div>
+  <div class="abstract">
+    <p class="lab">In one paragraph</p>
+    <p>Agmon's paper argues that a cell is a set of <em>interfaces</em> whose internal mechanism can be
+      refined or replaced while the interface is preserved — and it names, as a long-term goal, connecting a
+      "biological semantic layer … to an executable layer containing the heterogeneous computational models
+      that realize those descriptions." This repository has already built the semantic layer (Figures 4–10 as
+      composites of <em>draft processes</em>) and a compiler between the layers — an algebraic effect system
+      whose functor <code>⟦C⟧_H</code> swaps each draft signature for a conforming <code>Process</code>
+      handler while preserving the interface, with the paper's Fig 6 grain-swap as its worked example. Five of
+      eleven figures now compile and run. This plan completes the remaining six, adds real-simulator handlers,
+      and takes on the paper's hardest and most interesting figure — Figure 10 — where composition is no longer
+      a static handler swap but an <em>event-driven rewrite</em>: division, development, evolution. That is
+      exactly the control-flow half of algebraic effects, and the paper already supplies the mechanism for it
+      (Fig 3c). The terminus is a composed, executable whole cell that senses its environment, maintains
+      viability, and disintegrates or divides when its bounds are crossed.</p>
+  </div>
+</div></header>
+
+<section><div class="wrap col">
+  <h2><span class="sn">1</span>Where we already are</h2>
+  <p class="lede">Two layers and a compiler between them — most of the scaffolding exists.</p>
+  <p>The paper's central claim is that biological organization is compositional: a cell is described from the
+    outside by an <strong>interface</strong> (typed, unit-bearing exchange variables — chemical
+    <code>mol·s⁻¹</code>, mechanical <code>N</code>, electrical <code>A</code>, thermal <code>W</code>, plus
+    growth rate, shape, signaling, objective, and viability bounds), and from the inside by coupled processes
+    that construct and maintain that interface. Its Table 1 gives this a formal spine, including the
+    <em>process-implementation mapping</em> <code>R_L</code> — "the mapping from abstract processes to concrete
+    mechanisms, linking model structure to executable behavior" — and states plainly that "this separation
+    between compositional role and implementation is what allows a model component to be refined or replaced
+    without rebuilding the entire system."</p>
+  <p>That mapping <code>R_L</code> is a compiler, and this repository has built it. The
+    <span class="pill">paper-figures</span> investigation rebuilds Figures 4–10 as eleven process-bigraph
+    composites of <strong>draft processes</strong>: typed ports plus a behavior contract
+    (<code>senses</code>/<code>affects</code>/<code>constraints</code>), with a deliberately inert
+    <code>update</code> — meaning without mechanism. <code>compile.py</code> then supplies the semantic→executable
+    functor. The current status, figure by figure:</p>
+  <div class="tbl-scroll"><table>
+    <thead><tr><th>Paper figure</th><th>Semantic composite</th><th>Handler(s)</th><th>Executable</th><th>Compiler mechanism</th></tr></thead>
+    <tbody>
+      <tr><td>4a · interaction modalities</td><td class="chk">✓</td><td class="todo">—</td><td class="todo">—</td><td>illustrative (no dynamics needed)</td></tr>
+      <tr><td>4b · cellular interface</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td>handler bind</td></tr>
+      <tr><td>5 · cell–environment coupling</td><td class="chk">✓</td><td class="chk">✓ spatial field</td><td class="chk">✓</td><td>handler bind + store <code>refine</code> (scalar → <code>map[float]</code> lattice)</td></tr>
+      <tr><td>6 · disintegration (grain swap)</td><td class="chk">✓</td><td class="chk">✓✓ coarse + kinetic</td><td class="chk">✓✓</td><td><strong>handler independence</strong> (law 4)</td></tr>
+      <tr><td>7 · molecular mechanism</td><td class="chk">✓</td><td class="todo">— <span class="tag plan">Phase 1</span></td><td class="todo">—</td><td>handler bind (reaction network)</td></tr>
+      <tr><td>8 · nested hierarchy</td><td class="chk">✓</td><td class="todo">— <span class="tag plan">Phase 1</span></td><td class="todo">—</td><td>handler bind (per-compartment processes)</td></tr>
+      <tr><td>9a · coarse-graining stack</td><td class="chk">✓</td><td class="todo">— <span class="tag plan">Phase 1</span></td><td class="todo">—</td><td>handler bind (three grains)</td></tr>
+      <tr><td>9b · minimal cell / autopoiesis</td><td class="chk">✓</td><td class="chk">✓</td><td class="chk">✓</td><td>handler bind (mutual closure)</td></tr>
+      <tr><td>10-1 · division</td><td class="chk">✓</td><td class="todo">— <span class="tag plan">Phase 3</span></td><td class="todo">—</td><td><strong>event-driven rewrite</strong></td></tr>
+      <tr><td>10-2 · development (biofilm)</td><td class="chk">✓</td><td class="todo">— <span class="tag plan">Phase 3</span></td><td class="todo">—</td><td><strong>event-driven rewrite</strong></td></tr>
+      <tr><td>10-3 · evolution</td><td class="chk">✓</td><td class="todo">— <span class="tag plan">Phase 3</span></td><td class="todo">—</td><td><strong>event-driven rewrite</strong> (port addition)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="fn">Semantic layer: 11/11 composites build and render (25 tests). Compiler: 5 executables materialized
+    (<span class="pill">fig04b</span>, <span class="pill">fig05</span>, <span class="pill">fig06×2</span>,
+    <span class="pill">fig09b</span>); 4 compilation laws asserted in <code>tests/test_compilation.py</code>. The
+    gap is six figures of handlers — and, for Figure 10, a genuinely new compiler capability.</p>
+</div></section>
+
+<section><div class="wrap col">
+  <h2><span class="sn">2</span>The compiler we have, precisely</h2>
+  <p>To plan the extension we need the current object stated exactly. A <strong>draft process is an effect
+    signature</strong> <code>op : (in : τ) ⇒ (out : τ)</code>; a <strong>handler</strong> is an executable
+    <code>Process</code> whose ports match; a <strong>handler environment</strong> installs a handler (with
+    config, initial values, and any declared store refinements) for each signature. <code>compile_composite(C,
+    H, core)</code> is the functor <code>⟦C⟧_H</code>: it walks the semantic composite and, for each draft node
+    <code>local:S</code> with a handler in <code>H</code>, checks conformance <code>H(S) ⊢ S</code>, rewrites the
+    node's <code>address</code>, and <em>leaves every store and wire untouched</em>. Four laws hold:</p>
+  <div class="panel" style="font-family:var(--font-sans); font-size:15.5px">
+    <p style="margin:0 0 10px"><strong>1 · Conformance.</strong> <code>⟦C⟧_H</code> is defined only if the handler supplies every signature port with a compatible type (<code>check_conformance</code>).</p>
+    <p style="margin:10px 0"><strong>2 · Interface preservation.</strong> <code>interface_of(⟦C⟧_H) = interface_of(C)</code> — port names and wired store paths are identical; only a declared <code>refine</code> may change a leaf's schema. This <em>is</em> the paper's central claim, made mechanical.</p>
+    <p style="margin:10px 0"><strong>3 · Executability.</strong> the compiled composite builds and produces non-trivial dynamics; the semantic one is inert.</p>
+    <p style="margin:10px 0 0"><strong>4 · Handler independence.</strong> two conforming environments give two executables sharing one interface — the Fig 6 grain-swap: one <code>CoarseGrainedMetabolism</code> signature handled by linear <code>CoarseMetabolism</code> (biomass = 5.0) <em>or</em> saturating <code>KineticMetabolism</code> (3.33), same ports.</p>
+  </div>
+  <p>This is a faithful, small algebraic effect system, and it exactly covers what the theory calls the
+    <em>handler-selection</em> (tagless-final) regime: any <strong>forward-only</strong> interpretation of a
+    signature. Every static figure — 4b, 5, 6, 7, 8, 9 — lives here. The plan's Phases 1–2 are "more handlers,"
+    no new machinery. Phase 3 is different in kind, and §4 explains why.</p>
+</div></section>
+
+<section><div class="wrap">
+  <figure class="wide">
+    <svg class="fig-svg" viewBox="0 0 920 300" role="img" aria-label="Semantic figures compile through the functor into executable composites; two handler environments produce two executables sharing one interface.">
+      <rect x="30" y="60" width="250" height="150" rx="14" class="s-panel s-line"/>
+      <text x="46" y="46" font-size="12.5" font-weight="700" class="t-mut" letter-spacing="1.2">SEMANTIC LAYER</text>
+      <text x="50" y="96" font-size="14.5" font-weight="700" class="t-ink">Figure composite C</text>
+      <text x="50" y="122" font-size="12.5" class="t-mut">draft processes = effect signatures</text>
+      <text x="50" y="142" font-size="12.5" class="t-mut">typed ports + behavior contract</text>
+      <text x="50" y="162" font-size="12.5" class="t-mut mono">update = inert</text>
+      <text x="50" y="190" font-size="12" class="t-teal mono">local:CoarseGrainedMetabolism</text>
+
+      <text x="330" y="120" font-size="13" class="t-teal mono" font-weight="700">⟦C⟧_H</text>
+      <text x="316" y="140" font-size="11" class="t-mut">compile_composite</text>
+      <line x1="284" y1="135" x2="430" y2="105" class="s-teal" marker-end="url(#a)"/>
+      <line x1="284" y1="135" x2="430" y2="205" class="s-teal" marker-end="url(#a)"/>
+      <text x="300" y="96" font-size="10.5" class="t-mut">H₁</text>
+      <text x="300" y="186" font-size="10.5" class="t-mut">H₂</text>
+
+      <rect x="440" y="60" width="230" height="80" rx="12" class="s-panel s-line"/>
+      <text x="456" y="88" font-size="13.5" font-weight="700" class="t-ink">executable · coarse</text>
+      <text x="456" y="110" font-size="12" class="t-mut mono">CoarseMetabolism</text>
+      <text x="456" y="128" font-size="12" class="t-mut">biomass → 5.0 (linear)</text>
+
+      <rect x="440" y="168" width="230" height="80" rx="12" class="s-panel s-line"/>
+      <text x="456" y="196" font-size="13.5" font-weight="700" class="t-ink">executable · kinetic</text>
+      <text x="456" y="218" font-size="12" class="t-mut mono">KineticMetabolism</text>
+      <text x="456" y="236" font-size="12" class="t-mut">biomass → 3.33 (saturating)</text>
+
+      <path d="M690 100 Q740 100 740 154 Q740 208 690 208" class="s-nofill s-amber" stroke-dasharray="4 4"/>
+      <text x="752" y="150" font-size="12" class="t-amber" font-weight="600">same</text>
+      <text x="752" y="168" font-size="12" class="t-amber" font-weight="600">interface</text>
+      <text x="752" y="186" font-size="11" class="t-mut">(law 2)</text>
+      <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="f-teal"/></marker></defs>
+    </svg>
+    <figcaption><span class="fnum">Figure 1.</span> <b>The compiler, as it stands.</b> A figure composite of
+      draft-process signatures is compiled by <code>⟦C⟧_H</code> under a handler environment into a running
+      composite. Two environments over the same interface yield two mechanisms — the paper's Fig 6 grain-swap
+      (law 4). Ports and wiring are byte-identical across the swap (law 2).</figcaption>
+  </figure>
+</div></section>
+
+<section><div class="wrap col">
+  <h2><span class="sn">3</span>The plan</h2>
+  <p>Five phases. Phases 1–2 broaden handler coverage over the paper's static figures — the cheap, forward-only
+    work. Phase 3 is the conceptual leap that Figure 10 demands. Phases 4–5 compose the atlas into a whole cell
+    and ground its types in real ontologies.</p>
+
+  <div class="phase">
+    <p class="ph"><span class="num">1</span> · Handler coverage for the static figures</p>
+    <h3>Finish Figures 7, 8, 9a</h3>
+    <p>Pure handler-binding, no new compiler machinery — each is a conforming <code>Process</code> plus an
+      environment entry plus a line in <code>build_executables.py</code>. <strong>Fig 7 (molecular mechanism):</strong>
+      a reaction-network handler over the molecular interface (chemical/electrical/mechanical/thermal/structural
+      ports; substrates/catalysts/cofactors/products subports) — reuse the pattern of the existing
+      <code>KineticReactionNetwork</code>. <strong>Fig 8 (nested hierarchy):</strong> per-compartment process
+      handlers (transmembrane transport, replication, metabolism, transcription, translation, subunit assembly)
+      wired to the ECM→membrane→cytoplasm→nucleus→chromosome place graph — the interesting test of law 2 on a
+      deep nesting. <strong>Fig 9a (coarse-graining stack):</strong> three handlers at three grains (molecular
+      mechanism / self-organized process / coarse-grained process) over one interface, a second worked example
+      of law 4 alongside Fig 6.</p>
+    <p class="deliv"><b>Deliverables:</b> <code>handlers_fig07/08/09a.py</code>, three envs in
+      <code>handler_envs.py</code>, three executables, three lines in <code>BUILD</code>; conformance + run
+      covered automatically by <code>tests/test_compilation.py</code>. <b>Risk:</b> low.</p>
+  </div>
+
+  <div class="phase">
+    <p class="ph"><span class="num">2</span> · Real-simulator handlers</p>
+    <h3>Make <code>R_L</code> point at genuine tools</h3>
+    <p>The concept doc already anticipates this: "the same signature can later be handled by a real external
+      simulator (COBRA/dFBA, tellurium/COPASI, …) — the swap is exactly a new, conforming handler, with the
+      interface preserved by law 2." The paper's Discussion makes it the point: learned and mechanistic models
+      alike "can occupy a process role within a larger composition when its inputs, outputs, assumptions, and
+      domain of validity are made explicit." Wrap real engines behind the existing signatures, drawing on the
+      sibling <span class="pill">viva-*</span> wrappers already in the ecosystem
+      (<span class="pill">viva-copasi</span>, <span class="pill">viva-comets</span> for dFBA,
+      <span class="pill">viva-cobra</span>-style FBA). The Fig 6 <code>CoarseGrainedMetabolism</code> signature
+      gains a third handler — a real dFBA flux — and law 4 now demonstrates <em>toy vs. real</em>, not toy vs.
+      toy.</p>
+    <p class="deliv"><b>Deliverables:</b> at least one real-engine handler conforming to an existing figure
+      signature; an env that selects it; a study comparing toy vs. real over the identical interface.
+      <b>Risk:</b> medium — the wrapped tool's ports must be made to conform exactly (or via a declared
+      <code>refine</code>).</p>
+  </div>
+
+  <div class="phase">
+    <p class="ph"><span class="num">3</span> · Event-driven rewrite handlers</p>
+    <h3>Figure 10 — division, development, evolution</h3>
+    <p>Here the static picture breaks. Division does not preserve the interface — it <em>partitions</em> one
+      cell into two, each re-establishing its own interface (Fig 10b). Development embeds cells inside a new
+      biofilm node (Fig 10d). Evolution <em>adds a port</em> (Fig 10f). These are the paper's event-driven graph
+      rewrites (Fig 3c: divide / engulf / burst), and they need a handler that is not a structure-preserving
+      <code>Process</code> but an <strong>orchestration Step that rewrites the place graph at runtime</strong>.
+      This is a real extension of <code>compile.py</code>: a new handler class (a rewrite rule redex→reactum
+      over stores) and a relaxation of law 2 from "interface identical" to "interface preserved up to a
+      <em>declared</em> structural rewrite" — the same discipline as <code>refine</code>, applied to topology
+      rather than a leaf. §4 argues this is exactly the algebraic-effect control-flow half, and that the paper
+      already hands us the mechanism.</p>
+    <p class="deliv"><b>Deliverables:</b> a <code>RewriteHandler</code>/Step abstraction; division as
+      store-partition; development as hierarchical embedding; evolution as port addition; law 2′ (rewrite-aware
+      interface preservation) with a test. <b>Risk:</b> high — the novel work; sequence it after Phases 1–2 prove
+      the handler surface.</p>
+  </div>
+
+  <div class="phase">
+    <p class="ph"><span class="num">4</span> · Compose the atlas into a whole cell</p>
+    <h3>Interface → coupling → viability → rewrite, in one run</h3>
+    <p>The figures compile in isolation; the paper's thesis is that they <em>compose</em>. Wire the Fig 5
+      cell–environment coupling to the Fig 6 metabolism handler to the Fig 8 molecular hierarchy through their
+      shared interface stores, producing one multiscale executable cell. Then add a <strong>viability
+      monitor</strong> (Fig 4's viability bounds — temperature, pH, toxin concentration) as a Step that reads
+      the interface and, when bounds are crossed, fires the Fig 6 <em>disintegration</em> rewrite (coarse cell →
+      molecular network) or the Fig 10 <em>division</em> rewrite. This closes the paper's full arc — the cell as
+      an agent whose description is valid only within its viability region, and which reorganizes when it is
+      not — as a single running composite.</p>
+    <p class="deliv"><b>Deliverables:</b> a composed <code>whole-cell.composite.json</code> (Fig 5+6+8); a
+      <code>ViabilityMonitor</code> Step; a study showing a run that grows, crosses a bound, and disintegrates
+      or divides. <b>Risk:</b> high — depends on Phases 2–3.</p>
+  </div>
+
+  <div class="phase">
+    <p class="ph"><span class="num">5</span> · Ontology-typed interfaces &amp; provenance</p>
+    <h3>Bind the vocabulary to real standards</h3>
+    <p>The paper repeatedly points the interface vocabulary at existing ontologies: the Cell Behavior Ontology
+      (CBO) for cellular behaviors, SBO for reactions/parameters, GO and ChEBI for molecular species, PDB/SMILES
+      for structure. Bind the workspace's unit-bearing interface types (<code>_types.py</code>) to those terms,
+      make <code>check_conformance</code> ontology-aware (a handler port conforms if its term is the signature's
+      term or a subclass), and stamp each handler with provenance — which figure, which real tool, which
+      assumptions and domain of validity (the paper's explicit requirement for a model to occupy a process
+      role). This turns the atlas from a demonstration into a curatable, annotated resource.</p>
+    <p class="deliv"><b>Deliverables:</b> ontology annotations on interface types; ontology-aware conformance;
+      per-handler provenance records. <b>Risk:</b> medium — mostly integration, valuable for reuse.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap col">
+  <h2><span class="sn">4</span>Figure 10 is the control-flow half of algebraic effects</h2>
+  <p>The compiler today is an effect system in its <em>interpreter-swapping</em> sense: pick a handler, run each
+    operation to completion, get a mechanism. Effect-handler theory calls the remaining power
+    <em>delimited continuations</em> — a handler that captures "the rest of the computation" and may resume it
+    zero times (halt) or <em>many</em> times (branch). A structure-preserving <code>Process.update</code> cannot
+    do this; it returns deltas and control flows on.</p>
+  <div class="note">
+    <p class="lab">The observation that organizes Phase 3</p>
+    <p style="margin:0"><strong>Cell division is multi-shot resumption.</strong> One cell becomes two, each
+      continuing the computation with a partitioned share of state. Disintegration is zero-shot (the cellular
+      description halts; control drops to molecules). Engulfment and bursting are structural resumptions with a
+      changed place graph. These are precisely the continuations a run-to-completion handler lacks — and the
+      paper already supplies the mechanism as a first-class construct: the <em>event-driven graph rewrite</em>
+      of Fig 3c (divide / engulf / burst) and its orchestration. So Phase 3 is not bolting an alien feature onto
+      the compiler; it is implementing the paper's own Fig 3c as the handler class that gives <code>⟦C⟧_H</code>
+      its control-flow half.</p>
+  </div>
+  <p>This reframes the whole plan cleanly. Figures 4–9 are the <em>forward-only</em> fragment: handler selection,
+    interface preserved exactly (laws 1–4, done or Phase 1–2). Figure 10 is the <em>rewrite</em> fragment:
+    orchestration handlers that transform the place graph under a declared structural rewrite, interface
+    preserved <em>up to</em> that rewrite (law 2′, Phase 3). The atlas becomes complete only when both fragments
+    are present — which is also the paper's own claim that composition is "not a property of a finished model but
+    an ongoing practice" of refining, replacing, and re-cutting descriptions as their domains of validity change.</p>
+</div></section>
+
+<section><div class="wrap col">
+  <h2><span class="sn">5</span>How it lands in the investigation</h2>
+  <p>The work threads through the existing <span class="pill">paper-figures</span> investigation and its
+    <span class="pill">fig-compilation</span> study rather than starting new structure. Concretely:</p>
+  <ul>
+    <li>Each new handler set extends <code>fig-compilation</code>'s baselines with the freshly-materialized
+      executable, and adds an <code>image</code> visualization pairing the <em>semantic</em> loom render with the
+      <em>executable</em> one — the reader sees interface-preserved-but-mechanism-swapped at a glance.</li>
+    <li>Each figure's own study (<code>fig-07</code>, <code>fig-08</code>, …) graduates from "renders /
+      structure-checks" to a Decide-phase verdict: <em>does a conforming handler exist, does it run, does it
+      preserve the interface?</em> — the investigation's <code>verdict_status</code> moves from
+      <code>not-yet-run</code> toward run.</li>
+    <li>Phase 3 warrants its own study (<code>fig-10-rewrite</code>) whose evaluation is law 2′: the rewrite
+      changes exactly the declared structure and nothing else.</li>
+    <li>Phase 4's whole-cell composite becomes the investigation's headline result — the atlas's figures,
+      composed and alive — surfaced on the read-only dashboard.</li>
+  </ul>
+  <p>The compilation laws are the investigation's rigor spine: every executable is gated on conformance (law 1)
+    and interface preservation (law 2/2′), so a handler that quietly changes the interface fails the build, not
+    a reviewer's reading.</p>
+</div></section>
+
+<section><div class="wrap col">
+  <h2><span class="sn">6</span>Risks, gotchas, and sequencing</h2>
+  <h3>Known traps (already paid for once)</h3>
+  <ul>
+    <li><strong>Init from <code>_default</code>, not <code>_value</code>.</strong> process-bigraph's realize
+      initializes a typed leaf from <code>_default</code>; the draft composites' <code>_value: 0.0</code> is
+      inert, so every environment's <code>init</code> must set <code>_default</code>. Baked into
+      <code>_apply_store_overrides</code>; new handlers must respect it.</li>
+    <li><strong>Spatial fields are <code>map[float]</code>, not <code>array</code>.</strong> a real spatial
+      handler (Fig 5, and any Phase-2 reaction–diffusion) refines a scalar store to a length-N
+      <code>map[float]</code> lattice — loom's <code>map</code> realizer adds element-wise (diffusion-delta
+      semantics) and skips <code>_</code>-keys; <code>array</code>/<code>list</code> fail, and loom's SVG export
+      can't snapshot a map-field node (it still builds and runs).</li>
+    <li><strong>Conformance vs. refinement.</strong> a refined port's type legitimately differs from the
+      signature's; the compiler auto-detects refined ports from the env's <code>refine</code> + wiring. Phase 3's
+      structural rewrites need the analogous "declared, therefore allowed" discipline at the topology level.</li>
+    <li><strong>Discovery + CI.</strong> static specs must live at <code>&lt;package&gt;/composites/</code>;
+      README freshness and leaked-local-path guards in <code>workspace-ci</code> bite after composite edits —
+      regenerate with <code>vivarium-workbench gen-readme</code> and keep render scripts path-relative.</li>
+  </ul>
+  <h3>Sequencing</h3>
+  <p>Do Phase 1 first (it is nearly mechanical and completes the static atlas), then Phase 2 (one real handler is
+    enough to prove the point and de-risk the wrapper path). Phase 3 is the research bet and should not block the
+    others; prototype division alone before development/evolution. Phase 4 depends on 2–3; Phase 5 can proceed in
+    parallel from the start, since ontology annotation touches types, not dynamics. A reasonable first milestone:
+    <strong>all eleven figures with a conforming handler and a materialized executable</strong> (Phases 1–2 plus a
+    minimal Phase-3 division), which makes the <em>whole</em> paper executable for the first time.</p>
+</div></section>
+
+<section><div class="wrap col">
+  <h2><span class="sn"></span>References</h2>
+  <ol class="refs">
+    <li>Agmon, E. <em>A meta-modeler's guide to the cellular interface and its composition patterns.</em> (the source paper; Figures 4–10, Table 1, Fig 3c event-driven rewrites).</li>
+    <li>Agmon, E. &amp; Spangler, R. K. <em>Process Bigraphs and the Architecture of Compositional Systems Biology.</em> arXiv:2512.23754 (2025).</li>
+    <li>Agmon, E. et al. Vivarium: an interface and engine for integrative multiscale modeling. <em>Bioinformatics</em> 38, 1972–1979 (2022).</li>
+    <li>Mallavarapu, A., Thomson, M., Ullian, B. &amp; Gunawardena, J. Programming with models (little b). <em>J. R. Soc. Interface</em> 6, 257 (2009).</li>
+    <li>Maturana, H. R. &amp; Varela, F. J. <em>Autopoiesis and Cognition.</em> (1980) — Fig 9 closure.</li>
+    <li>Plotkin, G. &amp; Pretnar, M. Handlers of Algebraic Effects. <em>ESOP</em> 2009 / <em>LMCS</em> 2013 — handlers, resumption.</li>
+    <li>Sluka, J. P. et al. The cell behavior ontology (CBO). <em>Bioinformatics</em> 30, 2367 (2014) — Phase 5 interface terms.</li>
+    <li>Sarkar, Waddell &amp; Dybvig. A Nanopass Infrastructure for Compiler Education. <em>ICFP</em> 2004 — the multi-pass, explicit-IR discipline.</li>
+    <li>Repo: <span class="pill">viva-meta-modelers-guide</span> — <code>compile.py</code>, <code>handler_envs.py</code>, <code>docs/concepts/semantic-to-executable-compilation.md</code>, investigation <code>paper-figures</code>, study <code>fig-compilation</code>.</li>
+  </ol>
+</div></section>
+
+<footer><div class="wrap col">
+  <p><b>Compiling the meta-modeler's guide</b> — a plan for <span class="pill">viva-meta-modelers-guide</span>.
+    Foundation: PR #5 (semantic→executable compiler as an algebraic effect system). Companion working paper:
+    <em>Compiling biology to bigraphs.</em></p>
+</div></footer>
