@@ -1115,6 +1115,16 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **fig04b-executable**
+
+# fig04b-executable
+_save_viz('fig-compilation', 'fig04b-executable', _render_one('image:visualizations/fig04b-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig05-executable**
+
+# fig05-executable
+_save_viz('fig-compilation', 'fig05-executable', _render_one('image:visualizations/fig05-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
 # **fig06-executable-coarse**
 
 # fig06-executable-coarse
@@ -1125,12 +1135,47 @@ _save_viz('fig-compilation', 'fig06-executable-coarse', _render_one('image:visua
 # fig06-executable-kinetic
 _save_viz('fig-compilation', 'fig06-executable-kinetic', _render_one('image:visualizations/fig06-executable-kinetic.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig04b-executable**
+# **fig06-executable-fba**
 
-# fig04b-executable
-_save_viz('fig-compilation', 'fig04b-executable', _render_one('image:visualizations/fig04b-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# fig06-executable-fba
+_save_viz('fig-compilation', 'fig06-executable-fba', _render_one('image:visualizations/fig06-executable-fba.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig07-executable**
+
+# fig07-executable
+_save_viz('fig-compilation', 'fig07-executable', _render_one('image:visualizations/fig07-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig08-executable**
+
+# fig08-executable
+_save_viz('fig-compilation', 'fig08-executable', _render_one('image:visualizations/fig08-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig09a-executable**
+
+# fig09a-executable
+_save_viz('fig-compilation', 'fig09a-executable', _render_one('image:visualizations/fig09a-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
 # **fig09b-executable**
 
 # fig09b-executable
 _save_viz('fig-compilation', 'fig09b-executable', _render_one('image:visualizations/fig09b-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-1-executable**
+
+# fig10-1-executable
+_save_viz('fig-compilation', 'fig10-1-executable', _render_one('image:visualizations/fig10-1-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-2-executable**
+
+# fig10-2-executable
+_save_viz('fig-compilation', 'fig10-2-executable', _render_one('image:visualizations/fig10-2-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-3-executable**
+
+# fig10-3-executable
+_save_viz('fig-compilation', 'fig10-3-executable', _render_one('image:visualizations/fig10-3-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **wholecell**
+
+# wholecell
+_save_viz('fig-compilation', 'wholecell', _render_one('image:visualizations/wholecell.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
