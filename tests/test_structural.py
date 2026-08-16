@@ -25,3 +25,13 @@ def test_node_count_grows():
     before = one_cell()
     after = divide(before)
     assert len(cells_in(after)) == 2 * len(cells_in(before))   # 1 -> 2, real node insertion
+
+
+def test_division_fires_in_a_live_composite():
+    """The ReactionStep divides the cell inside a running Composite (typed store)."""
+    from viva_meta_modelers_guide.structural import run_division
+    colony = run_division(biomass=2.0, dna=1.0)
+    assert set(cells_in(colony)) == {"daughter_1", "daughter_2"}   # created in-composite
+    assert "cell" not in colony
+    for d in ("daughter_1", "daughter_2"):
+        assert colony[d].get("biomass") == 2.0                      # contents carried

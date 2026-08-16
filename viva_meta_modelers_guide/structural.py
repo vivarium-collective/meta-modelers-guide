@@ -13,17 +13,23 @@ node genuinely *becomes* two, carrying its contents (biomass, DNA) into each
 
 This is the honest realization of the paper's Fig 3c event-driven rewrite.
 
-Known integration gap (documented, not worked around): firing this as a live
-``ReactionStep`` *inside a running* ``Composite`` currently doesn't work, because
-the composite's ``tree[node]`` realize strips the ``_control`` tags the matcher
-needs (the reaction machinery operates on the raw node dict, which ``run_reactions``
-uses directly). Wiring the reaction engine through composite realize is a
-process-bigraph framework task; here we drive it via ``run_reactions`` on the node
-subtree, which is the same engine.
+This works two ways, both genuine node creation:
+
+* :func:`run_division` — fired *inside a live* ``Composite`` via a ``ReactionStep``
+  over a ``tree[node]``-typed store (the recommended path).
+* :func:`divide` — driven by ``run_reactions`` on the node subtree directly (the
+  same engine, no composite).
+
+The store MUST be typed ``tree[node]``: a composite realizes an untyped store as a
+plain dict, dropping the ``_control`` tags the matcher needs — the reaction then
+silently no-ops (process-bigraph now *warns* about this, see PR #193). With the
+store typed, the ``ReactionStep`` fires on ``run()`` and the daughters are created.
 """
 from __future__ import annotations
 
-from viva_compiler import ReactionRule, run_reactions
+from process_bigraph import Composite, allocate_core
+
+from viva_compiler import ReactionRule, reaction_step_node, run_reactions
 
 try:                                    # Site() marks a parametric hole in the pattern
     from bigraph_schema.assembly import Site
@@ -64,3 +70,26 @@ def cells_in(colony: dict) -> list[str]:
     """The keys of the cell nodes in a colony (control == 'cell')."""
     return [k for k, v in colony.items()
             if isinstance(v, dict) and v.get("_control") == "cell"]
+
+
+# ── genuine division INSIDE a live Composite (a ReactionStep) ─────────────────
+def dividing_composite(biomass: float = 1.0, dna: float = 1.0) -> dict:
+    """A composite whose ``colony`` store (typed ``tree[node]``) holds one cell and
+    a ``ReactionStep`` that divides it. Typing the store is essential — an untyped
+    store is realized as a plain dict and the reaction silently no-ops."""
+    return {"state": {
+        "colony": {"_type": "tree[node]",
+                   "cell": {"_control": "cell", "contents": {"biomass": biomass, "dna": dna}}},
+        "divider": reaction_step_node([cell_division_rule()], ["colony"]),
+    }}
+
+
+def run_division(biomass: float = 1.0, dna: float = 1.0, core=None) -> dict:
+    """Build the dividing composite, run one step, and return the resulting colony.
+    The ``ReactionStep`` fires the division inside the live composite: the single
+    cell node is genuinely replaced by two daughter cell nodes."""
+    if core is None:
+        core = allocate_core()
+    sim = Composite(dividing_composite(biomass, dna), core=core)
+    sim.run(1)
+    return sim.state["colony"]
