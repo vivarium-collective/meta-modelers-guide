@@ -24,6 +24,9 @@ BUILD: list[tuple[str, str, str]] = [
     ("fig06-kinetic", "fig06-disintegration",     "fig06-executable-kinetic"),
     ("fig04b",        "fig04b-cellular-interface", "fig04b-executable"),
     ("fig05",         "fig05-cell-environment",    "fig05-executable"),
+    ("fig07",         "fig07-molecular-mechanism", "fig07-executable"),
+    ("fig08",         "fig08-nested-hierarchy",    "fig08-executable"),
+    ("fig09a",        "fig09a-coarse-graining",    "fig09a-executable"),
     ("fig09b",        "fig09b-minimal-cell",       "fig09b-executable"),
 ]
 

@@ -11,6 +11,9 @@ from __future__ import annotations
 # aggregate them here so compile.py / build_executables.py see one ENVS map.
 from .handlers_fig04b import ENV as _FIG04B_ENV
 from .handlers_fig05 import ENV as _FIG05_ENV
+from .handlers_fig07 import ENV as _FIG07_ENV
+from .handlers_fig08 import ENV as _FIG08_ENV
+from .handlers_fig09a import ENV as _FIG09A_ENV
 from .handlers_fig09b import ENV as _FIG09B_ENV
 
 ENVS: dict[str, dict] = {
@@ -43,7 +46,10 @@ ENVS: dict[str, dict] = {
     },
 }
 
-# Figures 4b / 5 / 9b (defined next to their handlers).
+# Figures 4b / 5 / 7 / 8 / 9a / 9b (defined next to their handlers).
 ENVS["fig04b"] = _FIG04B_ENV
 ENVS["fig05"] = _FIG05_ENV
+ENVS["fig07"] = _FIG07_ENV
+ENVS["fig08"] = _FIG08_ENV
+ENVS["fig09a"] = _FIG09A_ENV
 ENVS["fig09b"] = _FIG09B_ENV
