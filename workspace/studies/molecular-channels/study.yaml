@@ -10,28 +10,19 @@ confidence: Accepted
 question: When a description drops to the molecular grain (Fig 7), can a single molecular mechanism act
   as a transducer across four typed physical channels at once — chemical, electrical, mechanical, thermal
   — each carried on its own port in its own unit, without the channels collapsing into one lumped output?
-hypothesis: The Fig 7 molecular mechanism, compiled under a transducer handler, drives four distinct output
-  ports with four distinct magnitudes, confirming that the typed-channel interface survives at the molecular
-  grain.
-objective: Run the Fig 7 executable and measure the four channel outputs to confirm they are simultaneously
-  active and independently typed.
 biological_summary: 'Fig 6 said the description can drop to molecules; Fig 7 shows what a molecular mechanism
   looks like as an interface. A molecular machine is rarely a single-input single-output device — it couples
   chemistry, charge, force and heat simultaneously. Here one mechanism transduces all four: it emits a
   chemical flux (0.6), an electrical current (0.3), a mechanical output (0.4) and a thermal output (0.7).
   The point is that these are four *typed* ports, not one scalar: the interface keeps them distinct so
   a downstream composite can wire each to the appropriate cell-level channel.'
-claim: The molecular mechanism transduces a driven, depleting substrate into product + heat with a CONSERVED
-  energy budget (product 4.8 + dissipated heat 3.2 account for the substrate energy consumed, 8.0) and
-  an Ohmic electrical channel tracking its decaying drive — dynamic response, not a step to constant.
+claim: At the molecular level a single mechanism can transduce several physical channels at once — chemical,
+  electrical, mechanical, thermal — each carried on its own typed port.
 baseline:
 - name: molecular-mechanism
   composite: viva_meta_modelers_guide.composites.fig07-molecular-mechanism
   params: {}
 variants: []
-expected_behavior:
-- All four output channels carry nonzero flux.
-- The four channels have distinct magnitudes/types.
 behavior_tests:
 - name: energy-conserved
   classification: primary
@@ -190,3 +181,7 @@ visualizations:
 parent_studies:
 - study: one-interface-three-mechanisms
   condition: tests-passed
+experiment: Install a transducer mechanism behind the Fig 7 interface, drive it with a depleting substrate,
+  and account for the energy budget.
+result: Substrate turns over into product and dissipated heat with energy conserved, while the electrical
+  channel tracks its drive — four channels through one mechanism, kept distinct.

@@ -399,11 +399,16 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     <header class="hero">
       <span class="kicker">Executable atlas · <em>A meta-modeler's guide to the cellular interface</em></span>
       <h1>{esc(inv.get('title') or slug)}</h1>
-      <p class="thesis">{md_inline(execu.get('what_is_this') or inv.get('lead') or '')}</p>
+      <p class="thesis">{md_inline(inv.get('lead') or execu.get('what_is_this') or '')}</p>
       <div class="verdict"><span class="badge ok">{esc(status or 'complete')}</span>
         <p>{md_inline(verdict)}</p></div>
       <div class="stats">{stat_html}</div>
     </header>
+
+    <section class="intro">
+      <span class="kicker">Introduction</span>
+      {paras(execu.get('what_is_this') or '')}
+    </section>
 
     <nav class="arc" aria-label="the arc">{arc}</nav>
 
@@ -495,6 +500,10 @@ code{font-family:var(--mono);font-size:.88em;background:color-mix(in srgb,var(--
 .verdict .badge{flex:none}
 .verdict p{margin:0;color:var(--ink-2);font-size:.98rem}
 .stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+.intro{margin:44px 0 12px;max-width:70ch}
+.intro .kicker{margin-bottom:12px;color:var(--teal)}
+.intro p{font-size:1.08rem;line-height:1.7;color:var(--ink-2);margin:0 0 1.05em}
+.intro p:first-of-type{color:var(--ink);font-size:1.14rem}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 18px;min-width:96px}
 .stat b{display:block;font-family:var(--serif);font-size:1.9rem;color:var(--teal);line-height:1}
 .stat span{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}

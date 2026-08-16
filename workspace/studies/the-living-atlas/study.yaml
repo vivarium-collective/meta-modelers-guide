@@ -10,12 +10,6 @@ confidence: Accepted
 question: 'Do all of the paper''s semantic figures actually compile to executables that run, and — the
   real test of composition — can the independently-authored figure mechanisms be assembled into a single
   whole cell that lives the paper''s full arc: grow, divide, and die?'
-hypothesis: 'All 12 executable composites build and produce non-trivial dynamics, and a whole-cell composite
-  assembled from the figure mechanisms (uptake+growth, metabolism, viability, division, disintegration)
-  runs the full arc in one trajectory: biomass rises and peaks, cell_count reaches 2, then a thermal shock
-  drives viability toward 0 and debris accumulates.'
-objective: Render a dynamics figure for every executable (the gallery) and run the composed whole cell
-  for 20 time units, measuring peak biomass, division time, minimum viability, and final debris.
 biological_summary: This is the payoff. The nine figure studies each showed one pattern compiling from
   draft to executable; this study shows the whole atlas running at once and, more importantly, composing.
   The gallery renders the dynamics of all twelve executables side by side — each compiled figure, actually
@@ -25,10 +19,8 @@ biological_summary: This is the payoff. The nine figure studies each showed one 
   maintaining its boundary, and disintegrates into molecular debris (→ 4.87). The paper's arc — interface,
   coupling, metabolism, closure, division, disintegration — runs end to end in one composite. A cell,
   assembled from drafts, that lives and dies.
-claim: 'The composed whole cell runs the full arc in ONE conserved trajectory: autocatalytic growth to
-  biomass 8.4 (dividing to 14 cells), then a thermal shock ramps temperature past tolerance, viability
-  collapses, and biomass converts to molecular debris (7.3) — mass conserved through death (biomass →
-  debris).'
+claim: 'The patterns compose: independently-specified interfaces and mechanisms can be assembled into
+  one cell that lives the paper''s full arc.'
 baseline:
 - name: fig06-exec-coarse
   composite: viva_meta_modelers_guide.composites.fig06-executable-coarse
@@ -67,12 +59,6 @@ baseline:
   composite: viva_meta_modelers_guide.composites.fig10-3-executable
   params: {}
 variants: []
-expected_behavior:
-- All 12 executables build and produce dynamics.
-- The composed cell grows and peaks in biomass.
-- The composed cell divides.
-- A thermal shock drives viability to ~0 and debris rises.
-- Grow->divide->shock->disintegrate happen in one run.
 behavior_tests:
 - name: full-arc
   classification: primary
@@ -260,3 +246,7 @@ parent_studies:
   condition: tests-passed
 - study: evolve
   condition: tests-passed
+experiment: Compose growth, metabolism, viability, division, and disintegration into a single whole-cell
+  composite and run it end to end.
+result: The cell grows and divides, then a thermal shock collapses its viability and its biomass converts
+  to debris — mass conserved through death, the whole arc in one run.

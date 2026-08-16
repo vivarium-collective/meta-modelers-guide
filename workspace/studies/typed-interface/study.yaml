@@ -11,13 +11,6 @@ question: Can the cellular boundary be specified as nothing but a set of typed, 
   ports (chemical, mechanical, electrical, thermal, plus growth rate, shape, objective, viability) with
   no committed mechanism, and then compiled — by installing one conforming handler — into a running, bounded,
   goal-directed cell whose interface is exactly the one declared?
-hypothesis: 'The Fig 4 interface authored as an inert draft (typed ports + a behavior contract, an update
-  that does nothing) compiles under a single conforming handler into an executable that leaves every port
-  and wire unchanged (law 2) yet produces genuine dynamics: shape and objective rise while the cell takes
-  up chemical from its surroundings.'
-objective: Author the Fig 4b cellular interface as a draft composite of typed ports, install a bounded-cell
-  handler via the compiler, run it, and measure whether the interface variables evolve as a goal-directed
-  cell would.
 biological_summary: 'A cell, viewed from the outside, is a small alphabet of exchange variables: fluxes
   of matter (chemical, mol·s⁻¹), forces (mechanical, N), currents (electrical, A) and heat (thermal, W),
   together with higher-level cellular quantities — growth rate (hr⁻¹), shape, an objective the cell pursues,
@@ -26,10 +19,9 @@ biological_summary: 'A cell, viewed from the outside, is a small alphabet of exc
   goal-directed cell''; the handler keeps the promise, uptaking chemical and converting it into growth
   so that shape and objective climb. Nothing about the interface changes between draft and executable
   — only a mechanism is installed behind it.'
-claim: Given one conforming handler the cellular interface becomes a bounded cell that grows on a DEPLETING
-  nutrient (Monod uptake; volume +3.7 as substrate falls 10→0) and whose viability holds ≈1 in-band then
-  collapses in an Arrhenius cliff once temperature is ramped past its tolerance — coupled dynamics, not
-  a ramp.
+claim: A cell can be specified at one level by its interface — typed exchange variables such as chemical
+  flux, force, current, heat, growth, shape, objective, and viability — without committing to the mechanism
+  that realizes those behaviors.
 baseline:
 - name: interaction-modalities
   composite: viva_meta_modelers_guide.composites.fig04a-interaction-modalities
@@ -38,10 +30,6 @@ baseline:
   composite: viva_meta_modelers_guide.composites.fig04b-cellular-interface
   params: {}
 variants: []
-expected_behavior:
-- The cell's shape increases over the run as it takes up matter.
-- The objective variable rises monotonically toward its target.
-- The executable's ports/wiring are identical to the draft's.
 behavior_tests:
 - name: growth-tracks-nutrient
   classification: primary
@@ -202,3 +190,7 @@ visualizations:
   address: image:visualizations/fig04-illustration.png
   config:
     chart: image
+experiment: Start with the Fig. 4 interface as an inert specification, install a bounded-cell mechanism
+  behind it, and run the resulting composite. The compiler must preserve the declared interface exactly.
+result: 'The interface is preserved while the installed mechanism produces cell-level dynamics: chemical
+  uptake drives growth and progress toward the cell''s objective.'

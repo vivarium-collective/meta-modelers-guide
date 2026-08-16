@@ -10,11 +10,6 @@ confidence: Accepted
 question: Is cell division in Fig 10 a genuine structural rewrite of the place graph — a single cell node
   actually becoming two daughter nodes at runtime — rather than a pre-declared post-structure that is
   merely animated?
-hypothesis: 'Compiling Fig 10''s division draft with a Milner-style reaction rule fires a discrete event
-  when the cell is large enough: cell_count steps from 1 to 2, two daughter nodes are created that did
-  not exist at t=0, and the parent''s DNA is partitioned symmetrically between them.'
-objective: 'Run the Fig 10-1 division executable and confirm a genuine node-creating rewrite: cell count
-  reaching 2, symmetric DNA partition, daughters born mid-run.'
 biological_summary: 'Fig 10 rewrites the cell across time, and division is its sharpest case. This is
   not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction
   rule in Milner''s sense whose reactum has more nodes than its redex. When the cell''s DNA crosses a
@@ -22,18 +17,13 @@ biological_summary: 'Fig 10 rewrites the cell across time, and division is its s
   each inheriting a symmetric share of the DNA (2.745 apiece) and a starting biomass of 0.5. The daughters
   are structurally new — they do not exist in the initial state — which is exactly what makes this an
   event-driven rewrite rather than an animation of a pre-built pair.'
-claim: Autocatalytic growth to a mass threshold triggers a MASS-CONSERVING division event (mother mass
-  = Σ daughters); the lineage traces a mass sawtooth and cell_count 1→14 as it draws down the shared nutrient
-  — a genuine event on top of continuous growth.
+claim: 'Division is a change to the composition itself: one cell becomes two through a graph rewrite that
+  creates new nodes at runtime, not a pre-drawn pair.'
 baseline:
 - name: division
   composite: viva_meta_modelers_guide.composites.fig10-1-division
   params: {}
 variants: []
-expected_behavior:
-- The cell count reaches two.
-- The two daughters receive equal DNA.
-- The daughter nodes are created at runtime, not pre-declared.
 behavior_tests:
 - name: division-fires
   classification: primary
@@ -192,3 +182,7 @@ visualizations:
 parent_studies:
 - study: self-made
   condition: tests-passed
+experiment: Install a Milner reaction rule behind the Fig 10 division interface and let the cell grow
+  to threshold and fire it.
+result: The single cell node is replaced by two daughters that conserve the parent's mass — a genuine
+  structural rewrite, driven by the cell's own growth.

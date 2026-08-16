@@ -10,11 +10,6 @@ confidence: Accepted
 question: How do molecules compose into a cell? Can the Fig 8 molecular composition be authored as a deeply
   nested place graph — membrane, cytoplasm, nucleus, chromosome, chromatin, nucleosome — with a gene-expression
   cascade wired to its deepest leaves, and does compilation preserve the interface even six levels down?
-hypothesis: Compiling the Fig 8 nested-hierarchy draft wires an expression cascade (DNA→RNA→protein) to
-  a six-level-deep place graph and runs it, with the deepest leaf (nucleosome.DNA) changing over time
-  and every port preserved — the strongest test of interface preservation under nesting (law 2).
-objective: Run the Fig 8 executable and measure the expression cascade at several depths, confirming ordered
-  DNA→RNA→protein flow and a live deepest leaf.
 biological_summary: 'Fig 8 is the inside view: a cell as a hierarchy of compartments, each containing
   the next. The place graph nests six levels deep — extracellular matrix outside the membrane, cytoplasm
   within, nucleus within that, then chromosome, chromatin, and finally the nucleosome that holds the DNA.
@@ -23,18 +18,13 @@ biological_summary: 'Fig 8 is the inside view: a cell as a hierarchy of compartm
   (nutrients → 2.4, energy → 0.84) across the membrane transport port (0.3). The compiler must preserve
   every port at every depth: the deepest leaf, nucleosome.DNA, rises from 1.0 to 1.4, proving the interface
   survives the deepest nesting.'
-claim: The six-level nested place graph carries a central-dogma cascade WITH degradation that reaches
-  steady states in the correct time hierarchy — mRNA settles fast (≈2.4), protein lags (≈10.5), metabolite
-  slowest (≈20) — the transcription-before-translation ordering.
+claim: Molecular composition is a nested containment hierarchy, and an interface can be preserved even
+  when it is wired to the deepest levels of that nesting.
 baseline:
 - name: nested-hierarchy
   composite: viva_meta_modelers_guide.composites.fig08-nested-hierarchy
   params: {}
 variants: []
-expected_behavior:
-- Expression flows DNA→RNA→protein, all rising.
-- The six-level-deep DNA leaf changes over the run.
-- Matter crosses the membrane boundary.
 behavior_tests:
 - name: steady-states
   classification: primary
@@ -192,3 +182,7 @@ visualizations:
 parent_studies:
 - study: molecular-channels
   condition: tests-passed
+experiment: Build the Fig 8 six-level place graph (ECM → membrane → cytoplasm → nucleus → chromosome →
+  nucleosome) and wire a transcription–translation cascade through it.
+result: The cascade reaches steady states in the right order — mRNA fast, protein lagging — with the interface
+  preserved at the deepest leaf.

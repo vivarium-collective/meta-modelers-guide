@@ -11,12 +11,6 @@ question: Can a single metabolism interface — the ports nutrients ⇒ {biomass
   of Fig 6 — be realized by three genuinely different mechanisms (a lumped-yield process, a saturating-kinetic
   process, and a real flux-balance optimization via COBRApy) while every other part of the composite,
   and the interface itself, stays byte-for-byte the same?
-hypothesis: Installing three different handlers on the one Fig 6 metabolism signature yields three executables
-  that all emit the same port set (biomass/energy/entropy/secretions) but with mechanism-specific trajectories
-  — coarse highest, kinetic lowest, FBA in between — demonstrating that mechanism is swappable behind
-  a preserved interface (compiler law 4, handler independence).
-objective: Compile the Fig 6 disintegration/metabolism draft under three handler environments (coarse,
-  kinetic, fba), run all three, and compare their biomass trajectories over an identical interface.
 biological_summary: 'Fig 6 is the paper''s thesis in a single figure. When a cellular description fails,
   the right level of description drops from the cell to its molecules — but the *interface* that couples
   metabolism to the rest of the cell need not change. This study realizes that one interface three ways.
@@ -25,19 +19,13 @@ biological_summary: 'Fig 6 is the paper''s thesis in a single figure. When a cel
   build biomass more slowly (→ 2.67). The FBA handler calls real COBRApy to solve a flux-balance optimization
   on a small metabolic network each step (→ 3.2). All three write the identical ports; a reader can watch
   the mechanism change underneath a boundary that does not move.'
-claim: 'One metabolism interface, three handlers (first-order, Michaelis–Menten, real COBRApy LP) as a
-  CLOSED-LOOP batch: all converge to the SAME final biomass (yield·S₀ = 5.0, mass conserved) but with
-  three DISTINCT kinetic signatures — substrate exhausted at t≈4.0 / 8.6 / 10.2. Same interface, conserved
-  mass, different dynamics.'
+claim: One metabolic interface can be realized by many mechanisms — a lumped yield, saturating kinetics,
+  or a real flux-balance solver — without changing what the interface exposes.
 baseline:
 - name: disintegration
   composite: viva_meta_modelers_guide.composites.fig06-disintegration
   params: {}
 variants: []
-expected_behavior:
-- Every handler converts nutrients into biomass.
-- The three handlers give measurably different biomass.
-- All three emit the same port set over the same wiring.
 behavior_tests:
 - name: mass-conserved
   classification: primary
@@ -198,3 +186,7 @@ visualizations:
 parent_studies:
 - study: closing-the-loop
   condition: tests-passed
+experiment: Install three different handlers behind the same nutrients ⇒ biomass interface and run each
+  as a closed-loop batch that consumes its own substrate.
+result: All three conserve mass to the same final biomass but with distinct kinetic signatures — the interface
+  stays fixed while the mechanism behind it is swapped freely.

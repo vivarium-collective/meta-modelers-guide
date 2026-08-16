@@ -10,12 +10,6 @@ confidence: Accepted
 question: Does the cell–environment coupling of Fig 5 close into a genuine sense/act loop when the environment
   is a real spatial field — i.e. does the cell read a diffusing chemical field, act back on it through
   an uptake flux, and grow from what it takes up, all over one shared field store?
-hypothesis: 'Compiling Fig 5 with an environment handler that diffuses a map[float] chemical field and
-  a cell handler that senses-and-acts produces a closed loop: an initial point source spreads across the
-  field, the cell''s uptake flux becomes positive, and its mass increases — sensing and acting being the
-  same coupling read in two directions.'
-objective: Run the Fig 5 executable with a real diffusing spatial field and measure field spread, the
-  cell's uptake flux, and cell mass to confirm the loop closes.
 biological_summary: 'Fig 5 turns the static interface of Fig 4 into a relationship. The environment is
   not a set of scalars but a field — here a nine-cell map[float] chemical field plus a mechanical field
   — and the cell couples to it locally: it senses the field value at its location and acts back by taking
@@ -24,18 +18,13 @@ biological_summary: 'Fig 5 turns the static interface of Fig 4 into a relationsh
   subsystems but one coupling: the same shared field store is what the cell reads and what it writes.
   Measured, the seeded source cell falls from 1.0 to 0.20 as it diffuses to its neighbors, the uptake
   flux rises to 0.34, and the cell''s mass grows to 1.17.'
-claim: Over a real 1-D diffusing nutrient field (Fick) the cell forms a gradient and draws a local well;
-  field mass is CONSERVED — Σfield 5.05 + cumulative uptake 0.95 ≈ the initial 6.0 — so sensing and acting
-  are one conserved coupling.
+claim: 'Sensing and acting are one coupling, not two: a cell and its environment can be specified as a
+  shared interface over which the cell reads a field and acts back on it.'
 baseline:
 - name: cell-environment
   composite: viva_meta_modelers_guide.composites.fig05-cell-environment
   params: {}
 variants: []
-expected_behavior:
-- A seeded point source spreads to neighbouring field cells.
-- The cell exerts a positive uptake flux on the field.
-- The cell gains mass from what it takes up.
 behavior_tests:
 - name: gradient-forms
   classification: primary
@@ -193,3 +182,7 @@ visualizations:
 parent_studies:
 - study: typed-interface
   condition: tests-passed
+experiment: Install a diffusing spatial nutrient field and a sense-and-act mechanism behind the Fig 5
+  interface, and run them over one shared field store.
+result: A gradient forms as the cell draws down a local source and grows, with field mass conserved (Σfield
+  + uptake ≈ initial) — sensing and acting close into a single loop.

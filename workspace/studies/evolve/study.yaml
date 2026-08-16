@@ -10,28 +10,19 @@ confidence: Accepted
 question: Can evolution (Fig 10) be modelled compositionally — variation and selection acting on a population,
   and, crucially, the *addition of a new interface port* to a lineage — so that the interface set itself
   changes over evolutionary time?
-hypothesis: 'The Fig 10-3 evolution executable selects a fitter variant (its cell count grows fastest)
-  and introduces a new interface capability: a port that is absent at t=0 emerges with nonzero value,
-  showing that composition can add ports, not just change their values.'
-objective: Run the Fig 10-3 evolution executable and measure differential growth (selection) and the emergence
-  of a new interface port.
 biological_summary: 'The last rewrite is the slowest one: evolution. Fig 10-3 models a population of cell
   variants under selection — a fitter E. coli lineage outgrows the rest (cell_count → 3.4) — and adds
   the move that makes evolution more than parameter drift: a lineage acquires a *new interface port* (an
   O157-like variant''s new_port emerges from 0 to 0.57). This is the compositional signature of innovation:
   the interface alphabet itself is extended, not merely re-valued. A cell that has a port its ancestors
   lacked can couple to its environment in a way they could not.'
-claim: Under chemostat-style competition the fitter variant SWEEPS — mutant fraction 0.05→0.70 as it competitively
-  excludes the wild type — and a new interface capability rides the sweep. Selection as a compositional
-  rewrite of the population.
+claim: Evolution is a composition that rewrites itself over time — variants compete, selection acts, and
+  a lineage can acquire an entirely new interface port.
 baseline:
 - name: evolution
   composite: viva_meta_modelers_guide.composites.fig10-3-evolution
   params: {}
 variants: []
-expected_behavior:
-- A fitter variant grows faster than the rest.
-- A new interface port appears that was absent at t=0.
 behavior_tests:
 - name: selection-sweep
   classification: primary
@@ -190,3 +181,7 @@ visualizations:
 parent_studies:
 - study: biofilm
   condition: tests-passed
+experiment: Compose competing variants under shared resource and dilution behind the Fig 10 evolution
+  interface and run the competition.
+result: The fitter variant sweeps the population and carries a new interface capability with it — the
+  interface set itself changes under selection.

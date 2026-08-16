@@ -10,27 +10,19 @@ confidence: Accepted
 question: Can multicellular development (Fig 10) be expressed as compositional reorganization — individual
   cells attaching, secreting extracellular matrix, and assembling into a biofilm that is itself a higher-level
   composite with its own aggregate observables?
-hypothesis: 'The Fig 10-2 development executable grows a biofilm as a higher-level composite: attached-cell
-  count, adhesion, and ECM all rise, and an aggregate biofilm_mass accumulates — development as composition,
-  not a single process.'
-objective: Run the Fig 10-2 development executable and measure attachment, ECM secretion, and aggregate
-  biofilm mass.
 biological_summary: 'If division makes two cells from one, development makes a community from many. Fig
   10-2 treats a biofilm as a composite at a level above the single cell: cells adhere to a surface (attached
   → 1.35, adhesion → 0.675), secrete a shared extracellular matrix (ecm → 1.8), and the whole assembly
   acquires an aggregate property — biofilm_mass → 2.25 — that no single cell has. The compositional point
   is that the same modelling apparatus that describes one cell describes their collective by nesting:
   the biofilm is a store containing cells, with processes that act on the group.'
-claim: The colony grows LOGISTICALLY to its surface carrying capacity (cells saturate at K=5, not unbounded/linear)
-  while ECM accumulates — development as a saturating, resource-limited compositional process.
+claim: 'Development is composition at a higher level: individual cells reorganize into a community that
+  is itself a composite with its own aggregate behavior.'
 baseline:
 - name: development
   composite: viva_meta_modelers_guide.composites.fig10-2-development
   params: {}
 variants: []
-expected_behavior:
-- Aggregate biofilm mass grows.
-- Cells attach and secrete ECM.
 behavior_tests:
 - name: logistic-saturation
   classification: primary
@@ -164,3 +156,7 @@ visualizations:
 parent_studies:
 - study: divide
   condition: tests-passed
+experiment: Compose cells with attachment, ECM secretion, and logistic growth behind the Fig 10 development
+  interface and run to carrying capacity.
+result: The colony saturates at its surface carrying capacity while matrix accumulates — a bounded, resource-limited
+  community, not unbounded growth.
