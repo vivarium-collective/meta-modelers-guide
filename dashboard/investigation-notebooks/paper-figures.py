@@ -744,3 +744,195 @@ _save_viz('fig-10-3', 'fig10-3-evolution', _render_one('image:visualizations/fig
 
 # fig10-illustration-3
 _save_viz('fig-10-3', 'fig10-illustration-3', _render_one('image:visualizations/fig10-illustration-3.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# ## Study: `fig-compilation`
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `fig06-exec-coarse` | `viva_meta_modelers_guide.composites.fig06-executable-coarse` | 0 | — |
+# | `fig06-exec-kinetic` | `viva_meta_modelers_guide.composites.fig06-executable-kinetic` | 0 | — |
+# | `fig04b-exec` | `viva_meta_modelers_guide.composites.fig04b-executable` | 0 | — |
+# | `fig05-exec-spatial` | `viva_meta_modelers_guide.composites.fig05-executable` | 0 | — |
+# | `fig09b-exec-minimal-cell` | `viva_meta_modelers_guide.composites.fig09b-executable` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `viva_meta_modelers_guide.composites.fig06-executable-coarse`** — `spec_viva_meta_modelers_guide_composites_fig06_executable_coarse` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-coarse.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_coarse)
+
+# === Edit parameters for composite 'fig06-executable-coarse' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'coarse_grained_metabolism'  (local:CoarseMetabolism)
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
+
+# process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['k'] = 0.2
+spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
+
+# **Composite `viva_meta_modelers_guide.composites.fig06-executable-kinetic`** — `spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-kinetic.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic)
+
+# === Edit parameters for composite 'fig06-executable-kinetic' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'coarse_grained_metabolism'  (local:KineticMetabolism)
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['vmax'] = 1.0
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['km'] = 0.5
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
+
+# process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['k'] = 0.2
+spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
+
+# **Composite `viva_meta_modelers_guide.composites.fig04b-executable`** — `spec_viva_meta_modelers_guide_composites_fig04b_executable` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig04b_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig04b-executable.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig04b_executable)
+
+# === Edit parameters for composite 'fig04b-executable' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'cell'  (local:CellularInterfaceHandler)
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['uptake_rate'] = 0.8
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['growth_max'] = 0.6
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['km'] = 0.5
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['shape_growth_coupling'] = 1.0
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['objective_yield'] = 0.5
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_opt'] = 37.0
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_tol'] = 5.0
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['viability_relax'] = 0.3
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['viability_init'] = 1.0
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['elasticity'] = 0.1
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['membrane_conductance'] = 0.05
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['thermal_conductance'] = 0.02
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['signaling_gain'] = 0.4
+spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['interval'] = 1.0
+
+# **Composite `viva_meta_modelers_guide.composites.fig05-executable`** — `spec_viva_meta_modelers_guide_composites_fig05_executable` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig05_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig05-executable.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig05_executable)
+
+# === Edit parameters for composite 'fig05-executable' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'reaction_diffusion'  (local:SpatialDiffusion)
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['diffusivity'] = 0.2
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['interval'] = 1.0
+
+# process 'production_degradation'  (local:ProductionDegradationField)
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_index'] = 0
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_rate'] = 0.05
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['decay_rate'] = 0.01
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['interval'] = 1.0
+
+# process 'mechanical_stress'  (local:MechanicalRelax)
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['relax_rate'] = 0.3
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['interval'] = 1.0
+
+# process 'single_cell_processes'  (local:SingleCellSpatial)
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['cell_index'] = 4
+spec_viva_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['interval'] = 1.0
+
+# **Composite `viva_meta_modelers_guide.composites.fig09b-executable`** — `spec_viva_meta_modelers_guide_composites_fig09b_executable` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig09b_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09b-executable.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig09b_executable)
+
+# === Edit parameters for composite 'fig09b-executable' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'minimal_cell_containment'  (local:ContainmentODE)
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['assembly_rate'] = 0.15
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['interval'] = 1.0
+
+# process 'minimal_cell_metabolism'  (local:MetabolismLinear)
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['k_cat'] = 0.2
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['metabolite_yield'] = 0.6
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['energy_yield'] = 0.4
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
+
+# process 'gene_expression'  (local:GeneExpressionODE)
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['k_expr'] = 0.25
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['protein_yield'] = 0.5
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['enzyme_yield'] = 0.3
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['interval'] = 1.0
+
+# process 'minimal_cell_replication'  (local:ReplicationODE)
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['k_rep'] = 0.1
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['gene_yield'] = 0.5
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['nucleic_yield'] = 0.4
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['interval'] = 1.0
+
+# process 'diffusion'  (local:DiffusionRelax)
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['turnover_rate'] = 0.05
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['interval'] = 1.0
+
+# process 'reactions'  (local:MassActionReactions)
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['k_react'] = 0.15
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['protein_yield'] = 0.4
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['nucleic_turnover'] = 0.2
+spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['interval'] = 1.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: fig-compilation ===
+STUDY = 'fig-compilation'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig06-executable-coarse**
+
+# fig06-executable-coarse
+_save_viz('fig-compilation', 'fig06-executable-coarse', _render_one('image:visualizations/fig06-executable-coarse.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig06-executable-kinetic**
+
+# fig06-executable-kinetic
+_save_viz('fig-compilation', 'fig06-executable-kinetic', _render_one('image:visualizations/fig06-executable-kinetic.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig04b-executable**
+
+# fig04b-executable
+_save_viz('fig-compilation', 'fig04b-executable', _render_one('image:visualizations/fig04b-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig09b-executable**
+
+# fig09b-executable
+_save_viz('fig-compilation', 'fig09b-executable', _render_one('image:visualizations/fig09b-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
