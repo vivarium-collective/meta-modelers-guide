@@ -151,13 +151,51 @@ def _compile_node(node, handler_env, core, refine_ports_by_draft) -> None:
         return
     spec = handler_env[draft]
     handler = spec["handler"]
-    rep = check_conformance(core, draft, handler,
-                            allow_refine=refine_ports_by_draft.get(draft, set()))
+    # A *rewrite* handler (Fig 10 division/development/evolution) is an
+    # event-driven graph rewrite whose draft signature is a placeholder — its
+    # real contract is the ports the node WIRES (e.g. Divide's ``biomass ⇒
+    # biomass_1, biomass_2, cell_count``), not the stub class signature. For such
+    # handlers, conformance is checked against the node's wiring (law 2′). The
+    # interface itself is still preserved: the daughter/biofilm/variant subtrees
+    # the rewrite fills are already declared in the semantic composite, so
+    # ``interface_of`` is unchanged; the handler animates a pre-declared
+    # post-structure via a discrete event.
+    if _is_rewrite(core, handler):
+        rep = check_wiring_conformance(core, node, handler)
+    else:
+        rep = check_conformance(core, draft, handler,
+                                allow_refine=refine_ports_by_draft.get(draft, set()))
     if not rep.ok:
         raise CompileError(str(rep))
     node["address"] = f"local:{handler}"
     node["config"] = {**spec.get("config", {}), **(node.get("config") or {})}
     node.pop("_draft", None)
+
+
+def _is_rewrite(core, handler_name: str) -> bool:
+    """A handler declares itself a rewrite handler with a class-level ``REWRITE``."""
+    cls = core.link_registry.get(handler_name)
+    return bool(getattr(cls, "REWRITE", False))
+
+
+def check_wiring_conformance(core, node, handler_name: str) -> ConformanceReport:
+    """Rewrite-handler conformance: the handler's ports must be exactly the ports
+    the *node* wires (name-bijection per direction), so the composite builds and
+    every wire has a port. Types are the store leaves' own types, trusted here."""
+    hcls = core.link_registry[handler_name]
+    h_in, h_out = set(_ports(hcls, "inputs")), set(_ports(hcls, "outputs"))
+    n_in = set((node.get("inputs") or {}).keys())
+    n_out = set((node.get("outputs") or {}).keys())
+    rep = ConformanceReport(_draft_name(node) or "?", handler_name)
+    for p in n_in - h_in:
+        rep.missing.append(("wired-input", p))
+    for p in n_out - h_out:
+        rep.missing.append(("wired-output", p))
+    for p in h_in - n_in:
+        rep.missing.append(("handler-input-not-wired", p))
+    for p in h_out - n_out:
+        rep.missing.append(("handler-output-not-wired", p))
+    return rep
 
 
 def _refined_ports(semantic_state, handler_env) -> dict:

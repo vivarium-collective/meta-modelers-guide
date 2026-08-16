@@ -28,6 +28,9 @@ BUILD: list[tuple[str, str, str]] = [
     ("fig08",         "fig08-nested-hierarchy",    "fig08-executable"),
     ("fig09a",        "fig09a-coarse-graining",    "fig09a-executable"),
     ("fig09b",        "fig09b-minimal-cell",       "fig09b-executable"),
+    ("fig10-1",       "fig10-1-division",          "fig10-1-executable"),
+    ("fig10-2",       "fig10-2-development",       "fig10-2-executable"),
+    ("fig10-3",       "fig10-3-evolution",         "fig10-3-executable"),
 ]
 
 

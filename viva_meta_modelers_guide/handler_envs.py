@@ -15,6 +15,9 @@ from .handlers_fig07 import ENV as _FIG07_ENV
 from .handlers_fig08 import ENV as _FIG08_ENV
 from .handlers_fig09a import ENV as _FIG09A_ENV
 from .handlers_fig09b import ENV as _FIG09B_ENV
+from .handlers_fig10 import (ENV_DIVISION as _FIG10_DIV,
+                             ENV_DEVELOPMENT as _FIG10_DEV,
+                             ENV_EVOLUTION as _FIG10_EVO)
 
 ENVS: dict[str, dict] = {
     # Fig 6 grain-swap — same CoarseGrainedMetabolism interface, two handlers.
@@ -53,3 +56,6 @@ ENVS["fig07"] = _FIG07_ENV
 ENVS["fig08"] = _FIG08_ENV
 ENVS["fig09a"] = _FIG09A_ENV
 ENVS["fig09b"] = _FIG09B_ENV
+ENVS["fig10-1"] = _FIG10_DIV
+ENVS["fig10-2"] = _FIG10_DEV
+ENVS["fig10-3"] = _FIG10_EVO
