@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+"""Materialize each figure's EXECUTABLE composite by running the semantic→executable
+compiler (compile.py) over the semantic composite + its handler environment, and
+writing the result to composites/<output>.composite.json — discoverable by the
+workbench and runnable via /viva-run. compile.py is the single source of truth.
+
+Re-run after editing handlers / envs / semantic composites.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from viva_meta_modelers_guide.core import build_core
+from viva_meta_modelers_guide.compile import compile_composite
+from viva_meta_modelers_guide.handler_envs import ENVS
+
+ROOT = Path(__file__).resolve().parent.parent
+COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
+
+# (env name, semantic composite stem, executable output stem)
+BUILD: list[tuple[str, str, str]] = [
+    ("fig06-coarse",  "fig06-disintegration",     "fig06-executable-coarse"),
+    ("fig06-kinetic", "fig06-disintegration",     "fig06-executable-kinetic"),
+    ("fig04b",        "fig04b-cellular-interface", "fig04b-executable"),
+    ("fig05",         "fig05-cell-environment",    "fig05-executable"),
+    ("fig09b",        "fig09b-minimal-cell",       "fig09b-executable"),
+]
+
+
+def build_one(core, env_name, semantic_stem, output_stem) -> Path | None:
+    if env_name not in ENVS:
+        print(f"skip {output_stem}: env {env_name!r} not defined yet")
+        return None
+    sem = json.loads((COMPOSITES / f"{semantic_stem}.composite.json").read_text())
+    ex_state = compile_composite(sem["state"], ENVS[env_name], core)
+    doc = {
+        "name": output_stem,
+        "description": (f"EXECUTABLE compilation of {semantic_stem} under handler "
+                        f"environment '{env_name}' — draft signatures replaced by "
+                        f"conforming Process handlers (see compile.py). Runnable."),
+        "requires": {"processes": sorted({s["handler"] for s in ENVS[env_name].values()})},
+        "state": ex_state,
+    }
+    out = COMPOSITES / f"{output_stem}.composite.json"
+    out.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
+    return out
+
+
+def main() -> None:
+    core = build_core()
+    n = 0
+    for env_name, sem_stem, out_stem in BUILD:
+        p = build_one(core, env_name, sem_stem, out_stem)
+        if p:
+            print("built", p.relative_to(ROOT)); n += 1
+    print(f"\n{n} executable composites materialized")
+
+
+if __name__ == "__main__":
+    main()
