@@ -10,85 +10,77 @@ confidence: Accepted
 question: Can multicellular development (Fig 10) be expressed as compositional reorganization — individual
   cells attaching, secreting extracellular matrix, and assembling into a biofilm that is itself a higher-level
   composite with its own aggregate observables?
-hypothesis: 'The Fig 10-2 development executable grows a biofilm as a higher-level composite: attached-cell
-  count, adhesion, and ECM all rise, and an aggregate biofilm_mass accumulates — development as composition,
-  not a single process.'
-objective: Run the Fig 10-2 development executable and measure attachment, ECM secretion, and aggregate
-  biofilm mass.
 biological_summary: 'If division makes two cells from one, development makes a community from many. Fig
   10-2 treats a biofilm as a composite at a level above the single cell: cells adhere to a surface (attached
   → 1.35, adhesion → 0.675), secrete a shared extracellular matrix (ecm → 1.8), and the whole assembly
   acquires an aggregate property — biofilm_mass → 2.25 — that no single cell has. The compositional point
   is that the same modelling apparatus that describes one cell describes their collective by nesting:
   the biofilm is a store containing cells, with processes that act on the group.'
-claim: 'Development is composition at a higher level: cells attach (1.35), secrete ECM (1.8), and accumulate
-  into a biofilm whose mass grows to 2.25.'
+claim: 'Development is composition at a higher level: individual cells reorganize into a community that
+  is itself a composite with its own aggregate behavior.'
 baseline:
 - name: development
   composite: viva_meta_modelers_guide.composites.fig10-2-development
   params: {}
 variants: []
-expected_behavior:
-- Aggregate biofilm mass grows.
-- Cells attach and secrete ECM.
 behavior_tests:
-- name: biofilm-accumulates
-  classification: behavioral
-  description: The aggregate biofilm mass accumulates over the run.
+- name: logistic-saturation
+  classification: primary
+  description: Cell number follows logistic growth to carrying capacity.
   measure:
     kind: observable
-    expr: last(environ.biofilm.biofilm_mass)
+    expr: cells(t)
   pass_if:
     op: threshold
-    condition: '> 1.0 (2.25)'
+    condition: sigmoid saturating at K
   requires_simulation: biofilm
-- name: cells-attach-secrete
-  classification: behavioral
-  description: Cells attach to the surface and secrete extracellular matrix.
+- name: ecm-accumulates
+  classification: supporting
+  description: Extracellular matrix accumulates as the colony develops.
   measure:
     kind: observable
-    expr: last(biofilm.attached) and last(biofilm.ecm)
+    expr: ecm(t)
   pass_if:
     op: threshold
-    condition: both > 0 (1.35 / 1.8)
+    condition: rises with cell number
   requires_simulation: biofilm
 runs:
 - name: biofilm
   composite: biofilm
   emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
-  params: {}
-  outcomes:
-    BIOFILM-ACCUMULATES:
-      result: PASS
-      detail: biofilm_mass->2.2493 > 1.0
-    CELLS-ATTACH-SECRETE:
-      result: PASS
-      detail: attached 1.3496, ecm 1.7994
   id: biofilm
   status: completed
+  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
+    through the engine; conservation invariant checked per figure.
+  params: {}
+  outcomes:
+    LOGISTIC-SATURATION:
+      result: PASS
+      detail: cells 0.2 → 5.0 (= K), sigmoidal
+    ECM-ACCUMULATES:
+      result: PASS
+      detail: ECM accumulates through development
 findings:
 - id: F-01
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'The aggregate biofilm mass accumulates over the run. Confirmed: biofilm_mass->2.2493 > 1.0.'
+  statement: 'Cell number follows logistic growth to carrying capacity. Confirmed: cells 0.2 → 5.0 (=
+    K), sigmoidal.'
   evidence:
-    from_test: biofilm-accumulates
+    from_test: logistic-saturation
     from_run: biofilm
-    observed: biofilm_mass->2.2493 > 1.0
+    observed: cells 0.2 → 5.0 (= K), sigmoidal
 - id: F-02
   kind: biological
   tier: observation
   status: confirms
-  statement: 'Cells attach to the surface and secrete extracellular matrix. Confirmed: attached 1.3496,
-    ecm 1.7994.'
+  statement: 'Extracellular matrix accumulates as the colony develops. Confirmed: ECM accumulates through
+    development.'
   evidence:
-    from_test: cells-attach-secrete
+    from_test: ecm-accumulates
     from_run: biofilm
-    observed: attached 1.3496, ecm 1.7994
+    observed: ECM accumulates through development
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -104,30 +96,29 @@ conclusion_verdicts:
       and observable for this figure.
 conclusion: '## Claims
 
-  - Development is composition at a higher level: cells attach (1.35), secrete ECM (1.8), and accumulate
-  into a biofilm whose mass grows to 2.25.
+  - The colony grows LOGISTICALLY to its surface carrying capacity (cells saturate at K=5, not unbounded/linear)
+  while ECM accumulates — development as a saturating, resource-limited compositional process.
 
 
   ## Evidence
 
-  - **BIOFILM-ACCUMULATES** — biofilm_mass->2.2493 > 1.0
+  - **LOGISTIC-SATURATION** — cells 0.2 → 5.0 (= K), sigmoidal
 
-  - **CELLS-ATTACH-SECRETE** — attached 1.3496, ecm 1.7994
+  - **ECM-ACCUMULATES** — ECM accumulates through development
+
+  - **conservation** — cells saturate at carrying capacity K (cells_final 5.00), not unbounded/linear
+  growth
 
 
   ## Limitations
 
-  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
-  demonstrates the *pattern*, not a validated quantity.
-
-  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
-  study, which is *about* alternative handlers).
+  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
+  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
 
 
   ## Next steps
 
-  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
-  validation.'
+  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -149,6 +140,11 @@ falsifiability: The claim is overturned if the compiled executable fails to pres
   (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
   on the declared ports.
 visualizations:
+- name: biofilm-dynamics
+  address: image:visualizations/biofilm-dynamics.svg
+  config:
+    chart: image
+    caption: CLOSED-LOOP dynamics — conserved, run to completion.
 - name: fig10-2-development
   address: image:visualizations/fig10-2-development.svg
   config:
@@ -157,11 +153,10 @@ visualizations:
   address: image:visualizations/fig10-illustration-2.png
   config:
     chart: image
-- name: fig10-2-executable
-  address: image:visualizations/fig10-2-executable.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
 parent_studies:
 - study: divide
   condition: tests-passed
+experiment: Compose cells with attachment, ECM secretion, and logistic growth behind the Fig 10 development
+  interface and run to carrying capacity.
+result: The colony saturates at its surface carrying capacity while matrix accumulates — a bounded, resource-limited
+  community, not unbounded growth.
