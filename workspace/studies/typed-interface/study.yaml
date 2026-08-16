@@ -1,0 +1,203 @@
+schema_version: 4
+name: typed-interface
+investigation: draft-to-living-cell
+title: The Typed Interface
+created: '2026-08-15'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Can the cellular boundary be specified as nothing but a set of typed, unit-bearing exchange
+  ports (chemical, mechanical, electrical, thermal, plus growth rate, shape, objective, viability) with
+  no committed mechanism, and then compiled — by installing one conforming handler — into a running, bounded,
+  goal-directed cell whose interface is exactly the one declared?
+hypothesis: 'The Fig 4 interface authored as an inert draft (typed ports + a behavior contract, an update
+  that does nothing) compiles under a single conforming handler into an executable that leaves every port
+  and wire unchanged (law 2) yet produces genuine dynamics: shape and objective rise while the cell takes
+  up chemical from its surroundings.'
+objective: Author the Fig 4b cellular interface as a draft composite of typed ports, install a bounded-cell
+  handler via the compiler, run it, and measure whether the interface variables evolve as a goal-directed
+  cell would.
+biological_summary: 'A cell, viewed from the outside, is a small alphabet of exchange variables: fluxes
+  of matter (chemical, mol·s⁻¹), forces (mechanical, N), currents (electrical, A) and heat (thermal, W),
+  together with higher-level cellular quantities — growth rate (hr⁻¹), shape, an objective the cell pursues,
+  and a viability that says whether the cellular description still holds. Fig 4 is that alphabet. This
+  study makes it operational: the draft declares each port with its type and unit and promises ''a bounded,
+  goal-directed cell''; the handler keeps the promise, uptaking chemical and converting it into growth
+  so that shape and objective climb. Nothing about the interface changes between draft and executable
+  — only a mechanism is installed behind it.'
+claim: A cell's boundary is a small set of typed, unit-bearing ports; a conforming handler turns that
+  inert interface into a bounded, goal-directed cell that grows (shape 1.0→4.2) and pursues an objective.
+baseline:
+- name: interaction-modalities
+  composite: viva_meta_modelers_guide.composites.fig04a-interaction-modalities
+  params: {}
+- name: cellular-interface
+  composite: viva_meta_modelers_guide.composites.fig04b-cellular-interface
+  params: {}
+variants: []
+expected_behavior:
+- The cell's shape increases over the run as it takes up matter.
+- The objective variable rises monotonically toward its target.
+- The executable's ports/wiring are identical to the draft's.
+behavior_tests:
+- name: cell-grows
+  classification: behavioral
+  description: The bounded-cell handler grows the cell body from uptake.
+  measure:
+    kind: observable
+    expr: max(interface.shape) over the run
+  pass_if:
+    op: threshold
+    condition: ≥ 3.0 (dimensionless shape factor)
+  requires_simulation: typed-interface
+- name: goal-directed
+  classification: behavioral
+  description: The cell accumulates progress toward its objective.
+  measure:
+    kind: observable
+    expr: last(interface.objective)
+  pass_if:
+    op: threshold
+    condition: '> 1.0'
+  requires_simulation: typed-interface
+- name: chemical-uptake
+  classification: behavioral
+  description: The chemical port carries a net uptake (negative outward flux).
+  measure:
+    kind: observable
+    expr: min(interface.chemical)
+  pass_if:
+    op: threshold
+    condition: < 0 (net uptake)
+  requires_simulation: typed-interface
+runs:
+- name: typed-interface
+  composite: typed-interface
+  emitter: RAMEmitter
+  steps: 9
+  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
+    in scripts/_catalog/measured_readouts.json
+  params: {}
+  outcomes:
+    CELL-GROWS:
+      result: PASS
+      detail: max(interface.shape) = 4.2 ≥ 3.0
+    GOAL-DIRECTED:
+      result: PASS
+      detail: last(interface.objective) = 1.6 > 1.0
+    CHEMICAL-UPTAKE:
+      result: PASS
+      detail: min(interface.chemical) = -0.8 < 0
+  id: typed-interface
+  status: completed
+findings:
+- id: F-01
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The bounded-cell handler grows the cell body from uptake. Confirmed: max(interface.shape)
+    = 4.2 ≥ 3.0.'
+  evidence:
+    from_test: cell-grows
+    from_run: typed-interface
+    observed: max(interface.shape) = 4.2 ≥ 3.0
+- id: F-02
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The cell accumulates progress toward its objective. Confirmed: last(interface.objective)
+    = 1.6 > 1.0.'
+  evidence:
+    from_test: goal-directed
+    from_run: typed-interface
+    observed: last(interface.objective) = 1.6 > 1.0
+- id: F-03
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The chemical port carries a net uptake (negative outward flux). Confirmed: min(interface.chemical)
+    = -0.8 < 0.'
+  evidence:
+    from_test: chemical-uptake
+    from_run: typed-interface
+    observed: min(interface.chemical) = -0.8 < 0
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
+      + scripts/measure_all.py, 2026-08-16).
+  biological_validation:
+    result: PASS
+    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
+      pattern qualitatively (toy-real, uncalibrated).
+  explanatory_gain:
+    result: POSITIVE
+    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
+      and observable for this figure.
+conclusion: '## Claims
+
+  - A cell''s boundary is a small set of typed, unit-bearing ports; a conforming handler turns that inert
+  interface into a bounded, goal-directed cell that grows (shape 1.0→4.2) and pursues an objective.
+
+
+  ## Evidence
+
+  - **CELL-GROWS** — max(interface.shape) = 4.2 ≥ 3.0
+
+  - **GOAL-DIRECTED** — last(interface.objective) = 1.6 > 1.0
+
+  - **CHEMICAL-UPTAKE** — min(interface.chemical) = -0.8 < 0
+
+
+  ## Limitations
+
+  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
+  demonstrates the *pattern*, not a validated quantity.
+
+  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
+  study, which is *about* alternative handlers).
+
+
+  ## Next steps
+
+  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
+  validation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The figure draft compiles to an executable that runs.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
+      preservation holds.
+    pipeline_unblocks:
+    - the-living-atlas
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - handler produced no non-trivial dynamics on the declared ports
+    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+limitations:
+- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
+  cell.
+- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
+  given the handler).
+falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
+  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
+  on the declared ports.
+visualizations:
+- name: fig04a-interaction-modalities
+  address: image:visualizations/fig04a-interaction-modalities.svg
+  config:
+    chart: image
+- name: fig04b-cellular-interface
+  address: image:visualizations/fig04b-cellular-interface.svg
+  config:
+    chart: image
+- name: fig04-illustration
+  address: image:visualizations/fig04-illustration.png
+  config:
+    chart: image
+- name: fig04b-executable
+  address: image:visualizations/fig04b-executable.svg
+  config:
+    chart: image
+    caption: EXECUTABLE dynamics — the compiled figure, running.

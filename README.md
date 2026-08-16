@@ -67,15 +67,22 @@ composites and investigations; regenerate any time with
 | `fig05-executable` | EXECUTABLE compilation of fig05-cell-environment under handler environment 'fig05' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig06-disintegration` | Fig 6b — cell disintegration as a grain-swap equivalence. |
 | `fig06-executable-coarse` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-coarse' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig06-executable-fba` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-fba' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig06-executable-kinetic` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-kinetic' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig07-executable` | EXECUTABLE compilation of fig07-molecular-mechanism under handler environment 'fig07' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig07-molecular-mechanism` | Fig 7b/7c — a molecular mechanism as a process with typed physical channels. |
+| `fig08-executable` | EXECUTABLE compilation of fig08-nested-hierarchy under handler environment 'fig08' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig08-nested-hierarchy` | Fig 8b — molecular compositions as a nested hierarchical composite. |
 | `fig09a-coarse-graining` | Fig 9a — self-organized processes, coarse-graining, and autopoiesis. |
+| `fig09a-executable` | EXECUTABLE compilation of fig09a-coarse-graining under handler environment 'fig09a' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig09b-executable` | EXECUTABLE compilation of fig09b-minimal-cell under handler environment 'fig09b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig09b-minimal-cell` | Fig 9b — minimal cell composition. |
 | `fig10-1-division` | Fig 10.1 (panel b) — division as a compositional rewrite. |
+| `fig10-1-executable` | EXECUTABLE compilation of fig10-1-division under handler environment 'fig10-1' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig10-2-development` | Fig 10.2 (panels c/d) — biofilm development as a hierarchical reorganization. |
+| `fig10-2-executable` | EXECUTABLE compilation of fig10-2-development under handler environment 'fig10-2' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `fig10-3-evolution` | Fig 10.3 (panels e/f) — evolution reshapes the composition itself. |
+| `fig10-3-executable` | EXECUTABLE compilation of fig10-3-evolution under handler environment 'fig10-3' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 <!-- END:composites -->
 
 ### Investigations
@@ -85,7 +92,7 @@ composites and investigations; regenerate any time with
 
 | Investigation | Research question |
 |---|---|
-| [paper-figures _(planning)_](https://vivarium-collective.github.io/viva-meta-modelers-guide/investigations/paper-figures.html) |  |
+| [From Draft to Living Cell _(complete)_](https://vivarium-collective.github.io/viva-meta-modelers-guide/investigations/draft-to-living-cell.html) | How far can a cell be built compositionally — assembled from typed interfaces, each specified as a *draft* before any mechanism is chosen, then compiled into something that actually runs — and does t… |
 <!-- END:investigations -->
 
 ## Layout

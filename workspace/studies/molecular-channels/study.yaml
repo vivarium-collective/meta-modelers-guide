@@ -1,0 +1,168 @@
+schema_version: 4
+name: molecular-channels
+investigation: draft-to-living-cell
+title: Molecular Channels
+created: '2026-08-15'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: When a description drops to the molecular grain (Fig 7), can a single molecular mechanism act
+  as a transducer across four typed physical channels at once — chemical, electrical, mechanical, thermal
+  — each carried on its own port in its own unit, without the channels collapsing into one lumped output?
+hypothesis: The Fig 7 molecular mechanism, compiled under a transducer handler, drives four distinct output
+  ports with four distinct magnitudes, confirming that the typed-channel interface survives at the molecular
+  grain.
+objective: Run the Fig 7 executable and measure the four channel outputs to confirm they are simultaneously
+  active and independently typed.
+biological_summary: 'Fig 6 said the description can drop to molecules; Fig 7 shows what a molecular mechanism
+  looks like as an interface. A molecular machine is rarely a single-input single-output device — it couples
+  chemistry, charge, force and heat simultaneously. Here one mechanism transduces all four: it emits a
+  chemical flux (0.6), an electrical current (0.3), a mechanical output (0.4) and a thermal output (0.7).
+  The point is that these are four *typed* ports, not one scalar: the interface keeps them distinct so
+  a downstream composite can wire each to the appropriate cell-level channel.'
+claim: At the molecular grain, one mechanism transduces four independently-typed channels at once — chemical
+  (0.6), electrical (0.3), mechanical (0.4) and thermal (0.7) — each an emitting port in its own unit.
+baseline:
+- name: molecular-mechanism
+  composite: viva_meta_modelers_guide.composites.fig07-molecular-mechanism
+  params: {}
+variants: []
+expected_behavior:
+- All four output channels carry nonzero flux.
+- The four channels have distinct magnitudes/types.
+behavior_tests:
+- name: all-channels-active
+  classification: behavioral
+  description: All four typed output channels are simultaneously nonzero.
+  measure:
+    kind: observable
+    expr: last of chemical_out, electrical_out, mechanical_out, thermal_out
+  pass_if:
+    op: threshold
+    condition: all > 0
+  requires_simulation: molecular-channels
+- name: channels-distinct
+  classification: structural
+  description: The four channels are independently typed ports, not one lumped output.
+  measure:
+    kind: observable
+    expr: distinct port magnitudes {0.6, 0.3, 0.4, 0.7}
+  pass_if:
+    op: threshold
+    condition: four distinct values
+  requires_simulation: molecular-channels
+runs:
+- name: molecular-channels
+  composite: molecular-channels
+  emitter: RAMEmitter
+  steps: 9
+  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
+    in scripts/_catalog/measured_readouts.json
+  params: {}
+  outcomes:
+    ALL-CHANNELS-ACTIVE:
+      result: PASS
+      detail: chemical 0.6, electrical 0.3, mechanical 0.4, thermal 0.7 — all > 0
+    CHANNELS-DISTINCT:
+      result: PASS
+      detail: four distinct typed magnitudes {0.6, 0.3, 0.4, 0.7}
+  id: molecular-channels
+  status: completed
+findings:
+- id: F-01
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'All four typed output channels are simultaneously nonzero. Confirmed: chemical 0.6, electrical
+    0.3, mechanical 0.4, thermal 0.7 — all > 0.'
+  evidence:
+    from_test: all-channels-active
+    from_run: molecular-channels
+    observed: chemical 0.6, electrical 0.3, mechanical 0.4, thermal 0.7 — all > 0
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The four channels are independently typed ports, not one lumped output. Confirmed: four
+    distinct typed magnitudes {0.6, 0.3, 0.4, 0.7}.'
+  evidence:
+    from_test: channels-distinct
+    from_run: molecular-channels
+    observed: four distinct typed magnitudes {0.6, 0.3, 0.4, 0.7}
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
+      + scripts/measure_all.py, 2026-08-16).
+  biological_validation:
+    result: PASS
+    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
+      pattern qualitatively (toy-real, uncalibrated).
+  explanatory_gain:
+    result: POSITIVE
+    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
+      and observable for this figure.
+conclusion: '## Claims
+
+  - At the molecular grain, one mechanism transduces four independently-typed channels at once — chemical
+  (0.6), electrical (0.3), mechanical (0.4) and thermal (0.7) — each an emitting port in its own unit.
+
+
+  ## Evidence
+
+  - **ALL-CHANNELS-ACTIVE** — chemical 0.6, electrical 0.3, mechanical 0.4, thermal 0.7 — all > 0
+
+  - **CHANNELS-DISTINCT** — four distinct typed magnitudes {0.6, 0.3, 0.4, 0.7}
+
+
+  ## Limitations
+
+  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
+  demonstrates the *pattern*, not a validated quantity.
+
+  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
+  study, which is *about* alternative handlers).
+
+
+  ## Next steps
+
+  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
+  validation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The figure draft compiles to an executable that runs.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
+      preservation holds.
+    pipeline_unblocks:
+    - one-interface-three-mechanisms
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - handler produced no non-trivial dynamics on the declared ports
+    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+limitations:
+- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
+  cell.
+- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
+  given the handler).
+falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
+  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
+  on the declared ports.
+visualizations:
+- name: fig07-molecular-mechanism
+  address: image:visualizations/fig07-molecular-mechanism.svg
+  config:
+    chart: image
+- name: fig07-illustration
+  address: image:visualizations/fig07-illustration.png
+  config:
+    chart: image
+- name: fig07-executable
+  address: image:visualizations/fig07-executable.svg
+  config:
+    chart: image
+    caption: EXECUTABLE dynamics — the compiled figure, running.
+parent_studies:
+- study: one-interface-three-mechanisms
+  condition: tests-passed
