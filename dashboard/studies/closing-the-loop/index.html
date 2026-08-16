@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">Does the cell–environment coupling of Fig 5 close into a genuine sense/act loop when the environment is a real spatial field — i.e. does the cell read a diffusing chemical field, act back on it through an uptake flux, and grow from what it takes up, all over one shared field store?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">Compiling Fig 5 with an environment handler that diffuses a map[float] chemical field and a cell handler that senses-and-acts produces a closed loop: an initial point source spreads across the field, the cell&#39;s uptake flux becomes positive, and its mass increases — sensing and acting being the same coupling read in two directions.</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Run the Fig 5 executable with a real diffusing spatial field and measure field spread, the cell&#39;s uptake flux, and cell mass to confirm the loop closes.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A point source at field cell 4 spreads outward (source falls, neighbours rise). Confirmed: source field[4] 1.0-&gt;0.2049; neighbour field[0]-&gt;0.2647.</span>
+            <span class="finding-claim finding-statement">A localized bolus diffuses into a spatial gradient (Fickian). Confirmed: point bolus diffuses across the 15-node lattice.</span>
             
-            <span class="finding-chip">via <code>field-diffuses</code></span>
+            <span class="finding-chip">via <code>gradient-forms</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> source field[4] 1.0-&gt;0.2049; neighbour field[0]-&gt;0.2647 · 
+              <strong>observed:</strong> point bolus diffuses across the 15-node lattice · 
               
-              via test <a href="#bt-field-diffuses" onclick="_gotoStudyTab('tests','bt-field-diffuses');return false;"><code>field-diffuses</code></a> · 
+              via test <a href="#bt-gradient-forms" onclick="_gotoStudyTab('tests','bt-gradient-forms');return false;"><code>gradient-forms</code></a> · 
               in run <a href="#run-closing-the-loop"><code>closing-the-loop</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: source &lt; 0.5 AND a neighbour &gt; 0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: bolus spreads to neighbours</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The cell acts back on the environment through a positive uptake flux. Confirmed: last(uptake_flux) = 0.3387 &gt; 0.</span>
+            <span class="finding-claim finding-statement">Field + cumulative uptake is conserved (no source/sink leak). Confirmed: 5.05 + 0.95 ≈ 6.00 (conserved).</span>
             
-            <span class="finding-chip">via <code>cell-acts</code></span>
+            <span class="finding-chip">via <code>mass-conserved</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> last(uptake_flux) = 0.3387 &gt; 0 · 
+              <strong>observed:</strong> 5.05 + 0.95 ≈ 6.00 (conserved) · 
               
-              via test <a href="#bt-cell-acts" onclick="_gotoStudyTab('tests','bt-cell-acts');return false;"><code>cell-acts</code></a> · 
+              via test <a href="#bt-mass-conserved" onclick="_gotoStudyTab('tests','bt-mass-conserved');return false;"><code>mass-conserved</code></a> · 
               in run <a href="#run-closing-the-loop"><code>closing-the-loop</code></a>
               
               
@@ -532,7 +532,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: ≈ initial field mass</code></div>
             
             
             
@@ -551,9 +551,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The cell gains mass over the run from its uptake. Confirmed: last(single_cell.mass) = 1.1693 &gt; 1.0.</span>
+            <span class="finding-claim finding-statement">The cell is a local sink — uptake and biomass rise. Confirmed: cumulative uptake 0 → 0.95.</span>
             
-            <span class="finding-chip">via <code>cell-grows</code></span>
+            <span class="finding-chip">via <code>cell-draws-well</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -565,9 +565,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> last(single_cell.mass) = 1.1693 &gt; 1.0 · 
+              <strong>observed:</strong> cumulative uptake 0 → 0.95 · 
               
-              via test <a href="#bt-cell-grows" onclick="_gotoStudyTab('tests','bt-cell-grows');return false;"><code>cell-grows</code></a> · 
+              via test <a href="#bt-cell-draws-well" onclick="_gotoStudyTab('tests','bt-cell-draws-well');return false;"><code>cell-draws-well</code></a> · 
               in run <a href="#run-closing-the-loop"><code>closing-the-loop</code></a>
               
               
@@ -576,7 +576,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 1.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 0 and rising</code></div>
             
             
             
@@ -643,7 +643,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">A point source at field cell 4 spreads outward (source falls, neighbours rise). Confirmed: source field[4] 1.0-&gt;0.2049; neighbour field[0]-&gt;0.2647.<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">A localized bolus diffuses into a spatial gradient (Fickian). Confirmed: point bolus diffuses across the 15-node lattice.<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -817,15 +817,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -910,31 +901,31 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-field-diffuses"
+    <li class="expected-behavior-item" id="bt-gradient-forms"
         data-test-kind="behavioral"
         
-        data-pytest-node="field-diffuses"
-        data-classification="behavioral"
+        data-pytest-node="gradient-forms"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">field-diffuses</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">gradient-forms</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>closing-the-loop</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">A point source at field cell 4 spreads outward (source falls, neighbours rise).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">A localized bolus diffuses into a spatial gradient (Fickian).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(environment.chemical_field[4]) and last(chemical_field[0])", "kind": "observable"}
-pass_if: {"condition": "source \u003c 0.5 AND a neighbour \u003e 0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "field profile over space\u00d7time", "kind": "observable"}
+pass_if: {"condition": "bolus spreads to neighbours", "op": "threshold"}</pre>
       </details>
       
       
@@ -949,31 +940,31 @@ pass_if: {"condition": "source \u003c 0.5 AND a neighbour \u003e 0", "op": "thre
     
     
     
-    <li class="expected-behavior-item" id="bt-cell-acts"
+    <li class="expected-behavior-item" id="bt-mass-conserved"
         data-test-kind="behavioral"
         
-        data-pytest-node="cell-acts"
-        data-classification="behavioral"
+        data-pytest-node="mass-conserved"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">cell-acts</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mass-conserved</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>closing-the-loop</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The cell acts back on the environment through a positive uptake flux.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Field + cumulative uptake is conserved (no source/sink leak).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(environment.uptake_flux)", "kind": "observable"}
-pass_if: {"condition": "\u003e 0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03a3field(t) + uptake_total(t)", "kind": "observable"}
+pass_if: {"condition": "\u2248 initial field mass", "op": "threshold"}</pre>
       </details>
       
       
@@ -988,31 +979,31 @@ pass_if: {"condition": "\u003e 0", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-cell-grows"
+    <li class="expected-behavior-item" id="bt-cell-draws-well"
         data-test-kind="behavioral"
         
-        data-pytest-node="cell-grows"
-        data-classification="behavioral"
+        data-pytest-node="cell-draws-well"
+        data-classification="supporting"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">cell-grows</strong>
+        <span class="classification-pill classification-supporting">supporting</span>
+        <strong style="font-size: 0.9em;">cell-draws-well</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>closing-the-loop</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The cell gains mass over the run from its uptake.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The cell is a local sink — uptake and biomass rise.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(single_cell.mass)", "kind": "observable"}
-pass_if: {"condition": "\u003e 1.0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "uptake_total(t)", "kind": "observable"}
+pass_if: {"condition": "\u003e 0 and rising", "op": "threshold"}</pre>
       </details>
       
       
@@ -1135,22 +1126,22 @@ pass_if: {"condition": "\u003e 1.0", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Sensing and acting are two sides of one coupling: over a real diffusing map[float] field the cell draws down a local source (1.0→0.20), acts back with uptake flux 0.34, and grows (mass 1.0→1.17).</li>
+<li>Over a real 1-D diffusing nutrient field (Fick) the cell forms a gradient and draws a local well; field mass is CONSERVED — Σfield 5.05 + cumulative uptake 0.95 ≈ the initial 6.0 — so sensing and acting are one conserved coupling.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>FIELD-DIFFUSES</strong> — source field[4] 1.0-&gt;0.2049; neighbour field[0]-&gt;0.2647</li>
-<li><strong>CELL-ACTS</strong> — last(uptake_flux) = 0.3387 &gt; 0</li>
-<li><strong>CELL-GROWS</strong> — last(single_cell.mass) = 1.1693 &gt; 1.0</li>
+<li><strong>GRADIENT-FORMS</strong> — point bolus diffuses across the 15-node lattice</li>
+<li><strong>MASS-CONSERVED</strong> — 5.05 + 0.95 ≈ 6.00 (conserved)</li>
+<li><strong>CELL-DRAWS-WELL</strong> — cumulative uptake 0 → 0.95</li>
+<li><strong>conservation</strong> — field+uptake conserved: Σfield 5.05 + taken 0.95 ≈ initial 6.00</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1234,7 +1225,7 @@ pass_if: {"condition": "\u003e 1.0", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "closing-the-loop";

@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="6 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">Can a single metabolism interface — the ports nutrients ⇒ {biomass, energy, entropy, secretions} of Fig 6 — be realized by three genuinely different mechanisms (a lumped-yield process, a saturating-kinetic process, and a real flux-balance optimization via COBRApy) while every other part of the composite, and the interface itself, stays byte-for-byte the same?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">Installing three different handlers on the one Fig 6 metabolism signature yields three executables that all emit the same port set (biomass/energy/entropy/secretions) but with mechanism-specific trajectories — coarse highest, kinetic lowest, FBA in between — demonstrating that mechanism is swappable behind a preserved interface (compiler law 4, handler independence).</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Compile the Fig 6 disintegration/metabolism draft under three handler environments (coarse, kinetic, fba), run all three, and compare their biomass trajectories over an identical interface.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Each of the three handlers produces positive biomass. Confirmed: coarse 4.0, kinetic 2.6667, fba 3.2 — all &gt; 0.</span>
+            <span class="finding-claim finding-statement">Every handler conserves mass: final biomass = yield × S₀. Confirmed: coarse/kinetic/FBA all → biomass 5.0.</span>
             
-            <span class="finding-chip">via <code>all-produce-biomass</code></span>
+            <span class="finding-chip">via <code>mass-conserved</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> coarse 4.0, kinetic 2.6667, fba 3.2 — all &gt; 0 · 
+              <strong>observed:</strong> coarse/kinetic/FBA all → biomass 5.0 · 
               
-              via test <a href="#bt-all-produce-biomass" onclick="_gotoStudyTab('tests','bt-all-produce-biomass');return false;"><code>all-produce-biomass</code></a> · 
+              via test <a href="#bt-mass-conserved" onclick="_gotoStudyTab('tests','bt-mass-conserved');return false;"><code>mass-conserved</code></a> · 
               in run <a href="#run-one-interface-three-mechanisms"><code>one-interface-three-mechanisms</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all &gt; 0 (4.0 / 2.67 / 3.2)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all = 5.0 (= 0.5 × 10)</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The three biomass endpoints are meaningfully spread, not identical. Confirmed: biomass spread 2.667–4.0 (Δ = 1.333) &gt; 1.0.</span>
+            <span class="finding-claim finding-statement">The three mechanisms differ in dynamical SHAPE, not just slope. Confirmed: t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap).</span>
             
-            <span class="finding-chip">via <code>mechanisms-differ</code></span>
+            <span class="finding-chip">via <code>distinct-kinetics</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> biomass spread 2.667–4.0 (Δ = 1.333) &gt; 1.0 · 
+              <strong>observed:</strong> t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap) · 
               
-              via test <a href="#bt-mechanisms-differ" onclick="_gotoStudyTab('tests','bt-mechanisms-differ');return false;"><code>mechanisms-differ</code></a> · 
+              via test <a href="#bt-distinct-kinetics" onclick="_gotoStudyTab('tests','bt-distinct-kinetics');return false;"><code>distinct-kinetics</code></a> · 
               in run <a href="#run-one-interface-three-mechanisms"><code>one-interface-three-mechanisms</code></a>
               
               
@@ -532,7 +532,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 1.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: three distinct times</code></div>
             
             
             
@@ -551,7 +551,7 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">All three executables expose the identical port set (biomass, energy, entropy, secretions) over the identical wiring (compiler law 2/4). Confirmed: all three emit {biomass, energy, entropy, secretions} over identical wiring.</span>
+            <span class="finding-claim finding-statement">All three expose the identical port set over identical wiring. Confirmed: nutrients ⇒ biomass, one interface (law 4).</span>
             
             <span class="finding-chip">via <code>interface-preserved</code></span>
             
@@ -565,7 +565,7 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> all three emit {biomass, energy, entropy, secretions} over identical wiring · 
+              <strong>observed:</strong> nutrients ⇒ biomass, one interface (law 4) · 
               
               via test <a href="#bt-interface-preserved" onclick="_gotoStudyTab('tests','bt-interface-preserved');return false;"><code>interface-preserved</code></a> · 
               in run <a href="#run-one-interface-three-mechanisms"><code>one-interface-three-mechanisms</code></a>
@@ -622,6 +622,18 @@
           </div>
         </div>
         
+        
+        
+        
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-top:1px solid #f1f5f9">
+          <span style="padding:1px 8px;border-radius:9999px;background:#fef9c3;color:#854d0e;font-weight:600;font-size:0.72em;white-space:nowrap">medium</span>
+          <div>
+            <strong style="color:#1e293b">claim-untested</strong>
+            <code style="font-size:0.82em">replication</code>
+            <div style="color:#475569;font-size:0.9em;margin-top:1px">only 2 replicates — add seeds for a robustness claim</div>
+          </div>
+        </div>
+        
       </div>
     </div>
     
@@ -631,7 +643,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">Each of the three handlers produces positive biomass. Confirmed: coarse 4.0, kinetic 2.6667, fba 3.2 — all &gt; 0.<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">Every handler conserves mass: final biomass = yield × S₀. Confirmed: coarse/kinetic/FBA all → biomass 5.0.<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -805,15 +817,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -898,31 +901,31 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-all-produce-biomass"
+    <li class="expected-behavior-item" id="bt-mass-conserved"
         data-test-kind="behavioral"
         
-        data-pytest-node="all-produce-biomass"
-        data-classification="behavioral"
+        data-pytest-node="mass-conserved"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">all-produce-biomass</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mass-conserved</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>one-interface-three-mechanisms</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Each of the three handlers produces positive biomass.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Every handler conserves mass: final biomass = yield × S₀.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(coarse.biomass) for coarse, kinetic, fba", "kind": "observable"}
-pass_if: {"condition": "all \u003e 0 (4.0 / 2.67 / 3.2)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "final biomass for coarse/kinetic/FBA", "kind": "observable"}
+pass_if: {"condition": "all = 5.0 (= 0.5 \u00d7 10)", "op": "threshold"}</pre>
       </details>
       
       
@@ -937,31 +940,31 @@ pass_if: {"condition": "all \u003e 0 (4.0 / 2.67 / 3.2)", "op": "threshold"}</pr
     
     
     
-    <li class="expected-behavior-item" id="bt-mechanisms-differ"
+    <li class="expected-behavior-item" id="bt-distinct-kinetics"
         data-test-kind="behavioral"
         
-        data-pytest-node="mechanisms-differ"
-        data-classification="behavioral"
+        data-pytest-node="distinct-kinetics"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">mechanisms-differ</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">distinct-kinetics</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>one-interface-three-mechanisms</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The three biomass endpoints are meaningfully spread, not identical.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The three mechanisms differ in dynamical SHAPE, not just slope.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max-min of {coarse, kinetic, fba} last biomass", "kind": "observable"}
-pass_if: {"condition": "\u003e 1.0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "time to 90% substrate consumed", "kind": "observable"}
+pass_if: {"condition": "three distinct times", "op": "threshold"}</pre>
       </details>
       
       
@@ -980,26 +983,26 @@ pass_if: {"condition": "\u003e 1.0", "op": "threshold"}</pre>
         data-test-kind="behavioral"
         
         data-pytest-node="interface-preserved"
-        data-classification="structural"
+        data-classification="supporting"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-structural">structural</span>
+        <span class="classification-pill classification-supporting">supporting</span>
         <strong style="font-size: 0.9em;">interface-preserved</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>one-interface-three-mechanisms</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">All three executables expose the identical port set (biomass, energy, entropy, secretions) over the identical wiring (compiler law 2/4).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">All three expose the identical port set over identical wiring.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "port-set equality across the three compiled composites", "kind": "observable"}
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "port set across the three handlers", "kind": "observable"}
 pass_if: {"condition": "identical", "op": "threshold"}</pre>
       </details>
       
@@ -1123,22 +1126,22 @@ pass_if: {"condition": "identical", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is realized by THREE independent handlers — coarse (biomass 4.0), saturating-kinetic (2.67), and real COBRApy FBA (3.2) — with no change to the rest of the composite (handler independence, law 4).</li>
+<li>One metabolism interface, three handlers (first-order, Michaelis–Menten, real COBRApy LP) as a CLOSED-LOOP batch: all converge to the SAME final biomass (yield·S₀ = 5.0, mass conserved) but with three DISTINCT kinetic signatures — substrate exhausted at t≈4.0 / 8.6 / 10.2. Same interface, conserved mass, different dynamics.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>ALL-PRODUCE-BIOMASS</strong> — coarse 4.0, kinetic 2.6667, fba 3.2 — all &gt; 0</li>
-<li><strong>MECHANISMS-DIFFER</strong> — biomass spread 2.667–4.0 (Δ = 1.333) &gt; 1.0</li>
-<li><strong>INTERFACE-PRESERVED</strong> — all three emit {biomass, energy, entropy, secretions} over identical wiring</li>
+<li><strong>MASS-CONSERVED</strong> — coarse/kinetic/FBA all → biomass 5.0</li>
+<li><strong>DISTINCT-KINETICS</strong> — t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap)</li>
+<li><strong>INTERFACE-PRESERVED</strong> — nutrients ⇒ biomass, one interface (law 4)</li>
+<li><strong>conservation</strong> — all three converge to biomass = yield·S₀ = 5.0 (mass conserved); coarse/MM/FBA differ in timescale, not endpoint</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1222,7 +1225,7 @@ pass_if: {"condition": "identical", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "one-interface-three-mechanisms";

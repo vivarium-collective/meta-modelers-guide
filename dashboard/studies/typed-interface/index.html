@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">Can the cellular boundary be specified as nothing but a set of typed, unit-bearing exchange ports (chemical, mechanical, electrical, thermal, plus growth rate, shape, objective, viability) with no committed mechanism, and then compiled — by installing one conforming handler — into a running, bounded, goal-directed cell whose interface is exactly the one declared?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">The Fig 4 interface authored as an inert draft (typed ports + a behavior contract, an update that does nothing) compiles under a single conforming handler into an executable that leaves every port and wire unchanged (law 2) yet produces genuine dynamics: shape and objective rise while the cell takes up chemical from its surroundings.</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Author the Fig 4b cellular interface as a draft composite of typed ports, install a bounded-cell handler via the compiler, run it, and measure whether the interface variables evolve as a goal-directed cell would.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The bounded-cell handler grows the cell body from uptake. Confirmed: max(interface.shape) = 4.2 ≥ 3.0.</span>
+            <span class="finding-claim finding-statement">Volume gained is paid for by nutrient consumed (mass balance). Confirmed: volume +3.70 from nutrient −10.00 (yield-bounded).</span>
             
-            <span class="finding-chip">via <code>cell-grows</code></span>
+            <span class="finding-chip">via <code>growth-tracks-nutrient</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> max(interface.shape) = 4.2 ≥ 3.0 · 
+              <strong>observed:</strong> volume +3.70 from nutrient −10.00 (yield-bounded) · 
               
-              via test <a href="#bt-cell-grows" onclick="_gotoStudyTab('tests','bt-cell-grows');return false;"><code>cell-grows</code></a> · 
+              via test <a href="#bt-growth-tracks-nutrient" onclick="_gotoStudyTab('tests','bt-growth-tracks-nutrient');return false;"><code>growth-tracks-nutrient</code></a> · 
               in run <a href="#run-typed-interface"><code>typed-interface</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: ≥ 3.0 (dimensionless shape factor)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: volume gain &gt; 0 and ≤ yield·consumed</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The cell accumulates progress toward its objective. Confirmed: last(interface.objective) = 1.6 &gt; 1.0.</span>
+            <span class="finding-claim finding-statement">Uptake follows a saturating Monod law and depletes the pool. Confirmed: nutrient 10→0 (saturating drawdown).</span>
             
-            <span class="finding-chip">via <code>goal-directed</code></span>
+            <span class="finding-chip">via <code>monod-saturation</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> last(interface.objective) = 1.6 &gt; 1.0 · 
+              <strong>observed:</strong> nutrient 10→0 (saturating drawdown) · 
               
-              via test <a href="#bt-goal-directed" onclick="_gotoStudyTab('tests','bt-goal-directed');return false;"><code>goal-directed</code></a> · 
+              via test <a href="#bt-monod-saturation" onclick="_gotoStudyTab('tests','bt-monod-saturation');return false;"><code>monod-saturation</code></a> · 
               in run <a href="#run-typed-interface"><code>typed-interface</code></a>
               
               
@@ -532,7 +532,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 1.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: monotonic depletion to ≈0</code></div>
             
             
             
@@ -551,9 +551,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The chemical port carries a net uptake (negative outward flux). Confirmed: min(interface.chemical) = -0.8 &lt; 0.</span>
+            <span class="finding-claim finding-statement">Viability holds in the tolerance band then collapses past it (Arrhenius). Confirmed: viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band.</span>
             
-            <span class="finding-chip">via <code>chemical-uptake</code></span>
+            <span class="finding-chip">via <code>viability-cliff</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -565,9 +565,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> min(interface.chemical) = -0.8 &lt; 0 · 
+              <strong>observed:</strong> viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band · 
               
-              via test <a href="#bt-chemical-uptake" onclick="_gotoStudyTab('tests','bt-chemical-uptake');return false;"><code>chemical-uptake</code></a> · 
+              via test <a href="#bt-viability-cliff" onclick="_gotoStudyTab('tests','bt-viability-cliff');return false;"><code>viability-cliff</code></a> · 
               in run <a href="#run-typed-interface"><code>typed-interface</code></a>
               
               
@@ -576,7 +576,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &lt; 0 (net uptake)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: holds ≈1 in-band, drops &lt;0.1 past tolerance</code></div>
             
             
             
@@ -643,7 +643,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">The bounded-cell handler grows the cell body from uptake. Confirmed: max(interface.shape) = 4.2 ≥ 3.0.<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">Volume gained is paid for by nutrient consumed (mass balance). Confirmed: volume +3.70 from nutrient −10.00 (yield-bounded).<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -852,15 +852,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -945,31 +936,31 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-cell-grows"
+    <li class="expected-behavior-item" id="bt-growth-tracks-nutrient"
         data-test-kind="behavioral"
         
-        data-pytest-node="cell-grows"
-        data-classification="behavioral"
+        data-pytest-node="growth-tracks-nutrient"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">cell-grows</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">growth-tracks-nutrient</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>typed-interface</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The bounded-cell handler grows the cell body from uptake.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Volume gained is paid for by nutrient consumed (mass balance).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(interface.shape) over the run", "kind": "observable"}
-pass_if: {"condition": "\u2265 3.0 (dimensionless shape factor)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "volume gained vs nutrient drawn down", "kind": "observable"}
+pass_if: {"condition": "volume gain \u003e 0 and \u2264 yield\u00b7consumed", "op": "threshold"}</pre>
       </details>
       
       
@@ -984,31 +975,31 @@ pass_if: {"condition": "\u2265 3.0 (dimensionless shape factor)", "op": "thresho
     
     
     
-    <li class="expected-behavior-item" id="bt-goal-directed"
+    <li class="expected-behavior-item" id="bt-monod-saturation"
         data-test-kind="behavioral"
         
-        data-pytest-node="goal-directed"
-        data-classification="behavioral"
+        data-pytest-node="monod-saturation"
+        data-classification="supporting"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">goal-directed</strong>
+        <span class="classification-pill classification-supporting">supporting</span>
+        <strong style="font-size: 0.9em;">monod-saturation</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>typed-interface</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The cell accumulates progress toward its objective.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Uptake follows a saturating Monod law and depletes the pool.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(interface.objective)", "kind": "observable"}
-pass_if: {"condition": "\u003e 1.0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "nutrient(t)", "kind": "observable"}
+pass_if: {"condition": "monotonic depletion to \u22480", "op": "threshold"}</pre>
       </details>
       
       
@@ -1023,31 +1014,31 @@ pass_if: {"condition": "\u003e 1.0", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-chemical-uptake"
+    <li class="expected-behavior-item" id="bt-viability-cliff"
         data-test-kind="behavioral"
         
-        data-pytest-node="chemical-uptake"
-        data-classification="behavioral"
+        data-pytest-node="viability-cliff"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">chemical-uptake</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">viability-cliff</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>typed-interface</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The chemical port carries a net uptake (negative outward flux).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Viability holds in the tolerance band then collapses past it (Arrhenius).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "min(interface.chemical)", "kind": "observable"}
-pass_if: {"condition": "\u003c 0 (net uptake)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability once T \u003e T_tol", "kind": "observable"}
+pass_if: {"condition": "holds \u22481 in-band, drops \u003c0.1 past tolerance", "op": "threshold"}</pre>
       </details>
       
       
@@ -1170,22 +1161,22 @@ pass_if: {"condition": "\u003c 0 (net uptake)", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>A cell's boundary is a small set of typed, unit-bearing ports; a conforming handler turns that inert interface into a bounded, goal-directed cell that grows (shape 1.0→4.2) and pursues an objective.</li>
+<li>Given one conforming handler the cellular interface becomes a bounded cell that grows on a DEPLETING nutrient (Monod uptake; volume +3.7 as substrate falls 10→0) and whose viability holds ≈1 in-band then collapses in an Arrhenius cliff once temperature is ramped past its tolerance — coupled dynamics, not a ramp.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>CELL-GROWS</strong> — max(interface.shape) = 4.2 ≥ 3.0</li>
-<li><strong>GOAL-DIRECTED</strong> — last(interface.objective) = 1.6 &gt; 1.0</li>
-<li><strong>CHEMICAL-UPTAKE</strong> — min(interface.chemical) = -0.8 &lt; 0</li>
+<li><strong>GROWTH-TRACKS-NUTRIENT</strong> — volume +3.70 from nutrient −10.00 (yield-bounded)</li>
+<li><strong>MONOD-SATURATION</strong> — nutrient 10→0 (saturating drawdown)</li>
+<li><strong>VIABILITY-CLIFF</strong> — viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band</li>
+<li><strong>conservation</strong> — volume gained 3.70 from nutrient drawn-down 10.00</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1269,7 +1260,7 @@ pass_if: {"condition": "\u003c 0 (net uptake)", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "typed-interface";

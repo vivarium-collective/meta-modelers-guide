@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">Can evolution (Fig 10) be modelled compositionally — variation and selection acting on a population, and, crucially, the *addition of a new interface port* to a lineage — so that the interface set itself changes over evolutionary time?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">The Fig 10-3 evolution executable selects a fitter variant (its cell count grows fastest) and introduces a new interface capability: a port that is absent at t=0 emerges with nonzero value, showing that composition can add ports, not just change their values.</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Run the Fig 10-3 evolution executable and measure differential growth (selection) and the emergence of a new interface port.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The fitter variant is selected — its cell count grows. Confirmed: cell_ecoli.cell_count-&gt;3.4 &gt; 1.</span>
+            <span class="finding-claim finding-statement">The fitter mutant&#39;s frequency rises (a selection sweep). Confirmed: 0.05 → 0.70 over the run.</span>
             
-            <span class="finding-chip">via <code>selection</code></span>
+            <span class="finding-chip">via <code>selection-sweep</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_ecoli.cell_count-&gt;3.4 &gt; 1 · 
+              <strong>observed:</strong> 0.05 → 0.70 over the run · 
               
-              via test <a href="#bt-selection" onclick="_gotoStudyTab('tests','bt-selection');return false;"><code>selection</code></a> · 
+              via test <a href="#bt-selection-sweep" onclick="_gotoStudyTab('tests','bt-selection-sweep');return false;"><code>selection-sweep</code></a> · 
               in run <a href="#run-evolve"><code>evolve</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 1 (3.4)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: rises substantially</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A new interface port emerges (absent at t=0, nonzero after) — evolution adds a port. Confirmed: cell_O157.new_port 0.0-&gt;0.5695.</span>
+            <span class="finding-claim finding-statement">The wild type is competitively excluded as the mutant rises. Confirmed: n_wt peaks then falls as the mutant takes over.</span>
             
-            <span class="finding-chip">via <code>new-port-emerges</code></span>
+            <span class="finding-chip">via <code>competitive-exclusion</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_O157.new_port 0.0-&gt;0.5695 · 
+              <strong>observed:</strong> n_wt peaks then falls as the mutant takes over · 
               
-              via test <a href="#bt-new-port-emerges" onclick="_gotoStudyTab('tests','bt-new-port-emerges');return false;"><code>new-port-emerges</code></a> · 
+              via test <a href="#bt-competitive-exclusion" onclick="_gotoStudyTab('tests','bt-competitive-exclusion');return false;"><code>competitive-exclusion</code></a> · 
               in run <a href="#run-evolve"><code>evolve</code></a>
               
               
@@ -532,7 +532,51 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: 0 -&gt; &gt; 0 (0.57)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: rises then declines</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">A new interface port emerges, carried by the winning lineage. Confirmed: new capability 0 → ~0.7 riding the sweep.</span>
+            
+            <span class="finding-chip">via <code>new-capability</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-03</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> new capability 0 → ~0.7 riding the sweep · 
+              
+              via test <a href="#bt-new-capability" onclick="_gotoStudyTab('tests','bt-new-capability');return false;"><code>new-capability</code></a> · 
+              in run <a href="#run-evolve"><code>evolve</code></a>
+              
+              
+            </div>
+            
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: emerges from 0</code></div>
             
             
             
@@ -599,7 +643,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">The fitter variant is selected — its cell count grows. Confirmed: cell_ecoli.cell_count-&gt;3.4 &gt; 1.<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">The fitter mutant&#39;s frequency rises (a selection sweep). Confirmed: 0.05 → 0.70 over the run.<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -773,15 +817,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -866,31 +901,31 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-selection"
+    <li class="expected-behavior-item" id="bt-selection-sweep"
         data-test-kind="behavioral"
         
-        data-pytest-node="selection"
-        data-classification="behavioral"
+        data-pytest-node="selection-sweep"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">selection</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">selection-sweep</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>evolve</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The fitter variant is selected — its cell count grows.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The fitter mutant&#39;s frequency rises (a selection sweep).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(environ.cell_ecoli.cell_count)", "kind": "observable"}
-pass_if: {"condition": "\u003e 1 (3.4)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mutant fraction n_mut/(n_wt+n_mut)", "kind": "observable"}
+pass_if: {"condition": "rises substantially", "op": "threshold"}</pre>
       </details>
       
       
@@ -905,31 +940,70 @@ pass_if: {"condition": "\u003e 1 (3.4)", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-new-port-emerges"
+    <li class="expected-behavior-item" id="bt-competitive-exclusion"
         data-test-kind="behavioral"
         
-        data-pytest-node="new-port-emerges"
-        data-classification="structural"
+        data-pytest-node="competitive-exclusion"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-structural">structural</span>
-        <strong style="font-size: 0.9em;">new-port-emerges</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">competitive-exclusion</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>evolve</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">A new interface port emerges (absent at t=0, nonzero after) — evolution adds a port.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The wild type is competitively excluded as the mutant rises.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "first vs last of cell_O157.new_port", "kind": "observable"}
-pass_if: {"condition": "0 -\u003e \u003e 0 (0.57)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "n_wt(t)", "kind": "observable"}
+pass_if: {"condition": "rises then declines", "op": "threshold"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-new-capability"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="new-capability"
+        data-classification="supporting"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-supporting">supporting</span>
+        <strong style="font-size: 0.9em;">new-capability</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>evolve</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">A new interface port emerges, carried by the winning lineage.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "capability(t)", "kind": "observable"}
+pass_if: {"condition": "emerges from 0", "op": "threshold"}</pre>
       </details>
       
       
@@ -1052,21 +1126,22 @@ pass_if: {"condition": "0 -\u003e \u003e 0 (0.57)", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Evolution is a compositional rewrite too: a fitter variant is selected (cell_count → 3.4) and a lineage gains an entirely new interface port (new_port emerges to 0.57).</li>
+<li>Under chemostat-style competition the fitter variant SWEEPS — mutant fraction 0.05→0.70 as it competitively excludes the wild type — and a new interface capability rides the sweep. Selection as a compositional rewrite of the population.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>SELECTION</strong> — cell_ecoli.cell_count-&gt;3.4 &gt; 1</li>
-<li><strong>NEW-PORT-EMERGES</strong> — cell_O157.new_port 0.0-&gt;0.5695</li>
+<li><strong>SELECTION-SWEEP</strong> — 0.05 → 0.70 over the run</li>
+<li><strong>COMPETITIVE-EXCLUSION</strong> — n_wt peaks then falls as the mutant takes over</li>
+<li><strong>NEW-CAPABILITY</strong> — new capability 0 → ~0.7 riding the sweep</li>
+<li><strong>conservation</strong> — selection sweep: mutant fraction 0.05 → 0.70</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1115,8 +1190,8 @@ pass_if: {"condition": "0 -\u003e \u003e 0 (0.57)", "op": "threshold"}</pre>
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>2</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">2 PASS</span> ·
+        <strong>3</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">3 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -1150,7 +1225,7 @@ pass_if: {"condition": "0 -\u003e \u003e 0 (0.57)", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "evolve";

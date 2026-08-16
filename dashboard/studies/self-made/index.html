@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="4 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">How does a cell hold itself together? Does the Fig 9 composition express autopoiesis — metabolism, containment, and replication mutually producing one another — and does that same closure appear when each function is realized at a coarse, a self-organized, or a molecular grain?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">The Fig 9 executables show all three closure functions simultaneously active and expressible at multiple grains: a coarse metabolism/containment/replication triad and a molecular minimal cell (Fig 9b) that grows its own membrane and proteins — the mutual closure Maturana &amp; Varela called autopoiesis.</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Run the Fig 9a (three-grain closure) and Fig 9b (minimal cell) executables and confirm metabolism, containment, and replication are all productive at more than one grain.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">All three autopoietic functions produce output (metabolism, containment, replication). Confirmed: metabolism 2.4, containment 1.6, replication 1.6 — all &gt; 0.</span>
+            <span class="finding-claim finding-statement">The intact composition self-produces (autocatalytic membrane + enzyme). Confirmed: intact membrane→3.8, enzyme→3.1 (self-produced).</span>
             
-            <span class="finding-chip">via <code>closure-active</code></span>
+            <span class="finding-chip">via <code>closure-sustains</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> metabolism 2.4, containment 1.6, replication 1.6 — all &gt; 0 · 
+              <strong>observed:</strong> intact membrane→3.8, enzyme→3.1 (self-produced) · 
               
-              via test <a href="#bt-closure-active" onclick="_gotoStudyTab('tests','bt-closure-active');return false;"><code>closure-active</code></a> · 
+              via test <a href="#bt-closure-sustains" onclick="_gotoStudyTab('tests','bt-closure-sustains');return false;"><code>closure-sustains</code></a> · 
               in run <a href="#run-self-made"><code>self-made</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all &gt; 0 (2.4 / 1.6 / 1.6)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: rise to a large pool</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Each function is realized at more than one grain (coarse AND self-organized nonzero). Confirmed: coarse + self-organized variants both nonzero for each function.</span>
+            <span class="finding-claim finding-statement">The enzyme-knockout NEGATIVE control collapses — closure is required. Confirmed: knockout enzyme 0.3 → ~0, membrane never builds.</span>
             
-            <span class="finding-chip">via <code>multi-grain</code></span>
+            <span class="finding-chip">via <code>knockout-collapses</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> coarse + self-organized variants both nonzero for each function · 
+              <strong>observed:</strong> knockout enzyme 0.3 → ~0, membrane never builds · 
               
-              via test <a href="#bt-multi-grain" onclick="_gotoStudyTab('tests','bt-multi-grain');return false;"><code>multi-grain</code></a> · 
+              via test <a href="#bt-knockout-collapses" onclick="_gotoStudyTab('tests','bt-knockout-collapses');return false;"><code>knockout-collapses</code></a> · 
               in run <a href="#run-self-made"><code>self-made</code></a>
               
               
@@ -532,7 +532,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: both &gt; 0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: decays to ≈0</code></div>
             
             
             
@@ -551,9 +551,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The Fig 9b minimal cell grows its own membrane and protein pool. Confirmed: membrane.area-&gt;1.2, proteins-&gt;1.2687.</span>
+            <span class="finding-claim finding-statement">Metabolism, containment, replication are all productive in the closure. Confirmed: precursor, membrane, enzyme all sustained.</span>
             
-            <span class="finding-chip">via <code>minimal-cell-grows</code></span>
+            <span class="finding-chip">via <code>multi-grain</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -565,9 +565,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> membrane.area-&gt;1.2, proteins-&gt;1.2687 · 
+              <strong>observed:</strong> precursor, membrane, enzyme all sustained · 
               
-              via test <a href="#bt-minimal-cell-grows" onclick="_gotoStudyTab('tests','bt-minimal-cell-grows');return false;"><code>minimal-cell-grows</code></a> · 
+              via test <a href="#bt-multi-grain" onclick="_gotoStudyTab('tests','bt-multi-grain');return false;"><code>multi-grain</code></a> · 
               in run <a href="#run-self-made"><code>self-made</code></a>
               
               
@@ -576,7 +576,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: both &gt; 1.0 (1.2 / 1.27)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all active</code></div>
             
             
             
@@ -622,6 +622,18 @@
           </div>
         </div>
         
+        
+        
+        
+        <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-top:1px solid #f1f5f9">
+          <span style="padding:1px 8px;border-radius:9999px;background:#fef9c3;color:#854d0e;font-weight:600;font-size:0.72em;white-space:nowrap">medium</span>
+          <div>
+            <strong style="color:#1e293b">claim-untested</strong>
+            <code style="font-size:0.82em">replication</code>
+            <div style="color:#475569;font-size:0.9em;margin-top:1px">only 2 replicates — add seeds for a robustness claim</div>
+          </div>
+        </div>
+        
       </div>
     </div>
     
@@ -631,7 +643,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">All three autopoietic functions produce output (metabolism, containment, replication). Confirmed: metabolism 2.4, containment 1.6, replication 1.6 — all &gt; 0.<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">The intact composition self-produces (autocatalytic membrane + enzyme). Confirmed: intact membrane→3.8, enzyme→3.1 (self-produced).<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -840,15 +852,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -933,31 +936,70 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-closure-active"
+    <li class="expected-behavior-item" id="bt-closure-sustains"
         data-test-kind="behavioral"
         
-        data-pytest-node="closure-active"
-        data-classification="behavioral"
+        data-pytest-node="closure-sustains"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">closure-active</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">closure-sustains</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>self-made</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">All three autopoietic functions produce output (metabolism, containment, replication).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The intact composition self-produces (autocatalytic membrane + enzyme).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(metabolism_selforg.products), containment_selforg.membrane, replication_coarse.copies", "kind": "observable"}
-pass_if: {"condition": "all \u003e 0 (2.4 / 1.6 / 1.6)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "membrane/enzyme(t), intact", "kind": "observable"}
+pass_if: {"condition": "rise to a large pool", "op": "threshold"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-knockout-collapses"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="knockout-collapses"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">knockout-collapses</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>self-made</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The enzyme-knockout NEGATIVE control collapses — closure is required.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "enzyme(t), knockout", "kind": "observable"}
+pass_if: {"condition": "decays to \u22480", "op": "threshold"}</pre>
       </details>
       
       
@@ -976,66 +1018,27 @@ pass_if: {"condition": "all \u003e 0 (2.4 / 1.6 / 1.6)", "op": "threshold"}</pre
         data-test-kind="behavioral"
         
         data-pytest-node="multi-grain"
-        data-classification="structural"
+        data-classification="supporting"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-structural">structural</span>
+        <span class="classification-pill classification-supporting">supporting</span>
         <strong style="font-size: 0.9em;">multi-grain</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>self-made</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Each function is realized at more than one grain (coarse AND self-organized nonzero).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Metabolism, containment, replication are all productive in the closure.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "coarse and selforg variants of each function", "kind": "observable"}
-pass_if: {"condition": "both \u003e 0", "op": "threshold"}</pre>
-      </details>
-      
-      
-      
-      
-    </li>
-    
-    
-    
-    
-    
-    
-    
-    
-    <li class="expected-behavior-item" id="bt-minimal-cell-grows"
-        data-test-kind="behavioral"
-        
-        data-pytest-node="minimal-cell-grows"
-        data-classification="behavioral"
-        data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
-      
-        
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">minimal-cell-grows</strong>
-        
-        <span class="muted" style="font-size:0.78em">requires: <code>self-made</code></span>
-        
-      </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The Fig 9b minimal cell grows its own membrane and protein pool.</div>
-      
-      
-      <details style="margin-top: 6px; font-size: 0.82em;">
-        <summary class="muted" style="cursor: pointer;">Assertion</summary>
-        
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(membrane.area) and last(proteins.concentration)", "kind": "observable"}
-pass_if: {"condition": "both \u003e 1.0 (1.2 / 1.27)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "the three functions, intact", "kind": "observable"}
+pass_if: {"condition": "all active", "op": "threshold"}</pre>
       </details>
       
       
@@ -1158,22 +1161,22 @@ pass_if: {"condition": "both \u003e 1.0 (1.2 / 1.27)", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Metabolism, containment, and replication close on one another (autopoiesis) and the same three functions appear at coarse, self-organized, and molecular grains — metabolites 4.8, membrane 1.6, replication copies 1.6/1.2.</li>
+<li>The autopoietic composition SELF-SUSTAINS — metabolism→precursor→enzyme→metabolism closes on itself and builds a large membrane/enzyme pool — while the enzyme-knockout CONTROL collapses to ≈0. The closure is load-bearing, not decorative.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>CLOSURE-ACTIVE</strong> — metabolism 2.4, containment 1.6, replication 1.6 — all &gt; 0</li>
-<li><strong>MULTI-GRAIN</strong> — coarse + self-organized variants both nonzero for each function</li>
-<li><strong>MINIMAL-CELL-GROWS</strong> — membrane.area-&gt;1.2, proteins-&gt;1.2687</li>
+<li><strong>CLOSURE-SUSTAINS</strong> — intact membrane→3.8, enzyme→3.1 (self-produced)</li>
+<li><strong>KNOCKOUT-COLLAPSES</strong> — knockout enzyme 0.3 → ~0, membrane never builds</li>
+<li><strong>MULTI-GRAIN</strong> — precursor, membrane, enzyme all sustained</li>
+<li><strong>conservation</strong> — intact composition self-sustains a steady state; the enzyme-knockout control collapses — the closure is load-bearing</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1257,7 +1260,7 @@ pass_if: {"condition": "both \u003e 1.0 (1.2 / 1.27)", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "self-made";

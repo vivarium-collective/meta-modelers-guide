@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">Do all of the paper&#39;s semantic figures actually compile to executables that run, and — the real test of composition — can the independently-authored figure mechanisms be assembled into a single whole cell that lives the paper&#39;s full arc: grow, divide, and die?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">All 12 executable composites build and produce non-trivial dynamics, and a whole-cell composite assembled from the figure mechanisms (uptake+growth, metabolism, viability, division, disintegration) runs the full arc in one trajectory: biomass rises and peaks, cell_count reaches 2, then a thermal shock drives viability toward 0 and debris accumulates.</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Render a dynamics figure for every executable (the gallery) and run the composed whole cell for 20 time units, measuring peak biomass, division time, minimum viability, and final debris.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Every executable composite builds and produces non-trivial dynamics. Confirmed: 12 / 12 executables rendered dynamics (measure_all.py).</span>
+            <span class="finding-claim finding-statement">Grow → divide → thermal shock → viability collapse → disintegrate, in one run. Confirmed: growth, division, shock, death, debris in one composite.</span>
             
-            <span class="finding-chip">via <code>all-executables-run</code></span>
+            <span class="finding-chip">via <code>full-arc</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> 12 / 12 executables rendered dynamics (measure_all.py) · 
+              <strong>observed:</strong> growth, division, shock, death, debris in one composite · 
               
-              via test <a href="#bt-all-executables-run" onclick="_gotoStudyTab('tests','bt-all-executables-run');return false;"><code>all-executables-run</code></a> · 
+              via test <a href="#bt-full-arc" onclick="_gotoStudyTab('tests','bt-full-arc');return false;"><code>full-arc</code></a> · 
               in run <a href="#run-the-living-atlas"><code>the-living-atlas</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: = 12 / 12</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all five phases occur</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The composed whole cell grows and peaks in biomass. Confirmed: peak biomass 5.108 &gt; 3.0.</span>
+            <span class="finding-claim finding-statement">Biomass converts to debris — mass conserved through lysis. Confirmed: peak biomass 8.4 → debris 7.3 (conserved).</span>
             
-            <span class="finding-chip">via <code>whole-cell-grows</code></span>
+            <span class="finding-chip">via <code>mass-conserved-through-death</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> peak biomass 5.108 &gt; 3.0 · 
+              <strong>observed:</strong> peak biomass 8.4 → debris 7.3 (conserved) · 
               
-              via test <a href="#bt-whole-cell-grows" onclick="_gotoStudyTab('tests','bt-whole-cell-grows');return false;"><code>whole-cell-grows</code></a> · 
+              via test <a href="#bt-mass-conserved-through-death" onclick="_gotoStudyTab('tests','bt-mass-conserved-through-death');return false;"><code>mass-conserved-through-death</code></a> · 
               in run <a href="#run-the-living-atlas"><code>the-living-atlas</code></a>
               
               
@@ -532,7 +532,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 3.0 (5.108)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: debris ≈ lysed biomass</code></div>
             
             
             
@@ -551,9 +551,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The composed whole cell divides during the run. Confirmed: cell_count -&gt; 2.0 at t ≈ 3.4.</span>
+            <span class="finding-claim finding-statement">The thermal shock drives viability past its cliff. Confirmed: viability 1.0 → ~0 at the shock.</span>
             
-            <span class="finding-chip">via <code>whole-cell-divides</code></span>
+            <span class="finding-chip">via <code>viability-cliff</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -565,9 +565,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_count -&gt; 2.0 at t ≈ 3.4 · 
+              <strong>observed:</strong> viability 1.0 → ~0 at the shock · 
               
-              via test <a href="#bt-whole-cell-divides" onclick="_gotoStudyTab('tests','bt-whole-cell-divides');return false;"><code>whole-cell-divides</code></a> · 
+              via test <a href="#bt-viability-cliff" onclick="_gotoStudyTab('tests','bt-viability-cliff');return false;"><code>viability-cliff</code></a> · 
               in run <a href="#run-the-living-atlas"><code>the-living-atlas</code></a>
               
               
@@ -576,7 +576,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: ≥ 2 (at t ≈ 3.4)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: collapses toward 0</code></div>
             
             
             
@@ -595,9 +595,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A thermal shock drives viability toward zero and molecular debris accumulates. Confirmed: min viability 0.018 &lt; 0.1; final debris 4.87 &gt; 1.</span>
+            <span class="finding-claim finding-statement">The cell divides as it grows before the shock. Confirmed: cell_count 1 → 14 before death.</span>
             
-            <span class="finding-chip">via <code>whole-cell-dies</code></span>
+            <span class="finding-chip">via <code>divides</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -609,9 +609,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> min viability 0.018 &lt; 0.1; final debris 4.87 &gt; 1 · 
+              <strong>observed:</strong> cell_count 1 → 14 before death · 
               
-              via test <a href="#bt-whole-cell-dies" onclick="_gotoStudyTab('tests','bt-whole-cell-dies');return false;"><code>whole-cell-dies</code></a> · 
+              via test <a href="#bt-divides" onclick="_gotoStudyTab('tests','bt-divides');return false;"><code>divides</code></a> · 
               in run <a href="#run-the-living-atlas"><code>the-living-atlas</code></a>
               
               
@@ -620,7 +620,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: viability &lt; 0.1 AND debris &gt; 1 (0.018 / 4.87)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: ≥ 2</code></div>
             
             
             
@@ -687,7 +687,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">Every executable composite builds and produces non-trivial dynamics. Confirmed: 12 / 12 executables rendered dynamics (measure_all.py).<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">Grow → divide → thermal shock → viability collapse → disintegrate, in one run. Confirmed: growth, division, shock, death, debris in one composite.<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -1246,15 +1246,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -1339,31 +1330,31 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-all-executables-run"
+    <li class="expected-behavior-item" id="bt-full-arc"
         data-test-kind="behavioral"
         
-        data-pytest-node="all-executables-run"
-        data-classification="structural"
+        data-pytest-node="full-arc"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-structural">structural</span>
-        <strong style="font-size: 0.9em;">all-executables-run</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">full-arc</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Every executable composite builds and produces non-trivial dynamics.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Grow → divide → thermal shock → viability collapse → disintegrate, in one run.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "count of executables with a rendered dynamics series", "kind": "observable"}
-pass_if: {"condition": "= 12 / 12", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "the whole trajectory", "kind": "observable"}
+pass_if: {"condition": "all five phases occur", "op": "threshold"}</pre>
       </details>
       
       
@@ -1378,31 +1369,31 @@ pass_if: {"condition": "= 12 / 12", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-whole-cell-grows"
+    <li class="expected-behavior-item" id="bt-mass-conserved-through-death"
         data-test-kind="behavioral"
         
-        data-pytest-node="whole-cell-grows"
-        data-classification="behavioral"
+        data-pytest-node="mass-conserved-through-death"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">whole-cell-grows</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mass-conserved-through-death</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The composed whole cell grows and peaks in biomass.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Biomass converts to debris — mass conserved through lysis.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(biomass)", "kind": "observable"}
-pass_if: {"condition": "\u003e 3.0 (5.108)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "peak biomass vs final debris", "kind": "observable"}
+pass_if: {"condition": "debris \u2248 lysed biomass", "op": "threshold"}</pre>
       </details>
       
       
@@ -1417,31 +1408,31 @@ pass_if: {"condition": "\u003e 3.0 (5.108)", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-whole-cell-divides"
+    <li class="expected-behavior-item" id="bt-viability-cliff"
         data-test-kind="behavioral"
         
-        data-pytest-node="whole-cell-divides"
-        data-classification="behavioral"
+        data-pytest-node="viability-cliff"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">whole-cell-divides</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">viability-cliff</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The composed whole cell divides during the run.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The thermal shock drives viability past its cliff.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(cell_count)", "kind": "observable"}
-pass_if: {"condition": "\u2265 2 (at t \u2248 3.4)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability at shock", "kind": "observable"}
+pass_if: {"condition": "collapses toward 0", "op": "threshold"}</pre>
       </details>
       
       
@@ -1456,31 +1447,31 @@ pass_if: {"condition": "\u2265 2 (at t \u2248 3.4)", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-whole-cell-dies"
+    <li class="expected-behavior-item" id="bt-divides"
         data-test-kind="behavioral"
         
-        data-pytest-node="whole-cell-dies"
-        data-classification="behavioral"
+        data-pytest-node="divides"
+        data-classification="supporting"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">whole-cell-dies</strong>
+        <span class="classification-pill classification-supporting">supporting</span>
+        <strong style="font-size: 0.9em;">divides</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">A thermal shock drives viability toward zero and molecular debris accumulates.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The cell divides as it grows before the shock.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "min(viability) and last(debris)", "kind": "observable"}
-pass_if: {"condition": "viability \u003c 0.1 AND debris \u003e 1 (0.018 / 4.87)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "cell_count(t)", "kind": "observable"}
+pass_if: {"condition": "\u2265 2", "op": "threshold"}</pre>
       </details>
       
       
@@ -1603,23 +1594,23 @@ pass_if: {"condition": "viability \u003c 0.1 AND debris \u003e 1 (0.018 / 4.87)"
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Every draft in the atlas compiles to a running executable (12/12 with dynamics), and the figures compose into ONE whole cell that grows (biomass→5.1), divides (cell_count→2 at t≈3.4), then loses viability under thermal shock (→0.02) and disintegrates into molecular debris (→4.87).</li>
+<li>The composed whole cell runs the full arc in ONE conserved trajectory: autocatalytic growth to biomass 8.4 (dividing to 14 cells), then a thermal shock ramps temperature past tolerance, viability collapses, and biomass converts to molecular debris (7.3) — mass conserved through death (biomass → debris).</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>ALL-EXECUTABLES-RUN</strong> — 12 / 12 executables rendered dynamics (measure_all.py)</li>
-<li><strong>WHOLE-CELL-GROWS</strong> — peak biomass 5.108 &gt; 3.0</li>
-<li><strong>WHOLE-CELL-DIVIDES</strong> — cell_count -&gt; 2.0 at t ≈ 3.4</li>
-<li><strong>WHOLE-CELL-DIES</strong> — min viability 0.018 &lt; 0.1; final debris 4.87 &gt; 1</li>
+<li><strong>FULL-ARC</strong> — growth, division, shock, death, debris in one composite</li>
+<li><strong>MASS-CONSERVED-THROUGH-DEATH</strong> — peak biomass 8.4 → debris 7.3 (conserved)</li>
+<li><strong>VIABILITY-CLIFF</strong> — viability 1.0 → ~0 at the shock</li>
+<li><strong>DIVIDES</strong> — cell_count 1 → 14 before death</li>
+<li><strong>conservation</strong> — mass conserved through death: peak biomass 8.43 → debris 7.26; divides to 14 cells; viability -0.00</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1703,7 +1694,7 @@ pass_if: {"condition": "viability \u003c 0.1 AND debris \u003e 1 (0.018 / 4.87)"
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "the-living-atlas";

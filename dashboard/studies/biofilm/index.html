@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">Can multicellular development (Fig 10) be expressed as compositional reorganization — individual cells attaching, secreting extracellular matrix, and assembling into a biofilm that is itself a higher-level composite with its own aggregate observables?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">The Fig 10-2 development executable grows a biofilm as a higher-level composite: attached-cell count, adhesion, and ECM all rise, and an aggregate biofilm_mass accumulates — development as composition, not a single process.</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Run the Fig 10-2 development executable and measure attachment, ECM secretion, and aggregate biofilm mass.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The aggregate biofilm mass accumulates over the run. Confirmed: biofilm_mass-&gt;2.2493 &gt; 1.0.</span>
+            <span class="finding-claim finding-statement">Cell number follows logistic growth to carrying capacity. Confirmed: cells 0.2 → 5.0 (= K), sigmoidal.</span>
             
-            <span class="finding-chip">via <code>biofilm-accumulates</code></span>
+            <span class="finding-chip">via <code>logistic-saturation</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> biofilm_mass-&gt;2.2493 &gt; 1.0 · 
+              <strong>observed:</strong> cells 0.2 → 5.0 (= K), sigmoidal · 
               
-              via test <a href="#bt-biofilm-accumulates" onclick="_gotoStudyTab('tests','bt-biofilm-accumulates');return false;"><code>biofilm-accumulates</code></a> · 
+              via test <a href="#bt-logistic-saturation" onclick="_gotoStudyTab('tests','bt-logistic-saturation');return false;"><code>logistic-saturation</code></a> · 
               in run <a href="#run-biofilm"><code>biofilm</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 1.0 (2.25)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: sigmoid saturating at K</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Cells attach to the surface and secrete extracellular matrix. Confirmed: attached 1.3496, ecm 1.7994.</span>
+            <span class="finding-claim finding-statement">Extracellular matrix accumulates as the colony develops. Confirmed: ECM accumulates through development.</span>
             
-            <span class="finding-chip">via <code>cells-attach-secrete</code></span>
+            <span class="finding-chip">via <code>ecm-accumulates</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> attached 1.3496, ecm 1.7994 · 
+              <strong>observed:</strong> ECM accumulates through development · 
               
-              via test <a href="#bt-cells-attach-secrete" onclick="_gotoStudyTab('tests','bt-cells-attach-secrete');return false;"><code>cells-attach-secrete</code></a> · 
+              via test <a href="#bt-ecm-accumulates" onclick="_gotoStudyTab('tests','bt-ecm-accumulates');return false;"><code>ecm-accumulates</code></a> · 
               in run <a href="#run-biofilm"><code>biofilm</code></a>
               
               
@@ -532,7 +532,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: both &gt; 0 (1.35 / 1.8)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: rises with cell number</code></div>
             
             
             
@@ -599,7 +599,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">The aggregate biofilm mass accumulates over the run. Confirmed: biofilm_mass-&gt;2.2493 &gt; 1.0.<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">Cell number follows logistic growth to carrying capacity. Confirmed: cells 0.2 → 5.0 (= K), sigmoidal.<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -773,15 +773,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -866,31 +857,31 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-biofilm-accumulates"
+    <li class="expected-behavior-item" id="bt-logistic-saturation"
         data-test-kind="behavioral"
         
-        data-pytest-node="biofilm-accumulates"
-        data-classification="behavioral"
+        data-pytest-node="logistic-saturation"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">biofilm-accumulates</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">logistic-saturation</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>biofilm</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The aggregate biofilm mass accumulates over the run.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Cell number follows logistic growth to carrying capacity.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(environ.biofilm.biofilm_mass)", "kind": "observable"}
-pass_if: {"condition": "\u003e 1.0 (2.25)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "cells(t)", "kind": "observable"}
+pass_if: {"condition": "sigmoid saturating at K", "op": "threshold"}</pre>
       </details>
       
       
@@ -905,31 +896,31 @@ pass_if: {"condition": "\u003e 1.0 (2.25)", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-cells-attach-secrete"
+    <li class="expected-behavior-item" id="bt-ecm-accumulates"
         data-test-kind="behavioral"
         
-        data-pytest-node="cells-attach-secrete"
-        data-classification="behavioral"
+        data-pytest-node="ecm-accumulates"
+        data-classification="supporting"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">cells-attach-secrete</strong>
+        <span class="classification-pill classification-supporting">supporting</span>
+        <strong style="font-size: 0.9em;">ecm-accumulates</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>biofilm</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Cells attach to the surface and secrete extracellular matrix.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Extracellular matrix accumulates as the colony develops.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biofilm.attached) and last(biofilm.ecm)", "kind": "observable"}
-pass_if: {"condition": "both \u003e 0 (1.35 / 1.8)", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "ecm(t)", "kind": "observable"}
+pass_if: {"condition": "rises with cell number", "op": "threshold"}</pre>
       </details>
       
       
@@ -1052,21 +1043,21 @@ pass_if: {"condition": "both \u003e 0 (1.35 / 1.8)", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Development is composition at a higher level: cells attach (1.35), secrete ECM (1.8), and accumulate into a biofilm whose mass grows to 2.25.</li>
+<li>The colony grows LOGISTICALLY to its surface carrying capacity (cells saturate at K=5, not unbounded/linear) while ECM accumulates — development as a saturating, resource-limited compositional process.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>BIOFILM-ACCUMULATES</strong> — biofilm_mass-&gt;2.2493 &gt; 1.0</li>
-<li><strong>CELLS-ATTACH-SECRETE</strong> — attached 1.3496, ecm 1.7994</li>
+<li><strong>LOGISTIC-SATURATION</strong> — cells 0.2 → 5.0 (= K), sigmoidal</li>
+<li><strong>ECM-ACCUMULATES</strong> — ECM accumulates through development</li>
+<li><strong>conservation</strong> — cells saturate at carrying capacity K (cells_final 5.00), not unbounded/linear growth</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1150,7 +1141,7 @@ pass_if: {"condition": "both \u003e 0 (1.35 / 1.8)", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "biofilm";

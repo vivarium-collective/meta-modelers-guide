@@ -26,12 +26,11 @@ if _os.environ.get("PYTHONUTF8") != "1":
 # something that actually runs — and does that composition hold together into a
 # whole cell that lives and dies?
 #
-# An executable atlas of *A meta-modeler's guide to the cellular interface* (Agmon).
-# Each compositional figure (4–10) is rebuilt twice: as a semantic DRAFT composite —
-# typed interface ports + a behavior contract, no dynamics, rendered in the paper's
-# visual language beside the original illustration — and as a compiled EXECUTABLE
-# that runs. The two layers and the compiler between them (an algebraic effect
-# system) are the subject; the terminus is a composed whole cell.
+# This investigation turns *A meta-modeler's guide to the cellular interface* into an executable test of compositional modeling. Each composition pattern in the paper is first represented as a draft: a typed biological interface and behavioral contract with no committed mechanism. It is then compiled by installing one or more concrete implementations — mechanistic, rule-based, data-driven, or otherwise — while preserving the declared interface.
+#
+# The point is not to assemble a single monolithic cell model. It is to test whether a biological model can remain open-ended as its mechanisms change, its assumptions fail, and its level of description shifts. Interfaces provide the places where models can be connected, isolated, replaced, or expanded; graph rewrites allow the composition itself to change through events such as growth, division, and disintegration.
+#
+# The investigation therefore follows the paper's central claim: composition is not the final architecture of a model, but an ongoing way of building one. Across the studies below, we ask whether the same biological specification can support alternative mechanisms, whether those mechanisms can be composed without losing their interface semantics, and whether the resulting system can reorganize as the biology demands. The endpoint is a composed whole cell that grows, divides, loses viability, and changes its own level of description — demonstrating the full arc from interface specification to living, changing simulation.
 #
 # ---
 #
@@ -159,11 +158,7 @@ def _render_one(address, config, runs_db, study_yaml):
 #
 # **Question.** Can the cellular boundary be specified as nothing but a set of typed, unit-bearing exchange ports (chemical, mechanical, electrical, thermal, plus growth rate, shape, objective, viability) with no committed mechanism, and then compiled — by installing one conforming handler — into a running, bounded, goal-directed cell whose interface is exactly the one declared?
 #
-# **Objective.** Author the Fig 4b cellular interface as a draft composite of typed ports, install a bounded-cell handler via the compiler, run it, and measure whether the interface variables evolve as a goal-directed cell would.
-#
-# **Hypothesis.** The Fig 4 interface authored as an inert draft (typed ports + a behavior contract, an update that does nothing) compiles under a single conforming handler into an executable that leaves every port and wire unchanged (law 2) yet produces genuine dynamics: shape and objective rise while the cell takes up chemical from its surroundings.
-#
-# **Claim.** A cell's boundary is a small set of typed, unit-bearing ports; a conforming handler turns that inert interface into a bounded, goal-directed cell that grows (shape 1.0→4.2) and pursues an objective.
+# **Claim.** A cell can be specified at one level by its interface — typed exchange variables such as chemical flux, force, current, heat, growth, shape, objective, and viability — without committing to the mechanism that realizes those behaviors.
 
 # ### Parameters
 #
@@ -227,7 +222,7 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig04a-interaction-modalities**
+# **typed-interface-dynamics**
 
 def _save_viz(study, slug, html):
     d = REPO / 'reports/notebooks/figures' / study
@@ -236,6 +231,11 @@ def _save_viz(study, slug, html):
     out.write_text(html, encoding='utf-8')
     print('  wrote', out)
 
+
+# typed-interface-dynamics
+_save_viz('typed-interface', 'typed-interface-dynamics', _render_one('image:visualizations/typed-interface-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
+# **fig04a-interaction-modalities**
 
 # fig04a-interaction-modalities
 _save_viz('typed-interface', 'fig04a-interaction-modalities', _render_one('image:visualizations/fig04a-interaction-modalities.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
@@ -250,30 +250,21 @@ _save_viz('typed-interface', 'fig04b-cellular-interface', _render_one('image:vis
 # fig04-illustration
 _save_viz('typed-interface', 'fig04-illustration', _render_one('image:visualizations/fig04-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig04b-executable**
-
-# fig04b-executable
-_save_viz('typed-interface', 'fig04b-executable', _render_one('image:visualizations/fig04b-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | cell-grows | kind=observable expr=max(interface.shape) over the run | op threshold condition ≥ 3.0 (dimensionless shape factor) |
-# | goal-directed | kind=observable expr=last(interface.objective) | op threshold condition > 1.0 |
-# | chemical-uptake | kind=observable expr=min(interface.chemical) | op threshold condition < 0 (net uptake) |
+# | growth-tracks-nutrient | kind=observable expr=volume gained vs nutrient drawn down | op threshold condition volume gain > 0 and ≤ yield·consumed |
+# | monod-saturation | kind=observable expr=nutrient(t) | op threshold condition monotonic depletion to ≈0 |
+# | viability-cliff | kind=observable expr=viability once T > T_tol | op threshold condition holds ≈1 in-band, drops <0.1 past tolerance |
 
 # ## Study: Closing the Loop (`closing-the-loop`)
 #
 # **Question.** Does the cell–environment coupling of Fig 5 close into a genuine sense/act loop when the environment is a real spatial field — i.e. does the cell read a diffusing chemical field, act back on it through an uptake flux, and grow from what it takes up, all over one shared field store?
 #
-# **Objective.** Run the Fig 5 executable with a real diffusing spatial field and measure field spread, the cell's uptake flux, and cell mass to confirm the loop closes.
-#
-# **Hypothesis.** Compiling Fig 5 with an environment handler that diffuses a map[float] chemical field and a cell handler that senses-and-acts produces a closed loop: an initial point source spreads across the field, the cell's uptake flux becomes positive, and its mass increases — sensing and acting being the same coupling read in two directions.
-#
-# **Claim.** Sensing and acting are two sides of one coupling: over a real diffusing map[float] field the cell draws down a local source (1.0→0.20), acts back with uptake flux 0.34, and grows (mass 1.0→1.17).
+# **Claim.** Sensing and acting are one coupling, not two: a cell and its environment can be specified as a shared interface over which the cell reads a field and acts back on it.
 
 # ### Parameters
 #
@@ -323,6 +314,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **closing-the-loop-dynamics**
+
+# closing-the-loop-dynamics
+_save_viz('closing-the-loop', 'closing-the-loop-dynamics', _render_one('image:visualizations/closing-the-loop-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig05-cell-environment**
 
 # fig05-cell-environment
@@ -333,30 +329,21 @@ _save_viz('closing-the-loop', 'fig05-cell-environment', _render_one('image:visua
 # fig05-illustration
 _save_viz('closing-the-loop', 'fig05-illustration', _render_one('image:visualizations/fig05-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig05-executable**
-
-# fig05-executable
-_save_viz('closing-the-loop', 'fig05-executable', _render_one('image:visualizations/fig05-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | field-diffuses | kind=observable expr=last(environment.chemical_field[4]) and last(chemical_field[0]) | op threshold condition source < 0.5 AND a neighbour > 0 |
-# | cell-acts | kind=observable expr=last(environment.uptake_flux) | op threshold condition > 0 |
-# | cell-grows | kind=observable expr=last(single_cell.mass) | op threshold condition > 1.0 |
+# | gradient-forms | kind=observable expr=field profile over space×time | op threshold condition bolus spreads to neighbours |
+# | mass-conserved | kind=observable expr=Σfield(t) + uptake_total(t) | op threshold condition ≈ initial field mass |
+# | cell-draws-well | kind=observable expr=uptake_total(t) | op threshold condition > 0 and rising |
 
 # ## Study: One Interface, Three Mechanisms (`one-interface-three-mechanisms`)
 #
 # **Question.** Can a single metabolism interface — the ports nutrients ⇒ {biomass, energy, entropy, secretions} of Fig 6 — be realized by three genuinely different mechanisms (a lumped-yield process, a saturating-kinetic process, and a real flux-balance optimization via COBRApy) while every other part of the composite, and the interface itself, stays byte-for-byte the same?
 #
-# **Objective.** Compile the Fig 6 disintegration/metabolism draft under three handler environments (coarse, kinetic, fba), run all three, and compare their biomass trajectories over an identical interface.
-#
-# **Hypothesis.** Installing three different handlers on the one Fig 6 metabolism signature yields three executables that all emit the same port set (biomass/energy/entropy/secretions) but with mechanism-specific trajectories — coarse highest, kinetic lowest, FBA in between — demonstrating that mechanism is swappable behind a preserved interface (compiler law 4, handler independence).
-#
-# **Claim.** One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is realized by THREE independent handlers — coarse (biomass 4.0), saturating-kinetic (2.67), and real COBRApy FBA (3.2) — with no change to the rest of the composite (handler independence, law 4).
+# **Claim.** One metabolic interface can be realized by many mechanisms — a lumped yield, saturating kinetics, or a real flux-balance solver — without changing what the interface exposes.
 
 # ### Parameters
 #
@@ -400,6 +387,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **one-interface-three-mechanisms-dynamics**
+
+# one-interface-three-mechanisms-dynamics
+_save_viz('one-interface-three-mechanisms', 'one-interface-three-mechanisms-dynamics', _render_one('image:visualizations/one-interface-three-mechanisms-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig06-disintegration**
 
 # fig06-disintegration
@@ -410,40 +402,21 @@ _save_viz('one-interface-three-mechanisms', 'fig06-disintegration', _render_one(
 # fig06-illustration
 _save_viz('one-interface-three-mechanisms', 'fig06-illustration', _render_one('image:visualizations/fig06-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig06-executable-coarse**
-
-# fig06-executable-coarse
-_save_viz('one-interface-three-mechanisms', 'fig06-executable-coarse', _render_one('image:visualizations/fig06-executable-coarse.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-executable-kinetic**
-
-# fig06-executable-kinetic
-_save_viz('one-interface-three-mechanisms', 'fig06-executable-kinetic', _render_one('image:visualizations/fig06-executable-kinetic.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-executable-fba**
-
-# fig06-executable-fba
-_save_viz('one-interface-three-mechanisms', 'fig06-executable-fba', _render_one('image:visualizations/fig06-executable-fba.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | all-produce-biomass | kind=observable expr=last(coarse.biomass) for coarse, kinetic, fba | op threshold condition all > 0 (4.0 / 2.67 / 3.2) |
-# | mechanisms-differ | kind=observable expr=max-min of {coarse, kinetic, fba} last biomass | op threshold condition > 1.0 |
-# | interface-preserved | kind=observable expr=port-set equality across the three compiled composites | op threshold condition identical |
+# | mass-conserved | kind=observable expr=final biomass for coarse/kinetic/FBA | op threshold condition all = 5.0 (= 0.5 × 10) |
+# | distinct-kinetics | kind=observable expr=time to 90% substrate consumed | op threshold condition three distinct times |
+# | interface-preserved | kind=observable expr=port set across the three handlers | op threshold condition identical |
 
 # ## Study: Molecular Channels (`molecular-channels`)
 #
 # **Question.** When a description drops to the molecular grain (Fig 7), can a single molecular mechanism act as a transducer across four typed physical channels at once — chemical, electrical, mechanical, thermal — each carried on its own port in its own unit, without the channels collapsing into one lumped output?
 #
-# **Objective.** Run the Fig 7 executable and measure the four channel outputs to confirm they are simultaneously active and independently typed.
-#
-# **Hypothesis.** The Fig 7 molecular mechanism, compiled under a transducer handler, drives four distinct output ports with four distinct magnitudes, confirming that the typed-channel interface survives at the molecular grain.
-#
-# **Claim.** At the molecular grain, one mechanism transduces four independently-typed channels at once — chemical (0.6), electrical (0.3), mechanical (0.4) and thermal (0.7) — each an emitting port in its own unit.
+# **Claim.** At the molecular level a single mechanism can transduce several physical channels at once — chemical, electrical, mechanical, thermal — each carried on its own typed port.
 
 # ### Parameters
 #
@@ -484,6 +457,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **molecular-channels-dynamics**
+
+# molecular-channels-dynamics
+_save_viz('molecular-channels', 'molecular-channels-dynamics', _render_one('image:visualizations/molecular-channels-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig07-molecular-mechanism**
 
 # fig07-molecular-mechanism
@@ -494,29 +472,21 @@ _save_viz('molecular-channels', 'fig07-molecular-mechanism', _render_one('image:
 # fig07-illustration
 _save_viz('molecular-channels', 'fig07-illustration', _render_one('image:visualizations/fig07-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig07-executable**
-
-# fig07-executable
-_save_viz('molecular-channels', 'fig07-executable', _render_one('image:visualizations/fig07-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | all-channels-active | kind=observable expr=last of chemical_out, electrical_out, mechanical_out, thermal_out | op threshold condition all > 0 |
-# | channels-distinct | kind=observable expr=distinct port magnitudes {0.6, 0.3, 0.4, 0.7} | op threshold condition four distinct values |
+# | energy-conserved | kind=observable expr=product + heat vs substrate consumed | op threshold condition balanced (η + (1−η)) |
+# | dynamic-response | kind=observable expr=product(t), current(t) | op threshold condition smooth transient to steady state |
+# | ohmic-channel | kind=observable expr=current vs voltage | op threshold condition current ∝ voltage (relaxing) |
 
 # ## Study: The Nested Cell (`the-nested-cell`)
 #
 # **Question.** How do molecules compose into a cell? Can the Fig 8 molecular composition be authored as a deeply nested place graph — membrane, cytoplasm, nucleus, chromosome, chromatin, nucleosome — with a gene-expression cascade wired to its deepest leaves, and does compilation preserve the interface even six levels down?
 #
-# **Objective.** Run the Fig 8 executable and measure the expression cascade at several depths, confirming ordered DNA→RNA→protein flow and a live deepest leaf.
-#
-# **Hypothesis.** Compiling the Fig 8 nested-hierarchy draft wires an expression cascade (DNA→RNA→protein) to a six-level-deep place graph and runs it, with the deepest leaf (nucleosome.DNA) changing over time and every port preserved — the strongest test of interface preservation under nesting (law 2).
-#
-# **Claim.** A six-level nested place graph (ECM→membrane→cytoplasm→nucleus→chromosome→nucleosome) carries a coupled expression cascade — DNA (1.0→1.4) → RNA (→1.41) → protein (→0.52) — with the interface preserved at the deepest leaf (law 2).
+# **Claim.** Molecular composition is a nested containment hierarchy, and an interface can be preserved even when it is wired to the deepest levels of that nesting.
 
 # ### Parameters
 #
@@ -572,6 +542,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **the-nested-cell-dynamics**
+
+# the-nested-cell-dynamics
+_save_viz('the-nested-cell', 'the-nested-cell-dynamics', _render_one('image:visualizations/the-nested-cell-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig08-nested-hierarchy**
 
 # fig08-nested-hierarchy
@@ -582,30 +557,21 @@ _save_viz('the-nested-cell', 'fig08-nested-hierarchy', _render_one('image:visual
 # fig08-illustration
 _save_viz('the-nested-cell', 'fig08-illustration', _render_one('image:visualizations/fig08-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig08-executable**
-
-# fig08-executable
-_save_viz('the-nested-cell', 'fig08-executable', _render_one('image:visualizations/fig08-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | cascade-flows | kind=observable expr=last(cytoplasm.rna) and last(cytoplasm.proteins) | op threshold condition both > 0 (1.41 / 0.52) |
-# | deepest-leaf-live | kind=observable expr=last(...nucleosome.DNA) vs first | op threshold condition > first (1.4 > 1.0) |
-# | transport-active | kind=observable expr=last(membrane.transport_flux) | op threshold condition > 0 |
+# | steady-states | kind=observable expr=mRNA/protein/metabolite as t→end | op threshold condition plateau at k_synth/k_deg |
+# | time-hierarchy | kind=observable expr=settling order | op threshold condition mRNA before protein before metabolite |
+# | cascade-flows | kind=observable expr=downstream species | op threshold condition all > 0 at steady state |
 
 # ## Study: Self-Made (`self-made`)
 #
 # **Question.** How does a cell hold itself together? Does the Fig 9 composition express autopoiesis — metabolism, containment, and replication mutually producing one another — and does that same closure appear when each function is realized at a coarse, a self-organized, or a molecular grain?
 #
-# **Objective.** Run the Fig 9a (three-grain closure) and Fig 9b (minimal cell) executables and confirm metabolism, containment, and replication are all productive at more than one grain.
-#
-# **Hypothesis.** The Fig 9 executables show all three closure functions simultaneously active and expressible at multiple grains: a coarse metabolism/containment/replication triad and a molecular minimal cell (Fig 9b) that grows its own membrane and proteins — the mutual closure Maturana & Varela called autopoiesis.
-#
-# **Claim.** Metabolism, containment, and replication close on one another (autopoiesis) and the same three functions appear at coarse, self-organized, and molecular grains — metabolites 4.8, membrane 1.6, replication copies 1.6/1.2.
+# **Claim.** A cell holds itself together through closure: metabolism, containment, and replication each produce what the others need, so the organization sustains itself.
 
 # ### Parameters
 #
@@ -696,6 +662,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **self-made-dynamics**
+
+# self-made-dynamics
+_save_viz('self-made', 'self-made-dynamics', _render_one('image:visualizations/self-made-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig09a-coarse-graining**
 
 # fig09a-coarse-graining
@@ -716,35 +687,21 @@ _save_viz('self-made', 'fig09-illustration', _render_one('image:visualizations/f
 # fig09-illustration-2
 _save_viz('self-made', 'fig09-illustration-2', _render_one('image:visualizations/fig09-illustration-2.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig09a-executable**
-
-# fig09a-executable
-_save_viz('self-made', 'fig09a-executable', _render_one('image:visualizations/fig09a-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
-# **fig09b-executable**
-
-# fig09b-executable
-_save_viz('self-made', 'fig09b-executable', _render_one('image:visualizations/fig09b-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | closure-active | kind=observable expr=last(metabolism_selforg.products), containment_selforg.membrane, replication_coarse.copies | op threshold condition all > 0 (2.4 / 1.6 / 1.6) |
-# | multi-grain | kind=observable expr=coarse and selforg variants of each function | op threshold condition both > 0 |
-# | minimal-cell-grows | kind=observable expr=last(membrane.area) and last(proteins.concentration) | op threshold condition both > 1.0 (1.2 / 1.27) |
+# | closure-sustains | kind=observable expr=membrane/enzyme(t), intact | op threshold condition rise to a large pool |
+# | knockout-collapses | kind=observable expr=enzyme(t), knockout | op threshold condition decays to ≈0 |
+# | multi-grain | kind=observable expr=the three functions, intact | op threshold condition all active |
 
 # ## Study: Divide (`divide`)
 #
 # **Question.** Is cell division in Fig 10 a genuine structural rewrite of the place graph — a single cell node actually becoming two daughter nodes at runtime — rather than a pre-declared post-structure that is merely animated?
 #
-# **Objective.** Run the Fig 10-1 division executable and confirm a genuine node-creating rewrite: cell count reaching 2, symmetric DNA partition, daughters born mid-run.
-#
-# **Hypothesis.** Compiling Fig 10's division draft with a Milner-style reaction rule fires a discrete event when the cell is large enough: cell_count steps from 1 to 2, two daughter nodes are created that did not exist at t=0, and the parent's DNA is partitioned symmetrically between them.
-#
-# **Claim.** Division is a genuine event-driven graph rewrite: one cell node becomes two (cell_count 1→2), partitioning DNA symmetrically (2.745 each) into daughters that did not exist at t=0.
+# **Claim.** Division is a change to the composition itself: one cell becomes two through a graph rewrite that creates new nodes at runtime, not a pre-drawn pair.
 
 # ### Parameters
 #
@@ -791,6 +748,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **divide-dynamics**
+
+# divide-dynamics
+_save_viz('divide', 'divide-dynamics', _render_one('image:visualizations/divide-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig10-1-division**
 
 # fig10-1-division
@@ -801,30 +763,21 @@ _save_viz('divide', 'fig10-1-division', _render_one('image:visualizations/fig10-
 # fig10-illustration
 _save_viz('divide', 'fig10-illustration', _render_one('image:visualizations/fig10-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig10-1-executable**
-
-# fig10-1-executable
-_save_viz('divide', 'fig10-1-executable', _render_one('image:visualizations/fig10-1-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | division-fires | kind=observable expr=max(environ.cell_count) | op threshold condition ≥ 2 |
-# | symmetric-partition | kind=observable expr=last(daughter_1.dna) vs last(daughter_2.dna) | op threshold condition equal (2.745 = 2.745) |
-# | nodes-created | kind=observable expr=first(daughter_1.dna) | op threshold condition = 0 at t0, > 0 after the event |
+# | division-fires | kind=observable expr=cell_count(t) | op threshold condition steps up (1 → many) |
+# | mass-conserved | kind=observable expr=mass(t) across an event | op threshold condition halves, total conserved |
+# | autocatalytic-growth | kind=observable expr=mass between events, nutrient | op threshold condition rises as nutrient depletes |
 
 # ## Study: Biofilm (`biofilm`)
 #
 # **Question.** Can multicellular development (Fig 10) be expressed as compositional reorganization — individual cells attaching, secreting extracellular matrix, and assembling into a biofilm that is itself a higher-level composite with its own aggregate observables?
 #
-# **Objective.** Run the Fig 10-2 development executable and measure attachment, ECM secretion, and aggregate biofilm mass.
-#
-# **Hypothesis.** The Fig 10-2 development executable grows a biofilm as a higher-level composite: attached-cell count, adhesion, and ECM all rise, and an aggregate biofilm_mass accumulates — development as composition, not a single process.
-#
-# **Claim.** Development is composition at a higher level: cells attach (1.35), secrete ECM (1.8), and accumulate into a biofilm whose mass grows to 2.25.
+# **Claim.** Development is composition at a higher level: individual cells reorganize into a community that is itself a composite with its own aggregate behavior.
 
 # ### Parameters
 #
@@ -871,6 +824,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **biofilm-dynamics**
+
+# biofilm-dynamics
+_save_viz('biofilm', 'biofilm-dynamics', _render_one('image:visualizations/biofilm-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig10-2-development**
 
 # fig10-2-development
@@ -881,29 +839,20 @@ _save_viz('biofilm', 'fig10-2-development', _render_one('image:visualizations/fi
 # fig10-illustration-2
 _save_viz('biofilm', 'fig10-illustration-2', _render_one('image:visualizations/fig10-illustration-2.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig10-2-executable**
-
-# fig10-2-executable
-_save_viz('biofilm', 'fig10-2-executable', _render_one('image:visualizations/fig10-2-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | biofilm-accumulates | kind=observable expr=last(environ.biofilm.biofilm_mass) | op threshold condition > 1.0 (2.25) |
-# | cells-attach-secrete | kind=observable expr=last(biofilm.attached) and last(biofilm.ecm) | op threshold condition both > 0 (1.35 / 1.8) |
+# | logistic-saturation | kind=observable expr=cells(t) | op threshold condition sigmoid saturating at K |
+# | ecm-accumulates | kind=observable expr=ecm(t) | op threshold condition rises with cell number |
 
 # ## Study: Evolve (`evolve`)
 #
 # **Question.** Can evolution (Fig 10) be modelled compositionally — variation and selection acting on a population, and, crucially, the *addition of a new interface port* to a lineage — so that the interface set itself changes over evolutionary time?
 #
-# **Objective.** Run the Fig 10-3 evolution executable and measure differential growth (selection) and the emergence of a new interface port.
-#
-# **Hypothesis.** The Fig 10-3 evolution executable selects a fitter variant (its cell count grows fastest) and introduces a new interface capability: a port that is absent at t=0 emerges with nonzero value, showing that composition can add ports, not just change their values.
-#
-# **Claim.** Evolution is a compositional rewrite too: a fitter variant is selected (cell_count → 3.4) and a lineage gains an entirely new interface port (new_port emerges to 0.57).
+# **Claim.** Evolution is a composition that rewrites itself over time — variants compete, selection acts, and a lineage can acquire an entirely new interface port.
 
 # ### Parameters
 #
@@ -950,6 +899,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **evolve-dynamics**
+
+# evolve-dynamics
+_save_viz('evolve', 'evolve-dynamics', _render_one('image:visualizations/evolve-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
+
 # **fig10-3-evolution**
 
 # fig10-3-evolution
@@ -960,29 +914,21 @@ _save_viz('evolve', 'fig10-3-evolution', _render_one('image:visualizations/fig10
 # fig10-illustration-3
 _save_viz('evolve', 'fig10-illustration-3', _render_one('image:visualizations/fig10-illustration-3.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig10-3-executable**
-
-# fig10-3-executable
-_save_viz('evolve', 'fig10-3-executable', _render_one('image:visualizations/fig10-3-executable.svg', {'chart': 'image', 'caption': 'EXECUTABLE dynamics — the compiled figure, running.'}, RUNS_DB, STUDY_YAML))
-
 # ### Acceptance criteria
 #
 # _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | selection | kind=observable expr=last(environ.cell_ecoli.cell_count) | op threshold condition > 1 (3.4) |
-# | new-port-emerges | kind=observable expr=first vs last of cell_O157.new_port | op threshold condition 0 -> > 0 (0.57) |
+# | selection-sweep | kind=observable expr=mutant fraction n_mut/(n_wt+n_mut) | op threshold condition rises substantially |
+# | competitive-exclusion | kind=observable expr=n_wt(t) | op threshold condition rises then declines |
+# | new-capability | kind=observable expr=capability(t) | op threshold condition emerges from 0 |
 
 # ## Study: The Living Atlas (`the-living-atlas`)
 #
 # **Question.** Do all of the paper's semantic figures actually compile to executables that run, and — the real test of composition — can the independently-authored figure mechanisms be assembled into a single whole cell that lives the paper's full arc: grow, divide, and die?
 #
-# **Objective.** Render a dynamics figure for every executable (the gallery) and run the composed whole cell for 20 time units, measuring peak biomass, division time, minimum viability, and final debris.
-#
-# **Hypothesis.** All 12 executable composites build and produce non-trivial dynamics, and a whole-cell composite assembled from the figure mechanisms (uptake+growth, metabolism, viability, division, disintegration) runs the full arc in one trajectory: biomass rises and peaks, cell_count reaches 2, then a thermal shock drives viability toward 0 and debris accumulates.
-#
-# **Claim.** Every draft in the atlas compiles to a running executable (12/12 with dynamics), and the figures compose into ONE whole cell that grows (biomass→5.1), divides (cell_count→2 at t≈3.4), then loses viability under thermal shock (→0.02) and disintegrates into molecular debris (→4.87).
+# **Claim.** The patterns compose: independently-specified interfaces and mechanisms can be assembled into one cell that lives the paper's full arc.
 
 # ### Parameters
 #
@@ -1352,70 +1298,10 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig04b-executable**
+# **the-living-atlas-dynamics**
 
-# fig04b-executable
-_save_viz('the-living-atlas', 'fig04b-executable', _render_one('image:visualizations/fig04b-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig05-executable**
-
-# fig05-executable
-_save_viz('the-living-atlas', 'fig05-executable', _render_one('image:visualizations/fig05-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-executable-coarse**
-
-# fig06-executable-coarse
-_save_viz('the-living-atlas', 'fig06-executable-coarse', _render_one('image:visualizations/fig06-executable-coarse.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-executable-kinetic**
-
-# fig06-executable-kinetic
-_save_viz('the-living-atlas', 'fig06-executable-kinetic', _render_one('image:visualizations/fig06-executable-kinetic.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-executable-fba**
-
-# fig06-executable-fba
-_save_viz('the-living-atlas', 'fig06-executable-fba', _render_one('image:visualizations/fig06-executable-fba.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig07-executable**
-
-# fig07-executable
-_save_viz('the-living-atlas', 'fig07-executable', _render_one('image:visualizations/fig07-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig08-executable**
-
-# fig08-executable
-_save_viz('the-living-atlas', 'fig08-executable', _render_one('image:visualizations/fig08-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig09a-executable**
-
-# fig09a-executable
-_save_viz('the-living-atlas', 'fig09a-executable', _render_one('image:visualizations/fig09a-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig09b-executable**
-
-# fig09b-executable
-_save_viz('the-living-atlas', 'fig09b-executable', _render_one('image:visualizations/fig09b-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-1-executable**
-
-# fig10-1-executable
-_save_viz('the-living-atlas', 'fig10-1-executable', _render_one('image:visualizations/fig10-1-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-2-executable**
-
-# fig10-2-executable
-_save_viz('the-living-atlas', 'fig10-2-executable', _render_one('image:visualizations/fig10-2-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-3-executable**
-
-# fig10-3-executable
-_save_viz('the-living-atlas', 'fig10-3-executable', _render_one('image:visualizations/fig10-3-executable.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **wholecell**
-
-# wholecell
-_save_viz('the-living-atlas', 'wholecell', _render_one('image:visualizations/wholecell.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# the-living-atlas-dynamics
+_save_viz('the-living-atlas', 'the-living-atlas-dynamics', _render_one('image:visualizations/the-living-atlas-dynamics.svg', {'chart': 'image', 'caption': 'CLOSED-LOOP dynamics — conserved, run to completion.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -1423,7 +1309,7 @@ _save_viz('the-living-atlas', 'wholecell', _render_one('image:visualizations/who
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | all-executables-run | kind=observable expr=count of executables with a rendered dynamics series | op threshold condition = 12 / 12 |
-# | whole-cell-grows | kind=observable expr=max(biomass) | op threshold condition > 3.0 (5.108) |
-# | whole-cell-divides | kind=observable expr=max(cell_count) | op threshold condition ≥ 2 (at t ≈ 3.4) |
-# | whole-cell-dies | kind=observable expr=min(viability) and last(debris) | op threshold condition viability < 0.1 AND debris > 1 (0.018 / 4.87) |
+# | full-arc | kind=observable expr=the whole trajectory | op threshold condition all five phases occur |
+# | mass-conserved-through-death | kind=observable expr=peak biomass vs final debris | op threshold condition debris ≈ lysed biomass |
+# | viability-cliff | kind=observable expr=viability at shock | op threshold condition collapses toward 0 |
+# | divides | kind=observable expr=cell_count(t) | op threshold condition ≥ 2 |

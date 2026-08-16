@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">How do molecules compose into a cell? Can the Fig 8 molecular composition be authored as a deeply nested place graph — membrane, cytoplasm, nucleus, chromosome, chromatin, nucleosome — with a gene-expression cascade wired to its deepest leaves, and does compilation preserve the interface even six levels down?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">Compiling the Fig 8 nested-hierarchy draft wires an expression cascade (DNA→RNA→protein) to a six-level-deep place graph and runs it, with the deepest leaf (nucleosome.DNA) changing over time and every port preserved — the strongest test of interface preservation under nesting (law 2).</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Run the Fig 8 executable and measure the expression cascade at several depths, confirming ordered DNA→RNA→protein flow and a live deepest leaf.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The gene-expression cascade produces RNA and protein. Confirmed: rna-&gt;1.41, proteins-&gt;0.518 (both &gt; 0).</span>
+            <span class="finding-claim finding-statement">Each species reaches a degradation-balanced steady state (not a ramp). Confirmed: mRNA≈2.4, protein≈10.5, metabolite≈20 (steady).</span>
             
-            <span class="finding-chip">via <code>cascade-flows</code></span>
+            <span class="finding-chip">via <code>steady-states</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> rna-&gt;1.41, proteins-&gt;0.518 (both &gt; 0) · 
+              <strong>observed:</strong> mRNA≈2.4, protein≈10.5, metabolite≈20 (steady) · 
               
-              via test <a href="#bt-cascade-flows" onclick="_gotoStudyTab('tests','bt-cascade-flows');return false;"><code>cascade-flows</code></a> · 
+              via test <a href="#bt-steady-states" onclick="_gotoStudyTab('tests','bt-steady-states');return false;"><code>steady-states</code></a> · 
               in run <a href="#run-the-nested-cell"><code>the-nested-cell</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: both &gt; 0 (1.41 / 0.52)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: plateau at k_synth/k_deg</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The deepest leaf (nucleosome.DNA, six levels down) is wired and changes — interface preserved at depth. Confirmed: nucleosome.DNA 1.0-&gt;1.4 (6 levels deep).</span>
+            <span class="finding-claim finding-statement">The cascade shows the transcription-before-translation delay. Confirmed: mRNA fast, protein lags, metabolite slowest.</span>
             
-            <span class="finding-chip">via <code>deepest-leaf-live</code></span>
+            <span class="finding-chip">via <code>time-hierarchy</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> nucleosome.DNA 1.0-&gt;1.4 (6 levels deep) · 
+              <strong>observed:</strong> mRNA fast, protein lags, metabolite slowest · 
               
-              via test <a href="#bt-deepest-leaf-live" onclick="_gotoStudyTab('tests','bt-deepest-leaf-live');return false;"><code>deepest-leaf-live</code></a> · 
+              via test <a href="#bt-time-hierarchy" onclick="_gotoStudyTab('tests','bt-time-hierarchy');return false;"><code>time-hierarchy</code></a> · 
               in run <a href="#run-the-nested-cell"><code>the-nested-cell</code></a>
               
               
@@ -532,7 +532,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; first (1.4 &gt; 1.0)</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: mRNA before protein before metabolite</code></div>
             
             
             
@@ -551,9 +551,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Matter crosses the membrane boundary via the transport port. Confirmed: last(membrane.transport_flux) = 0.3 &gt; 0.</span>
+            <span class="finding-claim finding-statement">Expression flows gene→mRNA→protein→metabolite. Confirmed: all four levels populated.</span>
             
-            <span class="finding-chip">via <code>transport-active</code></span>
+            <span class="finding-chip">via <code>cascade-flows</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -565,9 +565,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> last(membrane.transport_flux) = 0.3 &gt; 0 · 
+              <strong>observed:</strong> all four levels populated · 
               
-              via test <a href="#bt-transport-active" onclick="_gotoStudyTab('tests','bt-transport-active');return false;"><code>transport-active</code></a> · 
+              via test <a href="#bt-cascade-flows" onclick="_gotoStudyTab('tests','bt-cascade-flows');return false;"><code>cascade-flows</code></a> · 
               in run <a href="#run-the-nested-cell"><code>the-nested-cell</code></a>
               
               
@@ -576,7 +576,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: &gt; 0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all &gt; 0 at steady state</code></div>
             
             
             
@@ -643,7 +643,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">The gene-expression cascade produces RNA and protein. Confirmed: rna-&gt;1.41, proteins-&gt;0.518 (both &gt; 0).<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">Each species reaches a degradation-balanced steady state (not a ramp). Confirmed: mRNA≈2.4, protein≈10.5, metabolite≈20 (steady).<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -817,15 +817,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -910,109 +901,109 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-cascade-flows"
+    <li class="expected-behavior-item" id="bt-steady-states"
         data-test-kind="behavioral"
         
-        data-pytest-node="cascade-flows"
-        data-classification="behavioral"
+        data-pytest-node="steady-states"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">steady-states</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>the-nested-cell</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Each species reaches a degradation-balanced steady state (not a ramp).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mRNA/protein/metabolite as t\u2192end", "kind": "observable"}
+pass_if: {"condition": "plateau at k_synth/k_deg", "op": "threshold"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-time-hierarchy"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="time-hierarchy"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">time-hierarchy</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>the-nested-cell</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The cascade shows the transcription-before-translation delay.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "settling order", "kind": "observable"}
+pass_if: {"condition": "mRNA before protein before metabolite", "op": "threshold"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-cascade-flows"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="cascade-flows"
+        data-classification="supporting"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-supporting">supporting</span>
         <strong style="font-size: 0.9em;">cascade-flows</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-nested-cell</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The gene-expression cascade produces RNA and protein.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Expression flows gene→mRNA→protein→metabolite.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cytoplasm.rna) and last(cytoplasm.proteins)", "kind": "observable"}
-pass_if: {"condition": "both \u003e 0 (1.41 / 0.52)", "op": "threshold"}</pre>
-      </details>
-      
-      
-      
-      
-    </li>
-    
-    
-    
-    
-    
-    
-    
-    
-    <li class="expected-behavior-item" id="bt-deepest-leaf-live"
-        data-test-kind="behavioral"
-        
-        data-pytest-node="deepest-leaf-live"
-        data-classification="structural"
-        data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
-      
-        
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-structural">structural</span>
-        <strong style="font-size: 0.9em;">deepest-leaf-live</strong>
-        
-        <span class="muted" style="font-size:0.78em">requires: <code>the-nested-cell</code></span>
-        
-      </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The deepest leaf (nucleosome.DNA, six levels down) is wired and changes — interface preserved at depth.</div>
-      
-      
-      <details style="margin-top: 6px; font-size: 0.82em;">
-        <summary class="muted" style="cursor: pointer;">Assertion</summary>
-        
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(...nucleosome.DNA) vs first", "kind": "observable"}
-pass_if: {"condition": "\u003e first (1.4 \u003e 1.0)", "op": "threshold"}</pre>
-      </details>
-      
-      
-      
-      
-    </li>
-    
-    
-    
-    
-    
-    
-    
-    
-    <li class="expected-behavior-item" id="bt-transport-active"
-        data-test-kind="behavioral"
-        
-        data-pytest-node="transport-active"
-        data-classification="behavioral"
-        data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
-      
-        
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">transport-active</strong>
-        
-        <span class="muted" style="font-size:0.78em">requires: <code>the-nested-cell</code></span>
-        
-      </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Matter crosses the membrane boundary via the transport port.</div>
-      
-      
-      <details style="margin-top: 6px; font-size: 0.82em;">
-        <summary class="muted" style="cursor: pointer;">Assertion</summary>
-        
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(membrane.transport_flux)", "kind": "observable"}
-pass_if: {"condition": "\u003e 0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "downstream species", "kind": "observable"}
+pass_if: {"condition": "all \u003e 0 at steady state", "op": "threshold"}</pre>
       </details>
       
       
@@ -1135,22 +1126,22 @@ pass_if: {"condition": "\u003e 0", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>A six-level nested place graph (ECM→membrane→cytoplasm→nucleus→chromosome→nucleosome) carries a coupled expression cascade — DNA (1.0→1.4) → RNA (→1.41) → protein (→0.52) — with the interface preserved at the deepest leaf (law 2).</li>
+<li>The six-level nested place graph carries a central-dogma cascade WITH degradation that reaches steady states in the correct time hierarchy — mRNA settles fast (≈2.4), protein lags (≈10.5), metabolite slowest (≈20) — the transcription-before-translation ordering.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>CASCADE-FLOWS</strong> — rna-&gt;1.41, proteins-&gt;0.518 (both &gt; 0)</li>
-<li><strong>DEEPEST-LEAF-LIVE</strong> — nucleosome.DNA 1.0-&gt;1.4 (6 levels deep)</li>
-<li><strong>TRANSPORT-ACTIVE</strong> — last(membrane.transport_flux) = 0.3 &gt; 0</li>
+<li><strong>STEADY-STATES</strong> — mRNA≈2.4, protein≈10.5, metabolite≈20 (steady)</li>
+<li><strong>TIME-HIERARCHY</strong> — mRNA fast, protein lags, metabolite slowest</li>
+<li><strong>CASCADE-FLOWS</strong> — all four levels populated</li>
+<li><strong>conservation</strong> — time hierarchy: mRNA settles fast, protein lags — mRNA_ss≈2.40, protein_ss≈10.48</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1234,7 +1225,7 @@ pass_if: {"condition": "\u003e 0", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "the-nested-cell";

@@ -436,8 +436,8 @@
       <div id="question-text" class="overview-prose" data-editable="true" data-field="question"
            data-placeholder="+ Add the research question this study asks">When a description drops to the molecular grain (Fig 7), can a single molecular mechanism act as a transducer across four typed physical channels at once — chemical, electrical, mechanical, thermal — each carried on its own port in its own unit, without the channels collapsing into one lumped output?</div>
       <div id="hypothesis-text" class="overview-prose" data-editable="true" data-field="hypothesis"
-           data-placeholder="(predicted outcome)">The Fig 7 molecular mechanism, compiled under a transducer handler, drives four distinct output ports with four distinct magnitudes, confirming that the typed-channel interface survives at the molecular grain.</div>
-      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective">Run the Fig 7 executable and measure the four channel outputs to confirm they are simultaneously active and independently typed.</div>
+           data-placeholder="(predicted outcome)"></div>
+      <div id="objective-text" class="overview-prose" data-editable="true" data-field="objective"></div>
     </div>
     
 
@@ -463,9 +463,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">All four typed output channels are simultaneously nonzero. Confirmed: chemical 0.6, electrical 0.3, mechanical 0.4, thermal 0.7 — all &gt; 0.</span>
+            <span class="finding-claim finding-statement">Product + dissipated heat balance the substrate energy consumed. Confirmed: product 4.8 + heat 3.2 ≡ substrate 8.0.</span>
             
-            <span class="finding-chip">via <code>all-channels-active</code></span>
+            <span class="finding-chip">via <code>energy-conserved</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -477,9 +477,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> chemical 0.6, electrical 0.3, mechanical 0.4, thermal 0.7 — all &gt; 0 · 
+              <strong>observed:</strong> product 4.8 + heat 3.2 ≡ substrate 8.0 · 
               
-              via test <a href="#bt-all-channels-active" onclick="_gotoStudyTab('tests','bt-all-channels-active');return false;"><code>all-channels-active</code></a> · 
+              via test <a href="#bt-energy-conserved" onclick="_gotoStudyTab('tests','bt-energy-conserved');return false;"><code>energy-conserved</code></a> · 
               in run <a href="#run-molecular-channels"><code>molecular-channels</code></a>
               
               
@@ -488,7 +488,7 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all &gt; 0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: balanced (η + (1−η))</code></div>
             
             
             
@@ -507,9 +507,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The four channels are independently typed ports, not one lumped output. Confirmed: four distinct typed magnitudes {0.6, 0.3, 0.4, 0.7}.</span>
+            <span class="finding-claim finding-statement">Channels show a real transient (turnover + relaxation), not a step. Confirmed: product rises sigmoidally; current peaks then relaxes.</span>
             
-            <span class="finding-chip">via <code>channels-distinct</code></span>
+            <span class="finding-chip">via <code>dynamic-response</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -521,9 +521,9 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> four distinct typed magnitudes {0.6, 0.3, 0.4, 0.7} · 
+              <strong>observed:</strong> product rises sigmoidally; current peaks then relaxes · 
               
-              via test <a href="#bt-channels-distinct" onclick="_gotoStudyTab('tests','bt-channels-distinct');return false;"><code>channels-distinct</code></a> · 
+              via test <a href="#bt-dynamic-response" onclick="_gotoStudyTab('tests','bt-dynamic-response');return false;"><code>dynamic-response</code></a> · 
               in run <a href="#run-molecular-channels"><code>molecular-channels</code></a>
               
               
@@ -532,7 +532,51 @@
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: four distinct values</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: smooth transient to steady state</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The electrical channel is an Ohmic response to its decaying drive. Confirmed: current tracks g·voltage as voltage decays.</span>
+            
+            <span class="finding-chip">via <code>ohmic-channel</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-03</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> current tracks g·voltage as voltage decays · 
+              
+              via test <a href="#bt-ohmic-channel" onclick="_gotoStudyTab('tests','bt-ohmic-channel');return false;"><code>ohmic-channel</code></a> · 
+              in run <a href="#run-molecular-channels"><code>molecular-channels</code></a>
+              
+              
+            </div>
+            
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: current ∝ voltage (relaxing)</code></div>
             
             
             
@@ -599,7 +643,7 @@
     <div class="overview-section conclusion-block">
       <h2 class="overview-label">Conclusion</h2>
       
-      <p class="conclusion-insight">All four typed output channels are simultaneously nonzero. Confirmed: chemical 0.6, electrical 0.3, mechanical 0.4, thermal 0.7 — all &gt; 0.<span class="computed-tag">computed from findings</span></p>
+      <p class="conclusion-insight">Product + dissipated heat balance the substrate energy consumed. Confirmed: product 4.8 + heat 3.2 ≡ substrate 8.0.<span class="computed-tag">computed from findings</span></p>
       
       
     <div class="narrative-field">
@@ -773,15 +817,6 @@
     </div>
 
     
-    <details style="margin-top: 1.4em;">
-      <summary class="muted">How observables tie to Expected Behavior</summary>
-      <p style="font-size: 0.9em;">Observables can be referenced by name in an
-      <code>expected_behavior[i].measure</code> block (e.g. <code>kind: bulk_count, id:
-      "MONOMER0-160[c]"</code>). When the dashboard validates a study, it cross-checks
-      that every <code>measure</code> resolves to a declared observable, or to a
-      built-in helper.</p>
-    </details>
-    
   </div>
 </section>
 
@@ -866,31 +901,31 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-all-channels-active"
+    <li class="expected-behavior-item" id="bt-energy-conserved"
         data-test-kind="behavioral"
         
-        data-pytest-node="all-channels-active"
-        data-classification="behavioral"
+        data-pytest-node="energy-conserved"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-behavioral">behavioral</span>
-        <strong style="font-size: 0.9em;">all-channels-active</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">energy-conserved</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>molecular-channels</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">All four typed output channels are simultaneously nonzero.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Product + dissipated heat balance the substrate energy consumed.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last of chemical_out, electrical_out, mechanical_out, thermal_out", "kind": "observable"}
-pass_if: {"condition": "all \u003e 0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "product + heat vs substrate consumed", "kind": "observable"}
+pass_if: {"condition": "balanced (\u03b7 + (1\u2212\u03b7))", "op": "threshold"}</pre>
       </details>
       
       
@@ -905,31 +940,70 @@ pass_if: {"condition": "all \u003e 0", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-channels-distinct"
+    <li class="expected-behavior-item" id="bt-dynamic-response"
         data-test-kind="behavioral"
         
-        data-pytest-node="channels-distinct"
-        data-classification="structural"
+        data-pytest-node="dynamic-response"
+        data-classification="supporting"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-structural">structural</span>
-        <strong style="font-size: 0.9em;">channels-distinct</strong>
+        <span class="classification-pill classification-supporting">supporting</span>
+        <strong style="font-size: 0.9em;">dynamic-response</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>molecular-channels</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The four channels are independently typed ports, not one lumped output.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Channels show a real transient (turnover + relaxation), not a step.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "distinct port magnitudes {0.6, 0.3, 0.4, 0.7}", "kind": "observable"}
-pass_if: {"condition": "four distinct values", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "product(t), current(t)", "kind": "observable"}
+pass_if: {"condition": "smooth transient to steady state", "op": "threshold"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-ohmic-channel"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="ohmic-channel"
+        data-classification="supporting"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-supporting">supporting</span>
+        <strong style="font-size: 0.9em;">ohmic-channel</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-channels</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The electrical channel is an Ohmic response to its decaying drive.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "current vs voltage", "kind": "observable"}
+pass_if: {"condition": "current \u221d voltage (relaxing)", "op": "threshold"}</pre>
       </details>
       
       
@@ -1052,21 +1126,22 @@ pass_if: {"condition": "four distinct values", "op": "threshold"}</pre>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>At the molecular grain, one mechanism transduces four independently-typed channels at once — chemical (0.6), electrical (0.3), mechanical (0.4) and thermal (0.7) — each an emitting port in its own unit.</li>
+<li>The molecular mechanism transduces a driven, depleting substrate into product + heat with a CONSERVED energy budget (product 4.8 + dissipated heat 3.2 account for the substrate energy consumed, 8.0) and an Ohmic electrical channel tracking its decaying drive — dynamic response, not a step to constant.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>ALL-CHANNELS-ACTIVE</strong> — chemical 0.6, electrical 0.3, mechanical 0.4, thermal 0.7 — all &gt; 0</li>
-<li><strong>CHANNELS-DISTINCT</strong> — four distinct typed magnitudes {0.6, 0.3, 0.4, 0.7}</li>
+<li><strong>ENERGY-CONSERVED</strong> — product 4.8 + heat 3.2 ≡ substrate 8.0</li>
+<li><strong>DYNAMIC-RESPONSE</strong> — product rises sigmoidally; current peaks then relaxes</li>
+<li><strong>OHMIC-CHANNEL</strong> — current tracks g·voltage as voltage decays</li>
+<li><strong>conservation</strong> — energy balance: product 4.80 + heat 3.20 accounts for substrate consumed 8.00</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run demonstrates the <em>pattern</em>, not a validated quantity.</li>
-<li>A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6 study, which is <em>about</em> alternative handlers).</li>
+<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Calibrate the handler against literature values to move from pattern-demonstration toward quantitative validation.</li>
+<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
 </ul>
 </div>
     </div>
@@ -1115,8 +1190,8 @@ pass_if: {"condition": "four distinct values", "op": "threshold"}</pre>
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>2</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">2 PASS</span> ·
+        <strong>3</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">3 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -1150,7 +1225,7 @@ pass_if: {"condition": "four distinct values", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "def82f1ee25a75422a012b8177c0bbabd47118ac", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/def82f1ee25a75422a012b8177c0bbabd47118ac", "branch": "main", "lockfile": "uv.lock@f96a28f0bec5", "generated_at": "2026-08-16 05:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/e87c7046a3b5a45bf34f9947565b5c0b0d9ede7c", "branch": "main", "lockfile": "uv.lock@1febee514630", "generated_at": "2026-08-16 22:03 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "molecular-channels";
