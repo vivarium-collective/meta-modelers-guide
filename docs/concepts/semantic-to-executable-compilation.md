@@ -180,3 +180,21 @@ process-bigraph's built-in bigraphical reactive system (`ReactionRule` + `run_re
 + a `ReactionStep`): one `cell` node becomes two, deterministically or stochastically
 (Gillespie). That is the honest realization of the paper's Fig 3c and the recommended
 next step for Fig 10's division/development/evolution.
+
+### Fig 10-1 division as a genuine structural rewrite (`structural.py`)
+
+`viva_meta_modelers_guide/structural.py` realizes division as a *true* structural
+rewrite via viva-compiler's reactive backend: a parametric `ReactionRule` whose
+reactum has a different node set than its redex, so firing it **creates** the
+daughter nodes — `{"cell": {contents}}` → `{"daughter_1": {contents}, "daughter_2":
+{contents}}`, one node genuinely becoming two, each carrying the cell's biomass/DNA
+(Milner shared site). This is the honest realization of Fig 3c, distinct from the
+`DivisionRewrite` handler (which fills a pre-declared daughter).
+
+**Framework gap (documented, not worked around):** firing this as a live
+`ReactionStep` *inside a running* `Composite` does not yet work — the composite's
+`tree[node]` realize strips the `_control` tags the matcher needs. So the genuine
+rewrite is driven via `run_reactions` on the node subtree (the same engine). Wiring
+the reaction engine through composite realize (so a `ReactionStep` can fire in a live
+composite) is a process-bigraph framework task — a good candidate alongside
+upstreaming viva-compiler.
