@@ -21,6 +21,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7.4"]
+# Real external-simulator handlers (Phase 2). Optional: the Fig 6 FBAMetabolism
+# handler bridges COBRApy; without it the coarse/kinetic handlers still run and the
+# FBA tests skip. Install with `pip install -e .[simulators]`.
+simulators = ["cobra>=0.29"]
 
 [build-system]
 requires = ["hatchling"]

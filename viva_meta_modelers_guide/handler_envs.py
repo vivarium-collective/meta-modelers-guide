@@ -14,6 +14,7 @@ from .handlers_fig05 import ENV as _FIG05_ENV
 from .handlers_fig07 import ENV as _FIG07_ENV
 from .handlers_fig08 import ENV as _FIG08_ENV
 from .handlers_fig09a import ENV as _FIG09A_ENV
+from .handlers_fig06_fba import ENV as _FIG06_FBA_ENV
 from .handlers_fig09b import ENV as _FIG09B_ENV
 from .handlers_fig10 import (ENV_DIVISION as _FIG10_DIV,
                              ENV_DEVELOPMENT as _FIG10_DEV,
@@ -59,3 +60,5 @@ ENVS["fig09b"] = _FIG09B_ENV
 ENVS["fig10-1"] = _FIG10_DIV
 ENVS["fig10-2"] = _FIG10_DEV
 ENVS["fig10-3"] = _FIG10_EVO
+# Fig 6, a THIRD handler over the same interface: real FBA (optional cobra dep).
+ENVS["fig06-fba"] = _FIG06_FBA_ENV

@@ -22,6 +22,7 @@ COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
 BUILD: list[tuple[str, str, str]] = [
     ("fig06-coarse",  "fig06-disintegration",     "fig06-executable-coarse"),
     ("fig06-kinetic", "fig06-disintegration",     "fig06-executable-kinetic"),
+    ("fig06-fba",     "fig06-disintegration",     "fig06-executable-fba"),
     ("fig04b",        "fig04b-cellular-interface", "fig04b-executable"),
     ("fig05",         "fig05-cell-environment",    "fig05-executable"),
     ("fig07",         "fig07-molecular-mechanism", "fig07-executable"),
