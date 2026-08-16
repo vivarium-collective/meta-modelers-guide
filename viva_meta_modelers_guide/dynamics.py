@@ -298,7 +298,7 @@ class GrowToDivide(ODE):
         return {"nutrient": -u, "mass": self.config["yield_"] * u}
 
 
-class DivisionEvent(Step):
+class LineageDivision(Step):
     """When mass crosses the threshold, halve it (mother→two daughters, mass
     conserved) and increment the cell count. Set-semantics deltas."""
     config_schema = {"threshold": _f(1.6)}
@@ -320,7 +320,7 @@ def build_divide():
         "grow": {"_type": "process", "address": "local:GrowToDivide", "interval": 0.1,
                  "inputs": {"nutrient": ["nutrient"], "mass": ["mass"]},
                  "outputs": {"nutrient": ["nutrient"], "mass": ["mass"]}},
-        "division": {"_type": "step", "address": "local:DivisionEvent",
+        "division": {"_type": "step", "address": "local:LineageDivision",
                      "inputs": {"mass": ["mass"], "cell_count": ["cell_count"]},
                      "outputs": {"mass": ["mass"], "cell_count": ["cell_count"]}},
         "emitter": _emitter(obs)}}
