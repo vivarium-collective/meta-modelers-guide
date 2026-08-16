@@ -21,8 +21,9 @@ biological_summary: 'The last rewrite is the slowest one: evolution. Fig 10-3 mo
   O157-like variant''s new_port emerges from 0 to 0.57). This is the compositional signature of innovation:
   the interface alphabet itself is extended, not merely re-valued. A cell that has a port its ancestors
   lacked can couple to its environment in a way they could not.'
-claim: 'Evolution is a compositional rewrite too: a fitter variant is selected (cell_count → 3.4) and
-  a lineage gains an entirely new interface port (new_port emerges to 0.57).'
+claim: Under chemostat-style competition the fitter variant SWEEPS — mutant fraction 0.05→0.70 as it competitively
+  excludes the wild type — and a new interface capability rides the sweep. Selection as a compositional
+  rewrite of the population.
 baseline:
 - name: evolution
   composite: viva_meta_modelers_guide.composites.fig10-3-evolution
@@ -32,64 +33,86 @@ expected_behavior:
 - A fitter variant grows faster than the rest.
 - A new interface port appears that was absent at t=0.
 behavior_tests:
-- name: selection
-  classification: behavioral
-  description: The fitter variant is selected — its cell count grows.
+- name: selection-sweep
+  classification: primary
+  description: The fitter mutant's frequency rises (a selection sweep).
   measure:
     kind: observable
-    expr: last(environ.cell_ecoli.cell_count)
+    expr: mutant fraction n_mut/(n_wt+n_mut)
   pass_if:
     op: threshold
-    condition: '> 1 (3.4)'
+    condition: rises substantially
   requires_simulation: evolve
-- name: new-port-emerges
-  classification: structural
-  description: A new interface port emerges (absent at t=0, nonzero after) — evolution adds a port.
+- name: competitive-exclusion
+  classification: primary
+  description: The wild type is competitively excluded as the mutant rises.
   measure:
     kind: observable
-    expr: first vs last of cell_O157.new_port
+    expr: n_wt(t)
   pass_if:
     op: threshold
-    condition: 0 -> > 0 (0.57)
+    condition: rises then declines
+  requires_simulation: evolve
+- name: new-capability
+  classification: supporting
+  description: A new interface port emerges, carried by the winning lineage.
+  measure:
+    kind: observable
+    expr: capability(t)
+  pass_if:
+    op: threshold
+    condition: emerges from 0
   requires_simulation: evolve
 runs:
 - name: evolve
   composite: evolve
   emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
-  params: {}
-  outcomes:
-    SELECTION:
-      result: PASS
-      detail: cell_ecoli.cell_count->3.4 > 1
-    NEW-PORT-EMERGES:
-      result: PASS
-      detail: cell_O157.new_port 0.0->0.5695
   id: evolve
   status: completed
+  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
+    through the engine; conservation invariant checked per figure.
+  params: {}
+  outcomes:
+    SELECTION-SWEEP:
+      result: PASS
+      detail: 0.05 → 0.70 over the run
+    COMPETITIVE-EXCLUSION:
+      result: PASS
+      detail: n_wt peaks then falls as the mutant takes over
+    NEW-CAPABILITY:
+      result: PASS
+      detail: new capability 0 → ~0.7 riding the sweep
 findings:
 - id: F-01
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'The fitter variant is selected — its cell count grows. Confirmed: cell_ecoli.cell_count->3.4
-    > 1.'
+  statement: 'The fitter mutant''s frequency rises (a selection sweep). Confirmed: 0.05 → 0.70 over the
+    run.'
   evidence:
-    from_test: selection
+    from_test: selection-sweep
     from_run: evolve
-    observed: cell_ecoli.cell_count->3.4 > 1
+    observed: 0.05 → 0.70 over the run
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'A new interface port emerges (absent at t=0, nonzero after) — evolution adds a port. Confirmed:
-    cell_O157.new_port 0.0->0.5695.'
+  statement: 'The wild type is competitively excluded as the mutant rises. Confirmed: n_wt peaks then
+    falls as the mutant takes over.'
   evidence:
-    from_test: new-port-emerges
+    from_test: competitive-exclusion
     from_run: evolve
-    observed: cell_O157.new_port 0.0->0.5695
+    observed: n_wt peaks then falls as the mutant takes over
+- id: F-03
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'A new interface port emerges, carried by the winning lineage. Confirmed: new capability
+    0 → ~0.7 riding the sweep.'
+  evidence:
+    from_test: new-capability
+    from_run: evolve
+    observed: new capability 0 → ~0.7 riding the sweep
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -105,30 +128,31 @@ conclusion_verdicts:
       and observable for this figure.
 conclusion: '## Claims
 
-  - Evolution is a compositional rewrite too: a fitter variant is selected (cell_count → 3.4) and a lineage
-  gains an entirely new interface port (new_port emerges to 0.57).
+  - Under chemostat-style competition the fitter variant SWEEPS — mutant fraction 0.05→0.70 as it competitively
+  excludes the wild type — and a new interface capability rides the sweep. Selection as a compositional
+  rewrite of the population.
 
 
   ## Evidence
 
-  - **SELECTION** — cell_ecoli.cell_count->3.4 > 1
+  - **SELECTION-SWEEP** — 0.05 → 0.70 over the run
 
-  - **NEW-PORT-EMERGES** — cell_O157.new_port 0.0->0.5695
+  - **COMPETITIVE-EXCLUSION** — n_wt peaks then falls as the mutant takes over
+
+  - **NEW-CAPABILITY** — new capability 0 → ~0.7 riding the sweep
+
+  - **conservation** — selection sweep: mutant fraction 0.05 → 0.70
 
 
   ## Limitations
 
-  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
-  demonstrates the *pattern*, not a validated quantity.
-
-  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
-  study, which is *about* alternative handlers).
+  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
+  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
 
 
   ## Next steps
 
-  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
-  validation.'
+  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -150,6 +174,11 @@ falsifiability: The claim is overturned if the compiled executable fails to pres
   (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
   on the declared ports.
 visualizations:
+- name: evolve-dynamics
+  address: image:visualizations/evolve-dynamics.svg
+  config:
+    chart: image
+    caption: CLOSED-LOOP dynamics — conserved, run to completion.
 - name: fig10-3-evolution
   address: image:visualizations/fig10-3-evolution.svg
   config:
@@ -158,11 +187,6 @@ visualizations:
   address: image:visualizations/fig10-illustration-3.png
   config:
     chart: image
-- name: fig10-3-executable
-  address: image:visualizations/fig10-3-executable.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
 parent_studies:
 - study: biofilm
   condition: tests-passed

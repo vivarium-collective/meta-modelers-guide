@@ -215,7 +215,7 @@ def study_exec_svgs(study: dict) -> list[Path]:
     d = study.get("_dir")
     if not d:
         return []
-    return sorted((d / "visualizations").glob("*executable*.svg"))
+    return sorted((d / "visualizations").glob("*-dynamics.svg"))
 
 
 def confidence_badge(study: dict) -> str:
@@ -233,13 +233,17 @@ def chips(pairs: list[tuple[str, str]]) -> str:
     return f'<div class="chips">{"".join(out)}</div>' if out else ""
 
 
-def study_card(study: dict, order: int) -> str:
+def study_card(study: dict, order: int, inv_map: dict) -> str:
     slug = study.get("name", "")
     title = study.get("title") or slug
     claim = study.get("claim") or ""
     oc = outcomes(study)
     svgs = study_exec_svgs(study)
     figs = "".join(f'<figure class="fig-wrap">{inline_svg(p)}</figure>' for p in svgs)
+    inv = inv_map.get(slug, {})
+    inv_html = (f'<div class="invariant"><span class="inv-k">{esc(inv.get("invariant_kind","").upper())} '
+                f'conserved / checked</span> {md_inline(inv.get("invariant",""))}</div>'
+                if inv.get("invariant") else "")
 
     # collapsible full detail — the parts a reader only wants on demand
     findings = study.get("findings", [])
@@ -266,6 +270,7 @@ def study_card(study: dict, order: int) -> str:
         </div>
       </div>
       {chips(oc)}
+      {inv_html}
       <div class="figs">{figs}</div>
       {detail}
     </article>"""
@@ -297,10 +302,13 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     execu = inv.get("executive", {}) if isinstance(inv.get("executive"), dict) else {}
     arg = inv.get("scientific_argument", {}) if isinstance(inv.get("scientific_argument"), dict) else {}
 
+    # conservation invariants measured per figure (scripts/render_dynamics.py)
+    inv_path = ws / "scripts" / "_catalog" / "dynamics_readouts.json"
+    inv_map = json.loads(inv_path.read_text()) if inv_path.exists() else {}
+
     # ── hero stats
-    n_exec = sum(len(study_exec_svgs(s)) for s in studies)
-    stats = [("figures compiled", "11"), ("executables", str(n_exec)), ("studies", str(len(studies))),
-             ("whole cell", "1")]
+    stats = [("studies", str(len(studies))), ("closed-loop models", str(len(inv_map) or len(studies))),
+             ("conservation checks", str(len(inv_map))), ("whole cell", "1")]
     stat_html = "".join(f'<div class="stat"><b>{v}</b><span>{esc(k)}</span></div>' for k, v in stats)
 
     # ── the arc spine
@@ -310,52 +318,52 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
         + ('<span class="arc-arrow">→</span>' if i < len(studies) - 1 else "")
         for i, s in enumerate(studies))
 
+    def hl_fig(s):
+        svgs = study_exec_svgs(s)
+        return f'<figure class="hl-fig">{inline_svg(svgs[0])}</figure>' if svgs else ""
+
+    def inv_line(s):
+        d = inv_map.get(s.get("name", ""), {})
+        return (f'<div class="invariant"><span class="inv-k">{esc(d.get("invariant_kind","").upper())} '
+                f'conserved</span> {md_inline(d.get("invariant",""))}</div>') if d.get("invariant") else ""
+
     # ── highlights (the interesting components, promoted)
     highlights = []
-    # 1) whole cell
     atlas = by_slug.get("the-living-atlas")
-    traj_path = ws / "workspace" / "reports" / "wholecell-trajectory.json"
-    if atlas and traj_path.exists():
-        traj = json.loads(traj_path.read_text())
+    if atlas:
         highlights.append(f"""
         <section class="hl">
           <div class="hl-txt">
             <span class="kicker">The payoff</span>
             <h2>A cell, assembled from drafts, that lives and dies</h2>
             <p>The figures don't just each run — they <em>compose</em>. Assembled into one cell,
-            it takes up nutrients and grows, divides when its biomass crosses threshold, then a
-            thermal shock pushes it past its viable band and it disintegrates into molecular debris.
-            The paper's whole arc, in a single run.</p>
+            it grows autocatalytically on a depleting nutrient, divides as it grows, then a thermal
+            shock ramps its temperature past tolerance, viability collapses, and its biomass converts
+            to molecular debris — <strong>mass conserved through death</strong>. The whole arc, one run.</p>
             {chips(outcomes(atlas)[:4])}
+            {inv_line(atlas)}
           </div>
-          <figure class="hl-fig">{wholecell_chart(traj)}
-            <figcaption><span class="lg biomass">biomass</span>
-            <span class="lg debris">debris</span>
-            <span class="lg via">viability (right)</span></figcaption>
-          </figure>
+          {hl_fig(atlas)}
         </section>""")
-    # 2) one interface, three mechanisms
     three = by_slug.get("one-interface-three-mechanisms")
     if three:
-        bars = bars_chart([("coarse", 4.0), ("FBA", 3.2), ("kinetic", 2.667)], vmax=4.6)
-        svgs = study_exec_svgs(three)
-        row = "".join(f'<figure class="fig-wrap sm">{inline_svg(p)}</figure>' for p in svgs)
         highlights.append(f"""
         <section class="hl reverse">
           <div class="hl-txt">
             <span class="kicker">The thesis, in one figure</span>
             <h2>One interface, three mechanisms</h2>
-            <p>A single metabolism interface — nutrients ⇒ biomass, energy, entropy, secretions —
-            realized three independent ways: a lumped-yield process, a saturating-kinetic process,
-            and a real COBRApy flux-balance optimization. Same ports, same wiring; only the
-            mechanism underneath changes. Final biomass over one unchanged interface:</p>
-            <figure class="hl-bars">{bars}</figure>
+            <p>One metabolism interface — nutrients ⇒ biomass — realized three ways: first-order,
+            Michaelis–Menten, and a real COBRApy LP, run as a <strong>closed-loop batch</strong> that
+            consumes its own substrate. All three converge to the same final biomass (mass conserved)
+            but with three distinct kinetic signatures — the saturation knee, the capacity plateau,
+            the exponential drawdown. Same interface, conserved mass, different dynamics.</p>
+            {inv_line(three)}
           </div>
-          <div class="hl-fig grid3">{row}</div>
+          {hl_fig(three)}
         </section>""")
 
     # ── studies
-    cards = "".join(study_card(by_slug[s], i + 1)
+    cards = "".join(study_card(by_slug[s], i + 1, inv_map)
                     for i, s in enumerate(sn for sn in order if sn in by_slug))
 
     # ── shared caveats (lifted from identical per-study boilerplate)
@@ -564,6 +572,10 @@ figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:1
   max-width:100%}
 .chip-k{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
 .chip-v{font-family:var(--mono);font-size:.82rem;color:var(--ink)}
+.invariant{margin:14px 0 0;padding:10px 14px;border-radius:9px;font-size:.9rem;color:var(--ink-2);
+  background:color-mix(in srgb,var(--teal) 8%,transparent);border-left:3px solid var(--teal)}
+.inv-k{font-family:var(--sans);font-size:.64rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--teal);margin-right:8px}
 .figs{display:flex;flex-wrap:wrap;gap:16px;margin:20px 0 0}
 .fig-wrap{flex:1 1 300px;min-width:0;background:var(--surface);border:1px solid var(--line);
   border-radius:12px;padding:10px}

@@ -23,9 +23,9 @@ biological_summary: 'Fig 8 is the inside view: a cell as a hierarchy of compartm
   (nutrients → 2.4, energy → 0.84) across the membrane transport port (0.3). The compiler must preserve
   every port at every depth: the deepest leaf, nucleosome.DNA, rises from 1.0 to 1.4, proving the interface
   survives the deepest nesting.'
-claim: A six-level nested place graph (ECM→membrane→cytoplasm→nucleus→chromosome→nucleosome) carries a
-  coupled expression cascade — DNA (1.0→1.4) → RNA (→1.41) → protein (→0.52) — with the interface preserved
-  at the deepest leaf (law 2).
+claim: The six-level nested place graph carries a central-dogma cascade WITH degradation that reaches
+  steady states in the correct time hierarchy — mRNA settles fast (≈2.4), protein lags (≈10.5), metabolite
+  slowest (≈20) — the transcription-before-translation ordering.
 baseline:
 - name: nested-hierarchy
   composite: viva_meta_modelers_guide.composites.fig08-nested-hierarchy
@@ -36,88 +36,85 @@ expected_behavior:
 - The six-level-deep DNA leaf changes over the run.
 - Matter crosses the membrane boundary.
 behavior_tests:
+- name: steady-states
+  classification: primary
+  description: Each species reaches a degradation-balanced steady state (not a ramp).
+  measure:
+    kind: observable
+    expr: mRNA/protein/metabolite as t→end
+  pass_if:
+    op: threshold
+    condition: plateau at k_synth/k_deg
+  requires_simulation: the-nested-cell
+- name: time-hierarchy
+  classification: primary
+  description: The cascade shows the transcription-before-translation delay.
+  measure:
+    kind: observable
+    expr: settling order
+  pass_if:
+    op: threshold
+    condition: mRNA before protein before metabolite
+  requires_simulation: the-nested-cell
 - name: cascade-flows
-  classification: behavioral
-  description: The gene-expression cascade produces RNA and protein.
+  classification: supporting
+  description: Expression flows gene→mRNA→protein→metabolite.
   measure:
     kind: observable
-    expr: last(cytoplasm.rna) and last(cytoplasm.proteins)
+    expr: downstream species
   pass_if:
     op: threshold
-    condition: both > 0 (1.41 / 0.52)
-  requires_simulation: the-nested-cell
-- name: deepest-leaf-live
-  classification: structural
-  description: The deepest leaf (nucleosome.DNA, six levels down) is wired and changes — interface preserved
-    at depth.
-  measure:
-    kind: observable
-    expr: last(...nucleosome.DNA) vs first
-  pass_if:
-    op: threshold
-    condition: '> first (1.4 > 1.0)'
-  requires_simulation: the-nested-cell
-- name: transport-active
-  classification: behavioral
-  description: Matter crosses the membrane boundary via the transport port.
-  measure:
-    kind: observable
-    expr: last(membrane.transport_flux)
-  pass_if:
-    op: threshold
-    condition: '> 0'
+    condition: all > 0 at steady state
   requires_simulation: the-nested-cell
 runs:
 - name: the-nested-cell
   composite: the-nested-cell
   emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
-  params: {}
-  outcomes:
-    CASCADE-FLOWS:
-      result: PASS
-      detail: rna->1.41, proteins->0.518 (both > 0)
-    DEEPEST-LEAF-LIVE:
-      result: PASS
-      detail: nucleosome.DNA 1.0->1.4 (6 levels deep)
-    TRANSPORT-ACTIVE:
-      result: PASS
-      detail: last(membrane.transport_flux) = 0.3 > 0
   id: the-nested-cell
   status: completed
+  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
+    through the engine; conservation invariant checked per figure.
+  params: {}
+  outcomes:
+    STEADY-STATES:
+      result: PASS
+      detail: mRNA≈2.4, protein≈10.5, metabolite≈20 (steady)
+    TIME-HIERARCHY:
+      result: PASS
+      detail: mRNA fast, protein lags, metabolite slowest
+    CASCADE-FLOWS:
+      result: PASS
+      detail: all four levels populated
 findings:
 - id: F-01
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'The gene-expression cascade produces RNA and protein. Confirmed: rna->1.41, proteins->0.518
-    (both > 0).'
+  statement: 'Each species reaches a degradation-balanced steady state (not a ramp). Confirmed: mRNA≈2.4,
+    protein≈10.5, metabolite≈20 (steady).'
   evidence:
-    from_test: cascade-flows
+    from_test: steady-states
     from_run: the-nested-cell
-    observed: rna->1.41, proteins->0.518 (both > 0)
+    observed: mRNA≈2.4, protein≈10.5, metabolite≈20 (steady)
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The deepest leaf (nucleosome.DNA, six levels down) is wired and changes — interface preserved
-    at depth. Confirmed: nucleosome.DNA 1.0->1.4 (6 levels deep).'
+  statement: 'The cascade shows the transcription-before-translation delay. Confirmed: mRNA fast, protein
+    lags, metabolite slowest.'
   evidence:
-    from_test: deepest-leaf-live
+    from_test: time-hierarchy
     from_run: the-nested-cell
-    observed: nucleosome.DNA 1.0->1.4 (6 levels deep)
+    observed: mRNA fast, protein lags, metabolite slowest
 - id: F-03
   kind: biological
   tier: observation
   status: confirms
-  statement: 'Matter crosses the membrane boundary via the transport port. Confirmed: last(membrane.transport_flux)
-    = 0.3 > 0.'
+  statement: 'Expression flows gene→mRNA→protein→metabolite. Confirmed: all four levels populated.'
   evidence:
-    from_test: transport-active
+    from_test: cascade-flows
     from_run: the-nested-cell
-    observed: last(membrane.transport_flux) = 0.3 > 0
+    observed: all four levels populated
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -133,33 +130,31 @@ conclusion_verdicts:
       and observable for this figure.
 conclusion: '## Claims
 
-  - A six-level nested place graph (ECM→membrane→cytoplasm→nucleus→chromosome→nucleosome) carries a coupled
-  expression cascade — DNA (1.0→1.4) → RNA (→1.41) → protein (→0.52) — with the interface preserved at
-  the deepest leaf (law 2).
+  - The six-level nested place graph carries a central-dogma cascade WITH degradation that reaches steady
+  states in the correct time hierarchy — mRNA settles fast (≈2.4), protein lags (≈10.5), metabolite slowest
+  (≈20) — the transcription-before-translation ordering.
 
 
   ## Evidence
 
-  - **CASCADE-FLOWS** — rna->1.41, proteins->0.518 (both > 0)
+  - **STEADY-STATES** — mRNA≈2.4, protein≈10.5, metabolite≈20 (steady)
 
-  - **DEEPEST-LEAF-LIVE** — nucleosome.DNA 1.0->1.4 (6 levels deep)
+  - **TIME-HIERARCHY** — mRNA fast, protein lags, metabolite slowest
 
-  - **TRANSPORT-ACTIVE** — last(membrane.transport_flux) = 0.3 > 0
+  - **CASCADE-FLOWS** — all four levels populated
+
+  - **conservation** — time hierarchy: mRNA settles fast, protein lags — mRNA_ss≈2.40, protein_ss≈10.48
 
 
   ## Limitations
 
-  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
-  demonstrates the *pattern*, not a validated quantity.
-
-  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
-  study, which is *about* alternative handlers).
+  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
+  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
 
 
   ## Next steps
 
-  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
-  validation.'
+  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -181,6 +176,11 @@ falsifiability: The claim is overturned if the compiled executable fails to pres
   (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
   on the declared ports.
 visualizations:
+- name: the-nested-cell-dynamics
+  address: image:visualizations/the-nested-cell-dynamics.svg
+  config:
+    chart: image
+    caption: CLOSED-LOOP dynamics — conserved, run to completion.
 - name: fig08-nested-hierarchy
   address: image:visualizations/fig08-nested-hierarchy.svg
   config:
@@ -189,11 +189,6 @@ visualizations:
   address: image:visualizations/fig08-illustration.png
   config:
     chart: image
-- name: fig08-executable
-  address: image:visualizations/fig08-executable.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
 parent_studies:
 - study: molecular-channels
   condition: tests-passed

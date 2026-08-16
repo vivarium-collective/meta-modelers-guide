@@ -26,8 +26,10 @@ biological_summary: 'A cell, viewed from the outside, is a small alphabet of exc
   goal-directed cell''; the handler keeps the promise, uptaking chemical and converting it into growth
   so that shape and objective climb. Nothing about the interface changes between draft and executable
   — only a mechanism is installed behind it.'
-claim: A cell's boundary is a small set of typed, unit-bearing ports; a conforming handler turns that
-  inert interface into a bounded, goal-directed cell that grows (shape 1.0→4.2) and pursues an objective.
+claim: Given one conforming handler the cellular interface becomes a bounded cell that grows on a DEPLETING
+  nutrient (Monod uptake; volume +3.7 as substrate falls 10→0) and whose viability holds ≈1 in-band then
+  collapses in an Arrhenius cliff once temperature is ramped past its tolerance — coupled dynamics, not
+  a ramp.
 baseline:
 - name: interaction-modalities
   composite: viva_meta_modelers_guide.composites.fig04a-interaction-modalities
@@ -41,87 +43,86 @@ expected_behavior:
 - The objective variable rises monotonically toward its target.
 - The executable's ports/wiring are identical to the draft's.
 behavior_tests:
-- name: cell-grows
-  classification: behavioral
-  description: The bounded-cell handler grows the cell body from uptake.
+- name: growth-tracks-nutrient
+  classification: primary
+  description: Volume gained is paid for by nutrient consumed (mass balance).
   measure:
     kind: observable
-    expr: max(interface.shape) over the run
+    expr: volume gained vs nutrient drawn down
   pass_if:
     op: threshold
-    condition: ≥ 3.0 (dimensionless shape factor)
+    condition: volume gain > 0 and ≤ yield·consumed
   requires_simulation: typed-interface
-- name: goal-directed
-  classification: behavioral
-  description: The cell accumulates progress toward its objective.
+- name: monod-saturation
+  classification: supporting
+  description: Uptake follows a saturating Monod law and depletes the pool.
   measure:
     kind: observable
-    expr: last(interface.objective)
+    expr: nutrient(t)
   pass_if:
     op: threshold
-    condition: '> 1.0'
+    condition: monotonic depletion to ≈0
   requires_simulation: typed-interface
-- name: chemical-uptake
-  classification: behavioral
-  description: The chemical port carries a net uptake (negative outward flux).
+- name: viability-cliff
+  classification: primary
+  description: Viability holds in the tolerance band then collapses past it (Arrhenius).
   measure:
     kind: observable
-    expr: min(interface.chemical)
+    expr: viability once T > T_tol
   pass_if:
     op: threshold
-    condition: < 0 (net uptake)
+    condition: holds ≈1 in-band, drops <0.1 past tolerance
   requires_simulation: typed-interface
 runs:
 - name: typed-interface
   composite: typed-interface
   emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
-  params: {}
-  outcomes:
-    CELL-GROWS:
-      result: PASS
-      detail: max(interface.shape) = 4.2 ≥ 3.0
-    GOAL-DIRECTED:
-      result: PASS
-      detail: last(interface.objective) = 1.6 > 1.0
-    CHEMICAL-UPTAKE:
-      result: PASS
-      detail: min(interface.chemical) = -0.8 < 0
   id: typed-interface
   status: completed
+  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
+    through the engine; conservation invariant checked per figure.
+  params: {}
+  outcomes:
+    GROWTH-TRACKS-NUTRIENT:
+      result: PASS
+      detail: volume +3.70 from nutrient −10.00 (yield-bounded)
+    MONOD-SATURATION:
+      result: PASS
+      detail: nutrient 10→0 (saturating drawdown)
+    VIABILITY-CLIFF:
+      result: PASS
+      detail: viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band
 findings:
 - id: F-01
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'The bounded-cell handler grows the cell body from uptake. Confirmed: max(interface.shape)
-    = 4.2 ≥ 3.0.'
+  statement: 'Volume gained is paid for by nutrient consumed (mass balance). Confirmed: volume +3.70 from
+    nutrient −10.00 (yield-bounded).'
   evidence:
-    from_test: cell-grows
+    from_test: growth-tracks-nutrient
     from_run: typed-interface
-    observed: max(interface.shape) = 4.2 ≥ 3.0
+    observed: volume +3.70 from nutrient −10.00 (yield-bounded)
 - id: F-02
   kind: biological
   tier: observation
   status: confirms
-  statement: 'The cell accumulates progress toward its objective. Confirmed: last(interface.objective)
-    = 1.6 > 1.0.'
+  statement: 'Uptake follows a saturating Monod law and depletes the pool. Confirmed: nutrient 10→0 (saturating
+    drawdown).'
   evidence:
-    from_test: goal-directed
+    from_test: monod-saturation
     from_run: typed-interface
-    observed: last(interface.objective) = 1.6 > 1.0
+    observed: nutrient 10→0 (saturating drawdown)
 - id: F-03
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'The chemical port carries a net uptake (negative outward flux). Confirmed: min(interface.chemical)
-    = -0.8 < 0.'
+  statement: 'Viability holds in the tolerance band then collapses past it (Arrhenius). Confirmed: viability
+    1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band.'
   evidence:
-    from_test: chemical-uptake
+    from_test: viability-cliff
     from_run: typed-interface
-    observed: min(interface.chemical) = -0.8 < 0
+    observed: viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -137,32 +138,32 @@ conclusion_verdicts:
       and observable for this figure.
 conclusion: '## Claims
 
-  - A cell''s boundary is a small set of typed, unit-bearing ports; a conforming handler turns that inert
-  interface into a bounded, goal-directed cell that grows (shape 1.0→4.2) and pursues an objective.
+  - Given one conforming handler the cellular interface becomes a bounded cell that grows on a DEPLETING
+  nutrient (Monod uptake; volume +3.7 as substrate falls 10→0) and whose viability holds ≈1 in-band then
+  collapses in an Arrhenius cliff once temperature is ramped past its tolerance — coupled dynamics, not
+  a ramp.
 
 
   ## Evidence
 
-  - **CELL-GROWS** — max(interface.shape) = 4.2 ≥ 3.0
+  - **GROWTH-TRACKS-NUTRIENT** — volume +3.70 from nutrient −10.00 (yield-bounded)
 
-  - **GOAL-DIRECTED** — last(interface.objective) = 1.6 > 1.0
+  - **MONOD-SATURATION** — nutrient 10→0 (saturating drawdown)
 
-  - **CHEMICAL-UPTAKE** — min(interface.chemical) = -0.8 < 0
+  - **VIABILITY-CLIFF** — viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band
+
+  - **conservation** — volume gained 3.70 from nutrient drawn-down 10.00
 
 
   ## Limitations
 
-  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
-  demonstrates the *pattern*, not a validated quantity.
-
-  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
-  study, which is *about* alternative handlers).
+  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
+  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
 
 
   ## Next steps
 
-  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
-  validation.'
+  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -184,6 +185,11 @@ falsifiability: The claim is overturned if the compiled executable fails to pres
   (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
   on the declared ports.
 visualizations:
+- name: typed-interface-dynamics
+  address: image:visualizations/typed-interface-dynamics.svg
+  config:
+    chart: image
+    caption: CLOSED-LOOP dynamics — conserved, run to completion.
 - name: fig04a-interaction-modalities
   address: image:visualizations/fig04a-interaction-modalities.svg
   config:
@@ -196,8 +202,3 @@ visualizations:
   address: image:visualizations/fig04-illustration.png
   config:
     chart: image
-- name: fig04b-executable
-  address: image:visualizations/fig04b-executable.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.

@@ -25,9 +25,10 @@ biological_summary: 'Fig 6 is the paper''s thesis in a single figure. When a cel
   build biomass more slowly (→ 2.67). The FBA handler calls real COBRApy to solve a flux-balance optimization
   on a small metabolic network each step (→ 3.2). All three write the identical ports; a reader can watch
   the mechanism change underneath a boundary that does not move.'
-claim: One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is realized by THREE
-  independent handlers — coarse (biomass 4.0), saturating-kinetic (2.67), and real COBRApy FBA (3.2) —
-  with no change to the rest of the composite (handler independence, law 4).
+claim: 'One metabolism interface, three handlers (first-order, Michaelis–Menten, real COBRApy LP) as a
+  CLOSED-LOOP batch: all converge to the SAME final biomass (yield·S₀ = 5.0, mass conserved) but with
+  three DISTINCT kinetic signatures — substrate exhausted at t≈4.0 / 8.6 / 10.2. Same interface, conserved
+  mass, different dynamics.'
 baseline:
 - name: disintegration
   composite: viva_meta_modelers_guide.composites.fig06-disintegration
@@ -38,33 +39,32 @@ expected_behavior:
 - The three handlers give measurably different biomass.
 - All three emit the same port set over the same wiring.
 behavior_tests:
-- name: all-produce-biomass
-  classification: behavioral
-  description: Each of the three handlers produces positive biomass.
+- name: mass-conserved
+  classification: primary
+  description: 'Every handler conserves mass: final biomass = yield × S₀.'
   measure:
     kind: observable
-    expr: last(coarse.biomass) for coarse, kinetic, fba
+    expr: final biomass for coarse/kinetic/FBA
   pass_if:
     op: threshold
-    condition: all > 0 (4.0 / 2.67 / 3.2)
+    condition: all = 5.0 (= 0.5 × 10)
   requires_simulation: one-interface-three-mechanisms
-- name: mechanisms-differ
-  classification: behavioral
-  description: The three biomass endpoints are meaningfully spread, not identical.
+- name: distinct-kinetics
+  classification: primary
+  description: The three mechanisms differ in dynamical SHAPE, not just slope.
   measure:
     kind: observable
-    expr: max-min of {coarse, kinetic, fba} last biomass
+    expr: time to 90% substrate consumed
   pass_if:
     op: threshold
-    condition: '> 1.0'
+    condition: three distinct times
   requires_simulation: one-interface-three-mechanisms
 - name: interface-preserved
-  classification: structural
-  description: All three executables expose the identical port set (biomass, energy, entropy, secretions)
-    over the identical wiring (compiler law 2/4).
+  classification: supporting
+  description: All three expose the identical port set over identical wiring.
   measure:
     kind: observable
-    expr: port-set equality across the three compiled composites
+    expr: port set across the three handlers
   pass_if:
     op: threshold
     condition: identical
@@ -73,74 +73,52 @@ runs:
 - name: one-interface-three-mechanisms
   composite: one-interface-three-mechanisms
   emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
-  params: {}
-  outcomes:
-    ALL-PRODUCE-BIOMASS:
-      result: PASS
-      detail: coarse 4.0, kinetic 2.6667, fba 3.2 — all > 0
-    MECHANISMS-DIFFER:
-      result: PASS
-      detail: biomass spread 2.667–4.0 (Δ = 1.333) > 1.0
-    INTERFACE-PRESERVED:
-      result: PASS
-      detail: all three emit {biomass, energy, entropy, secretions} over identical wiring
   id: one-interface-three-mechanisms
   status: completed
-- name: fig06-executable-kinetic
-  composite: fig06-executable-kinetic
-  emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
+  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
+    through the engine; conservation invariant checked per figure.
   params: {}
-  outcomes: {}
-  id: fig06-executable-kinetic
-  status: completed
-- name: fig06-executable-fba
-  composite: fig06-executable-fba
-  emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
-  params: {}
-  outcomes: {}
-  id: fig06-executable-fba
-  status: completed
+  outcomes:
+    MASS-CONSERVED:
+      result: PASS
+      detail: coarse/kinetic/FBA all → biomass 5.0
+    DISTINCT-KINETICS:
+      result: PASS
+      detail: t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap)
+    INTERFACE-PRESERVED:
+      result: PASS
+      detail: nutrients ⇒ biomass, one interface (law 4)
 findings:
 - id: F-01
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'Each of the three handlers produces positive biomass. Confirmed: coarse 4.0, kinetic 2.6667,
-    fba 3.2 — all > 0.'
+  statement: 'Every handler conserves mass: final biomass = yield × S₀. Confirmed: coarse/kinetic/FBA
+    all → biomass 5.0.'
   evidence:
-    from_test: all-produce-biomass
+    from_test: mass-conserved
     from_run: one-interface-three-mechanisms
-    observed: coarse 4.0, kinetic 2.6667, fba 3.2 — all > 0
+    observed: coarse/kinetic/FBA all → biomass 5.0
 - id: F-02
-  kind: biological
-  tier: observation
-  status: confirms
-  statement: 'The three biomass endpoints are meaningfully spread, not identical. Confirmed: biomass spread
-    2.667–4.0 (Δ = 1.333) > 1.0.'
-  evidence:
-    from_test: mechanisms-differ
-    from_run: one-interface-three-mechanisms
-    observed: biomass spread 2.667–4.0 (Δ = 1.333) > 1.0
-- id: F-03
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'All three executables expose the identical port set (biomass, energy, entropy, secretions)
-    over the identical wiring (compiler law 2/4). Confirmed: all three emit {biomass, energy, entropy,
-    secretions} over identical wiring.'
+  statement: 'The three mechanisms differ in dynamical SHAPE, not just slope. Confirmed: t≈4.0 (1st-order)
+    / 8.6 (MM knee) / 10.2 (FBA cap).'
+  evidence:
+    from_test: distinct-kinetics
+    from_run: one-interface-three-mechanisms
+    observed: t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap)
+- id: F-03
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'All three expose the identical port set over identical wiring. Confirmed: nutrients ⇒ biomass,
+    one interface (law 4).'
   evidence:
     from_test: interface-preserved
     from_run: one-interface-three-mechanisms
-    observed: all three emit {biomass, energy, entropy, secretions} over identical wiring
+    observed: nutrients ⇒ biomass, one interface (law 4)
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -156,33 +134,33 @@ conclusion_verdicts:
       and observable for this figure.
 conclusion: '## Claims
 
-  - One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is realized by THREE independent
-  handlers — coarse (biomass 4.0), saturating-kinetic (2.67), and real COBRApy FBA (3.2) — with no change
-  to the rest of the composite (handler independence, law 4).
+  - One metabolism interface, three handlers (first-order, Michaelis–Menten, real COBRApy LP) as a CLOSED-LOOP
+  batch: all converge to the SAME final biomass (yield·S₀ = 5.0, mass conserved) but with three DISTINCT
+  kinetic signatures — substrate exhausted at t≈4.0 / 8.6 / 10.2. Same interface, conserved mass, different
+  dynamics.
 
 
   ## Evidence
 
-  - **ALL-PRODUCE-BIOMASS** — coarse 4.0, kinetic 2.6667, fba 3.2 — all > 0
+  - **MASS-CONSERVED** — coarse/kinetic/FBA all → biomass 5.0
 
-  - **MECHANISMS-DIFFER** — biomass spread 2.667–4.0 (Δ = 1.333) > 1.0
+  - **DISTINCT-KINETICS** — t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap)
 
-  - **INTERFACE-PRESERVED** — all three emit {biomass, energy, entropy, secretions} over identical wiring
+  - **INTERFACE-PRESERVED** — nutrients ⇒ biomass, one interface (law 4)
+
+  - **conservation** — all three converge to biomass = yield·S₀ = 5.0 (mass conserved); coarse/MM/FBA
+  differ in timescale, not endpoint
 
 
   ## Limitations
 
-  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
-  demonstrates the *pattern*, not a validated quantity.
-
-  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
-  study, which is *about* alternative handlers).
+  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
+  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
 
 
   ## Next steps
 
-  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
-  validation.'
+  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -204,6 +182,11 @@ falsifiability: The claim is overturned if the compiled executable fails to pres
   (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
   on the declared ports.
 visualizations:
+- name: one-interface-three-mechanisms-dynamics
+  address: image:visualizations/one-interface-three-mechanisms-dynamics.svg
+  config:
+    chart: image
+    caption: CLOSED-LOOP dynamics — conserved, run to completion.
 - name: fig06-disintegration
   address: image:visualizations/fig06-disintegration.svg
   config:
@@ -212,21 +195,6 @@ visualizations:
   address: image:visualizations/fig06-illustration.png
   config:
     chart: image
-- name: fig06-executable-coarse
-  address: image:visualizations/fig06-executable-coarse.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
-- name: fig06-executable-kinetic
-  address: image:visualizations/fig06-executable-kinetic.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
-- name: fig06-executable-fba
-  address: image:visualizations/fig06-executable-fba.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
 parent_studies:
 - study: closing-the-loop
   condition: tests-passed

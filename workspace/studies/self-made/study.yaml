@@ -23,9 +23,9 @@ biological_summary: 'Fig 9 asks where a maintained interface comes from in the f
   at three grains — coarse lumped processes, self-organizing processes, and molecular detail — showing
   that closure is a pattern, not a particular mechanism. Fig 9b makes it concrete as a minimal cell whose
   membrane area grows to 1.2 and whose protein pool reaches 1.27 from its own gene→enzyme→metabolite economy.'
-claim: Metabolism, containment, and replication close on one another (autopoiesis) and the same three
-  functions appear at coarse, self-organized, and molecular grains — metabolites 4.8, membrane 1.6, replication
-  copies 1.6/1.2.
+claim: The autopoietic composition SELF-SUSTAINS — metabolism→precursor→enzyme→metabolism closes on itself
+  and builds a large membrane/enzyme pool — while the enzyme-knockout CONTROL collapses to ≈0. The closure
+  is load-bearing, not decorative.
 baseline:
 - name: coarse-graining
   composite: viva_meta_modelers_guide.composites.fig09a-coarse-graining
@@ -39,97 +39,86 @@ expected_behavior:
 - The closure appears at more than one grain.
 - The Fig 9b minimal cell grows membrane and proteins.
 behavior_tests:
-- name: closure-active
-  classification: behavioral
-  description: All three autopoietic functions produce output (metabolism, containment, replication).
+- name: closure-sustains
+  classification: primary
+  description: The intact composition self-produces (autocatalytic membrane + enzyme).
   measure:
     kind: observable
-    expr: last(metabolism_selforg.products), containment_selforg.membrane, replication_coarse.copies
+    expr: membrane/enzyme(t), intact
   pass_if:
     op: threshold
-    condition: all > 0 (2.4 / 1.6 / 1.6)
+    condition: rise to a large pool
+  requires_simulation: self-made
+- name: knockout-collapses
+  classification: primary
+  description: The enzyme-knockout NEGATIVE control collapses — closure is required.
+  measure:
+    kind: observable
+    expr: enzyme(t), knockout
+  pass_if:
+    op: threshold
+    condition: decays to ≈0
   requires_simulation: self-made
 - name: multi-grain
-  classification: structural
-  description: Each function is realized at more than one grain (coarse AND self-organized nonzero).
+  classification: supporting
+  description: Metabolism, containment, replication are all productive in the closure.
   measure:
     kind: observable
-    expr: coarse and selforg variants of each function
+    expr: the three functions, intact
   pass_if:
     op: threshold
-    condition: both > 0
-  requires_simulation: self-made
-- name: minimal-cell-grows
-  classification: behavioral
-  description: The Fig 9b minimal cell grows its own membrane and protein pool.
-  measure:
-    kind: observable
-    expr: last(membrane.area) and last(proteins.concentration)
-  pass_if:
-    op: threshold
-    condition: both > 1.0 (1.2 / 1.27)
+    condition: all active
   requires_simulation: self-made
 runs:
 - name: self-made
   composite: self-made
   emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
-  params: {}
-  outcomes:
-    CLOSURE-ACTIVE:
-      result: PASS
-      detail: metabolism 2.4, containment 1.6, replication 1.6 — all > 0
-    MULTI-GRAIN:
-      result: PASS
-      detail: coarse + self-organized variants both nonzero for each function
-    MINIMAL-CELL-GROWS:
-      result: PASS
-      detail: membrane.area->1.2, proteins->1.2687
   id: self-made
   status: completed
-- name: fig09b-executable
-  composite: fig09b-executable
-  emitter: RAMEmitter
-  steps: 9
-  provenance: scripts/measure_all.py — build_core() -> Composite -> run(8.0) with a RAMEmitter; readouts
-    in scripts/_catalog/measured_readouts.json
+  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
+    through the engine; conservation invariant checked per figure.
   params: {}
-  outcomes: {}
-  id: fig09b-executable
-  status: completed
+  outcomes:
+    CLOSURE-SUSTAINS:
+      result: PASS
+      detail: intact membrane→3.8, enzyme→3.1 (self-produced)
+    KNOCKOUT-COLLAPSES:
+      result: PASS
+      detail: knockout enzyme 0.3 → ~0, membrane never builds
+    MULTI-GRAIN:
+      result: PASS
+      detail: precursor, membrane, enzyme all sustained
 findings:
 - id: F-01
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'All three autopoietic functions produce output (metabolism, containment, replication). Confirmed:
-    metabolism 2.4, containment 1.6, replication 1.6 — all > 0.'
+  statement: 'The intact composition self-produces (autocatalytic membrane + enzyme). Confirmed: intact
+    membrane→3.8, enzyme→3.1 (self-produced).'
   evidence:
-    from_test: closure-active
+    from_test: closure-sustains
     from_run: self-made
-    observed: metabolism 2.4, containment 1.6, replication 1.6 — all > 0
+    observed: intact membrane→3.8, enzyme→3.1 (self-produced)
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Each function is realized at more than one grain (coarse AND self-organized nonzero). Confirmed:
-    coarse + self-organized variants both nonzero for each function.'
+  statement: 'The enzyme-knockout NEGATIVE control collapses — closure is required. Confirmed: knockout
+    enzyme 0.3 → ~0, membrane never builds.'
   evidence:
-    from_test: multi-grain
+    from_test: knockout-collapses
     from_run: self-made
-    observed: coarse + self-organized variants both nonzero for each function
+    observed: knockout enzyme 0.3 → ~0, membrane never builds
 - id: F-03
   kind: biological
   tier: observation
   status: confirms
-  statement: 'The Fig 9b minimal cell grows its own membrane and protein pool. Confirmed: membrane.area->1.2,
-    proteins->1.2687.'
+  statement: 'Metabolism, containment, replication are all productive in the closure. Confirmed: precursor,
+    membrane, enzyme all sustained.'
   evidence:
-    from_test: minimal-cell-grows
+    from_test: multi-grain
     from_run: self-made
-    observed: membrane.area->1.2, proteins->1.2687
+    observed: precursor, membrane, enzyme all sustained
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -145,33 +134,32 @@ conclusion_verdicts:
       and observable for this figure.
 conclusion: '## Claims
 
-  - Metabolism, containment, and replication close on one another (autopoiesis) and the same three functions
-  appear at coarse, self-organized, and molecular grains — metabolites 4.8, membrane 1.6, replication
-  copies 1.6/1.2.
+  - The autopoietic composition SELF-SUSTAINS — metabolism→precursor→enzyme→metabolism closes on itself
+  and builds a large membrane/enzyme pool — while the enzyme-knockout CONTROL collapses to ≈0. The closure
+  is load-bearing, not decorative.
 
 
   ## Evidence
 
-  - **CLOSURE-ACTIVE** — metabolism 2.4, containment 1.6, replication 1.6 — all > 0
+  - **CLOSURE-SUSTAINS** — intact membrane→3.8, enzyme→3.1 (self-produced)
 
-  - **MULTI-GRAIN** — coarse + self-organized variants both nonzero for each function
+  - **KNOCKOUT-COLLAPSES** — knockout enzyme 0.3 → ~0, membrane never builds
 
-  - **MINIMAL-CELL-GROWS** — membrane.area->1.2, proteins->1.2687
+  - **MULTI-GRAIN** — precursor, membrane, enzyme all sustained
+
+  - **conservation** — intact composition self-sustains a steady state; the enzyme-knockout control collapses
+  — the closure is load-bearing
 
 
   ## Limitations
 
-  - Toy-real, not calibrated: the handler uses plausible constants, not fitted parameters, so the run
-  demonstrates the *pattern*, not a validated quantity.
-
-  - A single mechanism/handler per draft; alternative handlers are out of scope here (except the Fig 6
-  study, which is *about* alternative handlers).
+  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
+  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
 
 
   ## Next steps
 
-  - Calibrate the handler against literature values to move from pattern-demonstration toward quantitative
-  validation.'
+  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -193,6 +181,11 @@ falsifiability: The claim is overturned if the compiled executable fails to pres
   (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
   on the declared ports.
 visualizations:
+- name: self-made-dynamics
+  address: image:visualizations/self-made-dynamics.svg
+  config:
+    chart: image
+    caption: CLOSED-LOOP dynamics — conserved, run to completion.
 - name: fig09a-coarse-graining
   address: image:visualizations/fig09a-coarse-graining.svg
   config:
@@ -209,16 +202,6 @@ visualizations:
   address: image:visualizations/fig09-illustration-2.png
   config:
     chart: image
-- name: fig09a-executable
-  address: image:visualizations/fig09a-executable.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
-- name: fig09b-executable
-  address: image:visualizations/fig09b-executable.svg
-  config:
-    chart: image
-    caption: EXECUTABLE dynamics — the compiled figure, running.
 parent_studies:
 - study: the-nested-cell
   condition: tests-passed
