@@ -24,15 +24,11 @@ from __future__ import annotations
 
 from process_bigraph import Process
 
+from viva_compiler import RewriteHandler  # marker base: conformance vs. wiring (law 2′)
+
 
 def _f(default):
     return {"_type": "float", "_default": default}
-
-
-class RewriteHandler(Process):
-    """Marker base for event-driven rewrite handlers: the compiler checks these
-    against the node's wiring rather than the draft's (placeholder) signature."""
-    REWRITE = True
 
 
 # ── Fig 10-1 · division ───────────────────────────────────────────────────────

@@ -160,3 +160,23 @@ quantity map and a keyword resolver over process kinds. Conformance is
 ontology-aware (`_type_compatible` accepts two differently-named types that denote
 the same term), and every materialized executable carries a provenance block naming
 each handler's biological-process term.
+
+### The compiler now lives in `viva-compiler`
+
+The compiler is no longer workspace code. Its domain-agnostic core — `signature_of`,
+`check_conformance` (`H ⊢ S`), `check_wiring_conformance`, `compile_composite`
+(`⟦C⟧_H`), `interface_of`, `RewriteHandler`, and the reactive-system backend — is the
+standalone [`viva-compiler`](https://github.com/vivarium-collective/viva-compiler)
+package. This workspace's `compile.py` is a thin adapter that injects the
+**ontology-aware** type-compatibility hook (Phase 5); everything else is viva-compiler's.
+Type compatibility is a pluggable hook there, so the library carries no ontology.
+
+### Two backends for structural rewrite
+
+viva-compiler exposes both rewrite backends. The `RewriteHandler` path (used by Fig
+10 here) animates a *pre-declared* post-structure. For a **genuine** structural
+rewrite — daughter nodes *created* when the rule fires — viva-compiler re-exports
+process-bigraph's built-in bigraphical reactive system (`ReactionRule` + `run_reactions`
++ a `ReactionStep`): one `cell` node becomes two, deterministically or stochastically
+(Gillespie). That is the honest realization of the paper's Fig 3c and the recommended
+next step for Fig 10's division/development/evolution.
