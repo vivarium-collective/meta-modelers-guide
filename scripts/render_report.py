@@ -233,17 +233,41 @@ def chips(pairs: list[tuple[str, str]]) -> str:
     return f'<div class="chips">{"".join(out)}</div>' if out else ""
 
 
+# Precise, physically-honest label per invariant kind (the callout badge text).
+# "conserved" is only true for the balance laws — the others are separations,
+# closures, or selection dynamics, so each gets its own verb.
+INV_LABEL = {
+    "carbon": "Mass balance",
+    "mass": "Mass conserved",
+    "energy": "Energy balance",
+    "timescale": "Timescale separation",
+    "closure": "Operational closure",
+    "logistic": "Bounded growth",
+    "selection": "Selection",
+}
+
+
+def _inv_label(kind: str) -> str:
+    return INV_LABEL.get(kind, (kind or "checked").replace("-", " ").title())
+
+
 def study_card(study: dict, order: int, inv_map: dict) -> str:
     slug = study.get("name", "")
     title = study.get("title") or slug
     claim = study.get("claim") or ""
     oc = outcomes(study)
     svgs = study_exec_svgs(study)
-    figs = "".join(f'<figure class="fig-wrap">{inline_svg(p)}</figure>' for p in svgs)
     inv = inv_map.get(slug, {})
-    inv_html = (f'<div class="invariant"><span class="inv-k">{esc(inv.get("invariant_kind","").upper())} '
-                f'conserved / checked</span> {md_inline(inv.get("invariant",""))}</div>'
-                if inv.get("invariant") else "")
+    # Figure caption BELOW the plot (publication convention): the physically-
+    # checked readout for this figure, badged with its precise invariant label.
+    if inv.get("invariant"):
+        cap = (f'<figcaption class="fig-cap"><span class="inv-k">'
+               f'{esc(_inv_label(inv.get("invariant_kind","")).upper())}</span> '
+               f'{md_inline(inv.get("invariant",""))}</figcaption>')
+    else:
+        cap = ""
+    figs = "".join(f'<figure class="fig-wrap">{inline_svg(p)}{cap}</figure>' for p in svgs)
+    inv_html = ""
 
     # collapsible full detail — the parts a reader only wants on demand
     findings = study.get("findings", [])
@@ -252,10 +276,9 @@ def study_card(study: dict, order: int, inv_map: dict) -> str:
         f'{md_inline(f.get("statement",""))}</li>' for f in findings)
     detail = f"""
       <details class="more">
-        <summary>Question, hypothesis &amp; findings</summary>
+        <summary>Question &amp; findings</summary>
         <div class="more-body">
           <h4>Question</h4>{paras(study.get('question'))}
-          <h4>Hypothesis</h4>{paras(study.get('hypothesis'))}
           <h4>Findings</h4><ul class="findings">{find_html}</ul>
         </div>
       </details>"""
@@ -324,8 +347,9 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
 
     def inv_line(s):
         d = inv_map.get(s.get("name", ""), {})
-        return (f'<div class="invariant"><span class="inv-k">{esc(d.get("invariant_kind","").upper())} '
-                f'conserved</span> {md_inline(d.get("invariant",""))}</div>') if d.get("invariant") else ""
+        return (f'<div class="invariant"><span class="inv-k">'
+                f'{esc(_inv_label(d.get("invariant_kind","")).upper())}</span> '
+                f'{md_inline(d.get("invariant",""))}</div>') if d.get("invariant") else ""
 
     # ── highlights (the interesting components, promoted)
     highlights = []
@@ -590,6 +614,9 @@ figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:1
   border-radius:12px;padding:10px}
 .fig-wrap.sm{flex:1 1 220px}
 .fig{width:100%;height:auto;display:block}
+.fig-cap{display:block;margin:10px 4px 2px;padding-top:10px;border-top:1px solid var(--line);
+  font-size:.82rem;line-height:1.5;color:var(--ink-2)}
+.fig-cap .inv-k{display:inline;font-size:.62rem}
 .more{margin:18px 0 0}
 .more>summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--teal);
   list-style:none;padding:8px 0}
