@@ -440,7 +440,7 @@ DYNAMICS = {
                    f"from nutrient drawn-down {R['nutrient'][0]-R['nutrient'][-1]:.2f}")),
     "closing-the-loop": dict(
         build=build_closing_the_loop, t_end=20.0, dt=0.1, field=True,
-        panels=[("Nutrient field — a gradient forms as the cell draws it down", "position",
+        panels=[("Nutrient field — a gradient forms", "position",
                  [f"c{i}" for i in range(15)])],
         invariant=("mass", lambda R: f"field+uptake conserved: "
                    f"Σfield {sum(R[f'c{i}'][-1] for i in range(15)):.2f} + taken {R['uptake_total'][-1]:.2f} "
@@ -453,15 +453,15 @@ DYNAMICS = {
                    "(mass conserved); coarse/MM/FBA differ in timescale, not endpoint")),
     "molecular-channels": dict(
         build=build_molecular_channels, t_end=16.0, dt=0.1,
-        panels=[("Chemical turnover → product + heat (energy conserved)", "amount",
+        panels=[("Chemical turnover → product + heat", "amount",
                  ["substrate", "product", "heat"]),
-                ("Electrical channel — Ohmic response to a decaying drive", "V / I",
+                ("Electrical channel — Ohmic response", "V / I",
                  ["voltage", "current"])],
         invariant=("energy", lambda R: f"energy balance: product {R['product'][-1]:.2f} + heat "
                    f"{R['heat'][-1]:.2f} accounts for substrate consumed {R['substrate'][0]-R['substrate'][-1]:.2f}")),
     "the-nested-cell": dict(
         build=build_nested_cell, t_end=20.0, dt=0.1,
-        panels=[("Central dogma: gene → mRNA → protein → metabolite (steady states)", "concentration",
+        panels=[("Central dogma: gene → mRNA → protein", "concentration",
                  ["mrna", "protein", "metabolite"])],
         invariant=("timescale", lambda R: f"time hierarchy: mRNA settles fast, protein lags — "
                    f"mRNA_ss≈{R['mrna'][-1]:.2f}, protein_ss≈{R['protein'][-1]:.2f}")),
@@ -473,20 +473,20 @@ DYNAMICS = {
                    "the enzyme-knockout control collapses — the closure is load-bearing")),
     "divide": dict(
         build=build_divide, t_end=18.0, dt=0.1,
-        panels=[("Mass — grow to threshold, halve at division (mass conserved)", "mass·count",
+        panels=[("Mass — grow, halve at division", "mass·count",
                  ["mass", "cell_count"]),
-                ("Nutrient drawn down by the growing lineage", "nutrient", ["nutrient"])],
+                ("Nutrient drawn down by the lineage", "nutrient", ["nutrient"])],
         invariant=("mass", lambda R: f"divisions: cell_count 1→{R['cell_count'][-1]:.0f}; "
                    f"each division halves mass (mother = Σ daughters)")),
     "biofilm": dict(
         build=build_biofilm, t_end=16.0, dt=0.1,
-        panels=[("Logistic colony growth + ECM (saturates at carrying capacity)", "amount",
+        panels=[("Logistic colony growth + ECM", "amount",
                  ["cells", "ecm"])],
         invariant=("logistic", lambda R: f"cells saturate at carrying capacity K "
                    f"(cells_final {R['cells'][-1]:.2f}), not unbounded/linear growth")),
     "evolve": dict(
         build=build_evolve, t_end=28.0, dt=0.1,
-        panels=[("Competitive selection — the fitter variant sweeps", "abundance",
+        panels=[("Competitive selection — fitter variant sweeps", "abundance",
                  ["n_wt", "n_mut"]),
                 ("A new interface capability rides the sweep", "capability", ["capability"])],
         invariant=("selection", lambda R: f"selection sweep: mutant fraction "
@@ -494,11 +494,11 @@ DYNAMICS = {
                    f"{R['n_mut'][-1]/(R['n_wt'][-1]+R['n_mut'][-1]):.2f}")),
     "the-living-atlas": dict(
         build=build_whole_cell_dynamics, t_end=20.0, dt=0.1,
-        panels=[("Whole cell: grow → divide → thermal shock → die → disintegrate", "biomass / debris",
+        panels=[("Grow → divide → shock → die → disintegrate", "biomass / debris",
                  ["biomass", "debris", "cell_count"]),
-                ("Viability collapse under the thermal shock", "temperature °C",
+                ("Viability collapse under thermal shock", "temperature °C",
                  ["temperature"], "viability", ["viability"])],
         invariant=("mass", lambda R: f"mass conserved through death: peak biomass "
                    f"{max(R['biomass']):.2f} → debris {R['debris'][-1]:.2f}; "
-                   f"divides to {R['cell_count'][-1]:.0f} cells; viability {min(R['viability']):.2f}")),
+                   f"divides to {R['cell_count'][-1]:.0f} cells; viability → {max(min(R['viability']), 0.0):.2f}")),
 }
