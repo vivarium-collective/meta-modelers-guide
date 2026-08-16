@@ -106,3 +106,57 @@ Materialize every figure's executable with `python scripts/build_executables.py`
 The same signature can later be handled by a **real external simulator** (COBRA/
 dFBA, tellurium/COPASI, …) wrapped as a Process — the swap is exactly a new,
 conforming handler, with the interface preserved by law 2.
+
+---
+
+## Status: the whole paper is executable
+
+Every one of the 11 figure composites now has a conforming handler environment and
+a materialized executable (`scripts/build_executables.py`); each compiles (law 1),
+preserves its interface (law 2), and runs with non-trivial dynamics (law 3).
+Coverage: Fig 4b, 5, 6, 7, 8, 9a, 9b, 10-1, 10-2, 10-3 (Fig 4a is illustrative).
+
+### Rewrite handlers — the control-flow half (law 2′)
+
+Fig 10 (division, development, evolution) is where composition stops being a static
+handler swap. Most Fig 10 drafts still conform normally, but `Divide`'s draft
+signature is a placeholder while the composite wires it as `biomass ⇒ biomass_1,
+biomass_2, cell_count`. A handler marked `REWRITE = True` (subclass of
+`RewriteHandler`) is checked against the node's **wiring** rather than the draft
+signature — **law 2′** — and fires a discrete event (`DivisionRewrite`: at a
+cell-cycle time the parent biomass partitions into two daughters and `cell_count`
+increments). The interface itself is still preserved: the daughter/biofilm/variant
+subtrees are pre-declared in the semantic composite, so `interface_of` is unchanged;
+the handler animates a pre-declared post-structure. True runtime node-insertion is a
+further extension.
+
+### Real external simulators as handlers (Phase 2)
+
+The same signature can be handled by a real engine. `FBAMetabolism`
+(`handlers_fig06_fba.py`) bridges **COBRApy** flux-balance analysis to the Fig 6
+`CoarseGrainedMetabolism` interface: it sets the nutrient uptake bound from the
+incoming flux and solves the LP for max biomass (capped by a network constraint).
+Fig 6 now demonstrates law 4 with three handlers over one interface — coarse
+(linear, 5.0), kinetic (saturating, 3.33), FBA (LP-constrained, 4.0). `cobra` is an
+optional dependency (`pip install -e .[simulators]`); it is imported lazily, so
+discovery and materialization work without it and the tests skip when it is absent.
+
+### The whole cell (Phase 4)
+
+`wholecell.py` composes the figures into one multiscale executable —
+cell–environment coupling (Fig 5) + viability-gated metabolism (Fig 6) + a
+`ViabilityMonitor` (Fig 4 bounds) + division (Fig 10) + disintegration (Fig 6). One
+run closes the paper's arc: the cell grows on nutrients, divides when biomass
+crosses a threshold (`cell_count` 1→2), then a thermal shock pushes temperature out
+of the viability band, viability collapses, and biomass decays into molecular debris
+(cell→molecular). `scripts/run_wholecell.py` records the trajectory.
+
+### Ontology-typed interfaces + provenance (Phase 5)
+
+`ontology.py` binds the interface vocabulary to real terms — GO for processes
+(metabolism `GO:0008152`, cell division `GO:0051301`, …), PATO for physical
+qualities (temperature `PATO:0000146`), CBO for cell behaviours — via an explicit
+quantity map and a keyword resolver over process kinds. Conformance is
+ontology-aware (`_type_compatible` accepts two differently-named types that denote
+the same term), and every materialized executable carries a provenance block naming
+each handler's biological-process term.
