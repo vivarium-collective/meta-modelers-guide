@@ -107,7 +107,15 @@ def _type_compatible(core, sig_t, handler_t) -> bool:
     # allow a handler type that inherits the signature type (a subtype)
     try:
         schema = core.access(handler_t) or {}
-        return schema.get("_inherit") == sig_t or sig_t in (schema.get("_inherit") or [])
+        if schema.get("_inherit") == sig_t or sig_t in (schema.get("_inherit") or []):
+            return True
+    except Exception:
+        pass
+    # ontology-aware: two differently-named types that denote the same ontology
+    # term are compatible (Phase 5). Guarded so a missing ontology module is inert.
+    try:
+        from .ontology import ontology_compatible
+        return ontology_compatible(sig_t, handler_t)
     except Exception:
         return False
 

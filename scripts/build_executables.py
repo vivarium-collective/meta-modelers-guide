@@ -40,12 +40,16 @@ def build_one(core, env_name, semantic_stem, output_stem) -> Path | None:
         return None
     sem = json.loads((COMPOSITES / f"{semantic_stem}.composite.json").read_text())
     ex_state = compile_composite(sem["state"], ENVS[env_name], core)
+    from viva_meta_modelers_guide.ontology import figure_provenance
     doc = {
         "name": output_stem,
         "description": (f"EXECUTABLE compilation of {semantic_stem} under handler "
                         f"environment '{env_name}' — draft signatures replaced by "
                         f"conforming Process handlers (see compile.py). Runnable."),
         "requires": {"processes": sorted({s["handler"] for s in ENVS[env_name].values()})},
+        # Phase 5 provenance: each handled draft's biological-process ontology term.
+        "provenance": {"figure": semantic_stem, "environment": env_name,
+                       "handlers": figure_provenance(ENVS[env_name])},
         "state": ex_state,
     }
     out = COMPOSITES / f"{output_stem}.composite.json"
