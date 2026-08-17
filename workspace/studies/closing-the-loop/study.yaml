@@ -11,13 +11,13 @@ question: Does the cell–environment coupling of Fig 5 close into a genuine sen
   is a real spatial field — i.e. does the cell read a diffusing chemical field, act back on it through
   an uptake flux, and grow from what it takes up, all over one shared field store?
 biological_summary: 'Fig 5 turns the static interface of Fig 4 into a relationship. The environment is
-  not a set of scalars but a field — here a nine-cell map[float] chemical field plus a mechanical field
+  not a set of scalars but a field — here a map[float] chemical field over a 15-node lattice plus a mechanical field
   — and the cell couples to it locally: it senses the field value at its location and acts back by taking
   up matter, which both feeds its growth and depletes the field. Diffusion then carries the depletion
   (and the cell''s secretions) outward. The key conceptual move is that sensing and acting are not two
   subsystems but one coupling: the same shared field store is what the cell reads and what it writes.
-  Measured, the seeded source cell falls from 1.0 to 0.20 as it diffuses to its neighbors, the uptake
-  flux rises to 0.34, and the cell''s mass grows to 1.17.'
+  Measured over the 15-node diffusing lattice, cumulative uptake climbs from 0 to 0.95 and the cell''s
+  biomass grows to 0.66, while field mass is conserved (Σfield 5.05 + uptake 0.95 ≈ the initial 6.00).'
 claim: 'Sensing and acting are one coupling, not two: a cell and its environment can be specified as a
   shared interface over which the cell reads a field and acts back on it.'
 baseline:
@@ -117,12 +117,10 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
-      pattern qualitatively (toy-real, uncalibrated).
+    basis: Gradient-forms, mass-conserved, and cell-draws-well all pass; the inert draft stays at seed, so the sense/act coupling is what drives the dynamics.
   explanatory_gain:
     result: POSITIVE
-    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
-      and observable for this figure.
+    basis: Running sensing and acting over one shared field store makes the "one coupling, not two" claim measurable as a conserved field balance.
 conclusion: '## Claims
 
   - Over a real 1-D diffusing nutrient field (Fick) the cell forms a gradient and draws a local well;
@@ -143,33 +141,28 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
-  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
+  - Toy-real diffusion model: field mass is conserved and the drawdown is Fickian in shape, but diffusion/uptake constants are illustrative.
 
 
   ## Next steps
 
-  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
+  - Add a second cell to the field to test competition and cross-feeding over the shared store.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
       preservation holds.
     pipeline_unblocks:
-    - typed-interface
+    - one-interface-three-mechanisms
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
-  cell.
-- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
-  given the handler).
-falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
-  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
-  on the declared ports.
+- Single diffusing field on a small 15-node lattice with one cell; no multi-cell competition for the shared field.
+- Diffusion and uptake constants are illustrative toy-real values, not calibrated to a medium or organism.
+falsifiability: Overturned if field mass is not conserved across the shared store (Σfield + cumulative uptake ≠ initial), or if the cell reads the field without acting back on it (uptake stays at 0).
 visualizations:
 - name: closing-the-loop-dynamics
   address: image:visualizations/closing-the-loop-dynamics.svg

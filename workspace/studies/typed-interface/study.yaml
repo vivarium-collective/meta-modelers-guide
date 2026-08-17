@@ -138,12 +138,10 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
-      pattern qualitatively (toy-real, uncalibrated).
+    basis: Volume, nutrient, and viability tests all pass on measured readouts; the inert-draft negative control stays at its 0.5 seed, isolating the installed handler as the cause.
   explanatory_gain:
     result: POSITIVE
-    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
-      and observable for this figure.
+    basis: Compiling the inert Fig 4 interface into a running cell makes interface-preservation and the growth-versus-viability coupling directly observable.
 conclusion: '## Claims
 
   - Given one conforming handler the cellular interface becomes a bounded cell that grows on a DEPLETING
@@ -165,33 +163,28 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
-  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
+  - Single-handler toy-real model: mass is conserved and the rate laws (Monod, Arrhenius) are real in shape, but the constants are illustrative.
 
 
   ## Next steps
 
-  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
+  - Install a second, independent handler behind the same interface to show mechanism-independence directly.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
       preservation holds.
     pipeline_unblocks:
-    - the-living-atlas
+    - closing-the-loop
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
-  cell.
-- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
-  given the handler).
-falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
-  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
-  on the declared ports.
+- One handler realizes the interface (Monod uptake + Arrhenius viability); the port set admits many mechanisms but only this one is installed and measured.
+- Constants (uptake half-saturation, yield, thermal tolerance) are illustrative, not fitted to a named organism.
+falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 4 interface, or if installing the handler leaves volume flat (no growth) or viability without an Arrhenius collapse past t_tol.
 visualizations:
 - name: typed-interface-dynamics
   address: image:visualizations/typed-interface-dynamics.svg

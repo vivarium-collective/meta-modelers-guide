@@ -12,12 +12,12 @@ question: How does a cell hold itself together? Does the Fig 9 composition expre
   each function is realized at a coarse, a self-organized, or a molecular grain?
 biological_summary: 'Fig 9 asks where a maintained interface comes from in the first place, and answers
   with autopoiesis: a cell is a network of processes that collectively produce and sustain the very organization
-  that lets them run. Three functions close the loop — metabolism builds the parts (metabolites → 4.8,
-  products → 2.4), containment builds the boundary that holds them (membrane → 1.6, boundary → 1.2), and
-  replication copies the blueprint (copies → 1.6 coarse, 1.2 self-organized). The same triad is drawn
-  at three grains — coarse lumped processes, self-organizing processes, and molecular detail — showing
-  that closure is a pattern, not a particular mechanism. Fig 9b makes it concrete as a minimal cell whose
-  membrane area grows to 1.2 and whose protein pool reaches 1.27 from its own gene→enzyme→metabolite economy.'
+  that lets them run. Three functions close the loop — metabolism builds the parts, containment builds
+  the boundary that holds them, and replication copies the blueprint. In the intact composition the closure
+  is self-producing: the membrane climbs to 3.8 and the enzyme pool to 3.1, held up by the very economy
+  they sustain, whereas an enzyme-knockout control collapses (enzyme 0.3 → ≈0, membrane never builds).
+  The same triad is drawn at three grains — coarse lumped processes, self-organizing processes, and molecular
+  detail — showing that closure is a pattern, not a particular mechanism.'
 claim: 'A cell holds itself together through closure: metabolism, containment, and replication each produce
   what the others need, so the organization sustains itself.'
 baseline:
@@ -38,7 +38,7 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: intact closure self-sustains the membrane (exec last≈2.1)
+    provenance: intact closure self-sustains the membrane (exec last≈3.8)
   requires_simulation: self-made
 - name: enzyme-maintained
   classification: primary
@@ -49,7 +49,7 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 0.5
-    provenance: the enzyme pool is held up by the closure (exec last≈1.1)
+    provenance: the enzyme pool is held up by the closure (exec last≈3.1)
   requires_simulation: self-made
 - name: knockout-collapses
   classification: diagnostic
@@ -121,12 +121,10 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
-      pattern qualitatively (toy-real, uncalibrated).
+    basis: Closure-sustains, knockout-collapses, and multi-grain all pass; the knockout negative control collapses to ≈0, showing the closure is load-bearing.
   explanatory_gain:
     result: POSITIVE
-    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
-      and observable for this figure.
+    basis: Contrasting the intact autopoietic loop against its knockout makes closure a measurable, falsifiable dependency rather than a metaphor.
 conclusion: '## Claims
 
   - The autopoietic composition SELF-SUSTAINS — metabolism→precursor→enzyme→metabolism closes on itself
@@ -148,33 +146,28 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
-  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
+  - Toy-real autopoiesis: the loop sustains a steady state and the knockout collapses, but the constants are illustrative and self-production is lumped.
 
 
   ## Next steps
 
-  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
+  - Sweep additional knockouts to map which loop members are individually essential to the closure.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
       preservation holds.
     pipeline_unblocks:
-    - the-nested-cell
+    - divide
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
-  cell.
-- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
-  given the handler).
-falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
-  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
-  on the declared ports.
+- Closure is shown as sustained steady levels, not literal self-fabrication of new components; the self-production is a toy autocatalytic loop.
+- The knockout is a single-gene control; robustness of the closure to other perturbations is untested.
+falsifiability: Overturned if the intact composition fails to sustain its membrane and enzyme pools, or if the enzyme-knockout control does NOT collapse (which would mean the closure is not load-bearing).
 visualizations:
 - name: self-made-dynamics
   address: image:visualizations/self-made-dynamics.svg
