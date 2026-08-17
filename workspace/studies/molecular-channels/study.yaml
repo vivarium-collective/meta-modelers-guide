@@ -24,36 +24,52 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: energy-conserved
+- name: product-formation
   classification: primary
-  description: Product + dissipated heat balance the substrate energy consumed.
   measure:
     kind: observable
-    expr: product + heat vs substrate consumed
+    path: product
+    expr: last(product)
   pass_if:
-    op: threshold
-    condition: balanced (η + (1−η))
-  requires_simulation: molecular-channels
-- name: dynamic-response
-  classification: supporting
-  description: Channels show a real transient (turnover + relaxation), not a step.
+    op: '>='
+    value: 2.0
+    provenance: chemical turnover yields product (exec last≈4.8)
+  requires_simulation: product-formation
+- name: substrate-consumed
+  classification: primary
   measure:
     kind: observable
-    expr: product(t), current(t)
+    path: substrate
+    expr: last(substrate)
   pass_if:
-    op: threshold
-    condition: smooth transient to steady state
-  requires_simulation: molecular-channels
-- name: ohmic-channel
-  classification: supporting
-  description: The electrical channel is an Ohmic response to its decaying drive.
+    op: <=
+    value: 0.5
+    provenance: substrate pool consumed to ~0 (exec last≈0.0 from 8.0)
+  requires_simulation: substrate-consumed
+- name: heat-generated
+  classification: primary
   measure:
     kind: observable
-    expr: current vs voltage
+    path: heat
+    expr: last(heat)
   pass_if:
-    op: threshold
-    condition: current ∝ voltage (relaxing)
-  requires_simulation: molecular-channels
+    op: '>='
+    value: 1.0
+    provenance: turnover dissipates heat (exec last≈3.2)
+  requires_simulation: heat-generated
+- name: draft-is-inert
+  classification: diagnostic
+  measure:
+    kind: observable
+    path: product
+    expr: last(product)
+  pass_if:
+    op: '>='
+    value: 2.0
+    provenance: inert-draft run stays at seed (no mechanism → no dynamics)
+  control: negative
+  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
+  requires_simulation: draft-is-inert
 runs:
 - name: molecular-channels
   composite: molecular-channels

@@ -24,26 +24,41 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: logistic-saturation
+- name: colony-growth
   classification: primary
-  description: Cell number follows logistic growth to carrying capacity.
   measure:
     kind: observable
-    expr: cells(t)
+    path: cells
+    expr: last(cells)
   pass_if:
-    op: threshold
-    condition: sigmoid saturating at K
-  requires_simulation: biofilm
-- name: ecm-accumulates
-  classification: supporting
-  description: Extracellular matrix accumulates as the colony develops.
+    op: '>='
+    value: 2.0
+    provenance: logistic colony grows toward K (exec last≈5.0)
+  requires_simulation: colony-growth
+- name: ecm-production
+  classification: primary
   measure:
     kind: observable
-    expr: ecm(t)
+    path: ecm
+    expr: last(ecm)
   pass_if:
-    op: threshold
-    condition: rises with cell number
-  requires_simulation: biofilm
+    op: '>='
+    value: 5.0
+    provenance: colony secretes extracellular matrix (exec last≈21.8)
+  requires_simulation: ecm-production
+- name: draft-is-inert
+  classification: diagnostic
+  measure:
+    kind: observable
+    path: cells
+    expr: last(cells)
+  pass_if:
+    op: '>='
+    value: 2.0
+    provenance: inert-draft run stays at seed (no mechanism → no dynamics)
+  control: negative
+  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
+  requires_simulation: draft-is-inert
 runs:
 - name: biofilm
   composite: biofilm

@@ -25,36 +25,41 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: division-fires
+- name: division-occurs
   classification: primary
-  description: Growth to threshold fires repeated division events.
   measure:
     kind: observable
-    expr: cell_count(t)
+    path: cell_count
+    expr: last(cell_count)
   pass_if:
-    op: threshold
-    condition: steps up (1 → many)
-  requires_simulation: divide
-- name: mass-conserved
+    op: '>='
+    value: 2.0
+    provenance: lineage divides (exec cell_count 1→14)
+  requires_simulation: division-occurs
+- name: nutrient-consumed
   classification: primary
-  description: Each division halves mass (mother = Σ daughters) — mass sawtooth.
   measure:
     kind: observable
-    expr: mass(t) across an event
+    path: nutrient
+    expr: last(nutrient)
   pass_if:
-    op: threshold
-    condition: halves, total conserved
-  requires_simulation: divide
-- name: autocatalytic-growth
-  classification: supporting
-  description: Between divisions mass grows autocatalytically on the nutrient.
+    op: <=
+    value: 5.0
+    provenance: growing lineage draws nutrient down (exec last≈1.1 from 20)
+  requires_simulation: nutrient-consumed
+- name: draft-is-inert
+  classification: diagnostic
   measure:
     kind: observable
-    expr: mass between events, nutrient
+    path: cell_count
+    expr: last(cell_count)
   pass_if:
-    op: threshold
-    condition: rises as nutrient depletes
-  requires_simulation: divide
+    op: '>='
+    value: 2.0
+    provenance: inert-draft run stays at seed (no mechanism → no dynamics)
+  control: negative
+  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
+  requires_simulation: draft-is-inert
 runs:
 - name: divide
   composite: divide

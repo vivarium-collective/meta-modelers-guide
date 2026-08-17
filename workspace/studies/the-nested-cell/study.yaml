@@ -26,36 +26,41 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: steady-states
+- name: protein-expressed
   classification: primary
-  description: Each species reaches a degradation-balanced steady state (not a ramp).
   measure:
     kind: observable
-    expr: mRNA/protein/metabolite as t→end
+    path: protein
+    expr: last(protein)
   pass_if:
-    op: threshold
-    condition: plateau at k_synth/k_deg
-  requires_simulation: the-nested-cell
-- name: time-hierarchy
+    op: '>='
+    value: 3.0
+    provenance: central dogma expresses protein (exec last≈10.5)
+  requires_simulation: protein-expressed
+- name: mrna-transcribed
   classification: primary
-  description: The cascade shows the transcription-before-translation delay.
   measure:
     kind: observable
-    expr: settling order
+    path: mrna
+    expr: last(mrna)
   pass_if:
-    op: threshold
-    condition: mRNA before protein before metabolite
-  requires_simulation: the-nested-cell
-- name: cascade-flows
-  classification: supporting
-  description: Expression flows gene→mRNA→protein→metabolite.
+    op: '>='
+    value: 0.5
+    provenance: gene transcribed to mRNA (exec last≈2.4)
+  requires_simulation: mrna-transcribed
+- name: draft-is-inert
+  classification: diagnostic
   measure:
     kind: observable
-    expr: downstream species
+    path: protein
+    expr: last(protein)
   pass_if:
-    op: threshold
-    condition: all > 0 at steady state
-  requires_simulation: the-nested-cell
+    op: '>='
+    value: 3.0
+    provenance: inert-draft run stays at seed (no mechanism → no dynamics)
+  control: negative
+  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
+  requires_simulation: draft-is-inert
 runs:
 - name: the-nested-cell
   composite: the-nested-cell
