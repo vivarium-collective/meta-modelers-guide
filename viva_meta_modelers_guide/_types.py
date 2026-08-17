@@ -70,13 +70,28 @@ def type_schemas() -> dict:
 def register_types(core):
     """Register the guide's biological interface types on ``core`` (idempotent).
 
-    Uses the plural ``core.register_types({...})`` API — the singular
-    ``register_type`` loop registers a name for ``access`` but NOT for the
-    ``realize`` path a ``Composite`` build walks, so custom-typed store leaves
-    (``{"_type": "concentration"}``) fail to resolve. The plural form registers
-    on both paths. Safe to call repeatedly.
+    Registers each type with the plural ``core.register_types({name: schema})``
+    API (needed for the ``realize`` path a ``Composite`` build walks — the
+    singular ``register_type`` only covers ``access``). Registers ONE AT A TIME,
+    tolerating per-name conflicts: some names (e.g. ``concentration``) may
+    already be provided by another installed package (``spatio_flux``'s
+    ``Concentration``), and a batch ``register_types(all)`` aborts on the first
+    such conflict — leaving every later type (``area`` …) unregistered, which
+    then surfaces at run time as "accessing {'_type': 'area', …} but schema is
+    not found". Registering per-name keeps the conflicting one's existing
+    definition and still registers all the rest. Safe to call repeatedly.
     """
-    core.register_types(type_schemas())
+    skipped = []
+    for name, schema in type_schemas().items():
+        try:
+            core.register_types({name: schema})
+        except Exception:
+            skipped.append(name)   # already provided elsewhere — keep that one
+    if skipped:
+        import warnings
+        warnings.warn(
+            "viva_meta_modelers_guide: kept existing definitions for types "
+            "already registered elsewhere: " + ", ".join(skipped))
     return core
 
 
