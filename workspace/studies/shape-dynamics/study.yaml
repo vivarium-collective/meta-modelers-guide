@@ -70,3 +70,23 @@ conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
 visualizations: []
+followup_proposals:
+- id: wire-viva-cpm-composite
+  title: Run the viva-cpm CPM composite end-to-end
+  motivation: 'The sourcing decision (reuse viva-cpm) is audited PASS, but the run is audit-only: the
+    Rust/maturin CPM composite needs its own core registration and lattice/energy parameters to execute.
+    This follow-up makes the Cellular Potts shape dynamics actually run, so the reuse decision is demonstrated
+    rather than only audited.'
+  hypothesized_mechanism: viva-cpm (dist pbg-cpm, imports as package `cpm`) builds via maturin and needs
+    a cpm-specific core + lattice/energy params, not the viva_munk core the other runnable tasks share.
+  status: proposed
+  seed:
+    purpose:
+      question: Does the reuse-viva-cpm decision hold up when the CPM composite is actually run to completion?
+      mechanism: Register a cpm-specific core, supply lattice + surface-energy/adhesion params, and run
+        the shape-dynamics composite.
+      expected_outcome: A cell changes shape on the lattice as surface energy/adhesion evolve; the run
+        completes and shape-dynamics source_fit becomes demonstrated.
+    pipeline_gate:
+      prerequisites:
+      - shape-dynamics

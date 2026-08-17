@@ -71,3 +71,24 @@ conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
 visualizations: []
+followup_proposals:
+- id: run-community-dfba-for-real
+  title: Run spatio-flux community_dfba end-to-end
+  motivation: 'The sourcing decision (reuse spatio-flux) is audited PASS, but the run is audit-only: spatio_flux.composites.metabolism.community_dfba
+    raises a TypeError under the generic demo driver, so the spatial dFBA competition never executes.
+    This follow-up wires the composite''s parameters so the chosen module actually runs — turning source_fit
+    from an audited claim into a demonstrated result and making the demo run one more study for real.'
+  hypothesized_mechanism: 'community_dfba needs module-specific parameter wiring (initial fields, species,
+    grid) that the generic Composite({''state'': ...}).run path does not supply.'
+  status: proposed
+  seed:
+    purpose:
+      question: Does the reuse-spatio-flux decision hold up when the community_dfba composite is actually
+        run to completion?
+      mechanism: Supply community_dfba's required fields/species/grid params and run the spatial dFBA
+        competition on the workspace core.
+      expected_outcome: Two populations compete for a shared diffusing nutrient; the run completes and
+        the spatial-competition source_fit becomes demonstrated, not audit-only.
+    pipeline_gate:
+      prerequisites:
+      - spatial-competition
