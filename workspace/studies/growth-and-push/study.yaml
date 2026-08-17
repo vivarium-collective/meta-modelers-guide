@@ -1,0 +1,76 @@
+schema_version: 4
+name: growth-and-push
+investigation: model-sourcing
+title: Growth And Push
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Given the task's required capabilities ['growth', 'physics_2d'], what is the right way to source
+  the model — reuse, compose, or build-new — and does the sourcing audit confirm it?
+biological_summary: Cells grow (a biomass process) and, as they enlarge, physically push their neighbours
+  (rigid-body contact) — two domains composed.
+claim: The right sourcing for this task is to compose growth-proc + viva-munk.
+requires:
+- growth
+- physics_2d
+sourcing:
+  decision: compose
+  modules:
+  - growth-proc
+  - viva-munk
+  rationale: growth process + viva-munk physics
+  audit:
+    gate: pass
+    axes:
+      source_fit: within_tol
+      reinvention: within_tol
+      novelty_justified: within_tol
+      survey_recorded: within_tol
+    catches_if_wrong: reuse of either alone misses a capability → `source_fit` mismatch.
+baseline:
+- name: growth-proc
+  module: growth-proc
+  domain: growth / biomass
+  params: {}
+- name: viva-munk
+  module: viva-munk
+  domain: 2D rigid-body physics (pymunk)
+  params: {}
+variants: []
+behavior_tests:
+- name: sourcing-fit
+  classification: primary
+  description: The chosen module(s)' capabilities cover the task's required capabilities.
+  measure:
+    kind: audit-axis
+    path: sourcing.source_fit
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing.build_sourcing_report -> source_fit=within_tol
+- name: no-reinvention
+  classification: primary
+  description: Did not build-new where a catalogued module already fits.
+  measure:
+    kind: audit-axis
+    path: sourcing.reinvention
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing -> reinvention=within_tol
+runs:
+- name: growth-and-push
+  module: growth-proc
+  status: completed
+  provenance: 'scripts/model_sourcing_demo.py — real module execution: ran t=3.0; 3 bodies'
+  outcomes:
+    SOURCING-GATE:
+      result: PASS
+      detail: gate=pass; source_fit=within_tol
+conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (compose growth-proc + viva-munk)
+  covers the required capabilities; the module ran for real (ran t=3.0; 3 bodies).
+falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
+  the capability-subset match against the catalog.
+visualizations: []

@@ -1,0 +1,168 @@
+{
+  "schema": "model_sourcing_results/v1",
+  "catalog": {
+    "viva-munk": [
+      "physics_2d",
+      "rigid_body",
+      "collision",
+      "mechanics",
+      "adhesion"
+    ],
+    "spatio-flux": [
+      "spatial",
+      "fba",
+      "dfba",
+      "diffusion",
+      "reaction",
+      "metabolism"
+    ],
+    "viva-cpm": [
+      "cpm",
+      "cell_shape",
+      "adhesion",
+      "spatial",
+      "morphology"
+    ],
+    "growth-proc": [
+      "growth",
+      "biomass"
+    ]
+  },
+  "loop_select_phase": true,
+  "results": [
+    {
+      "task": "cell-jostling",
+      "requires": [
+        "physics_2d",
+        "rigid_body",
+        "collision"
+      ],
+      "sourcing": {
+        "decision": "reuse",
+        "modules": [
+          "viva-munk"
+        ],
+        "rationale": "pymunk 2D rigid-body physics is exactly cell jostling"
+      },
+      "gate": "pass",
+      "axes": {
+        "source_fit": "within_tol",
+        "reinvention": "within_tol",
+        "novelty_justified": "within_tol",
+        "survey_recorded": "within_tol"
+      },
+      "real_run": "ran t=3.0; 3 bodies"
+    },
+    {
+      "task": "growth-and-push",
+      "requires": [
+        "growth",
+        "physics_2d"
+      ],
+      "sourcing": {
+        "decision": "compose",
+        "modules": [
+          "growth-proc",
+          "viva-munk"
+        ],
+        "rationale": "growth process + viva-munk physics"
+      },
+      "gate": "pass",
+      "axes": {
+        "source_fit": "within_tol",
+        "reinvention": "within_tol",
+        "novelty_justified": "within_tol",
+        "survey_recorded": "within_tol"
+      },
+      "real_run": "ran t=3.0; 3 bodies"
+    },
+    {
+      "task": "spatial-competition",
+      "requires": [
+        "spatial",
+        "dfba",
+        "diffusion"
+      ],
+      "sourcing": {
+        "decision": "reuse",
+        "modules": [
+          "spatio-flux"
+        ],
+        "rationale": "spatio-flux does spatial dFBA competition"
+      },
+      "gate": "pass",
+      "axes": {
+        "source_fit": "within_tol",
+        "reinvention": "within_tol",
+        "novelty_justified": "within_tol",
+        "survey_recorded": "within_tol"
+      },
+      "real_run": "ran t=5.0; glucose 10.0->8.31, acetate 0.0->0.083"
+    },
+    {
+      "task": "shape-dynamics",
+      "requires": [
+        "cpm",
+        "cell_shape",
+        "morphology"
+      ],
+      "sourcing": {
+        "decision": "reuse",
+        "modules": [
+          "viva-cpm"
+        ],
+        "rationale": "viva-cpm is a Cellular Potts shape engine"
+      },
+      "gate": "pass",
+      "axes": {
+        "source_fit": "within_tol",
+        "reinvention": "within_tol",
+        "novelty_justified": "within_tol",
+        "survey_recorded": "within_tol"
+      },
+      "real_run": "ran 6 updates; cell volumes [69, 72] (target 80, relaxing from 36)"
+    },
+    {
+      "task": "novel-mechanism",
+      "requires": [
+        "quantum_signal",
+        "exotic_transport"
+      ],
+      "sourcing": {
+        "decision": "build-new",
+        "modules": [],
+        "rationale": "no catalogued module covers this"
+      },
+      "gate": "pass",
+      "axes": {
+        "source_fit": "within_tol",
+        "reinvention": "within_tol",
+        "novelty_justified": "within_tol",
+        "survey_recorded": "within_tol"
+      },
+      "real_run": "\u2014"
+    },
+    {
+      "task": "TRAP-wrong-reuse",
+      "requires": [
+        "physics_2d",
+        "spatial"
+      ],
+      "sourcing": {
+        "decision": "reuse",
+        "modules": [
+          "viva-munk"
+        ],
+        "rationale": "looks like physics"
+      },
+      "gate": "fail",
+      "axes": {
+        "source_fit": "mismatch",
+        "reinvention": "within_tol",
+        "novelty_justified": "within_tol",
+        "survey_recorded": "within_tol"
+      },
+      "real_run": "\u2014"
+    }
+  ]
+}

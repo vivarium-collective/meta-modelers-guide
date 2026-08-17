@@ -1,0 +1,73 @@
+schema_version: 2
+name: model-sourcing
+title: Sourcing a Model Under Contract
+created: '2026-08-17'
+status: complete
+object_of_evaluation: sourcing-decision
+question: Faced with a modeling task, can an agent SOURCE the model well — reuse an existing module, compose
+  several, or build a new one when justified — and can that sourcing decision be held to a contract that
+  rewards reuse, catches reinvention, and refuses a module that does not actually fit?
+hypothesis: Each task's required capabilities and each module's declared capabilities are enough to grade
+  the sourcing decision deterministically (requires ⊆ capabilities), so reuse-when-you-should and build-only-when-warranted
+  become enforced axes, not hopes.
+lead: Six modeling tasks, three real installed modules (viva-munk, spatio-flux, viva-cpm), and a deterministic
+  sourcing audit that grades every reuse / compose / build-new decision — including a trap where a plausible-but-wrong
+  module is caught.
+executive:
+  what_is_this: 'This investigation extends the model-build-under-contract loop with a SELECT phase: before
+    the tests are locked, the agent decides WHERE the model comes from. Each of six tasks declares the
+    capabilities it requires; three real modules declare the capabilities they provide; the module_sourcing
+    audit grades the decision on four axes (source_fit, reinvention, novelty_justified, survey_recorded).'
+  verdict: 'The audit graded all six tasks correctly: 5 pass and the deliberate trap (TRAP-wrong-reuse)
+    FAILS on source_fit because viva-munk provides no `spatial` capability. All three reused modules execute
+    for real on ONE shared workspace core (viva-munk rigid-body physics; spatio-flux spatial dFBA with
+    real glucose drawdown and acetate secretion; viva-cpm Cellular Potts cells relaxing toward their target
+    shape) — each is inherited into viva_meta_modelers_guide.core.build_core rather than run on a parallel
+    core. Only the two non-reuse tasks (build-new, trap) have no run, by design.'
+  verdict_status: passed
+  decisions_needed: []
+at_a_glance:
+- study: cell-jostling
+  role: reuse → reuse viva-munk · audit PASS
+- study: growth-and-push
+  role: compose → compose growth-proc + viva-munk · audit PASS
+- study: spatial-competition
+  role: reuse → reuse spatio-flux · audit PASS
+- study: shape-dynamics
+  role: reuse → reuse viva-cpm · audit PASS
+- study: novel-mechanism
+  role: build-new → build-new (justified) · audit PASS
+- study: TRAP-wrong-reuse
+  role: reuse → no clean fit — needs `spatial`, which viva-munk lacks · audit FAIL
+catalog:
+  viva-munk:
+  - physics_2d
+  - rigid_body
+  - collision
+  - mechanics
+  - adhesion
+  spatio-flux:
+  - spatial
+  - fba
+  - dfba
+  - diffusion
+  - reaction
+  - metabolism
+  viva-cpm:
+  - cpm
+  - cell_shape
+  - adhesion
+  - spatial
+  - morphology
+  growth-proc:
+  - growth
+  - biomass
+studies:
+- cell-jostling
+- growth-and-push
+- spatial-competition
+- shape-dynamics
+- novel-mechanism
+- TRAP-wrong-reuse
+acceptance_criteria: []
+expert_docs: []

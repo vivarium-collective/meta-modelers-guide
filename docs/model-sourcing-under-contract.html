@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sourcing Under Contract</title>
+<style>
+  :root{
+    --bg:#f5f7f7; --surface:#ffffff; --surface-2:#eef2f1; --surface-3:#e6edeb;
+    --ink:#141e1d; --ink-soft:#51605e; --ink-faint:#879492;
+    --line:#dbe3e1; --line-strong:#c5d0ce;
+    --accent:#0e8f83; --accent-ink:#0a6b62; --accent-wash:#e0f0ee;
+    --ok:#177a44; --ok-wash:#e3f3e9; --ok-line:#bfe0cd;
+    --warn:#a35a09; --warn-wash:#f8ecd8; --warn-line:#ecd3ad;
+    --bad:#b02525; --bad-wash:#f8dede; --bad-line:#eec2c2;
+    --violet:#5b53c9; --violet-wash:#e9e7f7;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --shadow:0 1px 2px rgba(16,32,30,.05),0 5px 22px rgba(16,32,30,.06);
+    --radius:12px;
+  }
+  :root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+    --bg:#0b1211; --surface:#121b1a; --surface-2:#172221; --surface-3:#1e2b29;
+    --ink:#e6ecea; --ink-soft:#98a6a3; --ink-faint:#6a7876;
+    --line:#243130; --line-strong:#31403e;
+    --accent:#2dd4bf; --accent-ink:#5fe3d2; --accent-wash:#112b28;
+    --ok:#4ade80; --ok-wash:#12271b; --ok-line:#1f4430;
+    --warn:#fbbf24; --warn-wash:#2a2110; --warn-line:#4d3c14;
+    --bad:#f87171; --bad-wash:#2a1414; --bad-line:#4d2020;
+    --violet:#a5a0ec; --violet-wash:#1c1936;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.4);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0b1211; --surface:#121b1a; --surface-2:#172221; --surface-3:#1e2b29;
+    --ink:#e6ecea; --ink-soft:#98a6a3; --ink-faint:#6a7876;
+    --line:#243130; --line-strong:#31403e;
+    --accent:#2dd4bf; --accent-ink:#5fe3d2; --accent-wash:#112b28;
+    --ok:#4ade80; --ok-wash:#12271b; --ok-line:#1f4430;
+    --warn:#fbbf24; --warn-wash:#2a2110; --warn-line:#4d3c14;
+    --bad:#f87171; --bad-wash:#2a1414; --bad-line:#4d2020;
+    --violet:#a5a0ec; --violet-wash:#1c1936;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:940px;margin:0 auto;padding:40px 22px 80px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-ink)}
+  h1{font-size:30px;line-height:1.12;margin:.3em 0 .35em;letter-spacing:-.02em;text-wrap:balance;font-weight:780}
+  .lede{font-size:16px;color:var(--ink-soft);max-width:68ch;margin:0}
+  .lede b{color:var(--ink);font-weight:650}
+  h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  p{margin:0 0 12px}
+
+  .flow{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:12px 0;font-size:12.5px}
+  .flow .st{background:var(--surface);border:1px solid var(--line-strong);border-radius:999px;padding:4px 12px;font-weight:600}
+  .flow .st.new{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-wash)}
+  .flow .arw{color:var(--ink-faint)}
+
+  .cat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:6px}
+  .mod{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+  .mod .nm{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--accent-ink)}
+  .mod .dom{font-size:12px;color:var(--ink-soft);margin:3px 0 9px}
+  .mod .real{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--ok-wash);color:var(--ok)}
+  .caps{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .caps span{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:5px;background:var(--surface-3);color:var(--ink-soft)}
+
+  .tbl{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  .tbl-scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:13px;min-width:720px}
+  thead th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);padding:11px 13px;background:var(--surface-2);border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--surface-2)}
+  tbody tr.trap{background:var(--bad-wash)}
+  :root[data-theme="dark"] tbody tr.trap,:root:not([data-theme="light"]) tbody tr.trap{background:var(--bad-wash)}
+  .task{font-weight:650} .mono{font-family:var(--mono);font-size:12px}
+  .dpill{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+  .dpill.reuse{color:var(--accent-ink);background:var(--accent-wash)} .dpill.compose{color:var(--violet);background:var(--violet-wash)} .dpill.build{color:var(--warn);background:var(--warn-wash)}
+  .g{font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .g.pass{color:var(--ok);background:var(--ok-wash);border:1px solid var(--ok-line)} .g.fail{color:var(--bad);background:var(--bad-wash);border:1px solid var(--bad-line)}
+  .run{font-family:var(--mono);font-size:11.5px}
+  .run.ok{color:var(--ok)} .run.na{color:var(--ink-faint)}
+  .tfoot{padding:10px 13px;font-size:12px;color:var(--ink-soft);background:var(--surface-2);border-top:1px solid var(--line)}
+
+  .trapbox{margin-top:16px;background:var(--bad-wash);border:1px solid var(--bad-line);border-radius:var(--radius);padding:16px 18px}
+  .trapbox h3{margin:0 0 6px;font-size:15px;color:var(--bad)}
+  .trapbox p{margin:0;font-size:13.5px;color:var(--ink-soft)} .trapbox b{color:var(--ink)}
+  .trapbox code{font-family:var(--mono);font-size:12px}
+
+  .axes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+  @media(max-width:600px){.axes{grid-template-columns:1fr}}
+  .axc{border:1px solid var(--line);border-radius:10px;padding:13px 15px;background:var(--surface)}
+  .axc .h{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px}
+  .axc .h .sev{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint)}
+  .axc p{font-size:12.5px;color:var(--ink-soft);margin:6px 0 0}
+
+  .honest{border:1px dashed var(--line-strong);border-radius:10px;padding:14px 16px;margin-top:16px;font-size:13px;color:var(--ink-soft)}
+  .honest b{color:var(--ink)} .honest code{font-family:var(--mono)}
+  .foot{margin-top:36px;font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.7} .foot code{font-family:var(--mono)}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Model-building under contract · module sourcing</div>
+  <h1>Choosing the right module — and being audited for it</h1>
+  <p class="lede">The harder question isn't "can an agent build a model" — it's "did it <b>source</b> the
+    model well?" Faced with a task, should it <b>reuse</b> an existing module, <b>compose</b> several, or
+    <b>build new</b>? This demonstration runs six real modeling tasks against three <b>real, installed</b>
+    modules and grades each sourcing decision under contract — rewarding reuse, catching reinvention, and
+    flagging a module chosen that doesn't actually fit.</p>
+  <div class="flow">
+    <span class="st">AUTHOR tests</span><span class="arw">→</span>
+    <span class="st">AUDIT</span><span class="arw">→</span>
+    <span class="st new">SELECT (source: reuse / compose / build)</span><span class="arw">→</span>
+    <span class="st">🔒 LOCK</span><span class="arw">→</span>
+    <span class="st">BUILD</span><span class="arw">→</span>…
+  </div>
+
+  <h2>The catalog — three real modules</h2>
+  <p>Each module declares the capabilities it provides; a task declares the capabilities it <em>requires</em>.
+    The audit matches them with one rule — <code style="font-family:var(--mono)">requires ⊆ capabilities</code>
+    — the same rule the workbench already uses for analysis tools.</p>
+  <div class="cat">
+    <div class="mod"><div class="nm">viva-munk <span class="real">runs live</span></div><div class="dom">2D rigid-body physics (pymunk)</div>
+      <div class="caps"><span>physics_2d</span><span>rigid_body</span><span>collision</span><span>mechanics</span><span>adhesion</span></div></div>
+    <div class="mod"><div class="nm">spatio-flux <span class="real">runs live</span></div><div class="dom">spatial dFBA metabolism</div>
+      <div class="caps"><span>spatial</span><span>fba</span><span>dfba</span><span>diffusion</span><span>reaction</span><span>metabolism</span></div></div>
+    <div class="mod"><div class="nm">viva-cpm <span class="real">runs live</span></div><div class="dom">Cellular Potts shape engine (Rust)</div>
+      <div class="caps"><span>cpm</span><span>cell_shape</span><span>adhesion</span><span>spatial</span><span>morphology</span></div></div>
+  </div>
+
+  <h2>Six tasks, six sourcing decisions — all graded</h2>
+  <div class="tbl"><div class="tbl-scroll">
+    <table>
+      <thead><tr><th>Task</th><th>Requires</th><th>Sourcing</th><th>Gate</th><th>source_fit</th><th>reinvention</th><th>Real run</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+    <div class="tfoot">Every row is the real <code style="font-family:var(--mono)">module_sourcing</code> audit. All three reused modules run live on one shared workspace core —
+      viva-munk (rigid-body physics), spatio-flux (spatial dFBA: glucose drawn down, acetate secreted), and viva-cpm (Cellular Potts cells relaxing toward target shape). Only the build-new and trap tasks have no run, by design.</div>
+  </div>
+
+  <div class="trapbox">
+    <h3>✗ The trap — and the audit catches it</h3>
+    <p><b>TRAP-wrong-reuse</b> asks for <code>physics_2d</code> <b>and</b> <code>spatial</code>, and the agent reaches for
+      viva-munk because "it looks like physics." But viva-munk provides no <code>spatial</code> capability — so
+      <b>source_fit → mismatch</b>, the gate <b>fails</b>, and the audit names the missing capability
+      (<code>spatial</code>). A plausible-but-wrong module choice is stopped before it's locked.</p>
+  </div>
+
+  <h2>What the sourcing audit checks</h2>
+  <div class="axes">
+    <div class="axc"><div class="h">source_fit <span class="sev">hard</span></div><p>The chosen module(s)' combined capabilities actually cover the task's requirements — catches a module that looks right but misses a needed capability.</p></div>
+    <div class="axc"><div class="h">reinvention <span class="sev">hard</span></div><p>Build-new is rejected when a catalogued module already fits — "you reinvented viva-cpm."</p></div>
+    <div class="axc"><div class="h">novelty_justified <span class="sev">soft</span></div><p>Build-new is blessed only when nothing catalogued fits the required capabilities.</p></div>
+    <div class="axc"><div class="h">survey_recorded <span class="sev">soft</span></div><p>The agent recorded a rationale / candidates — it surveyed the catalog rather than blind-building.</p></div>
+  </div>
+
+  <div class="honest">
+    <p><b>Honest scope.</b> All three modules are <b>really installed</b> (viva-munk from PyPI, spatio-flux editable,
+      viva-cpm compiled from its Rust engine) and <b>inherited into one shared workspace core</b> —
+      <code>viva_meta_modelers_guide.core.build_core</code> imports each reused module and folds its processes + types
+      into the single core every task runs on. The sourcing <b>audit runs on all six tasks</b> and catches the trap;
+      <b>all three reused modules now execute live</b> on that shared core — viva-munk rigid-body physics, spatio-flux
+      spatial dFBA (real glucose drawdown + acetate secretion), and viva-cpm Cellular Potts cells relaxing toward
+      their target shape. The only tasks without a run are the two that are not supposed to have one: build-new
+      (no module to run) and the trap (rejected before it could run).</p>
+  </div>
+
+  <div class="foot">
+    Reproduce: <code>python scripts/model_sourcing_demo.py</code> (needs viva-munk, spatio-flux, viva-cpm installed).<br>
+    Sourcing audit: <code>viva_superpowers.module_sourcing</code> · loop phase: <code>SELECT</code>.
+  </div>
+</div>
+
+<script>
+  var R = [
+    ["cell-jostling","physics_2d, rigid_body, collision","reuse","reuse viva-munk","pass","within_tol","within_tol","ran t=3.0 · 3 bodies",true],
+    ["growth-and-push","growth, physics_2d","compose","compose growth + viva-munk","pass","within_tol","within_tol","ran t=3.0 · 3 bodies",true],
+    ["spatial-competition","spatial, dfba, diffusion","reuse","reuse spatio-flux","pass","within_tol","within_tol","ran t=5.0 · glucose 10→8.31",true],
+    ["shape-dynamics","cpm, cell_shape, morphology","reuse","reuse viva-cpm","pass","within_tol","within_tol","ran 6 updates · vol→[69,72]",true],
+    ["novel-mechanism","quantum_signal, exotic_transport","build","build-new (justified)","pass","within_tol","within_tol","—",false],
+    ["TRAP-wrong-reuse","physics_2d, spatial","reuse","reuse viva-munk","fail","mismatch","within_tol","—",false]
+  ];
+  var tb = document.getElementById("rows");
+  R.forEach(function(r){
+    var trap = r[4]==="fail";
+    var dcls = r[2];
+    tb.insertAdjacentHTML("beforeend",
+      '<tr'+(trap?' class="trap"':'')+'>'
+      + '<td class="task">'+r[0]+'</td>'
+      + '<td class="mono" style="color:var(--ink-soft)">'+r[1]+'</td>'
+      + '<td><span class="dpill '+dcls+'">'+r[3]+'</span></td>'
+      + '<td><span class="g '+(trap?'fail':'pass')+'">'+r[4]+'</span></td>'
+      + '<td class="mono" style="color:'+(r[5]==="mismatch"?'var(--bad)':'var(--ok)')+'">'+r[5]+'</td>'
+      + '<td class="mono" style="color:var(--ok)">'+r[6]+'</td>'
+      + '<td class="run '+(r[8]?'ok':'na')+'">'+r[7]+'</td>'
+      + '</tr>');
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+schema_version: 4
+name: TRAP-wrong-reuse
+investigation: model-sourcing
+title: Trap Wrong Reuse
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: failed
+confidence: Rejected
+question: Given the task's required capabilities ['physics_2d', 'spatial'], what is the right way to source
+  the model — reuse, compose, or build-new — and does the sourcing audit confirm it?
+biological_summary: Looks like a physics task, so viva-munk is tempting — but it also needs spatial structure
+  viva-munk does not provide.
+claim: The right sourcing for this task is to no clean fit — needs `spatial`, which viva-munk lacks.
+requires:
+- physics_2d
+- spatial
+sourcing:
+  decision: reuse
+  modules:
+  - viva-munk
+  rationale: looks like physics
+  audit:
+    gate: fail
+    axes:
+      source_fit: mismatch
+      reinvention: within_tol
+      novelty_justified: within_tol
+      survey_recorded: within_tol
+    catches_if_wrong: reuse viva-munk → `source_fit` mismatch (the trap).
+baseline:
+- name: viva-munk
+  module: viva-munk
+  domain: 2D rigid-body physics (pymunk)
+  params: {}
+variants: []
+behavior_tests:
+- name: sourcing-fit
+  classification: primary
+  description: The chosen module(s)' capabilities cover the task's required capabilities.
+  measure:
+    kind: audit-axis
+    path: sourcing.source_fit
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing.build_sourcing_report -> source_fit=mismatch
+- name: no-reinvention
+  classification: primary
+  description: Did not build-new where a catalogued module already fits.
+  measure:
+    kind: audit-axis
+    path: sourcing.reinvention
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing -> reinvention=within_tol
+runs:
+- name: TRAP-wrong-reuse
+  module: viva-munk
+  status: audit-only
+  provenance: scripts/model_sourcing_demo.py — sourcing decision audited; composite run is a follow-up
+  outcomes:
+    SOURCING-GATE:
+      result: FAIL
+      detail: gate=fail; source_fit=mismatch
+conclusion: The sourcing audit graded this task **FAIL**. The chosen module does not cover the required
+  capabilities — reuse viva-munk → `source_fit` mismatch (the trap). The audit stops this before the tests
+  are locked.
+falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
+  the capability-subset match against the catalog.
+visualizations: []

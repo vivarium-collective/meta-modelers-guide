@@ -1,0 +1,98 @@
+schema_version: 4
+name: shape-dynamics
+investigation: model-sourcing
+title: Shape Dynamics
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Given the task's required capabilities ['cpm', 'cell_shape', 'morphology'], what is the right
+  way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?
+biological_summary: A cell changes shape on a lattice as surface energy and adhesion evolve — Cellular
+  Potts morphodynamics.
+claim: The right sourcing for this task is to reuse viva-cpm.
+requires:
+- cpm
+- cell_shape
+- morphology
+sourcing:
+  decision: reuse
+  modules:
+  - viva-cpm
+  rationale: viva-cpm is a Cellular Potts shape engine
+  audit:
+    gate: pass
+    axes:
+      source_fit: within_tol
+      reinvention: within_tol
+      novelty_justified: within_tol
+      survey_recorded: within_tol
+    catches_if_wrong: build-new would trip `reinvention` — the CPM engine already exists.
+baseline:
+- name: viva-cpm
+  module: viva-cpm
+  domain: Cellular Potts shape engine (Rust)
+  params: {}
+variants: []
+behavior_tests:
+- name: sourcing-fit
+  classification: primary
+  description: The chosen module(s)' capabilities cover the task's required capabilities.
+  measure:
+    kind: audit-axis
+    path: sourcing.source_fit
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing.build_sourcing_report -> source_fit=within_tol
+- name: no-reinvention
+  classification: primary
+  description: Did not build-new where a catalogued module already fits.
+  measure:
+    kind: audit-axis
+    path: sourcing.reinvention
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing -> reinvention=within_tol
+runs:
+- name: shape-dynamics
+  module: viva-cpm
+  status: completed
+  provenance: 'scripts/model_sourcing_demo.py — real module execution: ran 6 updates; cell volumes [69,
+    72] (target 80, relaxing from 36)'
+  outcomes:
+    SOURCING-GATE:
+      result: PASS
+      detail: gate=pass; source_fit=within_tol
+conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse viva-cpm) covers the
+  required capabilities; the module ran for real (ran 6 updates; cell volumes [69, 72] (target 80, relaxing
+  from 36)).
+falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
+  the capability-subset match against the catalog.
+visualizations: []
+followup_proposals:
+- id: wire-viva-cpm-composite
+  title: Run the viva-cpm CPM composite end-to-end
+  motivation: 'The sourcing decision (reuse viva-cpm) is audited PASS, but the run is audit-only: the
+    Rust/maturin CPM composite needs its own core registration and lattice/energy parameters to execute.
+    This follow-up makes the Cellular Potts shape dynamics actually run, so the reuse decision is demonstrated
+    rather than only audited.'
+  hypothesized_mechanism: viva-cpm (dist pbg-cpm, imports as package `cpm`) builds via maturin and needs
+    a cpm-specific core + lattice/energy params, not the viva_munk core the other runnable tasks share.
+  status: resolved
+  seed:
+    purpose:
+      question: Does the reuse-viva-cpm decision hold up when the CPM composite is actually run to completion?
+      mechanism: Register a cpm-specific core, supply lattice + surface-energy/adhesion params, and run
+        the shape-dynamics composite.
+      expected_outcome: A cell changes shape on the lattice as surface energy/adhesion evolve; the run
+        completes and shape-dynamics source_fit becomes demonstrated.
+    pipeline_gate:
+      prerequisites:
+      - shape-dynamics
+  resolution: 'Closed in-place: build_core now inherits viva-cpm''s CPMProcess into the shared workspace
+    core (inherit_reused_modules), so a minimal Cellular Potts composite runs on it. shape-dynamics now
+    executes for real — two cells relax from 36px seed blocks toward target volume 80 (69, 72) under the
+    Metropolis Hamiltonian — instead of audit-only.'

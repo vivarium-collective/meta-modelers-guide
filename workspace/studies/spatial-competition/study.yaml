@@ -1,0 +1,98 @@
+schema_version: 4
+name: spatial-competition
+investigation: model-sourcing
+title: Spatial Competition
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Given the task's required capabilities ['spatial', 'dfba', 'diffusion'], what is the right way
+  to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?
+biological_summary: Two populations compete for a shared, diffusing nutrient across space — spatial dynamic
+  flux-balance.
+claim: The right sourcing for this task is to reuse spatio-flux.
+requires:
+- spatial
+- dfba
+- diffusion
+sourcing:
+  decision: reuse
+  modules:
+  - spatio-flux
+  rationale: spatio-flux does spatial dFBA competition
+  audit:
+    gate: pass
+    axes:
+      source_fit: within_tol
+      reinvention: within_tol
+      novelty_justified: within_tol
+      survey_recorded: within_tol
+    catches_if_wrong: a non-spatial module → `source_fit` mismatch.
+baseline:
+- name: spatio-flux
+  module: spatio-flux
+  domain: spatial dFBA metabolism
+  params: {}
+variants: []
+behavior_tests:
+- name: sourcing-fit
+  classification: primary
+  description: The chosen module(s)' capabilities cover the task's required capabilities.
+  measure:
+    kind: audit-axis
+    path: sourcing.source_fit
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing.build_sourcing_report -> source_fit=within_tol
+- name: no-reinvention
+  classification: primary
+  description: Did not build-new where a catalogued module already fits.
+  measure:
+    kind: audit-axis
+    path: sourcing.reinvention
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing -> reinvention=within_tol
+runs:
+- name: spatial-competition
+  module: spatio-flux
+  status: completed
+  provenance: 'scripts/model_sourcing_demo.py — real module execution: ran t=5.0; glucose 10.0->8.31,
+    acetate 0.0->0.083'
+  outcomes:
+    SOURCING-GATE:
+      result: PASS
+      detail: gate=pass; source_fit=within_tol
+conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse spatio-flux) covers the
+  required capabilities; the module ran for real (ran t=5.0; glucose 10.0->8.31, acetate 0.0->0.083).
+falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
+  the capability-subset match against the catalog.
+visualizations: []
+followup_proposals:
+- id: run-community-dfba-for-real
+  title: Run spatio-flux community_dfba end-to-end
+  motivation: 'The sourcing decision (reuse spatio-flux) is audited PASS, but the run is audit-only: spatio_flux.composites.metabolism.community_dfba
+    raises a TypeError under the generic demo driver, so the spatial dFBA competition never executes.
+    This follow-up wires the composite''s parameters so the chosen module actually runs — turning source_fit
+    from an audited claim into a demonstrated result and making the demo run one more study for real.'
+  hypothesized_mechanism: 'community_dfba needs module-specific parameter wiring (initial fields, species,
+    grid) that the generic Composite({''state'': ...}).run path does not supply.'
+  status: resolved
+  seed:
+    purpose:
+      question: Does the reuse-spatio-flux decision hold up when the community_dfba composite is actually
+        run to completion?
+      mechanism: Supply community_dfba's required fields/species/grid params and run the spatial dFBA
+        competition on the workspace core.
+      expected_outcome: Two populations compete for a shared diffusing nutrient; the run completes and
+        the spatial-competition source_fit becomes demonstrated, not audit-only.
+    pipeline_gate:
+      prerequisites:
+      - spatial-competition
+  resolution: 'Closed in-place: viva_meta_modelers_guide.core.build_core now inherits spatio-flux (and
+    viva-munk) into the shared workspace core, so community_dfba builds and runs on it. spatial-competition
+    now executes for real (glucose 10.0->8.31, acetate 0.0->0.083) instead of audit-only — no separate
+    child study needed.'
