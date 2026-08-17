@@ -1,6 +1,6 @@
 {
-  "name": "Nested Molecular Hierarchy — Executable",
-  "description": "The Fig 8b nested hierarchy, running: six mass-action ODEs act on leaves deep in the place-graph — transmembrane transport, replication/repair, metabolism, transcription, translation, and ribosomal subunit assembly — advancing pools of DNA, RNA, protein, and metabolites in place. Same topology and wiring as the draft — inert when run — but this one moves matter through the central-dogma cascade (the real E. coli reactions run near ~45 nt·s⁻¹ and ~15 aa·s⁻¹; here at illustrative rates).",
+  "name": "fig08-executable",
+  "description": "EXECUTABLE compilation of fig08-nested-hierarchy under handler environment 'fig08' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
   "requires": {
     "processes": [
       "CellMetabolismODE",
@@ -80,7 +80,8 @@
       "_type": "process",
       "address": "local:ReplicationAndRepairODE",
       "config": {
-        "k": 0.05,
+        "doubling_time_s": 1800.0,
+        "dna_init": 1.0,
         "interval": 1.0
       },
       "inputs": {
@@ -145,7 +146,9 @@
       "_type": "process",
       "address": "local:TranscriptionODE",
       "config": {
-        "k": 0.3,
+        "elong_nt_per_s": 45.0,
+        "gene_length_nt": 1000.0,
+        "mrna_halflife_s": 180.0,
         "interval": 1.0
       },
       "inputs": {
@@ -180,8 +183,11 @@
       "_type": "process",
       "address": "local:TranslationODE",
       "config": {
-        "k": 0.4,
-        "km": 0.5,
+        "elong_aa_per_s": 15.0,
+        "protein_length_aa": 300.0,
+        "doubling_time_s": 1800.0,
+        "km_met": 0.5,
+        "km_rib": 0.5,
         "interval": 1.0
       },
       "inputs": {
@@ -213,6 +219,8 @@
       "address": "local:SubunitAssemblyODE",
       "config": {
         "k": 0.2,
+        "doubling_time_s": 1800.0,
+        "ribosome_init": 0.5,
         "interval": 1.0
       },
       "inputs": {

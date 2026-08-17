@@ -20,8 +20,10 @@ Dynamics (all constants come from ``config`` — none fabricated inline):
 * **growth_rate**       — Monod law, ``growth_max · c/(km + c)``.
 * **shape** (volume)    — accumulates via growth: ``d = growth · interval``.
 * **objective**         — biomass proxy, accumulates with growth × yield.
-* **viability**         — relaxes toward 1 while ``thermal_ext`` is inside the
-  tolerance band ``[temp_opt ± temp_tol]``, else decays toward 0.
+* **viability**         — honest first-order **Arrhenius thermal death**,
+  ``dV/dt = −k(T)·V`` with ``k(T) = A·exp(−Ea/RT)`` (protein-denaturation-limited,
+  Ea ≈ 300 kJ·mol⁻¹): viability holds near 37 °C and collapses within minutes at
+  55 °C (E. coli D-value).
 * **mechanical** (force) / **electrical** (current) / **thermal** (heat flux) /
   **signaling** (rate) — small, physically-plausible responses to their drivers
   (elastic force, Ohmic current, Fourier heat flux, Monod-scaled signaling).
@@ -33,6 +35,8 @@ store to the freshly-computed value, so the store holds the current rate rather
 than an ever-growing integral.
 """
 from __future__ import annotations
+
+import math
 
 from process_bigraph import Process
 
@@ -64,10 +68,17 @@ class CellularInterfaceHandler(Process):
         # goal-directed accretion
         "shape_growth_coupling": _f(1.0),  # volume gained per unit growth·interval
         "objective_yield": _f(0.5),        # biomass-proxy gained per unit growth
-        # thermal viability band
-        "temp_opt": _f(37.0),            # optimal temperature (°C)
-        "temp_tol": _f(5.0),             # half-width of the survivable band
-        "viability_relax": _f(0.3),      # rate viability relaxes to its target
+        # thermal death — first-order Arrhenius, k(T) = A·exp(−Ea/RT).
+        # Ea ≈ 300 kJ·mol⁻¹ is the protein-denaturation-limited activation energy
+        # for bacterial thermal inactivation (E. coli; cf. moist-heat D/z data).
+        # A is pinned so the D-value (time for a 1-log kill) is ~1 min at 55 °C —
+        # the standard E. coli thermal-death reference — which makes death
+        # negligible near 37 °C (D ≈ 10 h) and catastrophic by 55 °C.
+        "death_Ea": _f(300000.0),        # activation energy (J·mol⁻¹)
+        "gas_R": _f(8.314),              # gas constant (J·mol⁻¹·K⁻¹)
+        "d_value_ref_min": _f(1.0),      # D-value target at the reference T (minutes)
+        "temp_ref_death": _f(55.0),      # E. coli thermal-death reference T (°C)
+        "temp_opt": _f(37.0),            # optimal temperature (°C); heat-flux zero point
         "viability_init": _f(1.0),       # starting viability (matches ENV init)
         # linear physical responses to the other drivers
         "elasticity": _f(0.1),           # force returned per unit applied force
@@ -125,11 +136,18 @@ class CellularInterfaceHandler(Process):
         heat_flux = c["thermal_conductance"] * (temp - c["temp_opt"])  # Fourier
         signaling = c["signaling_gain"] * saturation             # Monod-scaled
 
-        # viability relaxes toward 1 inside the thermal tolerance band, else to 0
-        in_band = abs(temp - c["temp_opt"]) <= c["temp_tol"]
-        target = 1.0 if in_band else 0.0
+        # Arrhenius thermal death: k(T) = A·exp(−Ea/RT), dV/dt = −k(T)·V.
+        # A is fixed by the E. coli D-value at the reference temperature, so
+        # k(T_ref) = ln(10)/D_ref (a 1-log kill in D_ref minutes). Time here is in
+        # minutes. Integrated exactly per step (exp) to stay in [0, 1] even for
+        # large k·interval. temp is °C → Kelvin.
+        Ea, R = c["death_Ea"], c["gas_R"]
+        T_K = temp + 273.15
+        T_ref_K = c["temp_ref_death"] + 273.15
+        k_ref = math.log(10.0) / c["d_value_ref_min"]           # k at reference T
+        k_death = k_ref * math.exp((Ea / R) * (1.0 / T_ref_K - 1.0 / T_K)) if T_K > 0 else 0.0
         v = getattr(self, "_viability", c["viability_init"])
-        dv = c["viability_relax"] * (target - v) * interval
+        dv = v * (math.exp(-k_death * interval) - 1.0)          # V·(e^{-kΔt} − 1) ≤ 0
         self._viability = v + dv
 
         # accumulating pools: volume + biomass-proxy objective grow with growth
@@ -162,9 +180,11 @@ ENV = {
             "km": 0.5,
             "shape_growth_coupling": 1.0,
             "objective_yield": 0.5,
+            "death_Ea": 300000.0,
+            "gas_R": 8.314,
+            "d_value_ref_min": 1.0,
+            "temp_ref_death": 55.0,
             "temp_opt": 37.0,
-            "temp_tol": 5.0,
-            "viability_relax": 0.3,
             "viability_init": 1.0,
             "elasticity": 0.1,
             "membrane_conductance": 0.05,

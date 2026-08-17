@@ -75,11 +75,20 @@ def _iter_own_process_classes():
 def register_workspace_processes(core):
     """Register this workspace's own Process/Step classes into ``core``.
 
-    Idempotent: a name already present in ``core.link_registry`` (e.g. provided
-    by auto-discovery in a non-editable install) is left untouched.
+    A name absent from the registry is added. A name already registered is left
+    untouched UNLESS it is held by a class from a *foreign* package (i.e. an
+    unrelated installed distribution's auto-discovered class that collides on the
+    same name — e.g. ``spatio_flux.paper_figures.Transcription`` shadowing this
+    guide's own ``Transcription`` draft): the workspace's own class then takes
+    precedence, since ``local:<Name>`` in this workspace's composites must resolve
+    to this workspace's definition. A class already provided by auto-discovery
+    *from this same package* (non-editable/Docker install) matches and is a no-op.
     """
+    package_name = __package__ or ""
     for name, cls in _iter_own_process_classes():
-        if name not in core.link_registry:
+        existing = core.link_registry.get(name)
+        existing_mod = getattr(existing, "__module__", "") if existing is not None else ""
+        if existing is None or not existing_mod.startswith(package_name):
             core.register_link(name, cls)
     return core
 
