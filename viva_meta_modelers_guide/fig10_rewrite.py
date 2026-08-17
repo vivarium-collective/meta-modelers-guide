@@ -42,6 +42,53 @@ def replicate_keeping_control(name: str, control: str, count: int = 2) -> Reacti
         label=f"{control}:{name}->x{count}")
 
 
+def _child_items(node):
+    """Yield (key, value) of a node's children — from its `contents` subtree when
+    present (the canonical nesting), else the node's own non-underscore keys (the
+    flattened shape a Site instantiation leaves behind)."""
+    contents = node.get("contents")
+    src = contents if isinstance(contents, dict) else node
+    return [(k, v) for k, v in src.items() if not k.startswith("_")]
+
+
+def _chrom_dna(chrom, default=1.0):
+    """The DNA amount on a chromosome node, whether it sits directly on the node
+    (flattened) or nested under `contents`."""
+    if "dna" in chrom:
+        return chrom["dna"]
+    contents = chrom.get("contents")
+    if isinstance(contents, dict) and "dna" in contents:
+        return contents["dna"]
+    return default
+
+
+def _divide_cell_partition(colony):
+    """Mitotic division as a PARTITION rewrite (not a copy): the single cell —
+    holding its two segregated sister chromatids after replication — splits into
+    two daughters `cell_0`, `cell_1`, each inheriting exactly ONE chromosome with
+    its DNA. Genuinely rewrites the place graph (one cell node becomes two), so
+    each daughter is its own cell with its own chromosome. Rebuilds the daughters
+    in the canonical `contents` nesting so every rendered node is structurally
+    uniform. Returns True if a cell was divided."""
+    for key, cell in list(colony.items()):
+        if key.startswith("_") or not isinstance(cell, dict) or cell.get("_control") != "cell":
+            continue
+        chroms = [v for _, v in _child_items(cell)
+                  if isinstance(v, dict) and v.get("_control") == "chromosome"]
+        if len(chroms) < 2:
+            continue
+        del colony[key]
+        for i, chrom in enumerate(chroms[:2]):
+            colony[f"cell_{i}"] = {
+                "_control": "cell",
+                "contents": {"chromosome": {
+                    "_control": "chromosome",
+                    "contents": {"dna": _chrom_dna(chrom)}}},
+            }
+        return True
+    return False
+
+
 def _find_mark(node, target_control):
     """Walk a node tree; set the FIRST node whose _control == target_control to
     MARK (in place). Returns True if one was marked."""
@@ -89,13 +136,12 @@ class CellCycleDivision(Process):
                     self._fired.add("seg")
                     return {"colony": colony}
         elif self._t >= 2 * cyc and "div" not in self._fired:
-            if _find_mark(colony, "cell"):
-                colony, ev = run_reactions(
-                    colony, [replicate_keeping_control("cell", "cell")],
-                    max_steps=1, mode="deterministic")
-                if ev:
-                    self._fired.add("div")
-                    return {"colony": colony}
+            # Division PARTITIONS the sisters one-per-daughter (true mitosis),
+            # rather than copying the whole cell — so each daughter ends with its
+            # own single chromosome + DNA, not two.
+            if _divide_cell_partition(colony):
+                self._fired.add("div")
+                return {"colony": colony}
         return {}
 
 
