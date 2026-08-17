@@ -43,6 +43,33 @@ def test_fba_runs_and_tracks_nutrient():
     assert comp.state["coarse"]["biomass"] > 0
 
 
+def test_fba_acetate_overflow_only_at_high_uptake():
+    """The headline: e_coli_core secretes acetate onto the 'secretions' port only
+    above the respiratory ceiling. Low glucose → 0 acetate; high glucose → > 0.
+    The coarse/kinetic handlers structurally cannot express this."""
+    from viva_meta_modelers_guide.handlers_fig06_fba import FBAMetabolism
+    core = build_core()
+    h = FBAMetabolism({}, core=core)
+    low = h.update({"nutrients": 0.5}, 1.0)    # glucose uptake 5 → respiratory
+    high = h.update({"nutrients": 1.5}, 1.0)   # glucose uptake 15 → overflow
+    assert low["secretions"] == 0.0, low
+    assert high["secretions"] > 0.0, high
+    assert high["biomass"] > 0.0
+
+
+def test_impostor_handler_rejected_by_compiler():
+    """The type judgment as a scene: a non-conforming handler is rejected with a
+    CompileError naming the missing ports."""
+    from viva_meta_modelers_guide.compile import CompileError
+    core = build_core()
+    env = {"CoarseGrainedMetabolism": {"handler": "NonConformingMetabolism",
+                                        "config": {}, "init": {"coarse.nutrients": 1.0}}}
+    with pytest.raises(CompileError) as ei:
+        compile_composite(_sem(), env, core)
+    msg = str(ei.value)
+    assert "biomass" in msg and "secretions" in msg, msg
+
+
 def test_law4_three_handlers_one_interface():
     """Coarse (linear), kinetic (saturating), and FBA (LP) — three mechanisms, one
     interface, all conforming; at least two give distinct biomass."""

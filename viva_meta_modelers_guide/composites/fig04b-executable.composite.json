@@ -1,6 +1,6 @@
 {
-  "name": "The Cellular Interface — Executable",
-  "description": "The Fig 4b cellular interface, running: a single cell installed behind the exact ports the draft declared, growing by Monod kinetics on its sensed nutrient (half-saturation set in config) and losing viability as temperature departs its 37 °C optimum (±5 °C tolerance, Arrhenius-style thermal death). Same wiring as the draft — which stays inert when run — but this one actually grows, saturates, and dies past its thermal limit.",
+  "name": "fig04b-executable",
+  "description": "EXECUTABLE compilation of fig04b-cellular-interface under handler environment 'fig04b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
   "requires": {
     "processes": [
       "CellularInterfaceHandler"
@@ -26,9 +26,11 @@
         "km": 0.5,
         "shape_growth_coupling": 1.0,
         "objective_yield": 0.5,
+        "death_Ea": 300000.0,
+        "gas_R": 8.314,
+        "d_value_ref_min": 1.0,
+        "temp_ref_death": 55.0,
         "temp_opt": 37.0,
-        "temp_tol": 5.0,
-        "viability_relax": 0.3,
         "viability_init": 1.0,
         "elasticity": 0.1,
         "membrane_conductance": 0.05,

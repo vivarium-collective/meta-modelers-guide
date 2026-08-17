@@ -1,6 +1,6 @@
 {
-  "name": "A Molecular Mechanism — Executable",
-  "description": "The Fig 7 molecular mechanism, running: a structure-defined transducer that moves matter (mol·s⁻¹), charge (A), momentum (N), and energy (W) across its four typed channels, driven by catalysis, conductance, mechanical coupling, and thermal-dissipation rate constants. Same channels and structure ports as the draft — which stays silent when run — but this one actually exchanges the four conserved currents each step.",
+  "name": "fig07-executable",
+  "description": "EXECUTABLE compilation of fig07-molecular-mechanism under handler environment 'fig07' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
   "requires": {
     "processes": [
       "MolecularMechanismHandler"
@@ -21,10 +21,13 @@
       "_type": "process",
       "address": "local:MolecularMechanismHandler",
       "config": {
-        "catalysis": 0.6,
-        "dissipation": 0.2,
-        "conductance": 0.3,
-        "coupling": 0.4,
+        "k_cat_atp": 100.0,
+        "n_protons_per_atp": 3.3,
+        "pmf_volts": 0.15,
+        "torque_pn_nm": 40.0,
+        "c_ring": 10.0,
+        "efficiency": 0.75,
+        "proton_charge": 1.602e-19,
         "interval": 1.0
       },
       "inputs": {

@@ -4,10 +4,20 @@ draft signature.
 The Fig 7 draft is a single molecular process that couples the four physical
 interaction channels of a molecule — chemical, electrical, mechanical, thermal —
 plus a (string) ``structure`` identifier, transforming input channels into output
-channels (Fig 7b). This handler realises it as an enzyme-like mechanism: it turns
-over the incoming chemical flux into product flux, dissipates part of the reaction
-as heat, and passes the electrical and mechanical channels through linear
-(Ohmic / elastic) responses. Every constant lives in ``config``.
+channels (Fig 7b). This handler names the transducer: the **F₁Fₒ ATP synthase**,
+the rotary motor that converts a proton flux across the membrane into ATP. All
+four channels are driven from ONE coupled quantity — the proton flux set by the
+chemical (substrate/turnover) input — so the ports are physically consistent:
+
+* **chemical**   — ATP synthesis flux, ``J_ATP = k_cat · activity``.
+* **electrical** — the proton current carried by the H⁺ flux, ``I = J_H · e``,
+  where ``J_H = (H⁺/ATP)·J_ATP`` and the driving proton-motive force is ≈ 150 mV.
+* **mechanical** — rotary power of the Fₒ motor, ``torque · ω``, with torque
+  ≈ 40 pN·nm and ω set by the H⁺ flux through the c-ring.
+* **thermal**    — the non-conserved remainder dissipated as heat,
+  ``(1 − η)·(PMF work)``, η ≈ 75 % (60–90 %).
+
+Every literature constant lives in ``config``.
 
 The four output channels are instantaneous *fluxes*, so they are written with
 "set" semantics (each ``update`` returns the delta carrying the additive store to
@@ -20,6 +30,8 @@ Mirrors handlers_fig04b.py (the set-semantics exemplar).
 """
 from __future__ import annotations
 
+import math
+
 from process_bigraph import Process
 
 
@@ -28,14 +40,23 @@ def _f(default):
 
 
 class MolecularMechanismHandler(Process):
-    """A molecular mechanism as a channel transducer: chemical turnover with heat
-    dissipation, plus Ohmic (electrical) and elastic (mechanical) pass-through."""
+    """The F₁Fₒ ATP synthase as a four-channel transducer: a proton flux (set by the
+    chemical/substrate input) drives ATP synthesis (chemical), carries a proton
+    current across the proton-motive force (electrical), spins the Fₒ rotor at a
+    fixed torque (mechanical), and dissipates its non-conserved remainder as heat
+    (thermal). All four channels derive from the one proton flux → physically
+    consistent."""
 
     config_schema = {
-        "catalysis": _f(0.6),       # product flux produced per unit chemical influx
-        "dissipation": _f(0.2),     # heat flux released per unit chemical influx
-        "conductance": _f(0.3),     # electrical output per unit electrical input
-        "coupling": _f(0.4),        # mechanical output per unit mechanical input
+        # F₁Fₒ ATP synthase — literature constants (Milo & Phillips, Cell Biology
+        # by the Numbers; Junge & Nelson 2015; Stock et al. 1999).
+        "k_cat_atp": _f(100.0),       # ATP synthase turnover ≈ 100 ATP·s⁻¹ at unit activity
+        "n_protons_per_atp": _f(3.3), # H⁺/ATP: c₁₀ ring ÷ 3 catalytic sites ≈ 3.3
+        "pmf_volts": _f(0.150),       # proton-motive force |Δp| ≈ 150 mV
+        "torque_pn_nm": _f(40.0),     # Fₒ rotary torque ≈ 40 pN·nm
+        "c_ring": _f(10.0),           # c-subunits translocated per full rotation
+        "efficiency": _f(0.75),       # fraction of PMF work conserved (60–90 %)
+        "proton_charge": _f(1.602e-19),  # elementary charge (C)
     }
 
     def inputs(self):
@@ -56,15 +77,25 @@ class MolecularMechanismHandler(Process):
 
     def update(self, state, interval):
         c = self.config
-        chem = float(state.get("chemical_in", 0.0))
-        elec = float(state.get("electrical_in", 0.0))
-        mech = float(state.get("mechanical_in", 0.0))
-        therm = float(state.get("thermal_in", 0.0))
+        activity = float(state.get("chemical_in", 0.0))   # substrate / enzyme activity
+
+        # One coupled quantity — the proton flux — sets all four channels.
+        j_atp = c["k_cat_atp"] * activity                 # ATP synthesis flux (ATP·s⁻¹)
+        j_h = c["n_protons_per_atp"] * j_atp              # H⁺ flux (H⁺·s⁻¹)
+        e = c["proton_charge"]
+
+        i_proton = j_h * e                                # proton current (A)
+        w_pmf = j_h * e * c["pmf_volts"]                  # PMF work rate (W)
+        omega = 2.0 * math.pi * j_h / c["c_ring"]         # Fₒ rotation (rad·s⁻¹)
+        torque_nm = c["torque_pn_nm"] * 1e-21             # 1 pN·nm = 1e-21 N·m
+        p_mech = torque_nm * omega                        # rotary mechanical power (W)
+        q_heat = (1.0 - c["efficiency"]) * w_pmf          # non-conserved remainder → heat
+
         return {
-            "chemical_out": self._set("chemical_out", c["catalysis"] * chem),
-            "thermal_out": self._set("thermal_out", c["dissipation"] * chem + therm),
-            "electrical_out": self._set("electrical_out", c["conductance"] * elec),
-            "mechanical_out": self._set("mechanical_out", c["coupling"] * mech),
+            "chemical_out": self._set("chemical_out", j_atp),
+            "electrical_out": self._set("electrical_out", i_proton),
+            "mechanical_out": self._set("mechanical_out", p_mech),
+            "thermal_out": self._set("thermal_out", q_heat),
         }
 
 
@@ -74,8 +105,9 @@ class MolecularMechanismHandler(Process):
 ENV = {
     "MolecularMechanism": {
         "handler": "MolecularMechanismHandler",
-        "config": {"catalysis": 0.6, "dissipation": 0.2,
-                   "conductance": 0.3, "coupling": 0.4},
+        "config": {"k_cat_atp": 100.0, "n_protons_per_atp": 3.3,
+                   "pmf_volts": 0.150, "torque_pn_nm": 40.0, "c_ring": 10.0,
+                   "efficiency": 0.75, "proton_charge": 1.602e-19},
         "init": {
             "ports.chemical_in": 1.0,
             "ports.electrical_in": 1.0,

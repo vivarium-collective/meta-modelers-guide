@@ -1,6 +1,6 @@
 {
-  "name": "Cell Disintegration — FBA Metabolism",
-  "description": "The Fig 6b coarse metabolism running as flux-balance: bounded substrate uptake is allocated toward a capacity-limited biomass objective, yielding growth, energy, and secretion at fixed stoichiometry, beside the molecular reaction network it lumps. Same ports as the draft — which stays silent when run — but this one solves for the growth flux each step.",
+  "name": "fig06-executable-fba",
+  "description": "EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-fba' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
   "requires": {
     "processes": [
       "FBAMetabolism",
@@ -26,12 +26,9 @@
       "_type": "process",
       "address": "local:FBAMetabolism",
       "config": {
-        "uptake_scale": 1.0,
-        "biomass_capacity": 0.8,
-        "biomass_yield": 0.5,
-        "energy_yield": 0.3,
-        "entropy_rate": 0.1,
-        "secretion_frac": 0.2,
+        "uptake_scale": 10.0,
+        "max_uptake": 20.0,
+        "o2_bound": 18.0,
         "interval": 1.0
       },
       "inputs": {
