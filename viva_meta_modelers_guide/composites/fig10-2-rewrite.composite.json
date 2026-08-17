@@ -1,0 +1,22 @@
+{
+  "name": "fig10-2-rewrite",
+  "description": "Fig 10.2 (biofilm) as a GENUINE place-graph rewrite: a founder cell colonizes (sibling cell nodes added one at a time up to capacity), then the mature community secretes extracellular matrix (an ECM node per cell). Running it ADDS place-graph nodes at runtime — steppable topology for the loom run/animate feature. The biofilm interface (a tree[node] community) grows from one cell into a structured multicellular collective.",
+  "requires": {
+    "processes": ["BiofilmDevelopment"]
+  },
+  "state": {
+    "biofilm": {
+      "_type": "tree[node]",
+      "cell": {"_control": "cell", "contents": {"biomass": 1.0}}
+    },
+    "development": {
+      "_type": "process",
+      "address": "local:BiofilmDevelopment",
+      "interval": 1.0,
+      "config": {"grow_every": 2.0, "capacity": 5.0},
+      "inputs": {"biofilm": ["biofilm"]},
+      "outputs": {"biofilm": ["biofilm"]}
+    }
+  },
+  "emitters": [{"address": "local:SQLiteEmitter"}]
+}
