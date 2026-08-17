@@ -122,7 +122,7 @@
   <div class="cat">
     <div class="mod"><div class="nm">viva-munk <span class="real">runs live</span></div><div class="dom">2D rigid-body physics (pymunk)</div>
       <div class="caps"><span>physics_2d</span><span>rigid_body</span><span>collision</span><span>mechanics</span><span>adhesion</span></div></div>
-    <div class="mod"><div class="nm">spatio-flux <span class="real">installed</span></div><div class="dom">spatial dFBA metabolism</div>
+    <div class="mod"><div class="nm">spatio-flux <span class="real">runs live</span></div><div class="dom">spatial dFBA metabolism</div>
       <div class="caps"><span>spatial</span><span>fba</span><span>dfba</span><span>diffusion</span><span>reaction</span><span>metabolism</span></div></div>
     <div class="mod"><div class="nm">viva-cpm <span class="real">installed</span></div><div class="dom">Cellular Potts shape engine (Rust)</div>
       <div class="caps"><span>cpm</span><span>cell_shape</span><span>adhesion</span><span>spatial</span><span>morphology</span></div></div>
@@ -135,8 +135,8 @@
       <tbody id="rows"></tbody>
     </table>
   </div>
-    <div class="tfoot">Every row is the real <code style="font-family:var(--mono)">module_sourcing</code> audit. viva-munk tasks
-      actually ran (rigid-body physics); spatio-flux/viva-cpm are installed and audited (their composites need parameter wiring to execute — a follow-up).</div>
+    <div class="tfoot">Every row is the real <code style="font-family:var(--mono)">module_sourcing</code> audit. viva-munk (rigid-body physics)
+      and spatio-flux (spatial dFBA — glucose drawn down, acetate secreted) both run live on one shared workspace core; viva-cpm is installed and audited (its Rust composite's wiring is the remaining follow-up).</div>
   </div>
 
   <div class="trapbox">
@@ -157,10 +157,12 @@
 
   <div class="honest">
     <p><b>Honest scope.</b> All three modules are <b>really installed</b> (viva-munk from PyPI, spatio-flux editable,
-      viva-cpm compiled from its Rust engine). The sourcing <b>audit runs on all six tasks</b> and catches the trap;
-      <b>viva-munk executes live</b> (rigid-body physics, 3 bodies). spatio-flux and viva-cpm are installed and
-      audited — running their composites end-to-end needs each module's own type/parameter wiring, which is the
-      demonstration's next step, not a gap in the audit.</p>
+      viva-cpm compiled from its Rust engine) and <b>inherited into one shared workspace core</b> —
+      <code>viva_meta_modelers_guide.core.build_core</code> imports each reused module and folds its processes + types
+      into the single core every task runs on. The sourcing <b>audit runs on all six tasks</b> and catches the trap;
+      <b>viva-munk and spatio-flux execute live</b> (rigid-body physics; spatial dFBA with real glucose drawdown and
+      acetate secretion). viva-cpm remains installed-and-audited — its Rust composite's own wiring is the one
+      remaining follow-up (<code>wire-viva-cpm-composite</code>), not a gap in the audit.</p>
   </div>
 
   <div class="foot">
@@ -173,7 +175,7 @@
   var R = [
     ["cell-jostling","physics_2d, rigid_body, collision","reuse","reuse viva-munk","pass","within_tol","within_tol","ran t=3.0 · 3 bodies",true],
     ["growth-and-push","growth, physics_2d","compose","compose growth + viva-munk","pass","within_tol","within_tol","ran t=3.0 · 3 bodies",true],
-    ["spatial-competition","spatial, dfba, diffusion","reuse","reuse spatio-flux","pass","within_tol","within_tol","audit-only",false],
+    ["spatial-competition","spatial, dfba, diffusion","reuse","reuse spatio-flux","pass","within_tol","within_tol","ran t=5.0 · glucose 10→8.31",true],
     ["shape-dynamics","cpm, cell_shape, morphology","reuse","reuse viva-cpm","pass","within_tol","within_tol","audit-only",false],
     ["novel-mechanism","quantum_signal, exotic_transport","build","build-new (justified)","pass","within_tol","within_tol","—",false],
     ["TRAP-wrong-reuse","physics_2d, spatial","reuse","reuse viva-munk","fail","mismatch","within_tol","—",false]

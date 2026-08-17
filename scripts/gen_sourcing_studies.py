@@ -36,7 +36,7 @@ BIO = {
 }
 
 
-def study_doc(r):
+def study_doc(r, existing=None):
     name = r["task"]
     dec = r["sourcing"]["decision"]
     chosen = r["sourcing"]["modules"]
@@ -45,7 +45,7 @@ def study_doc(r):
     right, catches = RIGHT[name]
     ran = r["real_run"] not in ("—", "—") and not r["real_run"].startswith("run err")
     run_note = r["real_run"]
-    return {
+    doc = {
         "schema_version": 4,
         "name": name,
         "investigation": "model-sourcing",
@@ -123,16 +123,24 @@ def study_doc(r):
                           "disagree with the capability-subset match against the catalog.",
         "visualizations": [],
     }
+    # Preserve hand-authored Decide-phase follow-ups: the generator regenerates
+    # the study from the audit results, but must NOT clobber followup_proposals
+    # (recorded via /viva-study propose-followup) that drive ongoing development.
+    if existing and existing.get("followup_proposals"):
+        doc["followup_proposals"] = existing["followup_proposals"]
+    return doc
 
 
 def main():
     os.makedirs(INV, exist_ok=True)
     order = [r["task"] for r in RESULTS["results"]]
     for r in RESULTS["results"]:
-        d = study_doc(r)
         sdir = os.path.join(STUDIES, r["task"])
+        spath = os.path.join(sdir, "study.yaml")
+        existing = yaml.safe_load(open(spath)) if os.path.exists(spath) else None
+        d = study_doc(r, existing)
         os.makedirs(sdir, exist_ok=True)
-        with open(os.path.join(sdir, "study.yaml"), "w") as fh:
+        with open(spath, "w") as fh:
             yaml.safe_dump(d, fh, sort_keys=False, width=100, allow_unicode=True)
         print("wrote", os.path.relpath(os.path.join(sdir, "study.yaml")))
 
@@ -163,9 +171,12 @@ def main():
                             "survey_recorded).",
             "verdict": f"The audit graded all six tasks correctly: {n_pass} pass and the deliberate trap "
                        f"(TRAP-wrong-reuse) FAILS on source_fit because viva-munk provides no `spatial` "
-                       f"capability. viva-munk executes for real (rigid-body physics, 3 bodies) on two "
-                       f"tasks; spatio-flux and viva-cpm are really installed and audited (their composites "
-                       f"need module-specific parameter wiring to run end-to-end — a follow-up).",
+                       f"capability. viva-munk and spatio-flux both execute for real on ONE shared "
+                       f"workspace core (rigid-body physics; spatial dFBA with real glucose drawdown and "
+                       f"acetate secretion) — the reused modules are inherited into "
+                       f"viva_meta_modelers_guide.core.build_core rather than run on parallel cores. "
+                       f"viva-cpm is installed and audited (its Rust composite's own wiring is the one "
+                       f"remaining follow-up).",
             "verdict_status": "passed",
             "decisions_needed": [],
         },

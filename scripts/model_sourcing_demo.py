@@ -1,9 +1,10 @@
 """Model-sourcing demonstration: 6 tasks, each choosing among real modules,
 each graded by the sourcing audit; runnable choices are actually run."""
 import json
-from process_bigraph import Composite
-import viva_munk, viva_munk.composites as MC
+from process_bigraph import Composite, composite_generator as CG
+import viva_munk.composites as MC
 import spatio_flux.composites as SC
+from viva_meta_modelers_guide.core import build_core
 from viva_superpowers import module_sourcing as MS, loop_state as L
 
 # --- capability catalog (the manifest: module -> capabilities) ---
@@ -14,7 +15,12 @@ CATALOG = {
     "growth-proc": ["growth", "biomass"],
 }
 
-core = viva_munk.core_import()
+# ONE shared workspace core: importing viva-munk + spatio-flux inherits ALL
+# their processes+types into it (viva_meta_modelers_guide.core.build_core), so
+# every task below runs against a single core instead of a per-task module core.
+# This is model-sourcing "reuse" made literal — the reused module contributes to
+# the workspace core rather than standing up a parallel one.
+core = build_core()
 
 def run_munk(doc_fn, t=3.0):
     d = doc_fn(); st = d.get('state', d)
@@ -22,11 +28,22 @@ def run_munk(doc_fn, t=3.0):
     cells = sim.state.get('cells') or sim.state.get('segment_cells') or {}
     return f"ran t={t}; {len(cells) if isinstance(cells,dict) else '?'} bodies"
 
-def run_spatioflux(key, t=2.0):
-    reg = SC.REGISTRY; fn = reg.get(key)
-    d = fn() if callable(fn) else fn
-    st = d.get('state', d) if isinstance(d, dict) else d
-    sim = Composite({'state': st}, core=core); sim.run(t)
+def run_spatioflux(key, t=5.0):
+    # spatio-flux composites are @composite_generator entries: build the state
+    # document via build_generator(entry, core), then run on the shared core.
+    entry = SC.REGISTRY.get(key)
+    doc = CG.build_generator(entry, core=core)
+    sim = Composite({'state': doc}, core=core); sim.run(t)
+    fields = sim.state.get('fields', {})
+    def _sum(name):
+        v = fields.get(name)
+        if v is None:
+            return None
+        import numpy as np
+        return float(np.sum(v))
+    g, a = _sum('glucose'), _sum('acetate')
+    if g is not None:
+        return f"ran t={t}; glucose 10.0->{g:.2f}, acetate 0.0->{a:.3f}"
     return f"ran t={t}; state keys {list(sim.state.keys())[:4]}"
 
 # --- the 6 sourcing tasks ---

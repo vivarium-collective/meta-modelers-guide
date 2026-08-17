@@ -59,15 +59,15 @@ behavior_tests:
 runs:
 - name: spatial-competition
   module: spatio-flux
-  status: error
-  provenance: 'scripts/model_sourcing_demo.py — run err: TypeError (composite needs module-specific param
-    wiring)'
+  status: completed
+  provenance: 'scripts/model_sourcing_demo.py — real module execution: ran t=5.0; glucose 10.0->8.31,
+    acetate 0.0->0.083'
   outcomes:
     SOURCING-GATE:
       result: PASS
       detail: gate=pass; source_fit=within_tol
 conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse spatio-flux) covers the
-  required capabilities; the decision is audited (real run is a follow-up).
+  required capabilities; the module ran for real (ran t=5.0; glucose 10.0->8.31, acetate 0.0->0.083).
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
 visualizations: []
@@ -80,7 +80,7 @@ followup_proposals:
     from an audited claim into a demonstrated result and making the demo run one more study for real.'
   hypothesized_mechanism: 'community_dfba needs module-specific parameter wiring (initial fields, species,
     grid) that the generic Composite({''state'': ...}).run path does not supply.'
-  status: proposed
+  status: resolved
   seed:
     purpose:
       question: Does the reuse-spatio-flux decision hold up when the community_dfba composite is actually
@@ -92,3 +92,7 @@ followup_proposals:
     pipeline_gate:
       prerequisites:
       - spatial-competition
+  resolution: 'Closed in-place: viva_meta_modelers_guide.core.build_core now inherits spatio-flux (and
+    viva-munk) into the shared workspace core, so community_dfba builds and runs on it. spatial-competition
+    now executes for real (glucose 10.0->8.31, acetate 0.0->0.083) instead of audit-only — no separate
+    child study needed.'
