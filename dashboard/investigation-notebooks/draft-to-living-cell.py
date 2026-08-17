@@ -707,11 +707,26 @@ _save_viz('self-made', 'fig09-illustration-2', _render_one('image:visualizations
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
+# | `division-rewrite` | `viva_meta_modelers_guide.composites.fig10-1-rewrite` | 0 | — |
 # | `division` | `viva_meta_modelers_guide.composites.fig10-1-division` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `viva_meta_modelers_guide.composites.fig10-1-rewrite`** — `spec_viva_meta_modelers_guide_composites_fig10_1_rewrite` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig10_1_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-1-rewrite.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_rewrite)
+
+# === Edit parameters for composite 'fig10-1-rewrite' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'cell_cycle'  (local:CellCycleDivision)
+spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['interval'] = 1.0
+spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = 3.0
 
 # **Composite `viva_meta_modelers_guide.composites.fig10-1-division`** — `spec_viva_meta_modelers_guide_composites_fig10_1_division` (a plain, editable dict)
 
@@ -783,11 +798,27 @@ _save_viz('divide', 'fig10-illustration', _render_one('image:visualizations/fig1
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
+# | `development-rewrite` | `viva_meta_modelers_guide.composites.fig10-2-rewrite` | 0 | — |
 # | `development` | `viva_meta_modelers_guide.composites.fig10-2-development` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `viva_meta_modelers_guide.composites.fig10-2-rewrite`** — `spec_viva_meta_modelers_guide_composites_fig10_2_rewrite` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-2-rewrite.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_rewrite)
+
+# === Edit parameters for composite 'fig10-2-rewrite' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'development'  (local:BiofilmDevelopment)
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['interval'] = 1.0
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['grow_every'] = 2.0
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['capacity'] = 5.0
 
 # **Composite `viva_meta_modelers_guide.composites.fig10-2-development`** — `spec_viva_meta_modelers_guide_composites_fig10_2_development` (a plain, editable dict)
 
@@ -859,11 +890,29 @@ _save_viz('biofilm', 'fig10-illustration-2', _render_one('image:visualizations/f
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
+# | `evolution-rewrite` | `viva_meta_modelers_guide.composites.fig10-3-rewrite` | 0 | — |
 # | `evolution` | `viva_meta_modelers_guide.composites.fig10-3-evolution` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `viva_meta_modelers_guide.composites.fig10-3-rewrite`** — `spec_viva_meta_modelers_guide_composites_fig10_3_rewrite` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-3-rewrite.composite.json')
+describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_rewrite)
+
+# === Edit parameters for composite 'fig10-3-rewrite' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'evolution'  (local:LineageEvolution)
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['interval'] = 1.0
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['generation'] = 2.0
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['mutate_at'] = 4.0
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['founders'] = 3.0
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['capacity'] = 6.0
 
 # **Composite `viva_meta_modelers_guide.composites.fig10-3-evolution`** — `spec_viva_meta_modelers_guide_composites_fig10_3_evolution` (a plain, editable dict)
 
