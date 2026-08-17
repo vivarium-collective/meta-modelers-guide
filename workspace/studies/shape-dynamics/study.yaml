@@ -59,14 +59,16 @@ behavior_tests:
 runs:
 - name: shape-dynamics
   module: viva-cpm
-  status: audit-only
-  provenance: scripts/model_sourcing_demo.py — sourcing decision audited; composite run is a follow-up
+  status: completed
+  provenance: 'scripts/model_sourcing_demo.py — real module execution: ran 6 updates; cell volumes [69,
+    72] (target 80, relaxing from 36)'
   outcomes:
     SOURCING-GATE:
       result: PASS
       detail: gate=pass; source_fit=within_tol
 conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse viva-cpm) covers the
-  required capabilities; the decision is audited (real run is a follow-up).
+  required capabilities; the module ran for real (ran 6 updates; cell volumes [69, 72] (target 80, relaxing
+  from 36)).
 falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
   the capability-subset match against the catalog.
 visualizations: []
@@ -79,7 +81,7 @@ followup_proposals:
     rather than only audited.'
   hypothesized_mechanism: viva-cpm (dist pbg-cpm, imports as package `cpm`) builds via maturin and needs
     a cpm-specific core + lattice/energy params, not the viva_munk core the other runnable tasks share.
-  status: proposed
+  status: resolved
   seed:
     purpose:
       question: Does the reuse-viva-cpm decision hold up when the CPM composite is actually run to completion?
@@ -90,3 +92,7 @@ followup_proposals:
     pipeline_gate:
       prerequisites:
       - shape-dynamics
+  resolution: 'Closed in-place: build_core now inherits viva-cpm''s CPMProcess into the shared workspace
+    core (inherit_reused_modules), so a minimal Cellular Potts composite runs on it. shape-dynamics now
+    executes for real — two cells relax from 36px seed blocks toward target volume 80 (69, 72) under the
+    Metropolis Hamiltonian — instead of audit-only.'

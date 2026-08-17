@@ -171,12 +171,12 @@ def main():
                             "survey_recorded).",
             "verdict": f"The audit graded all six tasks correctly: {n_pass} pass and the deliberate trap "
                        f"(TRAP-wrong-reuse) FAILS on source_fit because viva-munk provides no `spatial` "
-                       f"capability. viva-munk and spatio-flux both execute for real on ONE shared "
-                       f"workspace core (rigid-body physics; spatial dFBA with real glucose drawdown and "
-                       f"acetate secretion) — the reused modules are inherited into "
-                       f"viva_meta_modelers_guide.core.build_core rather than run on parallel cores. "
-                       f"viva-cpm is installed and audited (its Rust composite's own wiring is the one "
-                       f"remaining follow-up).",
+                       f"capability. All three reused modules execute for real on ONE shared workspace core "
+                       f"(viva-munk rigid-body physics; spatio-flux spatial dFBA with real glucose drawdown "
+                       f"and acetate secretion; viva-cpm Cellular Potts cells relaxing toward their target "
+                       f"shape) — each is inherited into viva_meta_modelers_guide.core.build_core rather than "
+                       f"run on a parallel core. Only the two non-reuse tasks (build-new, trap) have no run, "
+                       f"by design.",
             "verdict_status": "passed",
             "decisions_needed": [],
         },

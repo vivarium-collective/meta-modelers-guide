@@ -43,6 +43,7 @@ if str(_WS_ROOT) not in sys.path:
 _REUSED = [
     ("spatio_flux", "DynamicFBA"),
     ("viva_munk", "GrowDivide"),
+    ("cpm", "CPMProcess"),
 ]
 
 

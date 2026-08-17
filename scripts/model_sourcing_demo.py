@@ -46,6 +46,34 @@ def run_spatioflux(key, t=5.0):
         return f"ran t={t}; glucose 10.0->{g:.2f}, acetate 0.0->{a:.3f}"
     return f"ran t={t}; state keys {list(sim.state.keys())[:4]}"
 
+def run_cpm(t=6):
+    # Minimal Cellular Potts shape dynamics on the shared core: two cells seeded
+    # as small square blocks relax toward their target volume/surface under the
+    # Metropolis Hamiltonian (viva-cpm's Rust engine via CPMProcess).
+    spec = {
+        "potts": {"dims": [40, 40, 1], "boundary": "noflux",
+                  "neighbor_order": 2, "temperature": 10.0, "seed": 1},
+        "cells": [
+            {"type": 1, "target_volume": 80.0, "lambda_volume": 2.0,
+             "target_surface": 40.0, "lambda_surface": 0.5, "seed_block": [8, 8, 0, 14, 14, 1]},
+            {"type": 1, "target_volume": 80.0, "lambda_volume": 2.0,
+             "target_surface": 40.0, "lambda_surface": 0.5, "seed_block": [24, 24, 0, 30, 30, 1]},
+        ],
+        "contact": [{"a": 1, "b": 1, "j": 10.0}],
+    }
+    state = {
+        "cpm": {"_type": "process", "address": "local:CPMProcess",
+                "config": {"spec": spec, "mcs_per_update": 10},
+                "inputs": {"fates": ["fates"]},
+                "outputs": {"volumes": ["volumes"], "types": ["types"], "positions": ["positions"],
+                            "field_at_cell": ["field_at_cell"], "neighbor_secretory": ["neighbor_secretory"]}},
+        "fates": {}, "volumes": [], "types": [], "positions": [],
+        "field_at_cell": {}, "neighbor_secretory": {},
+    }
+    sim = Composite({'state': state}, core=core); sim.run(t)
+    vols = [v for v in (sim.state.get('volumes') or []) if v < 400]  # drop Medium (bg)
+    return f"ran {t} updates; cell volumes {sorted(round(v) for v in vols)} (target 80, relaxing from 36)"
+
 # --- the 6 sourcing tasks ---
 TASKS = [
   dict(name="cell-jostling", requires=["physics_2d","rigid_body","collision"],
@@ -59,7 +87,7 @@ TASKS = [
        run=lambda: run_spatioflux("spatio_flux.composites.metabolism.community_dfba")),
   dict(name="shape-dynamics", requires=["cpm","cell_shape","morphology"],
        sourcing=dict(decision="reuse", modules=["viva-cpm"], rationale="viva-cpm is a Cellular Potts shape engine"),
-       run=None),  # cpm run needs its own core; decision+audit shown, run best-effort below
+       run=run_cpm),
   dict(name="novel-mechanism", requires=["quantum_signal","exotic_transport"],
        sourcing=dict(decision="build-new", modules=[], rationale="no catalogued module covers this"),
        run=None),

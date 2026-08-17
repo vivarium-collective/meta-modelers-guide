@@ -106,9 +106,20 @@ def _inherit_spatio_flux(core, mod):
     mod.register_types(core)
 
 
+def _inherit_cpm(core, mod):
+    # viva-cpm (dist ``pbg-cpm``, import ``cpm``) exposes no register hook and its
+    # Rust-backed CPMProcess is not auto-discovered, so register it explicitly.
+    # Its ports use only base types (list/map/integer/float + overwrite), so no
+    # cpm-specific type registration is needed.
+    from cpm.processes.cpm_process import CPMProcess
+    if "CPMProcess" not in core.link_registry:
+        core.register_link("CPMProcess", CPMProcess)
+
+
 _REUSED_MODULES = (
     ("viva_munk", _inherit_viva_munk),
     ("spatio_flux", _inherit_spatio_flux),
+    ("cpm", _inherit_cpm),
 )
 
 
