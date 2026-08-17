@@ -120,3 +120,7 @@ one-shot scripts, and stale planning docs. Two locations are off-limits to bulk 
 
 If a specific file in either location is genuinely obsolete, delete it in its own commit
 with a one-line justification per file. Don't bundle with unrelated cleanup.
+
+## Reports
+
+- [Model-building under contract](docs/model-building-under-contract.html) — a worked, self-explaining walkthrough of the agentic loop building one `draft-to-living-cell` model under contract (tests locked → build → result → audit), with real metrics.

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How One Cell Gets Built</title>
+<style>
+  :root{
+    --bg:#f5f7f7; --surface:#ffffff; --surface-2:#eef2f1; --surface-3:#e6edeb;
+    --ink:#141e1d; --ink-soft:#51605e; --ink-faint:#879492;
+    --line:#dbe3e1; --line-strong:#c5d0ce;
+    --accent:#0e8f83; --accent-ink:#0a6b62; --accent-wash:#e0f0ee;
+    --ok:#177a44; --ok-wash:#e3f3e9; --ok-line:#bfe0cd;
+    --warn:#a35a09; --warn-wash:#f8ecd8; --warn-line:#ecd3ad;
+    --bad:#b02525; --bad-wash:#f8dede; --bad-line:#eec2c2;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --shadow:0 1px 2px rgba(16,32,30,.05),0 5px 22px rgba(16,32,30,.06);
+    --radius:12px;
+  }
+  :root:not([data-theme="light"]){ @media (prefers-color-scheme: dark){
+    --bg:#0b1211; --surface:#121b1a; --surface-2:#172221; --surface-3:#1e2b29;
+    --ink:#e6ecea; --ink-soft:#98a6a3; --ink-faint:#6a7876;
+    --line:#243130; --line-strong:#31403e;
+    --accent:#2dd4bf; --accent-ink:#5fe3d2; --accent-wash:#112b28;
+    --ok:#4ade80; --ok-wash:#12271b; --ok-line:#1f4430;
+    --warn:#fbbf24; --warn-wash:#2a2110; --warn-line:#4d3c14;
+    --bad:#f87171; --bad-wash:#2a1414; --bad-line:#4d2020;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.4);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#0b1211; --surface:#121b1a; --surface-2:#172221; --surface-3:#1e2b29;
+    --ink:#e6ecea; --ink-soft:#98a6a3; --ink-faint:#6a7876;
+    --line:#243130; --line-strong:#31403e;
+    --accent:#2dd4bf; --accent-ink:#5fe3d2; --accent-wash:#112b28;
+    --ok:#4ade80; --ok-wash:#12271b; --ok-line:#1f4430;
+    --warn:#fbbf24; --warn-wash:#2a2110; --warn-line:#4d3c14;
+    --bad:#f87171; --bad-wash:#2a1414; --bad-line:#4d2020;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:840px;margin:0 auto;padding:40px 22px 80px}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--accent-ink)}
+  h1{font-size:31px;line-height:1.12;margin:.3em 0 .35em;letter-spacing:-.02em;text-wrap:balance;font-weight:780}
+  .lede{font-size:16px;color:var(--ink-soft);max-width:66ch;margin:0}
+  .lede b{color:var(--ink);font-weight:650}
+  .subject{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px 16px;box-shadow:var(--shadow);font-size:13.5px}
+  .subject .l{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+  .subject .q{margin-top:5px;color:var(--ink)}
+
+  /* the stepped rail */
+  .steps{position:relative;margin-top:34px;padding-left:44px}
+  .steps::before{content:"";position:absolute;left:15px;top:8px;bottom:40px;width:2px;background:var(--line)}
+  .step{position:relative;margin-bottom:36px}
+  .step .num{position:absolute;left:-44px;top:0;width:32px;height:32px;border-radius:50%;background:var(--accent);
+    color:#fff;display:grid;place-items:center;font-weight:750;font-size:15px;box-shadow:0 0 0 4px var(--bg)}
+  :root[data-theme="dark"] .step .num,:root:not([data-theme="light"]) .step .num{color:#06201d}
+  .step.lock .num{background:var(--accent-ink)} .step.audit .num{background:var(--warn)}
+  .step h2{font-size:19px;margin:2px 0 3px;font-weight:750;letter-spacing:-.01em}
+  .step .cap{font-size:13px;color:var(--ink-soft);margin:0 0 12px;max-width:60ch}
+  .step .cap b{color:var(--ink);font-weight:650}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+
+  /* test list */
+  .tests .t{display:flex;align-items:center;gap:12px;padding:11px 15px;border-bottom:1px solid var(--line);font-size:13px}
+  .tests .t:last-child{border-bottom:none}
+  .tests .t.ctrl{background:var(--surface-2)}
+  .tests .t .nm{font-weight:650;min-width:150px}
+  .tests .t .nm small{display:block;font-weight:500;color:var(--ink-faint);font-size:11px}
+  .tests .t .crit{font-family:var(--mono);font-size:12.5px;margin-left:auto;color:var(--accent-ink)}
+  .badge{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:5px;flex-shrink:0}
+  .badge.pri{background:var(--accent-wash);color:var(--accent-ink)} .badge.ctl{background:var(--warn-wash);color:var(--warn)}
+
+  .lockbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--accent-wash);
+    border:1px solid transparent;border-radius:10px;padding:12px 15px;margin-top:12px;font-size:13px}
+  .lockbar .ic{font-size:17px}
+  .lockbar code{font-family:var(--mono);font-size:11.5px;color:var(--accent-ink)}
+  .lockbar b{color:var(--ink)}
+
+  /* iterations */
+  .iter{padding:13px 15px;border-bottom:1px solid var(--line)}
+  .iter:last-child{border-bottom:none}
+  .iter .h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px}
+  .iter .h .tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px}
+  .iter .h .tag.fail{color:var(--bad);background:var(--bad-wash);border:1px solid var(--bad-line)}
+  .iter .h .tag.pass{color:var(--ok);background:var(--ok-wash);border:1px solid var(--ok-line)}
+  .iter .h .edit{font-weight:650}
+  .iter .h .act{margin-left:auto;font-size:11px;font-weight:700;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.04em}
+  .iter .verds{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+  .vc{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px}
+  .vc.f{color:var(--bad);background:var(--bad-wash)} .vc.p{color:var(--ok);background:var(--ok-wash)}
+
+  /* result / report card */
+  .rc-scroll{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+  thead th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);
+    padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+  tbody td{padding:10px 14px;border-bottom:1px solid var(--line)}
+  tbody tr:last-child td{border-bottom:none}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12.5px}
+  .obs{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700}
+  .draftv{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--bad)}
+  .verdict{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .verdict.ok{color:var(--ok);background:var(--ok-wash);border:1px solid var(--ok-line)}
+  .rc-foot{padding:11px 14px;font-size:12.5px;color:var(--ink-soft);background:var(--surface-2);border-top:1px solid var(--line)}
+  .gatechip{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;
+    color:var(--ok);background:var(--ok-wash);border:1px solid var(--ok-line)}
+
+  /* audit axes */
+  .axis{display:flex;align-items:flex-start;gap:12px;padding:11px 15px;border-bottom:1px solid var(--line);font-size:13px}
+  .axis:last-child{border-bottom:none}
+  .axis .st{width:92px;flex-shrink:0}
+  .axis .bd .n{font-weight:650} .axis .bd .n code{font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+  .axis .bd .d{font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .v2{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .v2.ok{color:var(--ok);background:var(--ok-wash);border:1px solid var(--ok-line)}
+  .v2.drift{color:var(--warn);background:var(--warn-wash);border:1px solid var(--warn-line)}
+  .integrity{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+  @media(max-width:600px){.integrity{grid-template-columns:1fr}}
+  .ic2{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface)}
+  .ic2 .n{font-family:var(--mono);font-size:22px;font-weight:750;color:var(--ok)}
+  .ic2 .k{font-size:12px;font-weight:650;margin-top:4px} .ic2 .s{font-size:11px;color:var(--ink-faint);margin-top:2px}
+
+  .verdictbox{margin-top:28px;background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--ok);
+    border-radius:10px;padding:16px 18px}
+  .verdictbox h3{margin:0 0 6px;font-size:15px}
+  .verdictbox p{margin:0;font-size:13.5px;color:var(--ink-soft)}
+  .verdictbox b{color:var(--ink)}
+
+  .agg{margin-top:34px}
+  .agg h2{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .aggrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+  .aggc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 15px;box-shadow:var(--shadow)}
+  .aggc .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:24px;font-weight:750;letter-spacing:-.02em}
+  .aggc .n.ok{color:var(--ok)} .aggc .n.accent{color:var(--accent-ink)}
+  .aggc .k{font-size:11.5px;font-weight:600;margin-top:6px;color:var(--ink-soft)}
+  .foot{margin-top:36px;font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.7}
+  .foot code{font-family:var(--mono)}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Model-building under contract · a worked example</div>
+  <h1>How one cell gets built — and why you can trust the pass</h1>
+  <p class="lede">Watch the agentic loop construct one real model end to end. It's handed a question,
+    it <b>pre-registers</b> the tests that would settle it, those tests are <b>frozen</b>, and only
+    then does it build — iterating on the <b>model</b>, never the tests — until the frozen tests pass.
+    Every value below is the real run; nothing is staged.</p>
+  <div class="subject">
+    <div class="l">The study</div>
+    <div class="q"><b>typed-interface</b> — Can a cell boundary be specified as nothing but typed,
+      unit-bearing exchange ports (no committed mechanism), and then compiled — by installing one
+      conforming handler — into a running, bounded, goal-directed cell?</div>
+  </div>
+
+  <div class="steps">
+
+    <!-- 1 — CONTRACT -->
+    <div class="step">
+      <div class="num">1</div>
+      <h2>The contract is set</h2>
+      <p class="cap">Before anything is built, the loop commits to a rule it cannot escape: the acceptance
+        tests will be <b>authored, audited, and locked</b> — and from the lock onward the agent may change
+        the <b>model</b>, never the tests. That single commitment is what makes a later "pass" mean something.</p>
+      <div class="card" style="padding:14px 16px;font-size:13px;color:var(--ink-soft)">
+        Protocol: <b style="color:var(--ink)">AUTHOR</b> → <b style="color:var(--ink)">AUDIT</b> →
+        <b style="color:var(--accent-ink)">🔒 LOCK</b> → BUILD → RUN → EVALUATE →
+        <b style="color:var(--ink)">DONE</b> / GIVE&nbsp;UP. The lock is the contract; the audit (step 5)
+        is what certifies the contract was worth signing.
+      </div>
+    </div>
+
+    <!-- 2 — TESTS -->
+    <div class="step">
+      <div class="num">2</div>
+      <h2>The tests get made</h2>
+      <p class="cap">The agent writes graded acceptance criteria for what a real cell at this interface must do —
+        grow, feed, and lose viability past a thermal limit — plus a <b>negative control</b> the correct model
+        must be contrasted against. These are the contract's terms.</p>
+      <div class="card tests">
+        <div class="t"><span class="badge pri">primary</span><span class="nm">volume-growth<small>the cell grows</small></span><span class="crit">max(volume) ≥ 2.0</span></div>
+        <div class="t"><span class="badge pri">primary</span><span class="nm">nutrient-depletion<small>it feeds</small></span><span class="crit">last(nutrient) ≤ 0.1</span></div>
+        <div class="t"><span class="badge pri">primary</span><span class="nm">viability-cliff<small>it dies past tolerance</small></span><span class="crit">last(viability) ≤ 0.1</span></div>
+        <div class="t ctrl"><span class="badge ctl">control</span><span class="nm">draft-is-inert<small>the mechanism-less draft MUST fail this</small></span><span class="crit">max(volume) ≥ 2.0</span></div>
+      </div>
+      <div class="lockbar"><span class="ic">🔒</span><span><b>Locked</b> at iteration 0 · content hash
+        <code>sha256:b1489e55b6b9…</code> · <b>reopen_count = 0</b> — from here the tests are frozen.</span></div>
+    </div>
+
+    <!-- 3 — BUILD -->
+    <div class="step">
+      <div class="num">3</div>
+      <h2>The agent builds a model to pass them</h2>
+      <p class="cap">Now it builds against the frozen bar. Iteration&nbsp;1 is the <b>inert draft</b> — typed
+        ports, no mechanism — run for real; it leaves every quantity at its seed and <b>fails all three</b>
+        (and fails the control by design). The loop edits the <em>model</em>: it installs one conforming
+        handler. Iteration&nbsp;2 runs and <b>passes</b>.</p>
+      <div class="card">
+        <div class="iter">
+          <div class="h"><span class="tag fail">gate: fail</span><span class="edit">iter 1 — draft: typed ports, no committed mechanism</span><span class="act">→ navigate</span></div>
+          <div class="verds"><span class="vc f">volume-growth: mismatch</span><span class="vc f">nutrient-depletion: mismatch</span><span class="vc f">viability-cliff: mismatch</span></div>
+        </div>
+        <div class="iter">
+          <div class="h"><span class="tag pass">gate: pass</span><span class="edit">iter 2 — install conforming handler via the compiler</span><span class="act">→ done</span></div>
+          <div class="verds"><span class="vc p">volume-growth: within_tol</span><span class="vc p">nutrient-depletion: within_tol</span><span class="vc p">viability-cliff: within_tol</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 — RESULT -->
+    <div class="step">
+      <div class="num">4</div>
+      <h2>The result of that model</h2>
+      <p class="cap">The report card is the built model's real run graded against the same locked tests — shown
+        next to the inert draft so you can see the tests actually <b>discriminate</b> a working cell from a
+        mechanism-less one.</p>
+      <div class="card">
+        <div class="rc-scroll"><table>
+          <thead><tr><th>Test</th><th>Criterion</th><th>Inert draft</th><th>Built model</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">max(volume)</td><td class="mono">≥ 2.0</td><td class="draftv">0.50 ✗</td><td class="obs">6.11</td><td><span class="verdict ok">within_tol</span></td></tr>
+            <tr><td class="mono">last(nutrient)</td><td class="mono">≤ 0.1</td><td class="draftv">10.0 ✗</td><td class="obs">≈0.00</td><td><span class="verdict ok">within_tol</span></td></tr>
+            <tr><td class="mono">last(viability)</td><td class="mono">≤ 0.1</td><td class="draftv">1.00 ✗</td><td class="obs">0.00</td><td><span class="verdict ok">within_tol</span></td></tr>
+          </tbody>
+        </table></div>
+        <div class="rc-foot">Built model: nutrient depletes via Monod uptake, volume grows 0.5→6.11, and viability
+          holds ≈1 until temperature crosses t_tol=42 (≈t 5.6) then collapses to 0. Severity gate:
+          <span class="gatechip">PASSED · 3/3 within tolerance</span></div>
+      </div>
+    </div>
+
+    <!-- 5 — AUDIT -->
+    <div class="step audit">
+      <div class="num">5</div>
+      <h2>Audit the process — was it thorough?</h2>
+      <p class="cap">A pass is only worth the rigor of the tests behind it, so the loop audits the test suite
+        itself and the integrity of the run. This is what certifies the whole thing.</p>
+      <div class="card">
+        <div class="axis"><div class="st"><span class="v2 drift">drift</span></div><div class="bd"><div class="n">Discrimination <code>bands not trivially wide</code></div><div class="d">Honest flag: the three primaries use one-sided thresholds, so their tightness isn't machine-verifiable (a soft caution, not a fail).</div></div></div>
+        <div class="axis"><div class="st"><span class="v2 ok">within_tol</span></div><div class="bd"><div class="n">Objective coverage <code>mechanisms tested</code></div><div class="d">Every behavior the question names — growth, feeding, viability — has a primary test measuring it.</div></div></div>
+        <div class="axis"><div class="st"><span class="v2 ok">within_tol</span></div><div class="bd"><div class="n">Discriminating control <code>present</code></div><div class="d">The <code>draft-is-inert</code> control is there — and step&nbsp;3 confirmed the draft genuinely fails it.</div></div></div>
+        <div class="axis"><div class="st"><span class="v2 drift">drift</span></div><div class="bd"><div class="n">Independence <code>distinct observables</code></div><div class="d">Honest flag: the control re-uses the <code>volume</code> observable of the growth test (inherent to a growth control).</div></div></div>
+        <div class="axis"><div class="st"><span class="v2 ok">within_tol</span></div><div class="bd"><div class="n">Band provenance <code>sources cited</code></div><div class="d">Each acceptance band carries a provenance note from the real run.</div></div></div>
+      </div>
+      <div class="integrity">
+        <div class="ic2"><div class="n">0</div><div class="k">test weakenings</div><div class="s">reopen_count — the bar was never moved</div></div>
+        <div class="ic2"><div class="n">3✗→3✓</div><div class="k">discrimination</div><div class="s">draft failed all; built model passed all</div></div>
+        <div class="ic2"><div class="n">0</div><div class="k">gamed passes</div><div class="s">no "passed" with a failing gate</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdictbox">
+    <h3>Why you can trust this pass</h3>
+    <p>The tests were <b>locked before</b> the model existed and <b>never touched</b> (0 reopens). They
+      <b>discriminate</b> — the mechanism-less draft failed every one; only a real cell passes. Coverage and a
+      working negative control check out. The two <em>drift</em> flags are the audit being conservative, not a
+      failure. So the "DONE" isn't the agent grading its own homework — it's a model clearing a bar it could
+      neither weaken nor dodge.</p>
+  </div>
+
+  <div class="agg">
+    <h2>And it holds across the whole investigation</h2>
+    <div class="aggrow">
+      <div class="aggc"><div class="n ok">9/10</div><div class="k">reached DONE against a locked bar (+1 honest give-up)</div></div>
+      <div class="aggc"><div class="n accent">0</div><div class="k">test weakenings across all 10 studies</div></div>
+      <div class="aggc"><div class="n ok">9/9</div><div class="k">solvable studies where the draft failed & the model passed</div></div>
+      <div class="aggc"><div class="n accent">0</div><div class="k">gamed passes</div></div>
+      <div class="aggc"><div class="n">2.0</div><div class="k">mean iterations to DONE</div></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    Every value computed from the live loop-state audit trail — <code>draft-to-living-cell</code> ·
+    <code>.pbg/loop/typed-interface.json</code> + the real Fig-4b dynamics run.<br>
+    Reproduce: <code>python scripts/loop_typed_interface.py</code>, then read the loop state.
+  </div>
+</div>
+
+</body>
+</html>
