@@ -6,6 +6,18 @@
       "BiofilmDevelopment"
     ]
   },
+  "parameters": {
+    "capacity": {
+      "type": "int",
+      "default": 5,
+      "description": "Carrying capacity — how many cells the biofilm colonizes to."
+    },
+    "grow_every": {
+      "type": "float",
+      "default": 2.0,
+      "description": "Time between cell-division events during colonization."
+    }
+  },
   "state": {
     "biofilm": {
       "_type": "tree[node]",
@@ -21,8 +33,8 @@
       "address": "local:BiofilmDevelopment",
       "interval": 1.0,
       "config": {
-        "grow_every": 2.0,
-        "capacity": 5.0
+        "grow_every": "${grow_every}",
+        "capacity": "${capacity}"
       },
       "inputs": {
         "biofilm": [

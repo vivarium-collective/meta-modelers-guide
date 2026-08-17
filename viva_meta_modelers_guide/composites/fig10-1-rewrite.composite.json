@@ -1,10 +1,17 @@
 {
-  "name": "Cell Division — Live Topology",
-  "description": "Fig 10.1 as a GENUINE place-graph rewrite: chromosome segregation then cell division via Milner reaction rules over a tree[node] store. Running it ADDS nodes at runtime (1 cell -> 2 chromosomes -> 2 daughters) — steppable topology for the loom run/animate feature.",
+  "name": "Cell Division \u2014 Live Topology",
+  "description": "Fig 10.1 as a GENUINE place-graph rewrite: chromosome segregation then cell division via Milner reaction rules over a tree[node] store. Running it ADDS nodes at runtime (1 cell -> 2 chromosomes -> 2 daughters) \u2014 steppable topology for the loom run/animate feature.",
   "requires": {
     "processes": [
       "CellCycleDivision"
     ]
+  },
+  "parameters": {
+    "cycle": {
+      "type": "float",
+      "default": 3.0,
+      "description": "Cell-cycle length \u2014 time between chromosome-segregation + division events."
+    }
   },
   "state": {
     "colony": {
@@ -26,7 +33,7 @@
       "address": "local:CellCycleDivision",
       "interval": 1.0,
       "config": {
-        "cycle": 3.0
+        "cycle": "${cycle}"
       },
       "inputs": {
         "colony": [
