@@ -26,7 +26,7 @@ if _os.environ.get("PYTHONUTF8") != "1":
 # something that actually runs — and does that composition hold together into a
 # whole cell that lives and dies?
 #
-# This investigation turns *A meta-modeler's guide to the cellular interface* into an executable test of compositional modeling. Each composition pattern in the paper is first represented as a draft: a typed biological interface and behavioral contract with no committed mechanism. It is then compiled by installing one or more concrete implementations — mechanistic, rule-based, data-driven, or otherwise — while preserving the declared interface.
+# This investigation turns *A meta-modeler's guide to the cellular interface* into an executable test of compositional modeling. Each figure of the paper is written twice. First as a draft: a typed, unit-bearing biological interface and a behavioral contract, with no committed mechanism — a promise about what a process couples to and does, not how. Then it is compiled, which installs one or more conforming mechanisms — mechanistic, rule-based, data-driven, or otherwise — behind the identical ports, so the running simulation preserves the declared interface exactly.
 #
 # The point is not to assemble a single monolithic cell model. It is to test whether a biological model can remain open-ended as its mechanisms change, its assumptions fail, and its level of description shifts. Interfaces provide the places where models can be connected, isolated, replaced, or expanded; graph rewrites allow the composition itself to change through events such as growth, division, and disintegration.
 #
@@ -409,7 +409,10 @@ _save_viz('one-interface-three-mechanisms', 'fig06-illustration', _render_one('i
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | biomass-reaches-6 | kind=observable path=biomass expr=last(biomass) | op >= value 6.0 provenance OVER-REACH: exceeds the yield·S0=5.0 mass-conservation cap |
+# | mass-conserved | kind=observable path=biomass expr=max(biomass) | op <= value 5.0 provenance coarse/kinetic/FBA all → biomass 5.0 (= yield·S₀); mass conserved, never exceeds the cap |
+# | distinct-kinetics | kind=observable path=biomass expr=last(biomass) | op >= value 4.9 provenance coarse/kinetic/FBA all reach yield·S₀ = 5.0 via distinct kinetics (t≈4.0 1st-order / 8.6 MM knee / 10.2 FBA cap) |
+# | interface-preserved | kind=observable path=biomass expr=last(biomass) | op >= value 4.9 provenance identical nutrients ⇒ biomass interface across coarse/kinetic/FBA (law 4); the biomass port is driven to yield·S₀ in all three |
+# | biomass-reaches-6 | kind=observable path=biomass expr=last(biomass) | op >= value 6.0 provenance OVER-REACH control: 6.0 exceeds the yield·S₀ = 5.0 mass-conservation cap, so this MUST fail |
 
 # ## Study: Molecular Channels (`molecular-channels`)
 #
@@ -693,8 +696,8 @@ _save_viz('self-made', 'fig09-illustration-2', _render_one('image:visualizations
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | membrane-sustains | kind=observable path=membrane expr=last(membrane) | op >= value 1.0 provenance intact closure self-sustains the membrane (exec last≈2.1) |
-# | enzyme-maintained | kind=observable path=enzyme expr=last(enzyme) | op >= value 0.5 provenance the enzyme pool is held up by the closure (exec last≈1.1) |
+# | membrane-sustains | kind=observable path=membrane expr=last(membrane) | op >= value 1.0 provenance intact closure self-sustains the membrane (exec last≈3.8) |
+# | enzyme-maintained | kind=observable path=enzyme expr=last(enzyme) | op >= value 0.5 provenance the enzyme pool is held up by the closure (exec last≈3.1) |
 # | knockout-collapses | kind=observable path=membrane expr=last(membrane) | op >= value 1.0 provenance draft/knockout run collapses (no mechanism / no closure) |
 
 # ## Study: Divide (`divide`)
@@ -724,9 +727,12 @@ describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_rewrite)
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
+# tunable parameters (filled into ${name} placeholders):
+spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['parameters']['cycle']['default'] = 3.0
+
 # process 'cell_cycle'  (local:CellCycleDivision)
 spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['interval'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = 3.0
+spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = '${cycle}'
 
 # **Composite `viva_meta_modelers_guide.composites.fig10-1-division`** — `spec_viva_meta_modelers_guide_composites_fig10_1_division` (a plain, editable dict)
 
@@ -815,10 +821,14 @@ describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_rewrite)
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
+# tunable parameters (filled into ${name} placeholders):
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['capacity']['default'] = 5
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['grow_every']['default'] = 2.0
+
 # process 'development'  (local:BiofilmDevelopment)
 spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['interval'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['grow_every'] = 2.0
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['capacity'] = 5.0
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['grow_every'] = '${grow_every}'
+spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['capacity'] = '${capacity}'
 
 # **Composite `viva_meta_modelers_guide.composites.fig10-2-development`** — `spec_viva_meta_modelers_guide_composites_fig10_2_development` (a plain, editable dict)
 
@@ -907,12 +917,18 @@ describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_rewrite)
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
+# tunable parameters (filled into ${name} placeholders):
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['founders']['default'] = 3
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['capacity']['default'] = 6
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['generation']['default'] = 2.0
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['mutate_at']['default'] = 4.0
+
 # process 'evolution'  (local:LineageEvolution)
 spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['interval'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['generation'] = 2.0
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['mutate_at'] = 4.0
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['founders'] = 3.0
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['capacity'] = 6.0
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['generation'] = '${generation}'
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['mutate_at'] = '${mutate_at}'
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['founders'] = '${founders}'
+spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['capacity'] = '${capacity}'
 
 # **Composite `viva_meta_modelers_guide.composites.fig10-3-evolution`** — `spec_viva_meta_modelers_guide_composites_fig10_3_evolution` (a plain, editable dict)
 

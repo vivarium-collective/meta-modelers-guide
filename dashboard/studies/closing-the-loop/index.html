@@ -442,7 +442,7 @@
       <h2 class="overview-label ctr-h">Claim</h2>
       <p class="ctr-text">Sensing and acting are one coupling, not two: a cell and its environment can be specified as a shared interface over which the cell reads a field and acts back on it.</p>
       
-      <div class="ctr-context">Fig 5 turns the static interface of Fig 4 into a relationship. The environment is not a set of scalars but a field — here a nine-cell map[float] chemical field plus a mechanical field — and the cell couples to it locally: it senses the field value at its location and acts back by taking up matter, which both feeds its growth and depletes the field. Diffusion then carries the depletion (and the cell&#39;s secretions) outward. The key conceptual move is that sensing and acting are not two subsystems but one coupling: the same shared field store is what the cell reads and what it writes. Measured, the seeded source cell falls from 1.0 to 0.20 as it diffuses to its neighbors, the uptake flux rises to 0.34, and the cell&#39;s mass grows to 1.17.</div>
+      <div class="ctr-context">Fig 5 turns the static interface of Fig 4 into a relationship. The environment is not a set of scalars but a field — here a map[float] chemical field over a 15-node lattice plus a mechanical field — and the cell couples to it locally: it senses the field value at its location and acts back by taking up matter, which both feeds its growth and depletes the field. Diffusion then carries the depletion (and the cell&#39;s secretions) outward. The key conceptual move is that sensing and acting are not two subsystems but one coupling: the same shared field store is what the cell reads and what it writes. Measured over the 15-node diffusing lattice, cumulative uptake climbs from 0 to 0.95 and the cell&#39;s biomass grows to 0.66, while field mass is conserved (Σfield 5.05 + uptake 0.95 ≈ the initial 6.00).</div>
       
     </div>
 
@@ -3139,7 +3139,7 @@ z
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated cell.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Single diffusing field on a small 15-node lattice with one cell; no multi-cell competition for the shared field.</span></div>
         
       </div>
       
@@ -3593,7 +3593,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed (no mech
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Every behavior test passes against real measured readouts; the study demonstrates the paper&#39;s pattern qualitatively (toy-real, uncalibrated).</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Gradient-forms, mass-conserved, and cell-draws-well all pass; the inert draft stays at seed, so the sense/act coupling is what drives the dynamics.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -3606,7 +3606,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed (no mech
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">The draft-&gt;executable compilation makes the paper&#39;s interface-preservation claim mechanical and observable for this figure.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Running sensing and acting over one shared field store makes the &#34;one coupling, not two&#34; claim measurable as a conserved field balance.</textarea>
         </label>
       </div>
     </div>
@@ -3628,7 +3628,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed (no mech
         
         
         <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>typed-interface</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>one-interface-three-mechanisms</li></ul>
         </div>
         
       </div>
@@ -3666,11 +3666,11 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed (no mech
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
+<li>Toy-real diffusion model: field mass is conserved and the drawdown is Fickian in shape, but diffusion/uptake constants are illustrative.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
+<li>Add a second cell to the field to test competition and cross-feeding over the shared store.</li>
 </ul>
 </div>
     </div>
@@ -3692,7 +3692,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed (no mech
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated cell.</li><li style="margin:2px 0">Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic given the handler).</li>
+        <li style="margin:2px 0">Single diffusing field on a small 15-node lattice with one cell; no multi-cell competition for the shared field.</li><li style="margin:2px 0">Diffusion and uptake constants are illustrative toy-real values, not calibrated to a medium or organism.</li>
       </ul>
     </div>
     
@@ -3754,7 +3754,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed (no mech
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "0ac507ab83fc4017dce2ba4b7aed51cd7c93339e", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/0ac507ab83fc4017dce2ba4b7aed51cd7c93339e", "branch": "main", "lockfile": "uv.lock@ad4865e74cb8", "generated_at": "2026-08-17 17:59 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "f0f40cef4aa4f6016f6776660a2bfb99cf94f739", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/f0f40cef4aa4f6016f6776660a2bfb99cf94f739", "branch": "main", "lockfile": "uv.lock@c2dd8b31d903", "generated_at": "2026-08-17 20:34 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "closing-the-loop";
@@ -3875,6 +3875,11 @@ window._seedFollowupProposal = _seedFollowupProposal;
      _renderCompositeCardFull to show the SAME rich card the Modules/
      Composites view uses, with full semantic detail (config schema +
      declared observables). Loaded before study-detail.js, which calls it. -->
+<!-- loom-embed.js: _openCompositeLoomInline + helpers (from walkthrough.js,
+     which this iframe does NOT load). composite-card.js's _pcardToggleSec needs
+     it to MOUNT a composite's loom — without it, opening a composite from a
+     Model card stays stuck on "Resolving composite…". -->
+<script src="/viva-meta-modelers-guide/dashboard/assets/loom-embed.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/composite-card.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/study-detail.js"></script>
 <script>

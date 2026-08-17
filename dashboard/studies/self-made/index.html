@@ -442,7 +442,7 @@
       <h2 class="overview-label ctr-h">Claim</h2>
       <p class="ctr-text">A cell holds itself together through closure: metabolism, containment, and replication each produce what the others need, so the organization sustains itself.</p>
       
-      <div class="ctr-context">Fig 9 asks where a maintained interface comes from in the first place, and answers with autopoiesis: a cell is a network of processes that collectively produce and sustain the very organization that lets them run. Three functions close the loop — metabolism builds the parts (metabolites → 4.8, products → 2.4), containment builds the boundary that holds them (membrane → 1.6, boundary → 1.2), and replication copies the blueprint (copies → 1.6 coarse, 1.2 self-organized). The same triad is drawn at three grains — coarse lumped processes, self-organizing processes, and molecular detail — showing that closure is a pattern, not a particular mechanism. Fig 9b makes it concrete as a minimal cell whose membrane area grows to 1.2 and whose protein pool reaches 1.27 from its own gene→enzyme→metabolite economy.</div>
+      <div class="ctr-context">Fig 9 asks where a maintained interface comes from in the first place, and answers with autopoiesis: a cell is a network of processes that collectively produce and sustain the very organization that lets them run. Three functions close the loop — metabolism builds the parts, containment builds the boundary that holds them, and replication copies the blueprint. In the intact composition the closure is self-producing: the membrane climbs to 3.8 and the enzyme pool to 3.1, held up by the very economy they sustain, whereas an enzyme-knockout control collapses (enzyme 0.3 → ≈0, membrane never builds). The same triad is drawn at three grains — coarse lumped processes, self-organizing processes, and molecular detail — showing that closure is a pattern, not a particular mechanism.</div>
       
     </div>
 
@@ -2913,7 +2913,7 @@ L 680.709775 60.8958
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated cell.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Closure is shown as sustained steady levels, not literal self-fabrication of new components; the self-production is a toy autocatalytic loop.</span></div>
         
       </div>
       
@@ -3230,7 +3230,7 @@ L 680.709775 60.8958
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(membrane)", "kind": "observable", "path": "membrane"}
-pass_if: {"op": "\u003e=", "provenance": "intact closure self-sustains the membrane (exec last\u22482.1)", "value": 1.0}</pre>
+pass_if: {"op": "\u003e=", "provenance": "intact closure self-sustains the membrane (exec last\u22483.8)", "value": 1.0}</pre>
       </details>
       
       
@@ -3269,7 +3269,7 @@ pass_if: {"op": "\u003e=", "provenance": "intact closure self-sustains the membr
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(enzyme)", "kind": "observable", "path": "enzyme"}
-pass_if: {"op": "\u003e=", "provenance": "the enzyme pool is held up by the closure (exec last\u22481.1)", "value": 0.5}</pre>
+pass_if: {"op": "\u003e=", "provenance": "the enzyme pool is held up by the closure (exec last\u22483.1)", "value": 0.5}</pre>
       </details>
       
       
@@ -3402,7 +3402,7 @@ pass_if: {"op": "\u003e=", "provenance": "draft/knockout run collapses (no mecha
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Every behavior test passes against real measured readouts; the study demonstrates the paper&#39;s pattern qualitatively (toy-real, uncalibrated).</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Closure-sustains, knockout-collapses, and multi-grain all pass; the knockout negative control collapses to ≈0, showing the closure is load-bearing.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -3415,7 +3415,7 @@ pass_if: {"op": "\u003e=", "provenance": "draft/knockout run collapses (no mecha
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">The draft-&gt;executable compilation makes the paper&#39;s interface-preservation claim mechanical and observable for this figure.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Contrasting the intact autopoietic loop against its knockout makes closure a measurable, falsifiable dependency rather than a metaphor.</textarea>
         </label>
       </div>
     </div>
@@ -3437,7 +3437,7 @@ pass_if: {"op": "\u003e=", "provenance": "draft/knockout run collapses (no mecha
         
         
         <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>the-nested-cell</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>divide</li></ul>
         </div>
         
       </div>
@@ -3475,11 +3475,11 @@ pass_if: {"op": "\u003e=", "provenance": "draft/knockout run collapses (no mecha
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
+<li>Toy-real autopoiesis: the loop sustains a steady state and the knockout collapses, but the constants are illustrative and self-production is lumped.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
+<li>Sweep additional knockouts to map which loop members are individually essential to the closure.</li>
 </ul>
 </div>
     </div>
@@ -3501,7 +3501,7 @@ pass_if: {"op": "\u003e=", "provenance": "draft/knockout run collapses (no mecha
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated cell.</li><li style="margin:2px 0">Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic given the handler).</li>
+        <li style="margin:2px 0">Closure is shown as sustained steady levels, not literal self-fabrication of new components; the self-production is a toy autocatalytic loop.</li><li style="margin:2px 0">The knockout is a single-gene control; robustness of the closure to other perturbations is untested.</li>
       </ul>
     </div>
     
@@ -3563,7 +3563,7 @@ pass_if: {"op": "\u003e=", "provenance": "draft/knockout run collapses (no mecha
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "0ac507ab83fc4017dce2ba4b7aed51cd7c93339e", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/0ac507ab83fc4017dce2ba4b7aed51cd7c93339e", "branch": "main", "lockfile": "uv.lock@ad4865e74cb8", "generated_at": "2026-08-17 17:59 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "f0f40cef4aa4f6016f6776660a2bfb99cf94f739", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/f0f40cef4aa4f6016f6776660a2bfb99cf94f739", "branch": "main", "lockfile": "uv.lock@c2dd8b31d903", "generated_at": "2026-08-17 20:34 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "self-made";
@@ -3684,6 +3684,11 @@ window._seedFollowupProposal = _seedFollowupProposal;
      _renderCompositeCardFull to show the SAME rich card the Modules/
      Composites view uses, with full semantic detail (config schema +
      declared observables). Loaded before study-detail.js, which calls it. -->
+<!-- loom-embed.js: _openCompositeLoomInline + helpers (from walkthrough.js,
+     which this iframe does NOT load). composite-card.js's _pcardToggleSec needs
+     it to MOUNT a composite's loom — without it, opening a composite from a
+     Model card stays stuck on "Resolving composite…". -->
+<script src="/viva-meta-modelers-guide/dashboard/assets/loom-embed.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/composite-card.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/study-detail.js"></script>
 <script>

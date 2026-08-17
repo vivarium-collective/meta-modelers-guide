@@ -442,7 +442,7 @@
       <h2 class="overview-label ctr-h">Claim</h2>
       <p class="ctr-text">One metabolic interface can be realized by many mechanisms — a lumped yield, saturating kinetics, or a real flux-balance solver — without changing what the interface exposes.</p>
       
-      <div class="ctr-context">Fig 6 is the paper&#39;s thesis in a single figure. When a cellular description fails, the right level of description drops from the cell to its molecules — but the *interface* that couples metabolism to the rest of the cell need not change. This study realizes that one interface three ways. The coarse handler applies a lumped yield: nutrients convert to biomass at a fixed stoichiometry (biomass → 4.0). The kinetic handler applies a saturating (Michaelis–Menten-like) rate, so the same nutrients build biomass more slowly (→ 2.67). The FBA handler calls real COBRApy to solve a flux-balance optimization on a small metabolic network each step (→ 3.2). All three write the identical ports; a reader can watch the mechanism change underneath a boundary that does not move.</div>
+      <div class="ctr-context">Fig 6 is the paper&#39;s thesis in a single figure. When a cellular description fails, the right level of description drops from the cell to its molecules — but the *interface* that couples metabolism to the rest of the cell need not change. This study realizes that one interface three ways. The coarse handler applies a lumped yield — nutrients convert to biomass at a fixed stoichiometry. The kinetic handler applies a saturating (Michaelis–Menten-like) rate, so the same nutrients build biomass more slowly. The FBA handler calls real COBRApy to solve a flux-balance optimization on a small metabolic network each step. All three conserve mass to the identical endpoint — final biomass = yield·S₀ = 5.0 — but reach it by distinct kinetic routes, exhausting the substrate at t ≈ 4.0 (first-order), 8.6 (MM knee), and 10.2 (FBA cap). All three write the identical ports; a reader can watch the mechanism change underneath a boundary that does not move.</div>
       
     </div>
 
@@ -452,7 +452,7 @@
       
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>disintegration</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">biomass-reaches-6</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">All three handlers converge to biomass = yield·S₀ = 5.0 and never exceed that mass-conservation cap.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The three mechanisms all reach the yield·S₀ endpoint but by distinct kinetic routes (substrate exhausted at t≈4.0 / 8.6 / 10.2).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">All three handlers expose the identical nutrients ⇒ biomass port set over identical wiring (law 4); the shared port carries flux in every case.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Negative control / falsification: a handler that drove biomass to ≥ 6.0 would violate mass conservation (yield·S₀ = 5.0 is the hard cap). The model provably CANNOT pass this; it MUST fail, and its failure confirms the conservation bound.</span></div>
       </div>
       
     </div>
@@ -3095,6 +3095,8 @@ L 691.762971 206.4135
             
             
             
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≤ 5.0</code></div>
+            
             
             
             
@@ -3136,6 +3138,8 @@ L 691.762971 206.4135
             
             
             
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 4.9</code></div>
             
             
             
@@ -3179,6 +3183,8 @@ L 691.762971 206.4135
             
             
             
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 4.9</code></div>
+            
             
             
             
@@ -3202,7 +3208,7 @@ L 691.762971 206.4135
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated cell.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Three mechanisms share one toy metabolic setup; the FBA handler uses a small illustrative network, not a genome-scale reconstruction.</span></div>
         
       </div>
       
@@ -3460,10 +3466,10 @@ L 691.762971 206.4135
     
     
     
-    <li class="expected-behavior-item" id="bt-biomass-reaches-6"
+    <li class="expected-behavior-item" id="bt-mass-conserved"
         data-test-kind="behavioral"
         
-        data-pytest-node="biomass-reaches-6"
+        data-pytest-node="mass-conserved"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -3472,19 +3478,136 @@ L 691.762971 206.4135
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">biomass-reaches-6</strong>
+        <strong style="font-size: 0.9em;">mass-conserved</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>one-interface-three-mechanisms</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;"></div>
+      <div style="margin-top: 6px; font-size: 0.95em;">All three handlers converge to biomass = yield·S₀ = 5.0 and never exceed that mass-conservation cap.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(biomass)", "kind": "observable", "path": "biomass"}
+pass_if: {"op": "\u003c=", "provenance": "coarse/kinetic/FBA all \u2192 biomass 5.0 (= yield\u00b7S\u2080); mass conserved, never exceeds the cap", "value": 5.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-distinct-kinetics"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="distinct-kinetics"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">distinct-kinetics</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>one-interface-three-mechanisms</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The three mechanisms all reach the yield·S₀ endpoint but by distinct kinetic routes (substrate exhausted at t≈4.0 / 8.6 / 10.2).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biomass)", "kind": "observable", "path": "biomass"}
-pass_if: {"op": "\u003e=", "provenance": "OVER-REACH: exceeds the yield\u00b7S0=5.0 mass-conservation cap", "value": 6.0}</pre>
+pass_if: {"op": "\u003e=", "provenance": "coarse/kinetic/FBA all reach yield\u00b7S\u2080 = 5.0 via distinct kinetics (t\u22484.0 1st-order / 8.6 MM knee / 10.2 FBA cap)", "value": 4.9}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-interface-preserved"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="interface-preserved"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">interface-preserved</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>one-interface-three-mechanisms</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">All three handlers expose the identical nutrients ⇒ biomass port set over identical wiring (law 4); the shared port carries flux in every case.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biomass)", "kind": "observable", "path": "biomass"}
+pass_if: {"op": "\u003e=", "provenance": "identical nutrients \u21d2 biomass interface across coarse/kinetic/FBA (law 4); the biomass port is driven to yield\u00b7S\u2080 in all three", "value": 4.9}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-biomass-reaches-6"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="biomass-reaches-6"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">biomass-reaches-6</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>one-interface-three-mechanisms</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Negative control / falsification: a handler that drove biomass to ≥ 6.0 would violate mass conservation (yield·S₀ = 5.0 is the hard cap). The model provably CANNOT pass this; it MUST fail, and its failure confirms the conservation bound.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biomass)", "kind": "observable", "path": "biomass"}
+pass_if: {"op": "\u003e=", "provenance": "OVER-REACH control: 6.0 exceeds the yield\u00b7S\u2080 = 5.0 mass-conservation cap, so this MUST fail", "value": 6.0}</pre>
       </details>
       
       
@@ -3578,7 +3701,7 @@ pass_if: {"op": "\u003e=", "provenance": "OVER-REACH: exceeds the yield\u00b7S0=
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Every behavior test passes against real measured readouts; the study demonstrates the paper&#39;s pattern qualitatively (toy-real, uncalibrated).</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Mass-conserved, distinct-kinetics, and interface-preserved pass across all three handlers; the over-reach control (biomass ≥ 6.0) correctly fails against the 5.0 cap.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -3591,7 +3714,7 @@ pass_if: {"op": "\u003e=", "provenance": "OVER-REACH: exceeds the yield\u00b7S0=
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">The draft-&gt;executable compilation makes the paper&#39;s interface-preservation claim mechanical and observable for this figure.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Swapping lumped-yield, kinetic, and real-COBRApy handlers behind one fixed interface makes mechanism-independence concrete and measurable.</textarea>
         </label>
       </div>
     </div>
@@ -3613,7 +3736,7 @@ pass_if: {"op": "\u003e=", "provenance": "OVER-REACH: exceeds the yield\u00b7S0=
         
         
         <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>closing-the-loop</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>molecular-channels</li></ul>
         </div>
         
       </div>
@@ -3651,11 +3774,11 @@ pass_if: {"op": "\u003e=", "provenance": "OVER-REACH: exceeds the yield\u00b7S0=
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten, Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.</li>
+<li>Toy-real metabolism: mass is conserved to yield·S₀ and the kinetic shapes are real, but the FBA network and constants are illustrative.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.</li>
+<li>Replace the toy FBA network with a genome-scale reconstruction to test the same interface at realistic scale.</li>
 </ul>
 </div>
     </div>
@@ -3677,7 +3800,7 @@ pass_if: {"op": "\u003e=", "provenance": "OVER-REACH: exceeds the yield\u00b7S0=
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated cell.</li><li style="margin:2px 0">Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic given the handler).</li>
+        <li style="margin:2px 0">Three mechanisms share one toy metabolic setup; the FBA handler uses a small illustrative network, not a genome-scale reconstruction.</li><li style="margin:2px 0">Endpoints are fixed by the shared yield·S₀ budget, so the study tests kinetic shape and interface identity, not absolute biomass accuracy.</li>
       </ul>
     </div>
     
@@ -3739,7 +3862,7 @@ pass_if: {"op": "\u003e=", "provenance": "OVER-REACH: exceeds the yield\u00b7S0=
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "0ac507ab83fc4017dce2ba4b7aed51cd7c93339e", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/0ac507ab83fc4017dce2ba4b7aed51cd7c93339e", "branch": "main", "lockfile": "uv.lock@ad4865e74cb8", "generated_at": "2026-08-17 17:59 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "f0f40cef4aa4f6016f6776660a2bfb99cf94f739", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/f0f40cef4aa4f6016f6776660a2bfb99cf94f739", "branch": "main", "lockfile": "uv.lock@c2dd8b31d903", "generated_at": "2026-08-17 20:34 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "one-interface-three-mechanisms";
@@ -3860,6 +3983,11 @@ window._seedFollowupProposal = _seedFollowupProposal;
      _renderCompositeCardFull to show the SAME rich card the Modules/
      Composites view uses, with full semantic detail (config schema +
      declared observables). Loaded before study-detail.js, which calls it. -->
+<!-- loom-embed.js: _openCompositeLoomInline + helpers (from walkthrough.js,
+     which this iframe does NOT load). composite-card.js's _pcardToggleSec needs
+     it to MOUNT a composite's loom — without it, opening a composite from a
+     Model card stays stuck on "Resolving composite…". -->
+<script src="/viva-meta-modelers-guide/dashboard/assets/loom-embed.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/composite-card.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/study-detail.js"></script>
 <script>
