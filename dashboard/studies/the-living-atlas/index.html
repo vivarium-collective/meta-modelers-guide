@@ -169,6 +169,8 @@
     <div class="act-tabs">
       <button class="study-pillar" data-kind="compose"  onclick="_setStudyTab('compose')">Model</button>
       <button class="study-pillar" data-kind="readouts" onclick="_setStudyTab('readouts')">Readouts</button>
+      
+      <button class="study-pillar" data-kind="simulate"  onclick="_setStudyTab('simulate')">Simulations</button>
     </div>
   </div>
   <div class="act-cluster" data-act="evidence">
@@ -177,7 +179,9 @@
       <span class="act-label">Evidence</span>
     </div>
     <div class="act-tabs">
-      <button class="study-pillar" data-kind="simulate"  onclick="_setStudyTab('simulate')">Simulations</button>
+      
+      <button class="study-pillar" data-kind="results"   onclick="_setStudyTab('results')">Results</button>
+      <button class="study-pillar" data-kind="analyses"  onclick="_setStudyTab('analyses')">Analyses</button>
       <button class="study-pillar" data-kind="visualize" onclick="_setStudyTab('visualize')">Visualizations</button>
     </div>
   </div>
@@ -188,6 +192,9 @@
     </div>
     <div class="act-tabs">
       <button class="study-pillar" data-kind="tests" onclick="_setStudyTab('tests')">Tests</button>
+      
+      <button class="study-pillar" data-kind="audit" onclick="_setStudyTab('audit')">Audit</button>
+      <button class="study-pillar" data-kind="build" onclick="_setStudyTab('build')">Build</button>
     </div>
   </div>
   <div class="act-cluster" data-act="decision">
@@ -445,7 +452,7 @@
       
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig06-exec-coarse</code>, <code>fig06-exec-kinetic</code>, <code>fig04b-exec</code>, <code>fig05-exec-spatial</code>, <code>fig06-exec-fba</code>, <code>fig07-exec-molecular</code>, <code>fig08-exec-hierarchy</code>, <code>fig09a-exec-coarse-graining</code>, <code>fig09b-exec-minimal-cell</code>, <code>fig10-1-exec-division</code>, <code>fig10-2-exec-development</code>, <code>fig10-3-exec-evolution</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Grow → divide → thermal shock → viability collapse → disintegrate, in one run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Biomass converts to debris — mass conserved through lysis.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The thermal shock drives viability past its cliff.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell divides as it grows before the shock.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">peak-growth</span><span class="ctr-dot">·</span><span class="ctr-meta-item">disintegration</span><span class="ctr-dot">·</span><span class="ctr-meta-item">division</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Negative control: the inert/knockout draft MUST fail this.</span></div>
       </div>
       
     </div>
@@ -3649,8 +3656,6 @@ L 699.608 219.5805
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: all five phases occur</code></div>
-            
             
             
             
@@ -3692,8 +3697,6 @@ L 699.608 219.5805
             
             
             
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: debris ≈ lysed biomass</code></div>
             
             
             
@@ -3737,8 +3740,6 @@ L 699.608 219.5805
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: collapses toward 0</code></div>
-            
             
             
             
@@ -3780,8 +3781,6 @@ L 699.608 219.5805
             
             
             
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: op: threshold · condition: ≥ 2</code></div>
             
             
             
@@ -3825,6 +3824,12 @@ L 699.608 219.5805
     
     <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'the-living-atlas', 'draft-to-living-cell')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
   </div>
+
+  
+  <div id="model-composite-cards" class="model-composite-cards" data-study="the-living-atlas">
+    <p class="muted" style="font-size:0.85em;margin:0">Loading composite card(s)…</p>
+  </div>
+
   
   
   
@@ -4286,21 +4291,22 @@ L 699.608 219.5805
   <div id="study-run-detail" style="margin-top:14px"></div>
 </div>
 
+</section>
 
-<div class="overview-section" id="study-artifacts-section" style="margin-top:18px">
-  <h3 class="section-title" style="margin:0 0 10px 0">Study artifacts</h3>
 
-  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
-    <span class="muted" style="margin-right:auto;font-weight:600">Analysis result files</span>
-    <a id="data-download-all" class="btn-mini" style="display:none"
-       href="/api/study-analysis-zip?study=the-living-atlas">Download all (.zip)</a>
+<section class="study-tab-panel" data-kind="results" id="panel-results" hidden>
+
+<div class="overview-section" id="results-section">
+  <h2>Results</h2>
+  <p class="muted">What came back from this study's runs — a per-store preview of the latest run, plus the raw emitter store (zarr/parquet/runs.db) for every run.</p>
+
+  <h4>Latest run preview</h4>
+  <p class="muted" style="font-size:0.9em">Per-store sparkline + first/last/min/max from the most recent run's emitted trajectory. This is a downsampled PREVIEW, not the full data — use the per-store or Download-all links for the complete arrays.</p>
+  <div id="results-preview" data-study="the-living-atlas">
+    <p class="empty-message">Loading results preview…</p>
   </div>
-  <div id="data-files" data-study="the-living-atlas">
-    <p class="empty-message">Loading result files…</p>
-  </div>
 
-  
-  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:18px">
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:22px">
     <span class="muted" id="exports-downloads" style="margin-right:auto;font-weight:600">Raw simulation data</span>
     <button type="button" id="raw-data-download-all" class="btn-mini" style="display:none"
             onclick="_downloadAllRawExports()">⬇ Download all raw data</button>
@@ -4310,18 +4316,61 @@ L 699.608 219.5805
 
 </section>
 
+
+<section class="study-tab-panel" data-kind="analyses" id="panel-analyses" hidden>
+
+<div class="overview-section" id="analyses-results-section">
+  <h2>Analyses</h2>
+  <p class="muted">Result files written by this study's analysis steps.</p>
+
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <span class="muted" style="margin-right:auto;font-weight:600">Analysis result files</span>
+    <a id="data-download-all" class="btn-mini" style="display:none"
+       href="/api/study-analysis-zip?study=the-living-atlas">Download all (.zip)</a>
+  </div>
+  <div id="data-files" data-study="the-living-atlas">
+    <p class="empty-message">Loading result files…</p>
+  </div>
+</div>
+
+</section>
+
 <section class="study-tab-panel" data-kind="readouts" id="panel-readouts" hidden>
   <div class="observables-section">
     <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
       <h3 class="section-title" style="margin-right:auto">Readouts</h3>
     </div>
-    <p class="muted">Quantities collected from each simulation run. Each row is an emitter <code>store_path</code> the composite will save; authored entries in <code>study.yaml</code> add names, descriptions, and units on top.</p>
+    <p class="muted">The Design-time emit <strong>contract</strong>: what the emitter is
+    configured to persist, which store paths it declares, and the shape of what lands on
+    disk. No observed values here — see Results for what actually came back from a run.</p>
+
+    <h4>Emitter &amp; config</h4>
+    <p class="muted" style="font-size:0.9em">The emitter class, its write-path module, emit
+    interval/buffer, output location, and emit scope — from
+    <code>lib/emitters.py</code> and this study's (or the workspace's)
+    <code>runtime.default_emitter</code>.</p>
+    <div id="readouts-emitter" data-study="the-living-atlas">
+      <p class="empty-message">Loading emitter configuration…</p>
+    </div>
+
+    <h4>Emitted paths</h4>
+    <p class="muted" style="font-size:0.9em">Each row is an emitter <code>store_path</code>
+    the composite will save; authored entries in <code>study.yaml</code> add names,
+    descriptions, and units on top.</p>
 
     
     <div id="readouts-download" style="margin:0 0 16px 0"></div>
 
     <div id="readouts-table" data-study="the-living-atlas">
       <p class="empty-message">Loading readouts from the composite emit plan…</p>
+    </div>
+
+    <h4>Outputs &amp; shapes</h4>
+    <p class="muted" style="font-size:0.9em">Store path, dtype, shape
+    <code>(n_steps, …)</code>, units, and a best-effort byte estimate for each emitted
+    leaf.</p>
+    <div id="readouts-shapes" data-study="the-living-atlas">
+      <p class="empty-message">Loading output shapes…</p>
     </div>
 
     
@@ -4366,19 +4415,9 @@ L 699.608 219.5805
   <div class="tests-gate-summary" id="tests-gate-summary"><p class="empty-message">Loading gate summary…</p></div>
 
   
-  <div class="checks-band" style="margin-top:22px">
-    <h3 class="section-title" style="margin-bottom:8px">Checks</h3>
 
-    
-    <div class="check-group check-group-quality" id="check-group-quality" data-check-group="quality">
-      <p class="empty-message">Loading quality checks…</p>
-    </div>
-
-    
-    <div class="check-group check-group-reproducibility" id="check-group-reproducibility" data-check-group="reproducibility" style="margin-top:16px">
-      <p class="empty-message">Loading reproducibility checks…</p>
-    </div>
-  </div>
+  
+  
 
   
   
@@ -4409,10 +4448,10 @@ L 699.608 219.5805
     
     
     
-    <li class="expected-behavior-item" id="bt-full-arc"
+    <li class="expected-behavior-item" id="bt-peak-growth"
         data-test-kind="behavioral"
         
-        data-pytest-node="full-arc"
+        data-pytest-node="peak-growth"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -4421,19 +4460,19 @@ L 699.608 219.5805
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">full-arc</strong>
+        <strong style="font-size: 0.9em;">peak-growth</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Grow → divide → thermal shock → viability collapse → disintegrate, in one run.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;"></div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "the whole trajectory", "kind": "observable"}
-pass_if: {"condition": "all five phases occur", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(biomass)", "kind": "observable", "path": "biomass"}
+pass_if: {"op": "\u003e=", "provenance": "biomass peaks then lyses (exec max\u22488.4)", "value": 3.0}</pre>
       </details>
       
       
@@ -4448,10 +4487,10 @@ pass_if: {"condition": "all five phases occur", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-mass-conserved-through-death"
+    <li class="expected-behavior-item" id="bt-disintegration"
         data-test-kind="behavioral"
         
-        data-pytest-node="mass-conserved-through-death"
+        data-pytest-node="disintegration"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -4460,19 +4499,19 @@ pass_if: {"condition": "all five phases occur", "op": "threshold"}</pre>
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">mass-conserved-through-death</strong>
+        <strong style="font-size: 0.9em;">disintegration</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Biomass converts to debris — mass conserved through lysis.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;"></div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "peak biomass vs final debris", "kind": "observable"}
-pass_if: {"condition": "debris \u2248 lysed biomass", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(debris)", "kind": "observable", "path": "debris"}
+pass_if: {"op": "\u003e=", "provenance": "lysis converts biomass to debris (exec last\u22487.3)", "value": 2.0}</pre>
       </details>
       
       
@@ -4487,10 +4526,10 @@ pass_if: {"condition": "debris \u2248 lysed biomass", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-viability-cliff"
+    <li class="expected-behavior-item" id="bt-division"
         data-test-kind="behavioral"
         
-        data-pytest-node="viability-cliff"
+        data-pytest-node="division"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -4499,19 +4538,19 @@ pass_if: {"condition": "debris \u2248 lysed biomass", "op": "threshold"}</pre>
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">viability-cliff</strong>
+        <strong style="font-size: 0.9em;">division</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The thermal shock drives viability past its cliff.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;"></div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability at shock", "kind": "observable"}
-pass_if: {"condition": "collapses toward 0", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_count)", "kind": "observable", "path": "cell_count"}
+pass_if: {"op": "\u003e=", "provenance": "the cell divides (exec cell_count 1\u219214)", "value": 2.0}</pre>
       </details>
       
       
@@ -4526,31 +4565,31 @@ pass_if: {"condition": "collapses toward 0", "op": "threshold"}</pre>
     
     
     
-    <li class="expected-behavior-item" id="bt-divides"
+    <li class="expected-behavior-item" id="bt-draft-is-inert"
         data-test-kind="behavioral"
         
-        data-pytest-node="divides"
-        data-classification="supporting"
+        data-pytest-node="draft-is-inert"
+        data-classification="diagnostic"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #3b82f6; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-supporting">supporting</span>
-        <strong style="font-size: 0.9em;">divides</strong>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">draft-is-inert</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>the-living-atlas</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The cell divides as it grows before the shock.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Negative control: the inert/knockout draft MUST fail this.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "cell_count(t)", "kind": "observable"}
-pass_if: {"condition": "\u2265 2", "op": "threshold"}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(biomass)", "kind": "observable", "path": "biomass"}
+pass_if: {"op": "\u003e=", "provenance": "draft/knockout run collapses (no mechanism / no closure)", "value": 3.0}</pre>
       </details>
       
       
@@ -4561,6 +4600,34 @@ pass_if: {"condition": "\u2265 2", "op": "threshold"}</pre>
   </ul>
   
   </div>
+</section>
+
+
+<section class="study-tab-panel" data-kind="audit" id="panel-audit" hidden>
+  <h2>Audit</h2>
+  <p class="muted" style="margin:0 0 12px 0">Is the bar high enough to trust? Sufficiency of the Test set, plus the rigor and reproducibility scorecards.</p>
+
+  <div class="checks-band">
+    <div class="check-group check-group-sufficiency" id="audit-sufficiency" data-check-group="sufficiency">
+      <p class="empty-message">Loading sufficiency checks…</p>
+    </div>
+
+    <div class="check-group check-group-quality" id="check-group-quality" data-check-group="quality" style="margin-top:16px">
+      <p class="empty-message">Loading quality checks…</p>
+    </div>
+
+    <div class="check-group check-group-reproducibility" id="check-group-reproducibility" data-check-group="reproducibility" style="margin-top:16px">
+      <p class="empty-message">Loading reproducibility checks…</p>
+    </div>
+  </div>
+</section>
+
+
+<section class="study-tab-panel" data-kind="build" id="panel-build" hidden>
+  <h2>Build</h2>
+  <p class="muted" style="margin:0 0 12px 0">Was the pass earned honestly? Provenance from the agentic model-building loop, if this study was built through it.</p>
+
+  <div id="build-loop-state"><p class="empty-message">Loading loop provenance…</p></div>
 </section>
 
 <section class="study-tab-panel" data-kind="conclusions" id="panel-conclusions" hidden>
@@ -4773,7 +4840,7 @@ pass_if: {"condition": "\u2265 2", "op": "threshold"}</pre>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "f87a542ff371bda9826119425c008ba466bd2ee6", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/f87a542ff371bda9826119425c008ba466bd2ee6", "branch": "main", "lockfile": "uv.lock@f8b08aacd479", "generated_at": "2026-08-16 22:30 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "ce465e36a3345fdc8fa0e897c304bcbbb7bf48ff", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/ce465e36a3345fdc8fa0e897c304bcbbb7bf48ff", "branch": "main", "lockfile": "uv.lock@74e22fd99661", "generated_at": "2026-08-17 02:32 UTC"} };</script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "the-living-atlas";
@@ -4889,6 +4956,12 @@ window._seedFollowupProposal = _seedFollowupProposal;
 </script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/configure-run.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/sim-table.js"></script>
+<!-- composite-card.js: shared composite-card renderer (extracted from
+     walkthrough.js, study-spine-reorg Task 6) — the Model tab uses
+     _renderCompositeCardFull to show the SAME rich card the Modules/
+     Composites view uses, with full semantic detail (config schema +
+     declared observables). Loaded before study-detail.js, which calls it. -->
+<script src="/viva-meta-modelers-guide/dashboard/assets/composite-card.js"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/study-detail.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which

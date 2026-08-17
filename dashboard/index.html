@@ -2076,7 +2076,7 @@ Nothing on <code id="pr-base-display-2">main</code> changes until someone presse
      DataSource global that renderers call to fetch narrative data.
      local-server mode (default) fetches from the same-origin /api/* endpoints.
      Hosted mode (sub-projects #2/#3) will set a different config here. -->
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "f87a542ff371bda9826119425c008ba466bd2ee6", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/f87a542ff371bda9826119425c008ba466bd2ee6", "branch": "main", "lockfile": "uv.lock@f8b08aacd479", "generated_at": "2026-08-16 22:30 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/viva-meta-modelers-guide", basePath: "/viva-meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/viva-meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/viva-meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide", "commit": "ce465e36a3345fdc8fa0e897c304bcbbb7bf48ff", "commit_url": "https://github.com/vivarium-collective/viva-meta-modelers-guide/commit/ce465e36a3345fdc8fa0e897c304bcbbb7bf48ff", "branch": "main", "lockfile": "uv.lock@74e22fd99661", "generated_at": "2026-08-17 02:32 UTC"} };</script>
 <!-- Derive the global URL prefix from the (possibly publish-injected) config.
      Many renderers prefix workspace-root-absolute links (/studies/, /api/)
      with window.__BASE_PATH__ so they resolve when the read-only bundle is
@@ -2092,6 +2092,12 @@ Nothing on <code id="pr-base-display-2">main</code> changes until someone presse
 <script src="/viva-meta-modelers-guide/dashboard/assets/aig-graph.js" onerror="/* aig-graph unavailable */"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/audit.js" onerror="/* audit view unavailable */"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/sim-table.js"></script>
+<!-- composite-card.js: the shared composite-card renderer (extracted from
+     walkthrough.js, study-spine-reorg Task 6) — MUST load before
+     walkthrough.js, which now calls these functions as globals rather than
+     defining them itself. Also loaded on study-detail.html so the Model tab
+     renders the identical Full/Grid composite card. -->
+<script src="/viva-meta-modelers-guide/dashboard/assets/composite-card.js" onerror="/* composite-card unavailable */"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/walkthrough.js" onerror="/* walkthrough unavailable */"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/explorer.js" onerror="/* explorer unavailable */"></script>
 <script src="/viva-meta-modelers-guide/dashboard/assets/explorer-views.js" onerror="/* explorer views unavailable */"></script>

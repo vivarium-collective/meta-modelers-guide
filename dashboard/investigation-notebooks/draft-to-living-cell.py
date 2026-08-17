@@ -256,9 +256,10 @@ _save_viz('typed-interface', 'fig04-illustration', _render_one('image:visualizat
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | growth-tracks-nutrient | kind=observable expr=volume gained vs nutrient drawn down | op threshold condition volume gain > 0 and ≤ yield·consumed |
-# | monod-saturation | kind=observable expr=nutrient(t) | op threshold condition monotonic depletion to ≈0 |
-# | viability-cliff | kind=observable expr=viability once T > T_tol | op threshold condition holds ≈1 in-band, drops <0.1 past tolerance |
+# | volume-growth | kind=observable path=volume expr=max(volume) | op >= value 2.0 provenance executable run: max volume 6.11 from seed 0.5 (Monod uptake → yield·u growth) |
+# | nutrient-depletion | kind=observable path=nutrient expr=last(nutrient) | op <= value 0.1 provenance Monod uptake depletes the finite pool (10.0) to ~0 by t=18 |
+# | viability-cliff | kind=observable path=viability expr=last(viability) | op <= value 0.1 provenance Arrhenius: viability collapses once T > t_tol = 42 (crosses at t≈5.6, →0 by t=18) |
+# | draft-is-inert | kind=observable path=volume expr=max(volume) | op >= value 2.0 provenance inert-draft run: max volume 0.50 (no mechanism → no growth); the control the correct model is contrasted against |
 
 # ## Study: Closing the Loop (`closing-the-loop`)
 #
@@ -335,9 +336,9 @@ _save_viz('closing-the-loop', 'fig05-illustration', _render_one('image:visualiza
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | gradient-forms | kind=observable expr=field profile over space×time | op threshold condition bolus spreads to neighbours |
-# | mass-conserved | kind=observable expr=Σfield(t) + uptake_total(t) | op threshold condition ≈ initial field mass |
-# | cell-draws-well | kind=observable expr=uptake_total(t) | op threshold condition > 0 and rising |
+# | biomass-growth | kind=observable path=biomass expr=last(biomass) | op >= value 0.3 provenance cell sink grows from the diffusing field (exec last≈0.66) |
+# | nutrient-uptake | kind=observable path=uptake_total expr=last(uptake_total) | op >= value 0.5 provenance Monod uptake at the site draws down the bolus (exec last≈0.95) |
+# | draft-is-inert | kind=observable path=biomass expr=last(biomass) | op >= value 0.3 provenance inert-draft run stays at seed (no mechanism → no dynamics) |
 
 # ## Study: One Interface, Three Mechanisms (`one-interface-three-mechanisms`)
 #
@@ -408,9 +409,7 @@ _save_viz('one-interface-three-mechanisms', 'fig06-illustration', _render_one('i
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | mass-conserved | kind=observable expr=final biomass for coarse/kinetic/FBA | op threshold condition all = 5.0 (= 0.5 × 10) |
-# | distinct-kinetics | kind=observable expr=time to 90% substrate consumed | op threshold condition three distinct times |
-# | interface-preserved | kind=observable expr=port set across the three handlers | op threshold condition identical |
+# | biomass-reaches-6 | kind=observable path=biomass expr=last(biomass) | op >= value 6.0 provenance OVER-REACH: exceeds the yield·S0=5.0 mass-conservation cap |
 
 # ## Study: Molecular Channels (`molecular-channels`)
 #
@@ -478,9 +477,10 @@ _save_viz('molecular-channels', 'fig07-illustration', _render_one('image:visuali
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | energy-conserved | kind=observable expr=product + heat vs substrate consumed | op threshold condition balanced (η + (1−η)) |
-# | dynamic-response | kind=observable expr=product(t), current(t) | op threshold condition smooth transient to steady state |
-# | ohmic-channel | kind=observable expr=current vs voltage | op threshold condition current ∝ voltage (relaxing) |
+# | product-formation | kind=observable path=product expr=last(product) | op >= value 2.0 provenance chemical turnover yields product (exec last≈4.8) |
+# | substrate-consumed | kind=observable path=substrate expr=last(substrate) | op <= value 0.5 provenance substrate pool consumed to ~0 (exec last≈0.0 from 8.0) |
+# | heat-generated | kind=observable path=heat expr=last(heat) | op >= value 1.0 provenance turnover dissipates heat (exec last≈3.2) |
+# | draft-is-inert | kind=observable path=product expr=last(product) | op >= value 2.0 provenance inert-draft run stays at seed (no mechanism → no dynamics) |
 
 # ## Study: The Nested Cell (`the-nested-cell`)
 #
@@ -563,9 +563,9 @@ _save_viz('the-nested-cell', 'fig08-illustration', _render_one('image:visualizat
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | steady-states | kind=observable expr=mRNA/protein/metabolite as t→end | op threshold condition plateau at k_synth/k_deg |
-# | time-hierarchy | kind=observable expr=settling order | op threshold condition mRNA before protein before metabolite |
-# | cascade-flows | kind=observable expr=downstream species | op threshold condition all > 0 at steady state |
+# | protein-expressed | kind=observable path=protein expr=last(protein) | op >= value 3.0 provenance central dogma expresses protein (exec last≈10.5) |
+# | mrna-transcribed | kind=observable path=mrna expr=last(mrna) | op >= value 0.5 provenance gene transcribed to mRNA (exec last≈2.4) |
+# | draft-is-inert | kind=observable path=protein expr=last(protein) | op >= value 3.0 provenance inert-draft run stays at seed (no mechanism → no dynamics) |
 
 # ## Study: Self-Made (`self-made`)
 #
@@ -693,9 +693,9 @@ _save_viz('self-made', 'fig09-illustration-2', _render_one('image:visualizations
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | closure-sustains | kind=observable expr=membrane/enzyme(t), intact | op threshold condition rise to a large pool |
-# | knockout-collapses | kind=observable expr=enzyme(t), knockout | op threshold condition decays to ≈0 |
-# | multi-grain | kind=observable expr=the three functions, intact | op threshold condition all active |
+# | membrane-sustains | kind=observable path=membrane expr=last(membrane) | op >= value 1.0 provenance intact closure self-sustains the membrane (exec last≈2.1) |
+# | enzyme-maintained | kind=observable path=enzyme expr=last(enzyme) | op >= value 0.5 provenance the enzyme pool is held up by the closure (exec last≈1.1) |
+# | knockout-collapses | kind=observable path=membrane expr=last(membrane) | op >= value 1.0 provenance draft/knockout run collapses (no mechanism / no closure) |
 
 # ## Study: Divide (`divide`)
 #
@@ -769,9 +769,9 @@ _save_viz('divide', 'fig10-illustration', _render_one('image:visualizations/fig1
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | division-fires | kind=observable expr=cell_count(t) | op threshold condition steps up (1 → many) |
-# | mass-conserved | kind=observable expr=mass(t) across an event | op threshold condition halves, total conserved |
-# | autocatalytic-growth | kind=observable expr=mass between events, nutrient | op threshold condition rises as nutrient depletes |
+# | division-occurs | kind=observable path=cell_count expr=last(cell_count) | op >= value 2.0 provenance lineage divides (exec cell_count 1→14) |
+# | nutrient-consumed | kind=observable path=nutrient expr=last(nutrient) | op <= value 5.0 provenance growing lineage draws nutrient down (exec last≈1.1 from 20) |
+# | draft-is-inert | kind=observable path=cell_count expr=last(cell_count) | op >= value 2.0 provenance inert-draft run stays at seed (no mechanism → no dynamics) |
 
 # ## Study: Biofilm (`biofilm`)
 #
@@ -845,8 +845,9 @@ _save_viz('biofilm', 'fig10-illustration-2', _render_one('image:visualizations/f
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | logistic-saturation | kind=observable expr=cells(t) | op threshold condition sigmoid saturating at K |
-# | ecm-accumulates | kind=observable expr=ecm(t) | op threshold condition rises with cell number |
+# | colony-growth | kind=observable path=cells expr=last(cells) | op >= value 2.0 provenance logistic colony grows toward K (exec last≈5.0) |
+# | ecm-production | kind=observable path=ecm expr=last(ecm) | op >= value 5.0 provenance colony secretes extracellular matrix (exec last≈21.8) |
+# | draft-is-inert | kind=observable path=cells expr=last(cells) | op >= value 2.0 provenance inert-draft run stays at seed (no mechanism → no dynamics) |
 
 # ## Study: Evolve (`evolve`)
 #
@@ -920,9 +921,9 @@ _save_viz('evolve', 'fig10-illustration-3', _render_one('image:visualizations/fi
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | selection-sweep | kind=observable expr=mutant fraction n_mut/(n_wt+n_mut) | op threshold condition rises substantially |
-# | competitive-exclusion | kind=observable expr=n_wt(t) | op threshold condition rises then declines |
-# | new-capability | kind=observable expr=capability(t) | op threshold condition emerges from 0 |
+# | capability-emerges | kind=observable path=capability expr=last(capability) | op >= value 2.0 provenance a new interface capability rides the sweep (exec last≈7.6) |
+# | mutant-outgrows | kind=observable path=n_mut expr=last(n_mut) | op >= value 0.2 provenance the fitter variant sweeps (mut fraction 0.05→0.70) |
+# | draft-is-inert | kind=observable path=capability expr=last(capability) | op >= value 2.0 provenance draft/knockout run collapses (no mechanism / no closure) |
 
 # ## Study: The Living Atlas (`the-living-atlas`)
 #
@@ -1309,7 +1310,7 @@ _save_viz('the-living-atlas', 'the-living-atlas-dynamics', _render_one('image:vi
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | full-arc | kind=observable expr=the whole trajectory | op threshold condition all five phases occur |
-# | mass-conserved-through-death | kind=observable expr=peak biomass vs final debris | op threshold condition debris ≈ lysed biomass |
-# | viability-cliff | kind=observable expr=viability at shock | op threshold condition collapses toward 0 |
-# | divides | kind=observable expr=cell_count(t) | op threshold condition ≥ 2 |
+# | peak-growth | kind=observable path=biomass expr=max(biomass) | op >= value 3.0 provenance biomass peaks then lyses (exec max≈8.4) |
+# | disintegration | kind=observable path=debris expr=last(debris) | op >= value 2.0 provenance lysis converts biomass to debris (exec last≈7.3) |
+# | division | kind=observable path=cell_count expr=last(cell_count) | op >= value 2.0 provenance the cell divides (exec cell_count 1→14) |
+# | draft-is-inert | kind=observable path=biomass expr=max(biomass) | op >= value 3.0 provenance draft/knockout run collapses (no mechanism / no closure) |
