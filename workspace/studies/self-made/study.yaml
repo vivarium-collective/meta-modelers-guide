@@ -14,10 +14,12 @@ biological_summary: 'Fig 9 asks where a maintained interface comes from in the f
   with autopoiesis: a cell is a network of processes that collectively produce and sustain the very organization
   that lets them run. Three functions close the loop — metabolism builds the parts, containment builds
   the boundary that holds them, and replication copies the blueprint. In the intact composition the closure
-  is self-producing: the membrane climbs to 3.8 and the enzyme pool to 3.1, held up by the very economy
-  they sustain, whereas an enzyme-knockout control collapses (enzyme 0.3 → ≈0, membrane never builds).
-  The same triad is drawn at three grains — coarse lumped processes, self-organizing processes, and molecular
-  detail — showing that closure is a pattern, not a particular mechanism.'
+  is self-producing: the membrane climbs to 1.6 and the catalyst pool to 1.2, products to 2.4 and the
+  metabolite pool to 4.8, held up by the very economy they sustain, whereas the inert draft (uncompiled,
+  no mechanism) never builds — it stays at seed, isolating the compiled closure as the cause. The same
+  triad is drawn at three grains — coarse lumped processes, self-organizing processes, and molecular detail
+  (where the minimal cell grows proteins to 1.27, enzymes to 0.72 and its membrane area to 1.2) — showing
+  that closure is a pattern, not a particular mechanism.'
 claim: 'A cell holds itself together through closure: metabolism, containment, and replication each produce
   what the others need, so the organization sustains itself.'
 baseline:
@@ -38,20 +40,20 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: intact closure self-sustains the membrane (exec last≈3.8)
+    provenance: intact closure self-sustains the membrane (exec last≈1.6)
   requires_simulation: self-made
 - name: enzyme-maintained
   classification: primary
   measure:
     kind: observable
-    path: enzyme
-    expr: last(enzyme)
+    path: enzymes
+    expr: last(enzymes)
   pass_if:
     op: '>='
     value: 0.5
-    provenance: the enzyme pool is held up by the closure (exec last≈3.1)
+    provenance: the enzyme pool is held up by the closure (exec last≈0.72)
   requires_simulation: self-made
-- name: knockout-collapses
+- name: draft-is-inert
   classification: diagnostic
   measure:
     kind: observable
@@ -60,9 +62,9 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: draft/knockout run collapses (no mechanism / no closure)
+    provenance: inert draft stays at seed (no mechanism / no closure)
   control: negative
-  description: 'Negative control: the inert/knockout draft MUST fail this.'
+  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
   requires_simulation: self-made
 runs:
 - name: self-made
@@ -70,50 +72,52 @@ runs:
   emitter: RAMEmitter
   id: self-made
   status: completed
-  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
-    through the engine; conservation invariant checked per figure.
+  provenance: scripts/render_study_evidence.py — fig09a-executable and fig09b-executable compiled from
+    the Fig 9 drafts, run to completion through the engine.
   params: {}
   outcomes:
     CLOSURE-SUSTAINS:
       result: PASS
-      detail: intact membrane→3.8, enzyme→3.1 (self-produced)
-    KNOCKOUT-COLLAPSES:
+      detail: intact membrane→1.6, catalysts→1.2, products→2.4 (self-produced)
+    DRAFT-INERT:
       result: PASS
-      detail: knockout enzyme 0.3 → ~0, membrane never builds
+      detail: inert draft stays at seed — no membrane/enzyme built without the compiled closure
     MULTI-GRAIN:
       result: PASS
-      detail: precursor, membrane, enzyme all sustained
+      detail: sustained at all three grains — coarse (metabolites→4.8), self-organized (membrane→1.6,
+        products→2.4), molecular (proteins→1.27, enzymes→0.72)
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The intact composition self-produces (autocatalytic membrane + enzyme). Confirmed: intact
-    membrane→3.8, enzyme→3.1 (self-produced).'
+  statement: 'The intact composition self-produces (autocatalytic membrane + catalysts). Confirmed: intact
+    membrane→1.6, catalysts→1.2, products→2.4 (self-produced).'
   evidence:
-    from_test: closure-sustains
+    from_test: membrane-sustains
     from_run: self-made
-    observed: intact membrane→3.8, enzyme→3.1 (self-produced)
+    observed: intact membrane→1.6, catalysts→1.2, products→2.4 (self-produced)
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The enzyme-knockout NEGATIVE control collapses — closure is required. Confirmed: knockout
-    enzyme 0.3 → ~0, membrane never builds.'
+  statement: 'The inert-draft NEGATIVE control never builds — the closure is required. Confirmed: the inert
+    draft stays at seed, no membrane/enzyme produced.'
   evidence:
-    from_test: knockout-collapses
+    from_test: draft-is-inert
     from_run: self-made
-    observed: knockout enzyme 0.3 → ~0, membrane never builds
+    observed: inert draft stays at seed, no membrane/enzyme built
 - id: F-03
   kind: biological
   tier: observation
   status: confirms
-  statement: 'Metabolism, containment, replication are all productive in the closure. Confirmed: precursor,
-    membrane, enzyme all sustained.'
+  statement: 'Metabolism, containment, replication are all productive across the three grains. Confirmed:
+    coarse (metabolites→4.8), self-organized (membrane→1.6, products→2.4), molecular (proteins→1.27, enzymes→0.72)
+    all sustained.'
   evidence:
-    from_test: multi-grain
+    from_test: enzyme-maintained
     from_run: self-made
-    observed: precursor, membrane, enzyme all sustained
+    observed: coarse metabolites→4.8, self-organized membrane→1.6/products→2.4, molecular proteins→1.27/enzymes→0.72
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -121,37 +125,35 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Closure-sustains, knockout-collapses, and multi-grain all pass; the knockout negative control collapses to ≈0, showing the closure is load-bearing.
+    basis: Membrane-sustains, enzyme-maintained, and multi-grain all pass; the inert-draft negative control stays at seed, showing the compiled closure is load-bearing.
   explanatory_gain:
     result: POSITIVE
-    basis: Contrasting the intact autopoietic loop against its knockout makes closure a measurable, falsifiable dependency rather than a metaphor.
+    basis: Contrasting the intact autopoietic loop against the inert draft makes closure a measurable, falsifiable dependency rather than a metaphor.
 conclusion: '## Claims
 
-  - The autopoietic composition SELF-SUSTAINS — metabolism→precursor→enzyme→metabolism closes on itself
-  and builds a large membrane/enzyme pool — while the enzyme-knockout CONTROL collapses to ≈0. The closure
-  is load-bearing, not decorative.
+  - The autopoietic composition SELF-SUSTAINS — metabolism→products→catalysts→metabolism closes on itself
+  and builds up membrane (→1.6), catalysts (→1.2) and products (→2.4) — while the inert-draft CONTROL never
+  builds, staying at seed. The closure is load-bearing, not decorative.
 
 
   ## Evidence
 
-  - **CLOSURE-SUSTAINS** — intact membrane→3.8, enzyme→3.1 (self-produced)
+  - **CLOSURE-SUSTAINS** — intact membrane→1.6, catalysts→1.2, products→2.4 (self-produced)
 
-  - **KNOCKOUT-COLLAPSES** — knockout enzyme 0.3 → ~0, membrane never builds
+  - **DRAFT-INERT** — inert draft stays at seed — no membrane/enzyme built without the compiled closure
 
-  - **MULTI-GRAIN** — precursor, membrane, enzyme all sustained
-
-  - **conservation** — intact composition self-sustains a steady state; the enzyme-knockout control collapses
-  — the closure is load-bearing
+  - **MULTI-GRAIN** — coarse (metabolites→4.8), self-organized (membrane→1.6, products→2.4), molecular
+  (proteins→1.27, enzymes→0.72) all sustained
 
 
   ## Limitations
 
-  - Toy-real autopoiesis: the loop sustains a steady state and the knockout collapses, but the constants are illustrative and self-production is lumped.
+  - Toy-real autopoiesis: the loop sustains raised steady levels while the inert draft stays flat, but the constants are illustrative and self-production is lumped.
 
 
   ## Next steps
 
-  - Sweep additional knockouts to map which loop members are individually essential to the closure.'
+  - Add a genuine knockout executable to map which loop members are individually essential to the closure.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -166,14 +168,14 @@ conclusion_logic:
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
 - Closure is shown as sustained steady levels, not literal self-fabrication of new components; the self-production is a toy autocatalytic loop.
-- The knockout is a single-gene control; robustness of the closure to other perturbations is untested.
-falsifiability: Overturned if the intact composition fails to sustain its membrane and enzyme pools, or if the enzyme-knockout control does NOT collapse (which would mean the closure is not load-bearing).
+- The negative control is the inert draft, not a targeted knockout; robustness of the closure to specific perturbations is untested.
+falsifiability: Overturned if the intact composition fails to sustain its membrane and enzyme pools, or if the inert draft does NOT stay at seed (which would mean the closure is not load-bearing).
 visualizations:
 - name: self-made-dynamics
   address: image:visualizations/self-made-dynamics.svg
   config:
     chart: image
-    caption: CLOSED-LOOP dynamics — conserved, run to completion.
+    caption: Dynamics of the compiled Fig 9 executables (fig09a + fig09b), run to completion.
 - name: fig09a-coarse-graining
   address: image:visualizations/fig09a-coarse-graining.svg
   config:
@@ -194,6 +196,6 @@ parent_studies:
 - study: the-nested-cell
   condition: tests-passed
 experiment: Compose the three functions into a mutually-productive loop and compare the intact system
-  against an enzyme-knockout control.
-result: The intact composition self-sustains a large membrane and enzyme pool; the knockout collapses
-  to zero — the closure is load-bearing, not decorative.
+  against the inert draft.
+result: The intact composition self-sustains its membrane (→1.6), catalyst (→1.2) and product (→2.4) pools;
+  the inert draft never builds, staying at seed — the closure is load-bearing, not decorative.

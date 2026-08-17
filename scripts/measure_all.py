@@ -14,7 +14,7 @@ from process_bigraph import Composite, gather_emitter_results
 from viva_meta_modelers_guide.core import build_core
 from viva_meta_modelers_guide.wholecell import build_whole_cell
 
-import render_executable_dynamics as R  # sibling script
+import render_study_evidence as R  # sibling script — single executable-evidence renderer
 
 ROOT = Path(__file__).resolve().parent.parent
 COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"

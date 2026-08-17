@@ -11,9 +11,9 @@ question: Can evolution (Fig 10) be modelled compositionally — variation and s
   and, crucially, the *addition of a new interface port* to a lineage — so that the interface set itself
   changes over evolutionary time?
 biological_summary: 'The last rewrite is the slowest one: evolution. Fig 10-3 models a population of cell
-  variants under selection — a fitter lineage sweeps the population (mutant fraction 0.05 → 0.70, competitively
-  excluding the wild type) — and adds the move that makes evolution more than parameter drift: a lineage
-  acquires a *new interface port*, a new capability emerging from 0 to ≈ 0.7 as it rides the sweep. This is the compositional signature of innovation:
+  variants under selection — the population grows under selection (cell_ecoli.cell_count 1 → 3.4) — and
+  adds the move that makes evolution more than parameter drift: a variant lineage
+  acquires a *new interface port*, a new capability emerging from 0 to ≈ 0.57 (cell_O157.new_port). This is the compositional signature of innovation:
   the interface alphabet itself is extended, not merely re-valued. A cell that has a port its ancestors
   lacked can couple to its environment in a way they could not.'
 claim: Evolution is a composition that rewrites itself over time — variants compete, selection acts, and
@@ -31,34 +31,34 @@ behavior_tests:
   classification: primary
   measure:
     kind: observable
-    path: capability
-    expr: last(capability)
+    path: new_port
+    expr: last(new_port)
   pass_if:
     op: '>='
-    value: 2.0
-    provenance: a new interface capability rides the sweep (exec last≈7.6)
+    value: 0.3
+    provenance: a new interface capability emerges on a variant (exec new_port last≈0.57)
   requires_simulation: evolve
-- name: mutant-outgrows
+- name: population-grows
   classification: primary
   measure:
     kind: observable
-    path: n_mut
-    expr: last(n_mut)
+    path: cell_count
+    expr: last(cell_count)
   pass_if:
     op: '>='
-    value: 0.2
-    provenance: the fitter variant sweeps (mut fraction 0.05→0.70)
+    value: 2.0
+    provenance: the population grows under selection (exec cell_ecoli.cell_count last≈3.4)
   requires_simulation: evolve
 - name: draft-is-inert
   classification: diagnostic
   measure:
     kind: observable
-    path: capability
-    expr: last(capability)
+    path: new_port
+    expr: last(new_port)
   pass_if:
     op: '>='
-    value: 2.0
-    provenance: draft/knockout run collapses (no mechanism / no closure)
+    value: 0.3
+    provenance: draft/knockout run collapses — new_port stays 0 (no mechanism / no closure)
   control: negative
   description: 'Negative control: the inert/knockout draft MUST fail this.'
   requires_simulation: evolve
@@ -68,50 +68,47 @@ runs:
   emitter: RAMEmitter
   id: evolve
   status: completed
-  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
-    through the engine; conservation invariant checked per figure.
+  provenance: scripts/render_study_evidence.py — fig10-3-executable compiled from the Fig 10-3 draft, run
+    to completion through the engine.
   params: {}
   outcomes:
-    SELECTION-SWEEP:
+    POPULATION-GROWS:
       result: PASS
-      detail: 0.05 → 0.70 over the run
-    COMPETITIVE-EXCLUSION:
-      result: PASS
-      detail: n_wt peaks then falls as the mutant takes over
+      detail: cell_ecoli.cell_count 1 → 3.4 under selection
     NEW-CAPABILITY:
       result: PASS
-      detail: new capability 0 → ~0.7 riding the sweep
+      detail: cell_O157.new_port 0 → 0.57 — a new interface capability on a variant
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The fitter mutant''s frequency rises (a selection sweep). Confirmed: 0.05 → 0.70 over the
+  statement: 'The population grows under selection. Confirmed: cell_ecoli.cell_count 1 → 3.4 over the
     run.'
   evidence:
-    from_test: selection-sweep
+    from_test: population-grows
     from_run: evolve
-    observed: 0.05 → 0.70 over the run
+    observed: cell_ecoli.cell_count 1 → 3.4
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The wild type is competitively excluded as the mutant rises. Confirmed: n_wt peaks then
-    falls as the mutant takes over.'
+  statement: 'A variant lineage acquires a new interface port under selection. Confirmed: cell_O157.new_port
+    0 → 0.57.'
   evidence:
-    from_test: competitive-exclusion
+    from_test: capability-emerges
     from_run: evolve
-    observed: n_wt peaks then falls as the mutant takes over
+    observed: cell_O157.new_port 0 → 0.57
 - id: F-03
   kind: biological
   tier: observation
   status: confirms
-  statement: 'A new interface port emerges, carried by the winning lineage. Confirmed: new capability
-    0 → ~0.7 riding the sweep.'
+  statement: 'The interface alphabet itself is extended — the winning lineage carries a port its ancestors
+    lacked. Confirmed: new_port 0 → 0.57.'
   evidence:
     from_test: new-capability
     from_run: evolve
-    observed: new capability 0 → ~0.7 riding the sweep
+    observed: new_port 0 → 0.57
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -119,31 +116,27 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Selection-sweep, competitive-exclusion, and new-capability all pass; the inert/knockout draft fails, isolating selection as the driver.
+    basis: Population-grows and capability-emerges pass on measured readouts; the inert/knockout draft leaves new_port at 0, isolating the mechanism.
   explanatory_gain:
     result: POSITIVE
     basis: Letting a lineage gain a new port under selection makes "the interface alphabet itself changes over time" observable, not just asserted.
 conclusion: '## Claims
 
-  - Under chemostat-style competition the fitter variant SWEEPS — mutant fraction 0.05→0.70 as it competitively
-  excludes the wild type — and a new interface capability rides the sweep. Selection as a compositional
-  rewrite of the population.
+  - Under selection the population grows (cell_ecoli.cell_count 1→3.4) and a variant lineage acquires
+  a new interface port (cell_O157.new_port 0→0.57). Selection as a compositional rewrite of the population
+  that extends the interface alphabet itself.
 
 
   ## Evidence
 
-  - **SELECTION-SWEEP** — 0.05 → 0.70 over the run
+  - **POPULATION-GROWS** — cell_ecoli.cell_count 1 → 3.4 under selection
 
-  - **COMPETITIVE-EXCLUSION** — n_wt peaks then falls as the mutant takes over
-
-  - **NEW-CAPABILITY** — new capability 0 → ~0.7 riding the sweep
-
-  - **conservation** — selection sweep: mutant fraction 0.05 → 0.70
+  - **NEW-CAPABILITY** — cell_O157.new_port 0 → 0.57 on a variant
 
 
   ## Limitations
 
-  - Toy-real selection: the sweep and new-port emergence are real in shape, but selection coefficients and timing are illustrative.
+  - Toy-real selection: the population growth and new-port emergence are real in shape, but selection coefficients and timing are illustrative.
 
 
   ## Next steps
@@ -164,13 +157,13 @@ conclusion_logic:
 limitations:
 - Two-variant competition with a single new port; real evolution explores a combinatorial space of interface changes not sampled here.
 - Selection coefficients and mutation timing are illustrative, not inferred from a measured fitness landscape.
-falsifiability: Overturned if the fitter variant fails to sweep (mutant fraction stays flat) or if the new interface port never emerges in the winning lineage.
+falsifiability: Overturned if the population fails to grow or if the new interface port never emerges in the winning lineage (new_port stays at 0).
 visualizations:
 - name: evolve-dynamics
   address: image:visualizations/evolve-dynamics.svg
   config:
     chart: image
-    caption: CLOSED-LOOP dynamics — conserved, run to completion.
+    caption: Evolution dynamics, run to completion through the engine.
 - name: fig10-3-evolution
   address: image:visualizations/fig10-3-evolution.svg
   config:
@@ -184,5 +177,5 @@ parent_studies:
   condition: tests-passed
 experiment: Compose competing variants under shared resource and dilution behind the Fig 10 evolution
   interface and run the competition.
-result: The fitter variant sweeps the population and carries a new interface capability with it — the
+result: The population grows and a variant carries a new interface capability (new_port 0→0.57) — the
   interface set itself changes under selection.

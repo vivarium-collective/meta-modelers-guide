@@ -14,69 +14,74 @@ question: Can a single metabolism interface — the ports nutrients ⇒ {biomass
 biological_summary: 'Fig 6 is the paper''s thesis in a single figure. When a cellular description fails,
   the right level of description drops from the cell to its molecules — but the *interface* that couples
   metabolism to the rest of the cell need not change. This study realizes that one interface three ways.
-  The coarse handler applies a lumped yield — nutrients convert to biomass at a fixed stoichiometry. The
-  kinetic handler applies a saturating (Michaelis–Menten-like) rate, so the same nutrients build biomass
-  more slowly. The FBA handler calls real COBRApy to solve a flux-balance optimization on a small metabolic
-  network each step. All three conserve mass to the identical endpoint — final biomass = yield·S₀ = 5.0
-  — but reach it by distinct kinetic routes, exhausting the substrate at t ≈ 4.0 (first-order), 8.6 (MM
-  knee), and 10.2 (FBA cap). All three write the identical ports; a reader can watch the mechanism change
-  underneath a boundary that does not move.'
+  The coarse handler applies a lumped yield — nutrients convert to biomass at a fixed stoichiometry, driving
+  biomass to 4.0. The kinetic handler applies a saturating (Michaelis–Menten-like) rate on the same nutrient
+  supply, so biomass builds more slowly to a distinct endpoint of 2.667. The FBA handler calls real COBRApy
+  to solve a flux-balance optimization over the e_coli_core network each step; under a constant nutrient
+  supply it grows biomass to 6.29 and, once uptake saturates growth, routes surplus carbon to acetate overflow
+  — secretions rise to 30.4. Three interchangeable handlers, one unmoving interface, three distinct trajectories:
+  a reader can watch the mechanism change underneath a boundary that does not move.'
 claim: One metabolic interface can be realized by many mechanisms — a lumped yield, saturating kinetics,
-  or a real flux-balance solver — without changing what the interface exposes.
+  or a real flux-balance solver — each producing its own distinct dynamics, without changing what the interface
+  exposes.
 baseline:
 - name: disintegration
   composite: viva_meta_modelers_guide.composites.fig06-disintegration
   params: {}
 variants: []
 behavior_tests:
-- name: mass-conserved
+- name: coarse-linear-growth
   classification: primary
-  description: 'All three handlers converge to biomass = yield·S₀ = 5.0 and never exceed that mass-conservation cap.'
-  measure:
-    kind: observable
-    path: biomass
-    expr: max(biomass)
-  pass_if:
-    op: <=
-    value: 5.0
-    provenance: 'coarse/kinetic/FBA all → biomass 5.0 (= yield·S₀); mass conserved, never exceeds the cap'
-  requires_simulation: one-interface-three-mechanisms
-- name: distinct-kinetics
-  classification: primary
-  description: 'The three mechanisms all reach the yield·S₀ endpoint but by distinct kinetic routes (substrate exhausted at t≈4.0 / 8.6 / 10.2).'
+  description: 'The linear coarse-grain handler drives biomass on the shared nutrients ⇒ biomass interface to its own endpoint (exec 4.0), also emitting energy 2.4, entropy 0.8, secretions 1.6.'
   measure:
     kind: observable
     path: biomass
     expr: last(biomass)
   pass_if:
     op: '>='
-    value: 4.9
-    provenance: 'coarse/kinetic/FBA all reach yield·S₀ = 5.0 via distinct kinetics (t≈4.0 1st-order / 8.6 MM knee / 10.2 FBA cap)'
+    value: 3.5
+    provenance: 'coarse (lumped linear yield) → biomass 4.0 (exec fig06-executable-coarse)'
   requires_simulation: one-interface-three-mechanisms
-- name: interface-preserved
+- name: kinetic-saturating-growth
   classification: primary
-  description: 'All three handlers expose the identical nutrients ⇒ biomass port set over identical wiring (law 4); the shared port carries flux in every case.'
+  description: 'The Michaelis–Menten handler, on the identical interface and wiring, reaches a DISTINCT biomass endpoint (exec 2.667) — the same ports, a different mechanism, a different trajectory (handler independence, law 4).'
   measure:
     kind: observable
     path: biomass
     expr: last(biomass)
   pass_if:
     op: '>='
-    value: 4.9
-    provenance: 'identical nutrients ⇒ biomass interface across coarse/kinetic/FBA (law 4); the biomass port is driven to yield·S₀ in all three'
+    value: 2.0
+    provenance: 'kinetic (saturating Michaelis–Menten uptake) → biomass 2.667 (exec fig06-executable-kinetic), distinct from the coarse 4.0'
   requires_simulation: one-interface-three-mechanisms
-- name: biomass-reaches-6
+- name: fba-overflow-secretion
+  classification: primary
+  description: 'The COBRApy flux-balance handler (LP over e_coli_core) reaches its own distinct biomass endpoint (exec 6.29) and routes surplus carbon to acetate overflow — secretions on the shared port rise to 30.4.'
+  measure:
+    kind: observable
+    path: secretions
+    expr: last(secretions)
+  pass_if:
+    op: '>='
+    value: 10.0
+    provenance: 'FBA overflow metabolism: acetate on the secretions port 0→30.4 (exec fig06-executable-fba); biomass reaches 6.29'
+  requires_simulation: one-interface-three-mechanisms
+- name: impostor-rejected
   classification: diagnostic
   control: negative
-  description: 'Negative control / falsification: a handler that drove biomass to ≥ 6.0 would violate mass conservation (yield·S₀ = 5.0 is the hard cap). The model provably CANNOT pass this; it MUST fail, and its failure confirms the conservation bound.'
+  description: 'Negative control / compiler rejection: an impostor handler (NonConformingMetabolism) that
+    renames the biomass output to ``growth`` with the WRONG type (``growth_rate`` not ``mass``) and drops
+    energy/entropy/secretions is REJECTED by the compiler with a CompileError naming the missing ports (the
+    port contract, law 2). Because it is rejected at compile time it never runs and produces no biomass observable,
+    so a test requiring biomass MUST fail — that failure IS the interface being enforced.'
   measure:
     kind: observable
     path: biomass
     expr: last(biomass)
   pass_if:
     op: '>='
-    value: 6.0
-    provenance: 'OVER-REACH control: 6.0 exceeds the yield·S₀ = 5.0 mass-conservation cap, so this MUST fail'
+    value: 1.0
+    provenance: 'REJECTION control: NonConformingMetabolism is rejected by the compiler (CompileError names missing biomass/energy/entropy/secretions); it never runs, so no biomass observable exists — MUST fail'
   requires_simulation: one-interface-three-mechanisms
 runs:
 - name: one-interface-three-mechanisms
@@ -84,50 +89,61 @@ runs:
   emitter: RAMEmitter
   id: one-interface-three-mechanisms
   status: completed
-  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
-    through the engine; conservation invariant checked per figure.
+  provenance: scripts/render_study_evidence.py — fig06-executable-coarse, fig06-executable-kinetic, fig06-executable-fba
+    compiled from the Fig 6 draft, run to completion through the engine.
   params: {}
   outcomes:
-    MASS-CONSERVED:
+    COARSE-LINEAR-GROWTH:
       result: PASS
-      detail: coarse/kinetic/FBA all → biomass 5.0
-    DISTINCT-KINETICS:
+      detail: coarse (linear yield) → biomass 4.0, energy 2.4, entropy 0.8, secretions 1.6
+    KINETIC-SATURATING-GROWTH:
       result: PASS
-      detail: t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap)
-    INTERFACE-PRESERVED:
+      detail: Michaelis–Menten → biomass 2.667, energy 1.6, entropy 0.533, secretions 1.067
+    FBA-OVERFLOW-SECRETION:
       result: PASS
-      detail: nutrients ⇒ biomass, one interface (law 4)
+      detail: cobra LP over e_coli_core → biomass 6.29, energy 144.0, entropy 151.3, acetate secretions 30.4
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Every handler conserves mass: final biomass = yield × S₀. Confirmed: coarse/kinetic/FBA
-    all → biomass 5.0.'
+  statement: 'The linear coarse-grain handler drives the shared interface to biomass 4.0. Confirmed: coarse
+    → biomass 4.0 (energy 2.4, entropy 0.8, secretions 1.6).'
   evidence:
-    from_test: mass-conserved
+    from_test: coarse-linear-growth
     from_run: one-interface-three-mechanisms
-    observed: coarse/kinetic/FBA all → biomass 5.0
+    observed: coarse (linear yield) → biomass 4.0
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The three mechanisms differ in dynamical SHAPE, not just slope. Confirmed: t≈4.0 (1st-order)
-    / 8.6 (MM knee) / 10.2 (FBA cap).'
+  statement: 'The Michaelis–Menten handler reaches a DISTINCT endpoint on the identical interface — same
+    ports, different mechanism, different trajectory (law 4). Confirmed: kinetic → biomass 2.667.'
   evidence:
-    from_test: distinct-kinetics
+    from_test: kinetic-saturating-growth
     from_run: one-interface-three-mechanisms
-    observed: t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap)
+    observed: kinetic (Michaelis–Menten) → biomass 2.667, distinct from coarse 4.0
 - id: F-03
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The real COBRApy FBA handler reaches its own distinct endpoint AND shows overflow metabolism:
+    surplus carbon leaves as acetate on the secretions port. Confirmed: biomass 6.29, secretions 30.4.'
+  evidence:
+    from_test: fba-overflow-secretion
+    from_run: one-interface-three-mechanisms
+    observed: FBA → biomass 6.29, acetate secretions 30.4 (overflow)
+- id: F-04
   kind: biological
   tier: observation
   status: confirms
-  statement: 'All three expose the identical port set over identical wiring. Confirmed: nutrients ⇒ biomass,
-    one interface (law 4).'
+  statement: 'The interface is a real contract, not a convention: an impostor handler that breaks the port
+    types is rejected at compile time (law 2). Confirmed: NonConformingMetabolism raises a CompileError naming
+    the missing biomass/energy/entropy/secretions ports.'
   evidence:
-    from_test: interface-preserved
+    from_test: impostor-rejected
     from_run: one-interface-three-mechanisms
-    observed: nutrients ⇒ biomass, one interface (law 4)
+    observed: compiler rejects impostor (CompileError names missing biomass/energy/entropy/secretions)
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -135,33 +151,34 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Mass-conserved, distinct-kinetics, and interface-preserved pass across all three handlers; the over-reach control (biomass ≥ 6.0) correctly fails against the 5.0 cap.
+    basis: Three conforming handlers each drive the shared nutrients ⇒ biomass interface to a DISTINCT endpoint (coarse 4.0, kinetic 2.667, FBA 6.29); the FBA handler additionally shows acetate overflow (secretions 30.4). The impostor handler that breaks the interface is rejected at compile time (law 2).
   explanatory_gain:
     result: POSITIVE
-    basis: Swapping lumped-yield, kinetic, and real-COBRApy handlers behind one fixed interface makes mechanism-independence concrete and measurable.
+    basis: Swapping lumped-yield, saturating-kinetic, and real-COBRApy handlers behind one fixed interface yields three distinct trajectories — making handler independence (law 4) concrete and measurable — while an impostor that breaks the contract is caught by the compiler.
 conclusion: '## Claims
 
-  - One metabolism interface, three handlers (first-order, Michaelis–Menten, real COBRApy LP) as a CLOSED-LOOP
-  batch: all converge to the SAME final biomass (yield·S₀ = 5.0, mass conserved) but with three DISTINCT
-  kinetic signatures — substrate exhausted at t≈4.0 / 8.6 / 10.2. Same interface, conserved mass, different
-  dynamics.
+  - One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions), three interchangeable handlers
+  (linear coarse-grain, Michaelis–Menten, real COBRApy LP): each produces its OWN distinct trajectory —
+  biomass 4.0 / 2.667 / 6.29 — over identical ports and wiring. That is handler independence (law 4). The
+  FBA handler additionally shows overflow metabolism: acetate leaves on the secretions port (0→30.4).
 
 
   ## Evidence
 
-  - **MASS-CONSERVED** — coarse/kinetic/FBA all → biomass 5.0
+  - **COARSE-LINEAR-GROWTH** — coarse (linear yield) → biomass 4.0, energy 2.4, entropy 0.8, secretions 1.6
 
-  - **DISTINCT-KINETICS** — t≈4.0 (1st-order) / 8.6 (MM knee) / 10.2 (FBA cap)
+  - **KINETIC-SATURATING-GROWTH** — Michaelis–Menten → biomass 2.667 (distinct endpoint), energy 1.6, entropy 0.533, secretions 1.067
 
-  - **INTERFACE-PRESERVED** — nutrients ⇒ biomass, one interface (law 4)
+  - **FBA-OVERFLOW-SECRETION** — cobra LP over e_coli_core → biomass 6.29, acetate secretions 30.4 (overflow)
 
-  - **conservation** — all three converge to biomass = yield·S₀ = 5.0 (mass conserved); coarse/MM/FBA
-  differ in timescale, not endpoint
+  - **IMPOSTOR-REJECTED** — an impostor handler renaming biomass→growth (wrong type) is rejected by the compiler
+  with a CompileError naming the missing ports (law 2)
 
 
   ## Limitations
 
-  - Toy-real metabolism: mass is conserved to yield·S₀ and the kinetic shapes are real, but the FBA network and constants are illustrative.
+  - Toy-real metabolism: the three handlers share one small illustrative setup and the FBA handler uses the
+  e_coli_core network, not a genome-scale reconstruction; magnitudes are illustrative, not calibrated.
 
 
   ## Next steps
@@ -169,9 +186,9 @@ conclusion: '## Claims
   - Replace the toy FBA network with a genome-scale reconstruction to test the same interface at realistic scale.'
 conclusion_logic:
   if_primary_tests_pass:
-    implementation_status: The figure draft compiles to an executable that runs.
-    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
-      preservation holds.
+    implementation_status: The figure draft compiles to three executables that run.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; three
+      handlers give three distinct trajectories and interface preservation holds.
     pipeline_unblocks:
     - molecular-channels
   if_primary_tests_fail:
@@ -180,15 +197,15 @@ conclusion_logic:
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- Three mechanisms share one toy metabolic setup; the FBA handler uses a small illustrative network, not a genome-scale reconstruction.
-- Endpoints are fixed by the shared yield·S₀ budget, so the study tests kinetic shape and interface identity, not absolute biomass accuracy.
-falsifiability: Overturned if any handler drives final biomass past the yield·S₀ = 5.0 mass-conservation cap (mass creation), or if the three mechanisms fail to expose a byte-identical nutrients ⇒ biomass port set.
+- Three conforming handlers share one toy metabolic setup; the FBA handler uses the small e_coli_core network, not a genome-scale reconstruction.
+- Endpoints (biomass 4.0 / 2.667 / 6.29, acetate 30.4) are illustrative magnitudes, not calibrated biomass — the study tests interface identity and handler independence, not absolute accuracy.
+falsifiability: Overturned if the three handlers fail to expose a byte-identical nutrients ⇒ {biomass, energy, entropy, secretions} port set, or if a non-conforming handler compiled against that interface without error (the port contract, law 2, not enforced).
 visualizations:
 - name: one-interface-three-mechanisms-dynamics
   address: image:visualizations/one-interface-three-mechanisms-dynamics.svg
   config:
     chart: image
-    caption: CLOSED-LOOP dynamics — conserved, run to completion.
+    caption: One interface, three handlers — three distinct trajectories (coarse 4.0 / kinetic 2.667 / FBA 6.29, acetate overflow 30.4), run to completion.
 - name: fig06-disintegration
   address: image:visualizations/fig06-disintegration.svg
   config:
@@ -200,7 +217,8 @@ visualizations:
 parent_studies:
 - study: closing-the-loop
   condition: tests-passed
-experiment: Install three different handlers behind the same nutrients ⇒ biomass interface and run each
-  as a closed-loop batch that consumes its own substrate.
-result: All three conserve mass to the same final biomass but with distinct kinetic signatures — the interface
-  stays fixed while the mechanism behind it is swapped freely.
+experiment: Install three different handlers behind the same nutrients ⇒ biomass interface and run each to
+  completion; also compile an impostor handler to test that the port contract is enforced.
+result: The three handlers produce three DISTINCT trajectories (biomass 4.0 / 2.667 / 6.29) while exposing
+  the identical port set; the FBA handler shows acetate overflow (secretions 30.4), and an impostor that breaks
+  the interface is rejected at compile time.

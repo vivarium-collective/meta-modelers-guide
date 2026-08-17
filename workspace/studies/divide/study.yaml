@@ -14,8 +14,9 @@ biological_summary: 'Fig 10 rewrites the cell across time, and division is its s
   not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction
   rule in Milner''s sense whose reactum has more nodes than its redex. When a cell''s DNA crosses a
   threshold, the rule fires: the cell node is replaced by two daughter nodes, each inheriting a symmetric
-  share of the parent''s DNA and mass (mother mass = Σ daughters). Fired repeatedly as the lineage grows
-  on the shared nutrient (drawn 20 → 2.5), it takes cell_count from 1 to 14 over the run. The daughters
+  share of the parent''s DNA. Fired once as the cell grows to threshold, it takes cell_count from 1 to 2
+  — a single division event — with the parent''s dna climbing 1 → 3.06 and each new daughter spawning dna
+  0 → 2.75 and biomass 0 → 0.5. The daughters
   are structurally new — they do not exist in the initial state — which is exactly what makes this an
   event-driven rewrite rather than an animation of a pre-built pair.'
 claim: 'Division is a change to the composition itself: one cell becomes two through a graph rewrite that
@@ -37,20 +38,20 @@ behavior_tests:
     expr: last(cell_count)
   pass_if:
     op: '>='
-    value: 2.0
-    provenance: lineage divides (exec cell_count 1→14)
+    value: 1.5
+    provenance: lineage divides once (exec cell_count 1→2)
   requires_simulation: division-occurs
-- name: nutrient-consumed
+- name: daughters-spawn
   classification: primary
   measure:
     kind: observable
-    path: nutrient
-    expr: last(nutrient)
+    path: dna
+    expr: last(dna)
   pass_if:
-    op: <=
-    value: 5.0
-    provenance: growing lineage draws nutrient down (exec last≈1.1 from 20)
-  requires_simulation: nutrient-consumed
+    op: '>='
+    value: 1.0
+    provenance: division spawns two new daughters (exec daughter dna 0→2.75)
+  requires_simulation: daughters-spawn
 - name: draft-is-inert
   classification: diagnostic
   measure:
@@ -59,8 +60,8 @@ behavior_tests:
     expr: last(cell_count)
   pass_if:
     op: '>='
-    value: 2.0
-    provenance: inert-draft run stays at seed (no mechanism → no dynamics)
+    value: 1.5
+    provenance: inert-draft run stays at seed cell_count 1 (no mechanism → no dynamics)
   control: negative
   description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
   requires_simulation: draft-is-inert
@@ -70,50 +71,49 @@ runs:
   emitter: RAMEmitter
   id: divide
   status: completed
-  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
-    through the engine; conservation invariant checked per figure.
+  provenance: scripts/render_study_evidence.py — fig10-1-executable compiled from the Fig 10-1 draft, run
+    to completion through the engine.
   params: {}
   outcomes:
     DIVISION-FIRES:
       result: PASS
-      detail: cell_count 1 → 14 over the run
-    MASS-CONSERVED:
+      detail: cell_count 1 → 2 — one division event, spawning daughter_1 + daughter_2
+    DAUGHTERS-SPAWN:
       result: PASS
-      detail: mass sawtooth; halving conserves total
-    AUTOCATALYTIC-GROWTH:
+      detail: each daughter spawns dna 0 → 2.75 and biomass 0 → 0.5
+    PARENT-GROWS:
       result: PASS
-      detail: nutrient 20→2.5 feeding growth
+      detail: parent cell.dna climbs 1 → 3.06 to reach the division threshold
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Growth to threshold fires repeated division events. Confirmed: cell_count 1 → 14 over the
-    run.'
+  statement: 'Growth to threshold fires a division event. Confirmed: cell_count 1 → 2 — one division,
+    spawning daughter_1 + daughter_2.'
   evidence:
     from_test: division-fires
     from_run: divide
-    observed: cell_count 1 → 14 over the run
+    observed: cell_count 1 → 2 (one division)
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Each division halves mass (mother = Σ daughters) — mass sawtooth. Confirmed: mass sawtooth;
-    halving conserves total.'
+  statement: 'The division spawns two structurally-new daughter nodes. Confirmed: each daughter dna 0 →
+    2.75 and biomass 0 → 0.5.'
   evidence:
-    from_test: mass-conserved
+    from_test: daughters-spawn
     from_run: divide
-    observed: mass sawtooth; halving conserves total
+    observed: each daughter dna 0 → 2.75, biomass 0 → 0.5
 - id: F-03
   kind: biological
   tier: observation
   status: confirms
-  statement: 'Between divisions mass grows autocatalytically on the nutrient. Confirmed: nutrient 20→2.5
-    feeding growth.'
+  statement: 'The parent grows to the division threshold before firing. Confirmed: cell.dna 1 → 3.06.'
   evidence:
-    from_test: autocatalytic-growth
+    from_test: parent-grows
     from_run: divide
-    observed: nutrient 20→2.5 feeding growth
+    observed: cell.dna 1 → 3.06
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -121,36 +121,33 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Division-fires, mass-conserved, and autocatalytic-growth all pass; the inert draft stays at cell_count 1, so division is a real runtime rewrite.
+    basis: Division-fires, daughters-spawn, and parent-grows all pass; the inert draft stays at cell_count 1, so division is a real runtime rewrite.
   explanatory_gain:
     result: POSITIVE
-    basis: Watching one cell node become 14 via repeated mass-conserving rewrites makes division-as-graph-rewrite concrete rather than animated.
+    basis: Watching one cell node be replaced by two structurally-new daughters via a runtime rewrite makes division-as-graph-rewrite concrete rather than animated.
 conclusion: '## Claims
 
-  - Autocatalytic growth to a mass threshold triggers a MASS-CONSERVING division event (mother mass =
-  Σ daughters); the lineage traces a mass sawtooth and cell_count 1→14 as it draws down the shared nutrient
-  — a genuine event on top of continuous growth.
+  - Growth to a DNA threshold triggers a single division event: the cell node is replaced by two structurally-new
+  daughter nodes and cell_count goes 1→2 — a genuine event on top of continuous growth.
 
 
   ## Evidence
 
-  - **DIVISION-FIRES** — cell_count 1 → 14 over the run
+  - **DIVISION-FIRES** — cell_count 1 → 2 (one division), spawning daughter_1 + daughter_2
 
-  - **MASS-CONSERVED** — mass sawtooth; halving conserves total
+  - **DAUGHTERS-SPAWN** — each daughter dna 0 → 2.75, biomass 0 → 0.5
 
-  - **AUTOCATALYTIC-GROWTH** — nutrient 20→2.5 feeding growth
-
-  - **conservation** — divisions: cell_count 1→14; each division halves mass (mother = Σ daughters)
+  - **PARENT-GROWS** — parent cell.dna 1 → 3.06 to reach the threshold
 
 
   ## Limitations
 
-  - Toy-real division: each rewrite conserves mass, but the threshold and growth constants are illustrative and division is symmetric.
+  - Toy-real division: the rewrite fires once and division is symmetric; the threshold and growth constants are illustrative.
 
 
   ## Next steps
 
-  - Add size-controlled or asymmetric division rules to test the rewrite mechanism under realistic division timing.'
+  - Add repeated, size-controlled, or asymmetric division rules to test the rewrite mechanism under realistic division timing.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
@@ -165,14 +162,14 @@ conclusion_logic:
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
 - Symmetric division with a fixed DNA threshold; asymmetric division, septum placement, and size control are not modelled.
-- The lineage is well-mixed on one shared nutrient — no spatial structure among the 14 cells.
-falsifiability: Overturned if cell_count never increases (the rewrite never fires) or if a division fails to conserve mass (daughters' total ≠ mother's mass).
+- The rewrite fires once (cell_count 1→2); repeated division and spatial structure among daughters are not modelled.
+falsifiability: Overturned if cell_count never increases (the rewrite never fires) or if the division fails to spawn two structurally-new daughter nodes.
 visualizations:
 - name: divide-dynamics
   address: image:visualizations/divide-dynamics.svg
   config:
     chart: image
-    caption: CLOSED-LOOP dynamics — conserved, run to completion.
+    caption: Division dynamics, run to completion through the engine.
 - name: fig10-1-division
   address: image:visualizations/fig10-1-division.svg
   config:
@@ -186,5 +183,5 @@ parent_studies:
   condition: tests-passed
 experiment: Install a Milner reaction rule behind the Fig 10 division interface and let the cell grow
   to threshold and fire it.
-result: The single cell node is replaced by two daughters that conserve the parent's mass — a genuine
-  structural rewrite, driven by the cell's own growth.
+result: The single cell node is replaced by two structurally-new daughters (each dna → 2.75, biomass →
+  0.5) — a genuine structural rewrite, driven by the cell's own growth.

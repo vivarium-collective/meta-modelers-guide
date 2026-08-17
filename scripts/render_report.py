@@ -325,13 +325,13 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     execu = inv.get("executive", {}) if isinstance(inv.get("executive"), dict) else {}
     arg = inv.get("scientific_argument", {}) if isinstance(inv.get("scientific_argument"), dict) else {}
 
-    # conservation invariants measured per figure (scripts/render_dynamics.py)
+    # per-figure executable signatures measured by scripts/render_study_evidence.py
     inv_path = ws / "scripts" / "_catalog" / "dynamics_readouts.json"
     inv_map = json.loads(inv_path.read_text()) if inv_path.exists() else {}
 
     # ── hero stats
-    stats = [("studies", str(len(studies))), ("closed-loop models", str(len(inv_map) or len(studies))),
-             ("conservation checks", str(len(inv_map))), ("whole cell", "1")]
+    stats = [("studies", str(len(studies))), ("executables", str(len(inv_map) or len(studies))),
+             ("checked signatures", str(len(inv_map))), ("whole cell", "1")]
     stat_html = "".join(f'<div class="stat"><b>{v}</b><span>{esc(k)}</span></div>' for k, v in stats)
 
     # ── the arc spine
@@ -361,9 +361,10 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
             <span class="kicker">The payoff</span>
             <h2>A cell, assembled from drafts, that lives and dies</h2>
             <p>The figures don't just each run — they <em>compose</em>. Assembled into one cell,
-            it grows autocatalytically on a depleting nutrient, divides as it grows, then a thermal
-            shock ramps its temperature past tolerance, viability collapses, and its biomass converts
-            to molecular debris — <strong>mass conserved through death</strong>. The whole arc, one run.</p>
+            it grows on a depleting nutrient (biomass peaks ≈5.1), divides once as it grows
+            (cell_count 1→2), then a thermal shock ramps its temperature 37→50 °C past tolerance,
+            viability collapses (1.0→0.02), and its biomass converts to molecular debris (0→4.87).
+            The whole arc — grow, divide, die — in one run.</p>
             {chips(outcomes(atlas)[:4])}
             {inv_line(atlas)}
           </div>
@@ -376,11 +377,13 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
           <div class="hl-txt">
             <span class="kicker">The thesis, in one figure</span>
             <h2>One interface, three mechanisms</h2>
-            <p>One metabolism interface — nutrients ⇒ biomass — realized three ways: first-order,
-            Michaelis–Menten, and a real COBRApy LP, run as a <strong>closed-loop batch</strong> that
-            consumes its own substrate. All three converge to the same final biomass (mass conserved)
-            but with three distinct kinetic signatures — the saturation knee, the capacity plateau,
-            the exponential drawdown. Same interface, conserved mass, different dynamics.</p>
+            <p>One metabolism interface — nutrients ⇒ biomass — realized three ways: a first-order
+            lumped yield, saturating Michaelis–Menten kinetics, and a real COBRApy flux-balance LP.
+            The compiler installs each behind the <strong>identical ports</strong>, and the three
+            produce <strong>three genuinely different trajectories</strong> — biomass 4.0 (linear),
+            2.67 (saturating), and 6.29 (with an acetate overflow of 30.4 on the secretions port the
+            FBA solver discovers on its own). Same interface, interchangeable mechanism, distinct
+            dynamics — handler independence (law 4) made runnable.</p>
             {inv_line(three)}
           </div>
           {hl_fig(three)}
