@@ -12,9 +12,10 @@ question: Is cell division in Fig 10 a genuine structural rewrite of the place g
   merely animated?
 biological_summary: 'Fig 10 rewrites the cell across time, and division is its sharpest case. This is
   not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction
-  rule in Milner''s sense whose reactum has more nodes than its redex. When the cell''s DNA crosses a
-  threshold, the rule fires: the single cell node is replaced by two daughter nodes (cell_count 1 → 2),
-  each inheriting a symmetric share of the DNA (2.745 apiece) and a starting biomass of 0.5. The daughters
+  rule in Milner''s sense whose reactum has more nodes than its redex. When a cell''s DNA crosses a
+  threshold, the rule fires: the cell node is replaced by two daughter nodes, each inheriting a symmetric
+  share of the parent''s DNA and mass (mother mass = Σ daughters). Fired repeatedly as the lineage grows
+  on the shared nutrient (drawn 20 → 2.5), it takes cell_count from 1 to 14 over the run. The daughters
   are structurally new — they do not exist in the initial state — which is exactly what makes this an
   event-driven rewrite rather than an animation of a pre-built pair.'
 claim: 'Division is a change to the composition itself: one cell becomes two through a graph rewrite that
@@ -120,12 +121,10 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
-      pattern qualitatively (toy-real, uncalibrated).
+    basis: Division-fires, mass-conserved, and autocatalytic-growth all pass; the inert draft stays at cell_count 1, so division is a real runtime rewrite.
   explanatory_gain:
     result: POSITIVE
-    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
-      and observable for this figure.
+    basis: Watching one cell node become 14 via repeated mass-conserving rewrites makes division-as-graph-rewrite concrete rather than animated.
 conclusion: '## Claims
 
   - Autocatalytic growth to a mass threshold triggers a MASS-CONSERVING division event (mother mass =
@@ -146,33 +145,28 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
-  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
+  - Toy-real division: each rewrite conserves mass, but the threshold and growth constants are illustrative and division is symmetric.
 
 
   ## Next steps
 
-  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
+  - Add size-controlled or asymmetric division rules to test the rewrite mechanism under realistic division timing.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
       preservation holds.
     pipeline_unblocks:
-    - self-made
+    - biofilm
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
-  cell.
-- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
-  given the handler).
-falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
-  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
-  on the declared ports.
+- Symmetric division with a fixed DNA threshold; asymmetric division, septum placement, and size control are not modelled.
+- The lineage is well-mixed on one shared nutrient — no spatial structure among the 14 cells.
+falsifiability: Overturned if cell_count never increases (the rewrite never fires) or if a division fails to conserve mass (daughters' total ≠ mother's mass).
 visualizations:
 - name: divide-dynamics
   address: image:visualizations/divide-dynamics.svg

@@ -30,15 +30,16 @@ hypothesis: 'Every recurring composition pattern in the cellular-interface paper
   disintegration.
 
   '
-lead: Turning *A meta-modeler's guide to the cellular interface* into an executable test of compositional
-  modeling — each pattern authored as a typed draft, then compiled into running mechanisms behind a preserved
-  interface.
+lead: Every figure of the paper is written twice — first as a typed, unit-bearing promise with no mechanism,
+  then as a running simulation the compiler installs behind the identical ports — and the promises compose
+  into one cell that grows, divides, and dies.
 executive:
   what_is_this: 'This investigation turns *A meta-modeler''s guide to the cellular interface* into an
-    executable test of compositional modeling. Each composition pattern in the paper is first represented
-    as a draft: a typed biological interface and behavioral contract with no committed mechanism. It is
-    then compiled by installing one or more concrete implementations — mechanistic, rule-based, data-driven,
-    or otherwise — while preserving the declared interface.
+    executable test of compositional modeling. Each figure of the paper is written twice. First as a
+    draft: a typed, unit-bearing biological interface and a behavioral contract, with no committed
+    mechanism — a promise about what a process couples to and does, not how. Then it is compiled, which
+    installs one or more conforming mechanisms — mechanistic, rule-based, data-driven, or otherwise —
+    behind the identical ports, so the running simulation preserves the declared interface exactly.
 
 
     The point is not to assemble a single monolithic cell model. It is to test whether a biological model
@@ -225,21 +226,45 @@ at_a_glance:
 - study: the-living-atlas
   role: The payoff — every draft compiled to a running executable, the gallery of them in motion, and
     the composed whole cell that grows, divides, and dies.
-how_to_read: 'Read the arc in order, fig-04 → fig-10-3, then fig-compilation. In each study, look at
+how_to_read: 'Read the studies in arc order: typed-interface (the contract — a cell as its typed
 
-  two things side by side: the DRAFT render (the loom figure — the interface and its
+  exchange ports) → closing-the-loop (coupling — the sense/act loop closed over a real diffusing
 
-  contract, no dynamics) and, in fig-compilation, that figure''s EXECUTABLE dynamics (the
+  field) → one-interface-three-mechanisms (the thesis — one metabolism interface run coarse, kinetic,
 
-  same interface, now running). The three studies to start with if you are short on time:
+  and as real COBRApy FBA) → molecular-channels and the-nested-cell (the molecular grain — mechanisms
 
-  fig-06 (one interface, three mechanisms — the whole thesis in one figure), fig-10-1
+  as channel transducers, then a six-level nested place graph) → self-made (closure — metabolism,
 
-  (a genuine structural rewrite), and fig-compilation (the executables in motion + the
+  containment, and replication sustaining each other; autopoiesis) → divide, biofilm, evolve (rewriting
 
-  whole-cell arc). Throughout, the question to hold is the compiler''s law 2: did the
+  the cell in time) → the-living-atlas (the capstone — every draft compiled and in motion, and the
 
-  mechanism change while the interface stayed the same?
+  composed whole cell that grows, divides, and dies).
+
+
+  In each study, look at two things side by side: the DRAFT render (the loom figure — the interface
+
+  and its contract, no dynamics) and the EXECUTABLE dynamics (the same interface, now running).
+
+  Notice the pattern that makes the argument tight: every study pairs its live mechanism with a
+
+  `draft-is-inert` NEGATIVE CONTROL — the draft, actually run, does nothing (ports wire up, the
+
+  update is empty). That control is how the investigation proves the mechanism, not the wiring,
+
+  produces the behavior: swap the mechanism out and the dynamics vanish while the interface stays
+
+  identical.
+
+
+  Short on time? Start with one-interface-three-mechanisms (the whole thesis in one figure), divide
+
+  (a genuine event-driven structural rewrite), and the-living-atlas (the executables in motion plus
+
+  the whole-cell arc). Throughout, hold the compiler''s law 2: did the mechanism change while the
+
+  interface stayed the same?
 
   '
 glossary:
@@ -310,5 +335,19 @@ studies:
 - biofilm
 - evolve
 - the-living-atlas
+limitations:
+- Interfaces are checked at the port/type level — port names and compatible types must match for a handler
+  to install — not by runtime invariant. The compiler enforces that the ports line up and carry compatible
+  types, not that the mechanism honors the contract's intended behavior once it runs.
+- Units are currently name-only on ports (a port is labeled mol·s⁻¹, N, W, hr⁻¹, …); they document the
+  intended dimension but are not machine-enforced, so dimensional consistency across a wiring is a
+  convention, not a guarantee.
+- Handlers are toy-real, not calibrated — plausible constants, not fitted parameters. The dynamics
+  demonstrate the pattern (ultrasensitivity, closure, division, disintegration), not a quantitatively
+  validated cell.
+- The whole-cell composition is illustrative — it assembles independently-authored figure mechanisms
+  into one run to show that the interfaces compose, not to reproduce a specific organism's physiology.
+- The compiler is the binding stage only. It installs one conforming mechanism per draft; it does not
+  fit parameters, discover mechanisms, or reconcile mechanisms that disagree.
 expert_docs: []
 acceptance_criteria: []

@@ -12,8 +12,10 @@ question: When a description drops to the molecular grain (Fig 7), can a single 
   — each carried on its own port in its own unit, without the channels collapsing into one lumped output?
 biological_summary: 'Fig 6 said the description can drop to molecules; Fig 7 shows what a molecular mechanism
   looks like as an interface. A molecular machine is rarely a single-input single-output device — it couples
-  chemistry, charge, force and heat simultaneously. Here one mechanism transduces all four: it emits a
-  chemical flux (0.6), an electrical current (0.3), a mechanical output (0.4) and a thermal output (0.7).
+  chemistry, charge, force and heat simultaneously. Here one mechanism transduces all four at once: it
+  turns over a depleting substrate (8.0) into a chemical product (→ 4.8) while dissipating heat (→ 3.2),
+  and carries an electrical current and a mechanical output on their own typed ports. Product plus heat
+  balance the substrate consumed (4.8 + 3.2 ≡ 8.0).
   The point is that these are four *typed* ports, not one scalar: the interface keeps them distinct so
   a downstream composite can wire each to the appropriate cell-level channel.'
 claim: At the molecular level a single mechanism can transduce several physical channels at once — chemical,
@@ -127,12 +129,10 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
-      pattern qualitatively (toy-real, uncalibrated).
+    basis: Energy-conserved, dynamic-response, and Ohmic-channel all pass; the inert draft stays at seed, so the transduction is mechanism-driven.
   explanatory_gain:
     result: POSITIVE
-    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
-      and observable for this figure.
+    basis: Driving one mechanism and accounting for its energy budget makes the four typed channels measurable and distinct rather than asserted.
 conclusion: '## Claims
 
   - The molecular mechanism transduces a driven, depleting substrate into product + heat with a CONSERVED
@@ -153,33 +153,28 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
-  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
+  - Toy-real transducer: the energy budget is conserved and the channel shapes are real, but gains and constants are illustrative.
 
 
   ## Next steps
 
-  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
+  - Wire each channel to a downstream cell-level port to show the molecular transducer composing upward.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
       preservation holds.
     pipeline_unblocks:
-    - one-interface-three-mechanisms
+    - the-nested-cell
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
-  cell.
-- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
-  given the handler).
-falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
-  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
-  on the declared ports.
+- One transducer mechanism with four lumped channels; real molecular machines add stochasticity and internal states not resolved here.
+- The energy budget is closed by construction (product + heat ≡ substrate); channel gains are illustrative, not measured from a specific enzyme.
+falsifiability: Overturned if the four channels collapse into one lumped output, or if the energy budget fails to close (product + dissipated heat ≠ substrate consumed).
 visualizations:
 - name: molecular-channels-dynamics
   address: image:visualizations/molecular-channels-dynamics.svg

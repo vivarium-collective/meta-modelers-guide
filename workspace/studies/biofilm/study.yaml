@@ -11,9 +11,10 @@ question: Can multicellular development (Fig 10) be expressed as compositional r
   cells attaching, secreting extracellular matrix, and assembling into a biofilm that is itself a higher-level
   composite with its own aggregate observables?
 biological_summary: 'If division makes two cells from one, development makes a community from many. Fig
-  10-2 treats a biofilm as a composite at a level above the single cell: cells adhere to a surface (attached
-  → 1.35, adhesion → 0.675), secrete a shared extracellular matrix (ecm → 1.8), and the whole assembly
-  acquires an aggregate property — biofilm_mass → 2.25 — that no single cell has. The compositional point
+  10-2 treats a biofilm as a composite at a level above the single cell: cells adhere to a surface and
+  grow logistically toward a carrying capacity (cells 0.2 → 5.0 = K), secrete a shared extracellular matrix
+  (ecm accumulating to ≈ 21.8), and the whole assembly acquires aggregate, colony-level observables that
+  no single cell has. The compositional point
   is that the same modelling apparatus that describes one cell describes their collective by nesting:
   the biofilm is a store containing cells, with processes that act on the group.'
 claim: 'Development is composition at a higher level: individual cells reorganize into a community that
@@ -106,12 +107,10 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
-      pattern qualitatively (toy-real, uncalibrated).
+    basis: Logistic-saturation and ECM-accumulates pass on measured readouts; the inert draft stays at seed, so growth and secretion are mechanism-driven.
   explanatory_gain:
     result: POSITIVE
-    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
-      and observable for this figure.
+    basis: Nesting cells inside a biofilm store makes "development as higher-level composition" measurable via aggregate colony observables.
 conclusion: '## Claims
 
   - The colony grows LOGISTICALLY to its surface carrying capacity (cells saturate at K=5, not unbounded/linear)
@@ -130,33 +129,28 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
-  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
+  - Toy-real colony: growth saturates logistically at K and ECM accumulates, but the rate constants are illustrative.
 
 
   ## Next steps
 
-  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
+  - Give the biofilm spatial structure to test nutrient gradients and detachment as compositional processes.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
       preservation holds.
     pipeline_unblocks:
-    - divide
+    - evolve
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
-  cell.
-- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
-  given the handler).
-falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
-  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
-  on the declared ports.
+- Well-mixed logistic colony with a single carrying capacity; no spatial gradients, detachment, or nutrient-limited zones within the biofilm.
+- Adhesion and ECM-secretion rates are illustrative, not fitted to a measured biofilm.
+falsifiability: Overturned if the colony grows without bound (no logistic saturation at K) or if ECM fails to accumulate as the colony develops.
 visualizations:
 - name: biofilm-dynamics
   address: image:visualizations/biofilm-dynamics.svg

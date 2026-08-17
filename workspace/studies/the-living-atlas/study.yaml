@@ -14,9 +14,9 @@ biological_summary: This is the payoff. The nine figure studies each showed one 
   draft to executable; this study shows the whole atlas running at once and, more importantly, composing.
   The gallery renders the dynamics of all twelve executables side by side — each compiled figure, actually
   moving. Then the figures are assembled into a single cell. It takes up nutrients and grows (biomass
-  0.3 → 5.1); when its biomass crosses threshold it divides (cell_count → 2 at t ≈ 3.4); and when a thermal
-  shock pushes its temperature to 50° — outside the viable band — it loses viability (→ 0.018), stops
-  maintaining its boundary, and disintegrates into molecular debris (→ 4.87). The paper's arc — interface,
+  peaking at ≈ 8.4); as it grows it divides (cell_count 1 → 14); and when a thermal shock pushes its temperature
+  to 50° — outside the viable band — it loses viability (→ ≈0), stops maintaining its boundary, and disintegrates
+  into molecular debris (→ 7.3), with mass conserved through death (peak biomass 8.4 → debris 7.3). The paper's arc — interface,
   coupling, metabolism, closure, division, disintegration — runs end to end in one composite. A cell,
   assembled from drafts, that lives and dies.
 claim: 'The patterns compose: independently-specified interfaces and mechanisms can be assembled into
@@ -175,12 +175,10 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Every behavior test passes against real measured readouts; the study demonstrates the paper's
-      pattern qualitatively (toy-real, uncalibrated).
+    basis: Full-arc, mass-conserved-through-death, viability-cliff, and divides all pass on the single composed run; the inert/knockout draft fails, so the arc is mechanism-driven.
   explanatory_gain:
     result: POSITIVE
-    basis: The draft->executable compilation makes the paper's interface-preservation claim mechanical
-      and observable for this figure.
+    basis: Assembling the nine figure mechanisms into one cell that grows, divides, and dies turns "the patterns compose" into a single measured trajectory.
 conclusion: '## Claims
 
   - The composed whole cell runs the full arc in ONE conserved trajectory: autocatalytic growth to biomass
@@ -204,37 +202,28 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Physically-consistent TOY model: quantities are conserved and rate-law shapes are real (Monod, Michaelis–Menten,
-  Fick, Arrhenius, logistic), but constants are illustrative, not fitted to a specific organism.
+  - Composed toy-real cell: mass is conserved through the full arc, but it reuses illustrative handlers and is not a calibrated whole-cell model.
 
 
   ## Next steps
 
-  - Parameterize the rate constants from literature to move from correct-shape to quantitatively-calibrated.'
+  - Run the composed cell across replicate seeds and environments to move from a single arc to a distribution of outcomes.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
       preservation holds.
-    pipeline_unblocks:
-    - typed-interface
-    - one-interface-three-mechanisms
-    - self-made
-    - divide
-    - evolve
+    pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
-    - handler produced no non-trivial dynamics on the declared ports
-    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+    - a figure mechanism failed to compose into the whole-cell composite
+    block_downstream: none — this is the terminal capstone; a failure blocks the investigation's whole-cell
+      conclusion, with no further downstream study.
 limitations:
-- Uncalibrated toy-real constants — demonstrates the compositional pattern, not a quantitatively validated
-  cell.
-- Deterministic single run per mechanism; no multi-seed replication (the dynamics here are deterministic
-  given the handler).
-falsifiability: The claim is overturned if the compiled executable fails to preserve the draft's interface
-  (a port renamed or a wire dropped by compilation), or if the handler produces no non-trivial dynamics
-  on the declared ports.
+- The composed cell reuses the toy-real figure handlers; it demonstrates that the patterns COMPOSE, not a calibrated whole-cell simulation.
+- One deterministic end-to-end run; the arc (grow/divide/die) is shown once, not across replicate seeds or environments.
+falsifiability: Overturned if the independently-authored mechanisms fail to compose into one running cell, or if mass is not conserved through death (peak biomass ≠ resulting debris).
 visualizations:
 - name: the-living-atlas-dynamics
   address: image:visualizations/the-living-atlas-dynamics.svg
