@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sourcing a Model Under Contract</title>
+<style>
+:root{
+  --ink:#16211f; --ink-2:#3a4a47; --muted:#657572;
+  --paper:#f7f5f0; --surface:#ffffff; --line:#e3e0d8;
+  --teal:#0d6e6b; --teal-2:#3f9e99; --ochre:#a5620f; --ochre-2:#c98a3a;
+  --ok:#0d6e6b; --warn:#a5620f; --bad:#9b2f2f;
+  --shadow:0 1px 2px rgba(22,33,31,.04),0 8px 24px rgba(22,33,31,.06);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e9ece9; --ink-2:#b7c1bd; --muted:#8b9995;
+    --paper:#101514; --surface:#171d1c; --line:#28322f;
+    --teal:#4bb3ae; --teal-2:#6fd0ca; --ochre:#d79a4e; --ochre-2:#e6b877;
+    --ok:#4bb3ae; --warn:#d79a4e; --bad:#e07a7a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e9ece9; --ink-2:#b7c1bd; --muted:#8b9995;
+  --paper:#101514; --surface:#171d1c; --line:#28322f;
+  --teal:#4bb3ae; --teal-2:#6fd0ca; --ochre:#d79a4e; --ochre-2:#e6b877;
+  --ok:#4bb3ae; --warn:#d79a4e; --bad:#e07a7a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  line-height:1.6;-webkit-font-smoothing:antialiased;font-size:17px}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px 96px}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:600;line-height:1.15;text-wrap:balance;color:var(--ink)}
+a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.88em;background:color-mix(in srgb,var(--teal) 9%,transparent);
+  padding:.08em .35em;border-radius:4px}
+.kicker{display:inline-block;font-family:var(--sans);font-size:.74rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:600}
+.kicker em{font-style:italic;text-transform:none;letter-spacing:0}
+
+/* hero */
+.hero{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(2.4rem,6vw,3.9rem);margin:.25em 0 .3em;letter-spacing:-.01em}
+.thesis{font-size:1.22rem;color:var(--ink-2);max-width:40ch}
+.verdict{display:flex;gap:14px;align-items:flex-start;margin:26px 0 0;padding:18px 20px;background:var(--surface);
+  border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:10px;box-shadow:var(--shadow)}
+.verdict .badge{flex:none}
+.verdict p{margin:0;color:var(--ink-2);font-size:.98rem}
+.stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+.intro{margin:44px 0 12px;max-width:70ch}
+.intro .kicker{margin-bottom:12px;color:var(--teal)}
+.intro p{font-size:1.08rem;line-height:1.7;color:var(--ink-2);margin:0 0 1.05em}
+.intro p:first-of-type{color:var(--ink);font-size:1.14rem}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 18px;min-width:96px}
+.stat b{display:block;font-family:var(--serif);font-size:1.9rem;color:var(--teal);line-height:1}
+.stat span{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+/* badges */
+.badge{display:inline-block;font-family:var(--sans);font-size:.7rem;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;padding:.2em .6em;border-radius:999px;vertical-align:middle;
+  background:color-mix(in srgb,var(--muted) 16%,transparent);color:var(--muted)}
+.badge.ok{background:color-mix(in srgb,var(--teal) 15%,transparent);color:var(--teal)}
+.badge.warn{background:color-mix(in srgb,var(--ochre) 16%,transparent);color:var(--ochre)}
+.badge.bad{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+
+/* arc spine */
+.arc{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:26px 0;margin:8px 0 8px;
+  border-bottom:1px solid var(--line)}
+.arc-node{display:inline-flex;align-items:baseline;gap:7px;padding:6px 11px;border:1px solid var(--line);
+  border-radius:999px;background:var(--surface);font-size:.82rem}
+.arc-node:hover{border-color:var(--teal);text-decoration:none}
+.arc-n{font-family:var(--mono);font-size:.72rem;color:var(--ochre);font-weight:700}
+.arc-t{color:var(--ink)}
+.arc-arrow{color:var(--muted)}
+
+/* highlights */
+.hl{display:grid;grid-template-columns:1fr 1.1fr;gap:34px;align-items:center;
+  margin:56px 0;padding:34px;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow)}
+.hl.reverse{grid-template-columns:1.1fr 1fr}
+.hl.reverse .hl-txt{order:2}
+.hl h2{font-size:1.75rem;margin:.15em 0 .4em}
+.hl p{color:var(--ink-2);font-size:1rem}
+.hl-fig{margin:0}
+.hl-fig.grid3{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hl-bars{margin:14px 0 0}
+figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+.lg{display:inline-flex;align-items:center;gap:6px}
+.lg::before{content:"";width:14px;height:3px;border-radius:2px;background:var(--muted)}
+.lg.biomass::before{background:var(--teal)}
+.lg.debris::before{background:var(--ochre)}
+.lg.via::before{background:var(--teal-2);height:0;border-top:2px dashed var(--teal-2)}
+
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .ax{fill:var(--muted);font:11px var(--sans)}
+.chart .ax-l{text-anchor:end}.chart .ax-r{text-anchor:start}.chart .ax-x{text-anchor:middle}
+.chart .ser{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.chart .biomass{stroke:var(--teal)}
+.chart .debris{stroke:var(--ochre)}
+.chart .via{stroke:var(--teal-2);stroke-width:2;stroke-dasharray:4 4}
+.chart .evt{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
+.chart .evt-shock{stroke:var(--ochre)}
+.chart .evt-l{fill:var(--muted);font:10px var(--sans)}
+.chart .evt-l-shock{fill:var(--ochre)}
+.bars .bar{fill:var(--teal)}
+.bars .bar-l{fill:var(--ink);font:600 13px var(--sans);text-anchor:start;dominant-baseline:middle}
+.bars .bar-v{fill:var(--muted);font:600 12px var(--mono);dominant-baseline:middle}
+
+/* argument */
+.argument{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin:56px 0}
+.argument h3{font-size:1.15rem;margin:0 0 .5em;padding-bottom:.35em;border-bottom:2px solid var(--line)}
+.argument ul{margin:0;padding-left:1.1em}
+.argument li{margin:.5em 0;color:var(--ink-2);font-size:.95rem}
+
+/* studies */
+.studies-wrap{margin:64px 0 0}
+.studies-wrap>h2{font-size:1.9rem;border-bottom:1px solid var(--line);padding-bottom:.4em}
+.studies-wrap .sub{font-family:var(--sans);font-size:.9rem;font-weight:400;color:var(--muted)}
+.study{padding:30px 0;border-bottom:1px solid var(--line)}
+.study-head{display:flex;gap:16px;align-items:flex-start}
+.ord{font-family:var(--mono);font-size:.85rem;color:var(--ochre);font-weight:700;padding-top:.5em}
+.study h3{font-size:1.4rem;margin:0}
+.claim{margin:.4em 0 0;color:var(--ink-2);font-size:1.02rem}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.chip{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 12px;
+  max-width:100%}
+.chip-k{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+.chip-v{font-family:var(--mono);font-size:.82rem;color:var(--ink)}
+.invariant{margin:14px 0 0;padding:10px 14px;border-radius:9px;font-size:.9rem;color:var(--ink-2);
+  background:color-mix(in srgb,var(--teal) 8%,transparent);border-left:3px solid var(--teal)}
+.inv-k{font-family:var(--sans);font-size:.64rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--teal);margin-right:8px}
+.figs{display:flex;flex-wrap:wrap;gap:16px;margin:20px 0 0}
+.fig-wrap{flex:1 1 300px;min-width:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:10px}
+.fig-wrap.sm{flex:1 1 220px}
+.fig{width:100%;height:auto;display:block}
+.fig-cap{display:block;margin:10px 4px 2px;padding-top:10px;border-top:1px solid var(--line);
+  font-size:.82rem;line-height:1.5;color:var(--ink-2)}
+.fig-cap .inv-k{display:inline;font-size:.62rem}
+.more{margin:18px 0 0}
+.more>summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--teal);
+  list-style:none;padding:8px 0}
+.more>summary::-webkit-details-marker{display:none}
+.more>summary::before{content:"▸ ";color:var(--muted)}
+.more[open]>summary::before{content:"▾ "}
+.more-body{padding:6px 0 6px 14px;border-left:2px solid var(--line)}
+.more-body h4{margin:14px 0 .3em;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.more-body p{margin:.2em 0;color:var(--ink-2);font-size:.95rem}
+.findings{margin:.3em 0;padding-left:1.1em}
+.findings li{margin:.4em 0;color:var(--ink-2);font-size:.92rem}
+.tier{font-family:var(--mono);font-size:.64rem;text-transform:uppercase;padding:.1em .4em;border-radius:4px;
+  background:color-mix(in srgb,var(--muted) 14%,transparent);color:var(--muted);margin-right:4px}
+.tier-mechanism{background:color-mix(in srgb,var(--teal) 14%,transparent);color:var(--teal)}
+
+/* method */
+.method{margin:60px 0 0;padding:34px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.method h2{font-size:1.5rem;margin:0 0 .4em}
+.lead-sm{color:var(--ink-2);max-width:70ch}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:18px}
+.two-col h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 .4em}
+.two-col ul{margin:0;padding-left:1.1em}.two-col li{margin:.4em 0;color:var(--ink-2);font-size:.93rem}
+.two-col p{color:var(--ink-2);font-size:.93rem;margin:0}
+
+.foot{margin:56px 0 0;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
+
+@media (max-width:720px){
+  body{font-size:16px}
+  .hl,.hl.reverse{grid-template-columns:1fr}
+  .hl.reverse .hl-txt{order:0}
+  .hl-fig.grid3{grid-template-columns:1fr 1fr}
+  .argument,.two-col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <header class="hero">
+      <span class="kicker">Executable atlas · <em>A meta-modeler's guide to the cellular interface</em></span>
+      <h1>Sourcing a Model Under Contract</h1>
+      <p class="thesis">Six modeling tasks, three real installed modules (viva-munk, spatio-flux, viva-cpm), and a deterministic sourcing audit that grades every reuse / compose / build-new decision — including a trap where a plausible-but-wrong module is caught.</p>
+      <div class="verdict"><span class="badge ok">complete</span>
+        <p>The audit graded all six tasks correctly: 5 pass and the deliberate trap (TRAP-wrong-reuse) FAILS on source_fit because viva-munk provides no <code>spatial</code> capability. All three reused modules execute for real on ONE shared workspace core (viva-munk rigid-body physics; spatio-flux spatial dFBA with real glucose drawdown and acetate secretion; viva-cpm Cellular Potts cells relaxing toward their target shape) — each is inherited into viva_meta_modelers_guide.core.build_core rather than run on a parallel core. Only the two non-reuse tasks (build-new, trap) have no run, by design.</p></div>
+      <div class="stats"><div class="stat"><b>6</b><span>studies</span></div><div class="stat"><b>10</b><span>closed-loop models</span></div><div class="stat"><b>10</b><span>conservation checks</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
+    </header>
+
+    <section class="intro">
+      <span class="kicker">Introduction</span>
+      <p>This investigation extends the model-build-under-contract loop with a SELECT phase: before the tests are locked, the agent decides WHERE the model comes from. Each of six tasks declares the capabilities it requires; three real modules declare the capabilities they provide; the module_sourcing audit grades the decision on four axes (source_fit, reinvention, novelty_justified, survey_recorded).</p>
+    </section>
+
+    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-jostling"><span class="arc-n">01</span><span class="arc-t">Cell Jostling</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#growth-and-push"><span class="arc-n">02</span><span class="arc-t">Growth And Push</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#spatial-competition"><span class="arc-n">03</span><span class="arc-t">Spatial Competition</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#shape-dynamics"><span class="arc-n">04</span><span class="arc-t">Shape Dynamics</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#novel-mechanism"><span class="arc-n">05</span><span class="arc-t">Novel Mechanism</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#TRAP-wrong-reuse"><span class="arc-n">06</span><span class="arc-t">Trap Wrong Reuse</span></a></nav>
+
+    
+
+    <section class="argument">
+      <div><h3>Evidence for</h3><ul></ul></div>
+      <div><h3>Evidence against</h3><ul></ul></div>
+    </section>
+
+    <section class="studies-wrap">
+      <h2>The ten studies <span class="sub">— in arc order; claim + measured readouts + the running figure. Open a card for the full detail.</span></h2>
+      
+    <article class="study" id="cell-jostling">
+      <div class="study-head">
+        <span class="ord">01</span>
+        <div>
+          <h3>Cell Jostling <span class="badge ok">Accepted</span></h3>
+          <p class="claim">The right sourcing for this task is to reuse viva-munk.</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">SOURCING GATE</span><span class="chip-v">gate=pass; source_fit=within_tol</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Given the task&#x27;s required capabilities [&#x27;physics_2d&#x27;, &#x27;rigid_body&#x27;, &#x27;collision&#x27;], what is the right way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?</p>
+          <h4>Findings</h4><ul class="findings"></ul>
+        </div>
+      </details>
+    </article>
+    <article class="study" id="growth-and-push">
+      <div class="study-head">
+        <span class="ord">02</span>
+        <div>
+          <h3>Growth And Push <span class="badge ok">Accepted</span></h3>
+          <p class="claim">The right sourcing for this task is to compose growth-proc + viva-munk.</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">SOURCING GATE</span><span class="chip-v">gate=pass; source_fit=within_tol</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Given the task&#x27;s required capabilities [&#x27;growth&#x27;, &#x27;physics_2d&#x27;], what is the right way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?</p>
+          <h4>Findings</h4><ul class="findings"></ul>
+        </div>
+      </details>
+    </article>
+    <article class="study" id="spatial-competition">
+      <div class="study-head">
+        <span class="ord">03</span>
+        <div>
+          <h3>Spatial Competition <span class="badge ok">Accepted</span></h3>
+          <p class="claim">The right sourcing for this task is to reuse spatio-flux.</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">SOURCING GATE</span><span class="chip-v">gate=pass; source_fit=within_tol</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Given the task&#x27;s required capabilities [&#x27;spatial&#x27;, &#x27;dfba&#x27;, &#x27;diffusion&#x27;], what is the right way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?</p>
+          <h4>Findings</h4><ul class="findings"></ul>
+        </div>
+      </details>
+    </article>
+    <article class="study" id="shape-dynamics">
+      <div class="study-head">
+        <span class="ord">04</span>
+        <div>
+          <h3>Shape Dynamics <span class="badge ok">Accepted</span></h3>
+          <p class="claim">The right sourcing for this task is to reuse viva-cpm.</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">SOURCING GATE</span><span class="chip-v">gate=pass; source_fit=within_tol</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Given the task&#x27;s required capabilities [&#x27;cpm&#x27;, &#x27;cell_shape&#x27;, &#x27;morphology&#x27;], what is the right way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?</p>
+          <h4>Findings</h4><ul class="findings"></ul>
+        </div>
+      </details>
+    </article>
+    <article class="study" id="novel-mechanism">
+      <div class="study-head">
+        <span class="ord">05</span>
+        <div>
+          <h3>Novel Mechanism <span class="badge ok">Accepted</span></h3>
+          <p class="claim">The right sourcing for this task is to build-new (justified).</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">SOURCING GATE</span><span class="chip-v">gate=pass; source_fit=within_tol</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Given the task&#x27;s required capabilities [&#x27;quantum_signal&#x27;, &#x27;exotic_transport&#x27;], what is the right way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?</p>
+          <h4>Findings</h4><ul class="findings"></ul>
+        </div>
+      </details>
+    </article>
+    <article class="study" id="TRAP-wrong-reuse">
+      <div class="study-head">
+        <span class="ord">06</span>
+        <div>
+          <h3>Trap Wrong Reuse <span class="badge muted">Rejected</span></h3>
+          <p class="claim">The right sourcing for this task is to no clean fit — needs <code>spatial</code>, which viva-munk lacks.</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">SOURCING GATE</span><span class="chip-v">gate=fail; source_fit=mismatch</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Given the task&#x27;s required capabilities [&#x27;physics_2d&#x27;, &#x27;spatial&#x27;], what is the right way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?</p>
+          <h4>Findings</h4><ul class="findings"></ul>
+        </div>
+      </details>
+    </article>
+    </section>
+
+    
+    <section class="method">
+      <h2>Method &amp; shared caveats</h2>
+      <p class="lead-sm">Every figure begins as an inert <strong>draft</strong> — typed, unit-bearing
+      ports and a behavior contract, no dynamics — and is <strong>compiled</strong> by installing one
+      conforming mechanism, which preserves the interface exactly (compiler law 2) while giving the
+      figure real dynamics. Readouts below are <strong>measured</strong>, not asserted: every executable
+      and the whole cell were run and their observables recorded.</p>
+      <div class="two-col">
+        <div><h4>Limitations (shared across every study)</h4><ul></ul></div>
+        <div><h4>What would falsify the claim</h4><p>The sourcing call is overturned if the audit&#x27;s source_fit/reinvention axes disagree with the capability-subset match against the catalog.</p></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Generated from <code>investigation.yaml</code> + measured readouts ·
+      <a href="../dashboard/">interactive read-only workbench</a> ·
+      <a href="https://github.com/vivarium-collective/viva-meta-modelers-guide">source</a></p>
+    </footer></main>
+</body>
+</html>
