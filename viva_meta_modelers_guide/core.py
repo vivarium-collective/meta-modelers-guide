@@ -84,62 +84,6 @@ def register_workspace_processes(core):
     return core
 
 
-# ── Reused modules inherited into the shared workspace core ──────────────────
-# Model-sourcing "reuse" made literal: importing a catalogued module folds its
-# processes AND its custom types into the ONE core every study runs on, instead
-# of each task spinning up a parallel module-specific core (the bug that left
-# spatial-competition / cell-jostling running against mismatched cores). Each
-# entry is (import_name, register) where ``register(core, module)`` contributes
-# that module's registrations. Absent modules are skipped (e.g. viva-cpm's Rust
-# wheel may not be built in every environment) so the core still builds; a
-# registration error on a module that IS installed is allowed to surface.
-def _inherit_viva_munk(core, mod):
-    # viva_munk.core_import(core) registers viva_munk's processes + pymunk types
-    # AND (its own dependency) spatio-flux's types into the passed-in core.
-    mod.core_import(core)
-
-
-def _inherit_spatio_flux(core, mod):
-    # Processes (DynamicFBA, …) are discovered by allocate_core once imported;
-    # register_types adds spatio-flux's custom types (fields, bounds, particle…).
-    importlib.import_module("spatio_flux.visualizations")  # fire viz Step discovery
-    mod.register_types(core)
-
-
-def _inherit_cpm(core, mod):
-    # viva-cpm (dist ``pbg-cpm``, import ``cpm``) exposes no register hook and its
-    # Rust-backed CPMProcess is not auto-discovered, so register it explicitly.
-    # Its ports use only base types (list/map/integer/float + overwrite), so no
-    # cpm-specific type registration is needed.
-    from cpm.processes.cpm_process import CPMProcess
-    if "CPMProcess" not in core.link_registry:
-        core.register_link("CPMProcess", CPMProcess)
-
-
-_REUSED_MODULES = (
-    ("viva_munk", _inherit_viva_munk),
-    ("spatio_flux", _inherit_spatio_flux),
-    ("cpm", _inherit_cpm),
-)
-
-
-def inherit_reused_modules(core):
-    """Fold each installed reused module's processes + types into ``core``.
-
-    A module that isn't installed is skipped (import failure is not an error —
-    the workspace core must build without every optional dependency present).
-    Registration is idempotent, so calling this on an already-populated core is
-    safe.
-    """
-    for import_name, register in _REUSED_MODULES:
-        try:
-            mod = importlib.import_module(import_name)
-        except ImportError:
-            continue
-        register(core, mod)
-    return core
-
-
 def build_core(core=None):
     """Return a process-bigraph core with this workspace's processes registered.
 
@@ -153,9 +97,6 @@ def build_core(core=None):
     """
     if core is None:
         core = allocate_core()
-    # Inherit reused modules (viva-munk, spatio-flux, …) into the shared core so
-    # every study runs on one core with all sourced modules present.
-    inherit_reused_modules(core)
     try:
         from ._types import register_types
         register_types(core)
