@@ -1,0 +1,72 @@
+schema_version: 4
+name: cell-jostling
+investigation: model-sourcing
+title: Cell Jostling
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Given the task's required capabilities ['physics_2d', 'rigid_body', 'collision'], what is the
+  right way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?
+biological_summary: Cells packed in a colony jostle and push apart under contact forces — pure 2D rigid-body
+  mechanics.
+claim: The right sourcing for this task is to reuse viva-munk.
+requires:
+- physics_2d
+- rigid_body
+- collision
+sourcing:
+  decision: reuse
+  modules:
+  - viva-munk
+  rationale: pymunk 2D rigid-body physics is exactly cell jostling
+  audit:
+    gate: pass
+    axes:
+      source_fit: within_tol
+      reinvention: within_tol
+      novelty_justified: within_tol
+      survey_recorded: within_tol
+    catches_if_wrong: build-new would trip `reinvention` — a physics engine already exists.
+baseline:
+- name: viva-munk
+  module: viva-munk
+  domain: 2D rigid-body physics (pymunk)
+  params: {}
+variants: []
+behavior_tests:
+- name: sourcing-fit
+  classification: primary
+  description: The chosen module(s)' capabilities cover the task's required capabilities.
+  measure:
+    kind: audit-axis
+    path: sourcing.source_fit
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing.build_sourcing_report -> source_fit=within_tol
+- name: no-reinvention
+  classification: primary
+  description: Did not build-new where a catalogued module already fits.
+  measure:
+    kind: audit-axis
+    path: sourcing.reinvention
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing -> reinvention=within_tol
+runs:
+- name: cell-jostling
+  module: viva-munk
+  status: completed
+  provenance: 'scripts/model_sourcing_demo.py — real module execution: ran t=3.0; 3 bodies'
+  outcomes:
+    SOURCING-GATE:
+      result: PASS
+      detail: gate=pass; source_fit=within_tol
+conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (reuse viva-munk) covers the
+  required capabilities; the module ran for real (ran t=3.0; 3 bodies).
+falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
+  the capability-subset match against the catalog.
+visualizations: []

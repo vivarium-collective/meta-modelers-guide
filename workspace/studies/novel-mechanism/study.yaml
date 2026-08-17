@@ -1,0 +1,70 @@
+schema_version: 4
+name: novel-mechanism
+investigation: model-sourcing
+title: Novel Mechanism
+created: '2026-08-17'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Given the task's required capabilities ['quantum_signal', 'exotic_transport'], what is the right
+  way to source the model — reuse, compose, or build-new — and does the sourcing audit confirm it?
+biological_summary: A hypothetical coupling no catalogued module implements — the case where building
+  a new module is the right call.
+claim: The right sourcing for this task is to build-new (justified).
+requires:
+- quantum_signal
+- exotic_transport
+sourcing:
+  decision: build-new
+  modules: []
+  rationale: no catalogued module covers this
+  audit:
+    gate: pass
+    axes:
+      source_fit: within_tol
+      reinvention: within_tol
+      novelty_justified: within_tol
+      survey_recorded: within_tol
+    catches_if_wrong: no catalogued module covers the required capabilities, so novelty is warranted.
+baseline:
+- name: build-new
+  module: null
+  domain: new module (no catalogued fit)
+  params: {}
+variants: []
+behavior_tests:
+- name: sourcing-fit
+  classification: primary
+  description: The chosen module(s)' capabilities cover the task's required capabilities.
+  measure:
+    kind: audit-axis
+    path: sourcing.source_fit
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing.build_sourcing_report -> source_fit=within_tol
+- name: no-reinvention
+  classification: primary
+  description: Did not build-new where a catalogued module already fits.
+  measure:
+    kind: audit-axis
+    path: sourcing.reinvention
+  pass_if:
+    op: ==
+    value: within_tol
+    provenance: module_sourcing -> reinvention=within_tol
+runs:
+- name: novel-mechanism
+  module: null
+  status: audit-only
+  provenance: scripts/model_sourcing_demo.py — sourcing decision audited; composite run is a follow-up
+  outcomes:
+    SOURCING-GATE:
+      result: PASS
+      detail: gate=pass; source_fit=within_tol
+conclusion: The sourcing audit graded this task **PASS**. Chosen sourcing (build-new (justified)) covers
+  the required capabilities; the decision is audited (real run is a follow-up).
+falsifiability: The sourcing call is overturned if the audit's source_fit/reinvention axes disagree with
+  the capability-subset match against the catalog.
+visualizations: []

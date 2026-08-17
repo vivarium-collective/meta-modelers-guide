@@ -1,0 +1,76 @@
+"""Model-sourcing demonstration: 6 tasks, each choosing among real modules,
+each graded by the sourcing audit; runnable choices are actually run."""
+import json
+from process_bigraph import Composite
+import viva_munk, viva_munk.composites as MC
+import spatio_flux.composites as SC
+from viva_superpowers import module_sourcing as MS, loop_state as L
+
+# --- capability catalog (the manifest: module -> capabilities) ---
+CATALOG = {
+    "viva-munk":   ["physics_2d", "rigid_body", "collision", "mechanics", "adhesion"],
+    "spatio-flux": ["spatial", "fba", "dfba", "diffusion", "reaction", "metabolism"],
+    "viva-cpm":    ["cpm", "cell_shape", "adhesion", "spatial", "morphology"],
+    "growth-proc": ["growth", "biomass"],
+}
+
+core = viva_munk.core_import()
+
+def run_munk(doc_fn, t=3.0):
+    d = doc_fn(); st = d.get('state', d)
+    sim = Composite({'state': st}, core=core); sim.run(t)
+    cells = sim.state.get('cells') or sim.state.get('segment_cells') or {}
+    return f"ran t={t}; {len(cells) if isinstance(cells,dict) else '?'} bodies"
+
+def run_spatioflux(key, t=2.0):
+    reg = SC.REGISTRY; fn = reg.get(key)
+    d = fn() if callable(fn) else fn
+    st = d.get('state', d) if isinstance(d, dict) else d
+    sim = Composite({'state': st}, core=core); sim.run(t)
+    return f"ran t={t}; state keys {list(sim.state.keys())[:4]}"
+
+# --- the 6 sourcing tasks ---
+TASKS = [
+  dict(name="cell-jostling", requires=["physics_2d","rigid_body","collision"],
+       sourcing=dict(decision="reuse", modules=["viva-munk"], rationale="pymunk 2D rigid-body physics is exactly cell jostling"),
+       run=lambda: run_munk(MC.biofilm_document)),
+  dict(name="growth-and-push", requires=["growth","physics_2d"],
+       sourcing=dict(decision="compose", modules=["growth-proc","viva-munk"], rationale="growth process + viva-munk physics"),
+       run=lambda: run_munk(MC.glucose_growth_document)),
+  dict(name="spatial-competition", requires=["spatial","dfba","diffusion"],
+       sourcing=dict(decision="reuse", modules=["spatio-flux"], rationale="spatio-flux does spatial dFBA competition"),
+       run=lambda: run_spatioflux("spatio_flux.composites.metabolism.community_dfba")),
+  dict(name="shape-dynamics", requires=["cpm","cell_shape","morphology"],
+       sourcing=dict(decision="reuse", modules=["viva-cpm"], rationale="viva-cpm is a Cellular Potts shape engine"),
+       run=None),  # cpm run needs its own core; decision+audit shown, run best-effort below
+  dict(name="novel-mechanism", requires=["quantum_signal","exotic_transport"],
+       sourcing=dict(decision="build-new", modules=[], rationale="no catalogued module covers this"),
+       run=None),
+  dict(name="TRAP-wrong-reuse", requires=["physics_2d","spatial"],
+       sourcing=dict(decision="reuse", modules=["viva-munk"], rationale="looks like physics"),
+       run=None),  # viva-munk lacks 'spatial' -> audit should catch
+]
+
+print(f"{'task':22s} {'decision':10s} {'sourcing-gate':13s} source_fit reinv novel   real-run")
+results = []
+for t in TASKS:
+    spec = {"name": t["name"], "requires": t["requires"], "sourcing": t["sourcing"]}
+    rep = MS.build_sourcing_report(spec, CATALOG); gate = MS.sourcing_gate(rep)
+    ax = {a["id"]: a["verdict"] for g in rep["groups"].values() for a in g["axes"]}
+    run = "—"
+    if t["run"]:
+        try: run = t["run"]()
+        except Exception as e: run = f"run err: {type(e).__name__}"
+    print(f"{t['name']:22s} {t['sourcing']['decision']:10s} {gate:13s} {ax['source_fit']:10s} {ax['reinvention']:5s} {ax['novelty_justified']:6s} {run}")
+    results.append(dict(task=t["name"], requires=t["requires"], sourcing=t["sourcing"],
+                        gate=gate, axes=ax, real_run=run))
+
+# --- machine-readable artifact: the audit results + the catalog it was graded against ---
+import os
+out = os.path.join(os.path.dirname(__file__), os.pardir, "workspace", "investigations",
+                   "model-sourcing", "results.json")
+os.makedirs(os.path.dirname(out), exist_ok=True)
+with open(out, "w") as fh:
+    json.dump(dict(schema="model_sourcing_results/v1", catalog=CATALOG,
+                   loop_select_phase="SELECT" in L.STATES, results=results), fh, indent=2)
+print(f"\nresults -> {os.path.relpath(out)}")
