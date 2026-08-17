@@ -177,7 +177,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig04a-interaction-modalities.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities)
 
-# === Edit parameters for composite 'fig04a-interaction-modalities' ===
+# === Edit parameters for composite 'Interaction Modalities' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -199,7 +199,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig04b_cellular_interface = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig04b-cellular-interface.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig04b_cellular_interface)
 
-# === Edit parameters for composite 'fig04b-cellular-interface' ===
+# === Edit parameters for composite 'The Cellular Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -283,7 +283,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig05_cell_environment = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig05-cell-environment.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig05_cell_environment)
 
-# === Edit parameters for composite 'fig05-cell-environment' ===
+# === Edit parameters for composite 'Cell–Environment Coupling' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -362,7 +362,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig06_disintegration = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-disintegration.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig06_disintegration)
 
-# === Edit parameters for composite 'fig06-disintegration' ===
+# === Edit parameters for composite 'Cell Disintegration' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -433,7 +433,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig07_molecular_mechanism = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig07-molecular-mechanism.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig07_molecular_mechanism)
 
-# === Edit parameters for composite 'fig07-molecular-mechanism' ===
+# === Edit parameters for composite 'A Molecular Mechanism' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -504,7 +504,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig08-nested-hierarchy.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy)
 
-# === Edit parameters for composite 'fig08-nested-hierarchy' ===
+# === Edit parameters for composite 'Nested Molecular Hierarchy' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -590,7 +590,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09a-coarse-graining.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining)
 
-# === Edit parameters for composite 'fig09a-coarse-graining' ===
+# === Edit parameters for composite 'Self-Organization & Coarse-Graining' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -624,7 +624,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09b-minimal-cell.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell)
 
-# === Edit parameters for composite 'fig09b-minimal-cell' ===
+# === Edit parameters for composite 'The Minimal Cell' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -720,7 +720,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_1_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-1-rewrite.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_rewrite)
 
-# === Edit parameters for composite 'fig10-1-rewrite' ===
+# === Edit parameters for composite 'Cell Division — Live Topology' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -734,7 +734,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_1_division = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-1-division.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_division)
 
-# === Edit parameters for composite 'fig10-1-division' ===
+# === Edit parameters for composite 'Cell Division — Draft Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -811,7 +811,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_2_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-2-rewrite.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_rewrite)
 
-# === Edit parameters for composite 'fig10-2-rewrite' ===
+# === Edit parameters for composite 'Biofilm Development — Live Topology' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -826,7 +826,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_2_development = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-2-development.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_development)
 
-# === Edit parameters for composite 'fig10-2-development' ===
+# === Edit parameters for composite 'Biofilm Development — Draft Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -903,7 +903,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_3_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-3-rewrite.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_rewrite)
 
-# === Edit parameters for composite 'fig10-3-rewrite' ===
+# === Edit parameters for composite 'Evolution — Live Topology' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -920,7 +920,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_3_evolution = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-3-evolution.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_evolution)
 
-# === Edit parameters for composite 'fig10-3-evolution' ===
+# === Edit parameters for composite 'Evolution — Draft Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1007,7 +1007,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig06_executable_coarse = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-coarse.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_coarse)
 
-# === Edit parameters for composite 'fig06-executable-coarse' ===
+# === Edit parameters for composite 'Cell Disintegration — Coarse-Grained' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1028,7 +1028,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-kinetic.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic)
 
-# === Edit parameters for composite 'fig06-executable-kinetic' ===
+# === Edit parameters for composite 'Cell Disintegration — Kinetic Metabolism' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1051,7 +1051,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig04b_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig04b-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig04b_executable)
 
-# === Edit parameters for composite 'fig04b-executable' ===
+# === Edit parameters for composite 'The Cellular Interface — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1077,7 +1077,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig05_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig05-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig05_executable)
 
-# === Edit parameters for composite 'fig05-executable' ===
+# === Edit parameters for composite 'Cell–Environment Coupling — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1105,7 +1105,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig06_executable_fba = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-fba.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_fba)
 
-# === Edit parameters for composite 'fig06-executable-fba' ===
+# === Edit parameters for composite 'Cell Disintegration — FBA Metabolism' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1128,7 +1128,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig07_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig07-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig07_executable)
 
-# === Edit parameters for composite 'fig07-executable' ===
+# === Edit parameters for composite 'A Molecular Mechanism — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1145,7 +1145,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig08_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig08-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig08_executable)
 
-# === Edit parameters for composite 'fig08-executable' ===
+# === Edit parameters for composite 'Nested Molecular Hierarchy — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1183,7 +1183,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig09a_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09a-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig09a_executable)
 
-# === Edit parameters for composite 'fig09a-executable' ===
+# === Edit parameters for composite 'Self-Organization & Coarse-Graining — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1228,7 +1228,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig09b_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09b-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig09b_executable)
 
-# === Edit parameters for composite 'fig09b-executable' ===
+# === Edit parameters for composite 'The Minimal Cell — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1270,7 +1270,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_1_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-1-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_executable)
 
-# === Edit parameters for composite 'fig10-1-executable' ===
+# === Edit parameters for composite 'Cell Division — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1292,7 +1292,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_2_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-2-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_executable)
 
-# === Edit parameters for composite 'fig10-2-executable' ===
+# === Edit parameters for composite 'Biofilm Development — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
@@ -1316,7 +1316,7 @@ from viva_superpowers.composite_spec import load_spec
 spec_viva_meta_modelers_guide_composites_fig10_3_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-3-executable.composite.json')
 describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_executable)
 
-# === Edit parameters for composite 'fig10-3-executable' ===
+# === Edit parameters for composite 'Evolution — Executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
