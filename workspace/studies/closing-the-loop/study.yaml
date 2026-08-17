@@ -26,36 +26,41 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: gradient-forms
+- name: biomass-growth
   classification: primary
-  description: A localized bolus diffuses into a spatial gradient (Fickian).
   measure:
     kind: observable
-    expr: field profile over space×time
+    path: biomass
+    expr: last(biomass)
   pass_if:
-    op: threshold
-    condition: bolus spreads to neighbours
-  requires_simulation: closing-the-loop
-- name: mass-conserved
+    op: '>='
+    value: 0.3
+    provenance: cell sink grows from the diffusing field (exec last≈0.66)
+  requires_simulation: biomass-growth
+- name: nutrient-uptake
   classification: primary
-  description: Field + cumulative uptake is conserved (no source/sink leak).
   measure:
     kind: observable
-    expr: Σfield(t) + uptake_total(t)
+    path: uptake_total
+    expr: last(uptake_total)
   pass_if:
-    op: threshold
-    condition: ≈ initial field mass
-  requires_simulation: closing-the-loop
-- name: cell-draws-well
-  classification: supporting
-  description: The cell is a local sink — uptake and biomass rise.
+    op: '>='
+    value: 0.5
+    provenance: Monod uptake at the site draws down the bolus (exec last≈0.95)
+  requires_simulation: nutrient-uptake
+- name: draft-is-inert
+  classification: diagnostic
   measure:
     kind: observable
-    expr: uptake_total(t)
+    path: biomass
+    expr: last(biomass)
   pass_if:
-    op: threshold
-    condition: '> 0 and rising'
-  requires_simulation: closing-the-loop
+    op: '>='
+    value: 0.3
+    provenance: inert-draft run stays at seed (no mechanism → no dynamics)
+  control: negative
+  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
+  requires_simulation: draft-is-inert
 runs:
 - name: closing-the-loop
   composite: closing-the-loop

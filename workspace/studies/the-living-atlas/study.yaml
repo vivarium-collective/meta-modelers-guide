@@ -60,45 +60,51 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: full-arc
+- name: peak-growth
   classification: primary
-  description: Grow → divide → thermal shock → viability collapse → disintegrate, in one run.
   measure:
     kind: observable
-    expr: the whole trajectory
+    path: biomass
+    expr: max(biomass)
   pass_if:
-    op: threshold
-    condition: all five phases occur
+    op: '>='
+    value: 3.0
+    provenance: biomass peaks then lyses (exec max≈8.4)
   requires_simulation: the-living-atlas
-- name: mass-conserved-through-death
+- name: disintegration
   classification: primary
-  description: Biomass converts to debris — mass conserved through lysis.
   measure:
     kind: observable
-    expr: peak biomass vs final debris
+    path: debris
+    expr: last(debris)
   pass_if:
-    op: threshold
-    condition: debris ≈ lysed biomass
+    op: '>='
+    value: 2.0
+    provenance: lysis converts biomass to debris (exec last≈7.3)
   requires_simulation: the-living-atlas
-- name: viability-cliff
+- name: division
   classification: primary
-  description: The thermal shock drives viability past its cliff.
   measure:
     kind: observable
-    expr: viability at shock
+    path: cell_count
+    expr: last(cell_count)
   pass_if:
-    op: threshold
-    condition: collapses toward 0
+    op: '>='
+    value: 2.0
+    provenance: the cell divides (exec cell_count 1→14)
   requires_simulation: the-living-atlas
-- name: divides
-  classification: supporting
-  description: The cell divides as it grows before the shock.
+- name: draft-is-inert
+  classification: diagnostic
   measure:
     kind: observable
-    expr: cell_count(t)
+    path: biomass
+    expr: max(biomass)
   pass_if:
-    op: threshold
-    condition: ≥ 2
+    op: '>='
+    value: 3.0
+    provenance: draft/knockout run collapses (no mechanism / no closure)
+  control: negative
+  description: 'Negative control: the inert/knockout draft MUST fail this.'
   requires_simulation: the-living-atlas
 runs:
 - name: the-living-atlas

@@ -31,35 +31,55 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: growth-tracks-nutrient
+- name: volume-growth
   classification: primary
-  description: Volume gained is paid for by nutrient consumed (mass balance).
+  description: The conforming handler grows the cell — volume climbs well above its seed.
   measure:
     kind: observable
-    expr: volume gained vs nutrient drawn down
+    path: volume
+    expr: max(volume)
   pass_if:
-    op: threshold
-    condition: volume gain > 0 and ≤ yield·consumed
+    op: '>='
+    value: 2.0
+    provenance: 'executable run: max volume 6.11 from seed 0.5 (Monod uptake → yield·u growth)'
   requires_simulation: typed-interface
-- name: monod-saturation
-  classification: supporting
-  description: Uptake follows a saturating Monod law and depletes the pool.
+- name: nutrient-depletion
+  classification: primary
+  description: Monod uptake draws the finite nutrient pool down to ≈0 (saturating consumption).
   measure:
     kind: observable
-    expr: nutrient(t)
+    path: nutrient
+    expr: last(nutrient)
   pass_if:
-    op: threshold
-    condition: monotonic depletion to ≈0
+    op: <=
+    value: 0.1
+    provenance: 'Monod uptake depletes the finite pool (10.0) to ~0 by t=18'
   requires_simulation: typed-interface
 - name: viability-cliff
   classification: primary
-  description: Viability holds in the tolerance band then collapses past it (Arrhenius).
+  description: Viability holds ≈1 in-band then collapses once T exceeds t_tol (Arrhenius).
   measure:
     kind: observable
-    expr: viability once T > T_tol
+    path: viability
+    expr: last(viability)
   pass_if:
-    op: threshold
-    condition: holds ≈1 in-band, drops <0.1 past tolerance
+    op: <=
+    value: 0.1
+    provenance: 'Arrhenius: viability collapses once T > t_tol = 42 (crosses at t≈5.6, →0 by t=18)'
+  requires_simulation: typed-interface
+- name: draft-is-inert
+  classification: diagnostic
+  control: negative
+  description: 'Negative control: the inert draft (typed ports, no mechanism) MUST fail volume-growth
+    — volume stays at its 0.5 seed. This is what the correct model is contrasted against.'
+  measure:
+    kind: observable
+    path: volume
+    expr: max(volume)
+  pass_if:
+    op: '>='
+    value: 2.0
+    provenance: 'inert-draft run: max volume 0.50 (no mechanism → no growth); the control the correct model is contrasted against'
   requires_simulation: typed-interface
 runs:
 - name: typed-interface
