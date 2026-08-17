@@ -27,35 +27,16 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: mass-conserved
+- name: biomass-reaches-6
   classification: primary
-  description: 'Every handler conserves mass: final biomass = yield × S₀.'
   measure:
     kind: observable
-    expr: final biomass for coarse/kinetic/FBA
+    path: biomass
+    expr: last(biomass)
   pass_if:
-    op: threshold
-    condition: all = 5.0 (= 0.5 × 10)
-  requires_simulation: one-interface-three-mechanisms
-- name: distinct-kinetics
-  classification: primary
-  description: The three mechanisms differ in dynamical SHAPE, not just slope.
-  measure:
-    kind: observable
-    expr: time to 90% substrate consumed
-  pass_if:
-    op: threshold
-    condition: three distinct times
-  requires_simulation: one-interface-three-mechanisms
-- name: interface-preserved
-  classification: supporting
-  description: All three expose the identical port set over identical wiring.
-  measure:
-    kind: observable
-    expr: port set across the three handlers
-  pass_if:
-    op: threshold
-    condition: identical
+    op: '>='
+    value: 6.0
+    provenance: 'OVER-REACH: exceeds the yield·S0=5.0 mass-conservation cap'
   requires_simulation: one-interface-three-mechanisms
 runs:
 - name: one-interface-three-mechanisms

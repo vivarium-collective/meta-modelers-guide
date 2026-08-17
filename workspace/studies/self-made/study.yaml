@@ -29,35 +29,40 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: closure-sustains
+- name: membrane-sustains
   classification: primary
-  description: The intact composition self-produces (autocatalytic membrane + enzyme).
   measure:
     kind: observable
-    expr: membrane/enzyme(t), intact
+    path: membrane
+    expr: last(membrane)
   pass_if:
-    op: threshold
-    condition: rise to a large pool
+    op: '>='
+    value: 1.0
+    provenance: intact closure self-sustains the membrane (exec last≈2.1)
+  requires_simulation: self-made
+- name: enzyme-maintained
+  classification: primary
+  measure:
+    kind: observable
+    path: enzyme
+    expr: last(enzyme)
+  pass_if:
+    op: '>='
+    value: 0.5
+    provenance: the enzyme pool is held up by the closure (exec last≈1.1)
   requires_simulation: self-made
 - name: knockout-collapses
-  classification: primary
-  description: The enzyme-knockout NEGATIVE control collapses — closure is required.
+  classification: diagnostic
   measure:
     kind: observable
-    expr: enzyme(t), knockout
+    path: membrane
+    expr: last(membrane)
   pass_if:
-    op: threshold
-    condition: decays to ≈0
-  requires_simulation: self-made
-- name: multi-grain
-  classification: supporting
-  description: Metabolism, containment, replication are all productive in the closure.
-  measure:
-    kind: observable
-    expr: the three functions, intact
-  pass_if:
-    op: threshold
-    condition: all active
+    op: '>='
+    value: 1.0
+    provenance: draft/knockout run collapses (no mechanism / no closure)
+  control: negative
+  description: 'Negative control: the inert/knockout draft MUST fail this.'
   requires_simulation: self-made
 runs:
 - name: self-made

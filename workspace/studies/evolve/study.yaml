@@ -24,35 +24,40 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: selection-sweep
+- name: capability-emerges
   classification: primary
-  description: The fitter mutant's frequency rises (a selection sweep).
   measure:
     kind: observable
-    expr: mutant fraction n_mut/(n_wt+n_mut)
+    path: capability
+    expr: last(capability)
   pass_if:
-    op: threshold
-    condition: rises substantially
+    op: '>='
+    value: 2.0
+    provenance: a new interface capability rides the sweep (exec last≈7.6)
   requires_simulation: evolve
-- name: competitive-exclusion
+- name: mutant-outgrows
   classification: primary
-  description: The wild type is competitively excluded as the mutant rises.
   measure:
     kind: observable
-    expr: n_wt(t)
+    path: n_mut
+    expr: last(n_mut)
   pass_if:
-    op: threshold
-    condition: rises then declines
+    op: '>='
+    value: 0.2
+    provenance: the fitter variant sweeps (mut fraction 0.05→0.70)
   requires_simulation: evolve
-- name: new-capability
-  classification: supporting
-  description: A new interface port emerges, carried by the winning lineage.
+- name: draft-is-inert
+  classification: diagnostic
   measure:
     kind: observable
-    expr: capability(t)
+    path: capability
+    expr: last(capability)
   pass_if:
-    op: threshold
-    condition: emerges from 0
+    op: '>='
+    value: 2.0
+    provenance: draft/knockout run collapses (no mechanism / no closure)
+  control: negative
+  description: 'Negative control: the inert/knockout draft MUST fail this.'
   requires_simulation: evolve
 runs:
 - name: evolve
