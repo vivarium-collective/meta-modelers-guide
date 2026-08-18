@@ -2,7 +2,7 @@
 """Run the Phase-4 whole cell and record the paper's full arc as a trajectory.
 
 interface → cell–environment coupling → metabolism → viability → division /
-disintegration, all in one composite (see viva_meta_modelers_guide/wholecell.py).
+disintegration, all in one composite (see meta_modelers_guide/wholecell.py).
 Writes workspace/reports/wholecell-trajectory.json and, if plotly is available, an
 interactive figure beside it.
 """
@@ -13,8 +13,8 @@ from pathlib import Path
 
 from process_bigraph import Composite, gather_emitter_results
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.wholecell import build_whole_cell
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.wholecell import build_whole_cell
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "workspace" / "reports"

@@ -13,11 +13,11 @@ from pathlib import Path
 import pytest
 from process_bigraph import Composite
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.compile import (
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.compile import (
     compile_composite, check_conformance, interface_of, _refined_ports, _is_rewrite,
 )
-from viva_meta_modelers_guide.handler_envs import ENVS
+from meta_modelers_guide.handler_envs import ENVS
 
 # scripts/ is not a package; load the BUILD table directly.
 import importlib.util
@@ -27,7 +27,7 @@ _spec = importlib.util.spec_from_file_location(
 _be = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_be)
 
-COMPOSITES = Path(__file__).resolve().parent.parent / "viva_meta_modelers_guide" / "composites"
+COMPOSITES = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"
 CASES = [(e, s, o) for (e, s, o) in _be.BUILD if e in ENVS]
 
 

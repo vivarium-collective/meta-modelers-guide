@@ -41,7 +41,7 @@ framing is an **algebraic effect system**.
 4. **Handler independence**: two conforming handler sets yield two valid
    executables sharing one interface (Fig 6 grain-swap = coarse FBA vs kinetic).
 
-## Modules (all top-level in `viva_meta_modelers_guide/`)
+## Modules (all top-level in `meta_modelers_guide/`)
 
 ### `compile.py` (pure; no heavy deps)
 - `signature_of(draft_cls) -> Signature{inputs: {port:type}, outputs: {port:type}, contract}`.

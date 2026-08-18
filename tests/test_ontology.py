@@ -2,13 +2,13 @@
 can be ontology-aware; executables carry provenance."""
 from __future__ import annotations
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.compile import _type_compatible
-from viva_meta_modelers_guide.handler_envs import ENVS
-from viva_meta_modelers_guide.ontology import (
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.compile import _type_compatible
+from meta_modelers_guide.handler_envs import ENVS
+from meta_modelers_guide.ontology import (
     interface_term, process_term, term_ref, ontology_compatible, figure_provenance,
 )
-from viva_meta_modelers_guide._types import UNITS
+from meta_modelers_guide._types import UNITS
 
 
 def test_every_interface_quantity_has_a_term():

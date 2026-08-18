@@ -23,7 +23,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from process_bigraph import Process, Composite, gather_emitter_results
 
-from viva_meta_modelers_guide.core import build_core
+from meta_modelers_guide.core import build_core
 
 S0, DT, N = 10.0, 0.2, 70
 YIELD = 0.5

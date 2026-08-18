@@ -456,7 +456,7 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     <footer class="foot">
       <p>Generated from <code>investigation.yaml</code> + measured readouts ·
       <a href="../dashboard/">interactive read-only workbench</a> ·
-      <a href="https://github.com/vivarium-collective/viva-meta-modelers-guide">source</a></p>
+      <a href="https://github.com/vivarium-collective/meta-modelers-guide">source</a></p>
     </footer>"""
 
     doc = f"""<!doctype html>

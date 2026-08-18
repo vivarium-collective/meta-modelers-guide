@@ -11,12 +11,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.compile import compile_composite
-from viva_meta_modelers_guide.handler_envs import ENVS
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.compile import compile_composite
+from meta_modelers_guide.handler_envs import ENVS
 
 ROOT = Path(__file__).resolve().parent.parent
-COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
+COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 
 # (env name, semantic composite stem, executable output stem)
 BUILD: list[tuple[str, str, str]] = [
@@ -41,7 +41,7 @@ def build_one(core, env_name, semantic_stem, output_stem) -> Path | None:
         return None
     sem = json.loads((COMPOSITES / f"{semantic_stem}.composite.json").read_text())
     ex_state = compile_composite(sem["state"], ENVS[env_name], core)
-    from viva_meta_modelers_guide.ontology import figure_provenance
+    from meta_modelers_guide.ontology import figure_provenance
     doc = {
         "name": output_stem,
         "description": (f"EXECUTABLE compilation of {semantic_stem} under handler "

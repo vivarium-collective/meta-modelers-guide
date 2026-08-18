@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from process_bigraph import Composite, gather_emitter_results
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.fig10_topology import (
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.fig10_topology import (
     build_fig10_biofilm, build_fig10_evolution,
 )
 
