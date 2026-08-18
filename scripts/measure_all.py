@@ -11,13 +11,13 @@ from pathlib import Path
 
 from process_bigraph import Composite, gather_emitter_results
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.wholecell import build_whole_cell
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.wholecell import build_whole_cell
 
 import render_study_evidence as R  # sibling script — single executable-evidence renderer
 
 ROOT = Path(__file__).resolve().parent.parent
-COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
+COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 OUT = ROOT / "scripts" / "_catalog" / "measured_readouts.json"
 
 

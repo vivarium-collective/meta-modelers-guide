@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from process_bigraph import Composite, gather_emitter_results
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.wholecell import build_whole_cell
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.wholecell import build_whole_cell
 
 
 def _run():

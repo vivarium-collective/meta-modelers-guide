@@ -90,7 +90,7 @@ def register_types(core):
     if skipped:
         import warnings
         warnings.warn(
-            "viva_meta_modelers_guide: kept existing definitions for types "
+            "meta_modelers_guide: kept existing definitions for types "
             "already registered elsewhere: " + ", ".join(skipped))
     return core
 

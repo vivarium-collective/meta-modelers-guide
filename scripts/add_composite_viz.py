@@ -3,7 +3,7 @@
 
 Each ``composites/<stem>.composite.json`` that RUNS (executables, the fig10 live
 rewrites, and the composed whole cell) gets a ``dynamics_viz`` step wired to the
-observables that move — a :class:`viva_meta_modelers_guide.visualization.DynamicsPlot`.
+observables that move — a :class:`meta_modelers_guide.visualization.DynamicsPlot`.
 Arc-worthy figures (the whole cell's grow→divide→die, division / biofilm /
 evolution, the central-dogma cascade, autopoietic closure) additionally get a
 ``dynamics_movie`` (:class:`DynamicsMovie`) — a Play-button animation of the same
@@ -19,10 +19,10 @@ import json
 import re
 from pathlib import Path
 
-from viva_meta_modelers_guide._types import UNITS
+from meta_modelers_guide._types import UNITS
 
 ROOT = Path(__file__).resolve().parent.parent
-COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
+COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 NUMERIC = set(UNITS) | {"float"}
 
 # Every composite that actually runs → gets DynamicsPlot.

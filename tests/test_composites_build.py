@@ -13,9 +13,9 @@ from pathlib import Path
 import pytest
 from process_bigraph import Composite
 
-from viva_meta_modelers_guide.core import build_core
+from meta_modelers_guide.core import build_core
 
-COMPOSITE_DIR = Path(__file__).resolve().parent.parent / "viva_meta_modelers_guide" / "composites"
+COMPOSITE_DIR = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"
 SPECS = sorted(COMPOSITE_DIR.glob("*.composite.json"))
 
 

@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from process_bigraph import Composite, gather_emitter_results
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.fig10_rewrite import build_fig10_division
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.fig10_rewrite import build_fig10_division
 
 
 def _nodes(node, control):

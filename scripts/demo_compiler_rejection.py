@@ -23,13 +23,13 @@ from pathlib import Path
 
 from process_bigraph import Composite
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.compile import (
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.compile import (
     CompileError, compile_composite, signature_of,
 )
 
 ROOT = Path(__file__).resolve().parent.parent
-COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
+COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 SEMANTIC = COMPOSITES / "fig06-disintegration.composite.json"
 
 DRAFT = "CoarseGrainedMetabolism"

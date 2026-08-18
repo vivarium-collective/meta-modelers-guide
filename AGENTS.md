@@ -14,7 +14,7 @@ viva-superpowers workspace.
 ## What this workspace is
 
 `meta-modelers-guide` is a viva-superpowers workspace. The Python package
-lives under `viva_meta_modelers_guide/`; investigations live under
+lives under `meta_modelers_guide/`; investigations live under
 `workspace/investigations/<slug>/`; per-study YAML + runs live under
 `workspace/studies/<slug>/`. See [`README.md`](README.md) and
 [`NEXT_STEPS.md`](NEXT_STEPS.md) for the workspace's purpose + onboarding

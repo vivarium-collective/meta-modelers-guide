@@ -26,11 +26,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from process_bigraph import Composite, gather_emitter_results
 
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide._types import UNITS
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide._types import UNITS
 
 ROOT = Path(__file__).resolve().parent.parent
-COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
+COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 STUDIES = ROOT / "workspace" / "studies"
 CATALOG = ROOT / "scripts" / "_catalog"
 CATALOG.mkdir(parents=True, exist_ok=True)

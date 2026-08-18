@@ -11,11 +11,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from viva_meta_modelers_guide.figures import figure_for_process, figure_for_store
-from viva_meta_modelers_guide._types import STRING_TYPES
+from meta_modelers_guide.figures import figure_for_process, figure_for_store
+from meta_modelers_guide._types import STRING_TYPES
 
 ROOT = Path(__file__).resolve().parent.parent
-COMPOSITES = ROOT / "viva_meta_modelers_guide" / "composites"
+COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 
 
 def stamp(node: dict) -> None:

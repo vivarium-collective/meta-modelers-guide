@@ -69,9 +69,9 @@ Extra handler ports are allowed. `check_conformance` returns a `ConformanceRepor
 ## Worked example — Fig 6
 
 ```python
-from viva_meta_modelers_guide.core import build_core
-from viva_meta_modelers_guide.compile import compile_composite
-from viva_meta_modelers_guide.handler_envs import ENVS
+from meta_modelers_guide.core import build_core
+from meta_modelers_guide.compile import compile_composite
+from meta_modelers_guide.handler_envs import ENVS
 from process_bigraph import Composite
 import json
 
@@ -183,7 +183,7 @@ next step for Fig 10's division/development/evolution.
 
 ### Fig 10-1 division as a genuine structural rewrite (`structural.py`)
 
-`viva_meta_modelers_guide/structural.py` realizes division as a *true* structural
+`meta_modelers_guide/structural.py` realizes division as a *true* structural
 rewrite via viva-compiler's reactive backend: a parametric `ReactionRule` whose
 reactum has a different node set than its redex, so firing it **creates** the
 daughter nodes — `{"cell": {contents}}` → `{"daughter_1": {contents}, "daughter_2":

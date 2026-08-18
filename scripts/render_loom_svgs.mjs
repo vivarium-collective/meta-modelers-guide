@@ -31,7 +31,7 @@ try {
 }
 
 const BASE = process.env.LOOM_BASE || 'http://127.0.0.1:8790';
-const PKG = 'viva_meta_modelers_guide.composites';
+const PKG = 'meta_modelers_guide.composites';
 
 // [studySlug, compositeStem]  (svg stem == compositeStem, matching study viz addrs)
 const JOBS = [

@@ -27,7 +27,7 @@
   research workspace. Instead of one monolithic program, the model is a set of
   **typed, independently-wireable processes** you *compose* into whatever
   architecture a question needs. The Python package lives under
-  `viva_meta_modelers_guide/` (`core.py` exposes `build_core()`); research state lives
+  `meta_modelers_guide/` (`core.py` exposes `build_core()`); research state lives
   under `workspace/` — **composites** (wirings), **investigations** (a research
   question), and **studies** (the simulations that answer it).
 
@@ -60,7 +60,7 @@ git clone <this repo's URL> meta-modelers-guide
 cd meta-modelers-guide
 ```
 
-**Gate:** `workspace.yaml` and `viva_meta_modelers_guide/core.py` exist.
+**Gate:** `workspace.yaml` and `meta_modelers_guide/core.py` exist.
 
 ## 2. Install (uv, into a workspace venv)
 
@@ -73,7 +73,7 @@ uv sync                      # creates .venv/ and installs locked deps
 uv pip install -e .          # editable install of this workspace's package
 ```
 
-**Gate:** `.venv/bin/python -c "import viva_meta_modelers_guide; print('ok')"` prints
+**Gate:** `.venv/bin/python -c "import meta_modelers_guide; print('ok')"` prints
 `ok`, and `.venv/bin/vivarium-workbench --help` runs.
 
 ## 3. Serve the workbench
@@ -103,7 +103,7 @@ port wirings.
 Point the user at the four things the dashboard exposes:
 
 - **Registry** — the process and type definitions this workspace registers
-  (from `viva_meta_modelers_guide/core.py`'s `build_core()`).
+  (from `meta_modelers_guide/core.py`'s `build_core()`).
 - **Composites** — the wirings; each opens in the loom viewer.
 - **Investigations** — research questions under `workspace/investigations/<slug>/`,
   each with its studies and a published report.
@@ -138,9 +138,9 @@ ready-for-review, and never auto-merge.
 
 ## 8. Troubleshooting
 
-- **`ImportError` for `viva_meta_modelers_guide` in the dashboard** — the editable
+- **`ImportError` for `meta_modelers_guide` in the dashboard** — the editable
   install didn't run or ran into the wrong venv. Re-run `uv pip install -e .`
-  and confirm `.venv/bin/python -c "import viva_meta_modelers_guide"`.
+  and confirm `.venv/bin/python -c "import meta_modelers_guide"`.
 - **"Composite not found" / a composite fails to resolve** — the serving venv is
   missing a workspace dependency, or `build_core()` raised. Check the server log;
   re-run `uv sync`.

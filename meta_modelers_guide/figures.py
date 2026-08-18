@@ -8,7 +8,7 @@ illustration — in the spirit of the paper's BioRender panels.
 
 Usage (see scripts/add_figures.py):
 
-    from viva_meta_modelers_guide.figures import figure_for_store, figure_for_process
+    from meta_modelers_guide.figures import figure_for_store, figure_for_process
     svg = figure_for_store("DNA", "concentration")      # -> "<svg …double helix…/>"
     svg = figure_for_process("Transcription")           # -> "<svg …polymerase…/>"
 """

@@ -2,7 +2,7 @@
 daughter nodes (vs. the pre-declared-structure DivisionRewrite handler)."""
 from __future__ import annotations
 
-from viva_meta_modelers_guide.structural import one_cell, divide, cells_in
+from meta_modelers_guide.structural import one_cell, divide, cells_in
 
 
 def test_division_creates_two_daughter_nodes():
@@ -29,7 +29,7 @@ def test_node_count_grows():
 
 def test_division_fires_in_a_live_composite():
     """The ReactionStep divides the cell inside a running Composite (typed store)."""
-    from viva_meta_modelers_guide.structural import run_division
+    from meta_modelers_guide.structural import run_division
     colony = run_division(biomass=2.0, dna=1.0)
     assert set(cells_in(colony)) == {"daughter_1", "daughter_2"}   # created in-composite
     assert "cell" not in colony
