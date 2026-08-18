@@ -18,6 +18,11 @@ dependencies = [
     # Extracted from viva-template as of v0.4.16; provides the `vivarium-workbench
     # serve` CLI invoked by scripts/serve.sh.
     "vivarium-workbench",
+    # Pinned explicitly to git main (not just transitively via vivarium-workbench)
+    # so the workspace picks up newer modules the workbench tabs render — e.g.
+    # `viva_superpowers.loop_state` (Assurance > Build) and `viva_superpowers.test_audit`
+    # (Assurance > Audit), which are not in any published PyPI release yet.
+    "viva-superpowers",
 ]
 
 [project.optional-dependencies]
@@ -45,3 +50,4 @@ packages = ["viva_meta_modelers_guide"]
 
 [tool.uv.sources]
 vivarium-workbench = { git = "https://github.com/vivarium-collective/vivarium-workbench.git", branch = "main" }
+viva-superpowers = { git = "https://github.com/vivarium-collective/viva-superpowers.git", branch = "main" }
