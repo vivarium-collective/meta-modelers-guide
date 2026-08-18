@@ -93,9 +93,10 @@ def test_fig6_handler_independence():
 
 
 def test_fig10_division_is_event_driven():
-    """Fig 10-1: division is a discrete event. Before the cell-cycle time nothing
-    partitions; after it, the parent biomass splits into the two daughters and the
-    cell count increments (a rewrite realised over the run). Interface preserved."""
+    """Fig 10-1: division is a discrete event GATED BY DNA REPLICATION, not a wall
+    clock. Before the replicated DNA crosses the threshold nothing partitions;
+    once it crosses, the parent biomass is PARTITIONED into the two daughters (the
+    parent → 0, mass conserved) and the cell count increments. Interface preserved."""
     if "fig10-1" not in ENVS:
         pytest.skip("fig10-1 env not present")
     core = build_core()
@@ -103,18 +104,25 @@ def test_fig10_division_is_event_driven():
     ex = compile_composite(sem, ENVS["fig10-1"], core)
     assert interface_of(ex) == interface_of(sem)          # law 2 still holds
 
-    # division_time defaults to 5.0; run short (< event) then long (> event).
+    threshold = float(ENVS["fig10-1"]["Divide"]["config"]["dna_threshold"])
+
+    # Early: DNA has not yet reached the threshold → no division.
     early = Composite({"state": compile_composite(sem, ENVS["fig10-1"], core)}, core=core)
-    early.run(3)
+    early.run(1)
+    assert early.state["environ"]["cell"]["dna"] < threshold
     assert early.state["environ"]["cell_count"] == 1.0     # not yet divided
     assert early.state["environ"]["daughter_1"]["biomass"] == 0.0
 
+    # Late: DNA crosses the threshold → division fires once, mass conserved.
     late = Composite({"state": compile_composite(sem, ENVS["fig10-1"], core)}, core=core)
     late.run(10)
-    assert late.state["environ"]["cell_count"] == 2.0       # divided once
+    assert late.state["environ"]["cell"]["dna"] >= threshold  # the trigger crossed
+    assert late.state["environ"]["cell_count"] == 2.0         # divided once
+    parent = late.state["environ"]["cell"]["biomass"]
     d1 = late.state["environ"]["daughter_1"]["biomass"]
     d2 = late.state["environ"]["daughter_2"]["biomass"]
-    assert d1 > 0 and abs(d1 - d2) < 1e-9                   # partitioned equally
+    assert parent < 1e-9                                   # parent fully partitioned (conserved)
+    assert d1 > 0 and abs(d1 - d2) < 1e-9                   # into two equal daughters
 
 
 def test_rewrite_conformance_against_wiring():

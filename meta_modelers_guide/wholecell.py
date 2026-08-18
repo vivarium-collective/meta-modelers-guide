@@ -73,10 +73,23 @@ class Uptake(Process):
 
 
 class ViabilityGatedMetabolism(Process):
-    """Metabolism (Fig 6), gated by viability: flux = k · nutrients_local · viability.
-    Grows biomass + energy, consumes the local nutrient. When viability → 0 (out of
-    bounds) the flux vanishes — growth halts, as the paper requires."""
-    config_schema = {"k": _f(0.6), "biomass_yield": _f(0.8), "energy_yield": _f(0.4)}
+    """Metabolism (Fig 6) gated by viability — and the whole cell's mechanism-swap
+    slot. ``mode`` selects which of the Fig 6 metabolism kinetics grows the cell,
+    behind the SAME ports (``nutrients_local, viability`` → ``biomass, energy,
+    nutrients_local``):
+
+      * ``coarse``  — lumped first-order growth (rate ``k · nutrients_local``),
+      * ``kinetic`` — saturating Michaelis–Menten growth (``vmax · n /(km+n)``),
+      * ``fba``     — genome-scale flux-balance growth via the real Fig 6 COBRApy
+        ``e_coli_core`` solver (delegates to ``FBAMetabolism``).
+
+    Growth is scaled by viability (``× v``) so it halts when the cell leaves its
+    tolerance band. Swapping ``mode`` swaps the mechanism at the WHOLE-CELL level
+    — the paper's handler-independence thesis (Fig 6 law 4), now at the capstone:
+    the three kinetics give three distinct life histories behind one interface."""
+    config_schema = {"mode": {"_type": "string", "_default": "coarse"},
+                     "k": _f(0.6), "vmax": _f(1.4), "km": _f(0.4),
+                     "energy_yield": _f(0.4)}
 
     def inputs(self):
         return {"nutrients_local": "concentration", "viability": "viability"}
@@ -84,14 +97,34 @@ class ViabilityGatedMetabolism(Process):
     def outputs(self):
         return {"biomass": "mass", "energy": "energy", "nutrients_local": "concentration"}
 
+    def __init__(self, config=None, core=None):
+        super().__init__(config, core=core)
+        self._fba = None
+        if (self.config.get("mode") or "coarse") == "fba":
+            from .handlers_fig06_fba import FBAMetabolism
+            self._fba = FBAMetabolism({}, core=core)
+
+    def _growth_rate(self, nut: float) -> float:
+        """Biomass growth rate at local nutrient ``nut`` under the selected Fig 6
+        mechanism. Same input, three kinetics — the swap."""
+        c = self.config
+        mode = c.get("mode") or "coarse"
+        if mode == "kinetic":
+            denom = c["km"] + nut
+            return (c["vmax"] * nut / denom) if denom else 0.0
+        if mode == "fba" and self._fba is not None:
+            # FBAMetabolism returns biomass=growth·interval; call with interval=1
+            # to read the objective-value growth rate for this nutrient level.
+            return float(self._fba.update({"nutrients": nut}, 1.0).get("biomass", 0.0))
+        return c["k"] * nut  # coarse (lumped first-order)
+
     def update(self, state, interval):
         nut = float(state.get("nutrients_local", 0.0))
         v = float(state.get("viability", 0.0))
-        c = self.config
-        flux = c["k"] * nut * v
-        return {"biomass": c["biomass_yield"] * flux * interval,
-                "energy": c["energy_yield"] * flux * interval,
-                "nutrients_local": -flux * interval}
+        g = self._growth_rate(nut) * v
+        return {"biomass": g * interval,
+                "energy": self.config["energy_yield"] * g * interval,
+                "nutrients_local": -g * interval}
 
 
 class ViabilityMonitor(Process):
@@ -136,15 +169,20 @@ class ViabilityMonitor(Process):
 
 
 class DivisionEvent(Process):
-    """Rewrite (Fig 10): on the ``dividing`` flag, partition biomass into two
-    daughters ONCE and increment the cell count."""
+    """Rewrite (Fig 10): on the ``dividing`` flag, PARTITION the mother's biomass
+    into two daughters ONCE and increment the cell count. Mass is conserved — the
+    mother's own ``biomass`` is decremented by exactly what the daughters receive
+    (mother M → the focal cell keeps M/2, a sibling daughter gets M/2), so total
+    biomass across {cell, daughter} is unchanged by division."""
     config_schema = {}
 
     def inputs(self):
         return {"biomass": "mass", "dividing": "fraction"}
 
     def outputs(self):
-        return {"biomass_1": "mass", "biomass_2": "mass", "cell_count": "cell_count"}
+        # `biomass` writes back to the mother (cell) store so the partition
+        # conserves mass; `biomass_1` seeds the sibling daughter.
+        return {"biomass": "mass", "biomass_1": "mass", "cell_count": "cell_count"}
 
     def __init__(self, config=None, core=None):
         super().__init__(config, core=core)
@@ -155,7 +193,8 @@ class DivisionEvent(Process):
             return {}
         self._done = True
         half = float(state.get("biomass", 0.0)) / 2.0
-        return {"biomass_1": half, "biomass_2": half, "cell_count": 1.0}
+        # mother loses half (→ M/2); the sibling daughter gains that half. Conserved.
+        return {"biomass": -half, "biomass_1": half, "cell_count": 1.0}
 
 
 class DisintegrationEvent(Process):
@@ -178,8 +217,14 @@ class DisintegrationEvent(Process):
 
 
 # ── assemble the whole cell ───────────────────────────────────────────────────
-def build_whole_cell(emit: bool = True) -> dict:
+def build_whole_cell(emit: bool = True, metabolism: str = "coarse") -> dict:
     """A cell-in-environment composite wiring the figures' mechanisms together.
+
+    ``metabolism`` selects which Fig 6 metabolism mechanism grows the cell —
+    ``"coarse"`` | ``"kinetic"`` | ``"fba"`` — behind identical ports. Building the
+    whole cell three times with the three values, and running each, is the
+    capstone demonstration of handler independence (Fig 6 law 4) at the whole-cell
+    level: same composed cell, three metabolic mechanisms, three life histories.
 
     Place graph: ``environment{nutrients, temperature}`` and
     ``cell{biomass, energy, viability, nutrients_local, dividing, disintegrating,
@@ -221,7 +266,8 @@ def build_whole_cell(emit: bool = True) -> dict:
                             "viability": ["cell", "viability"]},
                            {"biomass": ["cell", "biomass"], "energy": ["cell", "energy"],
                             "nutrients_local": ["cell", "nutrients_local"]},
-                           {"k": 0.6, "biomass_yield": 0.8, "energy_yield": 0.4}),
+                           {"mode": metabolism, "k": 0.6, "vmax": 1.4, "km": 0.4,
+                            "energy_yield": 0.4}),
         "monitor": proc("ViabilityMonitor",
                         {"temperature": ["environment", "temperature"],
                          "biomass": ["cell", "biomass"], "viability": ["cell", "viability"]},
@@ -232,8 +278,8 @@ def build_whole_cell(emit: bool = True) -> dict:
                          "division_threshold": 1.0, "viability_floor": 0.3}),
         "division": proc("DivisionEvent",
                          {"biomass": ["cell", "biomass"], "dividing": ["cell", "dividing"]},
-                         {"biomass_1": ["daughter_1", "biomass"],
-                          "biomass_2": ["daughter_2", "biomass"],
+                         {"biomass": ["cell", "biomass"],            # mother, decremented (conserved)
+                          "biomass_1": ["daughter_1", "biomass"],    # sibling daughter
                           "cell_count": ["cell_count"]}),
         "disintegration": proc("DisintegrationEvent",
                                {"biomass": ["cell", "biomass"],

@@ -66,32 +66,36 @@ class SegregateChromosomeProc(Process):
 
 
 class DivisionRewrite(RewriteHandler):
-    """Event-driven division. Tracks an internal cell-cycle clock; once it reaches
-    ``division_time`` the cell divides ONCE — the parent biomass is partitioned
-    equally into the two daughters and the cell count increments. A discrete
-    rewrite event realised over the run (before the event: nothing; at the event:
-    the partition). Conformance is checked against the wiring (``REWRITE``)."""
-    config_schema = {"division_time": _f(5.0)}
+    """Event-driven division TRIGGERED BY DNA REPLICATION. The cell divides ONCE,
+    when its replicated ``dna`` crosses ``dna_threshold`` — not on a wall clock —
+    so the event is gated by the cell's own state (``ReplicationProc`` grows
+    ``dna``; segregation crosses the threshold; the rewrite fires). At the event
+    the parent's biomass is PARTITIONED equally into the two daughters: the parent
+    node's biomass is driven to 0 and each daughter receives M/2, so mass is
+    conserved (one cell node → two daughter nodes). A discrete structural rewrite
+    realised over the run; conformance checked against the wiring (``REWRITE``)."""
+    config_schema = {"dna_threshold": _f(2.0)}
 
     def inputs(self):
-        return {"biomass": "mass"}
+        return {"biomass": "mass", "dna": "concentration"}
 
     def outputs(self):
-        return {"biomass_1": "mass", "biomass_2": "mass", "cell_count": "cell_count"}
+        # `biomass` writes back to the PARENT (→ 0); the daughters receive the halves.
+        return {"biomass": "mass", "biomass_1": "mass", "biomass_2": "mass",
+                "cell_count": "cell_count"}
 
     def __init__(self, config=None, core=None):
         super().__init__(config, core=core)
-        self._clock = 0.0
         self._divided = False
 
     def update(self, state, interval):
-        self._clock += interval
-        if self._divided or self._clock < self.config["division_time"]:
+        if self._divided or float(state.get("dna", 0.0)) < self.config["dna_threshold"]:
             return {}
         self._divided = True
         biomass = float(state.get("biomass", 0.0))
         half = biomass / 2.0
-        return {"biomass_1": half, "biomass_2": half, "cell_count": 1.0}
+        # 1 node → 2 nodes: parent fully partitions, each daughter gets M/2. Conserved.
+        return {"biomass": -biomass, "biomass_1": half, "biomass_2": half, "cell_count": 1.0}
 
 
 # ── Fig 10-2 · development (biofilm) ──────────────────────────────────────────
@@ -222,7 +226,7 @@ ENV_DIVISION = {
     "DNAReplication": {"handler": "DNAReplicationODE", "config": {"k": 0.15},
                        "init": {"environ.cell.dna": 1.0, "environ.cell.energy": 1.0}},
     "SegregateChromosome": {"handler": "SegregateChromosomeProc", "config": {"seg_rate": 0.2}},
-    "Divide": {"handler": "DivisionRewrite", "config": {"division_time": 5.0},
+    "Divide": {"handler": "DivisionRewrite", "config": {"dna_threshold": 2.0},
                "init": {"environ.cell.biomass": 1.0, "environ.cell_count": 1.0}},
 }
 

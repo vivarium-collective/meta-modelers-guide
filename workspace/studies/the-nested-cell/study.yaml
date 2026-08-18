@@ -62,7 +62,7 @@ behavior_tests:
     op: '>='
     value: 1.0
     provenance: metabolism feeds the cascade, producing metabolites (exec last≈1.5)
-  requires_simulation: metabolites-produced
+  requires_simulation: the-nested-cell
 - name: mrna-transcribed
   classification: primary
   measure:
@@ -73,7 +73,7 @@ behavior_tests:
     op: '>='
     value: 0.05
     provenance: gene transcribed to mRNA (exec last≈0.18)
-  requires_simulation: mrna-transcribed
+  requires_simulation: the-nested-cell
 - name: draft-is-inert
   classification: diagnostic
   measure:
@@ -83,10 +83,12 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: inert-draft run stays at seed (no mechanism → no dynamics)
+    provenance: inert-draft run stays at seed (empty update by construction) → fails by design (expected-fail control)
   control: negative
-  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
-  requires_simulation: draft-is-inert
+  description: 'One-line sanity check (NOT the study''s control): the inert draft has empty updates by
+    construction, so it stays at seed and fails this threshold by design — confirming the framework''s
+    definition of a draft, not a scientific counterfactual.'
+  requires_simulation: the-nested-cell
 runs:
 - name: the-nested-cell
   composite: the-nested-cell
@@ -100,15 +102,15 @@ runs:
     ATP-SYNTHESIZED:
       result: PASS
       detail: chemical_out (ATP synthesized) 0→100 — F1Fo ATP synthase at the deepest molecular grain
-    CASCADE-POPULATES:
+    METABOLITES-PRODUCED:
       result: PASS
-      detail: nutrients→2.4, metabolites→1.5, energy→0.84 (metabolism feeds the cascade)
-    EXPRESSION-FLOWS:
+      detail: metabolism feeds the cascade — nutrients→2.4, metabolites→1.5, energy→0.84; interface preserved to the deepest leaf (ribosomal complex ≈0.50, transport flux→0.3)
+    MRNA-TRANSCRIBED:
       result: PASS
       detail: mRNA→0.18, protein→0.008 (transcription–translation produces a small pool)
-    INTERFACE-PRESERVED:
+    DRAFT-IS-INERT:
       result: PASS
-      detail: ribosomal complex present at the deepest leaf (≈0.50); transport flux→0.3
+      detail: 'expected-fail control: the inert draft (empty update) stays at seed — it fails the ≥1.0 metabolites threshold by design, confirming a draft is inert'
 findings:
 - id: F-01
   kind: biological
@@ -145,14 +147,14 @@ findings:
   kind: biological
   tier: observation
   status: confirms
-  statement: 'The inert draft (no mechanism) stays at seed, isolating the compiled mechanisms as the cause
-    of the dynamics, with the interface preserved from the molecular grain up to the deepest leaf (ribosomal
-    complex ≈0.50). Confirmed: draft produces no motion on the declared ports.'
+  statement: 'Sanity check on the framework''s definition: the inert draft, with no mechanism, has an empty
+    update and stays at seed. Confirmed: draft produces no motion on the declared ports (the definition of
+    a draft, not a scientific control). The real evidence is that the compiled mechanisms drive the ports
+    with the interface structurally preserved to the deepest leaf (ribosomal complex ≈0.50).'
   evidence:
     from_test: draft-is-inert
     from_run: the-nested-cell
-    observed: inert draft stays at seed; compiled mechanisms drive the ports (ribosomal complex ≈0.50 at
-      deepest leaf)
+    observed: inert draft stays at seed (empty update by construction)
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -203,9 +205,9 @@ conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure drafts compile to executables that run.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; the
-      molecular mechanism drives its chemical output and interface preservation holds through the nesting.
+      molecular mechanism drives its chemical output and structural interface preservation holds through the nesting.
     pipeline_unblocks:
-    - self-made
+    - the-living-atlas
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
@@ -237,7 +239,7 @@ visualizations:
   config:
     chart: image
 parent_studies:
-- study: one-interface-three-mechanisms
+- study: typed-interface
   condition: tests-passed
 experiment: Compile the Fig 7 F1Fo ATP-synthase draft to an executable and run it to completion, reading
   its chemical output port; then build the Fig 8 six-level place graph (ECM → membrane → cytoplasm → nucleus

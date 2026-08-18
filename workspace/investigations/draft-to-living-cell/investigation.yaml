@@ -17,7 +17,7 @@ question: 'How far can a cell be built compositionally — assembled from typed 
   '
 hypothesis: 'Every recurring composition pattern in the cellular-interface paper can be
 
-  authored as an inert draft (typed, unit-bearing ports + a behavior contract, with
+  authored as an inert draft (typed, unit-bearing ports + a structural contract, with
 
   no dynamics) and then *compiled* — by installing one conforming mechanism per
 
@@ -30,16 +30,21 @@ hypothesis: 'Every recurring composition pattern in the cellular-interface paper
   disintegration.
 
   '
-lead: Every figure of the paper is written twice — first as a typed, unit-bearing promise with no mechanism,
-  then as a running simulation the compiler installs behind the identical ports — and the promises compose
-  into one cell that grows, divides, and dies.
+lead: A biological model can be specified as an inert, typed interface contract and only then compiled —
+  one conforming mechanism installed per contract, interface preservation machine-checked — so mechanisms
+  of any grain become swappable behind a boundary that provably does not move, and division becomes a
+  first-class rewrite. The sharpest proof is one metabolism interface run three ways (coarse, saturating
+  kinetics, and REAL COBRApy flux-balance), with a non-conforming impostor rejected at compile time.
 executive:
   what_is_this: 'This investigation turns *A meta-modeler''s guide to the cellular interface* into an
     executable test of compositional modeling. Each figure of the paper is written twice. First as a
-    draft: a typed, unit-bearing biological interface and a behavioral contract, with no committed
-    mechanism — a promise about what a process couples to and does, not how. Then it is compiled, which
-    installs one or more conforming mechanisms — mechanistic, rule-based, data-driven, or otherwise —
-    behind the identical ports, so the running simulation preserves the declared interface exactly.
+    draft: a typed, unit-bearing biological interface — a STRUCTURAL contract of port names, types, and
+    wiring, with no committed mechanism. It says what a process couples to, not how. Then it is compiled,
+    which installs one or more conforming mechanisms — mechanistic, rule-based, data-driven, or otherwise
+    — behind the identical ports, so the running simulation preserves the declared interface exactly. The
+    compiler''s conformance check is STRUCTURAL: it verifies that a handler supplies every port with a
+    compatible type and wiring, and refuses one that does not. It does not check units, dimensions,
+    invariants, or runtime behavior.
 
 
     The point is not to assemble a single monolithic cell model. It is to test whether a biological model
@@ -56,25 +61,39 @@ executive:
     demands. The endpoint is a composed whole cell that grows, divides, loses viability, and changes its
     own level of description — demonstrating the full arc from interface specification to living, changing
     simulation.'
-  verdict: 'The reading holds, and it runs. All 11 figure composites build and render, and all
+  verdict: 'The reading holds, and it runs. The thesis is sharpest in one figure: ONE metabolism interface
 
-    11 compile to executables that run: every draft signature has a conforming handler,
+    (Fig 6, nutrients ⇒ biomass) carries THREE genuinely different mechanisms — a coarse lumped yield, a
 
-    every compiled composite preserves the paper''s interface (compiler law 2) and
+    saturating Michaelis–Menten kinetic, and REAL COBRApy flux-balance analysis over e_coli_core — behind
 
-    produces non-trivial dynamics (law 3). One exchange interface (Fig 6 metabolism)
+    ports that never move (law 4). The single most persuasive artifact is a negative one: a non-conforming
 
-    carries THREE mechanisms — coarse, saturating-kinetic, and real COBRApy flux-balance
+    impostor handler that renames/retypes/drops those ports is REJECTED by the compiler at compile time
 
-    analysis — over one unchanged interface (law 4). Figure 10 introduces event-driven
+    with a CompileError that names the missing ports. That is structural interface preservation (law 2)
 
-    rewrites: division fires as a discrete event, a cell node genuinely becoming two.
+    made mechanical. The machinery is not cherry-picked: the paper''s Figs 4–10 render as 11 figure drafts;
 
-    And the figures compose: a single whole cell grows on nutrients, divides when its
+    10 compile to executables (Fig 4a, the interaction-modalities vocabulary, is illustrative and draft-only
 
-    biomass crosses threshold, then loses viability under thermal shock and disintegrates
+    by design), and because Fig 6''s one interface carries three mechanisms there are 12 executable
 
-    into molecular debris — the paper''s full arc in one run.
+    composites in all — every one runs to completion. Figure 10 makes division a FIRST-CLASS structural
+
+    rewrite: the cell''s own replicated DNA crosses a threshold and one cell node genuinely becomes two,
+
+    conserving mass (the parent is partitioned, not duplicated). Finally the thesis lifts to the whole
+
+    cell: an assembled whole cell (built by hand in the figures'' style, not compiled from the drafts) runs
+
+    the SAME Fig 6 mechanism-swap — coarse / kinetic / FBA give three distinct life histories (peak biomass
+
+    5.78 / 6.43 / 6.05, dividing at t≈3.0 / 2.1 / 2.7) — each cell growing, dividing once (mass-conserved),
+
+    and dying when a SCRIPTED thermal shock (37 → 50 °C hard-coded at t=12) collapses viability to 0.018
+
+    and disintegration turns biomass to debris.
 
     '
   verdict_status: passed
@@ -97,18 +116,27 @@ scientific_argument:
     goal-directed cell out of them.
   - Fig 5 — cell–environment coupling closes as a sense/act loop over a shared field store; the executable
     diffuses a real spatial (map[float]) chemical field.
-  - Fig 6 — one metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is realized by
-    a coarse process, a saturating-kinetic process, OR real COBRApy FBA — three mechanisms, one interface
-    (handler independence, law 4).
+  - Fig 6 (THE THESIS) — one metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is
+    realized by a coarse process, a saturating-kinetic process, OR real COBRApy FBA — three mechanisms,
+    one interface (handler independence, law 4). The headline control is a non-conforming impostor handler,
+    REJECTED at compile time with a CompileError naming the missing ports (structural interface preservation,
+    law 2).
   - Fig 8 — molecular composition is a six-level-deep nested place graph (ECM → membrane → cytoplasm →
     nucleus → chromosome …) with a coupled gene-expression cascade wired to its leaves; the interface
     survives the deepest nesting (law 2).
-  - Fig 9 — the mutual closure of metabolism, containment, and replication expresses autopoiesis; the
-    same functions appear at coarse, self-organized, and molecular grains.
-  - Fig 10 — division, biofilm development, and evolution are compositional rewrites; division is a genuine
-    event-driven graph rewrite (one cell node → two daughter nodes).
-  - The whole cell — Figs 5 + 6 + viability + division + disintegration compose into one run that grows,
-    divides, and dies — composition is not a metaphor but a working assembly.
+  - Fig 9 — a toy autocatalytic loop of metabolism, containment, and replication compiles and runs at
+    coarse, self-organized, and molecular grains; it illustrates the closure PATTERN but is a stand-in, not
+    a demonstration of autopoiesis (folded into the gallery, deflated).
+  - 'Fig 10 — division is a FIRST-CLASS structural rewrite. The cell''s own replicated DNA crosses a
+    threshold (dna 1 → 3.06, threshold 2.0) and one cell node genuinely becomes two, conserving mass (the
+    parent is partitioned to daughters, not duplicated). Fig 10-2 development and Fig 10-3 evolution also
+    compile and run, but are deflated to the gallery — their selection is an ODE and their new port a
+    config flag flip.'
+  - 'The whole cell (mechanism-swap at scale) — an assembled whole cell (built by hand in the figures''
+    style, NOT compiled from the drafts) runs the Fig 6 mechanism-swap. Coarse, kinetic, and real-FBA
+    metabolism behind one interface give three distinct life histories (peak biomass 5.78 / 6.43 / 6.05).
+    Each grows, divides once (mass-conserved), and dies on a scripted thermal shock (37 → 50 °C at t=12)
+    that collapses viability to 0.018 — law 4 carried from a single figure up to a composed cell.'
   evidence_against:
   - The figures are toy-real, not calibrated — handlers use plausible constants, not fitted ones, so the
     dynamics demonstrate the *pattern* (ultrasensitivity, closure, division, disintegration) rather than
@@ -124,7 +152,11 @@ scientific_argument:
     are rendered in loom; the EXECUTABLE composites run and are shown as dynamics figures. A study''s
     draft render and its executable dynamics are the same interface at two stages, not two different models.'
   - The compiler is the binding stage only — it installs a conforming mechanism per draft; it does not
-    fit parameters or invent mechanisms.
+    fit parameters or invent mechanisms. Conformance is STRUCTURAL (port names, types, wiring), not
+    behavioral — it does not check units, dimensions, invariants, or runtime behavior.
+  - 'The capstone whole cell (the-living-atlas) is ASSEMBLED BY HAND in the figures'' style, NOT emitted by
+    the compiler from the figure drafts. Its death is a SCRIPTED thermal shock (hard-coded t=12), not an
+    emergent failure; its division conserves mass (the mother is halved, not doubled).'
   interpretation_ref: docs/concepts/semantic-to-executable-compilation.md
 biological_story: 'A cell is two things at once. From the outside it is a bounded, goal-directed agent
 
@@ -174,94 +206,106 @@ biological_story: 'A cell is two things at once. From the outside it is a bounde
 
   The move this investigation adds is to make each step *run*. A draft process is an
 
-  interface with a promise and no mechanism; compiling it installs a mechanism that keeps
+  interface with a STRUCTURAL contract — port names, types, and wiring — and no mechanism;
 
-  the promise (the ports and their wiring are preserved exactly) while giving the figure
+  compiling it installs a conforming mechanism (the compiler checks that the handler supplies
 
-  real dynamics. Because the interface is what is held fixed, the same figure can be run
+  every port with a compatible type, and preserves the ports and their wiring exactly) while
 
-  under different mechanisms — Fig 6''s metabolism as a lumped yield, a saturating kinetic
+  giving the figure real dynamics. Because the interface is what is held fixed, the same
 
-  law, or a genuine flux-balance optimization — and a reader can watch the mechanism change
+  figure can be run under different mechanisms — Fig 6''s metabolism as a lumped yield, a
 
-  underneath a boundary that does not. The arc closes by composing the figures into a
+  saturating kinetic law, or a genuine COBRApy flux-balance optimization — and a reader can
 
-  single cell: it takes up nutrients and grows, divides once its biomass is large enough,
+  watch the mechanism change underneath a boundary that does not. That mechanism-swap is the
 
-  and — when a thermal shock pushes its temperature outside the viable band — loses
+  thesis, and it is carried up to a whole cell: an assembled whole cell — built BY HAND in
 
-  viability, stops maintaining its boundary, and disintegrates into molecular debris. A
+  the figures'' style, not emitted by the compiler from the drafts — runs the same Fig 6
 
-  cell, assembled from drafts, that lives and dies.
+  swap, and coarse, kinetic, and real-FBA metabolism give three distinct life histories
+
+  behind one interface. In each, the cell takes up nutrients and grows, divides once its
+
+  biomass crosses a threshold (division conserves mass — the mother is halved, not doubled),
+
+  and — when a SCRIPTED thermal shock pushes its temperature outside the viable band (a
+
+  hard-coded 37 → 50 °C at t=12) — loses viability, stops maintaining its boundary, and
+
+  disintegrates into molecular debris. A cell that lives and dies, with the mechanism of its
+
+  life swappable behind a fixed boundary.
 
   '
 at_a_glance:
-- study: typed-interface
-  role: The interface itself — a cell as its typed exchange ports (draft), and a bounded goal-directed
-    cell that runs on them (executable).
-- study: closing-the-loop
-  role: Making the interface operational — the sense/act loop with the environment, closed over a real
-    diffusing spatial field.
 - study: one-interface-three-mechanisms
-  role: When a description fails — disintegration as a grain swap, and one metabolism interface run three
-    ways (coarse, kinetic, real FBA).
-- study: the-nested-cell
-  role: From molecules to the nested cell — a molecular mechanism (an F1Fo ATP synthase) at the deepest
-    grain feeding a coupled gene-expression cascade across a six-level nested place graph; the deepest
-    test of interface preservation.
-- study: self-made
-  role: How a cell holds itself together — self-organization and coarse-graining across three grains;
-    the closure that is autopoiesis.
+  role: 'THE THESIS — one metabolism interface (Fig 6) run three ways: a coarse lumped yield, a saturating
+    kinetic, and REAL COBRApy flux-balance, behind ports that never move. The headline control: a
+    non-conforming impostor handler is rejected at compile time with a CompileError naming the missing ports.'
 - study: divide
-  role: 'Rewriting the cell in time (1/2) — division as a genuine event-driven rewrite: one cell node
-    becomes two.'
-- study: multicellular
-  role: 'Rewriting the cell in time (2/2) — multicellularity as two compositional rewrites: development
-    (cells reorganize into a colony) and evolution (variation, selection, and a new interface port).'
+  role: 'Division as a FIRST-CLASS structural rewrite — the cell''s own replicated DNA crosses a threshold
+    and one cell node genuinely becomes two, conserving mass (the parent is partitioned, not duplicated).
+    No wall clock.'
+- study: typed-interface
+  role: The contract and its coupling — a cell specified as its typed exchange ports (Fig 4), then closed
+    into a sense/act loop over a real diffusing spatial field (Fig 5); sensing and acting are one coupling.
+- study: the-nested-cell
+  role: From molecules to the nested cell — an F1Fo ATP-synthase molecular mechanism at the deepest grain
+    feeding a gene-expression cascade across a six-level nested place graph; the deepest test of structural
+    interface preservation.
 - study: the-living-atlas
-  role: The payoff — the figures' modules compose into one whole cell that grows, divides once, and dies,
-    backed by all twelve drafts each compiled to a running executable.
-how_to_read: 'Read the studies in arc order: typed-interface (the contract — a cell as its typed
+  role: 'The payoff — the thesis at whole-cell scale: one assembled cell (built by hand in the figures''
+    style, not compiled), three swappable Fig 6 metabolisms, three distinct life histories — each grows,
+    divides once (mass-conserved), and dies on a scripted thermal shock.'
+- study: gallery
+  role: 'Appendix — every figure compiles and runs (11 figure drafts, 12 executable composites). Fig 9
+    self-organization and Fig 10-2/10-3 development/evolution are folded in here and deliberately deflated:
+    they compile and run, but the selection is an ODE and the "new port" a config flag flip.'
+how_to_read: 'Read the studies in thesis-first order. Start with one-interface-three-mechanisms — the
 
-  exchange ports) → closing-the-loop (coupling — the sense/act loop closed over a real diffusing
+  whole argument in one figure: one metabolism interface run three ways (coarse lumped yield, saturating
 
-  field) → one-interface-three-mechanisms (the thesis — one metabolism interface run coarse, kinetic,
+  kinetics, and REAL COBRApy flux-balance), with a non-conforming impostor rejected at compile time. Then
 
-  and as real COBRApy FBA) → the-nested-cell (the molecular grain — an ATP-synthase mechanism feeding
+  divide (division as a first-class structural rewrite — the cell''s own DNA crosses a threshold and one
 
-  a six-level nested place graph) → self-made (closure — metabolism,
+  cell node becomes two, conserving mass). Then typed-interface (the contract and its coupling — a cell
 
-  containment, and replication sustaining each other; autopoiesis) → divide (single-cell rewrite) and
+  as its typed ports, closed into a sense/act loop over a real diffusing field). Then the-nested-cell (the
 
-  multicellular (development and evolution — rewriting the cell in time) → the-living-atlas (the capstone
+  molecular grain — an ATP-synthase mechanism feeding a cascade across a six-level nested place graph, the
 
-  — the figure modules composed into one whole cell that grows, divides once, and dies, backed by all
+  deepest test of structural interface preservation). Then the-living-atlas (the payoff — the same Fig 6
 
-  twelve drafts compiled and in motion).
+  mechanism-swap carried up to a whole assembled cell: three metabolisms, three life histories, each
 
-
-  In each study, look at two things side by side: the DRAFT render (the loom figure — the interface
-
-  and its contract, no dynamics) and the EXECUTABLE dynamics (the same interface, now running).
-
-  Notice the pattern that makes the argument tight: every study pairs its live mechanism with a
-
-  `draft-is-inert` NEGATIVE CONTROL — the draft, actually run, does nothing (ports wire up, the
-
-  update is empty). That control is how the investigation proves the mechanism, not the wiring,
-
-  produces the behavior: swap the mechanism out and the dynamics vanish while the interface stays
-
-  identical.
+  growing, dividing once, and dying). Finally the gallery appendix (every figure compiles and runs).
 
 
-  Short on time? Start with one-interface-three-mechanisms (the whole thesis in one figure), divide
+  In each study, look at two things side by side: the DRAFT render (the loom figure — the structural
 
-  (a genuine event-driven structural rewrite), and the-living-atlas (the executables in motion plus
+  interface, no dynamics) and the EXECUTABLE dynamics (the same interface, now running). The investigation''s
 
-  the whole-cell arc). Throughout, hold the compiler''s law 2: did the mechanism change while the
+  genuine control is the compiler''s IMPOSTOR-REJECTION in one-interface-three-mechanisms: a handler that
 
-  interface stayed the same?
+  breaks the port contract is refused at compile time with a CompileError naming the missing ports — that
+
+  is the interface being enforced, not merely described. (The per-study `draft-is-inert` checks are only
+
+  sanity checks of the framework''s definition — a draft has an empty update by construction — not
+
+  scientific counterfactuals; where a real ablation would strengthen a claim, that is noted in the study.)
+
+
+  Short on time? Read one-interface-three-mechanisms (the thesis and its impostor control), divide (a
+
+  genuine structural rewrite), and the-living-atlas (the mechanism-swap at whole-cell scale). Throughout,
+
+  hold the compiler''s law 2: did the mechanism change while the STRUCTURAL interface — port names, types,
+
+  wiring — stayed the same?
 
   '
 glossary:
@@ -269,14 +313,15 @@ glossary:
   definition: The set of typed, unit-bearing variables through which a cellular description couples to
     its environment (fluxes, forces, currents, heat, plus growth, shape, objective, viability).
 - term: Draft process
-  definition: An interface with a behavior contract but no dynamics — typed ports + intent, an inert update;
-    it builds and renders but does nothing if run.
+  definition: An interface with a STRUCTURAL contract but no dynamics — typed ports + wiring + intent, an
+    inert (empty) update; it builds and renders but does nothing if run.
 - term: Handler
   definition: An executable Process that implements a draft's interface with real dynamics; the compiler
     installs one per draft.
 - term: Conformance (H ⊢ S)
-  definition: A handler conforms to a signature when it supplies every interface port with a compatible
-    type; the compiler refuses to install a non-conforming handler.
+  definition: STRUCTURAL conformance — a handler conforms to a signature when it supplies every interface
+    port with a compatible type and wiring; the compiler refuses to install a non-conforming handler. It
+    checks port names, types, and wiring — NOT units, dimensions, invariants, or runtime behavior.
 - term: Interface preservation (law 2)
   definition: Compilation changes a figure's internal mechanism but leaves its external interface — port
     names and wired store paths — identical.
@@ -302,34 +347,52 @@ guidelines:
   - Agmon & Spangler — Process Bigraphs and the Architecture of Compositional Systems Biology (arXiv:2512.23754).
   - Maturana & Varela — Autopoiesis and Cognition (Fig 9 closure).
   - Milner — bigraphical reactive systems (the reaction rules behind Fig 10 division).
-  naming_conventions: 'Studies are named fig-<n> after the paper''s figures; composites are
+  naming_conventions: 'Studies are named thematically (one-interface-three-mechanisms, divide, …), not
 
-    <package>.composites.fig<n>-<slug>; each figure has a SEMANTIC composite
+    after figure numbers. Composites are <package>.composites.fig<n>-<slug>; each of the paper''s Figs
 
-    (fig<n>-<slug>) and, where compiled, an EXECUTABLE (fig<n>-executable[-variant]).
+    4–10 has a SEMANTIC (draft) composite (fig<n>-<slug>) and, where compiled, an EXECUTABLE
+
+    (fig<n>-executable[-variant]) — 11 figure drafts, 10 compiled (Fig 4a is draft-only), 12 executable
+
+    composites in all (Fig 6 carries three mechanisms).
 
     '
 competing_frameworks:
-- name: Monolithic whole-cell model
-  prediction: A cell must be modeled as one large integrated system; components cannot be swapped without
-    rebuilding it.
-  discriminated_by: fig-06 — the same metabolism interface is realized by three independent handlers (coarse/kinetic/FBA)
-    with no change to the rest of the composite; and the whole cell is assembled from independently-authored
-    figure mechanisms.
-- name: Datatype interchange (SBML-style)
-  prediction: A model is a fixed datatype to be read, not a program; refining a component means editing
-    the datatype.
-  discriminated_by: The draft→executable compiler treats each figure as a program whose mechanism is installed
-    behind a preserved interface — refinement is a handler swap, not a datatype edit.
+- name: Kappa / BNGL (rule-based modeling)
+  prediction: Biology is best written as rule-based, structure-changing rewrites over site graphs — agents,
+    bonds, and complexes created and destroyed by rules.
+  discriminated_by: 'This work shares FIRST-CLASS structural rewrites (Fig 10 division is exactly such a rule
+    — one cell node becomes two), but adds an INERT, type-checked SPECIFICATION stage upstream of any
+    mechanism — the interface is authored and structurally checked before a rule or rate law is chosen, and
+    mechanisms of any grain (ODE, rule-based, or FBA) install behind the same checked interface.'
+- name: PySB / BioCRNpyler (programmatic composition)
+  prediction: Models are assembled programmatically from reusable components or motifs in a host language,
+    then exported to a simulator.
+  discriminated_by: Same programmatic-composition spirit, but composition here is over TYPED INTERFACES
+    with a compile step that machine-checks interface preservation (law 2). A component is a draft first
+    (ports and wiring, no mechanism); swapping mechanisms behind it is a checked operation, not a re-code.
+- name: ML-family algebraic-effect handlers / functors (the PL lineage)
+  prediction: Effects are declared as an interface (an algebraic-effect signature, or a functor's required
+    structure) and later given a handler/implementation the type system checks against the signature.
+  discriminated_by: This is the direct programming-languages lineage — a draft is the effect signature /
+    functor input, compilation is handler installation, and law 2 is signature preservation. The
+    contribution is to instantiate that discipline for biological models — unit-labeled cellular interfaces,
+    a place-graph substrate, and structural rewrites as first-class citizens.
+- name: Vivarium's own mechanism-swapping behind interfaces
+  prediction: Vivarium already composes processes over shared stores and lets one process be replaced by
+    another that reads and writes the same ports.
+  discriminated_by: 'This work turns that swap into a CHECKED, staged discipline — the interface is authored
+    as an inert draft, and a mechanism is installed only if it STRUCTURALLY conforms — a non-conforming
+    impostor is rejected at compile time with a CompileError naming the missing ports — rather than relying
+    on the convention that two processes happen to share ports.'
 studies:
-- typed-interface
-- closing-the-loop
 - one-interface-three-mechanisms
-- the-nested-cell
-- self-made
 - divide
-- multicellular
+- typed-interface
+- the-nested-cell
 - the-living-atlas
+- gallery
 limitations:
 - Interfaces are checked at the port/type level — port names and compatible types must match for a handler
   to install — not by runtime invariant. The compiler enforces that the ports line up and carry compatible
@@ -340,8 +403,11 @@ limitations:
 - Handlers are toy-real, not calibrated — plausible constants, not fitted parameters. The dynamics
   demonstrate the pattern (ultrasensitivity, closure, division, disintegration), not a quantitatively
   validated cell.
-- The whole-cell composition is illustrative — it assembles independently-authored figure mechanisms
-  into one run to show that the interfaces compose, not to reproduce a specific organism's physiology.
+- The capstone whole cell is ASSEMBLED BY HAND in the figures' style (wholecell.py), not emitted by the
+  compiler from the figure drafts. It demonstrates the Fig 6 mechanism-swap at whole-cell scale (coarse /
+  kinetic / real-FBA metabolism behind one interface), not a calibrated organism. Its division conserves
+  mass (the mother is halved) and its death is a SCRIPTED thermal shock (hard-coded t=12), not an emergent
+  failure.
 - The compiler is the binding stage only. It installs one conforming mechanism per draft; it does not
   fit parameters, discover mechanisms, or reconcile mechanisms that disagree.
 expert_docs: []

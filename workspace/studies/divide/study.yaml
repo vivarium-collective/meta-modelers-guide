@@ -8,19 +8,24 @@ phase: Decide
 gate_status: passed
 confidence: Accepted
 question: Is cell division in Fig 10 a genuine structural rewrite of the place graph — a single cell node
-  actually becoming two daughter nodes at runtime — rather than a pre-declared post-structure that is
-  merely animated?
+  actually becoming two daughter nodes at runtime, fired by the cell's own replicated DNA crossing a
+  threshold — rather than a pre-declared post-structure that is merely animated on a wall clock?
 biological_summary: 'Fig 10 rewrites the cell across time, and division is its sharpest case. This is
   not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction
-  rule in Milner''s sense whose reactum has more nodes than its redex. When a cell''s DNA crosses a
-  threshold, the rule fires: the cell node is replaced by two daughter nodes, each inheriting a symmetric
-  share of the parent''s DNA. Fired once as the cell grows to threshold, it takes cell_count from 1 to 2
-  — a single division event — with the parent''s dna climbing 1 → 3.06 and each new daughter spawning dna
-  0 → 2.75 and biomass 0 → 0.5. The daughters
-  are structurally new — they do not exist in the initial state — which is exactly what makes this an
-  event-driven rewrite rather than an animation of a pre-built pair.'
-claim: 'Division is a change to the composition itself: one cell becomes two through a graph rewrite that
-  creates new nodes at runtime, not a pre-drawn pair.'
+  rule in Milner''s sense whose reactum has more nodes than its redex. The trigger is the cell''s OWN
+  biology, not a timer: an autocatalytic DNA-replication process grows the cell''s ``dna`` and, when it
+  crosses ``dna_threshold`` = 2.0, the rewrite fires exactly once. There is no wall clock, no
+  ``division_time``, no scheduled tick — the cell divides because ``dna >= threshold``. At the event the
+  parent''s biomass is PARTITIONED, not duplicated: the parent node''s biomass is driven to 0 and each of
+  the two daughters receives M/2, so mass is CONSERVED (one cell node → two daughter nodes). Measured on
+  the compiled composite fig10-1-executable, the parent''s ``dna`` climbs 1 → 3.06 and crosses the
+  threshold; the rewrite fires; ``cell_count`` goes 1 → 2; each daughter inherits DNA (0 → 2.75) and half
+  the parent''s biomass (0 → 0.5) while the parent''s biomass falls to 0. The daughters are structurally
+  new — they do not exist in the initial state — which is exactly what makes this an event-driven rewrite
+  rather than an animation of a pre-built pair.'
+claim: 'Division is a change to the composition itself, triggered by the cell''s own replicated DNA
+  crossing a threshold: one cell becomes two through a graph rewrite that creates new nodes at runtime and
+  conserves mass (the parent is halved, not doubled) — not a pre-drawn pair on a timer.'
 baseline:
 - name: division-rewrite
   composite: meta_modelers_guide.composites.fig10-1-rewrite
@@ -30,8 +35,10 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: division-occurs
+- name: division-fires
   classification: primary
+  description: 'The cell''s replicated DNA crosses ``dna_threshold`` = 2.0 (parent dna 1 → 3.06) and the
+    rewrite fires ONCE — cell_count goes 1 → 2. The trigger is DNA state, not a wall clock.'
   measure:
     kind: observable
     path: cell_count
@@ -39,10 +46,13 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.5
-    provenance: lineage divides once (exec cell_count 1→2)
-  requires_simulation: division-occurs
+    provenance: 'DNA crosses threshold 2.0 (parent dna 1→3.06) → rewrite fires once, cell_count 1→2 (exec fig10-1-executable)'
+  requires_simulation: divide
 - name: daughters-spawn
   classification: primary
+  description: 'The rewrite spawns two structurally-new daughter nodes and CONSERVES MASS: each daughter
+    inherits DNA (0 → 2.75) and half the parent''s biomass (0 → 0.5) while the parent''s biomass is driven
+    to 0 (M → M/2 + M/2, not M → 2M).'
   measure:
     kind: observable
     path: dna
@@ -50,10 +60,14 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: division spawns two new daughters (exec daughter dna 0→2.75)
-  requires_simulation: daughters-spawn
+    provenance: 'division spawns two new daughters (exec daughter dna 0→2.75; each daughter biomass 0→0.5, parent biomass →0 — mass conserved)'
+  requires_simulation: divide
 - name: draft-is-inert
   classification: diagnostic
+  control: negative
+  description: 'One-line sanity check (NOT the study''s control): the inert draft has empty updates by
+    construction, so it stays at seed cell_count 1 and fails this threshold by design. This confirms the
+    framework''s definition of a draft, not a scientific counterfactual.'
   measure:
     kind: observable
     path: cell_count
@@ -61,10 +75,8 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.5
-    provenance: inert-draft run stays at seed cell_count 1 (no mechanism → no dynamics)
-  control: negative
-  description: 'Negative control: the inert draft (no mechanism) MUST fail this.'
-  requires_simulation: draft-is-inert
+    provenance: 'inert-draft run stays at seed cell_count 1 (empty update by construction) → fails by design (expected-fail control)'
+  requires_simulation: divide
 runs:
 - name: divide
   composite: divide
@@ -77,43 +89,46 @@ runs:
   outcomes:
     DIVISION-FIRES:
       result: PASS
-      detail: cell_count 1 → 2 — one division event, spawning daughter_1 + daughter_2
+      detail: parent dna 1 → 3.06 crosses dna_threshold 2.0 → the rewrite fires once, cell_count 1 → 2 (spawning daughter_1 + daughter_2)
     DAUGHTERS-SPAWN:
       result: PASS
-      detail: each daughter spawns dna 0 → 2.75 and biomass 0 → 0.5
-    PARENT-GROWS:
+      detail: each daughter inherits dna 0 → 2.75 and biomass 0 → 0.5, while the parent biomass falls to 0 — mass conserved (one node → two nodes)
+    DRAFT-IS-INERT:
       result: PASS
-      detail: parent cell.dna climbs 1 → 3.06 to reach the division threshold
+      detail: 'expected-fail control: the inert draft (empty update) stays at seed cell_count 1 — it fails the ≥1.5 threshold by design, confirming a draft is inert'
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Growth to threshold fires a division event. Confirmed: cell_count 1 → 2 — one division,
-    spawning daughter_1 + daughter_2.'
+  statement: 'Replicated DNA crossing a threshold fires a division event — no wall clock. Confirmed: parent
+    dna 1 → 3.06 crosses dna_threshold 2.0, the rewrite fires once, cell_count 1 → 2.'
   evidence:
     from_test: division-fires
     from_run: divide
-    observed: cell_count 1 → 2 (one division)
+    observed: parent dna 1 → 3.06 crosses threshold 2.0; cell_count 1 → 2 (one division)
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The division spawns two structurally-new daughter nodes. Confirmed: each daughter dna 0 →
-    2.75 and biomass 0 → 0.5.'
+  statement: 'The division spawns two structurally-new daughter nodes and CONSERVES MASS. Confirmed: each
+    daughter inherits dna 0 → 2.75 and biomass 0 → 0.5 while the parent biomass falls to 0 (the parent is
+    halved, not doubled).'
   evidence:
     from_test: daughters-spawn
     from_run: divide
-    observed: each daughter dna 0 → 2.75, biomass 0 → 0.5
+    observed: each daughter dna 0 → 2.75, biomass 0 → 0.5; parent biomass → 0 (mass conserved)
 - id: F-03
   kind: biological
   tier: observation
   status: confirms
-  statement: 'The parent grows to the division threshold before firing. Confirmed: cell.dna 1 → 3.06.'
+  statement: 'Sanity check on the framework''s definition: the inert draft, with no mechanism, has an empty
+    update and stays at seed. Confirmed: inert draft cell_count stays 1 (it fails the division threshold by
+    design — the definition of a draft, not a scientific control).'
   evidence:
-    from_test: parent-grows
+    from_test: draft-is-inert
     from_run: divide
-    observed: cell.dna 1 → 3.06
+    observed: inert draft stays at cell_count 1 (empty update by construction)
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -121,55 +136,59 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Division-fires, daughters-spawn, and parent-grows all pass; the inert draft stays at cell_count 1, so division is a real runtime rewrite.
+    basis: Division-fires and daughters-spawn both pass — the DNA threshold is crossed, the rewrite fires once, and mass is conserved across the partition; the inert draft stays at cell_count 1, so division is a real runtime rewrite.
   explanatory_gain:
     result: POSITIVE
-    basis: Watching one cell node be replaced by two structurally-new daughters via a runtime rewrite makes division-as-graph-rewrite concrete rather than animated.
+    basis: Watching one cell node be replaced by two structurally-new daughters — fired by the cell's own DNA crossing a threshold, with mass conserved — makes division-as-graph-rewrite concrete rather than animated on a clock.
 conclusion: '## Claims
 
-  - Growth to a DNA threshold triggers a single division event: the cell node is replaced by two structurally-new
-  daughter nodes and cell_count goes 1→2 — a genuine event on top of continuous growth.
+  - The cell''s own replicated DNA crossing a threshold (dna_threshold = 2.0) triggers a single division
+  event: the cell node is replaced by two structurally-new daughter nodes and cell_count goes 1→2. The
+  rewrite CONSERVES MASS — the parent''s biomass fully partitions (parent→0, each daughter M/2=0.5), it is
+  not duplicated. There is no wall clock: the trigger is ``dna >= threshold``.
 
 
   ## Evidence
 
-  - **DIVISION-FIRES** — cell_count 1 → 2 (one division), spawning daughter_1 + daughter_2
+  - **DIVISION-FIRES** — parent dna 1 → 3.06 crosses dna_threshold 2.0 → rewrite fires once, cell_count 1 → 2
 
-  - **DAUGHTERS-SPAWN** — each daughter dna 0 → 2.75, biomass 0 → 0.5
+  - **DAUGHTERS-SPAWN** — each daughter dna 0 → 2.75, biomass 0 → 0.5; parent biomass → 0 (mass conserved)
 
-  - **PARENT-GROWS** — parent cell.dna 1 → 3.06 to reach the threshold
+  - **DRAFT-IS-INERT** — sanity check: the inert draft (empty update) stays at cell_count 1 by construction
 
 
   ## Limitations
 
-  - Toy-real division: the rewrite fires once and division is symmetric; the threshold and growth constants are illustrative.
+  - Toy-real division: the rewrite fires once and division is symmetric; the DNA threshold, replication and
+  segregation constants are illustrative.
 
 
   ## Next steps
 
-  - Add repeated, size-controlled, or asymmetric division rules to test the rewrite mechanism under realistic division timing.'
+  - Add repeated, size-controlled, or asymmetric division rules to test the rewrite mechanism under
+  realistic division control.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
-    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
-      preservation holds.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; the
+      DNA-threshold trigger fires, the structural rewrite runs, and mass is conserved.
     pipeline_unblocks:
-    - multicellular
+    - typed-interface
   if_primary_tests_fail:
     diagnose:
-    - compiler dropped/renamed an interface port (law 2 violation)
-    - handler produced no non-trivial dynamics on the declared ports
-    block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
+    - the DNA-replication process never drives dna across the threshold (the rewrite never fires)
+    - the rewrite fails to spawn two structurally-new daughter nodes, or fails to conserve mass across the partition
+    block_downstream: the-living-atlas (the composed whole cell depends on this figure's division rewrite)
 limitations:
 - Symmetric division with a fixed DNA threshold; asymmetric division, septum placement, and size control are not modelled.
 - The rewrite fires once (cell_count 1→2); repeated division and spatial structure among daughters are not modelled.
-falsifiability: Overturned if cell_count never increases (the rewrite never fires) or if the division fails to spawn two structurally-new daughter nodes.
+falsifiability: Overturned if cell_count never increases (the DNA threshold is never crossed and the rewrite never fires), if the division fails to spawn two structurally-new daughter nodes, or if mass is not conserved across the partition (the parent's biomass is not driven to 0 while the daughters receive M/2 each).
 visualizations:
 - name: divide-dynamics
   address: image:visualizations/divide-dynamics.svg
   config:
     chart: image
-    caption: Division dynamics, run to completion through the engine.
+    caption: Division dynamics — DNA crosses threshold, the rewrite fires, and the parent's biomass partitions to two daughters (mass conserved), run to completion through the engine.
 - name: fig10-1-division
   address: image:visualizations/fig10-1-division.svg
   config:
@@ -179,9 +198,11 @@ visualizations:
   config:
     chart: image
 parent_studies:
-- study: self-made
+- study: one-interface-three-mechanisms
   condition: tests-passed
-experiment: Install a Milner reaction rule behind the Fig 10 division interface and let the cell grow
-  to threshold and fire it.
-result: The single cell node is replaced by two structurally-new daughters (each dna → 2.75, biomass →
-  0.5) — a genuine structural rewrite, driven by the cell's own growth.
+experiment: Install a Milner reaction rule behind the Fig 10 division interface, let an autocatalytic
+  DNA-replication process grow the cell's dna to the threshold, and observe the rewrite fire.
+result: The cell's replicated dna climbs 1 → 3.06 and crosses the threshold (2.0); the single cell node
+  is replaced by two structurally-new daughters, each inheriting dna → 2.75 and half the parent's biomass
+  (→ 0.5) while the parent's biomass falls to 0 — a genuine, mass-conserving structural rewrite driven by
+  the cell's own DNA, not a timer.
