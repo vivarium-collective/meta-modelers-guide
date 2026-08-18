@@ -48,12 +48,14 @@ STUDY_EXECUTABLES = {
     "closing-the-loop": ["fig05-executable"],
     "one-interface-three-mechanisms": [
         "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba"],
-    "molecular-channels": ["fig07-executable"],
-    "the-nested-cell": ["fig08-executable"],
+    # the-nested-cell absorbs the Fig 7 molecular mechanism (former molecular-channels study)
+    "the-nested-cell": ["fig07-executable", "fig08-executable"],
     "self-made": ["fig09a-executable", "fig09b-executable"],
     "divide": ["fig10-1-executable"],
-    "biofilm": ["fig10-2-executable"],
-    "evolve": ["fig10-3-executable"],
+    # multicellular merges development (Fig 10-2) + evolution (Fig 10-3)
+    "multicellular": ["fig10-2-executable", "fig10-3-executable"],
+    # the-living-atlas is the capstone: the composed whole cell is PRIMARY (rendered
+    # separately below); the 12-executable gallery is secondary (-gallery.svg).
     "the-living-atlas": [
         "fig04b-executable", "fig05-executable",
         "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba",
@@ -79,14 +81,11 @@ INVARIANTS = {
         "invariant_kind": "interface-preserved",
         "invariant": "one nutrients⇒biomass interface, three handlers → coarse 4.0 / kinetic 2.67 / "
                      "FBA 6.29 (+acetate overflow 30.4); same ports, distinct dynamics (law 4)"},
-    "molecular-channels": {
-        "invariant_kind": "mechanism",
-        "invariant": "the F1Fo ATP synthase runs on the Fig 7 interface — ATP output 0→100 "
-                     "(proton-motive-force-driven rotary catalysis)"},
     "the-nested-cell": {
         "invariant_kind": "hierarchy",
-        "invariant": "the central dogma runs nested in the cell — metabolites 0→1.5, rna 0→0.18, "
-                     "energy 0→0.84 across scales on one interface"},
+        "invariant": "molecular mechanisms compose into the nested cell — an F1Fo ATP synthase "
+                     "(Fig 7) drives output 0→100, feeding a central-dogma cascade (rna 0→0.18, "
+                     "metabolites 0→1.5, energy 0→0.84) across nested scales on one interface"},
     "self-made": {
         "invariant_kind": "closure",
         "invariant": "autopoietic closure self-sustains structure — membrane 0→1.6, enzymes 0→0.72; "
@@ -95,18 +94,16 @@ INVARIANTS = {
         "invariant_kind": "rewrite",
         "invariant": "division as a real topology event — cell_count 1→2, two daughters "
                      "(dna 0→2.75 each), parent dna 1→3.06"},
-    "biofilm": {
+    "multicellular": {
         "invariant_kind": "composition",
-        "invariant": "cells reorganize into a colony — aggregate biofilm_mass 0→2.25, ecm 0→1.8; "
-                     "colony-level observables emerge from nesting"},
-    "evolve": {
-        "invariant_kind": "innovation",
-        "invariant": "a variant acquires a new interface port under selection — new_port 0→0.57 "
-                     "while the population grows (cell_count 1→3.4)"},
+        "invariant": "single cells reorganize and evolve — a colony accumulates biofilm_mass 0→2.25 "
+                     "& ecm 0→1.8 (development), and a variant acquires a new interface port 0→0.57 "
+                     "while the population grows 1→3.4 (evolution)"},
     "the-living-atlas": {
         "invariant_kind": "composition",
-        "invariant": "12/12 figures compile to executables that run; assembled, the cell grows, "
-                     "divides once (1→2), and dies (viability 1.0→0.02, debris 0→4.87)"},
+        "invariant": "the figures' modules compose into one cell — it grows (biomass peak 5.1), "
+                     "divides once (cell_count 1→2), then dies (viability 1.0→0.02, debris 0→4.87); "
+                     "all 12 figures also run on their own"},
 }
 
 
@@ -191,11 +188,50 @@ def _panel(ax, stem, title):
             for lab, ys in series.items()}
 
 
+def _whole_cell(viz):
+    """PRIMARY atlas figure: run the composed whole-cell composite and plot the
+    grow→divide→die trajectory (biomass, viability, temperature, cell_count, debris)."""
+    state = json.loads((COMPOSITES / "whole-cell.composite.json").read_text())["state"]
+    core = build_core()
+    sim = Composite({"state": state}, core=core)
+    sim.run(20.0)
+    rows = gather_emitter_results(sim)[("emitter",)]
+    t = [r["time"] for r in rows]
+    keys = [("biomass", "#0d6e6b"), ("cell_count", "#1c7a77"), ("viability", "#657572"),
+            ("temperature", "#a5620f"), ("debris", "#c98a3a")]
+    fig, ax = plt.subplots(figsize=(6.0, 3.8), dpi=100)
+    ax2 = ax.twinx()
+    ro = {}
+    for k, col in keys:
+        ys = [float(r[k]) for r in rows if k in r]
+        if not ys:
+            continue
+        target = ax2 if k == "temperature" else ax
+        target.plot(t, ys, lw=2, color=col, label=k)
+        ro[k] = {"first": round(ys[0], 4), "last": round(ys[-1], 4),
+                 "min": round(min(ys), 4), "max": round(max(ys), 4)}
+    ax.set_title("the composed whole cell — grow · divide · die", fontsize=11, color="#16211f")
+    ax.set_xlabel("time", fontsize=9)
+    ax.set_ylabel("biomass · cell_count · viability · debris", fontsize=8)
+    ax2.set_ylabel("temperature (°C)", fontsize=8, color="#a5620f")
+    lines = ax.get_lines() + ax2.get_lines()
+    ax.legend(lines, [ln.get_label() for ln in lines], fontsize=7, frameon=False, loc="upper left")
+    ax.grid(True, alpha=0.15)
+    for s in ("top",):
+        ax.spines[s].set_visible(False)
+    fig.tight_layout()
+    fig.savefig(viz / "the-living-atlas-dynamics.svg", format="svg")
+    plt.close(fig)
+    return {"whole-cell": ro}
+
+
 def render(slug, stems):
     viz = STUDIES / slug / "visualizations"
     if not viz.parent.exists():
         return None
     viz.mkdir(parents=True, exist_ok=True)
+    # the-living-atlas: whole cell is PRIMARY; the 12-executable gallery is -gallery.svg
+    atlas = slug == "the-living-atlas"
     n = len(stems)
     if n == 1:
         fig, axes = plt.subplots(1, 1, figsize=(5.4, 3.5), dpi=100)
@@ -211,11 +247,15 @@ def render(slug, stems):
         readouts[stem] = _panel(ax, stem, title)
     for ax in axes[len(stems):]:
         ax.set_visible(False)
-    fig.suptitle(slug.replace("-", " "), fontsize=11, color="#16211f", y=0.99)
+    title = "the twelve compiled figures, each running" if atlas else slug.replace("-", " ")
+    fig.suptitle(title, fontsize=11, color="#16211f", y=0.99)
     fig.tight_layout()
-    out = viz / f"{slug}-dynamics.svg"
+    # atlas: the gallery is the SECONDARY figure; the whole cell is the primary -dynamics.svg
+    out = viz / (f"{slug}-gallery.svg" if atlas else f"{slug}-dynamics.svg")
     fig.savefig(out, format="svg")
     plt.close(fig)
+    if atlas:
+        readouts["whole-cell"] = _whole_cell(viz)["whole-cell"]
     return readouts
 
 
