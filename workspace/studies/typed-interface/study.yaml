@@ -31,55 +31,55 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: volume-growth
+- name: shape-growth
   classification: primary
-  description: The conforming handler grows the cell — volume climbs well above its seed.
+  description: The conforming handler grows the cell — shape climbs well above its seed.
   measure:
     kind: observable
-    path: volume
-    expr: max(volume)
+    path: shape
+    expr: max(shape)
   pass_if:
     op: '>='
     value: 2.0
-    provenance: 'executable run: max volume 6.11 from seed 0.5 (Monod uptake → yield·u growth)'
+    provenance: 'executable run: shape 1.0→4.2 (chemical uptake drives growth); exec last≈4.2'
   requires_simulation: typed-interface
-- name: nutrient-depletion
+- name: chemical-uptake
   classification: primary
-  description: Monod uptake draws the finite nutrient pool down to ≈0 (saturating consumption).
+  description: The cell takes up chemical across its interface — net chemical flux goes negative.
   measure:
     kind: observable
-    path: nutrient
-    expr: last(nutrient)
+    path: chemical
+    expr: min(chemical)
   pass_if:
     op: <=
-    value: 0.1
-    provenance: 'Monod uptake depletes the finite pool (10.0) to ~0 by t=18'
+    value: -0.5
+    provenance: 'chemical flux 0.0→-0.8 (net uptake across the interface); exec last≈-0.8'
   requires_simulation: typed-interface
-- name: viability-cliff
+- name: objective-climbs
   classification: primary
-  description: Viability holds ≈1 in-band then collapses once T exceeds t_tol (Arrhenius).
+  description: The cell pursues its declared objective — the objective readout climbs from zero.
   measure:
     kind: observable
-    path: viability
-    expr: last(viability)
+    path: objective
+    expr: last(objective)
   pass_if:
-    op: <=
-    value: 0.1
-    provenance: 'Arrhenius: viability collapses once T > t_tol = 42 (crosses at t≈5.6, →0 by t=18)'
+    op: '>='
+    value: 1.0
+    provenance: 'objective 0.0→1.6 as growth proceeds; exec last≈1.6'
   requires_simulation: typed-interface
 - name: draft-is-inert
   classification: diagnostic
   control: negative
-  description: 'Negative control: the inert draft (typed ports, no mechanism) MUST fail volume-growth
-    — volume stays at its 0.5 seed. This is what the correct model is contrasted against.'
+  description: 'Negative control: the inert draft (typed ports, no mechanism) MUST fail shape-growth
+    — shape stays at its 1.0 seed. This is what the correct model is contrasted against.'
   measure:
     kind: observable
-    path: volume
-    expr: max(volume)
+    path: shape
+    expr: max(shape)
   pass_if:
     op: '>='
     value: 2.0
-    provenance: 'inert-draft run: max volume 0.50 (no mechanism → no growth); the control the correct model is contrasted against'
+    provenance: 'inert-draft run: shape stays 1.0 (no mechanism → no growth); the control the correct model is contrasted against'
   requires_simulation: typed-interface
 runs:
 - name: typed-interface
@@ -87,50 +87,50 @@ runs:
   emitter: RAMEmitter
   id: typed-interface
   status: completed
-  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
-    through the engine; conservation invariant checked per figure.
+  provenance: scripts/render_study_evidence.py — fig04b-executable compiled from the Fig 4 draft, run
+    to completion through the engine.
   params: {}
   outcomes:
-    GROWTH-TRACKS-NUTRIENT:
+    SHAPE-GROWS:
       result: PASS
-      detail: volume +3.70 from nutrient −10.00 (yield-bounded)
-    MONOD-SATURATION:
+      detail: shape 1.0 → 4.2 (growth well above seed)
+    CHEMICAL-UPTAKE:
       result: PASS
-      detail: nutrient 10→0 (saturating drawdown)
-    VIABILITY-CLIFF:
+      detail: chemical flux 0.0 → -0.8 (net uptake across the interface)
+    OBJECTIVE-CLIMBS:
       result: PASS
-      detail: viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band
+      detail: objective 0.0 → 1.6 (goal-directed progress)
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Volume gained is paid for by nutrient consumed (mass balance). Confirmed: volume +3.70 from
-    nutrient −10.00 (yield-bounded).'
+  statement: 'Installing one conforming handler grows the cell through its interface. Confirmed: shape
+    1.0 → 4.2.'
   evidence:
-    from_test: growth-tracks-nutrient
+    from_test: shape-growth
     from_run: typed-interface
-    observed: volume +3.70 from nutrient −10.00 (yield-bounded)
+    observed: shape 1.0 → 4.2
 - id: F-02
   kind: biological
   tier: observation
   status: confirms
-  statement: 'Uptake follows a saturating Monod law and depletes the pool. Confirmed: nutrient 10→0 (saturating
-    drawdown).'
+  statement: 'The cell takes up chemical across its interface (net negative flux). Confirmed: chemical
+    flux 0.0 → -0.8.'
   evidence:
-    from_test: monod-saturation
+    from_test: chemical-uptake
     from_run: typed-interface
-    observed: nutrient 10→0 (saturating drawdown)
+    observed: chemical flux 0.0 → -0.8
 - id: F-03
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Viability holds in the tolerance band then collapses past it (Arrhenius). Confirmed: viability
-    1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band.'
+  statement: 'The cell makes progress toward its declared objective as growth proceeds. Confirmed: objective
+    0.0 → 1.6.'
   evidence:
-    from_test: viability-cliff
+    from_test: objective-climbs
     from_run: typed-interface
-    observed: viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band
+    observed: objective 0.0 → 1.6
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -138,32 +138,29 @@ conclusion_verdicts:
       + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Volume, nutrient, and viability tests all pass on measured readouts; the inert-draft negative control stays at its 0.5 seed, isolating the installed handler as the cause.
+    basis: Shape, chemical, and objective tests all pass on measured readouts; the inert-draft negative control stays at its 1.0 shape seed, isolating the installed handler as the cause.
   explanatory_gain:
     result: POSITIVE
-    basis: Compiling the inert Fig 4 interface into a running cell makes interface-preservation and the growth-versus-viability coupling directly observable.
+    basis: Compiling the inert Fig 4 interface into a running cell makes interface-preservation and the uptake-driven growth directly observable.
 conclusion: '## Claims
 
-  - Given one conforming handler the cellular interface becomes a bounded cell that grows on a DEPLETING
-  nutrient (Monod uptake; volume +3.7 as substrate falls 10→0) and whose viability holds ≈1 in-band then
-  collapses in an Arrhenius cliff once temperature is ramped past its tolerance — coupled dynamics, not
-  a ramp.
+  - Given one conforming handler the cellular interface becomes a bounded, goal-directed cell: chemical
+  is taken up across the interface (flux 0.0→−0.8) and drives growth, so shape climbs 1.0→4.2 and the
+  objective rises 0.0→1.6 — coupled dynamics behind an unchanged interface, not a scripted ramp.
 
 
   ## Evidence
 
-  - **GROWTH-TRACKS-NUTRIENT** — volume +3.70 from nutrient −10.00 (yield-bounded)
+  - **SHAPE-GROWS** — shape 1.0 → 4.2 (growth well above seed)
 
-  - **MONOD-SATURATION** — nutrient 10→0 (saturating drawdown)
+  - **CHEMICAL-UPTAKE** — chemical flux 0.0 → -0.8 (net uptake across the interface)
 
-  - **VIABILITY-CLIFF** — viability 1.0 → ~0 as temperature ramps 37→50 °C past the 42 °C band
-
-  - **conservation** — volume gained 3.70 from nutrient drawn-down 10.00
+  - **OBJECTIVE-CLIMBS** — objective 0.0 → 1.6 (goal-directed progress)
 
 
   ## Limitations
 
-  - Single-handler toy-real model: mass is conserved and the rate laws (Monod, Arrhenius) are real in shape, but the constants are illustrative.
+  - Single-handler toy-real model: the rate laws are real in shape but the constants are illustrative, and only this one mechanism is installed behind the interface.
 
 
   ## Next steps
@@ -182,15 +179,15 @@ conclusion_logic:
     - handler produced no non-trivial dynamics on the declared ports
     block_downstream: the-living-atlas (the composed whole cell depends on this figure's mechanism)
 limitations:
-- One handler realizes the interface (Monod uptake + Arrhenius viability); the port set admits many mechanisms but only this one is installed and measured.
-- Constants (uptake half-saturation, yield, thermal tolerance) are illustrative, not fitted to a named organism.
-falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 4 interface, or if installing the handler leaves volume flat (no growth) or viability without an Arrhenius collapse past t_tol.
+- One handler realizes the interface (chemical uptake driving growth); the port set admits many mechanisms but only this one is installed and measured.
+- Constants (uptake rate, yield) are illustrative, not fitted to a named organism.
+falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 4 interface, or if installing the handler leaves shape flat (no growth) or the objective unchanged.
 visualizations:
 - name: typed-interface-dynamics
   address: image:visualizations/typed-interface-dynamics.svg
   config:
     chart: image
-    caption: CLOSED-LOOP dynamics — conserved, run to completion.
+    caption: Dynamics of the compiled Fig 4 executable, run to completion.
 - name: fig04a-interaction-modalities
   address: image:visualizations/fig04a-interaction-modalities.svg
   config:

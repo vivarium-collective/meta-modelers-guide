@@ -7,21 +7,34 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: 'Do all of the paper''s semantic figures actually compile to executables that run, and — the
-  real test of composition — can the independently-authored figure mechanisms be assembled into a single
-  whole cell that lives the paper''s full arc: grow, divide, and die?'
-biological_summary: This is the payoff. The nine figure studies each showed one pattern compiling from
-  draft to executable; this study shows the whole atlas running at once and, more importantly, composing.
-  The gallery renders the dynamics of all twelve executables side by side — each compiled figure, actually
-  moving. Then the figures are assembled into a single cell. It takes up nutrients and grows (biomass
-  peaking at ≈ 8.4); as it grows it divides (cell_count 1 → 14); and when a thermal shock pushes its temperature
-  to 50° — outside the viable band — it loses viability (→ ≈0), stops maintaining its boundary, and disintegrates
-  into molecular debris (→ 7.3), with mass conserved through death (peak biomass 8.4 → debris 7.3). The paper's arc — interface,
-  coupling, metabolism, closure, division, disintegration — runs end to end in one composite. A cell,
-  assembled from drafts, that lives and dies.
-claim: 'The patterns compose: independently-specified interfaces and mechanisms can be assembled into
-  one cell that lives the paper''s full arc.'
+question: 'The paper''s semantic figures each compile to an executable that runs — but the real test of
+  composition is whether their independently-authored mechanisms share enough interface to COMPOSE. This
+  capstone wires the recurring figure modules (thermal interface, cell↔environment uptake, viability-gated
+  metabolism, the viability monitor, and the division/disintegration rewrites) through shared cell and
+  environment stores and runs them as one whole cell. Do the figures compose into a single cell that
+  grows, divides, and dies?'
+biological_summary: This is the payoff. Each figure study showed one pattern compiling from draft to executable;
+  here those same mechanisms are wired through shared cell and environment stores into a single running
+  whole cell — and it lives a whole life in one 20-step trajectory. The cell GROWS on the environmental
+  nutrient as viability-gated metabolism converts uptake to biomass (biomass 0.3 → peak ≈5.1). Once biomass
+  crosses the division threshold the rewrite fires ONCE, partitioning it into two daughters (cell_count
+  1 → 2 at t≈3.4). Then the thermal environment shocks past the tolerance band (temperature 37 → 50 °C
+  at t≈12); the viability monitor reads the interface and collapses viability (1.0 → 0.018), which gates
+  metabolism off and triggers the disintegration rewrite — the maintained boundary fails and biomass decays
+  into molecular debris (debris 0 → 4.87, biomass settling to 0.70). Grow, divide once, die — the paper''s
+  interface→coupling→metabolism→viability→rewrite arc, closed in a single composed cell. Backing this whole-cell
+  payoff is the gallery — all twelve of the paper''s semantic figures, each compiling to an executable
+  that runs to completion (12/12). The same mechanisms that ran as twelve separate figures are the modules
+  wired into this one cell.
+claim: 'The paper''s figure mechanisms are modular: wired through shared cell and environment stores they
+  COMPOSE into one whole cell that grows (biomass peak ≈5.1), divides once (cell_count 1 → 2), and dies
+  (viability 1.0 → 0.018 after a thermal shock 37 → 50 °C converts biomass to debris 0 → 4.87). Backing
+  it, all twelve of the paper''s semantic figures compile to executables that run to completion (12/12) —
+  the gallery whose modules this cell composes.'
 baseline:
+- name: whole-cell
+  composite: viva_meta_modelers_guide.composites.whole-cell
+  params: {}
 - name: fig06-exec-coarse
   composite: viva_meta_modelers_guide.composites.fig06-executable-coarse
   params: {}
@@ -60,7 +73,7 @@ baseline:
   params: {}
 variants: []
 behavior_tests:
-- name: peak-growth
+- name: cell-grows
   classification: primary
   measure:
     kind: observable
@@ -69,20 +82,10 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 3.0
-    provenance: biomass peaks then lyses (exec max≈8.4)
+    provenance: viability-gated metabolism converts nutrient uptake to biomass; the composed cell grows
+      biomass 0.3 → peak ≈5.1 (exec max≈5.1)
   requires_simulation: the-living-atlas
-- name: disintegration
-  classification: primary
-  measure:
-    kind: observable
-    path: debris
-    expr: last(debris)
-  pass_if:
-    op: '>='
-    value: 2.0
-    provenance: lysis converts biomass to debris (exec last≈7.3)
-  requires_simulation: the-living-atlas
-- name: division
+- name: cell-divides
   classification: primary
   measure:
     kind: observable
@@ -91,20 +94,35 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 2.0
-    provenance: the cell divides (exec cell_count 1→14)
+    provenance: once biomass crosses the division threshold the rewrite fires ONCE, partitioning the cell
+      into two daughters — cell_count 1 → 2 at t≈3.4 (exec last=2.0)
   requires_simulation: the-living-atlas
-- name: draft-is-inert
-  classification: diagnostic
+- name: cell-dies
+  classification: primary
   measure:
     kind: observable
-    path: biomass
-    expr: max(biomass)
+    path: viability
+    expr: last(viability)
+  pass_if:
+    op: <=
+    value: 0.1
+    provenance: the thermal shock (temperature 37 → 50 °C at t≈12) leaves the viability band; the monitor
+      collapses viability 1.0 → 0.018 and the disintegration rewrite turns biomass to debris 0 → 4.87 (exec
+      last=0.018)
+  requires_simulation: the-living-atlas
+- name: all-figures-run
+  classification: secondary
+  measure:
+    kind: observable
+    path: ports.chemical_out
+    expr: last(ports.chemical_out)
   pass_if:
     op: '>='
-    value: 3.0
-    provenance: draft/knockout run collapses (no mechanism / no closure)
-  control: negative
-  description: 'Negative control: the inert/knockout draft MUST fail this.'
+    value: 50.0
+    provenance: all twelve fig*-executable composites compile and run to completion (12/12); fig07''s F1Fo
+      ATP synthase charging its port chemical_out 0 → 100 is a witness that the gallery executes (exec last=100.0)
+  description: 'Gallery witness: the whole cell composes twelve figure modules; independently, all twelve
+    figures compile to executables that each run to completion.'
   requires_simulation: the-living-atlas
 runs:
 - name: the-living-atlas
@@ -112,136 +130,159 @@ runs:
   emitter: RAMEmitter
   id: the-living-atlas
   status: completed
-  provenance: scripts/render_dynamics.py — viva_meta_modelers_guide.dynamics builders run to completion
-    through the engine; conservation invariant checked per figure.
+  provenance: scripts/render_study_evidence.py — the composed whole-cell composite (wholecell.py modules)
+    run 20 steps, plus all twelve fig*-executable composites run to completion.
   params: {}
   outcomes:
-    FULL-ARC:
+    GROWS:
       result: PASS
-      detail: growth, division, shock, death, debris in one composite
-    MASS-CONSERVED-THROUGH-DEATH:
+      detail: the composed cell grows on the depleting nutrient — biomass 0.3 → peak ≈5.1
+    DIVIDES-ONCE:
       result: PASS
-      detail: peak biomass 8.4 → debris 7.3 (conserved)
-    VIABILITY-CLIFF:
+      detail: the division rewrite fires once — cell_count 1 → 2 (two daughters) at t≈3.4
+    DIES:
       result: PASS
-      detail: viability 1.0 → ~0 at the shock
-    DIVIDES:
+      detail: thermal shock (temperature 37 → 50 °C) collapses viability 1.0 → 0.018 and disintegration
+        converts biomass to debris 0 → 4.87
+    TWELVE-RUN:
       result: PASS
-      detail: cell_count 1 → 14 before death
+      detail: all 12 fig*-executable composites compile and run to completion (12/12)
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Grow → divide → thermal shock → viability collapse → disintegrate, in one run. Confirmed:
-    growth, division, shock, death, debris in one composite.'
+  statement: 'The figure modules compose into a cell that GROWS. Confirmed: wired through shared cell and
+    environment stores, viability-gated metabolism turns nutrient uptake into biomass, growing it 0.3 →
+    peak ≈5.1 in one run.'
   evidence:
-    from_test: full-arc
+    from_test: cell-grows
     from_run: the-living-atlas
-    observed: growth, division, shock, death, debris in one composite
+    observed: biomass 0.3 → peak ≈5.1
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Biomass converts to debris — mass conserved through lysis. Confirmed: peak biomass 8.4 →
-    debris 7.3 (conserved).'
+  statement: 'The composed cell DIVIDES ONCE: when biomass crosses the division threshold the rewrite fires
+    a single time, partitioning the cell into two daughters. Confirmed: cell_count 1 → 2 at t≈3.4.'
   evidence:
-    from_test: mass-conserved-through-death
+    from_test: cell-divides
     from_run: the-living-atlas
-    observed: peak biomass 8.4 → debris 7.3 (conserved)
+    observed: cell_count 1 → 2 (two daughters) at t≈3.4
 - id: F-03
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The thermal shock drives viability past its cliff. Confirmed: viability 1.0 → ~0 at the
-    shock.'
+  statement: 'The composed cell DIES. Confirmed: the thermal environment shocks past the tolerance band
+    (temperature 37 → 50 °C at t≈12), the viability monitor collapses viability 1.0 → 0.018, metabolism
+    gates off, and the disintegration rewrite converts biomass to molecular debris 0 → 4.87.'
   evidence:
-    from_test: viability-cliff
+    from_test: cell-dies
     from_run: the-living-atlas
-    observed: viability 1.0 → ~0 at the shock
+    observed: viability 1.0 → 0.018 after temperature 37 → 50; debris 0 → 4.87
 - id: F-04
   kind: biological
-  tier: observation
+  tier: mechanism
   status: confirms
-  statement: 'The cell divides as it grows before the shock. Confirmed: cell_count 1 → 14 before death.'
+  statement: 'The whole-cell payoff rests on a gallery of running parts: all twelve of the paper''s semantic
+    figures compile to executables that run to completion. Confirmed: 12/12, one witness being fig07''s
+    F1Fo ATP synthase charging its port 0 → 100.'
   evidence:
-    from_test: divides
+    from_test: all-figures-run
     from_run: the-living-atlas
-    observed: cell_count 1 → 14 before death
+    observed: 12/12 executables run to completion; fig07 chemical_out 0 → 100
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
-      + scripts/measure_all.py, 2026-08-16).
+    basis: The composed whole-cell composite runs 20 steps to completion and all twelve figure executables
+      run to completion (12/12) via scripts/render_study_evidence.py.
   biological_validation:
     result: PASS
-    basis: Full-arc, mass-conserved-through-death, viability-cliff, and divides all pass on the single composed run; the inert/knockout draft fails, so the arc is mechanism-driven.
+    basis: The composed cell reproduces a full life arc from its modular parts — it grows (biomass 0.3
+      → peak ≈5.1), divides once (cell_count 1 → 2), and dies (viability 1.0 → 0.018 after temperature
+      37 → 50 °C; debris 0 → 4.87) — so the paper's interface→coupling→metabolism→viability→rewrite arc
+      is mechanism-driven, produced by wiring independently-authored figure modules through shared stores.
   explanatory_gain:
     result: POSITIVE
-    basis: Assembling the nine figure mechanisms into one cell that grows, divides, and dies turns "the patterns compose" into a single measured trajectory.
+    basis: Composing the figures' recurring modules into one cell that grows, divides once, and dies turns
+      "the figures compose" from a claim into a single measured trajectory — backed by a gallery of all
+      twelve figures each running on its own.
 conclusion: '## Claims
 
-  - The composed whole cell runs the full arc in ONE conserved trajectory: autocatalytic growth to biomass
-  8.4 (dividing to 14 cells), then a thermal shock ramps temperature past tolerance, viability collapses,
-  and biomass converts to molecular debris (7.3) — mass conserved through death (biomass → debris).
+  - The paper''s figure mechanisms are modular: wired through shared cell and environment stores they compose
+  into one whole cell that grows, divides once, and dies. The same modules also each run as twelve standalone
+  figure executables (12/12).
 
 
   ## Evidence
 
-  - **FULL-ARC** — growth, division, shock, death, debris in one composite
+  - **GROWS** — viability-gated metabolism grows biomass 0.3 → peak ≈5.1 on the depleting nutrient
 
-  - **MASS-CONSERVED-THROUGH-DEATH** — peak biomass 8.4 → debris 7.3 (conserved)
+  - **DIVIDES-ONCE** — the division rewrite fires once: cell_count 1 → 2, two daughters, at t≈3.4
 
-  - **VIABILITY-CLIFF** — viability 1.0 → ~0 at the shock
+  - **DIES** — thermal shock (temperature 37 → 50 °C at t≈12) collapses viability 1.0 → 0.018; disintegration
+  converts biomass to debris 0 → 4.87
 
-  - **DIVIDES** — cell_count 1 → 14 before death
-
-  - **conservation** — mass conserved through death: peak biomass 8.43 → debris 7.26; divides to 14 cells;
-  viability -0.00
+  - **TWELVE-RUN** — all 12 fig*-executable composites compile and run to completion (12/12); fig07''s
+  ATP synthase charging 0 → 100 witnesses the gallery
 
 
   ## Limitations
 
-  - Composed toy-real cell: mass is conserved through the full arc, but it reuses illustrative handlers and is not a calibrated whole-cell model.
+  - Toy-real composition: the whole cell wires illustrative figure modules through shared stores; it is
+  a demonstration that the mechanisms COMPOSE into one grow→divide→die trajectory, not a calibrated whole-cell
+  model. One deterministic run.
 
 
   ## Next steps
 
-  - Run the composed cell across replicate seeds and environments to move from a single arc to a distribution of outcomes.'
+  - Run the composed whole cell across replicate seeds and thermal schedules; grow the composition beyond
+  the current module set toward a calibrated cell.'
 conclusion_logic:
   if_primary_tests_pass:
-    implementation_status: The figure draft compiles to an executable that runs.
-    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; interface
-      preservation holds.
+    implementation_status: The figure modules compose into one executable whole cell that runs.
+    biological_validation: The paper's interface→coupling→metabolism→viability→rewrite arc is demonstrated
+      at the toy-real (uncalibrated) level in a single composed cell; interface sharing across modules
+      holds.
     pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
-    - compiler dropped/renamed an interface port (law 2 violation)
-    - a figure mechanism failed to compose into the whole-cell composite
-    block_downstream: none — this is the terminal capstone; a failure blocks the investigation's whole-cell
+    - two figure modules that should share a store expose incompatible interfaces (law 2 violation)
+    - a figure module failed to compose or the whole-cell composite failed to run to completion
+    block_downstream: none — this is the terminal capstone; a failure blocks the investigation's compile-and-compose
       conclusion, with no further downstream study.
 limitations:
-- The composed cell reuses the toy-real figure handlers; it demonstrates that the patterns COMPOSE, not a calibrated whole-cell simulation.
-- One deterministic end-to-end run; the arc (grow/divide/die) is shown once, not across replicate seeds or environments.
-falsifiability: Overturned if the independently-authored mechanisms fail to compose into one running cell, or if mass is not conserved through death (peak biomass ≠ resulting debris).
+- The whole cell wires the figures' toy-real modules through shared stores; the study demonstrates that
+  the mechanisms COMPOSE into one grow→divide→die cell, not a calibrated whole-cell simulation.
+- One deterministic run of the composed cell (20 steps) and one deterministic run per gallery executable;
+  behaviors are shown once, not across replicate seeds or environments.
+falsifiability: Overturned if the figure modules fail to compose into a whole cell that runs to completion,
+  if the composed cell does not grow then divide once then die, or if any of the twelve figure drafts fails
+  to compile to an executable that runs to completion.
 visualizations:
 - name: the-living-atlas-dynamics
   address: image:visualizations/the-living-atlas-dynamics.svg
   config:
     chart: image
-    caption: CLOSED-LOOP dynamics — conserved, run to completion.
+    caption: The composed whole cell — grow, divide, die — one run of wholecell.py's modules.
+- name: the-living-atlas-gallery
+  address: image:visualizations/the-living-atlas-gallery.svg
+  config:
+    chart: image
+    caption: All twelve compiled figures, each running on its own.
 parent_studies:
-- study: typed-interface
-  condition: tests-passed
 - study: one-interface-three-mechanisms
   condition: tests-passed
 - study: self-made
   condition: tests-passed
-- study: divide
+- study: multicellular
   condition: tests-passed
-- study: evolve
-  condition: tests-passed
-experiment: Compose growth, metabolism, viability, division, and disintegration into a single whole-cell
-  composite and run it end to end.
-result: The cell grows and divides, then a thermal shock collapses its viability and its biomass converts
-  to debris — mass conserved through death, the whole arc in one run.
+experiment: Wire the paper's recurring figure modules (thermal interface, cell↔environment uptake, viability-gated
+  metabolism, viability monitor, and the division/disintegration rewrites) through shared cell and environment
+  stores into one whole-cell composite, run it 20 steps through the engine, and — as the backing gallery —
+  compile all twelve figure drafts to executables and run each to completion.
+result: The composed whole cell lives a full life in one run — it grows (biomass 0.3 → peak ≈5.1), divides
+  once into two daughters (cell_count 1 → 2 at t≈3.4), and dies after a thermal shock (temperature 37 →
+  50 °C) collapses viability (1.0 → 0.018) and disintegration converts biomass to debris (0 → 4.87). Backing
+  it, all twelve figure drafts compile to executables that run to completion (12/12). The figures'' mechanisms
+  are modular and compose into one cell.

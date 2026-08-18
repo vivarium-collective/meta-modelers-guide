@@ -1,0 +1,273 @@
+{
+  "name": "whole-cell",
+  "description": "The composed whole cell — the paper's figure mechanisms (thermal environment, nutrient uptake, viability-gated metabolism Fig 6, a viability monitor, division Fig 10-1, and disintegration) wired through shared cell/environment stores into one modular composite. Assembled, it grows on a depleting nutrient, divides once as it reaches threshold, then a thermal shock past tolerance collapses viability and converts its biomass to debris — grow, divide, die, in one run.",
+  "requires": {},
+  "provenance": {
+    "kind": "composed",
+    "source": "viva_meta_modelers_guide.wholecell.build_whole_cell"
+  },
+  "state": {
+    "environment": {
+      "nutrients": {
+        "_type": "concentration",
+        "_default": 1.0
+      },
+      "temperature": {
+        "_type": "temperature",
+        "_default": 37.0
+      }
+    },
+    "cell": {
+      "biomass": {
+        "_type": "mass",
+        "_default": 0.3
+      },
+      "energy": {
+        "_type": "energy",
+        "_default": 0.0
+      },
+      "viability": {
+        "_type": "viability",
+        "_default": 1.0
+      },
+      "nutrients_local": {
+        "_type": "concentration",
+        "_default": 0.0
+      },
+      "dividing": {
+        "_type": "fraction",
+        "_default": 0.0
+      },
+      "disintegrating": {
+        "_type": "fraction",
+        "_default": 0.0
+      },
+      "debris": {
+        "_type": "concentration",
+        "_default": 0.0
+      }
+    },
+    "daughter_1": {
+      "biomass": {
+        "_type": "mass",
+        "_default": 0.0
+      }
+    },
+    "daughter_2": {
+      "biomass": {
+        "_type": "mass",
+        "_default": 0.0
+      }
+    },
+    "cell_count": {
+      "_type": "cell_count",
+      "_default": 1.0
+    },
+    "thermal": {
+      "_type": "process",
+      "address": "local:ThermalEnvironment",
+      "config": {
+        "temp_normal": 37.0,
+        "temp_shock": 50.0,
+        "shock_time": 12.0
+      },
+      "interval": 0.1,
+      "inputs": {},
+      "outputs": {
+        "temperature": [
+          "environment",
+          "temperature"
+        ]
+      }
+    },
+    "uptake": {
+      "_type": "process",
+      "address": "local:Uptake",
+      "config": {
+        "uptake_rate": 0.5
+      },
+      "interval": 0.1,
+      "inputs": {
+        "nutrients_ext": [
+          "environment",
+          "nutrients"
+        ]
+      },
+      "outputs": {
+        "nutrients_local": [
+          "cell",
+          "nutrients_local"
+        ]
+      }
+    },
+    "metabolism": {
+      "_type": "process",
+      "address": "local:ViabilityGatedMetabolism",
+      "config": {
+        "k": 0.6,
+        "biomass_yield": 0.8,
+        "energy_yield": 0.4
+      },
+      "interval": 0.1,
+      "inputs": {
+        "nutrients_local": [
+          "cell",
+          "nutrients_local"
+        ],
+        "viability": [
+          "cell",
+          "viability"
+        ]
+      },
+      "outputs": {
+        "biomass": [
+          "cell",
+          "biomass"
+        ],
+        "energy": [
+          "cell",
+          "energy"
+        ],
+        "nutrients_local": [
+          "cell",
+          "nutrients_local"
+        ]
+      }
+    },
+    "monitor": {
+      "_type": "process",
+      "address": "local:ViabilityMonitor",
+      "config": {
+        "temp_opt": 37.0,
+        "temp_tol": 5.0,
+        "relax": 0.5,
+        "division_threshold": 1.0,
+        "viability_floor": 0.3
+      },
+      "interval": 0.1,
+      "inputs": {
+        "temperature": [
+          "environment",
+          "temperature"
+        ],
+        "biomass": [
+          "cell",
+          "biomass"
+        ],
+        "viability": [
+          "cell",
+          "viability"
+        ]
+      },
+      "outputs": {
+        "viability": [
+          "cell",
+          "viability"
+        ],
+        "dividing": [
+          "cell",
+          "dividing"
+        ],
+        "disintegrating": [
+          "cell",
+          "disintegrating"
+        ]
+      }
+    },
+    "division": {
+      "_type": "process",
+      "address": "local:DivisionEvent",
+      "config": {},
+      "interval": 0.1,
+      "inputs": {
+        "biomass": [
+          "cell",
+          "biomass"
+        ],
+        "dividing": [
+          "cell",
+          "dividing"
+        ]
+      },
+      "outputs": {
+        "biomass_1": [
+          "daughter_1",
+          "biomass"
+        ],
+        "biomass_2": [
+          "daughter_2",
+          "biomass"
+        ],
+        "cell_count": [
+          "cell_count"
+        ]
+      }
+    },
+    "disintegration": {
+      "_type": "process",
+      "address": "local:DisintegrationEvent",
+      "config": {
+        "decay_rate": 0.4
+      },
+      "interval": 0.1,
+      "inputs": {
+        "biomass": [
+          "cell",
+          "biomass"
+        ],
+        "disintegrating": [
+          "cell",
+          "disintegrating"
+        ]
+      },
+      "outputs": {
+        "biomass": [
+          "cell",
+          "biomass"
+        ],
+        "debris": [
+          "cell",
+          "debris"
+        ]
+      }
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "biomass": "mass",
+          "viability": "viability",
+          "temperature": "temperature",
+          "cell_count": "cell_count",
+          "debris": "concentration",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "biomass": [
+          "cell",
+          "biomass"
+        ],
+        "viability": [
+          "cell",
+          "viability"
+        ],
+        "temperature": [
+          "environment",
+          "temperature"
+        ],
+        "cell_count": [
+          "cell_count"
+        ],
+        "debris": [
+          "cell",
+          "debris"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    }
+  }
+}
