@@ -1,8 +1,8 @@
 # meta-modelers-guide
 
 <!-- BEGIN dashboard -->
-> ## 📊 [**Live dashboard →**](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/)
-> Browse every investigation & study interactively, or read the [published investigation reports](https://vivarium-collective.github.io/meta-modelers-guide/). Auto-published from `main` on every merge.
+> ## 📊 [**Live dashboard →**](https://vivarium-collective.github.io/viva-meta-modelers-guide/dashboard/)
+> Browse every investigation & study interactively, or read the [published investigation reports](https://vivarium-collective.github.io/viva-meta-modelers-guide/). Auto-published from `main` on every merge.
 <!-- END dashboard -->
 
 <!-- BEGIN:dashboard -->
