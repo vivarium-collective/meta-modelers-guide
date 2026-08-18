@@ -54,6 +54,12 @@ jobs:
         # force current main so `vivarium-workbench-publish` exists.
         run: uv pip install --reinstall-package vivarium-workbench "vivarium-workbench @ git+https://github.com/vivarium-collective/vivarium-workbench.git@main"
 
+      - name: Ensure viva-superpowers main (Build/Audit tab modules)
+        # Resolution may pin an older viva-superpowers SHA (transitively via the
+        # workbench) predating loop_state/test_audit; force current main so the
+        # Assurance > Build and Assurance > Audit tabs render instead of erroring.
+        run: uv pip install --reinstall-package viva-superpowers "viva-superpowers @ git+https://github.com/vivarium-collective/viva-superpowers.git@main"
+
       - name: Build dashboard snapshot
         # Run inside the activated venv, NOT `uv run` — `uv run` re-syncs to
         # uv.lock first, which would undo the ad-hoc vivarium-workbench@main
