@@ -66,8 +66,8 @@ if _env and Path(_env).is_dir():
     REPO = Path(_env)
 if REPO is None:
     REPO = _find_repo_root(Path.cwd().resolve())
-if REPO is None and Path('/home/runner/work/viva-meta-modelers-guide/viva-meta-modelers-guide').is_dir():
-    REPO = Path('/home/runner/work/viva-meta-modelers-guide/viva-meta-modelers-guide')
+if REPO is None and Path('/home/runner/work/meta-modelers-guide/meta-modelers-guide').is_dir():
+    REPO = Path('/home/runner/work/meta-modelers-guide/meta-modelers-guide')
 if REPO is None:
     REPO = Path.cwd()
 sys.path.insert(0, str(REPO))
