@@ -79,7 +79,7 @@ os.chdir(REPO)
 RERUN = True
 
 # --- standard process-bigraph protocol: register the workspace's Core ---
-from viva_meta_modelers_guide.core import build_core
+from meta_modelers_guide.core import build_core
 core = build_core()
 
 # --- imported from the repo this notebook was generated for ---
@@ -164,47 +164,47 @@ def _render_one(address, config, runs_db, study_yaml):
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `interaction-modalities` | `viva_meta_modelers_guide.composites.fig04a-interaction-modalities` | 0 | — |
-# | `cellular-interface` | `viva_meta_modelers_guide.composites.fig04b-cellular-interface` | 0 | — |
+# | `interaction-modalities` | `meta_modelers_guide.composites.fig04a-interaction-modalities` | 0 | — |
+# | `cellular-interface` | `meta_modelers_guide.composites.fig04b-cellular-interface` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.fig04a-interaction-modalities`** — `spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig04a-interaction-modalities`** — `spec_meta_modelers_guide_composites_fig04a_interaction_modalities` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig04a-interaction-modalities.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities)
+spec_meta_modelers_guide_composites_fig04a_interaction_modalities = load_spec(REPO / 'meta_modelers_guide/composites/fig04a-interaction-modalities.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig04a_interaction_modalities)
 
 # === Edit parameters for composite 'Interaction Modalities' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'nutrient_exchange'  (local:NutrientExchange)
-spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['nutrient_exchange']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['nutrient_exchange']['config']['interval'] = 1.0
 
 # process 'motile_force'  (local:MotileForce)
-spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['motile_force']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['motile_force']['config']['interval'] = 1.0
 
 # process 'growth'  (local:Growth)
-spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['growth']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['growth']['config']['interval'] = 1.0
 
 # process 'electrical_signaling'  (local:ElectricalSignaling)
-spec_viva_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['electrical_signaling']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['electrical_signaling']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig04b-cellular-interface`** — `spec_viva_meta_modelers_guide_composites_fig04b_cellular_interface` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig04b-cellular-interface`** — `spec_meta_modelers_guide_composites_fig04b_cellular_interface` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig04b_cellular_interface = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig04b-cellular-interface.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig04b_cellular_interface)
+spec_meta_modelers_guide_composites_fig04b_cellular_interface = load_spec(REPO / 'meta_modelers_guide/composites/fig04b-cellular-interface.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig04b_cellular_interface)
 
 # === Edit parameters for composite 'The Cellular Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'cell'  (local:CellularInterface)
-spec_viva_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['interval'] = 1.0
 
 # ### Run
 #
@@ -271,33 +271,33 @@ _save_viz('typed-interface', 'fig04-illustration', _render_one('image:visualizat
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `cell-environment` | `viva_meta_modelers_guide.composites.fig05-cell-environment` | 0 | — |
+# | `cell-environment` | `meta_modelers_guide.composites.fig05-cell-environment` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.fig05-cell-environment`** — `spec_viva_meta_modelers_guide_composites_fig05_cell_environment` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig05-cell-environment`** — `spec_meta_modelers_guide_composites_fig05_cell_environment` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig05_cell_environment = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig05-cell-environment.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig05_cell_environment)
+spec_meta_modelers_guide_composites_fig05_cell_environment = load_spec(REPO / 'meta_modelers_guide/composites/fig05-cell-environment.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig05_cell_environment)
 
 # === Edit parameters for composite 'Cell–Environment Coupling' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'reaction_diffusion'  (local:ReactionDiffusion)
-spec_viva_meta_modelers_guide_composites_fig05_cell_environment['state']['reaction_diffusion']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['reaction_diffusion']['config']['interval'] = 1.0
 
 # process 'production_degradation'  (local:ProductionDegradation)
-spec_viva_meta_modelers_guide_composites_fig05_cell_environment['state']['production_degradation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['production_degradation']['config']['interval'] = 1.0
 
 # process 'mechanical_stress'  (local:MechanicalStress)
-spec_viva_meta_modelers_guide_composites_fig05_cell_environment['state']['mechanical_stress']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['mechanical_stress']['config']['interval'] = 1.0
 
 # process 'single_cell_processes'  (local:SingleCellProcesses)
-spec_viva_meta_modelers_guide_composites_fig05_cell_environment['state']['single_cell_processes']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['single_cell_processes']['config']['interval'] = 1.0
 
 # ### Run
 #
@@ -351,27 +351,27 @@ _save_viz('closing-the-loop', 'fig05-illustration', _render_one('image:visualiza
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `disintegration` | `viva_meta_modelers_guide.composites.fig06-disintegration` | 0 | — |
+# | `disintegration` | `meta_modelers_guide.composites.fig06-disintegration` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.fig06-disintegration`** — `spec_viva_meta_modelers_guide_composites_fig06_disintegration` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig06-disintegration`** — `spec_meta_modelers_guide_composites_fig06_disintegration` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig06_disintegration = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-disintegration.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig06_disintegration)
+spec_meta_modelers_guide_composites_fig06_disintegration = load_spec(REPO / 'meta_modelers_guide/composites/fig06-disintegration.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig06_disintegration)
 
 # === Edit parameters for composite 'Cell Disintegration' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'coarse_grained_metabolism'  (local:CoarseGrainedMetabolism)
-spec_viva_meta_modelers_guide_composites_fig06_disintegration['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_disintegration['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
 
 # process 'catalyzed_reaction_network'  (local:CatalyzedReactionNetwork)
-spec_viva_meta_modelers_guide_composites_fig06_disintegration['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_disintegration['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
 
 # ### Run
 #
@@ -425,53 +425,53 @@ _save_viz('one-interface-three-mechanisms', 'fig06-illustration', _render_one('i
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `molecular-mechanism` | `viva_meta_modelers_guide.composites.fig07-molecular-mechanism` | 0 | — |
-# | `nested-hierarchy` | `viva_meta_modelers_guide.composites.fig08-nested-hierarchy` | 0 | — |
+# | `molecular-mechanism` | `meta_modelers_guide.composites.fig07-molecular-mechanism` | 0 | — |
+# | `nested-hierarchy` | `meta_modelers_guide.composites.fig08-nested-hierarchy` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.fig07-molecular-mechanism`** — `spec_viva_meta_modelers_guide_composites_fig07_molecular_mechanism` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig07-molecular-mechanism`** — `spec_meta_modelers_guide_composites_fig07_molecular_mechanism` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig07_molecular_mechanism = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig07-molecular-mechanism.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig07_molecular_mechanism)
+spec_meta_modelers_guide_composites_fig07_molecular_mechanism = load_spec(REPO / 'meta_modelers_guide/composites/fig07-molecular-mechanism.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig07_molecular_mechanism)
 
 # === Edit parameters for composite 'A Molecular Mechanism' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'molecular_mechanism'  (local:MolecularMechanism)
-spec_viva_meta_modelers_guide_composites_fig07_molecular_mechanism['state']['molecular_mechanism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig07_molecular_mechanism['state']['molecular_mechanism']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig08-nested-hierarchy`** — `spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig08-nested-hierarchy`** — `spec_meta_modelers_guide_composites_fig08_nested_hierarchy` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig08-nested-hierarchy.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy)
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy = load_spec(REPO / 'meta_modelers_guide/composites/fig08-nested-hierarchy.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig08_nested_hierarchy)
 
 # === Edit parameters for composite 'Nested Molecular Hierarchy' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'transmembrane_transport'  (local:TransmembraneTransport)
-spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transmembrane_transport']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transmembrane_transport']['config']['interval'] = 1.0
 
 # process 'replication_and_repair'  (local:ReplicationAndRepair)
-spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['replication_and_repair']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['replication_and_repair']['config']['interval'] = 1.0
 
 # process 'cell_metabolism'  (local:CellMetabolism)
-spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['cell_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['cell_metabolism']['config']['interval'] = 1.0
 
 # process 'transcription'  (local:Transcription)
-spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transcription']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transcription']['config']['interval'] = 1.0
 
 # process 'translation'  (local:Translation)
-spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['translation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['translation']['config']['interval'] = 1.0
 
 # process 'subunit_assembly'  (local:SubunitAssembly)
-spec_viva_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['subunit_assembly']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['subunit_assembly']['config']['interval'] = 1.0
 
 # ### Run
 #
@@ -525,74 +525,74 @@ _save_viz('the-nested-cell', 'fig08-illustration', _render_one('image:visualizat
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `coarse-graining` | `viva_meta_modelers_guide.composites.fig09a-coarse-graining` | 0 | — |
-# | `minimal-cell` | `viva_meta_modelers_guide.composites.fig09b-minimal-cell` | 0 | — |
+# | `coarse-graining` | `meta_modelers_guide.composites.fig09a-coarse-graining` | 0 | — |
+# | `minimal-cell` | `meta_modelers_guide.composites.fig09b-minimal-cell` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.fig09a-coarse-graining`** — `spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig09a-coarse-graining`** — `spec_meta_modelers_guide_composites_fig09a_coarse_graining` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09a-coarse-graining.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining = load_spec(REPO / 'meta_modelers_guide/composites/fig09a-coarse-graining.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig09a_coarse_graining)
 
 # === Edit parameters for composite 'Self-Organization & Coarse-Graining' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'metabolism_closure'  (local:MetabolismClosure)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['metabolism_closure']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['metabolism_closure']['config']['interval'] = 1.0
 
 # process 'autocatalysis'  (local:Autocatalysis)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['autocatalysis']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['autocatalysis']['config']['interval'] = 1.0
 
 # process 'containment_closure'  (local:ContainmentClosure)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['containment_closure']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['containment_closure']['config']['interval'] = 1.0
 
 # process 'membrane_self_assembly'  (local:MembraneSelfAssembly)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['membrane_self_assembly']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['membrane_self_assembly']['config']['interval'] = 1.0
 
 # process 'lipid_aggregation'  (local:LipidAggregation)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['lipid_aggregation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['lipid_aggregation']['config']['interval'] = 1.0
 
 # process 'replication_closure'  (local:ReplicationClosure)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['replication_closure']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['replication_closure']['config']['interval'] = 1.0
 
 # process 'template_replication'  (local:TemplateReplication)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_replication']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_replication']['config']['interval'] = 1.0
 
 # process 'template_directed_synthesis'  (local:TemplateDirectedSynthesis)
-spec_viva_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_directed_synthesis']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_directed_synthesis']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig09b-minimal-cell`** — `spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig09b-minimal-cell`** — `spec_meta_modelers_guide_composites_fig09b_minimal_cell` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09b-minimal-cell.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell)
+spec_meta_modelers_guide_composites_fig09b_minimal_cell = load_spec(REPO / 'meta_modelers_guide/composites/fig09b-minimal-cell.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig09b_minimal_cell)
 
 # === Edit parameters for composite 'The Minimal Cell' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'minimal_cell_containment'  (local:MinimalCellContainment)
-spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_containment']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_containment']['config']['interval'] = 1.0
 
 # process 'minimal_cell_metabolism'  (local:MinimalCellMetabolism)
-spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
 
 # process 'gene_expression'  (local:GeneExpression)
-spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell['state']['gene_expression']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['gene_expression']['config']['interval'] = 1.0
 
 # process 'minimal_cell_replication'  (local:MinimalCellReplication)
-spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_replication']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_replication']['config']['interval'] = 1.0
 
 # process 'diffusion'  (local:Diffusion)
-spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell['state']['diffusion']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['diffusion']['config']['interval'] = 1.0
 
 # process 'reactions'  (local:Reactions)
-spec_viva_meta_modelers_guide_composites_fig09b_minimal_cell['state']['reactions']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['reactions']['config']['interval'] = 1.0
 
 # ### Run
 #
@@ -655,48 +655,48 @@ _save_viz('self-made', 'fig09-illustration-2', _render_one('image:visualizations
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `division-rewrite` | `viva_meta_modelers_guide.composites.fig10-1-rewrite` | 0 | — |
-# | `division` | `viva_meta_modelers_guide.composites.fig10-1-division` | 0 | — |
+# | `division-rewrite` | `meta_modelers_guide.composites.fig10-1-rewrite` | 0 | — |
+# | `division` | `meta_modelers_guide.composites.fig10-1-division` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-1-rewrite`** — `spec_viva_meta_modelers_guide_composites_fig10_1_rewrite` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-1-rewrite`** — `spec_meta_modelers_guide_composites_fig10_1_rewrite` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_1_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-1-rewrite.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_rewrite)
+spec_meta_modelers_guide_composites_fig10_1_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-rewrite.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_1_rewrite)
 
 # === Edit parameters for composite 'Cell Division — Live Topology' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # tunable parameters (filled into ${name} placeholders):
-spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['parameters']['cycle']['default'] = 3.0
+spec_meta_modelers_guide_composites_fig10_1_rewrite['parameters']['cycle']['default'] = 3.0
 
 # process 'cell_cycle'  (local:CellCycleDivision)
-spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['interval'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = '${cycle}'
+spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = '${cycle}'
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-1-division`** — `spec_viva_meta_modelers_guide_composites_fig10_1_division` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-1-division`** — `spec_meta_modelers_guide_composites_fig10_1_division` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_1_division = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-1-division.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_division)
+spec_meta_modelers_guide_composites_fig10_1_division = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-division.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_1_division)
 
 # === Edit parameters for composite 'Cell Division — Draft Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'dna_replication'  (local:DNAReplication)
-spec_viva_meta_modelers_guide_composites_fig10_1_division['state']['dna_replication']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_division['state']['dna_replication']['config']['interval'] = 1.0
 
 # process 'segregate_chromosome'  (local:SegregateChromosome)
-spec_viva_meta_modelers_guide_composites_fig10_1_division['state']['segregate_chromosome']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_division['state']['segregate_chromosome']['config']['interval'] = 1.0
 
 # process 'divide'  (local:Divide)
-spec_viva_meta_modelers_guide_composites_fig10_1_division['state']['divide']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_division['state']['divide']['config']['interval'] = 1.0
 
 # ### Run
 #
@@ -749,94 +749,94 @@ _save_viz('divide', 'fig10-illustration', _render_one('image:visualizations/fig1
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `development-rewrite` | `viva_meta_modelers_guide.composites.fig10-2-rewrite` | 0 | — |
-# | `development` | `viva_meta_modelers_guide.composites.fig10-2-development` | 0 | — |
-# | `evolution-rewrite` | `viva_meta_modelers_guide.composites.fig10-3-rewrite` | 0 | — |
-# | `evolution` | `viva_meta_modelers_guide.composites.fig10-3-evolution` | 0 | — |
+# | `development-rewrite` | `meta_modelers_guide.composites.fig10-2-rewrite` | 0 | — |
+# | `development` | `meta_modelers_guide.composites.fig10-2-development` | 0 | — |
+# | `evolution-rewrite` | `meta_modelers_guide.composites.fig10-3-rewrite` | 0 | — |
+# | `evolution` | `meta_modelers_guide.composites.fig10-3-evolution` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-2-rewrite`** — `spec_viva_meta_modelers_guide_composites_fig10_2_rewrite` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-2-rewrite`** — `spec_meta_modelers_guide_composites_fig10_2_rewrite` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-2-rewrite.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_rewrite)
+spec_meta_modelers_guide_composites_fig10_2_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-rewrite.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_2_rewrite)
 
 # === Edit parameters for composite 'Biofilm Development — Live Topology' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # tunable parameters (filled into ${name} placeholders):
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['capacity']['default'] = 5
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['grow_every']['default'] = 2.0
+spec_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['capacity']['default'] = 5
+spec_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['grow_every']['default'] = 2.0
 
 # process 'development'  (local:BiofilmDevelopment)
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['interval'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['grow_every'] = '${grow_every}'
-spec_viva_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['capacity'] = '${capacity}'
+spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['grow_every'] = '${grow_every}'
+spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['capacity'] = '${capacity}'
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-2-development`** — `spec_viva_meta_modelers_guide_composites_fig10_2_development` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-2-development`** — `spec_meta_modelers_guide_composites_fig10_2_development` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_2_development = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-2-development.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_development)
+spec_meta_modelers_guide_composites_fig10_2_development = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-development.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_2_development)
 
 # === Edit parameters for composite 'Biofilm Development — Draft Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'surface_attachment'  (local:SurfaceAttachment)
-spec_viva_meta_modelers_guide_composites_fig10_2_development['state']['surface_attachment']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_development['state']['surface_attachment']['config']['interval'] = 1.0
 
 # process 'ecm_secretion'  (local:ECMSecretion)
-spec_viva_meta_modelers_guide_composites_fig10_2_development['state']['ecm_secretion']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_development['state']['ecm_secretion']['config']['interval'] = 1.0
 
 # process 'biofilm_growth'  (local:BiofilmGrowth)
-spec_viva_meta_modelers_guide_composites_fig10_2_development['state']['biofilm_growth']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_development['state']['biofilm_growth']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-3-rewrite`** — `spec_viva_meta_modelers_guide_composites_fig10_3_rewrite` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-3-rewrite`** — `spec_meta_modelers_guide_composites_fig10_3_rewrite` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-3-rewrite.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_rewrite)
+spec_meta_modelers_guide_composites_fig10_3_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-rewrite.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_3_rewrite)
 
 # === Edit parameters for composite 'Evolution — Live Topology' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # tunable parameters (filled into ${name} placeholders):
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['founders']['default'] = 3
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['capacity']['default'] = 6
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['generation']['default'] = 2.0
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['mutate_at']['default'] = 4.0
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['founders']['default'] = 3
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['capacity']['default'] = 6
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['generation']['default'] = 2.0
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['mutate_at']['default'] = 4.0
 
 # process 'evolution'  (local:LineageEvolution)
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['interval'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['generation'] = '${generation}'
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['mutate_at'] = '${mutate_at}'
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['founders'] = '${founders}'
-spec_viva_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['capacity'] = '${capacity}'
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['generation'] = '${generation}'
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['mutate_at'] = '${mutate_at}'
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['founders'] = '${founders}'
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['capacity'] = '${capacity}'
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-3-evolution`** — `spec_viva_meta_modelers_guide_composites_fig10_3_evolution` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-3-evolution`** — `spec_meta_modelers_guide_composites_fig10_3_evolution` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_3_evolution = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-3-evolution.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_evolution)
+spec_meta_modelers_guide_composites_fig10_3_evolution = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-evolution.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_3_evolution)
 
 # === Edit parameters for composite 'Evolution — Draft Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'variation'  (local:Variation)
-spec_viva_meta_modelers_guide_composites_fig10_3_evolution['state']['variation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_evolution['state']['variation']['config']['interval'] = 1.0
 
 # process 'selection'  (local:Selection)
-spec_viva_meta_modelers_guide_composites_fig10_3_evolution['state']['selection']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_evolution['state']['selection']['config']['interval'] = 1.0
 
 # process 'port_addition'  (local:PortAddition)
-spec_viva_meta_modelers_guide_composites_fig10_3_evolution['state']['port_addition']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_evolution['state']['port_addition']['config']['interval'] = 1.0
 
 # ### Run
 #
@@ -891,405 +891,405 @@ _save_viz('multicellular', 'fig10-illustration-3', _render_one('image:visualizat
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `whole-cell` | `viva_meta_modelers_guide.composites.whole-cell` | 0 | — |
-# | `fig06-exec-coarse` | `viva_meta_modelers_guide.composites.fig06-executable-coarse` | 0 | — |
-# | `fig06-exec-kinetic` | `viva_meta_modelers_guide.composites.fig06-executable-kinetic` | 0 | — |
-# | `fig04b-exec` | `viva_meta_modelers_guide.composites.fig04b-executable` | 0 | — |
-# | `fig05-exec-spatial` | `viva_meta_modelers_guide.composites.fig05-executable` | 0 | — |
-# | `fig06-exec-fba` | `viva_meta_modelers_guide.composites.fig06-executable-fba` | 0 | — |
-# | `fig07-exec-molecular` | `viva_meta_modelers_guide.composites.fig07-executable` | 0 | — |
-# | `fig08-exec-hierarchy` | `viva_meta_modelers_guide.composites.fig08-executable` | 0 | — |
-# | `fig09a-exec-coarse-graining` | `viva_meta_modelers_guide.composites.fig09a-executable` | 0 | — |
-# | `fig09b-exec-minimal-cell` | `viva_meta_modelers_guide.composites.fig09b-executable` | 0 | — |
-# | `fig10-1-exec-division` | `viva_meta_modelers_guide.composites.fig10-1-executable` | 0 | — |
-# | `fig10-2-exec-development` | `viva_meta_modelers_guide.composites.fig10-2-executable` | 0 | — |
-# | `fig10-3-exec-evolution` | `viva_meta_modelers_guide.composites.fig10-3-executable` | 0 | — |
+# | `whole-cell` | `meta_modelers_guide.composites.whole-cell` | 0 | — |
+# | `fig06-exec-coarse` | `meta_modelers_guide.composites.fig06-executable-coarse` | 0 | — |
+# | `fig06-exec-kinetic` | `meta_modelers_guide.composites.fig06-executable-kinetic` | 0 | — |
+# | `fig04b-exec` | `meta_modelers_guide.composites.fig04b-executable` | 0 | — |
+# | `fig05-exec-spatial` | `meta_modelers_guide.composites.fig05-executable` | 0 | — |
+# | `fig06-exec-fba` | `meta_modelers_guide.composites.fig06-executable-fba` | 0 | — |
+# | `fig07-exec-molecular` | `meta_modelers_guide.composites.fig07-executable` | 0 | — |
+# | `fig08-exec-hierarchy` | `meta_modelers_guide.composites.fig08-executable` | 0 | — |
+# | `fig09a-exec-coarse-graining` | `meta_modelers_guide.composites.fig09a-executable` | 0 | — |
+# | `fig09b-exec-minimal-cell` | `meta_modelers_guide.composites.fig09b-executable` | 0 | — |
+# | `fig10-1-exec-division` | `meta_modelers_guide.composites.fig10-1-executable` | 0 | — |
+# | `fig10-2-exec-development` | `meta_modelers_guide.composites.fig10-2-executable` | 0 | — |
+# | `fig10-3-exec-evolution` | `meta_modelers_guide.composites.fig10-3-executable` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `viva_meta_modelers_guide.composites.whole-cell`** — `spec_viva_meta_modelers_guide_composites_whole_cell` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.whole-cell`** — `spec_meta_modelers_guide_composites_whole_cell` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_whole_cell = load_spec(REPO / 'viva_meta_modelers_guide/composites/whole-cell.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_whole_cell)
+spec_meta_modelers_guide_composites_whole_cell = load_spec(REPO / 'meta_modelers_guide/composites/whole-cell.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_whole_cell)
 
 # === Edit parameters for composite 'whole-cell' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'thermal'  (local:ThermalEnvironment)
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['thermal']['interval'] = 0.1
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['temp_normal'] = 37.0
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['temp_shock'] = 50.0
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['shock_time'] = 12.0
+spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['interval'] = 0.1
+spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['temp_normal'] = 37.0
+spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['temp_shock'] = 50.0
+spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['shock_time'] = 12.0
 
 # process 'uptake'  (local:Uptake)
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['uptake']['interval'] = 0.1
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['uptake']['config']['uptake_rate'] = 0.5
+spec_meta_modelers_guide_composites_whole_cell['state']['uptake']['interval'] = 0.1
+spec_meta_modelers_guide_composites_whole_cell['state']['uptake']['config']['uptake_rate'] = 0.5
 
 # process 'metabolism'  (local:ViabilityGatedMetabolism)
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['metabolism']['interval'] = 0.1
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['k'] = 0.6
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['biomass_yield'] = 0.8
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['energy_yield'] = 0.4
+spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['interval'] = 0.1
+spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['k'] = 0.6
+spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['biomass_yield'] = 0.8
+spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['energy_yield'] = 0.4
 
 # process 'monitor'  (local:ViabilityMonitor)
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['monitor']['interval'] = 0.1
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['temp_opt'] = 37.0
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['temp_tol'] = 5.0
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['relax'] = 0.5
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['division_threshold'] = 1.0
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['viability_floor'] = 0.3
+spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['interval'] = 0.1
+spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['temp_opt'] = 37.0
+spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['temp_tol'] = 5.0
+spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['relax'] = 0.5
+spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['division_threshold'] = 1.0
+spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['viability_floor'] = 0.3
 
 # process 'division'  (local:DivisionEvent)
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['division']['interval'] = 0.1
+spec_meta_modelers_guide_composites_whole_cell['state']['division']['interval'] = 0.1
 
 # process 'disintegration'  (local:DisintegrationEvent)
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['disintegration']['interval'] = 0.1
-spec_viva_meta_modelers_guide_composites_whole_cell['state']['disintegration']['config']['decay_rate'] = 0.4
+spec_meta_modelers_guide_composites_whole_cell['state']['disintegration']['interval'] = 0.1
+spec_meta_modelers_guide_composites_whole_cell['state']['disintegration']['config']['decay_rate'] = 0.4
 
-# **Composite `viva_meta_modelers_guide.composites.fig06-executable-coarse`** — `spec_viva_meta_modelers_guide_composites_fig06_executable_coarse` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig06-executable-coarse`** — `spec_meta_modelers_guide_composites_fig06_executable_coarse` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-coarse.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_coarse)
+spec_meta_modelers_guide_composites_fig06_executable_coarse = load_spec(REPO / 'meta_modelers_guide/composites/fig06-executable-coarse.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig06_executable_coarse)
 
 # === Edit parameters for composite 'fig06-executable-coarse' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'coarse_grained_metabolism'  (local:CoarseMetabolism)
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
+spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
+spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
+spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
+spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
 
 # process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['k'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['k'] = 0.2
+spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig06-executable-kinetic`** — `spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig06-executable-kinetic`** — `spec_meta_modelers_guide_composites_fig06_executable_kinetic` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-kinetic.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic)
+spec_meta_modelers_guide_composites_fig06_executable_kinetic = load_spec(REPO / 'meta_modelers_guide/composites/fig06-executable-kinetic.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig06_executable_kinetic)
 
 # === Edit parameters for composite 'fig06-executable-kinetic' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'coarse_grained_metabolism'  (local:KineticMetabolism)
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['vmax'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['km'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['vmax'] = 1.0
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['km'] = 0.5
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
 
 # process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['k'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['k'] = 0.2
+spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig04b-executable`** — `spec_viva_meta_modelers_guide_composites_fig04b_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig04b-executable`** — `spec_meta_modelers_guide_composites_fig04b_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig04b_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig04b-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig04b_executable)
+spec_meta_modelers_guide_composites_fig04b_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig04b-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig04b_executable)
 
 # === Edit parameters for composite 'fig04b-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'cell'  (local:CellularInterfaceHandler)
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['uptake_rate'] = 0.8
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['growth_max'] = 0.6
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['km'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['shape_growth_coupling'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['objective_yield'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['death_Ea'] = 300000.0
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['gas_R'] = 8.314
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['d_value_ref_min'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_ref_death'] = 55.0
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_opt'] = 37.0
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['viability_init'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['elasticity'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['membrane_conductance'] = 0.05
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['thermal_conductance'] = 0.02
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['signaling_gain'] = 0.4
-spec_viva_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['uptake_rate'] = 0.8
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['growth_max'] = 0.6
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['km'] = 0.5
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['shape_growth_coupling'] = 1.0
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['objective_yield'] = 0.5
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['death_Ea'] = 300000.0
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['gas_R'] = 8.314
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['d_value_ref_min'] = 1.0
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_ref_death'] = 55.0
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_opt'] = 37.0
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['viability_init'] = 1.0
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['elasticity'] = 0.1
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['membrane_conductance'] = 0.05
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['thermal_conductance'] = 0.02
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['signaling_gain'] = 0.4
+spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig05-executable`** — `spec_viva_meta_modelers_guide_composites_fig05_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig05-executable`** — `spec_meta_modelers_guide_composites_fig05_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig05_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig05-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig05_executable)
+spec_meta_modelers_guide_composites_fig05_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig05-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig05_executable)
 
 # === Edit parameters for composite 'fig05-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'reaction_diffusion'  (local:SpatialDiffusion)
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['diffusivity'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['diffusivity'] = 0.2
+spec_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['interval'] = 1.0
 
 # process 'production_degradation'  (local:ProductionDegradationField)
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_index'] = 0
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_rate'] = 0.05
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['decay_rate'] = 0.01
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_index'] = 0
+spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_rate'] = 0.05
+spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['decay_rate'] = 0.01
+spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['interval'] = 1.0
 
 # process 'mechanical_stress'  (local:MechanicalRelax)
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['relax_rate'] = 0.3
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['relax_rate'] = 0.3
+spec_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['interval'] = 1.0
 
 # process 'single_cell_processes'  (local:SingleCellSpatial)
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['cell_index'] = 4
-spec_viva_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['cell_index'] = 4
+spec_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig06-executable-fba`** — `spec_viva_meta_modelers_guide_composites_fig06_executable_fba` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig06-executable-fba`** — `spec_meta_modelers_guide_composites_fig06_executable_fba` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig06_executable_fba = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig06-executable-fba.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig06_executable_fba)
+spec_meta_modelers_guide_composites_fig06_executable_fba = load_spec(REPO / 'meta_modelers_guide/composites/fig06-executable-fba.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig06_executable_fba)
 
 # === Edit parameters for composite 'fig06-executable-fba' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'coarse_grained_metabolism'  (local:FBAMetabolism)
-spec_viva_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['uptake_scale'] = 10.0
-spec_viva_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['max_uptake'] = 20.0
-spec_viva_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['o2_bound'] = 18.0
-spec_viva_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['uptake_scale'] = 10.0
+spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['max_uptake'] = 20.0
+spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['o2_bound'] = 18.0
+spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
 
 # process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
-spec_viva_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['k'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['k'] = 0.2
+spec_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig07-executable`** — `spec_viva_meta_modelers_guide_composites_fig07_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig07-executable`** — `spec_meta_modelers_guide_composites_fig07_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig07_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig07-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig07_executable)
+spec_meta_modelers_guide_composites_fig07_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig07-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig07_executable)
 
 # === Edit parameters for composite 'fig07-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'molecular_mechanism'  (local:MolecularMechanismHandler)
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['k_cat_atp'] = 100.0
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['n_protons_per_atp'] = 3.3
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['pmf_volts'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['torque_pn_nm'] = 40.0
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['c_ring'] = 10.0
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['efficiency'] = 0.75
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['proton_charge'] = 1.602e-19
-spec_viva_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['k_cat_atp'] = 100.0
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['n_protons_per_atp'] = 3.3
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['pmf_volts'] = 0.15
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['torque_pn_nm'] = 40.0
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['c_ring'] = 10.0
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['efficiency'] = 0.75
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['proton_charge'] = 1.602e-19
+spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig08-executable`** — `spec_viva_meta_modelers_guide_composites_fig08_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig08-executable`** — `spec_meta_modelers_guide_composites_fig08_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig08_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig08-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig08_executable)
+spec_meta_modelers_guide_composites_fig08_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig08-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig08_executable)
 
 # === Edit parameters for composite 'fig08-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'transmembrane_transport'  (local:TransmembraneTransportODE)
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['k'] = 0.3
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['metabolite_frac'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['k'] = 0.3
+spec_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['metabolite_frac'] = 0.1
+spec_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['interval'] = 1.0
 
 # process 'replication_and_repair'  (local:ReplicationAndRepairODE)
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['doubling_time_s'] = 1800.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['dna_init'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['doubling_time_s'] = 1800.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['dna_init'] = 1.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['interval'] = 1.0
 
 # process 'cell_metabolism'  (local:CellMetabolismODE)
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['k'] = 0.25
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['metabolite_yield'] = 0.6
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['energy_yield'] = 0.4
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['k'] = 0.25
+spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['metabolite_yield'] = 0.6
+spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['energy_yield'] = 0.4
+spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['interval'] = 1.0
 
 # process 'transcription'  (local:TranscriptionODE)
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['elong_nt_per_s'] = 45.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['gene_length_nt'] = 1000.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['mrna_halflife_s'] = 180.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['elong_nt_per_s'] = 45.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['gene_length_nt'] = 1000.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['mrna_halflife_s'] = 180.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['interval'] = 1.0
 
 # process 'translation'  (local:TranslationODE)
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['elong_aa_per_s'] = 15.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['protein_length_aa'] = 300.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['doubling_time_s'] = 1800.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['km_met'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['km_rib'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['elong_aa_per_s'] = 15.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['protein_length_aa'] = 300.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['doubling_time_s'] = 1800.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['km_met'] = 0.5
+spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['km_rib'] = 0.5
+spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['interval'] = 1.0
 
 # process 'subunit_assembly'  (local:SubunitAssemblyODE)
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['k'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['doubling_time_s'] = 1800.0
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['ribosome_init'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['k'] = 0.2
+spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['doubling_time_s'] = 1800.0
+spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['ribosome_init'] = 0.5
+spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig09a-executable`** — `spec_viva_meta_modelers_guide_composites_fig09a_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig09a-executable`** — `spec_meta_modelers_guide_composites_fig09a_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig09a_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09a-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig09a_executable)
+spec_meta_modelers_guide_composites_fig09a_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig09a-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig09a_executable)
 
 # === Edit parameters for composite 'fig09a-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'metabolism_closure'  (local:MetabolismClosureODE)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['metabolite_yield'] = 0.6
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['entropy_rate'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['metabolite_yield'] = 0.6
+spec_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['entropy_rate'] = 0.1
+spec_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['interval'] = 1.0
 
 # process 'autocatalysis'  (local:AutocatalysisODE)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['k'] = 0.3
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['k_cat'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['k'] = 0.3
+spec_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['k_cat'] = 0.15
+spec_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['interval'] = 1.0
 
 # process 'containment_closure'  (local:ContainmentClosureODE)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['assembly_rate'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['perm_max'] = 0.8
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['perm_km'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['assembly_rate'] = 0.15
+spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['perm_max'] = 0.8
+spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['perm_km'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['interval'] = 1.0
 
 # process 'membrane_self_assembly'  (local:MembraneSelfAssemblyODE)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['membrane_self_assembly']['config']['k'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['membrane_self_assembly']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['membrane_self_assembly']['config']['k'] = 0.2
+spec_meta_modelers_guide_composites_fig09a_executable['state']['membrane_self_assembly']['config']['interval'] = 1.0
 
 # process 'lipid_aggregation'  (local:LipidAggregationODE)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['lipid_aggregation']['config']['k'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['lipid_aggregation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['lipid_aggregation']['config']['k'] = 0.1
+spec_meta_modelers_guide_composites_fig09a_executable['state']['lipid_aggregation']['config']['interval'] = 1.0
 
 # process 'replication_closure'  (local:ReplicationClosureODE)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['replication_closure']['config']['k'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['replication_closure']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['replication_closure']['config']['k'] = 0.2
+spec_meta_modelers_guide_composites_fig09a_executable['state']['replication_closure']['config']['interval'] = 1.0
 
 # process 'template_replication'  (local:TemplateReplicationODE)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['template_replication']['config']['k'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['template_replication']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['template_replication']['config']['k'] = 0.15
+spec_meta_modelers_guide_composites_fig09a_executable['state']['template_replication']['config']['interval'] = 1.0
 
 # process 'template_directed_synthesis'  (local:TemplateDirectedSynthesisProc)
-spec_viva_meta_modelers_guide_composites_fig09a_executable['state']['template_directed_synthesis']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09a_executable['state']['template_directed_synthesis']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig09b-executable`** — `spec_viva_meta_modelers_guide_composites_fig09b_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig09b-executable`** — `spec_meta_modelers_guide_composites_fig09b_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig09b_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig09b-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig09b_executable)
+spec_meta_modelers_guide_composites_fig09b_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig09b-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig09b_executable)
 
 # === Edit parameters for composite 'fig09b-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'minimal_cell_containment'  (local:ContainmentODE)
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['assembly_rate'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['assembly_rate'] = 0.15
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['interval'] = 1.0
 
 # process 'minimal_cell_metabolism'  (local:MetabolismLinear)
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['k_cat'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['metabolite_yield'] = 0.6
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['energy_yield'] = 0.4
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['k_cat'] = 0.2
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['metabolite_yield'] = 0.6
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['energy_yield'] = 0.4
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
 
 # process 'gene_expression'  (local:GeneExpressionODE)
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['k_expr'] = 0.25
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['protein_yield'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['enzyme_yield'] = 0.3
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['k_expr'] = 0.25
+spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['protein_yield'] = 0.5
+spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['enzyme_yield'] = 0.3
+spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['interval'] = 1.0
 
 # process 'minimal_cell_replication'  (local:ReplicationODE)
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['k_rep'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['gene_yield'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['nucleic_yield'] = 0.4
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['k_rep'] = 0.1
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['gene_yield'] = 0.5
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['nucleic_yield'] = 0.4
+spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['interval'] = 1.0
 
 # process 'diffusion'  (local:DiffusionRelax)
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['turnover_rate'] = 0.05
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['turnover_rate'] = 0.05
+spec_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['interval'] = 1.0
 
 # process 'reactions'  (local:MassActionReactions)
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['k_react'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['protein_yield'] = 0.4
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['nucleic_turnover'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['k_react'] = 0.15
+spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['protein_yield'] = 0.4
+spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['nucleic_turnover'] = 0.2
+spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-1-executable`** — `spec_viva_meta_modelers_guide_composites_fig10_1_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-1-executable`** — `spec_meta_modelers_guide_composites_fig10_1_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_1_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-1-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_1_executable)
+spec_meta_modelers_guide_composites_fig10_1_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_1_executable)
 
 # === Edit parameters for composite 'fig10-1-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'dna_replication'  (local:DNAReplicationODE)
-spec_viva_meta_modelers_guide_composites_fig10_1_executable['state']['dna_replication']['config']['k'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig10_1_executable['state']['dna_replication']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_executable['state']['dna_replication']['config']['k'] = 0.15
+spec_meta_modelers_guide_composites_fig10_1_executable['state']['dna_replication']['config']['interval'] = 1.0
 
 # process 'segregate_chromosome'  (local:SegregateChromosomeProc)
-spec_viva_meta_modelers_guide_composites_fig10_1_executable['state']['segregate_chromosome']['config']['seg_rate'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig10_1_executable['state']['segregate_chromosome']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_executable['state']['segregate_chromosome']['config']['seg_rate'] = 0.2
+spec_meta_modelers_guide_composites_fig10_1_executable['state']['segregate_chromosome']['config']['interval'] = 1.0
 
 # process 'divide'  (local:DivisionRewrite)
-spec_viva_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['division_time'] = 5.0
-spec_viva_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['division_time'] = 5.0
+spec_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-2-executable`** — `spec_viva_meta_modelers_guide_composites_fig10_2_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-2-executable`** — `spec_meta_modelers_guide_composites_fig10_2_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_2_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-2-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_2_executable)
+spec_meta_modelers_guide_composites_fig10_2_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_2_executable)
 
 # === Edit parameters for composite 'fig10-2-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'surface_attachment'  (local:SurfaceAttachmentProc)
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['attach_rate'] = 0.15
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['adhesion_coef'] = 0.5
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['attach_rate'] = 0.15
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['adhesion_coef'] = 0.5
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['interval'] = 1.0
 
 # process 'ecm_secretion'  (local:ECMSecretionProc)
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['ecm_secretion']['config']['k'] = 0.2
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['ecm_secretion']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['ecm_secretion']['config']['k'] = 0.2
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['ecm_secretion']['config']['interval'] = 1.0
 
 # process 'biofilm_growth'  (local:BiofilmGrowthProc)
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['mass_rate'] = 0.25
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['growth_rate'] = 0.08
-spec_viva_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['mass_rate'] = 0.25
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['growth_rate'] = 0.08
+spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['interval'] = 1.0
 
-# **Composite `viva_meta_modelers_guide.composites.fig10-3-executable`** — `spec_viva_meta_modelers_guide_composites_fig10_3_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig10-3-executable`** — `spec_meta_modelers_guide_composites_fig10_3_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_viva_meta_modelers_guide_composites_fig10_3_executable = load_spec(REPO / 'viva_meta_modelers_guide/composites/fig10-3-executable.composite.json')
-describe_spec(spec_viva_meta_modelers_guide_composites_fig10_3_executable)
+spec_meta_modelers_guide_composites_fig10_3_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_3_executable)
 
 # === Edit parameters for composite 'fig10-3-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'variation'  (local:VariationProc)
-spec_viva_meta_modelers_guide_composites_fig10_3_executable['state']['variation']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_executable['state']['variation']['config']['interval'] = 1.0
 
 # process 'selection'  (local:SelectionProc)
-spec_viva_meta_modelers_guide_composites_fig10_3_executable['state']['selection']['config']['k'] = 0.3
-spec_viva_meta_modelers_guide_composites_fig10_3_executable['state']['selection']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_executable['state']['selection']['config']['k'] = 0.3
+spec_meta_modelers_guide_composites_fig10_3_executable['state']['selection']['config']['interval'] = 1.0
 
 # process 'port_addition'  (local:PortAdditionProc)
-spec_viva_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['onset_rate'] = 0.1
-spec_viva_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['capacity'] = 1.0
-spec_viva_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['onset_rate'] = 0.1
+spec_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['capacity'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['interval'] = 1.0
 
 # ### Run
 #
