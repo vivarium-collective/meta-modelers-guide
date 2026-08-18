@@ -44,24 +44,23 @@ PALETTE = ["#0d6e6b", "#a5620f", "#3f9e99", "#657572",
 # Multi-executable studies (one interface / many handlers, or coarse+fine) render
 # a small-multiple; the-living-atlas is the whole compiled gallery.
 STUDY_EXECUTABLES = {
-    "typed-interface": ["fig04b-executable"],
-    "closing-the-loop": ["fig05-executable"],
+    # LEAD — the thesis: one interface, three mechanisms (incl. real FBA)
     "one-interface-three-mechanisms": [
         "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba"],
-    # the-nested-cell absorbs the Fig 7 molecular mechanism (former molecular-channels study)
-    "the-nested-cell": ["fig07-executable", "fig08-executable"],
-    "self-made": ["fig09a-executable", "fig09b-executable"],
     "divide": ["fig10-1-executable"],
-    # multicellular merges development (Fig 10-2) + evolution (Fig 10-3)
-    "multicellular": ["fig10-2-executable", "fig10-3-executable"],
-    # the-living-atlas is the capstone: the composed whole cell is PRIMARY (rendered
-    # separately below); the 12-executable gallery is secondary (-gallery.svg).
-    "the-living-atlas": [
+    # "The Contract and Its Coupling" — Fig 4 interface + Fig 5 sense/act loop
+    "typed-interface": ["fig04b-executable", "fig05-executable"],
+    "the-nested-cell": ["fig07-executable", "fig08-executable"],
+    # gallery appendix — every figure compiles and runs (the 12-panel small-multiple)
+    "gallery": [
         "fig04b-executable", "fig05-executable",
         "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba",
         "fig07-executable", "fig08-executable",
         "fig09a-executable", "fig09b-executable",
         "fig10-1-executable", "fig10-2-executable", "fig10-3-executable"],
+    # the-living-atlas capstone: the composed whole cell run THREE WAYS (metabolism
+    # swap) — rendered specially below, not from executable panels.
+    "the-living-atlas": [],
 }
 
 
@@ -69,41 +68,38 @@ STUDY_EXECUTABLES = {
 # executable actually shows (NOT a conservation invariant; the executables are not
 # closed batches). Rendered by render_report.py as each figure's checked signature.
 INVARIANTS = {
-    "typed-interface": {
-        "invariant_kind": "interface",
-        "invariant": "the Fig 4 thermal interface runs — shape 1.0→4.2, objective 0→1.6, "
-                     "chemical 0→−0.8; viability holds (1.0→0.97)"},
-    "closing-the-loop": {
-        "invariant_kind": "closed-loop",
-        "invariant": "the cell senses the field and acts back — bolus drawn down (1.0→0.2), "
-                     "traction 0→0.41, mechanical response 0→0.94 (a closed sense→act loop)"},
     "one-interface-three-mechanisms": {
         "invariant_kind": "interface-preserved",
-        "invariant": "one nutrients⇒biomass interface, three handlers → coarse 4.0 / kinetic 2.67 / "
-                     "FBA 6.29 (+acetate overflow 30.4); same ports, distinct dynamics (law 4)"},
+        "invariant": "THE THESIS — one nutrients⇒biomass interface, three conforming handlers → "
+                     "coarse 4.0 / kinetic 2.67 / real-FBA 6.29 (+acetate overflow 30.4); a "
+                     "non-conforming impostor is rejected at compile time. Same ports, distinct "
+                     "dynamics (law 4)"},
+    "divide": {
+        "invariant_kind": "rewrite",
+        "invariant": "division as a first-class rewrite, GATED BY DNA (not a clock) — replicated "
+                     "dna 1→3.06 crosses the threshold and the parent PARTITIONS: parent biomass→0, "
+                     "each daughter 0.5 (mass conserved), cell_count 1→2"},
+    "typed-interface": {
+        "invariant_kind": "interface",
+        "invariant": "the typed contract and its coupling — the Fig 4 interface runs (shape 1.0→4.2, "
+                     "objective 0→1.6) and the Fig 5 cell senses a field and acts back (traction "
+                     "0→0.41, mechanical response 0→0.94), a closed sense→act loop"},
     "the-nested-cell": {
         "invariant_kind": "hierarchy",
         "invariant": "molecular mechanisms compose into the nested cell — an F1Fo ATP synthase "
                      "(Fig 7) drives output 0→100, feeding a central-dogma cascade (rna 0→0.18, "
-                     "metabolites 0→1.5, energy 0→0.84) across nested scales on one interface"},
-    "self-made": {
-        "invariant_kind": "closure",
-        "invariant": "autopoietic closure self-sustains structure — membrane 0→1.6, enzymes 0→0.72; "
-                     "the inert draft stays at seed"},
-    "divide": {
-        "invariant_kind": "rewrite",
-        "invariant": "division as a real topology event — cell_count 1→2, two daughters "
-                     "(dna 0→2.75 each), parent dna 1→3.06"},
-    "multicellular": {
-        "invariant_kind": "composition",
-        "invariant": "single cells reorganize and evolve — a colony accumulates biofilm_mass 0→2.25 "
-                     "& ecm 0→1.8 (development), and a variant acquires a new interface port 0→0.57 "
-                     "while the population grows 1→3.4 (evolution)"},
+                     "metabolites 0→1.5) across nested scales on one interface"},
+    "gallery": {
+        "invariant_kind": "coverage",
+        "invariant": "every figure compiles and runs — the 11 figure drafts materialize into 12 "
+                     "executable composites (Fig 6's one interface carries three), each producing "
+                     "non-trivial dynamics on its declared ports"},
     "the-living-atlas": {
         "invariant_kind": "composition",
-        "invariant": "the figures' modules compose into one cell — it grows (biomass peak 5.1), "
-                     "divides once (cell_count 1→2), then dies (viability 1.0→0.02, debris 0→4.87); "
-                     "all 12 figures also run on their own"},
+        "invariant": "the capstone — the composed whole cell run THREE WAYS (metabolism swapped "
+                     "behind identical ports): coarse peak 5.78 / kinetic 6.43 / fba 6.05, dividing "
+                     "at t≈3.0 / 2.1 / 2.7 (mass-conserved), then a scripted thermal shock kills it "
+                     "(viability→0.018). Handler independence at the whole-cell level"},
 }
 
 
@@ -188,41 +184,45 @@ def _panel(ax, stem, title):
             for lab, ys in series.items()}
 
 
-def _whole_cell(viz):
-    """PRIMARY atlas figure: run the composed whole-cell composite and plot the
-    grow→divide→die trajectory (biomass, viability, temperature, cell_count, debris)."""
-    state = json.loads((COMPOSITES / "whole-cell.composite.json").read_text())["state"]
-    core = build_core()
-    sim = Composite({"state": state}, core=core)
-    sim.run(20.0)
-    rows = gather_emitter_results(sim)[("emitter",)]
-    t = [r["time"] for r in rows]
-    keys = [("biomass", "#0d6e6b"), ("cell_count", "#1c7a77"), ("viability", "#657572"),
-            ("temperature", "#a5620f"), ("debris", "#c98a3a")]
-    fig, ax = plt.subplots(figsize=(6.0, 3.8), dpi=100)
-    ax2 = ax.twinx()
+def _metabolism_swap(viz):
+    """PRIMARY capstone figure: run the composed whole cell THREE WAYS — coarse /
+    kinetic / fba metabolism behind identical ports — and overlay the biomass life
+    histories. Same cell, three mechanisms, three trajectories: handler
+    independence (Fig 6 law 4) demonstrated at the whole-cell level. Division marks
+    (▾) show each mechanism reaches its division threshold at a different time."""
+    from meta_modelers_guide.wholecell import build_whole_cell
+    modes = [("coarse", "#0d6e6b"), ("kinetic", "#a5620f"), ("fba", "#1c7a77")]
+    fig, ax = plt.subplots(figsize=(6.2, 3.9), dpi=100)
     ro = {}
-    for k, col in keys:
-        ys = [float(r[k]) for r in rows if k in r]
-        if not ys:
-            continue
-        target = ax2 if k == "temperature" else ax
-        target.plot(t, ys, lw=2, color=col, label=k)
-        ro[k] = {"first": round(ys[0], 4), "last": round(ys[-1], 4),
-                 "min": round(min(ys), 4), "max": round(max(ys), 4)}
-    ax.set_title("the composed whole cell — grow · divide · die", fontsize=11, color="#16211f")
+    for mode, col in modes:
+        core = build_core()
+        sim = Composite(build_whole_cell(metabolism=mode), core=core)
+        sim.run(20.0)
+        rows = gather_emitter_results(sim)[("emitter",)]
+        t = [r["time"] for r in rows]
+        bm = [float(r["biomass"]) for r in rows]
+        ax.plot(t, bm, lw=2.2, color=col, label=f"{mode} metabolism")
+        div_t = next((r["time"] for r in rows if float(r["cell_count"]) >= 2), None)
+        if div_t is not None:
+            bi = min(range(len(t)), key=lambda i: abs(t[i] - div_t))
+            ax.plot([div_t], [bm[bi]], marker="v", color=col, ms=8)
+        ro[mode] = {"peak_biomass": round(max(bm), 3), "final": round(bm[-1], 3),
+                    "divides_at": round(div_t, 2) if div_t else None,
+                    "viability_min": round(min(float(r["viability"]) for r in rows), 4),
+                    "debris_final": round(float(rows[-1]["debris"]), 3)}
+    ax.set_title("one composed cell, three metabolisms — three life histories",
+                 fontsize=11, color="#16211f")
     ax.set_xlabel("time", fontsize=9)
-    ax.set_ylabel("biomass · cell_count · viability · debris", fontsize=8)
-    ax2.set_ylabel("temperature (°C)", fontsize=8, color="#a5620f")
-    lines = ax.get_lines() + ax2.get_lines()
-    ax.legend(lines, [ln.get_label() for ln in lines], fontsize=7, frameon=False, loc="upper left")
+    ax.set_ylabel("biomass", fontsize=9)
+    ax.legend(fontsize=8, frameon=False, loc="upper right",
+              title="▾ = division (threshold reached)", title_fontsize=7)
     ax.grid(True, alpha=0.15)
-    for s in ("top",):
+    for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     fig.tight_layout()
     fig.savefig(viz / "the-living-atlas-dynamics.svg", format="svg")
     plt.close(fig)
-    return {"whole-cell": ro}
+    return {"metabolism-swap": ro}
 
 
 def render(slug, stems):
@@ -230,8 +230,11 @@ def render(slug, stems):
     if not viz.parent.exists():
         return None
     viz.mkdir(parents=True, exist_ok=True)
-    # the-living-atlas: whole cell is PRIMARY; the 12-executable gallery is -gallery.svg
-    atlas = slug == "the-living-atlas"
+    # the-living-atlas: the capstone is the whole-cell METABOLISM-SWAP (rendered
+    # specially, three runs overlaid) — no executable panels.
+    if slug == "the-living-atlas":
+        return _metabolism_swap(viz)
+    atlas = False
     n = len(stems)
     if n == 1:
         fig, axes = plt.subplots(1, 1, figsize=(5.4, 3.5), dpi=100)

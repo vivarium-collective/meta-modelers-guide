@@ -67,13 +67,17 @@ behavior_tests:
     provenance: 'FBA overflow metabolism: acetate on the secretions port 0→30.4 (exec fig06-executable-fba); biomass reaches 6.29'
   requires_simulation: one-interface-three-mechanisms
 - name: impostor-rejected
-  classification: diagnostic
+  classification: primary
   control: negative
-  description: 'Negative control / compiler rejection: an impostor handler (NonConformingMetabolism) that
-    renames the biomass output to ``growth`` with the WRONG type (``growth_rate`` not ``mass``) and drops
-    energy/entropy/secretions is REJECTED by the compiler with a CompileError naming the missing ports (the
-    port contract, law 2). Because it is rejected at compile time it never runs and produces no biomass observable,
-    so a test requiring biomass MUST fail — that failure IS the interface being enforced.'
+  description: 'HEADLINE CONTROL (MUST-FAIL) — the single most persuasive artifact in the study. An impostor
+    handler (NonConformingMetabolism) that renames the biomass output to ``growth`` with the WRONG type
+    (``growth_rate`` not ``mass``) and drops energy/entropy/secretions is REJECTED by the compiler at compile
+    time with a CompileError that NAMES the missing ports (biomass, energy, entropy, secretions). This is
+    structural/interface conformance made mechanical: the compiler checks port names, types, and wiring
+    against the signature and refuses to install a handler that does not supply them. Inverted-control
+    convention: because the impostor never runs, it produces no biomass observable, so this test''s biomass
+    threshold MUST fail by design — that expected failure IS the interface being enforced. (Scope: the check
+    is structural — port names/types/wiring — not units, dimensions, invariants, or runtime behavior.)'
   measure:
     kind: observable
     path: biomass
@@ -102,6 +106,11 @@ runs:
     FBA-OVERFLOW-SECRETION:
       result: PASS
       detail: cobra LP over e_coli_core → biomass 6.29, energy 144.0, entropy 151.3, acetate secretions 30.4
+    IMPOSTOR-REJECTED:
+      result: PASS
+      detail: 'control behaved as required (expected-fail): NonConformingMetabolism is rejected by the compiler
+        with a CompileError naming the missing biomass/energy/entropy/secretions ports; it never runs, so
+        the biomass threshold fails by design — the rejection is the evidence.'
 findings:
 - id: F-01
   kind: biological
@@ -137,9 +146,9 @@ findings:
   kind: biological
   tier: observation
   status: confirms
-  statement: 'The interface is a real contract, not a convention: an impostor handler that breaks the port
-    types is rejected at compile time (law 2). Confirmed: NonConformingMetabolism raises a CompileError naming
-    the missing biomass/energy/entropy/secretions ports.'
+  statement: 'The interface is a real STRUCTURAL contract, not a convention: an impostor handler that breaks
+    the port names/types is rejected at compile time (law 2). Confirmed: NonConformingMetabolism raises a
+    CompileError naming the missing biomass/energy/entropy/secretions ports — the study''s headline control.'
   evidence:
     from_test: impostor-rejected
     from_run: one-interface-three-mechanisms
@@ -188,9 +197,9 @@ conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to three executables that run.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; three
-      handlers give three distinct trajectories and interface preservation holds.
+      handlers give three distinct trajectories and structural interface preservation holds.
     pipeline_unblocks:
-    - the-nested-cell
+    - divide
   if_primary_tests_fail:
     diagnose:
     - compiler dropped/renamed an interface port (law 2 violation)
@@ -199,6 +208,7 @@ conclusion_logic:
 limitations:
 - Three conforming handlers share one toy metabolic setup; the FBA handler uses the small e_coli_core network, not a genome-scale reconstruction.
 - Endpoints (biomass 4.0 / 2.667 / 6.29, acetate 30.4) are illustrative magnitudes, not calibrated biomass — the study tests interface identity and handler independence, not absolute accuracy.
+- Conformance is STRUCTURAL only. The compiler checks port names, types, and wiring against the signature; it does NOT check units, dimensions, invariants, or runtime behavior. The impostor is caught because it drops/renames/retypes ports, not because the compiler understands metabolism.
 falsifiability: Overturned if the three handlers fail to expose a byte-identical nutrients ⇒ {biomass, energy, entropy, secretions} port set, or if a non-conforming handler compiled against that interface without error (the port contract, law 2, not enforced).
 visualizations:
 - name: one-interface-three-mechanisms-dynamics
@@ -214,9 +224,7 @@ visualizations:
   address: image:visualizations/fig06-illustration.png
   config:
     chart: image
-parent_studies:
-- study: closing-the-loop
-  condition: tests-passed
+parent_studies: []
 experiment: Install three different handlers behind the same nutrients ⇒ biomass interface and run each to
   completion; also compile an impostor handler to test that the port contract is enforced.
 result: The three handlers produce three DISTINCT trajectories (biomass 4.0 / 2.667 / 6.29) while exposing

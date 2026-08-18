@@ -1,6 +1,6 @@
 {
   "name": "whole-cell",
-  "description": "The composed whole cell — the paper's figure mechanisms (thermal environment, nutrient uptake, viability-gated metabolism Fig 6, a viability monitor, division Fig 10-1, and disintegration) wired through shared cell/environment stores into one modular composite. Assembled, it grows on a depleting nutrient, divides once as it reaches threshold, then a thermal shock past tolerance collapses viability and converts its biomass to debris — grow, divide, die, in one run.",
+  "description": "The composed whole cell — the paper figure mechanisms (thermal environment, uptake, a SELECTABLE Fig 6 metabolism [coarse | kinetic | FBA], a viability monitor, DNA-threshold division Fig 10-1, and disintegration) wired through shared cell/environment stores. It grows, divides once (mass conserved), then a thermal shock past tolerance collapses viability and converts biomass to debris. Swapping the metabolism mechanism gives three distinct life histories behind one interface.",
   "requires": {},
   "provenance": {
     "kind": "composed",
@@ -104,8 +104,10 @@
       "_type": "process",
       "address": "local:ViabilityGatedMetabolism",
       "config": {
+        "mode": "coarse",
         "k": 0.6,
-        "biomass_yield": 0.8,
+        "vmax": 1.4,
+        "km": 0.4,
         "energy_yield": 0.4
       },
       "interval": 0.1,
@@ -190,12 +192,12 @@
         ]
       },
       "outputs": {
-        "biomass_1": [
-          "daughter_1",
+        "biomass": [
+          "cell",
           "biomass"
         ],
-        "biomass_2": [
-          "daughter_2",
+        "biomass_1": [
+          "daughter_1",
           "biomass"
         ],
         "cell_count": [

@@ -16,6 +16,12 @@ unit-bearing interface types and process kinds to ontology terms, so:
 Term IDs below are limited to standard GO/PATO classes we are confident about; the
 rest are given as ``ontology + label`` references (honest MIRIAM annotations without
 a fabricated numeric id).
+
+SCOPE (honest): this is a **curated annotation map** — a keyword→term lookup and a
+hand-listed synonym table for type compatibility. It is NOT ontology *reasoning*:
+it does not fetch term definitions, resolve identifiers, or check subsumption. It
+records which curated ontology term each interface quantity / process kind is
+*labelled* with; it does not verify that labelling against an ontology service.
 """
 from __future__ import annotations
 
