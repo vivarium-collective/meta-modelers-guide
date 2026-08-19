@@ -7,40 +7,9 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: 'The thesis of the investigation — one typed interface, many mechanisms — is proven at the level
-  of a single figure (Fig 6). Does it also hold at the level of a WHOLE CELL? This capstone assembles a
-  composed whole cell in the figures'' style — cell–environment uptake, a viability-gated Fig 6 metabolism,
-  a viability monitor, and the division and disintegration rewrites, wired through shared cell and
-  environment stores — and then SWAPS the Fig 6 metabolism behind identical ports (coarse, saturating
-  kinetic, or real COBRApy FBA). Same cell, three mechanisms: does each produce its own life history while
-  the interface never moves, and does each cell still grow, divide (mass-conserved), and die?'
-biological_summary: 'This is the payoff, and it is the paper''s thesis carried up to the whole cell. The
-  cell is ASSEMBLED BY HAND in the figures'' style (meta_modelers_guide/wholecell.py) — it is NOT emitted
-  by the compiler from the figure drafts. What it demonstrates is mechanism-swapping (Fig 6, law 4)
-  at the WHOLE-CELL level: behind one unchanged metabolism interface (nutrients ⇒ biomass), the Fig 6
-  mechanism is selectable — ``build_whole_cell(metabolism="coarse"|"kinetic"|"fba")`` — and the same cell
-  lives three DISTINCT life histories. With the COARSE lumped-yield metabolism the cell peaks at biomass
-  5.78 and divides at t≈3.0; with the SATURATING-KINETIC (Michaelis–Menten) metabolism it peaks at 6.43
-  and divides earlier, t≈2.1; with the REAL COBRApy FBA metabolism (flux-balance over e_coli_core solved
-  each step) it peaks at 6.05 and divides at t≈2.7. Three mechanisms, three trajectories, one interface
-  that does not move. In every case the cell first GROWS on the environmental nutrient as viability-gated
-  metabolism converts uptake to biomass; once biomass crosses the division threshold the rewrite fires
-  ONCE, partitioning the mother''s biomass — division CONSERVES MASS (the mother is halved, not doubled)
-  — so cell_count goes 1 → 2. Then a SCRIPTED thermal shock (the ThermalEnvironment process drives
-  temperature 37 → 50 °C at a hard-coded t=12) pushes the cell out of its tolerance band; the viability
-  monitor reads the interface and collapses viability 1.0 → 0.018, which gates metabolism off and triggers
-  the disintegration rewrite — the maintained boundary fails and biomass decays into molecular debris
-  (debris accumulating to ≈5.5–6.1, depending on the metabolism). Grow, divide once, die — but the
-  "grow" and "divide" are mechanism-driven and mechanism-dependent, while the "die" is a scripted shock.
-  Backing this whole-cell payoff, every one of the paper''s figures compiles and runs on its own — that
-  gallery is documented in the companion gallery study.'
-claim: 'The investigation''s thesis holds at the whole-cell level: behind ONE unchanged metabolism
-  interface, the Fig 6 mechanism is swappable (coarse / saturating-kinetic / real COBRApy FBA) and the
-  SAME assembled cell lives three distinct life histories — peak biomass 5.78 / 6.43 / 6.05, dividing at
-  t≈3.0 / 2.1 / 2.7. In every case the cell grows, divides once (cell_count 1 → 2, mass-conserved — the
-  mother is halved), and dies when a scripted thermal shock (37 → 50 °C at t=12) collapses viability to
-  0.018 and disintegration converts biomass to debris. The cell is assembled by hand in the figures''
-  style, not compiled from the figure drafts.'
+question: 'The thesis of the investigation — one typed interface, many mechanisms — is proven at the level of a single figure (Fig 6). Does it also hold at the level of a WHOLE CELL? This capstone assembles a composed whole cell in the figures'' style — cell–environment uptake, a viability-gated Fig 6 metabolism, a viability monitor, and the division and disintegration rewrites, wired through shared cell and environment stores — and then SWAPS the Fig 6 metabolism behind identical ports (coarse, saturating kinetic, or real COBRApy FBA). Same cell, three mechanisms: does each produce its own life history while the interface never moves, and does each cell still grow, divide (mass-conserved), and die?'
+biological_summary: 'This is the payoff, and it is the paper''s thesis carried up to the whole cell. The cell is ASSEMBLED BY HAND in the figures'' style (meta_modelers_guide/wholecell.py) — it is NOT emitted by the compiler from the figure drafts. What it demonstrates is mechanism-swapping (Fig 6, law 4) at the WHOLE-CELL level: behind one unchanged metabolism interface (nutrients ⇒ biomass), the Fig 6 mechanism is selectable — ``build_whole_cell(metabolism="coarse"|"kinetic"|"fba")`` — and the same cell lives three DISTINCT life histories. With the COARSE lumped-yield metabolism the cell peaks at biomass 5.78 and divides at t≈3.0; with the SATURATING-KINETIC (Michaelis–Menten) metabolism it peaks at 6.43 and divides earlier, t≈2.1; with the REAL COBRApy FBA metabolism (flux-balance over e_coli_core solved each step) it peaks at 6.05 and divides at t≈2.7. Three mechanisms, three trajectories, one interface that does not move. In every case the cell first GROWS on the environmental nutrient as viability-gated metabolism converts uptake to biomass; once biomass crosses the division threshold the rewrite fires ONCE, partitioning the mother''s biomass — division CONSERVES MASS (the mother is halved, not doubled) — so cell_count goes 1 → 2. Then a SCRIPTED thermal shock (the ThermalEnvironment process drives temperature 37 → 50 °C at a hard-coded t=12) pushes the cell out of its tolerance band; the viability monitor reads the interface and collapses viability 1.0 → 0.018, which gates metabolism off and triggers the disintegration rewrite — the maintained boundary fails and biomass decays into molecular debris (debris accumulating to ≈5.5–6.1, depending on the metabolism). Grow, divide once, die — but the "grow" and "divide" are mechanism-driven and mechanism-dependent, while the "die" is a scripted shock. Backing this whole-cell payoff, every one of the paper''s figures compiles and runs on its own — that gallery is documented in the companion gallery study.'
+claim: 'The investigation''s thesis holds at the whole-cell level: behind ONE unchanged metabolism interface, the Fig 6 mechanism is swappable (coarse / saturating-kinetic / real COBRApy FBA) and the SAME assembled cell lives three distinct life histories — peak biomass 5.78 / 6.43 / 6.05, dividing at t≈3.0 / 2.1 / 2.7. In every case the cell grows, divides once (cell_count 1 → 2, mass-conserved — the mother is halved), and dies when a scripted thermal shock (37 → 50 °C at t=12) collapses viability to 0.018 and disintegration converts biomass to debris. The cell is assembled by hand in the figures'' style, not compiled from the figure drafts.'
 baseline:
 - name: whole-cell
   composite: meta_modelers_guide.composites.whole-cell
@@ -49,8 +18,7 @@ variants: []
 behavior_tests:
 - name: metabolism-swap-coarse
   classification: primary
-  description: 'Behind the unchanged metabolism interface, the COARSE lumped-yield Fig 6 mechanism grows
-    the whole cell to its own peak biomass and divides at its own time.'
+  description: 'Behind the unchanged metabolism interface, the COARSE lumped-yield Fig 6 mechanism grows the whole cell to its own peak biomass and divides at its own time.'
   measure:
     kind: observable
     path: biomass
@@ -62,9 +30,7 @@ behavior_tests:
   requires_simulation: whole-cell-coarse
 - name: metabolism-swap-kinetic
   classification: primary
-  description: 'The SAME cell with the SATURATING-KINETIC (Michaelis–Menten) Fig 6 mechanism installed
-    behind the identical ports reaches a DISTINCT peak and divides at a DISTINCT time — mechanism-swap,
-    law 4, at the whole-cell level.'
+  description: 'The SAME cell with the SATURATING-KINETIC (Michaelis–Menten) Fig 6 mechanism installed behind the identical ports reaches a DISTINCT peak and divides at a DISTINCT time — mechanism-swap, law 4, at the whole-cell level.'
   measure:
     kind: observable
     path: biomass
@@ -76,8 +42,7 @@ behavior_tests:
   requires_simulation: whole-cell-kinetic
 - name: metabolism-swap-fba
   classification: primary
-  description: 'The SAME cell with the REAL COBRApy FBA Fig 6 mechanism (flux-balance over e_coli_core
-    solved each step) installed behind the identical ports reaches its own distinct peak and division time.'
+  description: 'The SAME cell with the REAL COBRApy FBA Fig 6 mechanism (flux-balance over e_coli_core solved each step) installed behind the identical ports reaches its own distinct peak and division time.'
   measure:
     kind: observable
     path: biomass
@@ -89,8 +54,7 @@ behavior_tests:
   requires_simulation: whole-cell-fba
 - name: cell-divides
   classification: primary
-  description: 'When biomass crosses the division threshold the rewrite fires ONCE, partitioning the
-    mother''s biomass into two — division CONSERVES MASS (the mother is halved, not doubled).'
+  description: 'When biomass crosses the division threshold the rewrite fires ONCE, partitioning the mother''s biomass into two — division CONSERVES MASS (the mother is halved, not doubled).'
   measure:
     kind: observable
     path: cell_count
@@ -102,9 +66,7 @@ behavior_tests:
   requires_simulation: whole-cell-coarse
 - name: cell-dies
   classification: primary
-  description: 'A SCRIPTED thermal shock (temperature driven 37 → 50 °C at a hard-coded t=12) leaves the
-    viability band; the monitor collapses viability and disintegration turns biomass into debris. Shared
-    across all three metabolisms.'
+  description: 'A SCRIPTED thermal shock (temperature driven 37 → 50 °C at a hard-coded t=12) leaves the viability band; the monitor collapses viability and disintegration turns biomass into debris. Shared across all three metabolisms.'
   measure:
     kind: observable
     path: viability
@@ -162,81 +124,75 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The thesis holds at the whole-cell level: with the COARSE Fig 6 metabolism installed behind
-    the unchanged interface, the assembled cell grows to its own peak and divides at its own time.
-    Confirmed: peak biomass 5.78, divides at t≈3.0.'
+  statement: 'The thesis holds at the whole-cell level: with the COARSE Fig 6 metabolism installed behind the unchanged interface, the assembled cell grows to its own peak and divides at its own time. Confirmed: peak biomass 5.78, divides at t≈3.0.'
   evidence:
     from_test: metabolism-swap-coarse
     from_run: whole-cell-coarse
     observed: coarse — peak biomass 5.78, divides t≈3.0
+  provenance:
+    run_ids:
+    - whole-cell-coarse
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Swapping in the SATURATING-KINETIC metabolism behind the identical ports gives a DISTINCT
-    life history — mechanism-swap (law 4) at the whole-cell level. Confirmed: peak biomass 6.43, divides
-    earlier at t≈2.1.'
+  statement: 'Swapping in the SATURATING-KINETIC metabolism behind the identical ports gives a DISTINCT life history — mechanism-swap (law 4) at the whole-cell level. Confirmed: peak biomass 6.43, divides earlier at t≈2.1.'
   evidence:
     from_test: metabolism-swap-kinetic
     from_run: whole-cell-kinetic
     observed: kinetic — peak biomass 6.43, divides t≈2.1 (distinct from coarse)
+  provenance:
+    run_ids:
+    - whole-cell-kinetic
 - id: F-03
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Swapping in the REAL COBRApy FBA metabolism behind the identical ports gives a third distinct
-    life history. Confirmed: peak biomass 6.05, divides at t≈2.7.'
+  statement: 'Swapping in the REAL COBRApy FBA metabolism behind the identical ports gives a third distinct life history. Confirmed: peak biomass 6.05, divides at t≈2.7.'
   evidence:
     from_test: metabolism-swap-fba
     from_run: whole-cell-fba
     observed: fba (real COBRApy) — peak biomass 6.05, divides t≈2.7
+  provenance:
+    run_ids:
+    - whole-cell-fba
 - id: F-04
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The composed cell DIVIDES ONCE and division CONSERVES MASS. Confirmed: the rewrite fires
-    once, cell_count 1 → 2, the mother''s biomass partitioned (mother halved, not doubled).'
+  statement: 'The composed cell DIVIDES ONCE and division CONSERVES MASS. Confirmed: the rewrite fires once, cell_count 1 → 2, the mother''s biomass partitioned (mother halved, not doubled).'
   evidence:
     from_test: cell-divides
     from_run: whole-cell-coarse
     observed: cell_count 1 → 2 (mother halved, mass conserved)
+  provenance:
+    run_ids:
+    - whole-cell-coarse
 - id: F-05
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The composed cell DIES on a SCRIPTED shock. Confirmed: the ThermalEnvironment process drives
-    temperature 37 → 50 °C at a hard-coded t=12, the viability monitor collapses viability 1.0 → 0.018,
-    metabolism gates off, and disintegration converts biomass to molecular debris (≈5.5–6.1).'
+  statement: 'The composed cell DIES on a SCRIPTED shock. Confirmed: the ThermalEnvironment process drives temperature 37 → 50 °C at a hard-coded t=12, the viability monitor collapses viability 1.0 → 0.018, metabolism gates off, and disintegration converts biomass to molecular debris (≈5.5–6.1).'
   evidence:
     from_test: cell-dies
     from_run: whole-cell-coarse
     observed: viability 1.0 → 0.018 after a scripted shock (temperature 37 → 50 at t=12); debris ≈5.5–6.1
+  provenance:
+    run_ids:
+    - whole-cell-coarse
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: The assembled whole-cell composite runs 20 steps to completion under all three metabolism
-      selections (coarse/kinetic/fba) via scripts/run_wholecell.py.
+    basis: The assembled whole-cell composite runs 20 steps to completion under all three metabolism selections (coarse/kinetic/fba) via scripts/run_wholecell.py.
   biological_validation:
     result: PASS
-    basis: Behind one unchanged metabolism interface, the three Fig 6 mechanisms give three distinct
-      whole-cell life histories (peak biomass 5.78 / 6.43 / 6.05, dividing at t≈3.0 / 2.1 / 2.7); in every
-      case the cell grows, divides once (cell_count 1 → 2, mass-conserved), and dies when a scripted
-      thermal shock (37 → 50 °C at t=12) collapses viability to 0.018 and disintegration turns biomass to
-      debris — mechanism-swap (law 4) demonstrated at the whole-cell level.
+    basis: Behind one unchanged metabolism interface, the three Fig 6 mechanisms give three distinct whole-cell life histories (peak biomass 5.78 / 6.43 / 6.05, dividing at t≈3.0 / 2.1 / 2.7); in every case the cell grows, divides once (cell_count 1 → 2, mass-conserved), and dies when a scripted thermal shock (37 → 50 °C at t=12) collapses viability to 0.018 and disintegration turns biomass to debris — mechanism-swap (law 4) demonstrated at the whole-cell level.
   explanatory_gain:
     result: POSITIVE
-    basis: Swapping coarse, saturating-kinetic, and real-COBRApy metabolisms behind one whole-cell
-      interface — and watching the same cell live three distinct life histories while the interface never
-      moves — carries the investigation's thesis from a single figure up to a composed cell.
+    basis: Swapping coarse, saturating-kinetic, and real-COBRApy metabolisms behind one whole-cell interface — and watching the same cell live three distinct life histories while the interface never moves — carries the investigation's thesis from a single figure up to a composed cell.
 conclusion: '## Claims
 
-  - The thesis holds at the whole-cell level. The cell is ASSEMBLED BY HAND in the figures'' style (not
-  compiled from the figure drafts), and behind ONE unchanged metabolism interface the Fig 6 mechanism is
-  swappable: coarse (peak biomass 5.78, divides t≈3.0), saturating-kinetic (6.43, t≈2.1), and real COBRApy
-  FBA (6.05, t≈2.7) — same cell, three mechanisms, three life histories. In every case the cell grows,
-  divides once (cell_count 1 → 2, mass-conserved — the mother is halved), and dies when a SCRIPTED thermal
-  shock (37 → 50 °C hard-coded at t=12) collapses viability to 0.018 and disintegration converts biomass to
-  molecular debris (≈5.5–6.1).
+  - The thesis holds at the whole-cell level. The cell is ASSEMBLED BY HAND in the figures'' style (not compiled from the figure drafts), and behind ONE unchanged metabolism interface the Fig 6 mechanism is swappable: coarse (peak biomass 5.78, divides t≈3.0), saturating-kinetic (6.43, t≈2.1), and real COBRApy FBA (6.05, t≈2.7) — same cell, three mechanisms, three life histories. In every case the cell grows, divides once (cell_count 1 → 2, mass-conserved — the mother is halved), and dies when a SCRIPTED thermal shock (37 → 50 °C hard-coded at t=12) collapses viability to 0.018 and disintegration converts biomass to molecular debris (≈5.5–6.1).
 
 
   ## Evidence
@@ -249,49 +205,35 @@ conclusion: '## Claims
 
   - **CELL-DIVIDES** — the rewrite fires once: cell_count 1 → 2, mother halved (mass conserved)
 
-  - **CELL-DIES** — scripted shock (37 → 50 °C at t=12) collapses viability 1.0 → 0.018; disintegration
-  turns biomass to debris (≈5.5–6.1)
+  - **CELL-DIES** — scripted shock (37 → 50 °C at t=12) collapses viability 1.0 → 0.018; disintegration turns biomass to debris (≈5.5–6.1)
 
 
   ## Limitations
 
-  - The whole cell is ASSEMBLED BY HAND in the figures'' style (wholecell.py), not emitted by the compiler
-  from the figure drafts; it demonstrates that a Fig-6-style mechanism-swap holds at the whole-cell scale,
-  not a calibrated whole-cell model.
+  - The whole cell is ASSEMBLED BY HAND in the figures'' style (wholecell.py), not emitted by the compiler from the figure drafts; it demonstrates that a Fig-6-style mechanism-swap holds at the whole-cell scale, not a calibrated whole-cell model.
 
-  - The "grow" and "divide" behaviors are mechanism-driven and mechanism-dependent, but the "die" is a
-  SCRIPTED thermal shock (hard-coded t=12), not an emergent failure. One deterministic run per metabolism.
+  - The "grow" and "divide" behaviors are mechanism-driven and mechanism-dependent, but the "die" is a SCRIPTED thermal shock (hard-coded t=12), not an emergent failure. One deterministic run per metabolism.
 
 
   ## Next steps
 
-  - Replace the scripted shock with an emergent viability failure (e.g. nutrient exhaustion), run replicate
-  seeds and thermal schedules, and drive the whole cell toward calibration rather than illustration.'
+  - Replace the scripted shock with an emergent viability failure (e.g. nutrient exhaustion), run replicate seeds and thermal schedules, and drive the whole cell toward calibration rather than illustration.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The assembled whole cell runs under all three metabolism selections.
-    biological_validation: Mechanism-swap (law 4) is demonstrated at the whole-cell level, at the toy-real
-      (uncalibrated) level; the metabolism interface is preserved across the three selections.
+    biological_validation: Mechanism-swap (law 4) is demonstrated at the whole-cell level, at the toy-real (uncalibrated) level; the metabolism interface is preserved across the three selections.
     pipeline_unblocks:
     - gallery
   if_primary_tests_fail:
     diagnose:
     - swapping the Fig 6 metabolism changes the whole cell's ports (the metabolism interface is not preserved across selections)
     - the assembled whole-cell composite fails to run to completion under one of the metabolism selections
-    block_downstream: none — this is the terminal capstone; a failure blocks the investigation's
-      mechanism-swap-at-whole-cell conclusion.
+    block_downstream: none — this is the terminal capstone; a failure blocks the investigation's mechanism-swap-at-whole-cell conclusion.
 limitations:
-- The whole cell is assembled by hand in the figures' style (wholecell.py); it is NOT compiled by the
-  draft→executable compiler from the figure drafts. The study demonstrates that a Fig-6-style
-  mechanism-swap holds at the whole-cell scale, not a calibrated whole-cell simulation.
-- Division conserves mass (the mother is halved) but is symmetric and fires once; the death is a SCRIPTED
-  thermal shock hard-coded at t=12, not an emergent failure.
-- One deterministic run per metabolism selection (20 steps); behaviors are shown once per mechanism, not
-  across replicate seeds or environments.
-falsifiability: Overturned if swapping the Fig 6 metabolism (coarse/kinetic/fba) changes the whole cell's
-  ports rather than only its trajectory, if the three metabolisms fail to produce three distinct life
-  histories, if division fails to conserve mass (the mother is not halved), or if the assembled cell fails
-  to run to completion under any metabolism selection.
+- The whole cell is assembled by hand in the figures' style (wholecell.py); it is NOT compiled by the draft→executable compiler from the figure drafts. The study demonstrates that a Fig-6-style mechanism-swap holds at the whole-cell scale, not a calibrated whole-cell simulation.
+- Division conserves mass (the mother is halved) but is symmetric and fires once; the death is a SCRIPTED thermal shock hard-coded at t=12, not an emergent failure.
+- One deterministic run per metabolism selection (20 steps); behaviors are shown once per mechanism, not across replicate seeds or environments.
+falsifiability: Overturned if swapping the Fig 6 metabolism (coarse/kinetic/fba) changes the whole cell's ports rather than only its trajectory, if the three metabolisms fail to produce three distinct life histories, if division fails to conserve mass (the mother is not halved), or if the assembled cell fails to run to completion under any metabolism selection.
 visualizations:
 - name: the-living-atlas-dynamics
   address: image:visualizations/the-living-atlas-dynamics.svg
@@ -301,13 +243,5 @@ visualizations:
 parent_studies:
 - study: the-nested-cell
   condition: tests-passed
-experiment: Assemble a whole cell in the figures' style (cell–environment uptake, a viability-gated Fig 6
-  metabolism, a viability monitor, and the division/disintegration rewrites) through shared cell and
-  environment stores, then SWAP the Fig 6 metabolism behind identical ports —
-  build_whole_cell(metabolism="coarse"|"kinetic"|"fba") — and run each 20 steps through the engine.
-result: Behind one unchanged metabolism interface the same cell lives three distinct life histories —
-  coarse (peak biomass 5.78, divides t≈3.0), saturating-kinetic (6.43, t≈2.1), and real COBRApy FBA (6.05,
-  t≈2.7). In every case the cell grows, divides once (cell_count 1 → 2, mass-conserved — the mother is
-  halved), and dies when a scripted thermal shock (37 → 50 °C at t=12) collapses viability (1.0 → 0.018)
-  and disintegration converts biomass to debris (≈5.5–6.1). Mechanism-swap (law 4), demonstrated at the
-  whole-cell level.
+experiment: Assemble a whole cell in the figures' style (cell–environment uptake, a viability-gated Fig 6 metabolism, a viability monitor, and the division/disintegration rewrites) through shared cell and environment stores, then SWAP the Fig 6 metabolism behind identical ports — build_whole_cell(metabolism="coarse"|"kinetic"|"fba") — and run each 20 steps through the engine.
+result: Behind one unchanged metabolism interface the same cell lives three distinct life histories — coarse (peak biomass 5.78, divides t≈3.0), saturating-kinetic (6.43, t≈2.1), and real COBRApy FBA (6.05, t≈2.7). In every case the cell grows, divides once (cell_count 1 → 2, mass-conserved — the mother is halved), and dies when a scripted thermal shock (37 → 50 °C at t=12) collapses viability (1.0 → 0.018) and disintegration converts biomass to debris (≈5.5–6.1). Mechanism-swap (law 4), demonstrated at the whole-cell level.

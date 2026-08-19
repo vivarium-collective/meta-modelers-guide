@@ -7,30 +7,9 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: 'Does every one of the paper''s figures compile from its draft to an executable that runs to
-  completion? This appendix is a COVERAGE result, not a scientific claim about any single figure: it shows
-  the draft→executable machinery works uniformly across all of the paper''s figures — including the ones
-  not promoted to their own study (Fig 9 self-organization/coarse-graining, and the Fig 10-2/10-3
-  development and evolution rewrites).'
-biological_summary: 'This is the gallery that backs the rest of the investigation: proof that the
-  draft→executable machinery is not cherry-picked to a few figures but runs across ALL of them. The
-  paper''s Figs 4–10 are rendered as 11 figure drafts; 10 of these compile to executables (Fig 4a, the
-  interaction-modalities vocabulary, is illustrative and draft-only by design), and because Fig 6''s single
-  metabolism interface carries three mechanisms (coarse, kinetic, FBA) there are 12 executable composites
-  in all — every one runs to completion. Two figures fold into this gallery rather than earning their own
-  study, and their claims are deliberately DEFLATED here. Fig 9 (self-organization and coarse-graining)
-  compiles and runs — its lumped and molecular composites raise their pools (membrane, catalysts,
-  metabolites, a minimal-cell protein/enzyme/membrane set) — but this is a toy autocatalytic loop, not a
-  demonstration of autopoiesis; we claim only that it compiles and runs. Fig 10-2 (development) and Fig
-  10-3 (evolution) likewise compile and run — a biofilm composite accumulates an aggregate observable and
-  a variant composite exposes an extra port — but the "selection" is an ordinary ODE (SelectionProc) and
-  "acquiring a new port" is a configuration flag flip, not emergent innovation; again we claim only that
-  they compile and run. A representative witness that the executables genuinely execute: Fig 7''s F1Fo ATP
-  synthase charges its chemical output port 0 → 100.'
-claim: 'Every figure of the paper compiles and runs: 11 figure drafts (Figs 4–10 rendered as composites),
-  10 compiling to executables (Fig 4a is illustrative, draft-only by design), and 12 executable composites
-  in all (Fig 6''s one interface carries three mechanisms) — every one runs to completion. This is a
-  coverage/appendix result about the machinery, not a scientific claim about any individual figure.'
+question: 'Does every one of the paper''s figures compile from its draft to an executable that runs to completion? This appendix is a COVERAGE result, not a scientific claim about any single figure: it shows the draft→executable machinery works uniformly across all of the paper''s figures — including the ones not promoted to their own study (Fig 9 self-organization/coarse-graining, and the Fig 10-2/10-3 development and evolution rewrites).'
+biological_summary: 'This is the gallery that backs the rest of the investigation: proof that the draft→executable machinery is not cherry-picked to a few figures but runs across ALL of them. The paper''s Figs 4–10 are rendered as 11 figure drafts; 10 of these compile to executables (Fig 4a, the interaction-modalities vocabulary, is illustrative and draft-only by design), and because Fig 6''s single metabolism interface carries three mechanisms (coarse, kinetic, FBA) there are 12 executable composites in all — every one runs to completion. Two figures fold into this gallery rather than earning their own study, and their claims are deliberately DEFLATED here. Fig 9 (self-organization and coarse-graining) compiles and runs — its lumped and molecular composites raise their pools (membrane, catalysts, metabolites, a minimal-cell protein/enzyme/membrane set) — but this is a toy autocatalytic loop, not a demonstration of autopoiesis; we claim only that it compiles and runs. Fig 10-2 (development) and Fig 10-3 (evolution) likewise compile and run — a biofilm composite accumulates an aggregate observable and a variant composite exposes an extra port — but the "selection" is an ordinary ODE (SelectionProc) and "acquiring a new port" is a configuration flag flip, not emergent innovation; again we claim only that they compile and run. A representative witness that the executables genuinely execute: Fig 7''s F1Fo ATP synthase charges its chemical output port 0 → 100.'
+claim: 'Every figure of the paper compiles and runs: 11 figure drafts (Figs 4–10 rendered as composites), 10 compiling to executables (Fig 4a is illustrative, draft-only by design), and 12 executable composites in all (Fig 6''s one interface carries three mechanisms) — every one runs to completion. This is a coverage/appendix result about the machinery, not a scientific claim about any individual figure.'
 baseline:
 - name: fig04b-executable
   composite: meta_modelers_guide.composites.fig04b-executable
@@ -72,9 +51,7 @@ variants: []
 behavior_tests:
 - name: all-figures-run
   classification: primary
-  description: 'Coverage witness: all 12 executable composites compile and run to completion. A
-    representative witness that they genuinely execute is Fig 7''s F1Fo ATP synthase charging its output
-    port chemical_out 0 → 100.'
+  description: 'Coverage witness: all 12 executable composites compile and run to completion. A representative witness that they genuinely execute is Fig 7''s F1Fo ATP synthase charging its output port chemical_out 0 → 100.'
   measure:
     kind: observable
     path: chemical_out
@@ -90,8 +67,7 @@ runs:
   emitter: RAMEmitter
   id: gallery
   status: completed
-  provenance: scripts/build_executables.py + scripts/measure_all.py — all 12 fig*-executable composites
-    compiled from the figure drafts and run to completion through the engine (2026-08-16).
+  provenance: scripts/build_executables.py + scripts/measure_all.py — all 12 fig*-executable composites compiled from the figure drafts and run to completion through the engine (2026-08-16).
   params: {}
   outcomes:
     ALL-FIGURES-RUN:
@@ -102,15 +78,14 @@ findings:
   kind: technical
   tier: observation
   status: confirms
-  statement: 'Coverage: every figure of the paper compiles to a running executable. Confirmed: 12/12
-    executable composites run to completion; fig07''s ATP synthase charging chemical_out 0 → 100 is a
-    representative witness. (This is a machinery-coverage result, not a scientific claim about any single
-    figure — Fig 9''s closure is a toy autocatalytic loop, and Fig 10-2/10-3''s development and evolution
-    are an ODE and a config flag flip.)'
+  statement: 'Coverage: every figure of the paper compiles to a running executable. Confirmed: 12/12 executable composites run to completion; fig07''s ATP synthase charging chemical_out 0 → 100 is a representative witness. (This is a machinery-coverage result, not a scientific claim about any single figure — Fig 9''s closure is a toy autocatalytic loop, and Fig 10-2/10-3''s development and evolution are an ODE and a config flag flip.)'
   evidence:
     from_test: all-figures-run
     from_run: gallery
     observed: 12/12 executables run to completion; fig07 chemical_out 0 → 100
+  provenance:
+    run_ids:
+    - gallery
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -123,10 +98,7 @@ conclusion_verdicts:
     basis: A single appendix that shows the draft→executable machinery runs uniformly across all of the paper's figures backs the focused studies without over-claiming the figures folded in here.
 conclusion: '## Claims
 
-  - Coverage: every figure of the paper compiles and runs. 11 figure drafts (Figs 4–10 as composites), 10
-  compiling to executables (Fig 4a is illustrative, draft-only by design), 12 executable composites in all
-  (Fig 6''s one interface carries three mechanisms) — all run to completion. This is a machinery-coverage
-  result, not a scientific claim about any single figure.
+  - Coverage: every figure of the paper compiles and runs. 11 figure drafts (Figs 4–10 as composites), 10 compiling to executables (Fig 4a is illustrative, draft-only by design), 12 executable composites in all (Fig 6''s one interface carries three mechanisms) — all run to completion. This is a machinery-coverage result, not a scientific claim about any single figure.
 
 
   ## Evidence
@@ -136,16 +108,12 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - The two figures folded into this gallery are DEFLATED on purpose: Fig 9''s "autopoiesis" is a toy
-  autocatalytic loop that merely raises its pools; Fig 10-2''s "development" and Fig 10-3''s "evolution"
-  compile and run, but the selection is an ordinary ODE (SelectionProc) and "acquiring a new port" is a
-  configuration flag flip — not emergent innovation. This appendix claims only that they compile and run.
+  - The two figures folded into this gallery are DEFLATED on purpose: Fig 9''s "autopoiesis" is a toy autocatalytic loop that merely raises its pools; Fig 10-2''s "development" and Fig 10-3''s "evolution" compile and run, but the selection is an ordinary ODE (SelectionProc) and "acquiring a new port" is a configuration flag flip — not emergent innovation. This appendix claims only that they compile and run.
 
 
   ## Next steps
 
-  - Promote any folded figure to its own study only if a genuine mechanism (a real selection dynamic, an
-  emergent port) replaces the toy stand-in.'
+  - Promote any folded figure to its own study only if a genuine mechanism (a real selection dynamic, an emergent port) replaces the toy stand-in.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: Every figure draft compiles to an executable that runs to completion.
@@ -157,40 +125,13 @@ conclusion_logic:
     - an executable composite failed to run to completion
     block_downstream: none — this is an appendix backing the focused studies.
 limitations:
-- Coverage result only. It shows the draft→executable machinery runs across all figures; it makes no
-  biological claim about any individual figure.
-- 'The folded-in figures are deliberately deflated. Fig 9 is a toy autocatalytic loop (not a demonstration
-  of autopoiesis), and Fig 10-2/10-3 development and evolution are an ODE and a config flag flip (not
-  emergent development or innovation).'
+- Coverage result only. It shows the draft→executable machinery runs across all figures; it makes no biological claim about any individual figure.
+- 'The folded-in figures are deliberately deflated. Fig 9 is a toy autocatalytic loop (not a demonstration of autopoiesis), and Fig 10-2/10-3 development and evolution are an ODE and a config flag flip (not emergent development or innovation).'
 - One deterministic run per executable; behaviors are shown once, not across replicate seeds.
-falsifiability: Overturned if any of the paper's figure drafts fails to compile to an executable, or if any
-  of the 12 executable composites fails to run to completion.
-visualizations:
-- name: gallery-figures
-  address: image:visualizations/the-living-atlas-gallery.svg
-  config:
-    chart: image
-    caption: All of the paper's figures, each compiling to an executable that runs to completion.
-- name: fig09a-coarse-graining
-  address: image:visualizations/fig09a-coarse-graining.svg
-  config:
-    chart: image
-- name: fig09b-minimal-cell
-  address: image:visualizations/fig09b-minimal-cell.svg
-  config:
-    chart: image
-- name: fig10-illustration-2
-  address: image:visualizations/fig10-illustration-2.png
-  config:
-    chart: image
-- name: fig10-illustration-3
-  address: image:visualizations/fig10-illustration-3.png
-  config:
-    chart: image
+falsifiability: Overturned if any of the paper's figure drafts fails to compile to an executable, or if any of the 12 executable composites fails to run to completion.
+visualizations: []
 parent_studies:
 - study: the-living-atlas
   condition: tests-passed
 experiment: Compile all of the paper's figure drafts to executables and run each to completion through the engine.
-result: All 12 executable composites run to completion (11 figure drafts, 10 compiling to executables plus
-  Fig 6's three mechanisms). A representative witness — Fig 7's F1Fo ATP synthase charges chemical_out 0 →
-  100. Coverage of the machinery, not a scientific claim about any single figure.
+result: All 12 executable composites run to completion (11 figure drafts, 10 compiling to executables plus Fig 6's three mechanisms). A representative witness — Fig 7's F1Fo ATP synthase charges chemical_out 0 → 100. Coverage of the machinery, not a scientific claim about any single figure.

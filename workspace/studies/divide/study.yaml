@@ -7,25 +7,9 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: Is cell division in Fig 10 a genuine structural rewrite of the place graph — a single cell node
-  actually becoming two daughter nodes at runtime, fired by the cell's own replicated DNA crossing a
-  threshold — rather than a pre-declared post-structure that is merely animated on a wall clock?
-biological_summary: 'Fig 10 rewrites the cell across time, and division is its sharpest case. This is
-  not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction
-  rule in Milner''s sense whose reactum has more nodes than its redex. The trigger is the cell''s OWN
-  biology, not a timer: an autocatalytic DNA-replication process grows the cell''s ``dna`` and, when it
-  crosses ``dna_threshold`` = 2.0, the rewrite fires exactly once. There is no wall clock, no
-  ``division_time``, no scheduled tick — the cell divides because ``dna >= threshold``. At the event the
-  parent''s biomass is PARTITIONED, not duplicated: the parent node''s biomass is driven to 0 and each of
-  the two daughters receives M/2, so mass is CONSERVED (one cell node → two daughter nodes). Measured on
-  the compiled composite fig10-1-executable, the parent''s ``dna`` climbs 1 → 3.06 and crosses the
-  threshold; the rewrite fires; ``cell_count`` goes 1 → 2; each daughter inherits DNA (0 → 2.75) and half
-  the parent''s biomass (0 → 0.5) while the parent''s biomass falls to 0. The daughters are structurally
-  new — they do not exist in the initial state — which is exactly what makes this an event-driven rewrite
-  rather than an animation of a pre-built pair.'
-claim: 'Division is a change to the composition itself, triggered by the cell''s own replicated DNA
-  crossing a threshold: one cell becomes two through a graph rewrite that creates new nodes at runtime and
-  conserves mass (the parent is halved, not doubled) — not a pre-drawn pair on a timer.'
+question: Is cell division in Fig 10 a genuine structural rewrite of the place graph — a single cell node actually becoming two daughter nodes at runtime, fired by the cell's own replicated DNA crossing a threshold — rather than a pre-declared post-structure that is merely animated on a wall clock?
+biological_summary: 'Fig 10 rewrites the cell across time, and division is its sharpest case. This is not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction rule in Milner''s sense whose reactum has more nodes than its redex. The trigger is the cell''s OWN biology, not a timer: an autocatalytic DNA-replication process grows the cell''s ``dna`` and, when it crosses ``dna_threshold`` = 2.0, the rewrite fires exactly once. There is no wall clock, no ``division_time``, no scheduled tick — the cell divides because ``dna >= threshold``. At the event the parent''s biomass is PARTITIONED, not duplicated: the parent node''s biomass is driven to 0 and each of the two daughters receives M/2, so mass is CONSERVED (one cell node → two daughter nodes). Measured on the compiled composite fig10-1-executable, the parent''s ``dna`` climbs 1 → 3.06 and crosses the threshold; the rewrite fires; ``cell_count`` goes 1 → 2; each daughter inherits DNA (0 → 2.75) and half the parent''s biomass (0 → 0.5) while the parent''s biomass falls to 0. The daughters are structurally new — they do not exist in the initial state — which is exactly what makes this an event-driven rewrite rather than an animation of a pre-built pair.'
+claim: 'Division is a change to the composition itself, triggered by the cell''s own replicated DNA crossing a threshold: one cell becomes two through a graph rewrite that creates new nodes at runtime and conserves mass (the parent is halved, not doubled) — not a pre-drawn pair on a timer.'
 baseline:
 - name: division-rewrite
   composite: meta_modelers_guide.composites.fig10-1-rewrite
@@ -37,8 +21,7 @@ variants: []
 behavior_tests:
 - name: division-fires
   classification: primary
-  description: 'The cell''s replicated DNA crosses ``dna_threshold`` = 2.0 (parent dna 1 → 3.06) and the
-    rewrite fires ONCE — cell_count goes 1 → 2. The trigger is DNA state, not a wall clock.'
+  description: 'The cell''s replicated DNA crosses ``dna_threshold`` = 2.0 (parent dna 1 → 3.06) and the rewrite fires ONCE — cell_count goes 1 → 2. The trigger is DNA state, not a wall clock.'
   measure:
     kind: observable
     path: cell_count
@@ -50,9 +33,7 @@ behavior_tests:
   requires_simulation: divide
 - name: daughters-spawn
   classification: primary
-  description: 'The rewrite spawns two structurally-new daughter nodes and CONSERVES MASS: each daughter
-    inherits DNA (0 → 2.75) and half the parent''s biomass (0 → 0.5) while the parent''s biomass is driven
-    to 0 (M → M/2 + M/2, not M → 2M).'
+  description: 'The rewrite spawns two structurally-new daughter nodes and CONSERVES MASS: each daughter inherits DNA (0 → 2.75) and half the parent''s biomass (0 → 0.5) while the parent''s biomass is driven to 0 (M → M/2 + M/2, not M → 2M).'
   measure:
     kind: observable
     path: dna
@@ -65,9 +46,7 @@ behavior_tests:
 - name: draft-is-inert
   classification: diagnostic
   control: negative
-  description: 'One-line sanity check (NOT the study''s control): the inert draft has empty updates by
-    construction, so it stays at seed cell_count 1 and fails this threshold by design. This confirms the
-    framework''s definition of a draft, not a scientific counterfactual.'
+  description: 'One-line sanity check (NOT the study''s control): the inert draft has empty updates by construction, so it stays at seed cell_count 1 and fails this threshold by design. This confirms the framework''s definition of a draft, not a scientific counterfactual.'
   measure:
     kind: observable
     path: cell_count
@@ -83,8 +62,7 @@ runs:
   emitter: RAMEmitter
   id: divide
   status: completed
-  provenance: scripts/render_study_evidence.py — fig10-1-executable compiled from the Fig 10-1 draft, run
-    to completion through the engine.
+  provenance: scripts/render_study_evidence.py — fig10-1-executable compiled from the Fig 10-1 draft, run to completion through the engine.
   params: {}
   outcomes:
     DIVISION-FIRES:
@@ -101,39 +79,42 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Replicated DNA crossing a threshold fires a division event — no wall clock. Confirmed: parent
-    dna 1 → 3.06 crosses dna_threshold 2.0, the rewrite fires once, cell_count 1 → 2.'
+  statement: 'Replicated DNA crossing a threshold fires a division event — no wall clock. Confirmed: parent dna 1 → 3.06 crosses dna_threshold 2.0, the rewrite fires once, cell_count 1 → 2.'
   evidence:
     from_test: division-fires
     from_run: divide
     observed: parent dna 1 → 3.06 crosses threshold 2.0; cell_count 1 → 2 (one division)
+  provenance:
+    run_ids:
+    - divide
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The division spawns two structurally-new daughter nodes and CONSERVES MASS. Confirmed: each
-    daughter inherits dna 0 → 2.75 and biomass 0 → 0.5 while the parent biomass falls to 0 (the parent is
-    halved, not doubled).'
+  statement: 'The division spawns two structurally-new daughter nodes and CONSERVES MASS. Confirmed: each daughter inherits dna 0 → 2.75 and biomass 0 → 0.5 while the parent biomass falls to 0 (the parent is halved, not doubled).'
   evidence:
     from_test: daughters-spawn
     from_run: divide
     observed: each daughter dna 0 → 2.75, biomass 0 → 0.5; parent biomass → 0 (mass conserved)
+  provenance:
+    run_ids:
+    - divide
 - id: F-03
   kind: biological
   tier: observation
   status: confirms
-  statement: 'Sanity check on the framework''s definition: the inert draft, with no mechanism, has an empty
-    update and stays at seed. Confirmed: inert draft cell_count stays 1 (it fails the division threshold by
-    design — the definition of a draft, not a scientific control).'
+  statement: 'Sanity check on the framework''s definition: the inert draft, with no mechanism, has an empty update and stays at seed. Confirmed: inert draft cell_count stays 1 (it fails the division threshold by design — the definition of a draft, not a scientific control).'
   evidence:
     from_test: draft-is-inert
     from_run: divide
     observed: inert draft stays at cell_count 1 (empty update by construction)
+  provenance:
+    run_ids:
+    - divide
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
-      + scripts/measure_all.py, 2026-08-16).
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
     basis: Division-fires and daughters-spawn both pass — the DNA threshold is crossed, the rewrite fires once, and mass is conserved across the partition; the inert draft stays at cell_count 1, so division is a real runtime rewrite.
@@ -142,10 +123,7 @@ conclusion_verdicts:
     basis: Watching one cell node be replaced by two structurally-new daughters — fired by the cell's own DNA crossing a threshold, with mass conserved — makes division-as-graph-rewrite concrete rather than animated on a clock.
 conclusion: '## Claims
 
-  - The cell''s own replicated DNA crossing a threshold (dna_threshold = 2.0) triggers a single division
-  event: the cell node is replaced by two structurally-new daughter nodes and cell_count goes 1→2. The
-  rewrite CONSERVES MASS — the parent''s biomass fully partitions (parent→0, each daughter M/2=0.5), it is
-  not duplicated. There is no wall clock: the trigger is ``dna >= threshold``.
+  - The cell''s own replicated DNA crossing a threshold (dna_threshold = 2.0) triggers a single division event: the cell node is replaced by two structurally-new daughter nodes and cell_count goes 1→2. The rewrite CONSERVES MASS — the parent''s biomass fully partitions (parent→0, each daughter M/2=0.5), it is not duplicated. There is no wall clock: the trigger is ``dna >= threshold``.
 
 
   ## Evidence
@@ -159,19 +137,16 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - Toy-real division: the rewrite fires once and division is symmetric; the DNA threshold, replication and
-  segregation constants are illustrative.
+  - Toy-real division: the rewrite fires once and division is symmetric; the DNA threshold, replication and segregation constants are illustrative.
 
 
   ## Next steps
 
-  - Add repeated, size-controlled, or asymmetric division rules to test the rewrite mechanism under
-  realistic division control.'
+  - Add repeated, size-controlled, or asymmetric division rules to test the rewrite mechanism under realistic division control.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to an executable that runs.
-    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; the
-      DNA-threshold trigger fires, the structural rewrite runs, and mass is conserved.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; the DNA-threshold trigger fires, the structural rewrite runs, and mass is conserved.
     pipeline_unblocks:
     - typed-interface
   if_primary_tests_fail:
@@ -200,9 +175,5 @@ visualizations:
 parent_studies:
 - study: one-interface-three-mechanisms
   condition: tests-passed
-experiment: Install a Milner reaction rule behind the Fig 10 division interface, let an autocatalytic
-  DNA-replication process grow the cell's dna to the threshold, and observe the rewrite fire.
-result: The cell's replicated dna climbs 1 → 3.06 and crosses the threshold (2.0); the single cell node
-  is replaced by two structurally-new daughters, each inheriting dna → 2.75 and half the parent's biomass
-  (→ 0.5) while the parent's biomass falls to 0 — a genuine, mass-conserving structural rewrite driven by
-  the cell's own DNA, not a timer.
+experiment: Install a Milner reaction rule behind the Fig 10 division interface, let an autocatalytic DNA-replication process grow the cell's dna to the threshold, and observe the rewrite fire.
+result: The cell's replicated dna climbs 1 → 3.06 and crosses the threshold (2.0); the single cell node is replaced by two structurally-new daughters, each inheriting dna → 2.75 and half the parent's biomass (→ 0.5) while the parent's biomass falls to 0 — a genuine, mass-conserving structural rewrite driven by the cell's own DNA, not a timer.

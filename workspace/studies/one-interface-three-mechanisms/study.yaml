@@ -7,23 +7,9 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: Can a single metabolism interface — the ports nutrients ⇒ {biomass, energy, entropy, secretions}
-  of Fig 6 — be realized by three genuinely different mechanisms (a lumped-yield process, a saturating-kinetic
-  process, and a real flux-balance optimization via COBRApy) while every other part of the composite,
-  and the interface itself, stays byte-for-byte the same?
-biological_summary: 'Fig 6 is the paper''s thesis in a single figure. When a cellular description fails,
-  the right level of description drops from the cell to its molecules — but the *interface* that couples
-  metabolism to the rest of the cell need not change. This study realizes that one interface three ways.
-  The coarse handler applies a lumped yield — nutrients convert to biomass at a fixed stoichiometry, driving
-  biomass to 4.0. The kinetic handler applies a saturating (Michaelis–Menten-like) rate on the same nutrient
-  supply, so biomass builds more slowly to a distinct endpoint of 2.667. The FBA handler calls real COBRApy
-  to solve a flux-balance optimization over the e_coli_core network each step; under a constant nutrient
-  supply it grows biomass to 6.29 and, once uptake saturates growth, routes surplus carbon to acetate overflow
-  — secretions rise to 30.4. Three interchangeable handlers, one unmoving interface, three distinct trajectories:
-  a reader can watch the mechanism change underneath a boundary that does not move.'
-claim: One metabolic interface can be realized by many mechanisms — a lumped yield, saturating kinetics,
-  or a real flux-balance solver — each producing its own distinct dynamics, without changing what the interface
-  exposes.
+question: Can a single metabolism interface — the ports nutrients ⇒ {biomass, energy, entropy, secretions} of Fig 6 — be realized by three genuinely different mechanisms (a lumped-yield process, a saturating-kinetic process, and a real flux-balance optimization via COBRApy) while every other part of the composite, and the interface itself, stays byte-for-byte the same?
+biological_summary: 'Fig 6 is the paper''s thesis in a single figure. When a cellular description fails, the right level of description drops from the cell to its molecules — but the *interface* that couples metabolism to the rest of the cell need not change. This study realizes that one interface three ways. The coarse handler applies a lumped yield — nutrients convert to biomass at a fixed stoichiometry, driving biomass to 4.0. The kinetic handler applies a saturating (Michaelis–Menten-like) rate on the same nutrient supply, so biomass builds more slowly to a distinct endpoint of 2.667. The FBA handler calls real COBRApy to solve a flux-balance optimization over the e_coli_core network each step; under a constant nutrient supply it grows biomass to 6.29 and, once uptake saturates growth, routes surplus carbon to acetate overflow — secretions rise to 30.4. Three interchangeable handlers, one unmoving interface, three distinct trajectories: a reader can watch the mechanism change underneath a boundary that does not move.'
+claim: One metabolic interface can be realized by many mechanisms — a lumped yield, saturating kinetics, or a real flux-balance solver — each producing its own distinct dynamics, without changing what the interface exposes.
 baseline:
 - name: disintegration
   composite: meta_modelers_guide.composites.fig06-disintegration
@@ -69,15 +55,7 @@ behavior_tests:
 - name: impostor-rejected
   classification: primary
   control: negative
-  description: 'HEADLINE CONTROL (MUST-FAIL) — the single most persuasive artifact in the study. An impostor
-    handler (NonConformingMetabolism) that renames the biomass output to ``growth`` with the WRONG type
-    (``growth_rate`` not ``mass``) and drops energy/entropy/secretions is REJECTED by the compiler at compile
-    time with a CompileError that NAMES the missing ports (biomass, energy, entropy, secretions). This is
-    structural/interface conformance made mechanical: the compiler checks port names, types, and wiring
-    against the signature and refuses to install a handler that does not supply them. Inverted-control
-    convention: because the impostor never runs, it produces no biomass observable, so this test''s biomass
-    threshold MUST fail by design — that expected failure IS the interface being enforced. (Scope: the check
-    is structural — port names/types/wiring — not units, dimensions, invariants, or runtime behavior.)'
+  description: 'HEADLINE CONTROL (MUST-FAIL) — the single most persuasive artifact in the study. An impostor handler (NonConformingMetabolism) that renames the biomass output to ``growth`` with the WRONG type (``growth_rate`` not ``mass``) and drops energy/entropy/secretions is REJECTED by the compiler at compile time with a CompileError that NAMES the missing ports (biomass, energy, entropy, secretions). This is structural/interface conformance made mechanical: the compiler checks port names, types, and wiring against the signature and refuses to install a handler that does not supply them. Inverted-control convention: because the impostor never runs, it produces no biomass observable, so this test''s biomass threshold MUST fail by design — that expected failure IS the interface being enforced. (Scope: the check is structural — port names/types/wiring — not units, dimensions, invariants, or runtime behavior.)'
   measure:
     kind: observable
     path: biomass
@@ -93,8 +71,7 @@ runs:
   emitter: RAMEmitter
   id: one-interface-three-mechanisms
   status: completed
-  provenance: scripts/render_study_evidence.py — fig06-executable-coarse, fig06-executable-kinetic, fig06-executable-fba
-    compiled from the Fig 6 draft, run to completion through the engine.
+  provenance: scripts/render_study_evidence.py — fig06-executable-coarse, fig06-executable-kinetic, fig06-executable-fba compiled from the Fig 6 draft, run to completion through the engine.
   params: {}
   outcomes:
     COARSE-LINEAR-GROWTH:
@@ -108,56 +85,60 @@ runs:
       detail: cobra LP over e_coli_core → biomass 6.29, energy 144.0, entropy 151.3, acetate secretions 30.4
     IMPOSTOR-REJECTED:
       result: PASS
-      detail: 'control behaved as required (expected-fail): NonConformingMetabolism is rejected by the compiler
-        with a CompileError naming the missing biomass/energy/entropy/secretions ports; it never runs, so
-        the biomass threshold fails by design — the rejection is the evidence.'
+      detail: 'control behaved as required (expected-fail): NonConformingMetabolism is rejected by the compiler with a CompileError naming the missing biomass/energy/entropy/secretions ports; it never runs, so the biomass threshold fails by design — the rejection is the evidence.'
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The linear coarse-grain handler drives the shared interface to biomass 4.0. Confirmed: coarse
-    → biomass 4.0 (energy 2.4, entropy 0.8, secretions 1.6).'
+  statement: 'The linear coarse-grain handler drives the shared interface to biomass 4.0. Confirmed: coarse → biomass 4.0 (energy 2.4, entropy 0.8, secretions 1.6).'
   evidence:
     from_test: coarse-linear-growth
     from_run: one-interface-three-mechanisms
     observed: coarse (linear yield) → biomass 4.0
+  provenance:
+    run_ids:
+    - one-interface-three-mechanisms
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The Michaelis–Menten handler reaches a DISTINCT endpoint on the identical interface — same
-    ports, different mechanism, different trajectory (law 4). Confirmed: kinetic → biomass 2.667.'
+  statement: 'The Michaelis–Menten handler reaches a DISTINCT endpoint on the identical interface — same ports, different mechanism, different trajectory (law 4). Confirmed: kinetic → biomass 2.667.'
   evidence:
     from_test: kinetic-saturating-growth
     from_run: one-interface-three-mechanisms
     observed: kinetic (Michaelis–Menten) → biomass 2.667, distinct from coarse 4.0
+  provenance:
+    run_ids:
+    - one-interface-three-mechanisms
 - id: F-03
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The real COBRApy FBA handler reaches its own distinct endpoint AND shows overflow metabolism:
-    surplus carbon leaves as acetate on the secretions port. Confirmed: biomass 6.29, secretions 30.4.'
+  statement: 'The real COBRApy FBA handler reaches its own distinct endpoint AND shows overflow metabolism: surplus carbon leaves as acetate on the secretions port. Confirmed: biomass 6.29, secretions 30.4.'
   evidence:
     from_test: fba-overflow-secretion
     from_run: one-interface-three-mechanisms
     observed: FBA → biomass 6.29, acetate secretions 30.4 (overflow)
+  provenance:
+    run_ids:
+    - one-interface-three-mechanisms
 - id: F-04
   kind: biological
   tier: observation
   status: confirms
-  statement: 'The interface is a real STRUCTURAL contract, not a convention: an impostor handler that breaks
-    the port names/types is rejected at compile time (law 2). Confirmed: NonConformingMetabolism raises a
-    CompileError naming the missing biomass/energy/entropy/secretions ports — the study''s headline control.'
+  statement: 'The interface is a real STRUCTURAL contract, not a convention: an impostor handler that breaks the port names/types is rejected at compile time (law 2). Confirmed: NonConformingMetabolism raises a CompileError naming the missing biomass/energy/entropy/secretions ports — the study''s headline control.'
   evidence:
     from_test: impostor-rejected
     from_run: one-interface-three-mechanisms
     observed: compiler rejects impostor (CompileError names missing biomass/energy/entropy/secretions)
+  provenance:
+    run_ids:
+    - one-interface-three-mechanisms
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py
-      + scripts/measure_all.py, 2026-08-16).
+    basis: All figure composites build and every executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
     basis: Three conforming handlers each drive the shared nutrients ⇒ biomass interface to a DISTINCT endpoint (coarse 4.0, kinetic 2.667, FBA 6.29); the FBA handler additionally shows acetate overflow (secretions 30.4). The impostor handler that breaks the interface is rejected at compile time (law 2).
@@ -166,10 +147,7 @@ conclusion_verdicts:
     basis: Swapping lumped-yield, saturating-kinetic, and real-COBRApy handlers behind one fixed interface yields three distinct trajectories — making handler independence (law 4) concrete and measurable — while an impostor that breaks the contract is caught by the compiler.
 conclusion: '## Claims
 
-  - One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions), three interchangeable handlers
-  (linear coarse-grain, Michaelis–Menten, real COBRApy LP): each produces its OWN distinct trajectory —
-  biomass 4.0 / 2.667 / 6.29 — over identical ports and wiring. That is handler independence (law 4). The
-  FBA handler additionally shows overflow metabolism: acetate leaves on the secretions port (0→30.4).
+  - One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions), three interchangeable handlers (linear coarse-grain, Michaelis–Menten, real COBRApy LP): each produces its OWN distinct trajectory — biomass 4.0 / 2.667 / 6.29 — over identical ports and wiring. That is handler independence (law 4). The FBA handler additionally shows overflow metabolism: acetate leaves on the secretions port (0→30.4).
 
 
   ## Evidence
@@ -180,14 +158,12 @@ conclusion: '## Claims
 
   - **FBA-OVERFLOW-SECRETION** — cobra LP over e_coli_core → biomass 6.29, acetate secretions 30.4 (overflow)
 
-  - **IMPOSTOR-REJECTED** — an impostor handler renaming biomass→growth (wrong type) is rejected by the compiler
-  with a CompileError naming the missing ports (law 2)
+  - **IMPOSTOR-REJECTED** — an impostor handler renaming biomass→growth (wrong type) is rejected by the compiler with a CompileError naming the missing ports (law 2)
 
 
   ## Limitations
 
-  - Toy-real metabolism: the three handlers share one small illustrative setup and the FBA handler uses the
-  e_coli_core network, not a genome-scale reconstruction; magnitudes are illustrative, not calibrated.
+  - Toy-real metabolism: the three handlers share one small illustrative setup and the FBA handler uses the e_coli_core network, not a genome-scale reconstruction; magnitudes are illustrative, not calibrated.
 
 
   ## Next steps
@@ -196,8 +172,7 @@ conclusion: '## Claims
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The figure draft compiles to three executables that run.
-    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; three
-      handlers give three distinct trajectories and structural interface preservation holds.
+    biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; three handlers give three distinct trajectories and structural interface preservation holds.
     pipeline_unblocks:
     - divide
   if_primary_tests_fail:
@@ -225,8 +200,5 @@ visualizations:
   config:
     chart: image
 parent_studies: []
-experiment: Install three different handlers behind the same nutrients ⇒ biomass interface and run each to
-  completion; also compile an impostor handler to test that the port contract is enforced.
-result: The three handlers produce three DISTINCT trajectories (biomass 4.0 / 2.667 / 6.29) while exposing
-  the identical port set; the FBA handler shows acetate overflow (secretions 30.4), and an impostor that breaks
-  the interface is rejected at compile time.
+experiment: Install three different handlers behind the same nutrients ⇒ biomass interface and run each to completion; also compile an impostor handler to test that the port contract is enforced.
+result: The three handlers produce three DISTINCT trajectories (biomass 4.0 / 2.667 / 6.29) while exposing the identical port set; the FBA handler shows acetate overflow (secretions 30.4), and an impostor that breaks the interface is rejected at compile time.
