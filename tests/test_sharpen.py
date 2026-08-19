@@ -45,6 +45,11 @@ def test_metabolism_swap_gives_distinct_life_histories():
     """Handler independence at the WHOLE-CELL level (Fig 6 law 4): the same cell,
     with coarse / kinetic / fba metabolism behind identical ports, produces THREE
     distinct trajectories — not the same numbers three times."""
+    # The fba arm needs the optional `cobra` package (FBAMetabolism); skip the
+    # whole comparison when it's absent rather than fail CI — the coarse/kinetic
+    # arms are dependency-free but this test asserts on all three.
+    import pytest
+    pytest.importorskip("cobra", reason="fba metabolism arm requires the optional cobra package")
     peaks, div_times = {}, {}
     for m in ("coarse", "kinetic", "fba"):
         _, rows = _run_whole_cell(m)
