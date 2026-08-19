@@ -426,11 +426,6 @@ print("No recorded runs for this study; nothing to reproduce.")
 # typed-interface-dynamics
 _save_viz('typed-interface', 'typed-interface-dynamics', _render_one('image:visualizations/typed-interface-dynamics.svg', {'chart': 'image', 'caption': 'Dynamics of the compiled Fig 4 executable, run to completion.'}, RUNS_DB, STUDY_YAML))
 
-# **closing-the-loop-dynamics**
-
-# closing-the-loop-dynamics
-_save_viz('typed-interface', 'closing-the-loop-dynamics', _render_one('image:visualizations/closing-the-loop-dynamics.svg', {'chart': 'image', 'caption': 'Dynamics of the compiled Fig 5 executable — the sense/act loop over a real diffusing field, run to completion.'}, RUNS_DB, STUDY_YAML))
-
 # **fig04a-interaction-modalities**
 
 # fig04a-interaction-modalities
@@ -445,16 +440,6 @@ _save_viz('typed-interface', 'fig04b-cellular-interface', _render_one('image:vis
 
 # fig04-illustration
 _save_viz('typed-interface', 'fig04-illustration', _render_one('image:visualizations/fig04-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig05-cell-environment**
-
-# fig05-cell-environment
-_save_viz('typed-interface', 'fig05-cell-environment', _render_one('image:visualizations/fig05-cell-environment.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig05-illustration**
-
-# fig05-illustration
-_save_viz('typed-interface', 'fig05-illustration', _render_one('image:visualizations/fig05-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -1041,35 +1026,6 @@ STUDY_YAML = str(STUDY_DIR / "study.yaml")
 RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
-
-# ### Visualizations
-#
-# _Results are shown by the figures below, produced by the run above._
-
-# **gallery-figures**
-
-# gallery-figures
-_save_viz('gallery', 'gallery-figures', _render_one('image:visualizations/the-living-atlas-gallery.svg', {'chart': 'image', 'caption': "All of the paper's figures, each compiling to an executable that runs to completion."}, RUNS_DB, STUDY_YAML))
-
-# **fig09a-coarse-graining**
-
-# fig09a-coarse-graining
-_save_viz('gallery', 'fig09a-coarse-graining', _render_one('image:visualizations/fig09a-coarse-graining.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig09b-minimal-cell**
-
-# fig09b-minimal-cell
-_save_viz('gallery', 'fig09b-minimal-cell', _render_one('image:visualizations/fig09b-minimal-cell.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-illustration-2**
-
-# fig10-illustration-2
-_save_viz('gallery', 'fig10-illustration-2', _render_one('image:visualizations/fig10-illustration-2.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-illustration-3**
-
-# fig10-illustration-3
-_save_viz('gallery', 'fig10-illustration-3', _render_one('image:visualizations/fig10-illustration-3.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
