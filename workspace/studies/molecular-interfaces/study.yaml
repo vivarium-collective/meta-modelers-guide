@@ -1,0 +1,193 @@
+schema_version: 4
+name: molecular-interfaces
+investigation: draft-to-living-cell
+title: Molecular Interfaces
+created: '2026-08-20'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: At the molecular grain, can a single molecular mechanism (F1Fo ATP synthase) be compiled from its draft and run as a PMF-driven rotary catalyst honoring the four physical interface channels (chemical/electrical/mechanical/thermal) and the specialized substrate/cofactor/catalyst/product ports?
+biological_summary: 'Fig 7 drops one level below the cellular boundary, to the molecular grain: a single molecule as a process with typed physical channels, no cell-level boundary at all. Fig 7b declares the interface — a molecule exchanges matter (chemical, mol·s⁻¹), charge (electrical, C·s⁻¹), momentum (mechanical, N) and energy (thermal, J·s⁻¹) with its surroundings, and carries a structural identifier (PDB/SMILES). Fig 7c refines the chemical channel into the vocabulary of enzymology — substrates, cofactors, catalysts, products — as a `subports` store nested alongside the four physical channels. As drafted, both stores are inert: unit-bearing ports and wiring, no update dynamics. This study names the transducer and compiles it: the **F1Fo ATP synthase**, the rotary motor that couples the proton-motive force (PMF) across a membrane to phosphorylation. `MolecularMechanismHandler` drives all four physical channels from ONE coupled quantity — the proton flux set by the chemical (substrate/turnover) input — so the channels stay physically consistent with each other: chemical is the ATP synthesis flux (`J_ATP = k_cat * activity`), electrical is the proton current carried by that same flux (`I = J_H * e`), mechanical is the rotary power of the Fo motor (`torque * omega`, `omega` set by the H+ flux through the c-ring), and thermal is the non-conserved remainder dissipated as heat (`(1-eta) * PMF work`, eta ~= 75%). Measured on the compiled fig07-executable, run 8 seconds through the engine (literature constants: k_cat ~= 100 ATP*s^-1, H+/ATP ~= 3.3, PMF ~= 150 mV, torque ~= 40 pN*nm; Milo & Phillips; Junge & Nelson 2015): chemical_out (ATP synthesized) rises 0 -> 100, and the other three channels move together from the same proton flux — electrical_out ~= 5.29e-17 A, mechanical_out ~= 8.29e-18 W, thermal_out ~= 1.98e-18 W (all real SI magnitudes for a single-molecule rotary motor, hence tiny). The four-channel interface is preserved unchanged by compilation (Law 2): `interface_of(draft) == interface_of(executable)`. HONESTY POINT: the Fig 7c `subports` refinement (substrates, cofactors, catalysts, products) is present in both the draft and the compiled executable — the store is wired and read by the dynamics visualization — but `MolecularMechanismHandler` does not write to it; those four ports stay at their 0.0 seed for the whole run. The specialized enzymatic vocabulary is structurally honored (declared, typed, preserved through compilation) but not driven by this handler''s dynamics, and the study says so rather than claiming substrate/cofactor/catalyst/product turnover that was not built. This is the molecular grain the disintegration study (Fig 6) drops into when a cell''s viability collapses: one mechanism, made concrete and executable.'
+claim: The molecular interface''s four typed channels compile to a running ATP-synthase mechanism, all four channels driven consistently from one coupled proton flux (chemical_out 0->100; electrical/mechanical/thermal channels move with it) — the molecular level the disintegration study drops into, made concrete. The specialized substrate/cofactor/catalyst/product ports are structurally preserved through compilation but are not driven by this handler (honestly noted, not claimed as dynamic).
+baseline:
+- name: molecular-mechanism
+  composite: meta_modelers_guide.composites.fig07-molecular-mechanism
+  params: {}
+- name: molecular-mechanism-executable
+  composite: meta_modelers_guide.composites.fig07-executable
+  params: {}
+variants: []
+key_assumptions:
+- All four physical channels (chemical/electrical/mechanical/thermal) are derived from ONE coupled quantity (the proton flux set by the chemical input), so they are not four independent free parameters — they move together by construction, which is what "physically consistent" means here, not four separately fitted rate laws.
+- The Fig 7c `subports` refinement (substrates, cofactors, catalysts, products) is a structural port declaration, not a modeled reaction mechanism. `MolecularMechanismHandler` conforms to the Fig 7b physical-channel signature only; it does not read or write `subports`, so those four leaves stay at their 0.0 seed for the entire run. No substrate-binding, cofactor, catalytic-turnover, or product-release dynamics are claimed.
+- Constants (k_cat, H+/ATP stoichiometry, PMF, torque, efficiency) are literature-grounded (Milo & Phillips, *Cell Biology by the Numbers*; Junge & Nelson 2015; Stock et al. 1999) but the model is a single coupled-flux transducer, not a mechanistic rotary-catalysis simulation (no explicit c-ring stepping, no discrete catalytic sites, no load dependence).
+behavior_tests:
+- name: atp-synthesized
+  classification: primary
+  description: The F1Fo ATP synthase mechanism drives its chemical output port — ATP synthesized rises from 0 to 100 over the run (exec fig07-executable, ports.chemical_out).
+  measure:
+    kind: observable
+    path: chemical_out
+    expr: last(chemical_out)
+  pass_if:
+    op: '>='
+    value: 50.0
+    provenance: exec last=100.0 — F1Fo ATP synthase (chemical_out 0->100, PMF-driven rotary catalysis; fig07-executable, run(8) matching scripts/render_study_evidence.py TOTAL_TIME=8.0)
+  requires_simulation: molecular-interfaces
+- name: rotary-power-couples
+  classification: primary
+  description: The mechanical channel (Fo rotary power) moves off its zero seed, driven by the SAME proton flux that drives ATP synthesis — the four channels are physically coupled, not independently parameterized.
+  measure:
+    kind: observable
+    path: mechanical_out
+    expr: last(mechanical_out)
+  pass_if:
+    op: '>='
+    value: 1.0e-19
+    provenance: exec last~=8.29e-18 W (rotary mechanical power = torque*omega, both set by the H+ flux; fig07-executable, run(8)). Real single-molecule magnitude — small in absolute SI units, but nonzero and driven by the same coupled flux as chemical_out.
+  requires_simulation: molecular-interfaces
+- name: draft-is-inert
+  classification: diagnostic
+  control: negative
+  description: 'One-line sanity check (NOT the study''s control): the inert Fig 7 draft (address local:MolecularMechanism, not the compiled Handler) has an empty update by construction, so chemical_out stays at its 0.0 seed and fails this threshold by design — confirming the framework''s definition of a draft, not a scientific counterfactual.'
+  measure:
+    kind: observable
+    path: chemical_out
+    expr: last(chemical_out)
+  pass_if:
+    op: '>='
+    value: 50.0
+    provenance: inert-draft run (fig07-molecular-mechanism) stays at chemical_out=0.0 (empty update by construction) -> fails by design (expected-fail control)
+  requires_simulation: molecular-interfaces
+runs:
+- name: molecular-interfaces
+  composite: molecular-interfaces
+  emitter: RAMEmitter
+  id: molecular-interfaces
+  status: completed
+  provenance: scripts/render_study_evidence.py — fig07-executable compiled from the Fig 7 draft (fig07-molecular-mechanism), run 8 seconds through the engine; fig07-molecular-mechanism itself run uncompiled as the draft-is-inert control.
+  params: {}
+  outcomes:
+    ATP-SYNTHESIZED:
+      result: PASS
+      detail: chemical_out (ATP synthesized) 0 -> 100 — F1Fo ATP synthase, PMF-driven rotary catalysis
+    ROTARY-POWER-COUPLES:
+      result: PASS
+      detail: mechanical_out 0 -> ~8.29e-18 W, alongside electrical_out ~5.29e-17 A and thermal_out ~1.98e-18 W — all four channels driven from the one coupled proton flux
+    DRAFT-IS-INERT:
+      result: PASS
+      detail: 'expected-fail control: the inert draft (empty update) stays at chemical_out=0.0 — it fails the >=50.0 threshold by design, confirming a draft is inert'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The F1Fo ATP synthase mechanism — compiled from the Fig 7 draft and run through the engine — synthesizes ATP on its chemical output port. Confirmed: chemical_out (ATP synthesized) 0 -> 100 via PMF-driven rotary catalysis.'
+  evidence:
+    from_test: atp-synthesized
+    from_run: molecular-interfaces
+    observed: chemical_out (ATP synthesized) 0 -> 100
+  provenance:
+    run_ids:
+    - molecular-interfaces
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'All four physical interface channels move together, driven from the one proton flux the chemical channel sets: chemical (ATP synthesis), electrical (proton current), mechanical (Fo rotary power) and thermal (dissipated remainder) are physically consistent with each other, not four independently fitted outputs. Confirmed: mechanical_out 0 -> ~8.29e-18 W, electrical_out -> ~5.29e-17 A, thermal_out -> ~1.98e-18 W, alongside chemical_out -> 100.'
+  evidence:
+    from_test: rotary-power-couples
+    from_run: molecular-interfaces
+    observed: mechanical_out ~8.29e-18 W; electrical_out ~5.29e-17 A; thermal_out ~1.98e-18 W
+  provenance:
+    run_ids:
+    - molecular-interfaces
+- id: F-03
+  kind: computational
+  tier: observation
+  status: confirms
+  statement: 'HONESTY POINT: the Fig 7c specialized enzymatic ports (substrates, cofactors, catalysts, products) are structurally preserved through compilation — declared, typed, and wired into the dynamics visualization — but are NOT driven by `MolecularMechanismHandler`. They stay at their 0.0 seed for the whole run. The study claims structural preservation of these ports, not simulated substrate-binding, cofactor, catalytic-turnover, or product-release dynamics.'
+  evidence:
+    observed: substrates, cofactors, catalysts, products all remain 0.0 over the full run (fig07-executable, run(8)); no handler writes to `subports`
+    discovered_during: authoring this study — verified directly against the compiled composite state, not asserted from the draft alone
+  provenance:
+    run_ids:
+    - molecular-interfaces
+- id: F-04
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'Sanity check on the framework''s definition: the inert draft, with no mechanism, has an empty update and stays at seed. Confirmed: chemical_out stays 0.0 (the definition of a draft, not a scientific control). The real evidence is that the compiled mechanism drives all four physical channels with the interface structurally preserved (Law 2).'
+  evidence:
+    from_test: draft-is-inert
+    from_run: molecular-interfaces
+    observed: inert draft stays at chemical_out=0.0 (empty update by construction)
+  provenance:
+    run_ids:
+    - molecular-interfaces
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: Both fig07 composites build and fig07-executable runs to completion (tests/test_composites_build.py::test_composite_builds[fig07-molecular-mechanism], [fig07-executable]; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig07-executable]).
+  biological_validation:
+    result: PASS
+    basis: The compiled ATP-synthase mechanism drives its chemical output port (chemical_out 0->100) and the other three physical channels move together from the same coupled proton flux; the inert draft stays at seed, isolating the compiled handler as the cause. The specialized subports are honestly reported as structurally present but undriven.
+  explanatory_gain:
+    result: POSITIVE
+    basis: Naming and compiling one concrete molecular machine (ATP synthase) behind the Fig 7 four-channel interface makes the molecular grain — the level the disintegration study (Fig 6) drops into — executable and observable, not merely illustrated.
+conclusion: '## Claims
+
+  - A single molecular mechanism (F1Fo ATP synthase) compiles from its Fig 7 draft and, run to completion, drives all four physical interface channels from one coupled proton flux: chemical (ATP synthesized, 0->100), electrical (proton current, ~5.29e-17 A), mechanical (Fo rotary power, ~8.29e-18 W) and thermal (dissipated remainder, ~1.98e-18 W). The interface is preserved unchanged by compilation (Law 2). The Fig 7c specialized ports (substrates, cofactors, catalysts, products) are structurally preserved but not driven by this handler — honestly reported, not claimed as dynamic.
+
+
+  ## Evidence
+
+  - **ATP-SYNTHESIZED** — chemical_out (ATP synthesized) 0 -> 100 (F1Fo ATP synthase, PMF-driven rotary catalysis)
+
+  - **ROTARY-POWER-COUPLES** — mechanical_out, electrical_out, thermal_out all move off zero, driven by the same proton flux as chemical_out
+
+  - **SUBPORTS-UNDRIVEN (honesty)** — substrates/cofactors/catalysts/products stay at 0.0 for the full run; present structurally, not simulated
+
+
+  ## Limitations
+
+  - One mechanism (F1Fo ATP synthase) realizes the Fig 7 interface; the four-channel transduction is real in shape (all channels derive from one proton flux with literature-grounded constants) but the magnitudes are illustrative, not fitted to a measured turnover rate under load.
+
+  - The Fig 7c enzymatic subports (substrate/cofactor/catalyst/product) are declared and preserved through compilation but carry no dynamics in this handler — no substrate-binding, cofactor, or product-release kinetics are modeled.
+
+  - Toy-real kinetics: no explicit c-ring stepping, discrete catalytic sites, or load-dependent torque; the coupling is a single algebraic transduction from one flux, not a mechanistic simulation of rotary catalysis.
+
+
+  ## Next steps
+
+  - Install a second handler behind the same Fig 7c `subports` refinement that actually drives substrate uptake, cofactor binding, and product release, so the enzymatic vocabulary becomes dynamic rather than structural-only.
+
+  - Wire the compiled chemical_out (ATP synthesized) into a downstream energy pool (e.g. the biomolecular-complementarity cascade) so the molecular mechanism drives a cellular-scale observable quantitatively, not just locally.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The Fig 7 draft compiles to an executable that runs.
+    biological_validation: The paper's molecular-interface pattern is demonstrated at the toy-real (uncalibrated) level; the ATP-synthase mechanism drives its chemical output and the other three physical channels move together from the same coupled flux.
+    pipeline_unblocks:
+    - biomolecular-complementarity
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - handler produced no non-trivial dynamics on the declared physical channels
+    block_downstream: biomolecular-complementarity (the nested-hierarchy study needs a molecular mechanism at its deepest grain to be meaningful)
+limitations:
+- The compiled ATP-synthase executable drives all four physical channels (chemical/electrical/mechanical/thermal) from one coupled proton flux; the magnitude is illustrative and not fitted to a specific measured turnover rate under physiological load.
+- The Fig 7c specialized enzymatic ports (substrates, cofactors, catalysts, products) are structurally present and preserved through compilation but are NOT driven by this handler — they stay at their 0.0 seed. No substrate-binding, cofactor, catalytic-turnover, or product-release dynamics are modeled or claimed.
+- One mechanism (F1Fo ATP synthase) realizes the Fig 7 interface; the port set admits other molecular mechanisms but only this one is installed and measured.
+falsifiability: Overturned if the compiled ATP-synthase executable fails to synthesize ATP on its chemical output port (chemical_out stays at seed), if compilation drops or renames a physical-channel port (Law 2 violated), or if the other three channels fail to move together with the chemical channel (revealing the "one coupled flux" claim is false and the channels are actually independent).
+visualizations:
+- name: fig07-illustration
+  address: image:visualizations/fig07-illustration.png
+  config:
+    chart: image
+    caption: 'Fig 7 — the molecular interface: a molecule as a process with typed physical channels (chemical, electrical, mechanical, thermal) plus a subports refinement (substrates, cofactors, catalysts, products). This study compiles it into a running F1Fo ATP synthase.'
+parent_studies:
+- study: disintegration
+  condition: tests-passed
+experiment: Compile the Fig 7 F1Fo ATP-synthase draft to an executable and run it 8 seconds through the engine, reading all four physical channel ports plus the subports refinement.
+result: The compiled mechanism synthesizes ATP — chemical_out rises 0->100 — while the electrical, mechanical, and thermal channels move together from the same coupled proton flux (electrical_out ~5.29e-17 A, mechanical_out ~8.29e-18 W, thermal_out ~1.98e-18 W). The specialized substrate/cofactor/catalyst/product ports remain structurally preserved but undriven — honestly reported. The inert draft, with no mechanism, stays at seed.
