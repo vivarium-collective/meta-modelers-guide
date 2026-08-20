@@ -32,7 +32,10 @@ class NutrientPool(Process):
 class CompetingCell(Process):
     """Saturating uptake from the shared pool; viability falls when uptake drops
     below maintenance. Depletes the shared nutrient (negative delta) — the coupling.
-    ``vmax`` sets competitive strength (cell_a > cell_b in the compete env)."""
+    ``vmax`` sets competitive strength; the compete env assigns a HIGHER ``vmax`` to
+    the ``CellAgent`` role than to the ``RivalCellAgent`` role (two draft roles over
+    the same coupling interface — see handler_envs.py), so the asymmetry is entirely
+    an env-layer choice, not something this handler or the draft composite bakes in."""
     config_schema = {"vmax": _f(0.6), "km": _f(0.3), "yield_": _f(0.5),
                      "maintenance": _f(0.15), "via_gain": _f(0.4)}
 

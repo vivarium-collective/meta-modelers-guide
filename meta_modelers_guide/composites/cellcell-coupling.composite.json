@@ -1,8 +1,8 @@
 {
   "name": "Cell–Cell Coupling",
-  "description": "Paper §Cell–cell coupling (no dedicated figure). Two cell agents are wired to ONE shared environmental nutrient store: each senses the pool and depletes it, so their interfaces are coupled not only through shared state but through CONSTRAINT — one cell's uptake reshapes the other's viability. DRAFT: typed ports + contract, no dynamics. cell_a_proc/cell_b_proc share ONE draft address (local:CellAgent) by design (law 4: one interface, swappable handlers) — the compiler keys handler-env lookup by draft name only (see handler_envs.py note), so per-cell competitive asymmetry (cell_a stronger than cell_b) is carried here, as each node's own `config.vmax`, which the compiler merges on top of the env's shared config.",
+  "description": "Paper §Cell–cell coupling (no dedicated figure). Two cell agents are wired to ONE shared environmental nutrient store: each senses the pool and depletes it, so their interfaces are coupled not only through shared state but through CONSTRAINT — one cell's uptake reshapes the other's viability. DRAFT: typed ports + contract, no dynamics — node config carries ONLY the timestep. cell_a_proc addresses local:CellAgent and cell_b_proc addresses local:RivalCellAgent: two draft roles with IDENTICAL ports/contract (see interfaces.py), so an env can hand each cell a different handler/config (the compiler keys handler lookup by draft address, so two nodes sharing one draft address cannot receive different handler configs — see handler_envs.py). Competitive asymmetry (cell_a stronger than cell_b) and cross-feeding symmetry both live entirely in the env layer (law 4: swap the env, not this composite).",
   "requires": {
-    "processes": ["CellAgent", "SharedNutrientEnv"],
+    "processes": ["CellAgent", "RivalCellAgent", "SharedNutrientEnv"],
     "types": ["concentration", "mass", "viability"]
   },
   "state": {
@@ -16,14 +16,14 @@
     "cell_a_proc": {
       "_type": "process",
       "address": "local:CellAgent",
-      "config": {"interval": 0.1, "vmax": 0.8},
+      "config": {"interval": 0.1},
       "inputs": {"nutrient": ["env", "nutrient"], "viability": ["cell_a", "viability"]},
       "outputs": {"nutrient": ["env", "nutrient"], "biomass": ["cell_a", "biomass"], "viability": ["cell_a", "viability"]}
     },
     "cell_b_proc": {
       "_type": "process",
-      "address": "local:CellAgent",
-      "config": {"interval": 0.1, "vmax": 0.2},
+      "address": "local:RivalCellAgent",
+      "config": {"interval": 0.1},
       "inputs": {"nutrient": ["env", "nutrient"], "viability": ["cell_b", "viability"]},
       "outputs": {"nutrient": ["env", "nutrient"], "biomass": ["cell_b", "biomass"], "viability": ["cell_b", "viability"]}
     },
