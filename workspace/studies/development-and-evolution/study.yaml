@@ -1,0 +1,244 @@
+schema_version: 4
+name: development-and-evolution
+investigation: draft-to-living-cell
+title: Development and Evolution
+created: '2026-08-20'
+status: complete
+phase: Decide
+gate_status: needs_calibration
+confidence: Provisional
+question: 'Fig 10c–f asks whether two of biology''s hardest structural transitions — development (individual cells nesting into a collective composite, a biofilm, with its own shared interface) and evolution (a new interface port switching on, selected by viability) — can be represented as event-driven, compositional rewrites (Law 2′) that preserve the interface underneath them (Law 2). Two composites answer the FIRST half of that (do the drafts compile to executables that run, behind an unchanged interface?) faithfully. This study asks the harder, second half explicitly: how much of what runs is a genuine developmental/evolutionary MECHANISM, versus a scripted stand-in — and is honest that the paper itself calls this transition "an open and substantial challenge" (line 580).'
+biological_summary: 'Fig 10c–f is the paper''s hardest pair of figures, and this study''s entire point is to show exactly WHERE the model is real and where it is a placeholder — not to claim more than the paper itself claims. There are, in fact, TWO different idioms represented across the six baseline composites, and they should not be blurred together.
+
+
+  DEVELOPMENT, continuous path (fig10-2-development → fig10-2-executable): the draft wires three handlers — SurfaceAttachment, ECMSecretion, BiofilmGrowth — into a single, PRE-DECLARED `biofilm` store nested in the environment (present from step 0; nothing is inserted into the place graph on this path). Compiled to fig10-2-executable and run 10 steps through the engine: biofilm_mass climbs 0 → 3.09, ecm 0 → 2.47, attached 0 → 1.85, adhesion 0 → 0.93, and the `cells` leaf — a CONTINUOUS scalar count, not discrete cell nodes — grows 1.00 → 2.09 via BiofilmGrowthProc''s d[cells]/dt = g·cells·ecm. The interface is preserved exactly (`interface_of(draft) == interface_of(executable)`, Law 2): the individual cellular interfaces genuinely become part of a collective (biofilm) interface that couples to the environment as one composite. But the handlers here (SurfaceAttachmentProc, ECMSecretionProc, BiofilmGrowthProc) are ORDINARY Process handlers, not the RewriteHandler idiom Fig 10-1''s division uses — no place-graph rewrite occurs on this path at all.
+
+
+  DEVELOPMENT, topology path (fig10-2-rewrite, "Biofilm Development — Live Topology"): a SEPARATE composite, outside the compile.py/handler-env pipeline, that genuinely inserts new place-graph nodes at runtime via an `overwrite[tree[node]]` output — a founder cell colonizes sibling cell nodes one at a time up to a capacity, then the mature community secretes one ECM node per cell (confirmed by tests/test_fig10_topology.py::test_biofilm_colonizes_to_capacity — cell count climbs monotonically 1 → 5 — and ::test_biofilm_secretes_ecm_after_maturing — ECM nodes appear only once the community is full). This IS a genuine structural rewrite, closer in spirit to Fig 10-1''s division. But the trigger is a fixed wall-clock timer (`grow_every` = 2.0 time units, capacity = 5) — not the community''s own nutrient, energy, or adhesion state crossing a threshold, the way Fig 10-1''s division is gated by DNA replication. It is a scripted colonization schedule, not an emergent developmental mechanism.
+
+
+  EVOLUTION, continuous path (fig10-3-evolution → fig10-3-executable): the draft wires Variation, Selection, and PortAddition across two cell variants — an ancestral `cell_ecoli` and a derived `cell_O157` that carries an extra `new_port` + `identity` leaf its ancestor lacks. Compiled and run 10 steps: `cell_ecoli.cell_count` climbs 1.00 → 4.00 via SelectionProc''s ODE d[cell_count]/dt = k·viability·fitness (k=0.3, viability and fitness both held at the fixed constant 1.0) — a single bulk growth term, NOT genotype-driven differential fitness, competition between variants, or drift; and `cell_O157.new_port` ramps 0 → 0.65 toward capacity 1.0 via PortAdditionProc''s first-order onset (onset_rate=0.1) — a scripted config ramp that always switches on identically once wired, not an emergent consequence of variation or selection. VariationProc itself has an EMPTY `update()`: genomic variation is represented only as a static identity/genome string, with no generative or heritable dynamics behind it.
+
+
+  EVOLUTION, topology path (fig10-3-rewrite, "Evolution — Live Topology"): again a separate `overwrite[tree[node]]` composite that genuinely adds AND removes organism nodes — three wildtype founders establish, then a hardcoded fitter mutant (fitness = 1.6, a fixed constant, not derived from any selection gradient) appears at a scripted time (`mutate_at` = 4.0), and a fixed sweep rule adds one mutant and prunes one wildtype every `generation` = 2.0 time units until the wildtype lineage is pruned to zero (confirmed by tests/test_fig10_topology.py::test_evolution_mutant_arises_then_sweeps — final mutant count ≥ 2, organism count = 0 — and ::test_evolution_total_population_bounded — total population never exceeds the capacity of 6). Real node insertion and removal, but the mutant''s fitness advantage and the sweep schedule are both hardcoded, not the outcome of a fitness landscape or population dynamics.
+
+
+  Bottom line: this study demonstrates that BOTH idioms — continuous ODEs behind a preserved interface (Law 2), and genuine runtime place-graph rewriting via `overwrite[tree[node]]` (in the spirit of Law 2′, though via a different mechanism than Fig 10-1''s RewriteHandler conformance-vs-wiring check) — compile and run for development and evolution. Neither is a validated biological result. The paper itself (line 580) calls development and evolution "an open and substantial challenge," and this study is deliberately, explicitly caveated rather than overclaiming a demonstrated developmental or evolutionary mechanism.'
+claim: 'Development nests individual cells into a biofilm collective behind a preserved, shared extracellular-matrix interface (Law 2), and evolution switches on a new chemical port under a viability-weighted growth term — both compile and run, and a separate "Live Topology" pair for each even performs genuine runtime place-graph node insertion/removal (in the spirit of Law 2′). But — the defining point of this study — none of this is a validated biological result: selection is a single ODE with fixed viability/fitness constants (not real fitness-based population dynamics), the "new port" is a first-order config-driven ramp (not an emergent evolutionary innovation), the continuous-path biofilm state is a pre-declared, non-inserted scalar store, and even the genuine node-inserting Live-Topology composites run on a fixed wall-clock schedule with a hardcoded mutant fitness advantage rather than an emergent, state-driven trigger. The paper itself calls development and evolution "an open and substantial challenge" (line 580); this study demonstrates the PATTERN, not the phenomenon.'
+baseline:
+- name: development
+  composite: meta_modelers_guide.composites.fig10-2-development
+  params: {}
+- name: development-rewrite
+  composite: meta_modelers_guide.composites.fig10-2-rewrite
+  params: {}
+- name: development-executable
+  composite: meta_modelers_guide.composites.fig10-2-executable
+  params: {}
+- name: evolution
+  composite: meta_modelers_guide.composites.fig10-3-evolution
+  params: {}
+- name: evolution-rewrite
+  composite: meta_modelers_guide.composites.fig10-3-rewrite
+  params: {}
+- name: evolution-executable
+  composite: meta_modelers_guide.composites.fig10-3-executable
+  params: {}
+variants: []
+key_assumptions:
+- 'SelectionProc''s population growth is a single ODE (k·viability·fitness, k=0.3) with viability and fitness held at fixed constants (1.0) in the baseline env — there is no genetic variation feeding back into fitness, no competition between variants, and no drift. This is NOT real fitness-based population dynamics.'
+- 'PortAdditionProc''s "new port" is a first-order ramp toward a fixed capacity (onset_rate=0.1, capacity=1.0) — it always switches on identically once wired; it is not an emergent consequence of variation or selection. VariationProc''s update() is empty by construction — variation is a static identity string, not a generative process.'
+- 'On the fig10-2-development/-executable path, `biofilm.cells` and `biofilm.biofilm_mass` are continuous scalar stores inside a single, PRE-DECLARED `biofilm` node present from step 0 — growth is a population/mass variable, not discrete cell nodes inserted into the place graph at runtime.'
+- 'A separate, more literal pair of composites (fig10-2-rewrite / fig10-3-rewrite, "Live Topology") DOES insert/remove real place-graph nodes at runtime — biofilm colonization + ECM secretion; a mutant lineage sweep — but on a fixed wall-clock schedule (grow_every / generation / mutate_at) with a hardcoded mutant fitness advantage (1.6), not driven by the community''s own state or an evolving fitness landscape.'
+- 'The fig10-2/fig10-3 executable handlers (SurfaceAttachmentProc, ECMSecretionProc, BiofilmGrowthProc, VariationProc, SelectionProc, PortAdditionProc) are ORDINARY Process handlers, not the RewriteHandler idiom Fig 10-1''s division uses — no place-graph rewrite occurs on the compiled/executable path; only the separate Live-Topology composites perform genuine node insertion/removal.'
+behavior_tests:
+- name: biofilm-interface-accumulates
+  classification: primary
+  description: 'The biofilm''s shared interface (surface attachment, ECM secretion, biofilm growth) accumulates state under its own handlers: biofilm_mass climbs 0 → 3.09 over 10 steps. This is a continuous, pre-declared store — not new cell nodes — and the interface is preserved exactly across compilation (Law 2).'
+  measure:
+    kind: observable
+    path: biofilm.biofilm_mass
+    expr: last(biofilm.biofilm_mass)
+  pass_if:
+    op: '>='
+    value: 1.0
+    provenance: 'fig10-2-executable run 10 steps: biofilm_mass 0 → 3.09, ecm 0 → 2.47, attached 0 → 1.85, adhesion 0 → 0.93, cells 1.00 → 2.09 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-2-executable])'
+  requires_simulation: development-and-evolution
+- name: port-switches-on
+  classification: primary
+  description: 'PortAdditionProc ramps a previously-silent chemical exchange port on: cell_O157.new_port climbs 0 → 0.65 over 10 steps toward capacity 1.0. Explicitly a config-driven first-order ramp (onset_rate=0.1) — NOT an emergent evolutionary innovation arising from variation or selection.'
+  measure:
+    kind: observable
+    path: cell_O157.new_port
+    expr: last(cell_O157.new_port)
+  pass_if:
+    op: '>='
+    value: 0.3
+    provenance: 'fig10-3-executable run 10 steps: new_port 0 → 0.65 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable])'
+  requires_simulation: development-and-evolution
+- name: selection-grows-population
+  classification: primary
+  description: 'SelectionProc''s ODE (k·viability·fitness, k=0.3) grows cell_ecoli.cell_count 1 → 4 over 10 steps. Explicitly caveated: viability and fitness are held at fixed constants (1.0), not products of a real fitness landscape, genotype-driven differential fitness, or population dynamics.'
+  measure:
+    kind: observable
+    path: cell_ecoli.cell_count
+    expr: last(cell_ecoli.cell_count)
+  pass_if:
+    op: '>='
+    value: 2.0
+    provenance: 'fig10-3-executable run 10 steps: cell_ecoli.cell_count 1 → 4 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable])'
+  requires_simulation: development-and-evolution
+- name: drafts-are-inert
+  classification: diagnostic
+  control: negative
+  description: 'Sanity check (NOT the study''s control): the DRAFT composites (fig10-2-development, fig10-3-evolution) have empty updates by construction — only the compiled executables produce dynamics. Confirms the framework''s definition of a draft, not a scientific counterfactual.'
+  measure:
+    kind: observable
+    path: biofilm.biofilm_mass
+    expr: last(biofilm.biofilm_mass)
+  pass_if:
+    op: '<='
+    value: 0.001
+    provenance: 'fig10-2-development run 10 steps: biofilm.biofilm_mass stays 0.0 (empty update by construction); fig10-3-evolution run 10 steps: cell_ecoli.cell_count stays 1.0, new_port stays 0.0 — only global_time advances on both drafts'
+  requires_simulation: development-and-evolution
+runs:
+- name: development-and-evolution
+  composite: development-and-evolution
+  emitter: RAMEmitter
+  id: development-and-evolution
+  status: completed
+  provenance: 'Engine run of fig10-2-development / fig10-2-executable and fig10-3-evolution / fig10-3-executable (10 steps each), plus tests/test_fig10_topology.py exercising fig10-2-rewrite''s and fig10-3-rewrite''s underlying Live-Topology mechanism (build_fig10_biofilm / build_fig10_evolution, same defaults as the composite JSON). Compilation + interface preservation confirmed by tests/test_compilation.py::test_env_conforms_compiles_and_runs (parametrized over fig10-2-executable, fig10-3-executable per scripts/build_executables.py''s BUILD table) and tests/test_composites_build.py::test_composite_builds (all 6 baseline composite specs resolve).'
+  params: {}
+  outcomes:
+    BIOFILM-INTERFACE-ACCUMULATES:
+      result: PASS
+      detail: 'biofilm_mass 0 → 3.09 (10 steps); interface preserved exactly across compilation (Law 2)'
+    PORT-SWITCHES-ON:
+      result: PASS
+      detail: 'cell_O157.new_port 0 → 0.65 (10 steps) via PortAdditionProc''s config-driven ramp'
+    SELECTION-GROWS-POPULATION:
+      result: PASS
+      detail: 'cell_ecoli.cell_count 1 → 4 (10 steps) via SelectionProc''s fixed-constant ODE'
+    DRAFTS-ARE-INERT:
+      result: PASS
+      detail: 'expected-fail control: fig10-2-development and fig10-3-evolution have empty updates by construction — biofilm_mass and cell_count stay at seed values'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: partial
+  statement: 'Development''s continuous path compiles to an executable that grows a shared, collective biofilm interface (biofilm_mass 0 → 3.09) behind an interface preserved exactly across compilation. Partial: this demonstrates the compositional PATTERN of individual cells folding into a collective interface, but the growth is a continuous scalar (ODE-updated population/mass), not discrete cell-node insertion, and no biological calibration is claimed.'
+  evidence:
+    from_test: biofilm-interface-accumulates
+    from_run: development-and-evolution
+    observed: biofilm_mass 0 → 3.09; ecm 0 → 2.47; attached 0 → 1.85; adhesion 0 → 0.93; cells 1.00 → 2.09 (10 steps)
+  provenance:
+    run_ids:
+    - development-and-evolution
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: partial
+  statement: 'Evolution''s continuous path switches on a previously-silent chemical exchange port (new_port 0 → 0.65) that the ancestral cell lacks. Partial: the mechanics of "a new interface capability arises" are represented, but the switch-on is an unconditional, config-driven first-order ramp — not an emergent consequence of variation or selection acting on a population.'
+  evidence:
+    from_test: port-switches-on
+    from_run: development-and-evolution
+    observed: cell_O157.new_port 0 → 0.65 (10 steps), onset_rate=0.1 toward capacity=1.0
+  provenance:
+    run_ids:
+    - development-and-evolution
+- id: F-03
+  kind: biological
+  tier: mechanism
+  status: partial
+  statement: 'Evolution''s continuous path grows the ancestral population (cell_ecoli.cell_count 1 → 4) under a viability-weighted selection term. Partial: this is a single ODE with viability and fitness held at fixed constants — not real fitness-based population dynamics, competition between variants, or drift.'
+  evidence:
+    from_test: selection-grows-population
+    from_run: development-and-evolution
+    observed: cell_ecoli.cell_count 1 → 4 (10 steps), k=0.3, viability=fitness=1.0 (fixed)
+  provenance:
+    run_ids:
+    - development-and-evolution
+- id: F-04
+  kind: methodological
+  tier: mechanism
+  status: novel
+  statement: 'Two distinct idioms answer "can development/evolution be a compositional rewrite?" differently, and they should not be conflated. The compiled/executable path (fig10-2-executable, fig10-3-executable) uses ORDINARY Process handlers behind a preserved interface — no place-graph rewrite occurs there. A SEPARATE Live-Topology pair (fig10-2-rewrite, fig10-3-rewrite) genuinely inserts and removes place-graph nodes at runtime via an `overwrite[tree[node]]` output (biofilm colonization to capacity 5 then ECM secretion per cell; a mutant lineage sweep that prunes the wildtype to zero) — closer in spirit to Fig 10-1''s division rewrite, but driven by a fixed wall-clock schedule and a hardcoded mutant fitness advantage (1.6), not by the community''s own state.'
+  evidence:
+    smoking_gun: 'meta_modelers_guide/fig10_topology.py (BiofilmDevelopment, LineageEvolution) vs meta_modelers_guide/handlers_fig10.py (SurfaceAttachmentProc et al., ordinary Process subclasses, no RewriteHandler)'
+    observed: 'fig10-2-rewrite: cell count climbs monotonically 1 → 5, then ECM nodes appear only once the community is full; fig10-3-rewrite: mutant count ≥ 2 and organism count = 0 by the final frame, total population bounded ≤ 6'
+  provenance:
+    run_ids: []
+- id: F-05
+  kind: methodological
+  tier: observation
+  status: partial
+  statement: 'Even the genuinely node-inserting Live-Topology composites are scripted, not emergent: the biofilm colonizes on a fixed timer (grow_every=2.0) up to a fixed capacity (5), and the evolution mutant appears at a hardcoded time (mutate_at=4.0) with a hardcoded fitness advantage (1.6) rather than one derived from a fitness landscape. Neither trigger is gated by the composite''s own internal state, unlike Fig 10-1''s division (gated by DNA crossing a threshold).'
+  evidence:
+    discovered_during: 'reading meta_modelers_guide/fig10_topology.py::BiofilmDevelopment.update / LineageEvolution.update against DivisionRewrite in handlers_fig10.py'
+  provenance:
+    run_ids: []
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'All 6 baseline composites build (tests/test_composites_build.py::test_composite_builds) and fig10-2-executable / fig10-3-executable run to completion with the interface preserved exactly against their drafts (tests/test_compilation.py::test_env_conforms_compiles_and_runs).'
+  biological_validation:
+    result: MIXED
+    basis: 'The paper itself calls development and evolution "an open and substantial challenge" (line 580); this study does not attempt to close that gap. Selection is a single ODE with fixed viability/fitness constants, the new port is a config-driven ramp, the continuous biofilm state is a pre-declared scalar store, and even the genuinely node-inserting Live-Topology composites run on a hardcoded schedule with a hardcoded mutant fitness advantage. Every primary behavior_test passes as a PATTERN demonstration; none is a validated biological result.'
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Separating the "compiles and runs behind a preserved interface" claim from the "genuinely rewrites the place graph" claim — and showing that Fig 10c–f actually contains BOTH idioms, neither one biologically calibrated — is itself the useful result: it locates exactly where this framework''s toy stand-ins for development and evolution sit, and what would need to change (state-gated triggers, a real fitness landscape, heritable variation) to make them more than a pattern demonstration.'
+conclusion: '## Claims
+
+  - Development''s continuous path (fig10-2-executable) grows a shared biofilm interface (biofilm_mass 0 → 3.09) behind an interface preserved exactly across compilation. Evolution''s continuous path (fig10-3-executable) switches on a new chemical port (0 → 0.65) and grows the ancestral population under a selection ODE (cell_count 1 → 4). A separate Live-Topology pair (fig10-2-rewrite, fig10-3-rewrite) genuinely inserts and removes place-graph nodes at runtime — biofilm colonization + ECM secretion; a mutant lineage sweep that prunes the wildtype to zero.
+
+
+  ## Evidence
+
+  - **BIOFILM-INTERFACE-ACCUMULATES** — biofilm_mass 0 → 3.09 (10 steps), interface preserved exactly (Law 2)
+
+  - **PORT-SWITCHES-ON** — cell_O157.new_port 0 → 0.65 (10 steps), config-driven ramp
+
+  - **SELECTION-GROWS-POPULATION** — cell_ecoli.cell_count 1 → 4 (10 steps), fixed-constant ODE
+
+  - **DRAFTS-ARE-INERT** — sanity check: both drafts stay at seed values by construction
+
+
+  ## Limitations — the defining point of this study
+
+  - This is a PATTERN DEMONSTRATION, not a validated result. The paper itself (line 580) calls development and evolution "an open and substantial challenge."
+
+  - Selection is a single ODE (k·viability·fitness) with viability and fitness held at fixed constants — not real fitness-based population dynamics, competition, or drift.
+
+  - The "new port" is a first-order, config-driven ramp (PortAdditionProc) — not an emergent evolutionary innovation. VariationProc''s update() is empty; variation is a static identity string with no generative or heritable process behind it.
+
+  - On the compiled/executable path, the biofilm''s cell/ECM state is a continuous, PRE-DECLARED scalar store present from step 0 — not runtime node insertion. Runtime node insertion/removal DOES happen, but only in the separate Live-Topology composites (fig10-2-rewrite, fig10-3-rewrite), and there it runs on a fixed wall-clock schedule with a hardcoded mutant fitness advantage (1.6) — not gated by the community''s own state, unlike Fig 10-1''s DNA-threshold-gated division.
+
+
+  ## Next steps
+
+  - Gate the Live-Topology colonization/mutation events on the composite''s own state (nutrient/energy for biofilm growth; a real fitness function for the mutant) rather than a wall-clock timer, before any claim of demonstrated development or evolution would be warranted.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'All 6 figure drafts compile to executables (or, for the Live-Topology pair, to their standalone runtime-rewrite composites) that run to completion, interface preserved exactly on the compiled path.'
+    biological_validation: 'The paper''s PATTERN is demonstrated at the toy, explicitly-uncalibrated level. No claim is made that development or evolution themselves have been validated — the paper (line 580) calls this an open and substantial challenge.'
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - the biofilm''s shared interface never accumulates state (SurfaceAttachment/ECMSecretion/BiofilmGrowth handlers not wired or not firing)
+    - the evolution port never switches on, or the ancestral population never grows under selection
+    - the drafts are not actually inert (a handler leaked into the semantic/draft composite)
+    block_downstream: 'none — this is a terminal, explicitly-caveated pattern-demonstration study; no downstream study depends on it.'
+limitations:
+- 'Pattern demonstration, not validated biology. The paper itself calls development and evolution "an open and substantial challenge" (line 580); this study makes no claim beyond compiling and running the pattern.'
+- 'Selection is a single ODE (k·viability·fitness) with viability and fitness held at fixed constants (1.0) — not real fitness-based population dynamics, inter-variant competition, or drift.'
+- '"Acquiring a new port" is a config-driven first-order ramp (PortAdditionProc, onset_rate/capacity), not an emergent evolutionary innovation. Genomic variation (VariationProc) has an empty update — no generative or heritable process is modelled.'
+- 'On the compiled/executable path, the biofilm''s cell and ECM state are continuous, pre-declared scalar stores present from step 0 — no place-graph node insertion occurs there. Genuine runtime node insertion/removal exists only in the separate Live-Topology composites (fig10-2-rewrite, fig10-3-rewrite), and even there the colonization/mutation schedule is a fixed wall-clock timer with a hardcoded mutant fitness advantage — not gated by the community''s own internal state.'
+- 'One deterministic run per composite (10 steps for the continuous-path executables); no replicate seeds, no parameter sweep over onset_rate/capacity/grow_every/mutate_at.'
+falsifiability: 'Overturned if the biofilm''s shared interface fails to accumulate state, if the interface changes across compilation (breaking Law 2), if the evolution port fails to switch on or the ancestral population fails to grow under selection, or if the draft composites turn out to have nontrivial dynamics (contradicting their status as inert scaffolds).'
+visualizations: []
+parent_studies:
+- study: growth-and-division
+  condition: tests-passed
+experiment: 'Compile the Fig 10c–f development and evolution drafts to executables and run each to completion through the engine (fig10-2-development → fig10-2-executable; fig10-3-evolution → fig10-3-executable), and separately exercise the Live-Topology composites (fig10-2-rewrite, fig10-3-rewrite) that genuinely insert/remove place-graph nodes at runtime — reporting exactly which parts of each mechanism are real dynamics and which are scripted stand-ins.'
+result: 'Both continuous-path executables run to completion behind an interface preserved exactly against their drafts: the biofilm interface accumulates state (biofilm_mass 0 → 3.09) and evolution switches on a new port (0 → 0.65) while growing the ancestral population under a selection ODE (cell_count 1 → 4). The Live-Topology composites genuinely insert and remove place-graph nodes (biofilm colonizes to capacity, then secretes ECM; the mutant lineage sweeps the wildtype to zero) but on a fixed wall-clock schedule with a hardcoded mutant fitness advantage. Every mechanism compiles and runs; none is a validated biological result — selection is an ODE, the new port is a config ramp, and node insertion (where it happens at all) is scripted, not state-gated.'
