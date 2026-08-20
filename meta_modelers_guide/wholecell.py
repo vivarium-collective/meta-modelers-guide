@@ -299,3 +299,71 @@ def build_whole_cell(emit: bool = True, metabolism: str = "coarse") -> dict:
                        "time": ["global_time"]},
         }
     return {"state": state}
+
+
+def build_disintegration(emit: bool = True) -> dict:
+    """A FOCUSED, PLAYABLE disintegration composite (Fig 6a): thermal shock →
+    viability collapse → cell-level metabolism halts → biomass decays into molecular
+    debris. No division — the trajectory reads as the pure cell→molecular level
+    shift. Assembled in the figures' style (like build_whole_cell), not compiler-
+    emitted; its RAM emitter makes the collapse visible frame-by-frame in the loom.
+    """
+    def proc(address, inputs, outputs, config=None):
+        return {"_type": "process", "address": f"local:{address}",
+                "config": config or {}, "interval": 1.0,
+                "inputs": inputs, "outputs": outputs}
+
+    state: dict = {
+        "environment": {
+            "nutrients": {"_type": "concentration", "_default": 1.0},
+            "temperature": {"_type": "temperature", "_default": 37.0},
+        },
+        "cell": {
+            "biomass": {"_type": "mass", "_default": 0.3},
+            "energy": {"_type": "energy", "_default": 0.0},
+            "viability": {"_type": "viability", "_default": 1.0},
+            "nutrients_local": {"_type": "concentration", "_default": 0.0},
+            "dividing": {"_type": "fraction", "_default": 0.0},
+            "disintegrating": {"_type": "fraction", "_default": 0.0},
+            "debris": {"_type": "concentration", "_default": 0.0},
+        },
+        "thermal": proc("ThermalEnvironment", {},
+                        {"temperature": ["environment", "temperature"]},
+                        {"temp_normal": 37.0, "temp_shock": 50.0, "shock_time": 8.0}),
+        "uptake": proc("Uptake",
+                       {"nutrients_ext": ["environment", "nutrients"]},
+                       {"nutrients_local": ["cell", "nutrients_local"]},
+                       {"uptake_rate": 0.5}),
+        "metabolism": proc("ViabilityGatedMetabolism",
+                           {"nutrients_local": ["cell", "nutrients_local"],
+                            "viability": ["cell", "viability"]},
+                           {"biomass": ["cell", "biomass"], "energy": ["cell", "energy"],
+                            "nutrients_local": ["cell", "nutrients_local"]},
+                           {"mode": "coarse", "k": 0.6, "energy_yield": 0.4}),
+        "monitor": proc("ViabilityMonitor",
+                        {"temperature": ["environment", "temperature"],
+                         "biomass": ["cell", "biomass"], "viability": ["cell", "viability"]},
+                        {"viability": ["cell", "viability"],
+                         "dividing": ["cell", "dividing"],
+                         "disintegrating": ["cell", "disintegrating"]},
+                        {"temp_opt": 37.0, "temp_tol": 5.0, "relax": 0.5,
+                         "division_threshold": 1e9, "viability_floor": 0.5}),
+        "disintegration": proc("DisintegrationEvent",
+                               {"biomass": ["cell", "biomass"],
+                                "disintegrating": ["cell", "disintegrating"]},
+                               {"biomass": ["cell", "biomass"], "debris": ["cell", "debris"]},
+                               {"decay_rate": 0.4}),
+    }
+    if emit:
+        state["emitter"] = {
+            "_type": "step", "address": "local:RAMEmitter",
+            "config": {"emit": {"biomass": "mass", "viability": "viability",
+                                "temperature": "temperature", "debris": "concentration",
+                                "disintegrating": "fraction", "time": "float"}},
+            "inputs": {"biomass": ["cell", "biomass"], "viability": ["cell", "viability"],
+                       "temperature": ["environment", "temperature"],
+                       "debris": ["cell", "debris"],
+                       "disintegrating": ["cell", "disintegrating"],
+                       "time": ["global_time"]},
+        }
+    return {"state": state}
