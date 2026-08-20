@@ -62,3 +62,40 @@ ENVS["fig10-2"] = _FIG10_DEV
 ENVS["fig10-3"] = _FIG10_EVO
 # Fig 6, a THIRD handler over the same interface: real FBA (optional cobra dep).
 ENVS["fig06-fba"] = _FIG06_FBA_ENV
+
+# Cell–cell coupling: two cells over ONE shared-nutrient interface (law 4).
+#
+# NOTE on env↔node keying: viva_compiler.compiler._compile_node keys the handler
+# lookup by `_draft_name(node)`, which is parsed purely from the node's `address`
+# (e.g. "local:CellAgent" -> "CellAgent") — it does NOT look at the node's own key
+# in the composite's state dict, so there is no "CellAgent#a"/"CellAgent#b" or
+# per-node-name keying convention to hook into. Both cell_a_proc and cell_b_proc
+# necessarily resolve to this ONE "CellAgent" entry and get the same handler class
+# + base config. Per-cell competitive asymmetry (cell_a stronger than cell_b) is
+# instead carried by each node's own `config` in the semantic composite
+# (cellcell-coupling.composite.json), which `_compile_node` merges ON TOP of this
+# env's config (node config wins per-key) — the one per-node override mechanism the
+# compiler actually supports. `init` overrides below (keyed by store path, not by
+# process) apply per-cell regardless, since `_apply_store_overrides` merges every
+# entry in the env dict.
+from .handlers_cellcell import NutrientPool  # noqa: F401  (registration side-effect)
+
+ENVS["cellcell-compete"] = {
+    "SharedNutrientEnv": {"handler": "NutrientPool",
+                          "config": {"supply": 0.5, "capacity": 1.0},
+                          "init": {"env.nutrient": 1.0}},
+    "CellAgent": {"handler": "CompetingCell",
+                  "config": {"vmax": 0.6, "km": 0.3, "yield_": 0.5,
+                             "maintenance": 0.1, "via_gain": 0.4},
+                  "init": {"cell_a.viability": 1.0, "cell_b.viability": 1.0}},
+}
+
+ENVS["cellcell-crossfeed"] = {
+    "SharedNutrientEnv": {"handler": "NutrientPool",
+                          "config": {"supply": 0.5, "capacity": 1.0},
+                          "init": {"env.nutrient": 1.0}},
+    "CellAgent": {"handler": "CrossFeedingCell",
+                  "config": {"vmax": 0.6, "km": 0.3, "yield_": 0.5,
+                             "maintenance": 0.1, "via_gain": 0.4, "return_frac": 0.7},
+                  "init": {"cell_a.viability": 1.0, "cell_b.viability": 1.0}},
+}

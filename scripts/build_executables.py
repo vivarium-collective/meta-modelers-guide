@@ -32,6 +32,8 @@ BUILD: list[tuple[str, str, str]] = [
     ("fig10-1",       "fig10-1-division",          "fig10-1-executable"),
     ("fig10-2",       "fig10-2-development",       "fig10-2-executable"),
     ("fig10-3",       "fig10-3-evolution",         "fig10-3-executable"),
+    ("cellcell-compete",   "cellcell-coupling", "cellcell-executable-compete"),
+    ("cellcell-crossfeed", "cellcell-coupling", "cellcell-executable-crossfeed"),
 ]
 
 
