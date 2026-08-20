@@ -47,7 +47,7 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.5
-    provenance: 'DNA crosses threshold 2.0 (parent dna 1→3.06) → rewrite fires once, cell_count 1→2 (exec fig10-1-executable)'
+    provenance: 'DNA crosses threshold 2.0 (parent dna 1→3.06) → rewrite fires once, cell_count 1→2 (exec fig10-1-executable, tests/test_compilation.py::test_fig10_division_is_event_driven)'
   requires_simulation: growth-and-division
 - name: daughters-spawn
   classification: primary
@@ -59,7 +59,7 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: 'division spawns two new daughters (exec daughter dna 0→2.75; each daughter biomass 0→0.5, parent biomass →0 — mass conserved)'
+    provenance: 'division spawns two new daughters (exec daughter dna 0→2.75; each daughter biomass 0→0.5, parent biomass →0 — mass conserved; tests/test_compilation.py::test_rewrite_conformance_against_wiring, tests/test_fig10_rewrite.py::test_cell_divides_into_two_daughters)'
   requires_simulation: growth-and-division
 - name: draft-is-inert
   classification: diagnostic
@@ -80,7 +80,7 @@ runs:
   emitter: RAMEmitter
   id: growth-and-division
   status: completed
-  provenance: scripts/render_study_evidence.py — fig10-1-executable compiled from the Fig 10-1 draft, run to completion through the engine.
+  provenance: scripts/render_study_evidence.py — fig10-1-executable compiled from the Fig 10-1 draft, run to completion through the engine. Behavior confirmed by tests/test_fig10_rewrite.py (topology grows monotonically, each daughter keeps one chromosome with dna) and tests/test_compilation.py::test_fig10_division_is_event_driven / ::test_rewrite_conformance_against_wiring.
   params: {}
   outcomes:
     GROWTH-CROSSES-THRESHOLD:
@@ -150,7 +150,7 @@ conclusion_verdicts:
     basis: All figure composites build and every executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: Growth-crosses-threshold, division-fires, and daughters-spawn all pass — the cell's own energy-coupled growth process drives dna across the threshold, the rewrite fires once, and mass is conserved across the partition; the inert draft stays at cell_count 1, so growth-and-division is a real runtime mechanism, not an animation.
+    basis: Growth-crosses-threshold, division-fires, and daughters-spawn all pass — the cell's own energy-coupled growth process drives dna across the threshold, the rewrite fires once, and mass is conserved across the partition; the inert draft stays at cell_count 1, so growth-and-division is a real runtime mechanism, not an animation. Confirmed by tests/test_compilation.py::test_fig10_division_is_event_driven (DNA-threshold trigger, not a wall clock), tests/test_compilation.py::test_rewrite_conformance_against_wiring (the rewrite's reactum conforms to the wiring it produces), and tests/test_fig10_rewrite.py (the rewrite mechanism itself — one cell/one chromosome → two daughters, each keeping DNA, topology growing monotonically).
   explanatory_gain:
     result: POSITIVE
     basis: Watching growth (an autocatalytic, energy-coupled DNA-replication process) drive one cell node to be replaced by two structurally-new daughters — fired by the cell's own state crossing a threshold, with mass conserved — makes growth-then-division-as-graph-rewrite concrete rather than animated on a clock.
@@ -183,7 +183,7 @@ conclusion_logic:
     implementation_status: The figure draft compiles to an executable that runs.
     biological_validation: The paper's pattern is demonstrated at the toy-real (uncalibrated) level; growth drives the DNA-threshold trigger, the structural rewrite runs, and mass is conserved.
     pipeline_unblocks:
-    - typed-interface
+    - cell-environment-coupling
   if_primary_tests_fail:
     diagnose:
     - the DNA-replication (growth) process never drives dna across the threshold (the rewrite never fires)
@@ -195,8 +195,8 @@ limitations:
 - Growth is a single autocatalytic ODE (k·dna·energy); it is not coupled to a full metabolic or spatial nutrient field in this figure.
 falsifiability: Overturned if the growth process never drives dna across the threshold (the rewrite never fires), if the division fails to spawn two structurally-new daughter nodes, or if mass is not conserved across the partition (the parent's biomass is not driven to 0 while the daughters receive M/2 each).
 visualizations:
-- name: divide-dynamics
-  address: image:visualizations/divide-dynamics.svg
+- name: growth-and-division-dynamics
+  address: image:visualizations/growth-and-division-dynamics.svg
   config:
     chart: image
     caption: Growth-and-division dynamics — DNA grows via the autocatalytic, energy-coupled replication process and crosses threshold, the rewrite fires, and the parent's biomass partitions to two daughters (mass conserved), run to completion through the engine.
