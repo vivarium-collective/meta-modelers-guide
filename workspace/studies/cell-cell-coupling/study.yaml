@@ -1,0 +1,229 @@
+schema_version: 4
+name: cell-cell-coupling
+investigation: draft-to-living-cell
+title: Cell–Cell Coupling
+created: '2026-08-20'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: When two cell interfaces are coupled through ONE shared environmental nutrient store, what is coupled is not only state but CONSTRAINT — does one cell's uptake push the other outside its viable bounds (competition), and can a different handler over the SAME coupling interface stabilize both (cross-feeding)?
+biological_summary: 'The paper''s Cell–cell coupling section asks what changes when a cell''s environment is not empty space but another cell drawing on the SAME resource. This study wires two cell nodes — ``CellAgent`` (cell_a) and ``RivalCellAgent`` (cell_b), two draft roles with identical ports/contract — onto one shared ``SharedNutrientEnv`` store (a bounded first-order pool, replenished toward capacity). Both draft roles are mechanism-free; the coupling composite''s node config carries only ``{interval: ...}``, exactly like every other draft composite in this workspace. The asymmetry lives entirely in the ENV/handler layer (law 4: two handler environments over one interface), not in the draft: the competition env (``cellcell-executable-compete``) assigns ``CompetingCell`` handlers with a HIGHER ``vmax`` (0.8) to cell_a than to cell_b (0.2) — pure competitive strength, same kinetic form — while the cross-feeding env (``cellcell-executable-crossfeed``) assigns BOTH roles the SAME symmetric ``CrossFeedingCell`` handler (vmax 0.6 each), which returns a byproduct to the shared pool (``return_frac`` 0.7) instead of exhausting it. Run to completion (20 steps) through the engine: under competition, cell_a''s viability climbs to 1.0 while cell_b''s collapses to ~0.0001 (effectively zero) — the weaker cell is driven out of its viable band while the stronger persists — and the shared nutrient store is measurably depleted (1.0 → 0.20), confirming the coupling is real, not two isolated cells. Under cross-feeding, over the SAME coupling interface, both cells'' viability reaches 1.0 and the shared store settles higher (1.0 → 0.54) because the byproduct return offsets combined uptake. What is coupled through one shared store is not just state (nutrient concentration) but CONSTRAINT — whether each cell''s own uptake keeps it inside its viable band depends on what the OTHER cell is doing to the same pool, and swapping the handler alone (not the draft, not the interface) is what negotiates that constraint differently.'
+claim: 'Two cells over one shared-nutrient interface negotiate viability, not just state: under competition the weaker cell (lower uptake capacity) is driven below its viable band while the stronger persists (cell_a viability → 1.0, cell_b → ~0.0001); under cross-feeding, the SAME coupling interface with a different handler keeps both cells viable (cell_a and cell_b → 1.0) — two handler environments over one interface (Law 4), the draft itself unchanged (Law 2).'
+baseline:
+- name: coupling-draft
+  composite: meta_modelers_guide.composites.cellcell-coupling
+  params: {}
+- name: compete
+  composite: meta_modelers_guide.composites.cellcell-executable-compete
+  params: {}
+- name: crossfeed
+  composite: meta_modelers_guide.composites.cellcell-executable-crossfeed
+  params: {}
+variants: []
+key_assumptions:
+- The competitive asymmetry (vmax 0.8 vs 0.2) and the cross-feeding symmetry (vmax 0.6/0.6, return_frac 0.7) live entirely in the handler env layer (handler_envs.py), never in the draft composite or its node config — per-node config would silently make an env's config dead and would defeat law 4's "env swaps mechanism" story (see the note in handler_envs.py above ENVS["cellcell-compete"]).
+- Two draft roles with identical ports (CellAgent, RivalCellAgent) stand in for "two cells" because the compiler keys handler lookup by the node's address-derived draft-class name, not by the node's own key in the composite state dict — there is no CellAgent#a/CellAgent#b convention to hook per-instance config into.
+behavior_tests:
+- name: competition-starves-weaker-cell
+  classification: primary
+  description: Under competition (cell_a vmax 0.8, cell_b vmax 0.2, same shared pool), the weaker cell's viability is driven below the viable band while the stronger cell's viability stays high.
+  measure:
+    kind: observable
+    path: cell_b.viability
+    expr: last(cell_b.viability)
+  pass_if:
+    op: '<='
+    value: 0.5
+    provenance: 'cell_b (rival, vmax 0.2) viability collapses 1.0 → 0.0001 under competition (exec cellcell-executable-compete, tests/test_cellcell.py::test_competition_pushes_weaker_cell_out_of_viable_bounds)'
+  requires_simulation: compete
+- name: competition-stronger-cell-persists
+  classification: primary
+  description: The stronger competitor (cell_a, vmax 0.8) stays inside its viable band while cell_b starves — confirming the asymmetry is competitive, not a shared collapse.
+  measure:
+    kind: observable
+    path: cell_a.viability
+    expr: last(cell_a.viability)
+  pass_if:
+    op: '>='
+    value: 0.5
+    provenance: 'cell_a (vmax 0.8) viability stays at 1.0 under competition while cell_b collapses (exec cellcell-executable-compete)'
+  requires_simulation: compete
+- name: crossfeeding-keeps-both-viable
+  classification: primary
+  description: Over the SAME coupling interface, swapping to a symmetric cross-feeding handler (byproduct returned to the shared pool) keeps BOTH cells viable — law 4, handler independence.
+  measure:
+    kind: observable
+    path: cell_b.viability
+    expr: last(cell_b.viability)
+  pass_if:
+    op: '>='
+    value: 0.5
+    provenance: 'both cells viability → 1.0 under cross-feeding (exec cellcell-executable-crossfeed, tests/test_cellcell.py::test_crossfeeding_keeps_both_cells_viable)'
+  requires_simulation: crossfeed
+- name: shared-pool-actually-depleted
+  classification: diagnostic
+  description: Sanity check that the coupling is real (not two isolated cells drawing on independent pools) — the shared nutrient store is measurably depleted under competition.
+  measure:
+    kind: observable
+    path: env.nutrient
+    expr: last(env.nutrient)
+  pass_if:
+    op: '<'
+    value: 1.0
+    provenance: 'shared env.nutrient depleted 1.0 → 0.1999... under competition (test_cellcell.py asserts st["env"]["nutrient"] < 1.0)'
+  requires_simulation: compete
+- name: draft-preserves-interface
+  classification: diagnostic
+  control: negative
+  description: 'Law 2 check (not the study''s scientific control): the compete and cross-feed handler envs compile to the SAME external interface as the inert coupling draft and as each other — confirms env-layer swapping never touches the declared interface.'
+  measure:
+    kind: observable
+    path: interface_match
+    expr: last(interface_match)
+  pass_if:
+    op: '>='
+    value: 1.0
+    provenance: 'tests/test_cellcell.py::test_handler_independence_same_interface — interface_of(compete) == interface_of(crossfeed) == interface_of(draft), asserted structurally'
+  requires_simulation: coupling-draft
+runs:
+- name: compete
+  composite: compete
+  emitter: RAMEmitter
+  id: compete
+  status: completed
+  provenance: 'meta_modelers_guide/composites/cellcell-executable-compete.composite.json compiled from the cellcell-coupling draft via ENVS["cellcell-compete"] (handler_envs.py), run 20 steps to completion through the engine.'
+  params: {}
+  outcomes:
+    COMPETITION-STARVES-WEAKER-CELL:
+      result: PASS
+      detail: cell_b (rival, vmax 0.2) viability 1.0 → 0.0001 (effectively zero) — driven below the 0.5 viable band
+    COMPETITION-STRONGER-CELL-PERSISTS:
+      result: PASS
+      detail: cell_a (vmax 0.8) viability stays at 1.0
+    SHARED-POOL-ACTUALLY-DEPLETED:
+      result: PASS
+      detail: env.nutrient 1.0 → 0.1999... — the shared pool is measurably drawn down, confirming real coupling
+- name: crossfeed
+  composite: crossfeed
+  emitter: RAMEmitter
+  id: crossfeed
+  status: completed
+  provenance: 'meta_modelers_guide/composites/cellcell-executable-crossfeed.composite.json compiled from the SAME cellcell-coupling draft via ENVS["cellcell-crossfeed"] (handler_envs.py), run 20 steps to completion through the engine.'
+  params: {}
+  outcomes:
+    CROSSFEEDING-KEEPS-BOTH-VIABLE:
+      result: PASS
+      detail: both cell_a and cell_b viability 1.0 → 1.0; env.nutrient settles at 0.538 (higher than under competition, since the byproduct is returned)
+- name: coupling-draft
+  composite: coupling-draft
+  emitter: RAMEmitter
+  id: coupling-draft
+  status: completed
+  provenance: 'tests/test_cellcell.py::test_handler_independence_same_interface — structural interface comparison across the inert draft and both handler envs, no execution needed for this check.'
+  params: {}
+  outcomes:
+    DRAFT-PRESERVES-INTERFACE:
+      result: PASS
+      detail: interface_of(compete) == interface_of(crossfeed) == interface_of(draft) — law 2 holds across both handler swaps
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Coupling two cells through one shared nutrient store couples CONSTRAINT, not just state: under competition, the cell with lower uptake capacity (cell_b, vmax 0.2) is driven out of its viable band while the stronger cell (cell_a, vmax 0.8) persists. Confirmed: cell_a viability 1.0 → 1.0, cell_b viability 1.0 → 0.0001.'
+  evidence:
+    from_test: competition-starves-weaker-cell
+    from_run: compete
+    observed: cell_a viability stays 1.0; cell_b viability collapses to 0.0001; env.nutrient depleted 1.0 → 0.1999
+  provenance:
+    run_ids:
+    - compete
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'A different handler over the SAME coupling interface (cross-feeding: symmetric vmax, partial byproduct return to the shared pool) sustains both cells — the constraint negotiated over one shared store is not fixed by the interface, it is set by which handler occupies it. Confirmed: both cell_a and cell_b viability 1.0 → 1.0 under cross-feeding.'
+  evidence:
+    from_test: crossfeeding-keeps-both-viable
+    from_run: crossfeed
+    observed: cell_a and cell_b viability both 1.0; env.nutrient settles at 0.538 (vs 0.1999 under competition)
+  provenance:
+    run_ids:
+    - crossfeed
+- id: F-03
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The competitive asymmetry and the cross-feeding symmetry live entirely in the handler env layer, never in the draft or the interface — confirming law 4 (handler independence over one coupling interface) and law 2 (interface preserved) simultaneously. Confirmed structurally: interface_of(compete) == interface_of(crossfeed) == interface_of(draft).'
+  evidence:
+    from_test: draft-preserves-interface
+    from_run: coupling-draft
+    observed: identical compiled interface across both handler envs and the inert draft (tests/test_cellcell.py::test_handler_independence_same_interface)
+  provenance:
+    run_ids:
+    - coupling-draft
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: All three cellcell composites build and both executables run to completion (scripts/build_executables.py entries cellcell-compete / cellcell-crossfeed; tests/test_cellcell.py, 3 passed).
+  biological_validation:
+    result: PASS
+    basis: Competition drives the weaker cell (lower uptake capacity) below its viable band while the stronger persists, and the shared pool is measurably depleted (coupling is real); cross-feeding over the SAME interface keeps both cells viable. All three tests plus the interface-preservation control pass.
+  explanatory_gain:
+    result: POSITIVE
+    basis: Making the SAME two-draft-role composite negotiate two different viability outcomes purely by swapping the handler env (competition vs cross-feeding) makes "coupling through a shared store couples constraint, not just state" concrete, and demonstrates law 4 (handler independence) directly.
+conclusion: '## Claims
+
+  - Two cells coupled through ONE shared nutrient store negotiate viability, not just state. Under competition (cell_a vmax 0.8, cell_b vmax 0.2), cell_b is driven below its viable band (viability 1.0 → 0.0001) while cell_a persists (viability → 1.0), and the shared pool is measurably depleted (nutrient 1.0 → 0.1999), confirming the coupling is real. Under cross-feeding — the SAME coupling interface, a different handler (symmetric vmax 0.6/0.6, partial byproduct return) — BOTH cells stay viable (viability → 1.0 each). This is Law 4: two handler environments negotiate the shared-store constraint differently, over an interface unchanged (Law 2).
+
+
+  ## Evidence
+
+  - **COMPETITION-STARVES-WEAKER-CELL** — cell_b viability 1.0 → 0.0001 under competition
+
+  - **COMPETITION-STRONGER-CELL-PERSISTS** — cell_a viability stays at 1.0 under competition
+
+  - **SHARED-POOL-ACTUALLY-DEPLETED** — env.nutrient 1.0 → 0.1999 under competition (real coupling, not two isolated cells)
+
+  - **CROSSFEEDING-KEEPS-BOTH-VIABLE** — both cell_a and cell_b viability → 1.0 under cross-feeding
+
+  - **DRAFT-PRESERVES-INTERFACE** — interface_of(compete) == interface_of(crossfeed) == interface_of(draft) (law 2 holds across both handler swaps)
+
+
+  ## Limitations
+
+  - Pairwise only: two cells over one shared store, not population-scale negotiation (many cells, spatial structure, or emergent niches).
+
+  - Toy-real constants: vmax, km, maintenance, via_gain, return_frac, supply, and capacity are illustrative, not fitted to a named organism or medium.
+
+  - Viability is a single scalar per cell driven by a fixed maintenance threshold; no explicit death/removal event when viability approaches zero (cell_b''s node persists at ~0 viability rather than being removed from the composition).
+
+
+  ## Next steps
+
+  - Extend to N > 2 cells over one shared store to test whether the competitive/cross-feeding pattern generalizes or new attractors emerge (population-scale negotiation, biofilm/collective nesting — see the later development-and-evolution study).
+
+  - Add an explicit death/removal rewrite when a cell''s viability crosses a lower threshold, turning "starves" into a structural change to the place graph (parallel to the division rewrite in the divide study).'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The cellcell-coupling draft compiles to two executables (compete, crossfeed) that both run to completion.
+    biological_validation: The paper's cell-cell coupling pattern is demonstrated at the toy-real (uncalibrated) level; competition negotiates viability against the stronger cell while cross-feeding, over the same interface, sustains both — law 4 (handler independence) and law 2 (interface preserved) both hold.
+    pipeline_unblocks:
+    - development-and-evolution
+  if_primary_tests_fail:
+    diagnose:
+    - the compete env fails to drive cell_b's viability below the band (vmax asymmetry not taking effect, or maintenance/via_gain miscalibrated)
+    - the crossfeed env fails to keep both cells viable (return_frac too low to offset combined uptake)
+    - the shared pool is not actually depleted (the two cells are not really coupled — independent pools masquerading as one)
+    block_downstream: development-and-evolution (population-scale/collective coupling depends on this figure's pairwise negotiation holding)
+limitations:
+- 'Pairwise only: two cells over one shared store, not population-scale negotiation among many cells (that is out of scope here — see the later development-and-evolution study for collective/biofilm nesting).'
+- 'Toy-real constants: vmax, km, maintenance, via_gain, return_frac, supply, and capacity are illustrative values chosen to demonstrate the qualitative pattern, not fitted to a named organism or medium.'
+- 'No explicit death/removal event: a cell driven near-zero viability (cell_b under competition) remains a live node in the composition rather than being structurally removed.'
+falsifiability: Overturned if the competition env fails to drive the weaker cell's viability below the viable band while the stronger persists, if the cross-feeding env fails to keep both cells viable over the SAME coupling interface, if the shared nutrient store is not measurably depleted under competition (coupling not real), or if the two handler envs compile to different external interfaces than the inert draft (a Law 2 violation).
+parent_studies:
+- study: cell-environment-coupling
+  condition: tests-passed
+experiment: Wire two draft cell roles (CellAgent, RivalCellAgent — identical ports, mechanism-free) onto one shared SharedNutrientEnv store, then compile the SAME draft through two different handler environments — a competition env (vmax 0.8 vs 0.2, no byproduct return) and a cross-feeding env (symmetric vmax 0.6/0.6, partial byproduct return) — and run each to completion through the engine.
+result: 'Under competition, the shared store is measurably depleted (nutrient 1.0 → 0.1999) and the weaker cell is driven out of its viable band (cell_b viability 1.0 → 0.0001) while the stronger cell persists (cell_a viability → 1.0). Under cross-feeding — the SAME coupling interface, only the handler swapped — both cells stay viable (viability → 1.0 each), because the returned byproduct offsets combined uptake. Two handler environments over one coupling interface negotiate constraint differently (Law 4), with the interface itself unchanged across both (Law 2).'
