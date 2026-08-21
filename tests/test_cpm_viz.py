@@ -6,7 +6,7 @@ from process_bigraph import Composite
 from meta_modelers_guide.core import build_core
 from meta_modelers_guide.cpm import viz
 
-COMP = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "cpm" / "composites" / "single-cell-in-a-field.composite.json"
+COMP = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites" / "single-cell-in-a-field.composite.json"
 
 def test_gif_and_metrics(tmp_path):
     core = build_core()

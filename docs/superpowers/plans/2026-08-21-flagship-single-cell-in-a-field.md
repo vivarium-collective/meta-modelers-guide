@@ -28,7 +28,7 @@
 - Create: `meta_modelers_guide/cpm/cell_field.py` — the `CpmCellField` process (owns a CPM world; footprint + growth ports).
 - Create: `meta_modelers_guide/cpm/bridge.py` — `CpmFieldBridge` (footprint ↔ biomass grid; metabolism ↔ growth) if kept separate from `CpmCellField`; the spike (Task 1) decides whether the bridge is a standalone process or folded into `CpmCellField`.
 - Create: `meta_modelers_guide/cpm/viz.py` — `cpm_frames_to_gif` + `metrics_panel`.
-- Create: `meta_modelers_guide/cpm/composites/single-cell-in-a-field.composite.json` — the flagship composite.
+- Create: `meta_modelers_guide/composites/single-cell-in-a-field.composite.json` — the flagship composite.
 - Modify: `meta_modelers_guide/core.py` — ensure `register_workspace_processes` picks up `meta_modelers_guide.cpm.*` processes (it auto-scans this package's Process subclasses; confirm the new subpackage is imported).
 - Modify: `pyproject.toml` — declare `pbg-cpm` and `spatio-flux` deps (documented as editable-installed; note the Rust `cpm_core` maturin precondition).
 - Create: `tests/test_cpm_smoke.py`, `tests/test_cpm_cell_field.py`, `tests/test_flagship_field.py`, `tests/test_cpm_viz.py`.
@@ -312,10 +312,10 @@ git commit -m "feat(cpm): CpmCellField — CPM cell metabolizes a shared field (
 ## Task 3: The flagship composite + behavior test
 
 **Files:**
-- Create: `meta_modelers_guide/cpm/composites/single-cell-in-a-field.composite.json`
+- Create: `meta_modelers_guide/composites/single-cell-in-a-field.composite.json`
 - Test: `tests/test_flagship_field.py`
 
-**Interfaces:** Consumes `CpmCellField` (Task 2), spatio-flux `DiffusionAdvection` (full address). Produces the composite spec id `meta_modelers_guide.cpm.composites.single-cell-in-a-field`.
+**Interfaces:** Consumes `CpmCellField` (Task 2), spatio-flux `DiffusionAdvection` (full address). Produces the composite spec id `meta_modelers_guide.composites.single-cell-in-a-field`.
 
 - [ ] **Step 1: Write the composite JSON**
 
@@ -359,7 +359,7 @@ Run: `PYTHONPATH=… pytest tests/test_flagship_field.py -v`. Iterate seeding/di
 - [ ] **Step 4: Commit**
 
 ```bash
-git add meta_modelers_guide/cpm/composites/single-cell-in-a-field.composite.json tests/test_flagship_field.py
+git add meta_modelers_guide/composites/single-cell-in-a-field.composite.json tests/test_flagship_field.py
 git commit -m "feat(cpm): flagship single-cell-in-a-field composite — CPM cell + diffusion + dFBA, sense/act loop"
 ```
 
@@ -427,7 +427,7 @@ git commit -m "feat(cpm): cpm_viz — GIF of the cell over its field + synced me
 
 - [ ] **Step 1:** Author `investigation.yaml` for `the-cellular-interface-multicellular` — schema_version 2, title "The Cellular Interface, Multicellular", the arc from the spec, `studies: [cell-environment-coupling-spatial]` (the rest added in later increments), a `question`/`lead`/`executive` re-anchored to the spatial realization, and a cross-link to `draft-to-living-cell`. Follow the shape of the existing `draft-to-living-cell/investigation.yaml`.
 
-- [ ] **Step 2:** Author `cell-environment-coupling-spatial/study.yaml` (schema_version 4; `name` matches dir; `investigation: the-cellular-interface-multicellular`): baseline composite `meta_modelers_guide.cpm.composites.single-cell-in-a-field`; question/claim = the Fig 5 sense/act loop as real spatial dFBA + niche construction; cite `tests/test_flagship_field.py`; honest caveats (toy-real e_coli_core constants; chemotaxis-toward-the-external-field deferred; the CPM field is Rust-internal, the metabolized nutrient is the spatio-flux field). Bake the GIF + metrics into `viz/` and reference them in `visualizations:` (`image:` for the GIF, the interactive metrics as the `html:` figure per the workbench viz convention).
+- [ ] **Step 2:** Author `cell-environment-coupling-spatial/study.yaml` (schema_version 4; `name` matches dir; `investigation: the-cellular-interface-multicellular`): baseline composite `meta_modelers_guide.composites.single-cell-in-a-field`; question/claim = the Fig 5 sense/act loop as real spatial dFBA + niche construction; cite `tests/test_flagship_field.py`; honest caveats (toy-real e_coli_core constants; chemotaxis-toward-the-external-field deferred; the CPM field is Rust-internal, the metabolized nutrient is the spatio-flux field). Bake the GIF + metrics into `viz/` and reference them in `visualizations:` (`image:` for the GIF, the interactive metrics as the `html:` figure per the workbench viz convention).
 
 - [ ] **Step 3:** Validate: `PYTHONPATH=… python scripts/lint-workspace.py` — the new study + investigation resolve; the baseline composite exists. Commit:
 
@@ -453,4 +453,4 @@ git commit -m "studies: the-cellular-interface-multicellular investigation + fla
 
 **Placeholder scan:** code steps carry real code grounded in the verified API map (full-address wiring, `world.*` methods, dFBA deltas, `(ny,nx)` grids). The two genuinely spike-decided points (bridge-vs-world-owning-process; JSON-vs-builder for ndarray seeding) are called out explicitly with the recommended resolution, not left vague.
 
-**Type consistency:** `CpmCellField` ports (`fields`, `volume`, `position`, `local_nutrient`, `biomass`, `acetate_secreted`) are used identically in Task 2's test, Task 3's composite/test, and Task 4's viz. Full addresses (`local:!spatio_flux…`, `local:!cpm…`) are used consistently. The composite spec id `meta_modelers_guide.cpm.composites.single-cell-in-a-field` is referenced identically in Tasks 3, 4, 5.
+**Type consistency:** `CpmCellField` ports (`fields`, `volume`, `position`, `local_nutrient`, `biomass`, `acetate_secreted`) are used identically in Task 2's test, Task 3's composite/test, and Task 4's viz. Full addresses (`local:!spatio_flux…`, `local:!cpm…`) are used consistently. The composite spec id `meta_modelers_guide.composites.single-cell-in-a-field` is referenced identically in Tasks 3, 4, 5.

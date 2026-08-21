@@ -15,7 +15,7 @@ from meta_modelers_guide.core import build_core
 
 pytest.importorskip("cobra")  # entire module skips without COBRApy
 
-COMP = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "cpm" / "composites" / "single-cell-in-a-field.composite.json"
+COMP = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites" / "single-cell-in-a-field.composite.json"
 
 
 def test_flagship_sense_act_loop():

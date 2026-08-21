@@ -55,7 +55,7 @@ Each study keeps the honest framing conventions of `draft-to-living-cell` (toy-r
 
 **Question:** does the Fig 5 sense/act loop hold as *real spatial metabolism* — one cell sensing a diffusing nutrient field, running flux-balance at its location, secreting a byproduct, and moving up the gradient — composed from independently-built CPM + spatio-flux processes through one typed bridge?
 
-**Composite** (`meta_modelers_guide/cpm/composites/` + a semantic draft + executable):
+**Composite** (`meta_modelers_guide/composites/` + a semantic draft + executable):
 - `cpm` `CPMProcess` — one cell, 2D lattice (e.g. 50×50), volume target, chemotaxis toward field 0.
 - `spatio_flux` `DiffusionAdvection` — the nutrient field on the same grid (Neumann/periodic BC).
 - `spatio_flux` `DynamicFBA` — `e_coli_core` (or a small curated model) at the cell's grid cell: nutrient uptake → biomass, secretes a byproduct (e.g. acetate) into the field.
