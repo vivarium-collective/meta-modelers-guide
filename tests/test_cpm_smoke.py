@@ -3,8 +3,15 @@ COM are readable, and a spatio-flux DiffusionAdvection field composes over a sha
 (ny,nx) grid — all addressed by full import path."""
 from __future__ import annotations
 import numpy as np
+import pytest
 from process_bigraph import Composite
 from meta_modelers_guide.core import build_core
+
+# The flagship composition depends on optional frameworks that are editable-installed
+# locally but absent from the base CI image (cpm needs a Rust/maturin build); skip
+# rather than fail when they are unavailable.
+pytest.importorskip("cpm")
+pytest.importorskip("spatio_flux")
 
 NX = NY = 40
 

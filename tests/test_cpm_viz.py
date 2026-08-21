@@ -2,9 +2,15 @@
 from __future__ import annotations
 import json, os
 from pathlib import Path
+import pytest
 from process_bigraph import Composite
 from meta_modelers_guide.core import build_core
 from meta_modelers_guide.cpm import viz
+
+# Optional frameworks absent from the base CI image (cpm needs a Rust/maturin build);
+# skip rather than fail when the flagship composite can't be built.
+pytest.importorskip("cpm")
+pytest.importorskip("spatio_flux")
 
 COMP = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites" / "single-cell-in-a-field.composite.json"
 

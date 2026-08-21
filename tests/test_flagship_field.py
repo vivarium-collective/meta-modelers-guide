@@ -14,6 +14,8 @@ from process_bigraph import Composite
 from meta_modelers_guide.core import build_core
 
 pytest.importorskip("cobra")  # entire module skips without COBRApy
+pytest.importorskip("cpm")  # + the spatial frameworks (absent from base CI)
+pytest.importorskip("spatio_flux")
 
 COMP = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites" / "single-cell-in-a-field.composite.json"
 

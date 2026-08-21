@@ -29,7 +29,14 @@ def test_composites_present():
 
 @pytest.mark.parametrize("spec_path", SPECS, ids=_ids(SPECS))
 def test_composite_builds(spec_path):
-    spec = json.loads(spec_path.read_text())
+    raw = spec_path.read_text()
+    # Composites that compose the spatial frameworks (cpm, spatio_flux) can only be
+    # built where those optional deps are installed; skip elsewhere (e.g. base CI).
+    if "spatio_flux" in raw:
+        pytest.importorskip("spatio_flux")
+    if "CpmCellField" in raw:
+        pytest.importorskip("cpm")
+    spec = json.loads(raw)
     assert spec.get("name"), f"{spec_path.name}: missing 'name'"
     assert spec.get("state"), f"{spec_path.name}: missing 'state'"
     core = build_core()
