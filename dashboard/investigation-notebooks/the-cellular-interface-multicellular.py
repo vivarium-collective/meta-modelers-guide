@@ -556,6 +556,101 @@ _save_viz('disintegration-spatial', 'disintegration-metrics', _render_one('html:
 # | debris-cloud-keeps-scattering | kind=observable path=particles expr=RMS radius of particle positions, tick 22 vs tick 16 | op > value 0.0 provenance RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3 (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact magnitudes vary run-to-run (representative values shown); the strict INCREASE is the robust, test-asserted claim (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris) |
 # | particle-bridge-emits-then-scatters | kind=observable path=particles expr=len(particles) unchanged and >=2 positions moved, tick 1 vs tick 4 | op == value 3.0 provenance a synthetic emitter process (not this study's composite): 3 particles emitted on tick 1, still exactly 3 particles at tick 4, with at least 2 having moved (tests/test_particle_bridge_spike.py::test_emit_then_scatter) |
 
+# ## Study: Growth and Division, Spatial (`growth-and-division-spatial`)
+#
+# **Question.** Does Fig 10a,b's growth-then-divide pattern hold spatially -- a CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a threshold and divides via the native CPM engine operation `divide_cells` (mass-conserved), compounding into a small lineage over the run -- composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`)?
+#
+# **Claim.** Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native CPM engine operation `divide_cells` through a single coupling process (`CpmGrowthDivision`) reproduces Fig 10a,b's growth-then-divide pattern as genuine spatial multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while every cell's CPM volume stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80 -- growth, crossing, division, and resumed growth in the daughters, all as direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. This mirrors `draft-to-living-cell/growth-and-division`'s Fig 10a,b claim (growth drives the cell's own state across a threshold; crossing the threshold triggers division) but realizes the division event itself as the native spatial CPM operation `divide_cells` acting directly on lattice pixels, in contrast to that study's place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `growth-division-spatial` | `meta_modelers_guide.composites.growth-division-spatial` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.growth-division-spatial`** — `spec_meta_modelers_guide_composites_growth_division_spatial` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_growth_division_spatial = load_spec(REPO / 'meta_modelers_guide/composites/growth-division-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_growth_division_spatial)
+
+# === Edit parameters for composite 'growth-division-spatial' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
+
+# process 'cell'  (local:CpmGrowthDivision)
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['glucose_vmax'] = 1.5
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['reset_target'] = 40.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: growth-and-division-spatial ===
+STUDY = 'growth-and-division-spatial'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **growth-division-spatial-movie**
+
+# growth-division-spatial-movie
+_save_viz('growth-and-division-spatial', 'growth-division-spatial-movie', _render_one('image:viz/growth-division-spatial.gif', {'chart': 'image', 'caption': 'Spatial growth-and-division over 36 ticks -- a single CPM cell compounds into a small lineage (1,2,2,2,4,4,4,8,8,8,13,16 cells) as metabolism-driven volume growth repeatedly crosses vol_threshold and native divide_cells splits each cell.'}, RUNS_DB, STUDY_YAML))
+
+# **growth-division-metrics**
+
+# growth-division-metrics
+_save_viz('growth-and-division-spatial', 'growth-division-metrics', _render_one('html:viz/growth-division-metrics.html', {'chart': 'html', 'caption': 'Synced n_cells/total_volume metrics for the growth-division run -- the population staircase (1,2,2,2,4,4,4,8,8,8,13,16) over 36 ticks.'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | population-steps-up-by-division | kind=observable path=obs.n_cells expr=max(obs.n_cells) over the 36-tick run | op >= value 8.0 provenance n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks (12 samples, cadence 3) -- steps 1 -> 2 -> 4 -> 8 -> 16 (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics) |
+# | population-never-shrinks | kind=observable path=obs.n_cells expr=obs.n_cells == sorted(obs.n_cells) over the 36-tick run | op > value 0.0 provenance n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 is monotonic non-decreasing over the full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns)) |
+# | daughters-resume-growth-without-runaway | kind=observable path=obs.n_cells expr=obs.n_cells after run(30) from a single seed cell (n0 = 1) | op >= value 3.0 provenance starting from n0 = 1, n_cells >= 3 after 30 ticks (at least 1 -> 2 -> ~4), with every per-cell volume bounded in (5, 200) -- no runaway single cell, no zero-volume phantom daughters (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
+# | per-cell-volume-stays-bounded | kind=observable path=obs.volume expr=range of per-cell CPM volume across all cells and all sampled ticks | op < value 200.0 provenance per-cell volumes stay bounded roughly 31-79 px across the 36-tick run (division halves a cell once it crosses vol_threshold = 80, resetting toward reset_target = 40, then it regrows); the tests' hard bounds (8 < v < 200) hold at every sampled tick (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
+# | native-division-conserves-mass | kind=observable path=cell_volumes expr=(vol_parent + vol_new_daughter) - vol_before_split, and divide_cells(500.0, 40.0) on a sub-threshold cell | op <= value 2.0 provenance divide_cells(80.0, 40.0) on a cell grown to ~150 splits it into two daughters (parent id kept + one new id) whose combined volume matches the pre-split volume within +-2 px (rounding); divide_cells(500.0, 40.0) on a cell at 60 (below threshold) returns [] -- a correct no-op (tests/test_cpm_divide_spike.py::test_divide_splits_one_into_two_mass_conserved, test_below_threshold_is_noop) |
+
 # ## Open decisions
 # - Only 1 of the 9 planned spatial-counterpart studies exists (cell-environment-coupling-spatial, the flagship). The remaining 8 — cellular-interface, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution — are named in the design spec's increment plan but have no composite, study, or run. Treat this investigation's verdict as scoped to the flagship pattern only until the fan-out increments land.
 # - Chemotaxis toward the sensed field (directed up-gradient motion) is explicitly deferred to a follow-up variant of the flagship composite; the current flagship cell does not chemotax, only senses, metabolizes, grows, and secretes.
