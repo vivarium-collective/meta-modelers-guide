@@ -40,7 +40,7 @@ Composite Explorer. Play it: `fig06-disintegration-dynamics`.
     nutrients ⇒ biomass, energy, entropy, secretions
 
 is realized by **three different mechanisms overlaid on one unchanged boundary** —
-three GRAINS of the same disintegration/coarse-graining pattern (law 4):
+three grains of the same disintegration/coarse-graining pattern (law 4):
 
 | Grain | What it is | Distinct behavior |
 |---|---|---|
@@ -111,8 +111,8 @@ rewrite → the whole cell.**
    figure of its own) — two cells wired over one shared nutrient store negotiate
    viability: competition starves the weaker cell; cross-feeding (a different
    handler, same interface) keeps both alive.
-4. **[disintegration](workspace/studies/disintegration/study.yaml)** (Fig 6, **THE
-   FLAGSHIP**) — the interface cut open: the playable viability collapse plus the
+4. **[disintegration](workspace/studies/disintegration/study.yaml)** (Fig 6, **the
+   flagship**) — the interface cut open: the playable viability collapse plus the
    three-grain metabolism swap above.
 5. **[molecular-interfaces](workspace/studies/molecular-interfaces/study.yaml)**
    (Fig 7) — one level further down: an F1Fo ATP-synthase mechanism drives all four
@@ -143,7 +143,7 @@ FBA give three distinct life histories).
 
 Honesty about scope is part of the claim:
 
-- **Conformance is STRUCTURAL** — port names, types, and wiring. It is *not* a check of
+- **Conformance is structural** — port names, types, and wiring. It is *not* a check of
   units, invariants, or runtime behavior. Units are name-only labels on ports
   (documentary, not machine-enforced); the compiler guarantees the ports line up, not
   that a mechanism honors its contract's *intended* behavior once running.

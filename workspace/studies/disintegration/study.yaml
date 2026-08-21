@@ -7,10 +7,10 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: 'Fig 6 is disintegration — the change in level of description that fires when a cell crosses its viability bound. Two faces: (a) played through, does the disintegration composite actually SHOW that shift — a thermal shock pushing viability past its bound, viability collapsing, viability-gated metabolism halting, and biomass turning into molecular debris? (b) Is the metabolic-exchange interface at the heart of that same shift realizable at a coarse cell-level grain, an intermediate kinetic grain, and a resolved molecular-network grain (real COBRApy flux-balance optimization) — three grains behind ports that never move?'
-biological_summary: 'Fig 6 is disintegration: the point where a cellular description stops being adequate and the right level of description drops to interacting molecular components. This study makes that shift both watchable and structural. (a) PLAYABLE: `fig06-disintegration-dynamics` scripts a thermal shock (temperature 37 → 50 at t≈8) against a cell with a fixed viability band. Play it in the Composite Explorer and the trajectory is legible without reading code — viability holds near 1.0, the shock lands, viability collapses toward 0, viability-gated metabolism halts, and biomass converts into molecular debris (biomass-conserving decay, not disappearance). Measured on `fig06-disintegration-dynamics` over 20 steps: viability 1.0 → ~0, debris 0 → ~4.6 (`tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration`). (b) STRUCTURAL: the same metabolic-exchange interface (nutrients ⇒ biomass, energy, entropy, secretions) that disintegration eventually halts is realizable at three different grains without moving a port. The coarse handler applies a lumped yield (biomass → 4.0). The kinetic handler applies a saturating Michaelis–Menten-like rate on the identical nutrient supply, reaching a distinct endpoint (biomass → 2.667). The FBA handler calls real COBRApy to solve a flux-balance optimization over the `e_coli_core` network each step — the resolved molecular network — and under sustained uptake overflows surplus carbon to acetate (biomass → 6.29, secretions → 30.4). `test_fig6_handler_independence` compiles the coarse and kinetic handlers against the identical interface and asserts they diverge; `tests/test_fba.py` adds the real COBRApy grain and its acetate-overflow signature. Three grains, one interface, coarse-graining as the reverse move: that is Law 4 made concrete on the exact interface that disintegration, played through, shows failing.
+question: 'Fig 6 is disintegration — the change in level of description that fires when a cell crosses its viability bound. Two faces: (a) played through, does the disintegration composite actually show that shift — a thermal shock pushing viability past its bound, viability collapsing, viability-gated metabolism halting, and biomass turning into molecular debris? (b) Is the metabolic-exchange interface at the heart of that same shift realizable at a coarse cell-level grain, an intermediate kinetic grain, and a resolved molecular-network grain (real COBRApy flux-balance optimization) — three grains behind ports that never move?'
+biological_summary: 'Fig 6 is disintegration: the point where a cellular description stops being adequate and the right level of description drops to interacting molecular components. This study makes that shift both watchable and structural. (a) Playable: `fig06-disintegration-dynamics` scripts a thermal shock (temperature 37 → 50 at t≈8) against a cell with a fixed viability band. Play it in the Composite Explorer and the trajectory is legible without reading code — viability holds near 1.0, the shock lands, viability collapses toward 0, viability-gated metabolism halts, and biomass converts into molecular debris (biomass-conserving decay, not disappearance). Measured on `fig06-disintegration-dynamics` over 20 steps: viability 1.0 → ~0, debris 0 → ~4.6 (`tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration`). (b) Structural: the same metabolic-exchange interface (nutrients ⇒ biomass, energy, entropy, secretions) that disintegration eventually halts is realizable at three different grains without moving a port. The coarse handler applies a lumped yield (biomass → 4.0). The kinetic handler applies a saturating Michaelis–Menten-like rate on the identical nutrient supply, reaching a distinct endpoint (biomass → 2.667). The FBA handler calls real COBRApy to solve a flux-balance optimization over the `e_coli_core` network each step — the resolved molecular network — and under sustained uptake overflows surplus carbon to acetate (biomass → 6.29, secretions → 30.4). `test_fig6_handler_independence` compiles the coarse and kinetic handlers against the identical interface and asserts they diverge; `tests/test_fba.py` adds the real COBRApy grain and its acetate-overflow signature. Three grains, one interface, coarse-graining as the reverse move: that is Law 4 made concrete on the exact interface that disintegration, played through, shows failing.
 
-  HOW TO VIEW: run `/viva-explore fig06-disintegration-dynamics` and step through it in the Composite Explorer to watch the viability curve collapse and debris rise in real time.'
+  How to view: run `/viva-explore fig06-disintegration-dynamics` and step through it in the Composite Explorer to watch the viability curve collapse and debris rise in real time.'
 claim: 'Disintegration is a change in level of description made executable and watchable: playing `fig06-disintegration-dynamics`, a thermal shock pushes the cell past its viability bound, viability collapses, viability-gated metabolism halts, and biomass decays into molecular debris (Fig 6a). The same metabolic-exchange interface''s cell↔molecular-network equivalence carries three grains behind ports that never move — a coarse lumped yield, a saturating kinetic law, and real COBRApy flux-balance on `e_coli_core` (Fig 6b, Law 4).'
 baseline:
 - name: disintegration-dynamics
@@ -32,7 +32,7 @@ variants: []
 behavior_tests:
 - name: viability-collapse
   classification: primary
-  description: 'HEADLINE — played through, `fig06-disintegration-dynamics` shows the level shift: the cell starts viable (viability > 0.9), the scripted thermal shock (t≈8) lands, and viability collapses past the floor (< 0.3) by step 20. This is the composite''s own dynamics, not a post-hoc annotation.'
+  description: 'Headline — played through, `fig06-disintegration-dynamics` shows the level shift: the cell starts viable (viability > 0.9), the scripted thermal shock (t≈8) lands, and viability collapses past the floor (< 0.3) by step 20. This is the composite''s own dynamics, not a post-hoc annotation.'
   measure:
     kind: observable
     path: cell.viability
@@ -68,7 +68,7 @@ behavior_tests:
   requires_simulation: coarse-grain
 - name: kinetic-saturating-growth
   classification: primary
-  description: 'The Michaelis–Menten handler, on the identical interface and wiring, reaches a DISTINCT biomass endpoint (exec 2.667) — the same ports, a different mechanism, a different trajectory (handler independence, law 4). Directly asserted by test_fig6_handler_independence, which compiles the coarse and kinetic grains against the same interface and requires their dynamics to diverge.'
+  description: 'The Michaelis–Menten handler, on the identical interface and wiring, reaches a distinct biomass endpoint (exec 2.667) — the same ports, a different mechanism, a different trajectory (handler independence, law 4). Directly asserted by test_fig6_handler_independence, which compiles the coarse and kinetic grains against the same interface and requires their dynamics to diverge.'
   measure:
     kind: observable
     path: biomass
@@ -93,7 +93,7 @@ behavior_tests:
 - name: impostor-rejected
   classification: primary
   control: negative
-  description: 'HEADLINE CONTROL (MUST-FAIL) — the single most persuasive artifact for the interface being real. An impostor handler (NonConformingMetabolism) that renames the biomass output to ``growth`` with the WRONG type (``growth_rate`` not ``mass``) and drops energy/entropy/secretions is REJECTED by the compiler at compile time with a CompileError that NAMES the missing ports (biomass, energy, entropy, secretions) — tests/test_fba.py::test_impostor_handler_rejected_by_compiler. Because the impostor never runs, it produces no biomass observable, so this test''s biomass threshold MUST fail by design — that expected failure IS the interface being enforced. (Scope: structural — port names/types/wiring — not units, dimensions, invariants, or runtime behavior.)'
+  description: 'Headline control (must-fail) — the single most persuasive artifact for the interface being real. An impostor handler (NonConformingMetabolism) that renames the biomass output to ``growth`` with the wrong type (``growth_rate`` not ``mass``) and drops energy/entropy/secretions is rejected by the compiler at compile time with a CompileError that names the missing ports (biomass, energy, entropy, secretions) — tests/test_fba.py::test_impostor_handler_rejected_by_compiler. Because the impostor never runs, it produces no biomass observable, so this test''s biomass threshold must fail by design — that expected failure is the interface being enforced. (Scope: structural — port names/types/wiring — not units, dimensions, invariants, or runtime behavior.)'
   measure:
     kind: observable
     path: biomass
@@ -101,7 +101,7 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: 'REJECTION control: NonConformingMetabolism is rejected by the compiler (CompileError names missing biomass/energy/entropy/secretions); it never runs, so no biomass observable exists — MUST fail (tests/test_fba.py::test_impostor_handler_rejected_by_compiler)'
+    provenance: 'Rejection control: NonConformingMetabolism is rejected by the compiler (CompileError names missing biomass/energy/entropy/secretions); it never runs, so no biomass observable exists — must fail (tests/test_fba.py::test_impostor_handler_rejected_by_compiler)'
   requires_simulation: disintegration-grain-swap
 runs:
 - name: disintegration-dynamics
@@ -203,7 +203,7 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The Michaelis–Menten handler reaches a DISTINCT endpoint on the identical interface — same ports, different mechanism, different trajectory (law 4), directly asserted by test_fig6_handler_independence. Confirmed: kinetic → biomass 2.667.'
+  statement: 'The Michaelis–Menten handler reaches a distinct endpoint on the identical interface — same ports, different mechanism, different trajectory (law 4), directly asserted by test_fig6_handler_independence. Confirmed: kinetic → biomass 2.667.'
   evidence:
     from_test: kinetic-saturating-growth
     from_run: kinetic-grain
@@ -215,7 +215,7 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The real COBRApy FBA handler — the resolved molecular network, e_coli_core — reaches its own distinct endpoint AND shows overflow metabolism: surplus carbon leaves as acetate on the secretions port. This is the third grain of the cell↔molecular-network equivalence. Confirmed: biomass 6.29, secretions 30.4.'
+  statement: 'The real COBRApy FBA handler — the resolved molecular network, e_coli_core — reaches its own distinct endpoint and shows overflow metabolism: surplus carbon leaves as acetate on the secretions port. This is the third grain of the cell↔molecular-network equivalence. Confirmed: biomass 6.29, secretions 30.4.'
   evidence:
     from_test: fba-overflow-secretion
     from_run: fba-grain
@@ -227,7 +227,7 @@ findings:
   kind: biological
   tier: observation
   status: confirms
-  statement: 'The interface is a real STRUCTURAL contract, not a convention: an impostor handler that breaks the port names/types is rejected at compile time (law 2), independent of which grain is behind the interface. Confirmed: NonConformingMetabolism raises a CompileError naming the missing biomass/energy/entropy/secretions ports.'
+  statement: 'The interface is a real structural contract, not a convention: an impostor handler that breaks the port names/types is rejected at compile time (law 2), independent of which grain is behind the interface. Confirmed: NonConformingMetabolism raises a CompileError naming the missing biomass/energy/entropy/secretions ports.'
   evidence:
     from_test: impostor-rejected
     from_run: disintegration-grain-swap
@@ -241,7 +241,7 @@ conclusion_verdicts:
     basis: All figure composites build and every executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16); fig06-disintegration-dynamics runs to completion through the engine (tests/test_disintegration_dynamics.py).
   biological_validation:
     result: PASS
-    basis: Played through, the dynamics composite shows the level shift (viability 1.0→~0, debris 0→~4.6). The three metabolism grains each drive the shared nutrients ⇒ biomass interface to a DISTINCT endpoint (coarse 4.0, kinetic 2.667, FBA 6.29) with the FBA grain additionally showing acetate overflow (secretions 30.4); the impostor handler that breaks the interface is rejected at compile time (law 2).
+    basis: Played through, the dynamics composite shows the level shift (viability 1.0→~0, debris 0→~4.6). The three metabolism grains each drive the shared nutrients ⇒ biomass interface to a distinct endpoint (coarse 4.0, kinetic 2.667, FBA 6.29) with the FBA grain additionally showing acetate overflow (secretions 30.4); the impostor handler that breaks the interface is rejected at compile time (law 2).
   explanatory_gain:
     result: POSITIVE
     basis: Watching the viability collapse and debris rise makes disintegration concrete rather than a definition; swapping lumped-yield, saturating-kinetic, and real-COBRApy handlers behind the same interface makes handler independence (law 4) measurable on the exact interface disintegration halts.
@@ -267,15 +267,15 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - The playable dynamics composite (`fig06-disintegration-dynamics`) is ASSEMBLED in the figures'' style (`meta_modelers_guide/wholecell.py` handlers), NOT compiler-emitted — same honesty as the capstone composite.
+  - The playable dynamics composite (`fig06-disintegration-dynamics`) is assembled in the figures'' style (`meta_modelers_guide/wholecell.py` handlers), not compiler-emitted — same honesty as the capstone composite.
 
-  - Its thermal shock is SCRIPTED (hard-coded onset at t≈8), not an emergent consequence of the cell''s own state.
+  - Its thermal shock is scripted (hard-coded onset at t≈8), not an emergent consequence of the cell''s own state.
 
   - The FBA grain requires the optional `cobra` dependency; its tests are a guarded skip when `cobra` is absent, not a hard failure.
 
-  - Grain equivalence across coarse/kinetic/FBA is STRUCTURAL (same interface, same ports) — not a fitted or calibrated reduction between the grains. Endpoints (biomass 4.0 / 2.667 / 6.29, acetate 30.4) are illustrative magnitudes from one small toy setup (FBA uses e_coli_core, not a genome-scale reconstruction).
+  - Grain equivalence across coarse/kinetic/FBA is structural (same interface, same ports) — not a fitted or calibrated reduction between the grains. Endpoints (biomass 4.0 / 2.667 / 6.29, acetate 30.4) are illustrative magnitudes from one small toy setup (FBA uses e_coli_core, not a genome-scale reconstruction).
 
-  - Conformance checking is STRUCTURAL only (port names, types, wiring); it does not check units, dimensions, invariants, or runtime behavior.
+  - Conformance checking is structural only (port names, types, wiring); it does not check units, dimensions, invariants, or runtime behavior.
 
 
   ## Next steps
@@ -319,4 +319,4 @@ visualizations:
     chart: image
 parent_studies: []
 experiment: 'Two runs test the two faces of disintegration. (a) Play `fig06-disintegration-dynamics` (a scripted thermal shock against a viability-gated cell) to 20 steps and watch viability, then debris. (b) Install three different handlers — coarse lumped yield, saturating kinetic, real COBRApy FBA over e_coli_core — behind the identical nutrients ⇒ biomass interface and run each to completion; also compile an impostor handler to test that the port contract is enforced.'
-result: 'Played through, the dynamics composite shows the level shift: viability collapses 1.0 → ~0 after a thermal shock, and biomass converts into molecular debris (0 → ~4.6). The three metabolism grains produce three DISTINCT trajectories (biomass 4.0 / 2.667 / 6.29) behind the identical port set; the FBA grain shows acetate overflow (secretions 30.4), and an impostor that breaks the interface is rejected at compile time.'
+result: 'Played through, the dynamics composite shows the level shift: viability collapses 1.0 → ~0 after a thermal shock, and biomass converts into molecular debris (0 → ~4.6). The three metabolism grains produce three distinct trajectories (biomass 4.0 / 2.667 / 6.29) behind the identical port set; the FBA grain shows acetate overflow (secretions 30.4), and an impostor that breaks the interface is rejected at compile time.'

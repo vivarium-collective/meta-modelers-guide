@@ -23,7 +23,7 @@ baseline:
 variants: []
 key_assumptions:
 - Law 1 (conformance) is demonstrated mechanically by `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, which lives in the disintegration/Fig 6 metabolism-signature code (`handlers_fig06_fba.py`'s `NonConformingMetabolism`), not by a cellular-interface-specific impostor — no such impostor exists in this codebase, and none is claimed. The compiler mechanism it exercises (reject a handler whose declared ports don't match the draft's signature) is the same mechanism that would reject a non-conforming handler installed behind this study's Fig 4 interface.
-- Conformance checking is STRUCTURAL — port names, types, and wiring — not units, dimensions, or runtime behavior. Ports carry unit labels (mol·s⁻¹, N, C·s⁻¹, J·s⁻¹, hr⁻¹, ...) that document intended dimension but are name-only annotations, not machine-enforced.
+- Conformance checking is structural — port names, types, and wiring — not units, dimensions, or runtime behavior. Ports carry unit labels (mol·s⁻¹, N, C·s⁻¹, J·s⁻¹, hr⁻¹, ...) that document intended dimension but are name-only annotations, not machine-enforced.
 behavior_tests:
 - name: shape-growth
   classification: primary
@@ -64,7 +64,7 @@ behavior_tests:
 - name: draft-is-inert
   classification: diagnostic
   control: negative
-  description: 'One-line sanity check (NOT the study''s control): the inert draft has empty updates by construction, so shape stays at its 1.0 seed and fails this threshold by design — confirming the framework''s definition of a draft, not a scientific counterfactual.'
+  description: 'One-line sanity check (not the study''s control): the inert draft has empty updates by construction, so shape stays at its 1.0 seed and fails this threshold by design — confirming the framework''s definition of a draft, not a scientific counterfactual.'
   measure:
     kind: observable
     path: shape
@@ -175,7 +175,7 @@ conclusion: '## Claims
 
   - Single-handler toy-real model: the rate laws are real in shape (Monod uptake/growth, Arrhenius thermal death) but the constants are illustrative; one mechanism is installed behind the Fig 4 interface.
 
-  - Conformance (Law 1) is checked STRUCTURALLY — port names, types, and wiring — not units, dimensions, or runtime behavior. Units are name-only labels.
+  - Conformance (Law 1) is checked structurally — port names, types, and wiring — not units, dimensions, or runtime behavior. Units are name-only labels.
 
   - No cellular-interface-specific impostor handler exists in this codebase; Law 1 is demonstrated by cross-referencing the metabolism-interface impostor test, honestly labeled as such.
 
@@ -199,8 +199,8 @@ conclusion_logic:
 limitations:
 - One handler realizes the Fig 4 interface (chemical uptake driving Monod growth); the port set admits many mechanisms but only this one is installed and measured.
 - Constants (uptake rate, growth rate, thermal-death Arrhenius parameters) are illustrative toy-real values, not fitted to a named organism or medium.
-- Conformance (Law 1) is STRUCTURAL only. The compiler checks port names, types, and wiring against the signature; it does NOT check units, dimensions, invariants, or runtime behavior. Units are name-only labels on ports (mol·s⁻¹, N, C·s⁻¹, J·s⁻¹, hr⁻¹, ...) that document intended dimension but are not machine-enforced.
-- No impostor handler specific to the cellular interface exists in this codebase. Law 1 is demonstrated by citing `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, whose impostor (`NonConformingMetabolism`) actually breaks the metabolism signature used in the disintegration/Fig 6 study — the SAME compiler mechanism, cross-referenced honestly rather than claimed as native to this figure.
+- Conformance (Law 1) is structural only. The compiler checks port names, types, and wiring against the signature; it does not check units, dimensions, invariants, or runtime behavior. Units are name-only labels on ports (mol·s⁻¹, N, C·s⁻¹, J·s⁻¹, hr⁻¹, ...) that document intended dimension but are not machine-enforced.
+- No impostor handler specific to the cellular interface exists in this codebase. Law 1 is demonstrated by citing `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, whose impostor (`NonConformingMetabolism`) actually breaks the metabolism signature used in the disintegration/Fig 6 study — the same compiler mechanism, cross-referenced honestly rather than claimed as native to this figure.
 falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 4 interface, if installing the handler leaves shape flat (no growth) or the objective unchanged, or if a non-conforming handler is found to compile without error against any declared interface (Law 1 not enforced).
 visualizations:
 - name: cellular-interface-dynamics
