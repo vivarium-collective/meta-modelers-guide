@@ -85,7 +85,12 @@ class CpmCellField(Process):
         self.world = load_world(spec)
         self.biomass = float(c["biomass0"])
         # one cobra e_coli_core, loaded once
-        from cobra.io import load_model
+        try:
+            from cobra.io import load_model
+        except Exception as exc:  # pragma: no cover - exercised only without cobra
+            raise RuntimeError(
+                "CpmCellField requires the optional 'cobra' package "
+                "(pip install -e .[simulators]).") from exc
         self._model = load_model("textbook")
         # cap respiratory capacity so glycolytic flux forces mixed-acid (acetate)
         # overflow rather than pure aerobic respiration (see module docstring)
@@ -96,13 +101,31 @@ class CpmCellField(Process):
         return lat == 1
 
     def _fba(self, glucose_conc, interval):
-        """One dFBA step on e_coli_core: MM-limited glucose uptake -> growth + acetate."""
+        """One dFBA step on e_coli_core: MM-limited glucose uptake -> requested growth +
+        acetate at the footprint's mean concentration. This is the *idealized* LP
+        solution, sized as if the whole footprint held `glucose_conc` everywhere and
+        that much glucose were actually available; `update()` clamps the glucose
+        removal against what the field's footprint pixels actually hold and scales
+        both the growth and the secretion down by the same ratio, so the cell can
+        never manufacture biomass/acetate from glucose it didn't actually remove."""
         c = self.config
         m = self._model
         v = c["glucose_vmax"] * glucose_conc / (c["glucose_km"] + glucose_conc) if glucose_conc > 0 else 0.0
         # budget-limit the uptake by available glucose over the footprint
         m.reactions.EX_glc__D_e.lower_bound = -float(v)
         sol = m.optimize()
+        if sol.status != "optimal":
+            # At v == 0 (no glucose left in the footprint) the LP is infeasible —
+            # the fixed non-growth ATP maintenance demand can't be met without any
+            # carbon source. `sol.objective_value` correctly comes back 0.0 in that
+            # case, but cobra/optlang does NOT zero `sol.fluxes` on an infeasible
+            # re-solve of a model that was previously solved to optimality: it
+            # returns stale primal values left over from the last feasible solve
+            # (confirmed empirically — a feasible solve followed by an infeasible
+            # one on the same model object returns nonsense, e.g. a *negative*
+            # EX_ac_e "acetate flux"). Never trust `sol.fluxes` unless
+            # `sol.status == "optimal"`; growth and secretion both cleanly stop.
+            return 0.0, 0.0, 0.0
         mu = float(sol.objective_value or 0.0)
         d_biomass = mu * self.biomass * interval
         glc_flux = float(sol.fluxes.get("EX_glc__D_e", 0.0))   # negative = uptake
@@ -119,17 +142,39 @@ class CpmCellField(Process):
         area = max(int(fp.sum()), 1)
         local_glc = float(glucose[fp].mean()) if fp.any() else 0.0
 
-        d_biomass, d_glc, d_ac = self._fba(local_glc, interval)
+        d_biomass, requested_d_glc, d_ac = self._fba(local_glc, interval)
+
+        # Mass-balance: the FBA solution above is idealized (sized off the mean
+        # local concentration), but only glucose actually present at the footprint
+        # can be removed. Clamp the requested removal to what's available, then
+        # scale BOTH biomass growth and acetate secretion by the same ratio the
+        # removal itself got clamped by — otherwise, as local glucose runs low, the
+        # cell keeps growing/secreting off glucose it never actually took up. This
+        # is what makes growth genuinely nutrient-limited (plateaus as the field
+        # depletes) rather than unbounded, which matters once the field is
+        # non-uniform / depleting rather than a flat initial condition.
+        available = -float(glucose[fp].sum()) if fp.any() else 0.0   # <= 0
+        clamped_d_glc = max(requested_d_glc, available)
+        ratio = (clamped_d_glc / requested_d_glc) if requested_d_glc < 0 else 1.0
+        d_biomass *= ratio
+        d_ac *= ratio
         self.biomass = max(self.biomass + d_biomass, 1e-9)
 
-        # write uptake/secretion back to the field, spread over the footprint pixels
+        # Write the clamped uptake/secretion back to the field. Glucose is removed
+        # from each footprint pixel *proportional to that pixel's own glucose*
+        # (rather than split evenly) so that on a non-uniform field a low-glucose
+        # pixel gives up proportionally less and can never be driven negative —
+        # each pixel's magnitude of removal is capped at its own current value by
+        # construction. Acetate secretion (a genuine addition, not a depletion) is
+        # still spread evenly across the footprint.
         dglc = np.zeros_like(glucose)
         dace = np.zeros_like(acetate)
-        # clamp glucose delta so a pixel never goes negative
-        per_pixel_glc = max(d_glc, -float(glucose[fp].sum())) / area if fp.any() else 0.0
-        per_pixel_ac = d_ac / area if fp.any() else 0.0
-        dglc[fp] = per_pixel_glc
-        dace[fp] = per_pixel_ac
+        if fp.any():
+            glc_fp = glucose[fp]
+            total_fp = float(glc_fp.sum())
+            weights = (glc_fp / total_fp) if total_fp > 0 else np.full(area, 1.0 / area)
+            dglc[fp] = clamped_d_glc * weights
+            dace[fp] = d_ac / area
 
         # grow the CPM cell from biomass, then step the world
         target = float(self.config["grow_per_biomass"]) * self.biomass

@@ -1,16 +1,30 @@
 # tests/test_cpm_cell_field.py
 """CpmCellField: a CPM cell that reads a shared nutrient grid at its footprint, runs
 dFBA there (uptake→biomass, secretes acetate), grows from biomass, and writes its
-uptake/secretion back to the field as a delta."""
+uptake/secretion back to the field as a delta.
+
+Skipped when the optional ``cobra`` dependency is absent (matches ``tests/test_fba.py``)."""
 from __future__ import annotations
 import numpy as np
+import pytest
 from process_bigraph import Composite
 from meta_modelers_guide.core import build_core
+
+pytest.importorskip("cobra")  # entire module skips without COBRApy
 
 NX = NY = 40
 
 def _state(core):
-    glucose = np.full((NY, NX), 10.0)
+    # Glucose init is deliberately toy-scale, not physiological: `box_volume_L`
+    # (1e-6 L) converts cobra's mmol/gDW/hr fluxes into a field-concentration delta
+    # by dividing by a volume far smaller than the flux magnitudes involved, so a
+    # 10 mM field gets fully depleted from a single dFBA request at the very first
+    # tick — leaving nothing to conserve against on later ticks. Since growth is
+    # now mass-conservative (biomass/acetate are scaled down by how much glucose
+    # was actually available, not the idealized FBA ask — see cell_field.py), a
+    # higher initial concentration is needed so the footprint has enough "budget"
+    # across all 12 ticks for growth to be visibly nonzero while staying real.
+    glucose = np.full((NY, NX), 20000.0)
     acetate = np.zeros((NY, NX))
     return {
         "fields": {"glucose": glucose, "acetate": acetate},
