@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Cellular Interface, Multicellular</title>
+<style>
+:root{
+  --ink:#16211f; --ink-2:#3a4a47; --muted:#657572;
+  --paper:#f7f5f0; --surface:#ffffff; --line:#e3e0d8;
+  --teal:#0d6e6b; --teal-2:#3f9e99; --ochre:#a5620f; --ochre-2:#c98a3a;
+  --ok:#0d6e6b; --warn:#a5620f; --bad:#9b2f2f;
+  --shadow:0 1px 2px rgba(22,33,31,.04),0 8px 24px rgba(22,33,31,.06);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e9ece9; --ink-2:#b7c1bd; --muted:#8b9995;
+    --paper:#101514; --surface:#171d1c; --line:#28322f;
+    --teal:#4bb3ae; --teal-2:#6fd0ca; --ochre:#d79a4e; --ochre-2:#e6b877;
+    --ok:#4bb3ae; --warn:#d79a4e; --bad:#e07a7a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e9ece9; --ink-2:#b7c1bd; --muted:#8b9995;
+  --paper:#101514; --surface:#171d1c; --line:#28322f;
+  --teal:#4bb3ae; --teal-2:#6fd0ca; --ochre:#d79a4e; --ochre-2:#e6b877;
+  --ok:#4bb3ae; --warn:#d79a4e; --bad:#e07a7a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  line-height:1.6;-webkit-font-smoothing:antialiased;font-size:17px}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px 96px}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:600;line-height:1.15;text-wrap:balance;color:var(--ink)}
+a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:.88em;background:color-mix(in srgb,var(--teal) 9%,transparent);
+  padding:.08em .35em;border-radius:4px}
+.kicker{display:inline-block;font-family:var(--sans);font-size:.74rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:600}
+.kicker em{font-style:italic;text-transform:none;letter-spacing:0}
+
+/* hero */
+.hero{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(2.4rem,6vw,3.9rem);margin:.25em 0 .3em;letter-spacing:-.01em}
+.thesis{font-size:1.22rem;color:var(--ink-2);max-width:40ch}
+.verdict{display:flex;gap:14px;align-items:flex-start;margin:26px 0 0;padding:18px 20px;background:var(--surface);
+  border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:10px;box-shadow:var(--shadow)}
+.verdict .badge{flex:none}
+.verdict p{margin:0;color:var(--ink-2);font-size:.98rem}
+.stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px}
+.intro{margin:44px 0 12px;max-width:70ch}
+.intro .kicker{margin-bottom:12px;color:var(--teal)}
+.intro p{font-size:1.08rem;line-height:1.7;color:var(--ink-2);margin:0 0 1.05em}
+.intro p:first-of-type{color:var(--ink);font-size:1.14rem}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 18px;min-width:96px}
+.stat b{display:block;font-family:var(--serif);font-size:1.9rem;color:var(--teal);line-height:1}
+.stat span{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+/* badges */
+.badge{display:inline-block;font-family:var(--sans);font-size:.7rem;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;padding:.2em .6em;border-radius:999px;vertical-align:middle;
+  background:color-mix(in srgb,var(--muted) 16%,transparent);color:var(--muted)}
+.badge.ok{background:color-mix(in srgb,var(--teal) 15%,transparent);color:var(--teal)}
+.badge.warn{background:color-mix(in srgb,var(--ochre) 16%,transparent);color:var(--ochre)}
+.badge.bad{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+
+/* arc spine */
+.arc{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:26px 0;margin:8px 0 8px;
+  border-bottom:1px solid var(--line)}
+.arc-node{display:inline-flex;align-items:baseline;gap:7px;padding:6px 11px;border:1px solid var(--line);
+  border-radius:999px;background:var(--surface);font-size:.82rem}
+.arc-node:hover{border-color:var(--teal);text-decoration:none}
+.arc-n{font-family:var(--mono);font-size:.72rem;color:var(--ochre);font-weight:700}
+.arc-t{color:var(--ink)}
+.arc-arrow{color:var(--muted)}
+
+/* highlights */
+.hl{display:grid;grid-template-columns:1fr 1.1fr;gap:34px;align-items:center;
+  margin:56px 0;padding:34px;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;box-shadow:var(--shadow)}
+.hl.reverse{grid-template-columns:1.1fr 1fr}
+.hl.reverse .hl-txt{order:2}
+.hl h2{font-size:1.75rem;margin:.15em 0 .4em}
+.hl p{color:var(--ink-2);font-size:1rem}
+.hl-fig{margin:0}
+.hl-fig.grid3{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hl-bars{margin:14px 0 0}
+figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+.lg{display:inline-flex;align-items:center;gap:6px}
+.lg::before{content:"";width:14px;height:3px;border-radius:2px;background:var(--muted)}
+.lg.biomass::before{background:var(--teal)}
+.lg.debris::before{background:var(--ochre)}
+.lg.via::before{background:var(--teal-2);height:0;border-top:2px dashed var(--teal-2)}
+
+/* charts */
+.chart{width:100%;height:auto;display:block;overflow:visible}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .ax{fill:var(--muted);font:11px var(--sans)}
+.chart .ax-l{text-anchor:end}.chart .ax-r{text-anchor:start}.chart .ax-x{text-anchor:middle}
+.chart .ser{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.chart .biomass{stroke:var(--teal)}
+.chart .debris{stroke:var(--ochre)}
+.chart .via{stroke:var(--teal-2);stroke-width:2;stroke-dasharray:4 4}
+.chart .evt{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
+.chart .evt-shock{stroke:var(--ochre)}
+.chart .evt-l{fill:var(--muted);font:10px var(--sans)}
+.chart .evt-l-shock{fill:var(--ochre)}
+.bars .bar{fill:var(--teal)}
+.bars .bar-l{fill:var(--ink);font:600 13px var(--sans);text-anchor:start;dominant-baseline:middle}
+.bars .bar-v{fill:var(--muted);font:600 12px var(--mono);dominant-baseline:middle}
+
+/* argument */
+.argument{display:grid;grid-template-columns:1fr 1fr;gap:34px;margin:56px 0}
+.argument h3{font-size:1.15rem;margin:0 0 .5em;padding-bottom:.35em;border-bottom:2px solid var(--line)}
+.argument ul{margin:0;padding-left:1.1em}
+.argument li{margin:.5em 0;color:var(--ink-2);font-size:.95rem}
+
+/* studies */
+.studies-wrap{margin:64px 0 0}
+.studies-wrap>h2{font-size:1.9rem;border-bottom:1px solid var(--line);padding-bottom:.4em}
+.studies-wrap .sub{font-family:var(--sans);font-size:.9rem;font-weight:400;color:var(--muted)}
+.study{padding:30px 0;border-bottom:1px solid var(--line)}
+.study-head{display:flex;gap:16px;align-items:flex-start}
+.ord{font-family:var(--mono);font-size:.85rem;color:var(--ochre);font-weight:700;padding-top:.5em}
+.study h3{font-size:1.4rem;margin:0}
+.claim{margin:.4em 0 0;color:var(--ink-2);font-size:1.02rem}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 0}
+.chip{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 12px;
+  max-width:100%}
+.chip-k{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+.chip-v{font-family:var(--mono);font-size:.82rem;color:var(--ink)}
+.invariant{margin:14px 0 0;padding:10px 14px;border-radius:9px;font-size:.9rem;color:var(--ink-2);
+  background:color-mix(in srgb,var(--teal) 8%,transparent);border-left:3px solid var(--teal)}
+.inv-k{font-family:var(--sans);font-size:.64rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--teal);margin-right:8px}
+.figs{display:flex;flex-wrap:wrap;gap:16px;margin:20px 0 0}
+.fig-wrap{flex:1 1 300px;min-width:0;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:10px}
+.fig-wrap.sm{flex:1 1 220px}
+.fig{width:100%;height:auto;display:block}
+.fig-cap{display:block;margin:10px 4px 2px;padding-top:10px;border-top:1px solid var(--line);
+  font-size:.82rem;line-height:1.5;color:var(--ink-2)}
+.fig-cap .inv-k{display:inline;font-size:.62rem}
+.more{margin:18px 0 0}
+.more>summary{cursor:pointer;font-size:.86rem;font-weight:600;color:var(--teal);
+  list-style:none;padding:8px 0}
+.more>summary::-webkit-details-marker{display:none}
+.more>summary::before{content:"▸ ";color:var(--muted)}
+.more[open]>summary::before{content:"▾ "}
+.more-body{padding:6px 0 6px 14px;border-left:2px solid var(--line)}
+.more-body h4{margin:14px 0 .3em;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.more-body p{margin:.2em 0;color:var(--ink-2);font-size:.95rem}
+.findings{margin:.3em 0;padding-left:1.1em}
+.findings li{margin:.4em 0;color:var(--ink-2);font-size:.92rem}
+.tier{font-family:var(--mono);font-size:.64rem;text-transform:uppercase;padding:.1em .4em;border-radius:4px;
+  background:color-mix(in srgb,var(--muted) 14%,transparent);color:var(--muted);margin-right:4px}
+.tier-mechanism{background:color-mix(in srgb,var(--teal) 14%,transparent);color:var(--teal)}
+
+/* method */
+.method{margin:60px 0 0;padding:34px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.method h2{font-size:1.5rem;margin:0 0 .4em}
+.lead-sm{color:var(--ink-2);max-width:70ch}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:18px}
+.two-col h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 .4em}
+.two-col ul{margin:0;padding-left:1.1em}.two-col li{margin:.4em 0;color:var(--ink-2);font-size:.93rem}
+.two-col p{color:var(--ink-2);font-size:.93rem;margin:0}
+
+.foot{margin:56px 0 0;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
+
+@media (max-width:720px){
+  body{font-size:16px}
+  .hl,.hl.reverse{grid-template-columns:1fr}
+  .hl.reverse .hl-txt{order:0}
+  .hl-fig.grid3{grid-template-columns:1fr 1fr}
+  .argument,.two-col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+    <header class="hero">
+      <span class="kicker">Executable atlas · <em>A meta-modeler's guide to the cellular interface</em></span>
+      <h1>The Cellular Interface, Multicellular</h1>
+      <p class="thesis">This is the spatial, multicellular-capable counterpart to <code>draft-to-living-cell</code>: the same
+nine interface-composition patterns from the paper, realized this time as real 2D spatial
+frameworks — chiefly a Cellular Potts Model (viva-cpm) coupled to spatio-flux&#x27;s
+diffusion-advection and dynamic-FBA processes — rather than lumped ODEs and scripted events.
+Where <code>draft-to-living-cell</code> asked &quot;can this pattern be authored as an inert typed draft and
+compiled into a runnable mechanism,&quot; this investigation asks &quot;does the pattern survive when
+the mechanism is a real spatial simulator built by someone else, composed in through one typed
+interface.&quot; The flagship, <code>cell-environment-coupling-spatial</code>, builds and runs exactly one such
+composition: <code>CpmCellField</code>, a process that reads a spatio-flux nutrient grid at a CPM cell&#x27;s
+own footprint, runs one dynamic-FBA step there (<code>e_coli_core</code>, oxygen-capped to force acetate
+overflow), grows the cell&#x27;s CPM target volume from the biomass produced, and writes the
+uptake/secretion back into the shared field as a spatial delta that spatio-flux&#x27;s
+<code>DiffusionAdvection</code> then spreads. Over 20 ticks the cell grows roughly 3.4x (32 to 110 CPM
+lattice pixels, on a 60x60 = 3600-pixel field — it does not come close to filling the lattice),
+depletes the glucose at its own footprint by up to ~18% before diffusion partially resupplies
+it, and secretes a spreading acetate plume — niche construction made spatially and
+metabolically real, not scripted. The remaining eight studies (a multi-cell competition
+counterpart, a structural-integrity release, molecular-scale reaction-diffusion, sorting and
+phase separation, a self-maintained protocell, growth-and-division, and colony development) are
+planned, not built; this file and the flagship study are honest about that.
+</p>
+      <div class="verdict"><span class="badge ok">running</span>
+        <p>Partial and honest: the flagship pattern holds. <code>cell-environment-coupling-spatial</code>
+demonstrates that a real CPM cell, coupled to a real spatio-flux nutrient field through one
+typed process (<code>CpmCellField</code>), closes the Fig 5 sense/act loop with genuine simulation
+output — over 20 ticks the cell depletes local glucose (up to ~18% at its own footprint
+before diffusion partially resupplies it), grows (CPM volume 32 -&gt; 110 pixels, roughly 3.4x,
+against a 3600-pixel lattice it does not come close to filling), and secretes acetate that
+diffuses outward into a plume (<code>tests/test_flagship_field.py</code>, <code>tests/test_cpm_cell_field.py</code>,
+<code>tests/test_cpm_viz.py</code>). This is niche construction as a real spatial and metabolic
+consequence of coupling two independently-built simulators, not a scripted trajectory.
+
+What this investigation has NOT yet shown is the other eight patterns&#x27; spatial
+counterparts — cell-cell competition over a shared field, a CPM structural-integrity release
+analogous to disintegration, reaction-diffusion molecular mechanisms, differential-adhesion
+sorting and phase separation, a self-maintained protocell, CPM growth-and-division, and
+colony development. Those are named in the design spec
+(<code>docs/superpowers/specs/2026-08-21-cellular-interface-multicellular-design.md</code>) as the
+increment plan, not results. Chemotaxis toward the field (the cell moving up the gradient it
+senses) is also deferred to a follow-up variant — the flagship cell&#x27;s modest position drift
+over the run is CPM thermal fluctuation, not directed motion.</p></div>
+      <div class="stats"><div class="stat"><b>1</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
+    </header>
+
+    <section class="intro">
+      <span class="kicker">Introduction</span>
+      <p>This investigation is the spatial sibling of <code>draft-to-living-cell</code>. That
+investigation turned the cellular-interface paper&#x27;s nine composition patterns into inert
+typed drafts compiled into small, lumped executables (ODE-scale mechanisms on 1-D or 9-cell
+grids). This investigation asks the harder question: do those same patterns still compose
+when the frameworks on each side of the interface are real, independently-built 2D spatial
+simulators — a Cellular Potts Model (viva-cpm, a Rust-backed lattice engine with genuine cell
+shape, adhesion, and volume dynamics) on one side, and spatio-flux&#x27;s diffusion-advection PDE
+solver plus dynamic flux-balance analysis on the other? Composing two frameworks that were
+never designed with each other in mind is exactly the paper&#x27;s central claim about typed
+interfaces made concrete: <code>CpmCellField</code>, the one coupling process this investigation has
+built so far, is the interface where a CPM cell&#x27;s footprint (a set of lattice pixels) is
+translated into a spatio-flux field read, and where a dynamic-FBA solution (mmol/gDW/hr
+fluxes) is translated back into a per-pixel field delta and a CPM target-volume update. Only
+the flagship study, <code>cell-environment-coupling-spatial</code> (the spatial analogue of Fig 5&#x27;s
+sense/act loop), is built and run; the other eight patterns from <code>draft-to-living-cell</code>
+(cell-cell coupling, disintegration, molecular interfaces, biomolecular complementarity,
+autopoiesis, growth-and-division, development-and-evolution, and the cellular-interface
+contract itself) are named as future increments in the design spec but have no composite,
+study, or run yet.</p>
+<p>The investigations are deliberate analogues, study-for-study, wherever the counterpart
+exists: <code>cell-environment-coupling-spatial</code> here is the spatial realization of
+<code>draft-to-living-cell/cell-environment-coupling</code>. Read them side by side — the lumped 9-cell
+1-D executable there against the real 60x60 2D CPM+spatio-flux composite here — for the same
+interface claim (sensing and acting are one coupling, not two subsystems; the cell measurably
+reshapes the gradient it depends on) demonstrated at two very different levels of mechanistic
+resolution.</p>
+    </section>
+
+    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-environment-coupling-spatial"><span class="arc-n">01</span><span class="arc-t">Cell–Environment Coupling, Spatial (flagship)</span></a></nav>
+
+    
+
+    <section class="argument">
+      <div><h3>Evidence for</h3><ul><li>cell-environment-coupling-spatial (the spatial Fig 5, this investigation&#x27;s flagship) — a
+real CPM cell reads a spatio-flux glucose field at its own footprint, runs one dynamic-FBA
+step (<code>e_coli_core</code>, oxygen-capped to force acetate overflow), grows its CPM target volume
+from the biomass produced, and writes uptake/secretion back into the field as a spatial
+delta that <code>DiffusionAdvection</code> then spreads. Over 20 ticks: CPM volume grows ~3.4x (32 -&gt;
+110 px, ~3% of the 60x60 lattice — the cell does not fill it), local footprint glucose
+depletes up to ~18% before diffusion partially resupplies it, and the field-wide acetate
+total rises from 0 to ~47 (mmol-equivalent field units) as the secreted plume diffuses
+outward. Net field-wide glucose falls (~32 of 5940 total field mass consumed) even though the
+depletion signal is much sharper locally at the cell&#x27;s own footprint than in the field-wide
+total — the direct niche-construction signature.</li></ul></div>
+      <div><h3>Evidence against</h3><ul><li>The other eight <code>draft-to-living-cell</code> patterns have no spatial counterpart built yet — this
+investigation currently demonstrates one pattern (cell-environment coupling), not nine.</li><li>Chemotaxis (directed up-gradient motion) is deferred; the flagship cell senses and acts on
+the field locally but does not move toward higher concentration.</li><li>The e_coli_core constants (<code>glucose_km</code>, <code>glucose_vmax</code>, <code>oxygen_vmax</code>, <code>box_volume_L</code>,
+<code>grow_per_biomass</code>) are toy-real — plausible, hand-tuned magnitudes chosen to produce
+gradual, spatially-legible dynamics over a short run, not fitted to any organism or medium.</li><li>The CPM lattice itself (the cell&#x27;s shape, occupied pixels, footprint) lives inside
+viva-cpm&#x27;s Rust engine as a private, write-protected world object (<code>CpmCellField.world</code>),
+not a process-bigraph store — only the coupling process reads and writes it. The
+&quot;environment&quot; the interface exposes to the rest of the composite is exclusively the
+spatio-flux <code>fields</code> store (glucose, acetate); the CPM&#x27;s own internal field concept
+(<code>field_at_cell</code>, <code>secretory_types</code>) is separate machinery this composite does not use.</li></ul></div>
+    </section>
+
+    <section class="studies-wrap">
+      <h2>The ten studies <span class="sub">— in arc order; claim + measured readouts + the running figure. Open a card for the full detail.</span></h2>
+      
+    <article class="study" id="cell-environment-coupling-spatial">
+      <div class="study-head">
+        <span class="ord">01</span>
+        <div>
+          <h3>Cell–Environment Coupling, Spatial (flagship) <span class="badge ok">Accepted</span></h3>
+          <p class="claim">Composing a real CPM cell with a real spatio-flux nutrient field through one typed
+coupling process (<code>CpmCellField</code>) reproduces the Fig 5 sense/act loop as genuine spatial
+metabolism, not a scripted stand-in for it: over 20 ticks the cell runs dynamic-FBA at its own
+footprint (<code>e_coli_core</code>, O2-capped to force acetate overflow), grows ~3.4x in CPM volume (32
+-&gt; 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
+up to ~18% before diffusion partially resupplies it (niche construction), and secretes a
+diffusing acetate plume — two independently-built simulators talking through one typed port.
+</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">CELL METABOLIZES AND GROWS</span><span class="chip-v">biomass 0.1 -&gt; ~0.37 via dynamic-FBA at the cell&#x27;s own footprint</span></div><div class="chip"><span class="chip-k">CPM VOLUME GROWS</span><span class="chip-v">CPM volume 32 -&gt; 110 px (~3.4x), ~3% of the 60x60 lattice</span></div><div class="chip"><span class="chip-k">ACETATE SECRETED AND DIFFUSES</span><span class="chip-v">field-wide acetate 0 -&gt; ~47.0 as the plume spreads</span></div><div class="chip"><span class="chip-k">NET GLUCOSE CONSUMED</span><span class="chip-v">field-wide glucose 5940.0 -&gt; ~5908.4; local footprint drawdown up to ~18%</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Does the Fig 5 sense/act loop hold as real spatial metabolism — one CPM cell sensing
+a diffusing nutrient field, running flux-balance analysis at its own footprint, growing, and
+secreting a byproduct back into the field — when the cell and its environment are each real,
+independently-built simulators (viva-cpm&#x27;s Cellular Potts engine, spatio-flux&#x27;s
+diffusion-advection and dynamic-FBA processes) composed through one typed coupling process
+(<code>CpmCellField</code>), rather than a scripted or lumped stand-in for that coupling?</p>
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A real CPM cell coupled to a real spatio-flux nutrient field through one typed
+process (<code>CpmCellField</code>) closes the Fig 5 sense/act loop as genuine spatial metabolism: it
+runs dynamic-FBA at its own footprint and grows both biologically (biomass) and structurally
+(CPM lattice volume). Confirmed: biomass 0.1 -&gt; ~0.37, CPM volume 32 -&gt; 110 px (~3.4x) over
+20 ticks, on a 3600-pixel lattice the cell occupies only ~3% of by the end.</li><li><span class="tier tier-mechanism">mechanism</span> The cell measurably depletes the local nutrient it senses before diffusion partially
+resupplies it — niche construction as a direct spatial-metabolic consequence, not a scripted
+trajectory. Confirmed: local footprint glucose concentration peaks at 1.15 (t=2) and falls to
+0.94 by t=20, an up-to-~18% local drawdown, while the field-wide glucose total falls by only
+~32 of 5940 units — the depletion signature is sharply local to the cell&#x27;s own footprint and
+its immediate diffusive neighborhood, not a field-wide event.</li><li><span class="tier tier-mechanism">mechanism</span> The O2-capped dynamic-FBA mechanism forces the optimizer into mixed-acid acetate
+overflow (rather than pure aerobic respiration), and that byproduct genuinely diffuses
+outward into a spreading plume via spatio-flux&#x27;s own <code>DiffusionAdvection</code> process — the
+secretion side of the coupling is as real as the uptake side. Confirmed: field-wide acetate
+0 -&gt; ~47.0 over 20 ticks.</li></ul>
+        </div>
+      </details>
+    </article>
+    </section>
+
+    
+    <section class="method">
+      <h2>Method &amp; shared caveats</h2>
+      <p class="lead-sm">Every figure begins as an inert <strong>draft</strong> — typed, unit-bearing
+      ports and a behavior contract, no dynamics — and is <strong>compiled</strong> by installing one
+      conforming mechanism, which preserves the interface exactly (compiler law 2) while giving the
+      figure real dynamics. Readouts below are <strong>measured</strong>, not asserted: every executable
+      and the whole cell were run and their observables recorded.</p>
+      <div class="two-col">
+        <div><h4>Limitations (shared across every study)</h4><ul><li>e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass) are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not fitted to any organism or medium.</li><li>Chemotaxis toward the external field is deferred to a follow-up variant; the flagship cell senses, metabolizes, grows, and secretes, but does not move directionally up-gradient.</li><li>Growth is roughly exponential in this coupling, so the run is deliberately bounded to ~20-25 ticks to stay spatially legible.</li><li>The metabolized nutrient field is exclusively the spatio-flux <code>`fields</code>` store; the CPM cell&#x27;s own internal lattice/world lives inside viva-cpm&#x27;s Rust engine as a private, write-protected object the coupling process owns, not a process-bigraph store — no other process in the composite reads or writes it, and viva-cpm&#x27;s own internal field concept (field_at_cell/secretory_types) is separate machinery this composite does not use.</li><li>Only one of the nine planned spatial-counterpart studies exists; see the investigation&#x27;s own decisions_needed for the honest scope of what this investigation currently demonstrates.</li><li>This investigation is at an early stage: only the flagship study is built. The design spec
+(<code>docs/superpowers/specs/2026-08-21-cellular-interface-multicellular-design.md</code>) lays out a
+complete 9-study analogy to <code>draft-to-living-cell</code>; this file and the flagship study reflect
+only the first increment of that plan.</li><li>Every mechanism here is toy-real: plausible constants, not calibrated to a named organism,
+medium, or literature target. The dynamics demonstrate the coupling pattern (real spatial
+sensing, metabolism, growth, secretion, diffusion), not a quantitatively validated cell.</li><li>Read alongside its specification-stage analogue,
+<code>draft-to-living-cell/cell-environment-coupling</code>: that study closes the same Fig 5 loop over
+a lumped 9-cell 1-D grid with a scripted-shape cell; this study closes it over a real 60x60
+2D CPM cell with genuine shape and a real dynamic-FBA metabolism. Compare the two for the
+same interface claim at two very different mechanistic resolutions.</li></ul></div>
+        <div><h4>What would falsify the claim</h4><p>Overturned if the cell&#x27;s biomass or CPM lattice volume never rise over the run, if local footprint glucose never depletes despite ongoing consumption, if acetate never appears in the shared field (the O2 cap failing to force overflow, or the secretion write not reaching the field store), or if net field-wide glucose does not fall (the cell failing to act as a genuine sink on the shared field).</p></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Generated from <code>investigation.yaml</code> + measured readouts ·
+      <a href="../dashboard/">interactive read-only workbench</a> ·
+      <a href="https://github.com/vivarium-collective/meta-modelers-guide">source</a></p>
+    </footer></main>
+</body>
+</html>
