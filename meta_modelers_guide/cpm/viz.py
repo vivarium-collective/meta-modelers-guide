@@ -320,6 +320,147 @@ def run_colony_frames(composite_state: dict, core, steps: int = 20, cadence: int
 
 
 # --------------------------------------------------------------------------
+# Disintegration (single dissolving cell + scattering particles) frame capture
+# --------------------------------------------------------------------------
+
+def _render_disintegration_frame(stressor: np.ndarray, footprint: np.ndarray,
+                                  particle_px: list[tuple[float, float]], time: float,
+                                  stressor_vmax: float) -> np.ndarray:
+    """Render one matplotlib (Agg) frame: the ``stressor`` field as a heatmap
+    background, the CPM cell's footprint pixels drawn in one solid color on
+    top, and every live particle's mapped pixel position overplotted as a
+    small scattering debris marker. Returns an (H, W, 3) uint8 RGB array (the
+    figure canvas buffer).
+
+    Unlike the flagship/colony frames (which contour a live cell's outline),
+    the disintegration story is about the footprint SHRINKING and eventually
+    vanishing while debris appears and drifts outward -- so the cell is drawn
+    as a filled solid-color overlay (via a masked RGBA image) rather than an
+    outline, which stays legible even once the footprint is down to a
+    handful of pixels, and the particle scatter is the frame's other main
+    signal (size/alpha kept small/soft so a large debris cloud doesn't
+    saturate the stressor heatmap underneath it).
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import ListedColormap
+
+    fig, ax = plt.subplots(1, 1, figsize=(6.4, 5.6), dpi=100)
+
+    im = ax.imshow(stressor, origin="lower", cmap="inferno", vmin=0.0, vmax=stressor_vmax)
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="stressor")
+
+    # Cell footprint: a masked RGBA overlay (transparent where no cell) in one
+    # solid color, rather than an outline -- stays visible down to a handful
+    # of pixels right before full dissolution.
+    if footprint.any():
+        cell_rgba = np.zeros((*footprint.shape, 4))
+        cell_rgba[footprint] = (0.0, 0.85, 1.0, 0.85)  # cyan, mostly opaque
+        ax.imshow(cell_rgba, origin="lower")
+
+    if particle_px:
+        cols, rows = zip(*particle_px)
+        ax.scatter(cols, rows, s=14, c="white", alpha=0.65, edgecolors="black",
+                   linewidths=0.3, zorder=5)
+
+    ax.set_title(f"disintegration: cell dissolving over stressor field  (t={time:.1f})",
+                 fontsize=10)
+    ax.set_xticks([]); ax.set_yticks([])
+    fig.tight_layout()
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cadence: int = 1
+                               ) -> tuple[list[np.ndarray], dict[str, list[float]]]:
+    """Mirror :func:`run_flagship_frames`, but for the disintegration study
+    (``CpmDisintegration``): builds a fresh :class:`Composite` from
+    ``composite_state`` and runs it in a manual cadence loop, capturing one
+    animation frame + one metrics row per tick.
+
+    Reaches the live CPM world via the process instance whose ``address``
+    names ``CpmDisintegration`` (found generically, like ``run_colony_frames``
+    does for ``CpmColonyField``, rather than hardcoding the ``"cell"`` store
+    key) for the lattice snapshot, AND the shared ``particles`` map store
+    (grown incrementally by that process and moved by a separate
+    ``BrownianMovement`` step) for the scattering debris cloud.
+
+    Particle ``position`` (x, y) is mapped to a pixel (col, row) with the
+    SAME convention the process uses in reverse: the process places a shed
+    particle's pixel center at ``x = (col + 0.5) * bounds_x / nx`` (and same
+    for y/row), so the forward pixel mapping used here for plotting is
+    ``col = x / bounds_x * nx``, ``row = y / bounds_y * ny``.
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
+    arrays; ``metrics`` is a dict of equal-length lists -- ``time``, ``area``,
+    ``mean_stressor``, ``n_particles``, ``n_components``, ``released_tick``
+    -- one entry per frame, drawn from the composite's ``obs`` store and the
+    ``particles`` store after each tick.
+    """
+    from process_bigraph import Composite
+
+    proc_key = next(
+        k for k, v in composite_state.items()
+        if isinstance(v, dict) and v.get("_type") == "process"
+        and "CpmDisintegration" in v.get("address", "")
+    )
+
+    comp = Composite({"state": composite_state}, core=core)
+
+    ny, nx = comp.state["fields"]["stressor"].shape
+    bounds = dict(composite_state[proc_key]["config"].get("bounds") or {})
+    bx = float(bounds.get("x", nx))
+    by = float(bounds.get("y", ny))
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    metrics: dict[str, list[float]] = {
+        "time": [], "area": [], "mean_stressor": [], "n_particles": [],
+        "n_components": [], "released_tick": [],
+    }
+    raw: list[tuple[np.ndarray, np.ndarray, list[tuple[float, float]], float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        world = comp.state[proc_key]["instance"].world
+        lattice = np.array(world.snapshot()).reshape(ny, nx)
+        footprint = lattice > 0
+        stressor = np.asarray(comp.state["fields"]["stressor"]).copy()
+        obs = comp.state["obs"]
+        particles = comp.state.get("particles", {}) or {}
+
+        particle_px = []
+        for p in particles.values():
+            pos = p.get("position") if isinstance(p, dict) else None
+            if pos is None:
+                continue
+            x, y = float(pos[0]), float(pos[1])
+            particle_px.append((x / bx * nx, y / by * ny))
+
+        t = float((tick + 1) * cadence)
+        raw.append((stressor, footprint, particle_px, t))
+
+        metrics["time"].append(t)
+        metrics["area"].append(float(obs.get("area", 0.0)))
+        metrics["mean_stressor"].append(float(obs.get("mean_stressor", 0.0)))
+        metrics["n_particles"].append(float(len(particles)))
+        metrics["n_components"].append(float(obs.get("n_components", 0.0)))
+        metrics["released_tick"].append(float(obs.get("released_tick", 0.0)))
+
+    stressor_vmax = max((float(s.max()) for s, _, _, _ in raw), default=1e-9) or 1e-9
+
+    frames = [_render_disintegration_frame(s, fp, ppx, t, stressor_vmax)
+              for s, fp, ppx, t in raw]
+
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
 # GIF encoding
 # --------------------------------------------------------------------------
 
@@ -406,6 +547,8 @@ def metrics_panel(metrics: dict[str, Any], out_path: str | Path,
     out_path = Path(out_path)
     if any(isinstance(v, dict) for k, v in metrics.items() if k != "time"):
         return _metrics_panel_percell(metrics, out_path, include_plotlyjs)
+    if "n_particles" in metrics and "mean_stressor" in metrics:
+        return _metrics_panel_disintegration(metrics, out_path, include_plotlyjs)
 
     times = metrics.get("time") or list(range(len(next(iter(metrics.values()), []))))
     series = {k: v for k, v in metrics.items() if k != "time" and v}
@@ -513,6 +656,77 @@ def _metrics_panel_percell(metrics: dict[str, dict[str, list[float]]], out_path:
         legend=dict(orientation="h", yanchor="bottom", y=-0.32, xanchor="left", x=0),
         hovermode="x unified", margin=dict(l=56, r=56, t=54, b=64),
     )
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
+def _metrics_panel_disintegration(metrics: dict[str, list[float]], out_path: Path,
+                                   include_plotlyjs: str | bool) -> str:
+    """Disintegration counterpart of :func:`metrics_panel` for
+    ``run_disintegration_frames``' output shape (flat equal-length lists, like
+    the flagship, but a different set of keys). ``area`` (pixel count,
+    O(1-64)) and ``n_particles`` (shed debris count, O(1-70)) share the
+    primary left-hand axis -- both are roughly the same "how much cell is
+    left vs. how much debris exists" order of magnitude, and plotting them
+    together is the whole payoff shot (cell shrinks while the cloud grows).
+    ``mean_stressor`` (O(0-1.5), the viability-threshold-crossing signal) gets
+    its own secondary right-hand axis so its much smaller range doesn't get
+    flattened against the pixel/particle counts. A dashed vertical marker at
+    ``released_tick`` (the tick the process latched release, from the LAST
+    metrics row -- the value is constant across the whole run once released)
+    marks the crossing directly on the timeline, when the cell released
+    during the captured run. Falls back to a small static HTML table if
+    Plotly is unavailable.
+    """
+    times = metrics.get("time") or []
+    area = metrics.get("area") or []
+    mean_stressor = metrics.get("mean_stressor") or []
+    n_particles = metrics.get("n_particles") or []
+    n_components = metrics.get("n_components") or []
+    released_ticks = metrics.get("released_tick") or []
+    released_tick = released_ticks[-1] if released_ticks else 0.0
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        cols = ("time", "area", "mean_stressor", "n_particles", "n_components", "released_tick")
+        header = "".join(f"<th>{c}</th>" for c in cols)
+        rows = "".join(
+            "<tr>" + "".join(f"<td>{v}</td>" for v in vals) + "</tr>"
+            for vals in zip(times, area, mean_stressor, n_particles, n_components, released_ticks)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr>{header}</tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=area, mode="lines+markers", name="area",
+                              line=dict(width=2.6, color=_PALETTE[0])))
+    fig.add_trace(go.Scatter(x=times, y=n_particles, mode="lines+markers", name="n_particles",
+                              line=dict(width=2.6, color=_PALETTE[1])))
+    if n_components:
+        fig.add_trace(go.Scatter(x=times, y=n_components, mode="lines+markers", name="n_components",
+                                  line=dict(width=1.8, color=_PALETTE[3], dash="dot")))
+    fig.add_trace(go.Scatter(x=times, y=mean_stressor, mode="lines+markers", name="mean_stressor",
+                              line=dict(width=2.6, color=_PALETTE[2]), yaxis="y2"))
+
+    fig.update_layout(
+        title=dict(text="<b>disintegration — synced metrics</b>", x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis=dict(title="area (px) / n_particles / n_components",
+                   gridcolor="rgba(120,130,125,0.16)"),
+        yaxis2=dict(title="mean_stressor", overlaying="y", side="right", showgrid=False),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.26, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
+    )
+    if released_tick and times and min(times) <= released_tick <= max(times):
+        fig.add_vline(x=released_tick, line_dash="dash", line_color="rgba(120,20,20,0.6)",
+                      annotation_text="released", annotation_position="top")
+
     out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
                                      config={"displayModeBar": False, "responsive": True}))
     return "plotly"
