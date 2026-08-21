@@ -16,7 +16,7 @@ OUT = ROOT / "meta_modelers_guide" / "composites" / "fig06-disintegration-dynami
 def main() -> None:
     doc = {
         "name": "Disintegration (playable)",
-        "description": ("Fig 6a — cell disintegration as a PLAYABLE trajectory: a "
+        "description": ("Fig 6a — cell disintegration as a playable trajectory: a "
                         "thermal shock pushes the cell past its viability bound; "
                         "viability collapses, viability-gated metabolism halts, and "
                         "biomass decays into molecular debris (cell→molecular level "

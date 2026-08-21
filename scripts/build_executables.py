@@ -46,7 +46,7 @@ def build_one(core, env_name, semantic_stem, output_stem) -> Path | None:
     from meta_modelers_guide.ontology import figure_provenance
     doc = {
         "name": output_stem,
-        "description": (f"EXECUTABLE compilation of {semantic_stem} under handler "
+        "description": (f"Executable compilation of {semantic_stem} under handler "
                         f"environment '{env_name}' — draft signatures replaced by "
                         f"conforming Process handlers (see compile.py). Runnable."),
         "requires": {"processes": sorted({s["handler"] for s in ENVS[env_name].values()})},

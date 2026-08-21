@@ -271,33 +271,37 @@ the same sets the dashboard shows — and kept fresh by CI (`workspace-ci` runs
 
 | Composite | What it is |
 |---|---|
-| `cellcell-coupling` | Cell–cell coupling (no figure of its own) — two cell agents wired to ONE shared environmental nutrient store, coupled through constraint, not just state; DRAFT, no dynamics. |
-| `cellcell-executable-compete` | EXECUTABLE compilation of cellcell-coupling under handler environment 'cellcell-compete' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `cellcell-executable-crossfeed` | EXECUTABLE compilation of cellcell-coupling under handler environment 'cellcell-crossfeed' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig04a-interaction-modalities` | Fig 4a — four interaction-modality cards of the cellular interface: nutrient exchange (chemical flux), motile force (mechanical), growth rate, and electrical signaling. |
-| `fig04b-cellular-interface` | Fig 4b — the minimal cellular interface. |
-| `fig04b-executable` | EXECUTABLE compilation of fig04b-cellular-interface under handler environment 'fig04b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig05-cell-environment` | Fig 5b — cell–environment coupling. |
-| `fig05-executable` | EXECUTABLE compilation of fig05-cell-environment under handler environment 'fig05' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig06-disintegration` | Fig 6b — cell disintegration as a grain-swap equivalence. |
-| `fig06-disintegration-dynamics` | Fig 6a — cell disintegration as a PLAYABLE trajectory: a thermal shock pushes the cell past its viability bound; viability collapses and biomass decays into molecular debris (cell→molecular level shift). Assembled in the figures' style, not compiler-emitted. Play it to watch the collapse. |
-| `fig06-executable-coarse` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-coarse' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig06-executable-fba` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-fba' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig06-executable-kinetic` | EXECUTABLE compilation of fig06-disintegration under handler environment 'fig06-kinetic' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig07-executable` | EXECUTABLE compilation of fig07-molecular-mechanism under handler environment 'fig07' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig07-molecular-mechanism` | Fig 7b/7c — a molecular mechanism as a process with typed physical channels. |
-| `fig08-executable` | EXECUTABLE compilation of fig08-nested-hierarchy under handler environment 'fig08' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig08-nested-hierarchy` | Fig 8b — molecular compositions as a nested hierarchical composite. |
-| `fig09a-coarse-graining` | Fig 9a — self-organized processes, coarse-graining, and autopoiesis. |
-| `fig09a-executable` | EXECUTABLE compilation of fig09a-coarse-graining under handler environment 'fig09a' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig09b-executable` | EXECUTABLE compilation of fig09b-minimal-cell under handler environment 'fig09b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig09b-minimal-cell` | Fig 9b — minimal cell composition. |
-| `fig10-1-division` | Fig 10.1 (panel b) — division as a compositional rewrite. |
-| `fig10-1-executable` | EXECUTABLE compilation of fig10-1-division under handler environment 'fig10-1' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig10-2-development` | Fig 10.2 (panels c/d) — biofilm development as a hierarchical reorganization. |
-| `fig10-2-executable` | EXECUTABLE compilation of fig10-2-development under handler environment 'fig10-2' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig10-3-evolution` | Fig 10.3 (panels e/f) — evolution reshapes the composition itself. |
-| `fig10-3-executable` | EXECUTABLE compilation of fig10-3-evolution under handler environment 'fig10-3' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `A Molecular Mechanism` | Fig 7b/7c — a molecular mechanism as a process with typed physical channels. |
+| `Biofilm Development — Draft Interface` | Fig 10.2 (panels c/d) — biofilm development as a hierarchical reorganization. |
+| `Biofilm Development — Live Topology` | Fig 10.2 (biofilm) as a genuine place-graph rewrite: a founder cell colonizes (sibling cell nodes added one at a time up to capacity), then the mature community secretes extracellular matrix (an ECM… |
+| `Cell Disintegration` | Fig 6b — cell disintegration as a grain-swap equivalence. |
+| `Cell Division — Draft Interface` | Fig 10.1 (panel b) — division as a compositional rewrite. |
+| `Cell Division — Live Topology` | Fig 10.1 as a genuine place-graph rewrite: chromosome segregation then cell division via Milner reaction rules over a tree[node] store. |
+| `Cell–Cell Coupling` | Paper §Cell–cell coupling (no dedicated figure). Two cell agents are wired to one shared environmental nutrient store: each senses the pool and depletes it, so their interfaces are coupled not only t… |
+| `Cell–Environment Coupling` | Fig 5b — cell–environment coupling. |
+| `Disintegration (playable)` | Fig 6a — cell disintegration as a playable trajectory: a thermal shock pushes the cell past its viability bound; viability collapses, viability-gated metabolism halts, and biomass decays into molecul… |
+| `Evolution — Draft Interface` | Fig 10.3 (panels e/f) — evolution reshapes the composition itself. |
+| `Evolution — Live Topology` | Fig 10.3 (evolution) as a genuine place-graph rewrite: a wildtype population establishes (organism nodes added), a fitter mutant arises, then a selection sweep adds mutant offspring and prunes wildty… |
+| `Interaction Modalities` | Fig 4a — four interaction-modality cards of the cellular interface: nutrient exchange (chemical flux), motile force (mechanical), growth rate, and electrical signaling. |
+| `Nested Molecular Hierarchy` | Fig 8b — molecular compositions as a nested hierarchical composite. |
+| `Self-Organization & Coarse-Graining` | Fig 9a — self-organization, coarse-graining, and autopoiesis. |
+| `The Cellular Interface` | Fig 4b — the minimal cellular interface. |
+| `The Minimal Cell` | Fig 9b — the minimal cell: the three columns of Fig 9a wired into one composite. |
+| `cellcell-executable-compete` | Executable compilation of cellcell-coupling under handler environment 'cellcell-compete' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `cellcell-executable-crossfeed` | Executable compilation of cellcell-coupling under handler environment 'cellcell-crossfeed' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig04b-executable` | Executable compilation of fig04b-cellular-interface under handler environment 'fig04b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig05-executable` | Executable compilation of fig05-cell-environment under handler environment 'fig05' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig06-executable-coarse` | Executable compilation of fig06-disintegration under handler environment 'fig06-coarse' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig06-executable-fba` | Executable compilation of fig06-disintegration under handler environment 'fig06-fba' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig06-executable-kinetic` | Executable compilation of fig06-disintegration under handler environment 'fig06-kinetic' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig07-executable` | Executable compilation of fig07-molecular-mechanism under handler environment 'fig07' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig08-executable` | Executable compilation of fig08-nested-hierarchy under handler environment 'fig08' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig09a-executable` | Executable compilation of fig09a-coarse-graining under handler environment 'fig09a' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig09b-executable` | Executable compilation of fig09b-minimal-cell under handler environment 'fig09b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig10-1-executable` | Executable compilation of fig10-1-division under handler environment 'fig10-1' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig10-2-executable` | Executable compilation of fig10-2-development under handler environment 'fig10-2' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig10-3-executable` | Executable compilation of fig10-3-evolution under handler environment 'fig10-3' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `whole-cell` | The composed whole cell — the paper figure mechanisms (thermal environment, uptake, a selectable Fig 6 metabolism [coarse \| kinetic \| FBA], a viability monitor, DNA-threshold division Fig 10-1, and d… |
 <!-- END:composites -->
 
 #### Investigations
@@ -307,5 +311,5 @@ the same sets the dashboard shows — and kept fresh by CI (`workspace-ci` runs
 
 | Investigation | Research question |
 |---|---|
-| [From Draft to Living Cell _(complete)_](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html) | Is a cellular interface simultaneously a MODELING CHOICE — a decision about which ports matter, what units they carry, how a process couples to the rest of the cell — and a TESTABLE BIOLOGICAL HYPOTH… |
+| [From Draft to Living Cell _(complete)_](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html) | Is a cellular interface simultaneously a modeling choice — a decision about which ports matter, what units they carry, how a process couples to the rest of the cell — and a testable biological hypoth… |
 <!-- END:investigations -->
