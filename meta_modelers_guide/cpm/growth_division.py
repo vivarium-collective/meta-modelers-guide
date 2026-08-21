@@ -10,20 +10,22 @@ daughter bookkeeping that call requires -- see
 - ``divide_cells(vol_threshold, reset_target)`` splits EVERY live cell whose
   volume >= ``vol_threshold`` (not a chosen id) by a plane through its longest
   bounding-box axis: the parent keeps its id, a NEW id is created for the other
-  daughter, pixels are re-owned (mass conserved), and the engine itself sets
-  BOTH daughters' ``target_volume`` to ``reset_target`` -- no manual CPM-side
-  reset needed. It returns the list of new ids created this call.
+  daughter, pixels are re-owned (mass conserved on the lattice), and the engine
+  itself sets BOTH daughters' physical ``target_volume`` to ``reset_target`` --
+  no manual CPM-side reset needed. It returns the list of new ids created this
+  call.
 - The one bookkeeping duty left to this process: our own per-cell ``biomass``
-  dict still drives ``set_target_volume`` every tick via
-  ``grow_per_biomass * biomass[cid]``, so after a division we must reset each
-  daughter's (parent's-and-new-id's) tracked ``biomass`` down to
-  ``reset_target / grow_per_biomass`` too -- otherwise the parent's pre-division
-  biomass (which maps to a target volume >= vol_threshold) would immediately
-  overwrite the engine's freshly-reset CPM target back over threshold next tick,
-  causing INFINITE RE-DIVISION every single update. A cell is "divided this
-  tick" if its id is in ``new_ids`` (the fresh daughter) OR if its post-step
-  volume dropped relative to its pre-divide volume (the parent, which kept its
-  id but gave up pixels).
+  dict still drives ``set_target_volume`` every following tick via
+  ``grow_per_biomass * biomass[cid]``, so after a division we must give each
+  daughter its share of tracked ``biomass`` too. Per the paper (Fig 10b
+  caption), division PARTITIONS state variables like biomass across the two
+  daughters rather than discarding them -- so we split the PARENT's
+  pre-division biomass between parent-id and new-id proportional to their
+  post-division lattice volumes (mass-conserving), not reset both to a fixed
+  ``reset_target``-derived value. See the ``update`` method for the exact
+  parent<->daughter pairing (index-matched against the engine's internal
+  ``dividing`` order, not a geometric guess) and the split formula, plus the
+  ``lineage``/``generation`` bookkeeping that records genealogy.
 - New daughter ids need their own cobra model copy (never share one model
   object across cells -- see the colony API map, bound-leakage risk #2):
   lazily ``load_model("textbook")`` for any id seen for the first time, with
@@ -89,8 +91,10 @@ class CpmGrowthDivision(Process):
             "position": "overwrite[map[list]]",
             "local_glucose": "overwrite[map[float]]",
             "biomass": "overwrite[map[float]]",
+            "generation": "overwrite[map[float]]",
             "n_cells": "overwrite[float]",
             "total_volume": "overwrite[float]",
+            "max_generation": "overwrite[float]",
         }
 
     def __init__(self, config=None, core=None):
@@ -131,6 +135,14 @@ class CpmGrowthDivision(Process):
         # in the study-3/colony API map.
         self._models: dict[int, object] = {}
         self.biomass: dict[int, float] = {}
+        # Lineage: new daughter id -> parent id (founder id 1 has no entry).
+        # Generation: cell id -> generation count (founder = 0, +1 per division
+        # a cell's ancestry passed through). `max_generation` is tracked
+        # incrementally so the observable stays correct even if a
+        # highest-generation cell's footprint later disappears (phantom).
+        self.lineage: dict[int, int] = {}
+        self.generation: dict[int, int] = {1: 0}
+        self.max_generation: int = 0
         self._new_model(1, float(c["init_biomass"]))
 
     def _new_model(self, cid, biomass0):
@@ -239,16 +251,49 @@ class CpmGrowthDivision(Process):
         vols_before = list(self.world.cell_volumes())
         new_ids = self.world.divide_cells(vol_threshold, reset_target)
         if new_ids:
+            # Exact parent<->daughter pairing (not a geometric/nearest-COM
+            # heuristic): viva-cpm's native `divide_cells`
+            # (crates/cpm-core/src/mitosis.rs) builds its internal `dividing`
+            # list by iterating `self.cells` -- a Vec indexed by cell id, id 0
+            # reserved for medium -- filtering `c.volume >= threshold`, in
+            # ascending-id order; it then creates exactly one new daughter per
+            # entry of `dividing`, in that same order, appending each new id to
+            # `new_ids`. The pyo3 binding's `cell_volumes()` returns
+            # `cells.iter().map(|c| c.volume)` -- the identical per-id
+            # ordering -- so replaying that same filter over our own
+            # `vols_before` snapshot reconstructs the Rust side's `dividing`
+            # list exactly, and `zip(dividing, new_ids)` gives the true
+            # parent -> daughter pairing index-for-index.
+            dividing = [cid for cid in range(1, len(vols_before)) if vols_before[cid] >= vol_threshold]
+            assert len(dividing) == len(new_ids), (
+                f"parent/daughter count mismatch: {len(dividing)} dividing vs {len(new_ids)} new_ids")
             vols_after = self.world.cell_volumes()
-            reset_biomass = reset_target / grow_per_biomass
-            divided = set(new_ids)
-            for cid in live_ids:
-                if cid in divided or (cid < len(vols_after) and cid < len(vols_before)
-                                       and vols_after[cid] < vols_before[cid]):
-                    divided.add(cid)
-            for cid in divided:
-                self._new_model(cid, reset_biomass)  # seed daughters not yet tracked
-                self.biomass[cid] = reset_biomass
+            for parent_id, daughter_id in zip(dividing, new_ids):
+                # Partition the PARENT's pre-division biomass across the two
+                # daughters proportional to their post-division lattice
+                # volumes -- mass-conserving, per the paper (Fig 10b caption:
+                # division "partitions state variables such as DNA and
+                # biomass into two cells"), rather than resetting both to a
+                # fixed value (which used to destroy accumulated biomass).
+                total_bm = self.biomass.get(parent_id, reset_target / grow_per_biomass)
+                vol_parent_after = float(vols_after[parent_id]) if parent_id < len(vols_after) else 0.0
+                vol_daughter = float(vols_after[daughter_id]) if daughter_id < len(vols_after) else 0.0
+                denom = vol_parent_after + vol_daughter
+                if denom > 0:
+                    parent_bm = total_bm * vol_parent_after / denom
+                    daughter_bm = total_bm * vol_daughter / denom
+                else:
+                    # Zero-volume phantom split (API map Q6): fall back to an
+                    # equal half-split so total biomass is still conserved.
+                    parent_bm = daughter_bm = total_bm / 2.0
+                self.biomass[parent_id] = max(parent_bm, 1e-9)
+                self._new_model(daughter_id, max(daughter_bm, 1e-9))  # daughter's own cobra copy
+
+                # Lineage + generation bookkeeping.
+                self.lineage[daughter_id] = parent_id
+                gen = self.generation.get(parent_id, 0) + 1
+                self.generation[daughter_id] = gen
+                self.max_generation = max(self.max_generation, gen)
 
         # re-derive live ids again post-division (new daughters + any phantom
         # zero-volume id from a too-small split, which we skip via `fp.any()`
@@ -258,7 +303,7 @@ class CpmGrowthDivision(Process):
 
         vols = self.world.cell_volumes()
         coms = self.world.cell_coms()
-        volume_obs, position_obs, biomass_obs = {}, {}, {}
+        volume_obs, position_obs, biomass_obs, generation_obs = {}, {}, {}, {}
         total_volume = 0.0
         for cid in live_ids:
             key = str(cid)
@@ -266,6 +311,7 @@ class CpmGrowthDivision(Process):
             volume_obs[key] = vol
             position_obs[key] = list(coms[cid])[:2] if cid < len(coms) else [0.0, 0.0]
             biomass_obs[key] = self.biomass.get(cid, 0.0)
+            generation_obs[key] = float(self.generation.get(cid, 0))
             total_volume += vol
 
         return {
@@ -274,6 +320,8 @@ class CpmGrowthDivision(Process):
             "position": position_obs,
             "local_glucose": local_glc_obs,
             "biomass": biomass_obs,
+            "generation": generation_obs,
             "n_cells": float(len(live_ids)),
             "total_volume": total_volume,
+            "max_generation": float(self.max_generation),
         }

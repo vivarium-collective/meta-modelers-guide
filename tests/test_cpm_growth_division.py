@@ -33,7 +33,9 @@ def _state(core):
                        "contact": [{"a": 0, "b": 1, "j": 14.0}, {"a": 1, "b": 1, "j": 14.0}]},
             "inputs": {"fields": ["fields"]},
             "outputs": {"fields": ["fields"], "n_cells": ["obs", "n_cells"],
-                        "total_volume": ["obs", "total_volume"], "volume": ["obs", "volume"]},
+                        "total_volume": ["obs", "total_volume"], "volume": ["obs", "volume"],
+                        "biomass": ["obs", "biomass"], "generation": ["obs", "generation"],
+                        "max_generation": ["obs", "max_generation"]},
         },
     }
 
@@ -47,3 +49,59 @@ def test_cell_grows_and_divides_into_a_population():
     vols = comp.state["obs"]["volume"]
     assert all(v < 200 for v in vols.values())          # no runaway single cell (division caps size)
     assert all(v > 5 for v in vols.values())            # no zero-volume phantom daughters
+
+
+def test_division_conserves_biomass_and_records_generation():
+    # P1-a regression: division must PARTITION the parent's tracked biomass
+    # across daughters (mass-conserving), not RESET both to a fixed value
+    # (which discarded biomass at every division). Also checks the new
+    # lineage/generation observable compounds as divisions stack up.
+    #
+    # To isolate the division-only effect from ordinary per-tick dFBA growth
+    # (which also changes total biomass every tick and would otherwise mask
+    # a conservation violation), spy on the live process's native
+    # `world.divide_cells` call: it returns *before* this process's Python
+    # partition loop runs, so `sum(proc.biomass.values())` at that instant is
+    # exactly the growth-loop's post-growth, pre-partition total. Comparing
+    # that snapshot against the same sum once `update()` returns isolates the
+    # partition step as an exact (not approximate) mass-conservation check.
+    core = build_core()
+    comp = Composite({"state": _state(core)}, core=core)
+    proc = comp.state["cell"]["instance"]
+
+    # The native `World` is a pyo3 extension type -- its methods are
+    # read-only, so intercept via a thin forwarding proxy instead of
+    # monkeypatching the attribute directly.
+    captured = {}
+
+    class _DivideSpy:
+        def __init__(self, world):
+            self._world = world
+
+        def divide_cells(self, threshold, reset_target):
+            new_ids = self._world.divide_cells(threshold, reset_target)
+            if new_ids:
+                captured["pre"] = sum(proc.biomass.values())
+            return new_ids
+
+        def __getattr__(self, name):
+            return getattr(self._world, name)
+
+    proc.world = _DivideSpy(proc.world)
+
+    max_gen_seen = 0.0
+    divisions_checked = 0
+    for _ in range(30):
+        captured.clear()
+        comp.run(1)
+        max_gen_seen = max(max_gen_seen, comp.state["obs"]["max_generation"])
+        if "pre" in captured:
+            post_total = sum(proc.biomass.values())
+            assert post_total == pytest.approx(captured["pre"], rel=1e-6), (
+                f"biomass not conserved across division: {captured['pre']} -> {post_total}")
+            divisions_checked += 1
+
+    assert divisions_checked >= 1  # at least one division occurred and was checked
+    assert max_gen_seen >= 2       # generations compound: founder(0) -> 1 -> 2+
+    gens = comp.state["obs"]["generation"]
+    assert set(gens.keys()) == set(comp.state["obs"]["volume"].keys())  # every live cell has a generation
