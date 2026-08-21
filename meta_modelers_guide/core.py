@@ -27,6 +27,17 @@ import pkgutil
 
 from process_bigraph import Process, Step, allocate_core
 
+# ``_iter_own_process_classes`` below walks this package's *immediate* submodules
+# via ``pkgutil.iter_modules`` and inspects ``dir(module)`` on each. For a
+# subpackage like ``meta_modelers_guide.cpm`` that module is the subpackage's
+# ``__init__``, not the ``cell_field`` module beneath it — so the subpackage must
+# import and re-export its Process classes for the scan to find them (see
+# ``meta_modelers_guide/cpm/__init__.py``). This import is a defensive, explicit
+# trigger for that registration path (the scan below would also import it lazily,
+# but making it explicit here documents the dependency and keeps `local:CpmCellField`
+# resolvable even if the scan's traversal strategy changes).
+from . import cpm as _cpm  # noqa: F401  (registers CpmCellField)
+
 
 def _iter_own_process_classes():
     """Yield (name, cls) for each Process/Step subclass defined in THIS package.
