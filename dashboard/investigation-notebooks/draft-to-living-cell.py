@@ -21,16 +21,22 @@ if _os.environ.get("PYTHONUTF8") != "1":
 #
 # _Investigation `draft-to-living-cell` — coder reproduction notebook._
 #
-# **Question.** How far can a cell be built compositionally — assembled from typed interfaces,
-# each specified as a *draft* before any mechanism is chosen, then compiled into
-# something that actually runs — and does that composition hold together into a
-# whole cell that lives and dies?
+# **Question.** Is a cellular interface simultaneously a modeling choice — a decision about which
+# ports matter, what units they carry, how a process couples to the rest of the cell — and a
+# testable biological hypothesis about which interactions actually govern a cell's fate? And
+# does treating composition as an ongoing practice — connect two interfaces where their
+# assumptions hold, cut the model open at the interface when those assumptions fail, coarse-grain
+# a resolved network back into a lumped exchange when organization re-emerges — let the same
+# cellular specification hold together across environment coupling, cell-cell coupling,
+# molecular mechanism, nested complementarity, autopoietic closure, growth, division, and the
+# harder transitions of development and evolution, while tracking viability bounds as the
+# locus of minimal agency throughout?
 #
-# This investigation turns *A meta-modeler's guide to the cellular interface* into an executable test of compositional modeling. Each figure of the paper is written twice. First as a draft: a typed, unit-bearing biological interface — a STRUCTURAL contract of port names, types, and wiring, with no committed mechanism. It says what a process couples to, not how. Then it is compiled, which installs one or more conforming mechanisms — mechanistic, rule-based, data-driven, or otherwise — behind the identical ports, so the running simulation preserves the declared interface exactly. The compiler's conformance check is STRUCTURAL: it verifies that a handler supplies every port with a compatible type and wiring, and refuses one that does not. It does not check units, dimensions, invariants, or runtime behavior.
+# This investigation turns *A meta-modeler's guide to the cellular interface* into an executable test of the paper's central claim: a cellular interface is simultaneously a modeling choice and a testable biological hypothesis about which interactions govern a cell's fate. Each study is written twice. First as a draft: a typed, unit-bearing interface — a structural contract of port names, types, and wiring, with no committed mechanism. It says what a process couples to, not how. Then it is compiled, which installs one or more conforming mechanisms — mechanistic, rule-based, data-driven, or otherwise — behind the identical ports, so the running simulation preserves the declared interface exactly. This operationalizes the paper's R_L (the process- implementation relation) and the Discussion's semantic-to-executable layer: a draft is the semantic layer, and compilation is the step that gives it an executable one. The compiler's conformance check is structural only: it verifies that a handler supplies every port with a compatible type and wiring, and refuses one that does not. It does not check units, dimensions, invariants, or runtime behavior.
 #
-# The point is not to assemble a single monolithic cell model. It is to test whether a biological model can remain open-ended as its mechanisms change, its assumptions fail, and its level of description shifts. Interfaces provide the places where models can be connected, isolated, replaced, or expanded; graph rewrites allow the composition itself to change through events such as growth, division, and disintegration.
+# The point is not to assemble one monolithic cell model. It is to test whether composition is an ongoing practice rather than a final architecture: connect two interfaces where their assumptions hold (cell-environment and cell-cell coupling), cut the model open at the interface when those assumptions fail and the right level of description drops to molecules (disintegration — the paper's Fig 6, and this investigation's flagship), and coarse-grain a resolved molecular network back into a lumped exchange when organization re-emerges (the same pattern run in reverse, and again in autopoiesis). Underneath every study sits one throughline: viability bounds and minimal agency. A cellular description is valid only while its interface variables sit inside a viability bound; the interface is the locus where ordinary chemical dynamics becomes a self-maintaining, adaptive agent, and losing that boundary is exactly what disintegration demonstrates.
 #
-# The investigation therefore follows the paper's central claim: composition is not the final architecture of a model, but an ongoing way of building one. Across the studies below, we ask whether the same biological specification can support alternative mechanisms, whether those mechanisms can be composed without losing their interface semantics, and whether the resulting system can reorganize as the biology demands. The endpoint is a composed whole cell that grows, divides, loses viability, and changes its own level of description — demonstrating the full arc from interface specification to living, changing simulation.
+# The 9 studies below follow the paper's own order: the cellular interface itself, then where it couples to environment and to other cells, then where it breaks (disintegration) and what it is made of underneath (molecular interfaces, biomolecular complementarity, autopoiesis), then how it is rewritten across time (growth and division, development and evolution). A closing capstone carries the disintegration grain-swap up to one hand-assembled whole cell that grows, divides, and dies; a coverage note confirms that every figure draft in this investigation compiles to a running executable.
 #
 # ---
 #
@@ -154,187 +160,11 @@ def _render_one(address, config, runs_db, study_yaml):
         return _p.read_text(encoding='utf-8', errors='replace')
     return f'<p style="color:#6b7280">unsupported figure type: {address}</p>'
 
-# ## Study: One Interface, Three Mechanisms (`one-interface-three-mechanisms`)
+# ## Study: The Cellular Interface (`cellular-interface`)
 #
-# **Question.** Can a single metabolism interface — the ports nutrients ⇒ {biomass, energy, entropy, secretions} of Fig 6 — be realized by three genuinely different mechanisms (a lumped-yield process, a saturating-kinetic process, and a real flux-balance optimization via COBRApy) while every other part of the composite, and the interface itself, stays byte-for-byte the same?
+# **Question.** Can the cellular boundary be specified as nothing but typed, unit-bearing exchange ports (chemical mol·s⁻¹, mechanical N, electrical C·s⁻¹, thermal J·s⁻¹) plus higher-level variables (growth, shape, objective, viability) — with no committed mechanism — and compiled, by installing one conforming handler, into a bounded, goal-directed cell whose interface is exactly the one declared?
 #
-# **Claim.** One metabolic interface can be realized by many mechanisms — a lumped yield, saturating kinetics, or a real flux-balance solver — each producing its own distinct dynamics, without changing what the interface exposes.
-
-# ### Parameters
-#
-# | simulation | composite | steps | params |
-# | --- | --- | --- | --- |
-# | `disintegration` | `meta_modelers_guide.composites.fig06-disintegration` | 0 | — |
-
-# ### Specification (process-bigraph) — load, inspect, edit
-#
-# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
-
-# **Composite `meta_modelers_guide.composites.fig06-disintegration`** — `spec_meta_modelers_guide_composites_fig06_disintegration` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig06_disintegration = load_spec(REPO / 'meta_modelers_guide/composites/fig06-disintegration.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig06_disintegration)
-
-# === Edit parameters for composite 'Cell Disintegration' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'coarse_grained_metabolism'  (local:CoarseGrainedMetabolism)
-spec_meta_modelers_guide_composites_fig06_disintegration['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
-
-# process 'catalyzed_reaction_network'  (local:CatalyzedReactionNetwork)
-spec_meta_modelers_guide_composites_fig06_disintegration['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
-
-# ### Run
-#
-# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
-
-# === Study: one-interface-three-mechanisms ===
-STUDY = 'one-interface-three-mechanisms'
-STUDY_DIR = REPO / 'workspace/studies' / STUDY
-STUDY_YAML = str(STUDY_DIR / "study.yaml")
-RUNS_DB = str(STUDY_DIR / "runs.db")
-
-print("No recorded runs for this study; nothing to reproduce.")
-
-# ### Visualizations
-#
-# _Results are shown by the figures below, produced by the run above._
-
-# **one-interface-three-mechanisms-dynamics**
-
-def _save_viz(study, slug, html):
-    d = REPO / 'reports/notebooks/figures' / study
-    d.mkdir(parents=True, exist_ok=True)
-    out = d / (slug + '.html')
-    out.write_text(html, encoding='utf-8')
-    print('  wrote', out)
-
-
-# one-interface-three-mechanisms-dynamics
-_save_viz('one-interface-three-mechanisms', 'one-interface-three-mechanisms-dynamics', _render_one('image:visualizations/one-interface-three-mechanisms-dynamics.svg', {'chart': 'image', 'caption': 'One interface, three handlers — three distinct trajectories (coarse 4.0 / kinetic 2.667 / FBA 6.29, acetate overflow 30.4), run to completion.'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-disintegration**
-
-# fig06-disintegration
-_save_viz('one-interface-three-mechanisms', 'fig06-disintegration', _render_one('image:visualizations/fig06-disintegration.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-illustration**
-
-# fig06-illustration
-_save_viz('one-interface-three-mechanisms', 'fig06-illustration', _render_one('image:visualizations/fig06-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# ### Acceptance criteria
-#
-# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
-#
-# | test | measures | passes if |
-# | --- | --- | --- |
-# | coarse-linear-growth | kind=observable path=biomass expr=last(biomass) | op >= value 3.5 provenance coarse (lumped linear yield) → biomass 4.0 (exec fig06-executable-coarse) |
-# | kinetic-saturating-growth | kind=observable path=biomass expr=last(biomass) | op >= value 2.0 provenance kinetic (saturating Michaelis–Menten uptake) → biomass 2.667 (exec fig06-executable-kinetic), distinct from the coarse 4.0 |
-# | fba-overflow-secretion | kind=observable path=secretions expr=last(secretions) | op >= value 10.0 provenance FBA overflow metabolism: acetate on the secretions port 0→30.4 (exec fig06-executable-fba); biomass reaches 6.29 |
-# | impostor-rejected | kind=observable path=biomass expr=last(biomass) | op >= value 1.0 provenance REJECTION control: NonConformingMetabolism is rejected by the compiler (CompileError names missing biomass/energy/entropy/secretions); it never runs, so no biomass observable exists — MUST fail |
-
-# ## Study: Divide (`divide`)
-#
-# **Question.** Is cell division in Fig 10 a genuine structural rewrite of the place graph — a single cell node actually becoming two daughter nodes at runtime, fired by the cell's own replicated DNA crossing a threshold — rather than a pre-declared post-structure that is merely animated on a wall clock?
-#
-# **Claim.** Division is a change to the composition itself, triggered by the cell's own replicated DNA crossing a threshold: one cell becomes two through a graph rewrite that creates new nodes at runtime and conserves mass (the parent is halved, not doubled) — not a pre-drawn pair on a timer.
-
-# ### Parameters
-#
-# | simulation | composite | steps | params |
-# | --- | --- | --- | --- |
-# | `division-rewrite` | `meta_modelers_guide.composites.fig10-1-rewrite` | 0 | — |
-# | `division` | `meta_modelers_guide.composites.fig10-1-division` | 0 | — |
-
-# ### Specification (process-bigraph) — load, inspect, edit
-#
-# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
-
-# **Composite `meta_modelers_guide.composites.fig10-1-rewrite`** — `spec_meta_modelers_guide_composites_fig10_1_rewrite` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_1_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-rewrite.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_1_rewrite)
-
-# === Edit parameters for composite 'Cell Division — Live Topology' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# tunable parameters (filled into ${name} placeholders):
-spec_meta_modelers_guide_composites_fig10_1_rewrite['parameters']['cycle']['default'] = 3.0
-
-# process 'cell_cycle'  (local:CellCycleDivision)
-spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = '${cycle}'
-
-# **Composite `meta_modelers_guide.composites.fig10-1-division`** — `spec_meta_modelers_guide_composites_fig10_1_division` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_1_division = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-division.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_1_division)
-
-# === Edit parameters for composite 'Cell Division — Draft Interface' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'dna_replication'  (local:DNAReplication)
-spec_meta_modelers_guide_composites_fig10_1_division['state']['dna_replication']['config']['interval'] = 1.0
-
-# process 'segregate_chromosome'  (local:SegregateChromosome)
-spec_meta_modelers_guide_composites_fig10_1_division['state']['segregate_chromosome']['config']['interval'] = 1.0
-
-# process 'divide'  (local:Divide)
-spec_meta_modelers_guide_composites_fig10_1_division['state']['divide']['config']['interval'] = 1.0
-
-# ### Run
-#
-# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
-
-# === Study: divide ===
-STUDY = 'divide'
-STUDY_DIR = REPO / 'workspace/studies' / STUDY
-STUDY_YAML = str(STUDY_DIR / "study.yaml")
-RUNS_DB = str(STUDY_DIR / "runs.db")
-
-print("No recorded runs for this study; nothing to reproduce.")
-
-# ### Visualizations
-#
-# _Results are shown by the figures below, produced by the run above._
-
-# **divide-dynamics**
-
-# divide-dynamics
-_save_viz('divide', 'divide-dynamics', _render_one('image:visualizations/divide-dynamics.svg', {'chart': 'image', 'caption': "Division dynamics — DNA crosses threshold, the rewrite fires, and the parent's biomass partitions to two daughters (mass conserved), run to completion through the engine."}, RUNS_DB, STUDY_YAML))
-
-# **fig10-1-division**
-
-# fig10-1-division
-_save_viz('divide', 'fig10-1-division', _render_one('image:visualizations/fig10-1-division.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-illustration**
-
-# fig10-illustration
-_save_viz('divide', 'fig10-illustration', _render_one('image:visualizations/fig10-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# ### Acceptance criteria
-#
-# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
-#
-# | test | measures | passes if |
-# | --- | --- | --- |
-# | division-fires | kind=observable path=cell_count expr=last(cell_count) | op >= value 1.5 provenance DNA crosses threshold 2.0 (parent dna 1→3.06) → rewrite fires once, cell_count 1→2 (exec fig10-1-executable) |
-# | daughters-spawn | kind=observable path=dna expr=last(dna) | op >= value 1.0 provenance division spawns two new daughters (exec daughter dna 0→2.75; each daughter biomass 0→0.5, parent biomass →0 — mass conserved) |
-# | draft-is-inert | kind=observable path=cell_count expr=last(cell_count) | op >= value 1.5 provenance inert-draft run stays at seed cell_count 1 (empty update by construction) → fails by design (expected-fail control) |
-
-# ## Study: The Contract and Its Coupling (`typed-interface`)
-#
-# **Question.** Can the cellular boundary be specified as nothing but a set of typed, unit-bearing exchange ports (Fig 4) with no committed mechanism, compiled — by installing one conforming handler — into a running, bounded, goal-directed cell whose interface is exactly the one declared; and does that same interface become a genuine sense/act LOOP (Fig 5) when the environment is a real diffusing spatial field the cell reads and acts back on?
-#
-# **Claim.** A cell can be specified at one level by its typed interface — exchange variables such as chemical flux, force, current, heat, growth, shape, objective, and viability — without committing to a mechanism; and that same interface is a genuine coupling in which sensing and acting are one relationship over a shared field store, not two subsystems.
+# **Claim.** The cell's interface is authored as an inert typed contract and compiled to a running bounded cell; a non-conforming handler that breaks the port contract is rejected at compile time with a CompileError naming the missing ports (Law 1 conformance).
 
 # ### Parameters
 #
@@ -342,7 +172,7 @@ _save_viz('divide', 'fig10-illustration', _render_one('image:visualizations/fig1
 # | --- | --- | --- | --- |
 # | `interaction-modalities` | `meta_modelers_guide.composites.fig04a-interaction-modalities` | 0 | — |
 # | `cellular-interface` | `meta_modelers_guide.composites.fig04b-cellular-interface` | 0 | — |
-# | `cell-environment` | `meta_modelers_guide.composites.fig05-cell-environment` | 0 | — |
+# | `cellular-interface-executable` | `meta_modelers_guide.composites.fig04b-executable` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
@@ -383,297 +213,6 @@ describe_spec(spec_meta_modelers_guide_composites_fig04b_cellular_interface)
 # process 'cell'  (local:CellularInterface)
 spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['interval'] = 1.0
 
-# **Composite `meta_modelers_guide.composites.fig05-cell-environment`** — `spec_meta_modelers_guide_composites_fig05_cell_environment` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig05_cell_environment = load_spec(REPO / 'meta_modelers_guide/composites/fig05-cell-environment.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig05_cell_environment)
-
-# === Edit parameters for composite 'Cell–Environment Coupling' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'reaction_diffusion'  (local:ReactionDiffusion)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['reaction_diffusion']['config']['interval'] = 1.0
-
-# process 'production_degradation'  (local:ProductionDegradation)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['production_degradation']['config']['interval'] = 1.0
-
-# process 'mechanical_stress'  (local:MechanicalStress)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['mechanical_stress']['config']['interval'] = 1.0
-
-# process 'single_cell_processes'  (local:SingleCellProcesses)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['single_cell_processes']['config']['interval'] = 1.0
-
-# ### Run
-#
-# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
-
-# === Study: typed-interface ===
-STUDY = 'typed-interface'
-STUDY_DIR = REPO / 'workspace/studies' / STUDY
-STUDY_YAML = str(STUDY_DIR / "study.yaml")
-RUNS_DB = str(STUDY_DIR / "runs.db")
-
-print("No recorded runs for this study; nothing to reproduce.")
-
-# ### Visualizations
-#
-# _Results are shown by the figures below, produced by the run above._
-
-# **typed-interface-dynamics**
-
-# typed-interface-dynamics
-_save_viz('typed-interface', 'typed-interface-dynamics', _render_one('image:visualizations/typed-interface-dynamics.svg', {'chart': 'image', 'caption': 'Dynamics of the compiled Fig 4 executable, run to completion.'}, RUNS_DB, STUDY_YAML))
-
-# **fig04a-interaction-modalities**
-
-# fig04a-interaction-modalities
-_save_viz('typed-interface', 'fig04a-interaction-modalities', _render_one('image:visualizations/fig04a-interaction-modalities.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig04b-cellular-interface**
-
-# fig04b-cellular-interface
-_save_viz('typed-interface', 'fig04b-cellular-interface', _render_one('image:visualizations/fig04b-cellular-interface.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig04-illustration**
-
-# fig04-illustration
-_save_viz('typed-interface', 'fig04-illustration', _render_one('image:visualizations/fig04-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# ### Acceptance criteria
-#
-# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
-#
-# | test | measures | passes if |
-# | --- | --- | --- |
-# | shape-growth | kind=observable path=shape expr=max(shape) | op >= value 2.0 provenance executable run: shape 1.0→4.2 (chemical uptake drives growth); exec last≈4.2 (fig04b-executable) |
-# | chemical-uptake | kind=observable path=chemical expr=min(chemical) | op <= value -0.5 provenance chemical flux 0.0→-0.8 (net uptake across the interface); exec last≈-0.8 (fig04b-executable) |
-# | objective-climbs | kind=observable path=objective expr=last(objective) | op >= value 1.0 provenance objective 0.0→1.6 as growth proceeds; exec last≈1.6 (fig04b-executable) |
-# | cell-draws-well | kind=observable path=uptake_flux expr=last(uptake_flux) | op >= value 0.2 provenance cell takes up from the field — uptake flux 0.0→0.34, bolus cell drawn down 1.0→0.2 (exec last≈0.34, fig05-executable) |
-# | cell-acts-back | kind=observable path=traction expr=last(traction) | op >= value 0.3 provenance cell acts back mechanically — traction 0.0→0.41 (exec last≈0.41, fig05-executable) |
-# | mechanical-response | kind=observable path=mechanical_field expr=last(mechanical_field) | op >= value 0.5 provenance mechanical field driven by the cell 0.0→0.94 (exec last≈0.94, fig05-executable) |
-# | draft-is-inert | kind=observable path=shape expr=max(shape) | op >= value 2.0 provenance inert-draft run: shape stays 1.0 (empty update by construction) → fails by design (expected-fail control) |
-
-# ## Study: From Molecules to the Nested Cell (`the-nested-cell`)
-#
-# **Question.** How do molecules compose into a cell? At the deepest grain a single molecular machine — F1Fo ATP synthase (Fig 7) — is compiled from its draft and run as a PMF-driven rotary catalyst that synthesizes ATP on its chemical output port. That mechanism sits at the bottom of the Fig 8 nested cell — a deeply nested place graph (membrane, cytoplasm, nucleus, chromosome, chromatin, nucleosome) with a gene-expression cascade wired to its deepest leaves. Does compilation preserve every interface, from the lone molecular mechanism up through six levels of nesting?
-#
-# **Claim.** A molecular mechanism (F1Fo ATP synthase) sits at the deepest grain and feeds a gene-expression cascade nested across six place-graph levels; each interface is preserved, from the lone molecular machine up to the deepest leaf of the nesting.
-
-# ### Parameters
-#
-# | simulation | composite | steps | params |
-# | --- | --- | --- | --- |
-# | `molecular-mechanism` | `meta_modelers_guide.composites.fig07-molecular-mechanism` | 0 | — |
-# | `nested-hierarchy` | `meta_modelers_guide.composites.fig08-nested-hierarchy` | 0 | — |
-
-# ### Specification (process-bigraph) — load, inspect, edit
-#
-# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
-
-# **Composite `meta_modelers_guide.composites.fig07-molecular-mechanism`** — `spec_meta_modelers_guide_composites_fig07_molecular_mechanism` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig07_molecular_mechanism = load_spec(REPO / 'meta_modelers_guide/composites/fig07-molecular-mechanism.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig07_molecular_mechanism)
-
-# === Edit parameters for composite 'A Molecular Mechanism' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'molecular_mechanism'  (local:MolecularMechanism)
-spec_meta_modelers_guide_composites_fig07_molecular_mechanism['state']['molecular_mechanism']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig08-nested-hierarchy`** — `spec_meta_modelers_guide_composites_fig08_nested_hierarchy` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy = load_spec(REPO / 'meta_modelers_guide/composites/fig08-nested-hierarchy.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig08_nested_hierarchy)
-
-# === Edit parameters for composite 'Nested Molecular Hierarchy' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'transmembrane_transport'  (local:TransmembraneTransport)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transmembrane_transport']['config']['interval'] = 1.0
-
-# process 'replication_and_repair'  (local:ReplicationAndRepair)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['replication_and_repair']['config']['interval'] = 1.0
-
-# process 'cell_metabolism'  (local:CellMetabolism)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['cell_metabolism']['config']['interval'] = 1.0
-
-# process 'transcription'  (local:Transcription)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transcription']['config']['interval'] = 1.0
-
-# process 'translation'  (local:Translation)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['translation']['config']['interval'] = 1.0
-
-# process 'subunit_assembly'  (local:SubunitAssembly)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['subunit_assembly']['config']['interval'] = 1.0
-
-# ### Run
-#
-# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
-
-# === Study: the-nested-cell ===
-STUDY = 'the-nested-cell'
-STUDY_DIR = REPO / 'workspace/studies' / STUDY
-STUDY_YAML = str(STUDY_DIR / "study.yaml")
-RUNS_DB = str(STUDY_DIR / "runs.db")
-
-print("No recorded runs for this study; nothing to reproduce.")
-
-# ### Visualizations
-#
-# _Results are shown by the figures below, produced by the run above._
-
-# **the-nested-cell-dynamics**
-
-# the-nested-cell-dynamics
-_save_viz('the-nested-cell', 'the-nested-cell-dynamics', _render_one('image:visualizations/the-nested-cell-dynamics.svg', {'chart': 'image', 'caption': 'Dynamics of the compiled executables, run to completion — the F1Fo ATP synthase molecular mechanism (chemical_out 0→100) at the deepest grain alongside the Fig 8 nested-cell cascade (metabolites, mRNA, energy rising from zero).'}, RUNS_DB, STUDY_YAML))
-
-# **fig08-nested-hierarchy**
-
-# fig08-nested-hierarchy
-_save_viz('the-nested-cell', 'fig08-nested-hierarchy', _render_one('image:visualizations/fig08-nested-hierarchy.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig08-illustration**
-
-# fig08-illustration
-_save_viz('the-nested-cell', 'fig08-illustration', _render_one('image:visualizations/fig08-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# ### Acceptance criteria
-#
-# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
-#
-# | test | measures | passes if |
-# | --- | --- | --- |
-# | atp-synthesized | kind=observable path=chemical_out expr=last(chemical_out) | op >= value 50.0 provenance exec last≈100 — F1Fo ATP synthase (ATP synthesized on chemical_out 0→100, exec fig07-executable) |
-# | metabolites-produced | kind=observable path=metabolites expr=last(metabolites) | op >= value 1.0 provenance metabolism feeds the cascade, producing metabolites (exec last≈1.5) |
-# | mrna-transcribed | kind=observable path=rna expr=last(rna) | op >= value 0.05 provenance gene transcribed to mRNA (exec last≈0.18) |
-# | draft-is-inert | kind=observable path=metabolites expr=last(metabolites) | op >= value 1.0 provenance inert-draft run stays at seed (empty update by construction) → fails by design (expected-fail control) |
-
-# ## Study: The Living Atlas (`the-living-atlas`)
-#
-# **Question.** The thesis of the investigation — one typed interface, many mechanisms — is proven at the level of a single figure (Fig 6). Does it also hold at the level of a WHOLE CELL? This capstone assembles a composed whole cell in the figures' style — cell–environment uptake, a viability-gated Fig 6 metabolism, a viability monitor, and the division and disintegration rewrites, wired through shared cell and environment stores — and then SWAPS the Fig 6 metabolism behind identical ports (coarse, saturating kinetic, or real COBRApy FBA). Same cell, three mechanisms: does each produce its own life history while the interface never moves, and does each cell still grow, divide (mass-conserved), and die?
-#
-# **Claim.** The investigation's thesis holds at the whole-cell level: behind ONE unchanged metabolism interface, the Fig 6 mechanism is swappable (coarse / saturating-kinetic / real COBRApy FBA) and the SAME assembled cell lives three distinct life histories — peak biomass 5.78 / 6.43 / 6.05, dividing at t≈3.0 / 2.1 / 2.7. In every case the cell grows, divides once (cell_count 1 → 2, mass-conserved — the mother is halved), and dies when a scripted thermal shock (37 → 50 °C at t=12) collapses viability to 0.018 and disintegration converts biomass to debris. The cell is assembled by hand in the figures' style, not compiled from the figure drafts.
-
-# ### Parameters
-#
-# | simulation | composite | steps | params |
-# | --- | --- | --- | --- |
-# | `whole-cell` | `meta_modelers_guide.composites.whole-cell` | 0 | — |
-
-# ### Specification (process-bigraph) — load, inspect, edit
-#
-# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
-
-# **Composite `meta_modelers_guide.composites.whole-cell`** — `spec_meta_modelers_guide_composites_whole_cell` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_whole_cell = load_spec(REPO / 'meta_modelers_guide/composites/whole-cell.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_whole_cell)
-
-# === Edit parameters for composite 'whole-cell' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'thermal'  (local:ThermalEnvironment)
-spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['interval'] = 0.1
-spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['temp_normal'] = 37.0
-spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['temp_shock'] = 50.0
-spec_meta_modelers_guide_composites_whole_cell['state']['thermal']['config']['shock_time'] = 12.0
-
-# process 'uptake'  (local:Uptake)
-spec_meta_modelers_guide_composites_whole_cell['state']['uptake']['interval'] = 0.1
-spec_meta_modelers_guide_composites_whole_cell['state']['uptake']['config']['uptake_rate'] = 0.5
-
-# process 'metabolism'  (local:ViabilityGatedMetabolism)
-spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['interval'] = 0.1
-spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['mode'] = 'coarse'
-spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['k'] = 0.6
-spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['vmax'] = 1.4
-spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['km'] = 0.4
-spec_meta_modelers_guide_composites_whole_cell['state']['metabolism']['config']['energy_yield'] = 0.4
-
-# process 'monitor'  (local:ViabilityMonitor)
-spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['interval'] = 0.1
-spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['temp_opt'] = 37.0
-spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['temp_tol'] = 5.0
-spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['relax'] = 0.5
-spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['division_threshold'] = 1.0
-spec_meta_modelers_guide_composites_whole_cell['state']['monitor']['config']['viability_floor'] = 0.3
-
-# process 'division'  (local:DivisionEvent)
-spec_meta_modelers_guide_composites_whole_cell['state']['division']['interval'] = 0.1
-
-# process 'disintegration'  (local:DisintegrationEvent)
-spec_meta_modelers_guide_composites_whole_cell['state']['disintegration']['interval'] = 0.1
-spec_meta_modelers_guide_composites_whole_cell['state']['disintegration']['config']['decay_rate'] = 0.4
-
-# ### Run
-#
-# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
-
-# === Study: the-living-atlas ===
-STUDY = 'the-living-atlas'
-STUDY_DIR = REPO / 'workspace/studies' / STUDY
-STUDY_YAML = str(STUDY_DIR / "study.yaml")
-RUNS_DB = str(STUDY_DIR / "runs.db")
-
-print("No recorded runs for this study; nothing to reproduce.")
-
-# ### Visualizations
-#
-# _Results are shown by the figures below, produced by the run above._
-
-# **the-living-atlas-dynamics**
-
-# the-living-atlas-dynamics
-_save_viz('the-living-atlas', 'the-living-atlas-dynamics', _render_one('image:visualizations/the-living-atlas-dynamics.svg', {'chart': 'image', 'caption': "The composed whole cell, three metabolisms behind one interface — coarse / kinetic / FBA give three life histories (peak biomass 5.78 / 6.43 / 6.05), each growing, dividing once (mass-conserved), and dying on a scripted thermal shock. (The 'every figure compiles and runs' gallery is now its own study.)"}, RUNS_DB, STUDY_YAML))
-
-# ### Acceptance criteria
-#
-# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
-#
-# | test | measures | passes if |
-# | --- | --- | --- |
-# | metabolism-swap-coarse | kind=observable path=biomass expr=max(biomass) | op >= value 3.0 provenance build_whole_cell(metabolism="coarse") — peak biomass 5.78, divides at t≈3.0 (exec max≈5.78) |
-# | metabolism-swap-kinetic | kind=observable path=biomass expr=max(biomass) | op >= value 3.0 provenance build_whole_cell(metabolism="kinetic") — peak biomass 6.43, divides at t≈2.1 (exec max≈6.43), distinct from coarse |
-# | metabolism-swap-fba | kind=observable path=biomass expr=max(biomass) | op >= value 3.0 provenance build_whole_cell(metabolism="fba") — real COBRApy: peak biomass 6.05, divides at t≈2.7 (exec max≈6.05) |
-# | cell-divides | kind=observable path=cell_count expr=last(cell_count) | op >= value 2.0 provenance the division rewrite fires once, cell_count 1 → 2 (mass-conserved: mother halved); all three metabolisms divide, at t≈3.0/2.1/2.7 (exec coarse last=2.0) |
-# | cell-dies | kind=observable path=viability expr=last(viability) | op <= value 0.1 provenance scripted shock (37 → 50 °C at t=12) collapses viability 1.0 → 0.018; disintegration converts biomass to debris ≈5.5–6.1 (exec coarse last=0.018) |
-
-# ## Study: Gallery — Every Figure Compiles and Runs (`gallery`)
-#
-# **Question.** Does every one of the paper's figures compile from its draft to an executable that runs to completion? This appendix is a COVERAGE result, not a scientific claim about any single figure: it shows the draft→executable machinery works uniformly across all of the paper's figures — including the ones not promoted to their own study (Fig 9 self-organization/coarse-graining, and the Fig 10-2/10-3 development and evolution rewrites).
-#
-# **Claim.** Every figure of the paper compiles and runs: 11 figure drafts (Figs 4–10 rendered as composites), 10 compiling to executables (Fig 4a is illustrative, draft-only by design), and 12 executable composites in all (Fig 6's one interface carries three mechanisms) — every one runs to completion. This is a coverage/appendix result about the machinery, not a scientific claim about any individual figure.
-
-# ### Parameters
-#
-# | simulation | composite | steps | params |
-# | --- | --- | --- | --- |
-# | `fig04b-executable` | `meta_modelers_guide.composites.fig04b-executable` | 0 | — |
-# | `fig05-executable` | `meta_modelers_guide.composites.fig05-executable` | 0 | — |
-# | `fig06-executable-coarse` | `meta_modelers_guide.composites.fig06-executable-coarse` | 0 | — |
-# | `fig06-executable-kinetic` | `meta_modelers_guide.composites.fig06-executable-kinetic` | 0 | — |
-# | `fig06-executable-fba` | `meta_modelers_guide.composites.fig06-executable-fba` | 0 | — |
-# | `fig07-executable` | `meta_modelers_guide.composites.fig07-executable` | 0 | — |
-# | `fig08-executable` | `meta_modelers_guide.composites.fig08-executable` | 0 | — |
-# | `fig09a-executable` | `meta_modelers_guide.composites.fig09a-executable` | 0 | — |
-# | `fig09b-executable` | `meta_modelers_guide.composites.fig09b-executable` | 0 | — |
-# | `fig10-1-executable` | `meta_modelers_guide.composites.fig10-1-executable` | 0 | — |
-# | `fig10-2-executable` | `meta_modelers_guide.composites.fig10-2-executable` | 0 | — |
-# | `fig10-3-executable` | `meta_modelers_guide.composites.fig10-3-executable` | 0 | — |
-
-# ### Specification (process-bigraph) — load, inspect, edit
-#
-# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
-
 # **Composite `meta_modelers_guide.composites.fig04b-executable`** — `spec_meta_modelers_guide_composites_fig04b_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
@@ -702,6 +241,105 @@ spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']
 spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['signaling_gain'] = 0.4
 spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['interval'] = 1.0
 
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: cellular-interface ===
+STUDY = 'cellular-interface'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig04b-executable-dynamics**
+
+def _save_viz(study, slug, html):
+    d = REPO / 'reports/notebooks/figures' / study
+    d.mkdir(parents=True, exist_ok=True)
+    out = d / (slug + '.html')
+    out.write_text(html, encoding='utf-8')
+    print('  wrote', out)
+
+
+# fig04b-executable-dynamics
+_save_viz('cellular-interface', 'fig04b-executable-dynamics', _render_one('html:fig04b-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 4: viability holds inside its shaded "viable" band while shape and objective climb from the installed handler\'s Monod-driven growth.'}, RUNS_DB, STUDY_YAML))
+
+# **cellular-interface-dynamics**
+
+# cellular-interface-dynamics
+_save_viz('cellular-interface', 'cellular-interface-dynamics', _render_one('image:visualizations/cellular-interface-dynamics.svg', {'chart': 'image', 'caption': 'Dynamics of the compiled Fig 4 executable, run to completion.'}, RUNS_DB, STUDY_YAML))
+
+# **fig04a-interaction-modalities**
+
+# fig04a-interaction-modalities
+_save_viz('cellular-interface', 'fig04a-interaction-modalities', _render_one('image:visualizations/fig04a-interaction-modalities.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig04b-cellular-interface**
+
+# fig04b-cellular-interface
+_save_viz('cellular-interface', 'fig04b-cellular-interface', _render_one('image:visualizations/fig04b-cellular-interface.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig04-illustration**
+
+# fig04-illustration
+_save_viz('cellular-interface', 'fig04-illustration', _render_one('image:visualizations/fig04-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | shape-growth | kind=observable path=shape expr=max(shape) | op >= value 2.0 provenance executable run: shape 1.0→4.2 (chemical uptake drives growth); exec last≈4.2 (fig04b-executable) |
+# | chemical-uptake | kind=observable path=chemical expr=min(chemical) | op <= value -0.5 provenance chemical flux 0.0→-0.8 (net uptake across the interface); exec last≈-0.8 (fig04b-executable) |
+# | objective-climbs | kind=observable path=objective expr=last(objective) | op >= value 1.0 provenance objective 0.0→1.6 as growth proceeds; exec last≈1.6 (fig04b-executable) |
+# | draft-is-inert | kind=observable path=shape expr=max(shape) | op >= value 2.0 provenance inert-draft run: shape stays 1.0 (empty update by construction) → fails by design (expected-fail control) |
+
+# ## Study: Cell–Environment Coupling (`cell-environment-coupling`)
+#
+# **Question.** Does the cellular interface become a genuine sense/act loop when the environment is a real diffusing spatial field the cell reads and acts back on?
+#
+# **Claim.** Compiling the Fig 5 draft installs a real Laplacian-diffusion field and single-cell uptake; the cell depletes nutrient locally, diffusion refills it, and the cell reshapes the very gradient it depends on (niche construction) — interface preserved (Law 2).
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `cell-environment` | `meta_modelers_guide.composites.fig05-cell-environment` | 0 | — |
+# | `cell-environment-executable` | `meta_modelers_guide.composites.fig05-executable` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.fig05-cell-environment`** — `spec_meta_modelers_guide_composites_fig05_cell_environment` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig05_cell_environment = load_spec(REPO / 'meta_modelers_guide/composites/fig05-cell-environment.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig05_cell_environment)
+
+# === Edit parameters for composite 'Cell–Environment Coupling' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'reaction_diffusion'  (local:ReactionDiffusion)
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['reaction_diffusion']['config']['interval'] = 1.0
+
+# process 'production_degradation'  (local:ProductionDegradation)
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['production_degradation']['config']['interval'] = 1.0
+
+# process 'mechanical_stress'  (local:MechanicalStress)
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['mechanical_stress']['config']['interval'] = 1.0
+
+# process 'single_cell_processes'  (local:SingleCellProcesses)
+spec_meta_modelers_guide_composites_fig05_cell_environment['state']['single_cell_processes']['config']['interval'] = 1.0
+
 # **Composite `meta_modelers_guide.composites.fig05-executable`** — `spec_meta_modelers_guide_composites_fig05_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
@@ -729,6 +367,250 @@ spec_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress
 # process 'single_cell_processes'  (local:SingleCellSpatial)
 spec_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['cell_index'] = 4
 spec_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['interval'] = 1.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: cell-environment-coupling ===
+STUDY = 'cell-environment-coupling'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig05-executable-dynamics**
+
+# fig05-executable-dynamics
+_save_viz('cell-environment-coupling', 'fig05-executable-dynamics', _render_one('html:fig05-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 5: uptake_flux and mechanical_field climb together as the cell senses the local field and acts back on it — one coupling, not two separate subsystems.'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | cell-draws-well | kind=observable path=uptake_flux expr=last(uptake_flux) | op >= value 0.2 provenance cell takes up from the field — uptake flux 0.0→0.34, bolus cell drawn down 1.0→0.2 (exec last≈0.34, fig05-executable) |
+# | cell-acts-back | kind=observable path=traction expr=last(traction) | op >= value 0.3 provenance cell acts back mechanically — traction 0.0→0.41 (exec last≈0.41, fig05-executable) |
+# | mechanical-response | kind=observable path=mechanical_field expr=last(mechanical_field) | op >= value 0.5 provenance mechanical field driven by the cell 0.0→0.94 (exec last≈0.94, fig05-executable) |
+
+# ## Study: Cell–Cell Coupling (`cell-cell-coupling`)
+#
+# **Question.** When two cell interfaces are coupled through one shared environmental nutrient store, what is coupled is not only state but constraint — does one cell's uptake push the other outside its viable bounds (competition), and can a different handler over the same coupling interface stabilize both (cross-feeding)?
+#
+# **Claim.** Two cells over one shared-nutrient interface negotiate viability, not just state: under competition the weaker cell (lower uptake capacity) is driven below its viable band while the stronger persists (cell_a viability → 1.0, cell_b → ~0.0001); under cross-feeding, the same coupling interface with a different handler keeps both cells viable (cell_a and cell_b → 1.0) — two handler environments over one interface (Law 4), the draft itself unchanged (Law 2).
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `coupling-draft` | `meta_modelers_guide.composites.cellcell-coupling` | 0 | — |
+# | `compete` | `meta_modelers_guide.composites.cellcell-executable-compete` | 0 | — |
+# | `crossfeed` | `meta_modelers_guide.composites.cellcell-executable-crossfeed` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.cellcell-coupling`** — `spec_meta_modelers_guide_composites_cellcell_coupling` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_cellcell_coupling = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-coupling.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_coupling)
+
+# === Edit parameters for composite 'Cell–Cell Coupling' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'shared_env'  (local:SharedNutrientEnv)
+spec_meta_modelers_guide_composites_cellcell_coupling['state']['shared_env']['config']['interval'] = 0.1
+
+# process 'cell_a_proc'  (local:CellAgent)
+spec_meta_modelers_guide_composites_cellcell_coupling['state']['cell_a_proc']['config']['interval'] = 0.1
+
+# process 'cell_b_proc'  (local:RivalCellAgent)
+spec_meta_modelers_guide_composites_cellcell_coupling['state']['cell_b_proc']['config']['interval'] = 0.1
+
+# **Composite `meta_modelers_guide.composites.cellcell-executable-compete`** — `spec_meta_modelers_guide_composites_cellcell_executable_compete` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_cellcell_executable_compete = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-executable-compete.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_executable_compete)
+
+# === Edit parameters for composite 'cellcell-executable-compete' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'shared_env'  (local:NutrientPool)
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['shared_env']['config']['supply'] = 0.5
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['shared_env']['config']['capacity'] = 1.0
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['shared_env']['config']['interval'] = 0.1
+
+# process 'cell_a_proc'  (local:CompetingCell)
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['vmax'] = 0.8
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['km'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['yield_'] = 0.5
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['maintenance'] = 0.1
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['via_gain'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['interval'] = 0.1
+
+# process 'cell_b_proc'  (local:CompetingCell)
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['vmax'] = 0.2
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['km'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['yield_'] = 0.5
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['maintenance'] = 0.1
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['via_gain'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['interval'] = 0.1
+
+# **Composite `meta_modelers_guide.composites.cellcell-executable-crossfeed`** — `spec_meta_modelers_guide_composites_cellcell_executable_crossfeed` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-executable-crossfeed.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_executable_crossfeed)
+
+# === Edit parameters for composite 'cellcell-executable-crossfeed' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'shared_env'  (local:NutrientPool)
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['shared_env']['config']['supply'] = 0.5
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['shared_env']['config']['capacity'] = 1.0
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['shared_env']['config']['interval'] = 0.1
+
+# process 'cell_a_proc'  (local:CrossFeedingCell)
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['vmax'] = 0.6
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['km'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['yield_'] = 0.5
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['maintenance'] = 0.1
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['via_gain'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['return_frac'] = 0.7
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['interval'] = 0.1
+
+# process 'cell_b_proc'  (local:CrossFeedingCell)
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['vmax'] = 0.6
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['km'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['yield_'] = 0.5
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['maintenance'] = 0.1
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['via_gain'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['return_frac'] = 0.7
+spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['interval'] = 0.1
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: cell-cell-coupling ===
+STUDY = 'cell-cell-coupling'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **cellcell-executable-compete-dynamics**
+
+# cellcell-executable-compete-dynamics
+_save_viz('cell-cell-coupling', 'cellcell-executable-compete-dynamics', _render_one('html:cellcell-executable-compete.html', {'chart': 'html', 'caption': 'Interactive: cell_a and cell_b viability diverge fast under competition — the weaker cell is driven out of its viable band while the shared nutrient pool is measurably depleted.'}, RUNS_DB, STUDY_YAML))
+
+# **cellcell-executable-crossfeed-dynamics**
+
+# cellcell-executable-crossfeed-dynamics
+_save_viz('cell-cell-coupling', 'cellcell-executable-crossfeed-dynamics', _render_one('html:cellcell-executable-crossfeed.html', {'chart': 'html', 'caption': "Interactive: under cross-feeding, both cells' viability stays up and the shared pool settles higher than under competition — same interface, different handler."}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | competition-starves-weaker-cell | kind=observable path=cell_b.viability expr=last(cell_b.viability) | op <= value 0.5 provenance cell_b (rival, vmax 0.2) viability collapses 1.0 → 0.0001 under competition (exec cellcell-executable-compete, tests/test_cellcell.py::test_competition_pushes_weaker_cell_out_of_viable_bounds) |
+# | competition-stronger-cell-persists | kind=observable path=cell_a.viability expr=last(cell_a.viability) | op >= value 0.5 provenance cell_a (vmax 0.8) viability stays at 1.0 under competition while cell_b collapses (exec cellcell-executable-compete) |
+# | crossfeeding-keeps-both-viable | kind=observable path=cell_b.viability expr=last(cell_b.viability) | op >= value 0.5 provenance both cells viability → 1.0 under cross-feeding (exec cellcell-executable-crossfeed, tests/test_cellcell.py::test_crossfeeding_keeps_both_cells_viable) |
+# | shared-pool-actually-depleted | kind=observable path=env.nutrient expr=last(env.nutrient) | op < value 1.0 provenance shared env.nutrient depleted 1.0 → 0.1999... under competition (test_cellcell.py asserts st["env"]["nutrient"] < 1.0) |
+# | draft-preserves-interface | kind=observable path=interface_match expr=last(interface_match) | op >= value 1.0 provenance tests/test_cellcell.py::test_handler_independence_same_interface — interface_of(compete) == interface_of(crossfeed) == interface_of(draft), asserted structurally |
+
+# ## Study: Disintegration (`disintegration`)
+#
+# **Question.** Fig 6 is disintegration — the change in level of description that fires when a cell crosses its viability bound. Two faces: (a) played through, does the disintegration composite actually show that shift — a thermal shock pushing viability past its bound, viability collapsing, viability-gated metabolism halting, and biomass turning into molecular debris? (b) Is the metabolic-exchange interface at the heart of that same shift realizable at a coarse cell-level grain, an intermediate kinetic grain, and a resolved molecular-network grain (real COBRApy flux-balance optimization) — three grains behind ports that never move?
+#
+# **Claim.** Disintegration is a change in level of description made executable and watchable: playing `fig06-disintegration-dynamics`, a thermal shock pushes the cell past its viability bound, viability collapses, viability-gated metabolism halts, and biomass decays into molecular debris (Fig 6a). The same metabolic-exchange interface's cell↔molecular-network equivalence carries three grains behind ports that never move — a coarse lumped yield, a saturating kinetic law, and real COBRApy flux-balance on `e_coli_core` (Fig 6b, Law 4).
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `disintegration-dynamics` | `meta_modelers_guide.composites.fig06-disintegration-dynamics` | 0 | — |
+# | `disintegration-grain-swap` | `meta_modelers_guide.composites.fig06-disintegration` | 0 | — |
+# | `coarse-grain` | `meta_modelers_guide.composites.fig06-executable-coarse` | 0 | — |
+# | `kinetic-grain` | `meta_modelers_guide.composites.fig06-executable-kinetic` | 0 | — |
+# | `fba-grain` | `meta_modelers_guide.composites.fig06-executable-fba` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.fig06-disintegration-dynamics`** — `spec_meta_modelers_guide_composites_fig06_disintegration_dynamics` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics = load_spec(REPO / 'meta_modelers_guide/composites/fig06-disintegration-dynamics.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig06_disintegration_dynamics)
+
+# === Edit parameters for composite 'Disintegration (playable)' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'thermal'  (local:ThermalEnvironment)
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['config']['temp_normal'] = 37.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['config']['temp_shock'] = 50.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['config']['shock_time'] = 8.0
+
+# process 'uptake'  (local:Uptake)
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['uptake']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['uptake']['config']['uptake_rate'] = 0.5
+
+# process 'metabolism'  (local:ViabilityGatedMetabolism)
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['config']['mode'] = 'coarse'
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['config']['k'] = 0.6
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['config']['energy_yield'] = 0.4
+
+# process 'monitor'  (local:ViabilityMonitor)
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['temp_opt'] = 37.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['temp_tol'] = 5.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['relax'] = 0.5
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['division_threshold'] = 1000000000.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['viability_floor'] = 0.5
+
+# process 'disintegration'  (local:DisintegrationEvent)
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['disintegration']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['disintegration']['config']['decay_rate'] = 0.4
+
+# **Composite `meta_modelers_guide.composites.fig06-disintegration`** — `spec_meta_modelers_guide_composites_fig06_disintegration` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig06_disintegration = load_spec(REPO / 'meta_modelers_guide/composites/fig06-disintegration.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig06_disintegration)
+
+# === Edit parameters for composite 'Cell Disintegration' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'coarse_grained_metabolism'  (local:CoarseGrainedMetabolism)
+spec_meta_modelers_guide_composites_fig06_disintegration['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
+
+# process 'catalyzed_reaction_network'  (local:CatalyzedReactionNetwork)
+spec_meta_modelers_guide_composites_fig06_disintegration['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
 
 # **Composite `meta_modelers_guide.composites.fig06-executable-coarse`** — `spec_meta_modelers_guide_composites_fig06_executable_coarse` (a plain, editable dict)
 
@@ -794,6 +676,85 @@ spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_graine
 spec_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['k'] = 0.2
 spec_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
 
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: disintegration ===
+STUDY = 'disintegration'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig06-disintegration-dynamics**
+
+# fig06-disintegration-dynamics
+_save_viz('disintegration', 'fig06-disintegration-dynamics', _render_one('html:fig06-disintegration-dynamics.html', {'chart': 'html', 'caption': 'Interactive Fig 6 flagship: viability, biomass, and debris (left axis) against temperature (right axis). The shock at t≈8 (37→50 °C) pushes the cell past its viability bound; viability collapses, metabolism halts, and biomass decays into molecular debris.'}, RUNS_DB, STUDY_YAML))
+
+# **fig06-three-metabolisms-dynamics**
+
+# fig06-three-metabolisms-dynamics
+_save_viz('disintegration', 'fig06-three-metabolisms-dynamics', _render_one('image:visualizations/fig06-three-metabolisms-dynamics.svg', {'chart': 'image', 'caption': "The metabolic-exchange interface's three grains — three distinct trajectories (coarse 4.0 / kinetic 2.667 / FBA 6.29, acetate overflow 30.4), run to completion."}, RUNS_DB, STUDY_YAML))
+
+# **fig06-disintegration**
+
+# fig06-disintegration
+_save_viz('disintegration', 'fig06-disintegration', _render_one('image:visualizations/fig06-disintegration.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig06-illustration**
+
+# fig06-illustration
+_save_viz('disintegration', 'fig06-illustration', _render_one('image:visualizations/fig06-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | viability-collapse | kind=observable path=cell.viability expr=last(cell.viability) | op < value 0.3 provenance played to 20 steps: viability 1.0 → ~0, collapsing past the 0.3 floor (tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration) |
+# | biomass-to-debris | kind=observable path=cell.debris expr=last(cell.debris) | op > value 0.0 provenance played to 20 steps: debris 0 → ~4.6 as biomass disintegrates into molecular debris (tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration) |
+# | coarse-linear-growth | kind=observable path=biomass expr=last(biomass) | op >= value 3.5 provenance coarse (lumped linear yield) → biomass 4.0 (exec fig06-executable-coarse) |
+# | kinetic-saturating-growth | kind=observable path=biomass expr=last(biomass) | op >= value 2.0 provenance kinetic (saturating Michaelis–Menten uptake) → biomass 2.667 (exec fig06-executable-kinetic), distinct from the coarse 4.0 (tests/test_compilation.py::test_fig6_handler_independence) |
+# | fba-overflow-secretion | kind=observable path=secretions expr=last(secretions) | op >= value 10.0 provenance FBA overflow metabolism: acetate on the secretions port 0→30.4 (exec fig06-executable-fba); biomass reaches 6.29 (tests/test_fba.py) |
+# | impostor-rejected | kind=observable path=biomass expr=last(biomass) | op >= value 1.0 provenance Rejection control: NonConformingMetabolism is rejected by the compiler (CompileError names missing biomass/energy/entropy/secretions); it never runs, so no biomass observable exists — must fail (tests/test_fba.py::test_impostor_handler_rejected_by_compiler) |
+
+# ## Study: Molecular Interfaces (`molecular-interfaces`)
+#
+# **Question.** At the molecular grain, can a single molecular mechanism (F1Fo ATP synthase) be compiled from its draft and run as a PMF-driven rotary catalyst honoring the four physical interface channels (chemical/electrical/mechanical/thermal) and the specialized substrate/cofactor/catalyst/product ports?
+#
+# **Claim.** The molecular interface''s four typed channels compile to a running ATP-synthase mechanism, all four channels driven consistently from one coupled proton flux (chemical_out 0->100; electrical/mechanical/thermal channels move with it) — the molecular level the disintegration study drops into, made concrete. The specialized substrate/cofactor/catalyst/product ports are structurally preserved through compilation but are not driven by this handler (honestly noted, not claimed as dynamic).
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `molecular-mechanism` | `meta_modelers_guide.composites.fig07-molecular-mechanism` | 0 | — |
+# | `molecular-mechanism-executable` | `meta_modelers_guide.composites.fig07-executable` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.fig07-molecular-mechanism`** — `spec_meta_modelers_guide_composites_fig07_molecular_mechanism` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig07_molecular_mechanism = load_spec(REPO / 'meta_modelers_guide/composites/fig07-molecular-mechanism.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig07_molecular_mechanism)
+
+# === Edit parameters for composite 'A Molecular Mechanism' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'molecular_mechanism'  (local:MolecularMechanism)
+spec_meta_modelers_guide_composites_fig07_molecular_mechanism['state']['molecular_mechanism']['config']['interval'] = 1.0
+
 # **Composite `meta_modelers_guide.composites.fig07-executable`** — `spec_meta_modelers_guide_composites_fig07_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
@@ -813,6 +774,87 @@ spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechani
 spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['efficiency'] = 0.75
 spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['proton_charge'] = 1.602e-19
 spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['interval'] = 1.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: molecular-interfaces ===
+STUDY = 'molecular-interfaces'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig07-executable-dynamics**
+
+# fig07-executable-dynamics
+_save_viz('molecular-interfaces', 'fig07-executable-dynamics', _render_one('html:fig07-executable.html', {'chart': 'html', 'caption': "Interactive Fig 7: chemical_out (ATP) steps from 0 to 100 as the proton flux turns on; the three other channels are computed from the same flux but are ~1e-17–1e-18 in magnitude at these constants, effectively invisible next to ATP's O(100) scale."}, RUNS_DB, STUDY_YAML))
+
+# **fig07-illustration**
+
+# fig07-illustration
+_save_viz('molecular-interfaces', 'fig07-illustration', _render_one('image:visualizations/fig07-illustration.png', {'chart': 'image', 'caption': 'Fig 7 — the molecular interface: a molecule as a process with typed physical channels (chemical, electrical, mechanical, thermal) plus a subports refinement (substrates, cofactors, catalysts, products). This study compiles it into a running F1Fo ATP synthase.'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | atp-synthesized | kind=observable path=chemical_out expr=last(chemical_out) | op >= value 50.0 provenance exec last=100.0 — F1Fo ATP synthase (chemical_out 0->100, PMF-driven rotary catalysis; fig07-executable, run(8) matching scripts/render_study_evidence.py TOTAL_TIME=8.0) |
+# | rotary-power-couples | kind=observable path=mechanical_out expr=last(mechanical_out) | op >= value 1e-19 provenance exec last~=8.29e-18 W (rotary mechanical power = torque*omega, both set by the H+ flux; fig07-executable, run(8)). Real single-molecule magnitude — small in absolute SI units, but nonzero and driven by the same coupled flux as chemical_out. |
+# | draft-is-inert | kind=observable path=chemical_out expr=last(chemical_out) | op >= value 50.0 provenance inert-draft run (fig07-molecular-mechanism) stays at chemical_out=0.0 (empty update by construction) -> fails by design (expected-fail control) |
+
+# ## Study: Biomolecular Complementarity (`biomolecular-complementarity`)
+#
+# **Question.** Do molecular mechanisms compose into nested hierarchical composites (proteins -> complexes -> organelles -> ECM) whose interfaces survive deep nesting, and does a gene-expression cascade wired to the deepest leaves preserve every interface across six levels (Law 2 at the deepest nesting)?
+#
+# **Claim.** The six-level nested place graph (membrane/cytoplasm/nucleus/chromosome/chromatin/nucleosome, plus a parallel organelles branch) compiles with a coupled transcription->translation->assembly cascade wired to its deepest stores; the interface is preserved through the deepest nesting (Law 2). Complementarity/selectivity is the paper''s organizing principle for why molecules assemble into this hierarchy, but the executable demonstrates hierarchical assembly, not fitted binding selectivity — no partner-choice or binding-affinity mechanism is built or claimed.
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `nested-hierarchy` | `meta_modelers_guide.composites.fig08-nested-hierarchy` | 0 | — |
+# | `nested-hierarchy-executable` | `meta_modelers_guide.composites.fig08-executable` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.fig08-nested-hierarchy`** — `spec_meta_modelers_guide_composites_fig08_nested_hierarchy` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy = load_spec(REPO / 'meta_modelers_guide/composites/fig08-nested-hierarchy.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig08_nested_hierarchy)
+
+# === Edit parameters for composite 'Nested Molecular Hierarchy' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'transmembrane_transport'  (local:TransmembraneTransport)
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transmembrane_transport']['config']['interval'] = 1.0
+
+# process 'replication_and_repair'  (local:ReplicationAndRepair)
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['replication_and_repair']['config']['interval'] = 1.0
+
+# process 'cell_metabolism'  (local:CellMetabolism)
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['cell_metabolism']['config']['interval'] = 1.0
+
+# process 'transcription'  (local:Transcription)
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transcription']['config']['interval'] = 1.0
+
+# process 'translation'  (local:Translation)
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['translation']['config']['interval'] = 1.0
+
+# process 'subunit_assembly'  (local:SubunitAssembly)
+spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['subunit_assembly']['config']['interval'] = 1.0
 
 # **Composite `meta_modelers_guide.composites.fig08-executable`** — `spec_meta_modelers_guide_composites_fig08_executable` (a plain, editable dict)
 
@@ -860,6 +902,106 @@ spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly'
 spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['ribosome_init'] = 0.5
 spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['interval'] = 1.0
 
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: biomolecular-complementarity ===
+STUDY = 'biomolecular-complementarity'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig08-executable-dynamics**
+
+# fig08-executable-dynamics
+_save_viz('biomolecular-complementarity', 'fig08-executable-dynamics', _render_one('html:fig08-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 8: the transcription → translation → assembly cascade — mRNA 0→0.178, ribosome 0.5→0.501, protein 0→0.008 — over the six-level nested place graph.'}, RUNS_DB, STUDY_YAML))
+
+# **fig08-executable-movie**
+
+# fig08-executable-movie
+_save_viz('biomolecular-complementarity', 'fig08-executable-movie', _render_one('html:fig08-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the same cascade (Play button sweeps a marker along each curve).'}, RUNS_DB, STUDY_YAML))
+
+# **fig08-nested-hierarchy**
+
+# fig08-nested-hierarchy
+_save_viz('biomolecular-complementarity', 'fig08-nested-hierarchy', _render_one('image:visualizations/fig08-nested-hierarchy.svg', {'chart': 'image', 'caption': 'The Fig 8 six-level nested place graph — extracellular matrix, membrane, cytoplasm, nucleus, chromosome, chromatin, nucleosome, plus a parallel organelles branch holding the ribosomal complex.'}, RUNS_DB, STUDY_YAML))
+
+# **fig08-illustration**
+
+# fig08-illustration
+_save_viz('biomolecular-complementarity', 'fig08-illustration', _render_one('image:visualizations/fig08-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | cascade-populates | kind=observable path=metabolites expr=last(metabolites) | op >= value 1.0 provenance exec last=1.5 — metabolism feeds the cascade (nutrients->2.4, metabolites->1.5, energy->0.84; fig08-executable, run(8) matching scripts/render_study_evidence.py TOTAL_TIME=8.0) |
+# | mrna-transcribed | kind=observable path=rna expr=last(rna) | op >= value 0.05 provenance exec last~=0.178 — gene transcribed to mRNA from the deepest-nested DNA store (fig08-executable, run(8)) |
+# | interface-preserved-to-deepest-leaf | kind=observable path=ribosome expr=last(ribosome) | op >= value 0.3 provenance exec last~=0.501 (seeded at 0.5, actively maintained by SubunitAssemblyODE against 30-min-doubling dilution) — the deepest-nested leaf this composite drives (fig08-executable, run(8)) |
+# | draft-is-inert | kind=observable path=metabolites expr=last(metabolites) | op >= value 1.0 provenance inert-draft run (fig08-nested-hierarchy) stays at metabolites=0.0 (empty update by construction) -> fails by design (expected-fail control) |
+
+# ## Study: Autopoiesis — Composition of the Cellular Interface (`autopoiesis`)
+#
+# **Question.** How does a maintained cellular interface arise from molecular processes? Do metabolism, containment, and replication, mutually wired so each maintains the others, compile into a self-sustaining minimal cell — and does each self-organized function run at coarse, self-organized, and molecular grains behind one interface (Law 4, its second home)?
+#
+# **Claim.** The three closure processes (metabolism, containment, replication) compile into a minimal cell whose interface is produced by the coupling itself — enzymes and energy exist only because a coupled process made them, not because they were seeded — and each function is realized by conforming handlers at multiple grains (containment and replication at three, metabolism at two) behind one fixed interface, Law 4''s second worked example. This is the closure pattern demonstrated qualitatively, not a validated autopoietic system.
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `fig09a-coarse-graining` | `meta_modelers_guide.composites.fig09a-coarse-graining` | 0 | — |
+# | `fig09a-executable` | `meta_modelers_guide.composites.fig09a-executable` | 0 | — |
+# | `fig09b-minimal-cell` | `meta_modelers_guide.composites.fig09b-minimal-cell` | 0 | — |
+# | `fig09b-executable` | `meta_modelers_guide.composites.fig09b-executable` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.fig09a-coarse-graining`** — `spec_meta_modelers_guide_composites_fig09a_coarse_graining` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig09a_coarse_graining = load_spec(REPO / 'meta_modelers_guide/composites/fig09a-coarse-graining.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig09a_coarse_graining)
+
+# === Edit parameters for composite 'Self-Organization & Coarse-Graining' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'metabolism_closure'  (local:MetabolismClosure)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['metabolism_closure']['config']['interval'] = 1.0
+
+# process 'autocatalysis'  (local:Autocatalysis)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['autocatalysis']['config']['interval'] = 1.0
+
+# process 'containment_closure'  (local:ContainmentClosure)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['containment_closure']['config']['interval'] = 1.0
+
+# process 'membrane_self_assembly'  (local:MembraneSelfAssembly)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['membrane_self_assembly']['config']['interval'] = 1.0
+
+# process 'lipid_aggregation'  (local:LipidAggregation)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['lipid_aggregation']['config']['interval'] = 1.0
+
+# process 'replication_closure'  (local:ReplicationClosure)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['replication_closure']['config']['interval'] = 1.0
+
+# process 'template_replication'  (local:TemplateReplication)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_replication']['config']['interval'] = 1.0
+
+# process 'template_directed_synthesis'  (local:TemplateDirectedSynthesis)
+spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_directed_synthesis']['config']['interval'] = 1.0
+
 # **Composite `meta_modelers_guide.composites.fig09a-executable`** — `spec_meta_modelers_guide_composites_fig09a_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
@@ -905,6 +1047,34 @@ spec_meta_modelers_guide_composites_fig09a_executable['state']['template_replica
 # process 'template_directed_synthesis'  (local:TemplateDirectedSynthesisProc)
 spec_meta_modelers_guide_composites_fig09a_executable['state']['template_directed_synthesis']['config']['interval'] = 1.0
 
+# **Composite `meta_modelers_guide.composites.fig09b-minimal-cell`** — `spec_meta_modelers_guide_composites_fig09b_minimal_cell` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig09b_minimal_cell = load_spec(REPO / 'meta_modelers_guide/composites/fig09b-minimal-cell.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig09b_minimal_cell)
+
+# === Edit parameters for composite 'The Minimal Cell' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'minimal_cell_containment'  (local:MinimalCellContainment)
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_containment']['config']['interval'] = 1.0
+
+# process 'minimal_cell_metabolism'  (local:MinimalCellMetabolism)
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
+
+# process 'gene_expression'  (local:GeneExpression)
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['gene_expression']['config']['interval'] = 1.0
+
+# process 'minimal_cell_replication'  (local:MinimalCellReplication)
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_replication']['config']['interval'] = 1.0
+
+# process 'diffusion'  (local:Diffusion)
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['diffusion']['config']['interval'] = 1.0
+
+# process 'reactions'  (local:Reactions)
+spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['reactions']['config']['interval'] = 1.0
+
 # **Composite `meta_modelers_guide.composites.fig09b-executable`** — `spec_meta_modelers_guide_composites_fig09b_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
@@ -947,6 +1117,117 @@ spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['con
 spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['nucleic_turnover'] = 0.2
 spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['interval'] = 1.0
 
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: autopoiesis ===
+STUDY = 'autopoiesis'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig09a-executable-dynamics**
+
+# fig09a-executable-dynamics
+_save_viz('autopoiesis', 'fig09a-executable-dynamics', _render_one('html:fig09a-executable.html', {'chart': 'html', 'caption': "Interactive Fig 9a: containment's three grains (boundary, membrane, aggregate) plus metabolism's two (metabolites, products) and replication's two (copies) — one interface, several conforming handlers."}, RUNS_DB, STUDY_YAML))
+
+# **fig09a-executable-movie**
+
+# fig09a-executable-movie
+_save_viz('autopoiesis', 'fig09a-executable-movie', _render_one('html:fig09a-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the fig09a grain trajectories.'}, RUNS_DB, STUDY_YAML))
+
+# **fig09b-executable-dynamics**
+
+# fig09b-executable-dynamics
+_save_viz('autopoiesis', 'fig09b-executable-dynamics', _render_one('html:fig09b-executable.html', {'chart': 'html', 'caption': "Interactive Fig 9b: the minimal cell's shared component pools all turning over together — enzymes, energy, genes, proteins, nucleic acids, metabolites, membrane area."}, RUNS_DB, STUDY_YAML))
+
+# **fig09b-executable-movie**
+
+# fig09b-executable-movie
+_save_viz('autopoiesis', 'fig09b-executable-movie', _render_one('html:fig09b-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the fig09b minimal-cell trajectories.'}, RUNS_DB, STUDY_YAML))
+
+# **fig09-illustration**
+
+# fig09-illustration
+_save_viz('autopoiesis', 'fig09-illustration', _render_one('image:visualizations/fig09-illustration.png', {'chart': 'image', 'caption': 'Fig 9a — self-organization, coarse-graining, and autopoiesis: metabolism, containment, and replication, each drawn at coarse/self-organized/molecular grains, compiled into the minimal cell of Fig 9b.'}, RUNS_DB, STUDY_YAML))
+
+# **fig09-illustration-2**
+
+# fig09-illustration-2
+_save_viz('autopoiesis', 'fig09-illustration-2', _render_one('image:visualizations/fig09-illustration-2.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | containment-three-grains | kind=observable path=containment_coarse.boundary expr=last(containment_coarse.boundary) | op >= value 1.0 provenance containment_coarse.boundary 0.0 → 1.5, containment_selforg.membrane 0.0 → 2.0, containment_molecular.aggregate 0.0 → 1.0 — three distinct grains of one function, each moving under its own handler (exec fig09a-executable, 10 engine steps) |
+# | closure-enzymes-from-zero | kind=observable path=enzymes.concentration expr=last(enzymes.concentration) | op >= value 0.5 provenance enzymes.concentration 0.0 → 0.95 over 10 engine steps — metabolism's catalyst pool exists only because gene expression made it (exec fig09b-executable) |
+# | metabolism-powers-replication | kind=observable path=genes.concentration expr=last(genes.concentration) | op >= value 1.3 provenance genes.concentration 1.0 → 1.69 as energy.energy climbs 1.0 → 1.31 and is spent by replication (exec fig09b-executable, 10 engine steps) |
+# | draft-is-inert | kind=observable path=enzymes.concentration expr=last(enzymes.concentration) | op >= value 0.5 provenance inert draft (fig09b-minimal-cell, empty update by construction) stays at enzymes.concentration 0.0 → fails the ≥0.5 threshold by design (expected-fail control) |
+
+# ## Study: Growth and Division (`growth-and-division`)
+#
+# **Question.** Does growth — an autocatalytic, energy-coupled DNA-replication process that plays the role of environment-coupled uptake — drive the cell's own dna store across a threshold, and does crossing that threshold fire a genuine structural rewrite of the place graph (one cell node becoming two daughter nodes at runtime, mass conserved) rather than a pre-declared post-structure animated on a wall clock?
+#
+# **Claim.** Growth precedes and drives division: an autocatalytic, energy-coupled DNA-replication process grows the cell's own dna store until it crosses a threshold, and crossing that threshold triggers a change to the composition itself — one cell becomes two through a graph rewrite that creates new nodes at runtime and conserves mass (the parent is halved, not doubled), not a pre-drawn pair on a timer (Law 2′, rewrite conformance vs wiring; Law 2, interface preserved across the rewrite).
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `division` | `meta_modelers_guide.composites.fig10-1-division` | 0 | — |
+# | `division-rewrite` | `meta_modelers_guide.composites.fig10-1-rewrite` | 0 | — |
+# | `division-executable` | `meta_modelers_guide.composites.fig10-1-executable` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.fig10-1-division`** — `spec_meta_modelers_guide_composites_fig10_1_division` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig10_1_division = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-division.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_1_division)
+
+# === Edit parameters for composite 'Cell Division — Draft Interface' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'dna_replication'  (local:DNAReplication)
+spec_meta_modelers_guide_composites_fig10_1_division['state']['dna_replication']['config']['interval'] = 1.0
+
+# process 'segregate_chromosome'  (local:SegregateChromosome)
+spec_meta_modelers_guide_composites_fig10_1_division['state']['segregate_chromosome']['config']['interval'] = 1.0
+
+# process 'divide'  (local:Divide)
+spec_meta_modelers_guide_composites_fig10_1_division['state']['divide']['config']['interval'] = 1.0
+
+# **Composite `meta_modelers_guide.composites.fig10-1-rewrite`** — `spec_meta_modelers_guide_composites_fig10_1_rewrite` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig10_1_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-rewrite.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_1_rewrite)
+
+# === Edit parameters for composite 'Cell Division — Live Topology' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# tunable parameters (filled into ${name} placeholders):
+spec_meta_modelers_guide_composites_fig10_1_rewrite['parameters']['cycle']['default'] = 3.0
+
+# process 'cell_cycle'  (local:CellCycleDivision)
+spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = '${cycle}'
+
 # **Composite `meta_modelers_guide.composites.fig10-1-executable`** — `spec_meta_modelers_guide_composites_fig10_1_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
@@ -968,6 +1249,117 @@ spec_meta_modelers_guide_composites_fig10_1_executable['state']['segregate_chrom
 # process 'divide'  (local:DivisionRewrite)
 spec_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['dna_threshold'] = 2.0
 spec_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['interval'] = 1.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: growth-and-division ===
+STUDY = 'growth-and-division'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig10-1-executable-dynamics**
+
+# fig10-1-executable-dynamics
+_save_viz('growth-and-division', 'fig10-1-executable-dynamics', _render_one('html:fig10-1-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 10a,b: dna climbs past threshold, the dashed line marks the division rewrite firing, cell_count steps 1→2, and biomass is partitioned (not duplicated) between the two daughters.'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-1-executable-movie**
+
+# fig10-1-executable-movie
+_save_viz('growth-and-division', 'fig10-1-executable-movie', _render_one('html:fig10-1-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of growth → division (a Play button sweeps a marker along each curve).'}, RUNS_DB, STUDY_YAML))
+
+# **growth-and-division-dynamics**
+
+# growth-and-division-dynamics
+_save_viz('growth-and-division', 'growth-and-division-dynamics', _render_one('image:visualizations/growth-and-division-dynamics.svg', {'chart': 'image', 'caption': "Growth-and-division dynamics — DNA grows via the autocatalytic, energy-coupled replication process and crosses threshold, the rewrite fires, and the parent's biomass partitions to two daughters (mass conserved), run to completion through the engine."}, RUNS_DB, STUDY_YAML))
+
+# **fig10-1-division**
+
+# fig10-1-division
+_save_viz('growth-and-division', 'fig10-1-division', _render_one('image:visualizations/fig10-1-division.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-illustration**
+
+# fig10-illustration
+_save_viz('growth-and-division', 'fig10-illustration', _render_one('image:visualizations/fig10-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | growth-crosses-threshold | kind=observable path=dna expr=last(dna) | op >= value 2.0 provenance growth process (k·dna·energy) drives parent dna 1 → 3.06, crossing dna_threshold 2.0 (exec fig10-1-executable) |
+# | division-fires | kind=observable path=cell_count expr=last(cell_count) | op >= value 1.5 provenance DNA crosses threshold 2.0 (parent dna 1→3.06) → rewrite fires once, cell_count 1→2 (exec fig10-1-executable, tests/test_compilation.py::test_fig10_division_is_event_driven) |
+# | daughters-spawn | kind=observable path=dna expr=last(dna) | op >= value 1.0 provenance division spawns two new daughters (exec daughter dna 0→2.75; each daughter biomass 0→0.5, parent biomass →0 — mass conserved; tests/test_compilation.py::test_rewrite_conformance_against_wiring, tests/test_fig10_rewrite.py::test_cell_divides_into_two_daughters) |
+# | draft-is-inert | kind=observable path=cell_count expr=last(cell_count) | op >= value 1.5 provenance inert-draft run stays at seed cell_count 1 (empty update by construction) → fails by design (expected-fail control) |
+
+# ## Study: Development and Evolution (`development-and-evolution`)
+#
+# **Question.** Fig 10c–f asks whether two of biology's hardest structural transitions — development (individual cells nesting into a collective composite, a biofilm, with its own shared interface) and evolution (a new interface port switching on, selected by viability) — can be represented as event-driven, compositional rewrites (Law 2′) that preserve the interface underneath them (Law 2). Two composites answer the first half of that (do the drafts compile to executables that run, behind an unchanged interface?) faithfully. This study asks the harder, second half explicitly: how much of what runs is a genuine developmental/evolutionary mechanism, versus a scripted stand-in — and is honest that the paper itself calls this transition "an open and substantial challenge" (line 580).
+#
+# **Claim.** Development nests individual cells into a biofilm collective behind a preserved, shared extracellular-matrix interface (Law 2), and evolution switches on a new chemical port under a viability-weighted growth term — both compile and run, and a separate "Live Topology" pair for each even performs genuine runtime place-graph node insertion/removal (in the spirit of Law 2′). But — the defining point of this study — none of this is a validated biological result: selection is a single ODE with fixed viability/fitness constants (not real fitness-based population dynamics), the "new port" is a first-order config-driven ramp (not an emergent evolutionary innovation), the continuous-path biofilm state is a pre-declared, non-inserted scalar store, and even the genuine node-inserting Live-Topology composites run on a fixed wall-clock schedule with a hardcoded mutant fitness advantage rather than an emergent, state-driven trigger. The paper itself calls development and evolution "an open and substantial challenge" (line 580); this study demonstrates the pattern, not the phenomenon.
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `development` | `meta_modelers_guide.composites.fig10-2-development` | 0 | — |
+# | `development-rewrite` | `meta_modelers_guide.composites.fig10-2-rewrite` | 0 | — |
+# | `development-executable` | `meta_modelers_guide.composites.fig10-2-executable` | 0 | — |
+# | `evolution` | `meta_modelers_guide.composites.fig10-3-evolution` | 0 | — |
+# | `evolution-rewrite` | `meta_modelers_guide.composites.fig10-3-rewrite` | 0 | — |
+# | `evolution-executable` | `meta_modelers_guide.composites.fig10-3-executable` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.fig10-2-development`** — `spec_meta_modelers_guide_composites_fig10_2_development` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig10_2_development = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-development.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_2_development)
+
+# === Edit parameters for composite 'Biofilm Development — Draft Interface' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'surface_attachment'  (local:SurfaceAttachment)
+spec_meta_modelers_guide_composites_fig10_2_development['state']['surface_attachment']['config']['interval'] = 1.0
+
+# process 'ecm_secretion'  (local:ECMSecretion)
+spec_meta_modelers_guide_composites_fig10_2_development['state']['ecm_secretion']['config']['interval'] = 1.0
+
+# process 'biofilm_growth'  (local:BiofilmGrowth)
+spec_meta_modelers_guide_composites_fig10_2_development['state']['biofilm_growth']['config']['interval'] = 1.0
+
+# **Composite `meta_modelers_guide.composites.fig10-2-rewrite`** — `spec_meta_modelers_guide_composites_fig10_2_rewrite` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig10_2_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-rewrite.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_2_rewrite)
+
+# === Edit parameters for composite 'Biofilm Development — Live Topology' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# tunable parameters (filled into ${name} placeholders):
+spec_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['capacity']['default'] = 5
+spec_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['grow_every']['default'] = 2.0
+
+# process 'development'  (local:BiofilmDevelopment)
+spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['grow_every'] = '${grow_every}'
+spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['capacity'] = '${capacity}'
 
 # **Composite `meta_modelers_guide.composites.fig10-2-executable`** — `spec_meta_modelers_guide_composites_fig10_2_executable` (a plain, editable dict)
 
@@ -992,6 +1384,48 @@ spec_meta_modelers_guide_composites_fig10_2_executable['state']['ecm_secretion']
 spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['mass_rate'] = 0.25
 spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['growth_rate'] = 0.08
 spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['interval'] = 1.0
+
+# **Composite `meta_modelers_guide.composites.fig10-3-evolution`** — `spec_meta_modelers_guide_composites_fig10_3_evolution` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig10_3_evolution = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-evolution.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_3_evolution)
+
+# === Edit parameters for composite 'Evolution — Draft Interface' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'variation'  (local:Variation)
+spec_meta_modelers_guide_composites_fig10_3_evolution['state']['variation']['config']['interval'] = 1.0
+
+# process 'selection'  (local:Selection)
+spec_meta_modelers_guide_composites_fig10_3_evolution['state']['selection']['config']['interval'] = 1.0
+
+# process 'port_addition'  (local:PortAddition)
+spec_meta_modelers_guide_composites_fig10_3_evolution['state']['port_addition']['config']['interval'] = 1.0
+
+# **Composite `meta_modelers_guide.composites.fig10-3-rewrite`** — `spec_meta_modelers_guide_composites_fig10_3_rewrite` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_fig10_3_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-rewrite.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig10_3_rewrite)
+
+# === Edit parameters for composite 'Evolution — Live Topology' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# tunable parameters (filled into ${name} placeholders):
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['founders']['default'] = 3
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['capacity']['default'] = 6
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['generation']['default'] = 2.0
+spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['mutate_at']['default'] = 4.0
+
+# process 'evolution'  (local:LineageEvolution)
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['generation'] = '${generation}'
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['mutate_at'] = '${mutate_at}'
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['founders'] = '${founders}'
+spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['capacity'] = '${capacity}'
 
 # **Composite `meta_modelers_guide.composites.fig10-3-executable`** — `spec_meta_modelers_guide_composites_fig10_3_executable` (a plain, editable dict)
 
@@ -1019,13 +1453,37 @@ spec_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']
 #
 # _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
 
-# === Study: gallery ===
-STUDY = 'gallery'
+# === Study: development-and-evolution ===
+STUDY = 'development-and-evolution'
 STUDY_DIR = REPO / 'workspace/studies' / STUDY
 STUDY_YAML = str(STUDY_DIR / "study.yaml")
 RUNS_DB = str(STUDY_DIR / "runs.db")
 
 print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **fig10-2-executable-dynamics**
+
+# fig10-2-executable-dynamics
+_save_viz('development-and-evolution', 'fig10-2-executable-dynamics', _render_one('html:fig10-2-executable.html', {'chart': 'html', 'caption': 'Interactive: biofilm_mass, ecm, cells, and attached all climb together over the pre-declared biofilm store — the collective interface accumulating state, not a place-graph rewrite.'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-2-executable-movie**
+
+# fig10-2-executable-movie
+_save_viz('development-and-evolution', 'fig10-2-executable-movie', _render_one('html:fig10-2-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the biofilm assembling.'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-3-executable-dynamics**
+
+# fig10-3-executable-dynamics
+_save_viz('development-and-evolution', 'fig10-3-executable-dynamics', _render_one('html:fig10-3-executable.html', {'chart': 'html', 'caption': 'Interactive: new_port ramps on as a scripted config-driven onset while cell_count grows under a fixed-constant selection ODE — real dynamics, but not emergent selection.'}, RUNS_DB, STUDY_YAML))
+
+# **fig10-3-executable-movie**
+
+# fig10-3-executable-movie
+_save_viz('development-and-evolution', 'fig10-3-executable-movie', _render_one('html:fig10-3-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the port-onset ramp and population growth.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -1033,4 +1491,10 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | all-figures-run | kind=observable path=chemical_out expr=last(chemical_out) | op >= value 50.0 provenance all 12 fig*-executable composites run to completion; witness fig07 chemical_out 0 → 100 (exec last=100.0) |
+# | biofilm-interface-accumulates | kind=observable path=biofilm.biofilm_mass expr=last(biofilm.biofilm_mass) | op >= value 1.0 provenance fig10-2-executable run 10 steps: biofilm_mass 0 → 3.09, ecm 0 → 2.47, attached 0 → 1.85, adhesion 0 → 0.93, cells 1.00 → 2.09 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-2-executable]) |
+# | port-switches-on | kind=observable path=cell_O157.new_port expr=last(cell_O157.new_port) | op >= value 0.3 provenance fig10-3-executable run 10 steps: new_port 0 → 0.65 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable]) |
+# | selection-grows-population | kind=observable path=cell_ecoli.cell_count expr=last(cell_ecoli.cell_count) | op >= value 2.0 provenance fig10-3-executable run 10 steps: cell_ecoli.cell_count 1 → 4 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable]) |
+# | drafts-are-inert | kind=observable path=biofilm.biofilm_mass expr=last(biofilm.biofilm_mass) | op <= value 0.001 provenance fig10-2-development run 10 steps: biofilm.biofilm_mass stays 0.0 (empty update by construction); fig10-3-evolution run 10 steps: cell_ecoli.cell_count stays 0.0 (the uncompiled draft's _value seed is not honored outside compile_composite), new_port stays 0.0 — only global_time advances on both drafts |
+
+# ## Open decisions
+# - development-and-evolution's own gate is needs_calibration: selection is a single fixed-constant ODE and the "new port" a scripted config ramp, not emergent population or fitness dynamics. Treat its results as pattern demonstrations only until replaced with genuine, state-driven selection and innovation mechanisms.
