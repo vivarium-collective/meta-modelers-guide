@@ -905,6 +905,209 @@ def run_growth_division_frames(composite_state: dict, core, steps: int = 20, cad
 
 
 # --------------------------------------------------------------------------
+# Sorting (differential-adhesion, two-type checkerboard demixing) frame
+# capture
+# --------------------------------------------------------------------------
+
+# Two fixed, visually distinct type colors -- shared across every sorting
+# frame/legend so "type 1" and "type 2" read as the same color throughout the
+# whole GIF (there's no field/lineage to derive a palette from here, unlike
+# `_lineage_colors`, since CpmSorting's two types are a fixed, non-dividing
+# roster known up front).
+_SORTING_TYPE_COLORS: dict[int, str] = {1: "#d1495b", 2: "#2f6f9f"}
+_SORTING_MEDIUM_BG = "#eef2f0"
+
+
+def _render_sorting_frame(lattice: np.ndarray, type_lattice: np.ndarray, time: float,
+                           colors: dict[int, str]) -> np.ndarray:
+    """Render one matplotlib (Agg) frame for a sorting tick: every live pixel
+    colored by its cell's TYPE (not by cell id -- the demixing signal IS the
+    two type populations separating, individual cell identity within a type
+    isn't the point) via the shared :func:`_footprint_fill` (translucent
+    fill + contour, layered per type over a flat medium-colored background --
+    there's no diffusing field here, so unlike every other renderer in this
+    module there's no heatmap to draw underneath). Returns an (H, W, 3) uint8
+    RGB array (the figure canvas buffer).
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import to_rgb
+
+    ny, nx = lattice.shape
+    fig, ax = plt.subplots(1, 1, figsize=(6.2, 6.2), dpi=100)
+
+    bg = np.ones((ny, nx, 4))
+    bg[..., :3] = to_rgb(_SORTING_MEDIUM_BG)
+    ax.imshow(bg, origin="lower")
+
+    for t, color in colors.items():
+        _footprint_fill(ax, type_lattice == t, color, fill_alpha=0.55, contour_color=color)
+
+    handles = [plt.Line2D([0], [0], color=color, lw=2, label=f"type {t}")
+               for t, color in colors.items()]
+    ax.legend(handles=handles, loc="upper right", fontsize=8, framealpha=0.6)
+
+    ax.set_xticks([]); ax.set_yticks([])
+    _pattern_title(fig, "Biomolecular complementarity — differential-adhesion sorting", time)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_sorting_frames(composite_state: dict, core, steps: int = 60, cadence: int = 5
+                        ) -> tuple[list[np.ndarray], dict[str, list[float]]]:
+    """Mirror :func:`run_flagship_frames`, but for the sorting study
+    (``CpmSorting``): builds a fresh :class:`Composite` from
+    ``composite_state`` and runs it in a manual cadence loop, capturing one
+    animation frame + one metrics row per tick.
+
+    Reaches the live CPM world via the process instance whose ``address``
+    names ``CpmSorting`` (found generically, like ``run_colony_frames`` does
+    for ``CpmColonyField``, rather than hardcoding the ``"cell"`` store key)
+    for the lattice snapshot. There is no ``fields`` store for this study (no
+    field input/output at all -- see ``sorting.py``'s module docstring), so
+    the grid shape comes from the process config instead of a field array's
+    ``.shape``.
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
+    arrays; ``metrics`` is ``{"time": [...], "hetero_frac": [...],
+    "cell_pixels": [...]}`` -- flat, equal-length lists (one entry per frame,
+    like the flagship/disintegration shape), drawn straight from the
+    composite's ``obs`` store after each tick, plus the explicit
+    panel-dispatch marker ``metrics["_panel"] = "sorting"`` (see
+    :func:`metrics_panel`).
+    """
+    from process_bigraph import Composite
+
+    proc_key = next(
+        k for k, v in composite_state.items()
+        if isinstance(v, dict) and v.get("_type") == "process"
+        and "CpmSorting" in v.get("address", "")
+    )
+
+    comp = Composite({"state": composite_state}, core=core)
+
+    grid = dict(composite_state[proc_key]["config"].get("grid") or {})
+    nx, ny = int(grid.get("nx", 70)), int(grid.get("ny", 70))
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    metrics: dict[str, list[float]] = {"time": [], "hetero_frac": [], "cell_pixels": []}
+    raw: list[tuple[np.ndarray, np.ndarray, float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        world = comp.state[proc_key]["instance"].world
+        lattice = np.array(world.snapshot()).reshape(ny, nx)
+        obs = comp.state["obs"]
+
+        # Per-pixel type, derived from the lattice + the process's per-cell
+        # `type` observable (id -> type) -- never cached, re-derived every
+        # tick like every other renderer's live-id handling in this module.
+        type_map = {int(k): float(v) for k, v in (obs.get("type") or {}).items()}
+        type_lattice = np.zeros_like(lattice, dtype=float)
+        for cid, t in type_map.items():
+            type_lattice[lattice == cid] = t
+
+        t = float((tick + 1) * cadence)
+        raw.append((lattice, type_lattice, t))
+
+        metrics["time"].append(t)
+        metrics["hetero_frac"].append(float(obs.get("hetero_frac", 0.0)))
+        metrics["cell_pixels"].append(float(obs.get("cell_pixels", 0.0)))
+
+    frames = [_render_sorting_frame(lat, tl, t, _SORTING_TYPE_COLORS) for lat, tl, t in raw]
+
+    metrics["_panel"] = "sorting"
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
+# Cahn-Hilliard (condensate phase separation) frame capture
+# --------------------------------------------------------------------------
+
+def _render_cahn_hilliard_frame(phi: np.ndarray, time: float) -> np.ndarray:
+    """Render one matplotlib (Agg) frame for a Cahn-Hilliard tick: ``phi`` as
+    a diverging heatmap fixed at the physical +/-1 coexistence bounds (not a
+    per-frame min/max -- color must stay comparable frame-to-frame as domains
+    grow from the near-flat, near-zero starting noise toward the +1/-1
+    coexistence values, the same fixed-scale reasoning as every other
+    renderer's ``*_vmax``/``vabs``). Returns an (H, W, 3) uint8 RGB array
+    (the figure canvas buffer).
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(1, 1, figsize=(6.2, 5.6), dpi=100)
+
+    im = ax.imshow(phi, origin="lower", cmap="RdBu", vmin=-1.0, vmax=1.0)
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="phi")
+
+    ax.set_xticks([]); ax.set_yticks([])
+    _pattern_title(fig, "Biomolecular complementarity — Cahn–Hilliard condensation", time)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_cahn_hilliard_frames(composite_state: dict, core, steps: int = 35, cadence: int = 5
+                              ) -> tuple[list[np.ndarray], dict[str, list[float]]]:
+    """Mirror :func:`run_flagship_frames`, but for the condensate study
+    (``CahnHilliard``): builds a fresh :class:`Composite` from
+    ``composite_state`` and runs it in a manual cadence loop, capturing one
+    animation frame + one metrics row per tick.
+
+    Unlike every CPM-lattice renderer in this module, there is no world-
+    owning process instance to reach into -- ``phi`` IS a genuine
+    process-bigraph ``fields`` store (see ``cahn_hilliard.py``'s module
+    docstring), so it's read straight off ``comp.state["fields"]["phi"]``
+    after each tick, same as the flagship/colony/growth-division renderers
+    read ``glucose``/``acetate``.
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
+    arrays; ``metrics`` is ``{"time": [...], "phi_var": [...]}`` -- flat,
+    equal-length lists (one entry per frame), drawn straight from the
+    composite's ``obs`` store after each tick, plus the explicit
+    panel-dispatch marker ``metrics["_panel"] = "cahn_hilliard"`` (see
+    :func:`metrics_panel`).
+    """
+    from process_bigraph import Composite
+
+    comp = Composite({"state": composite_state}, core=core)
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    metrics: dict[str, list[float]] = {"time": [], "phi_var": []}
+    raw: list[tuple[np.ndarray, float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        phi = np.asarray(comp.state["fields"]["phi"]).copy()
+        obs = comp.state["obs"]
+
+        t = float((tick + 1) * cadence)
+        raw.append((phi, t))
+
+        metrics["time"].append(t)
+        metrics["phi_var"].append(float(obs.get("phi_var", 0.0)))
+
+    frames = [_render_cahn_hilliard_frame(phi, t) for phi, t in raw]
+
+    metrics["_panel"] = "cahn_hilliard"
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
 # GIF encoding
 # --------------------------------------------------------------------------
 
@@ -1336,6 +1539,102 @@ def _metrics_panel_growth_division(metrics: dict[str, Any], out_path: Path,
     return "plotly"
 
 
+def _metrics_panel_sorting(metrics: dict[str, list[float]], out_path: Path,
+                            include_plotlyjs: str | bool) -> str:
+    """Sorting counterpart of :func:`metrics_panel` for
+    ``run_sorting_frames``' output shape (flat equal-length lists, like the
+    flagship/disintegration shape). ``hetero_frac`` (the demixing curve, the
+    study's headline number, collapsing from the checkerboard's well-mixed
+    start toward a sorted low value) is drawn on the primary left-hand axis;
+    ``cell_pixels`` (the cohesion guard -- a dissolving/fragmenting clump
+    must not be misread as "sorted" just because its heterotypic interface
+    shrank along with everything else, see ``sorting.py``'s module
+    docstring) gets its own secondary right-hand axis since it lives on a
+    very different scale (O(100s) pixels vs. ``hetero_frac``'s [0, 1]
+    range). Falls back to a small static HTML table if Plotly is
+    unavailable.
+    """
+    times = metrics.get("time") or []
+    hetero = metrics.get("hetero_frac") or []
+    cohesion = metrics.get("cell_pixels") or []
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        header = "".join(f"<th>{c}</th>" for c in ("time", "hetero_frac", "cell_pixels"))
+        rows = "".join(
+            "<tr>" + "".join(f"<td>{v}</td>" for v in vals) + "</tr>"
+            for vals in zip(times, hetero, cohesion)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr>{header}</tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=hetero, mode="lines+markers", name="hetero_frac",
+                              line=dict(width=2.8, color=_PALETTE[0])))
+    fig.add_trace(go.Scatter(x=times, y=cohesion, mode="lines+markers", name="cell_pixels (cohesion)",
+                              line=dict(width=2.0, color=_PALETTE[1], dash="dot"), yaxis="y2"))
+
+    fig.update_layout(
+        title=dict(text="<b>sorting — demixing + cohesion</b>", x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis=dict(title="hetero_frac", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis2=dict(title="cell_pixels (cohesion)", overlaying="y", side="right", showgrid=False),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.26, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
+    )
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
+def _metrics_panel_cahn_hilliard(metrics: dict[str, list[float]], out_path: Path,
+                                  include_plotlyjs: str | bool) -> str:
+    """Cahn-Hilliard counterpart of :func:`metrics_panel` for
+    ``run_cahn_hilliard_frames``' output shape (flat equal-length lists).
+    ``phi_var`` is the study's headline number -- it rises from the
+    near-flat starting noise toward the coexistence variance as ``phi``
+    separates into +1/-1 domains -- so it's the only trace, on a single
+    axis (no secondary-scale metric to share the panel with, unlike every
+    other study here). Falls back to a small static HTML table if Plotly is
+    unavailable.
+    """
+    times = metrics.get("time") or []
+    phi_var = metrics.get("phi_var") or []
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        rows = "".join(
+            f"<tr><td>{t}</td><td>{v}</td></tr>" for t, v in zip(times, phi_var)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr><th>time</th><th>phi_var</th></tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=phi_var, mode="lines+markers", name="phi_var",
+                              line=dict(width=2.8, color=_PALETTE[0])))
+
+    fig.update_layout(
+        title=dict(text="<b>condensate — phase-separation variance</b>", x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis=dict(title="phi_var", gridcolor="rgba(120,130,125,0.16)"),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
+    )
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
 # Explicit renderer→panel-kind dispatch table (see `metrics_panel`'s
 # docstring): every `run_*_frames` in this module stamps `metrics["_panel"]`
 # with its own kind name, looked up here instead of sniffed from which keys
@@ -1346,4 +1645,6 @@ _METRICS_PANEL_DISPATCH: dict[str, Any] = {
     "colony_compete": _metrics_panel_compete,
     "disintegration": _metrics_panel_disintegration,
     "growth_division": _metrics_panel_growth_division,
+    "sorting": _metrics_panel_sorting,
+    "cahn_hilliard": _metrics_panel_cahn_hilliard,
 }
