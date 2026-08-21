@@ -55,7 +55,18 @@ class CpmColonyField(Process):
         # `_default` on a container type gets *merged* (concatenated for lists)
         # with the caller-supplied config rather than replaced by it. Python-side
         # defaulting in `__init__` avoids that trap entirely.
-        "grid": {"_type": "tree[integer]"},
+        # `tree[integer]` looked right for a flat {nx, ny} dict, but
+        # process_bigraph's Composite config resolution collapses a
+        # `tree[integer]`-typed process-config leaf to its scalar default (0)
+        # instead of preserving the dict (verified directly: `map[integer]`/
+        # `schema` round-trip {"nx": .., "ny": ..} correctly through the same
+        # Composite path, `tree[integer]` does not) -- so any composite
+        # requesting nx/ny != the Python-side fallback default (40, see
+        # below) silently got a 40x40 lattice instead. `test_cpm_colony_field`
+        # only ever passed because it happens to request nx=ny=40. `map[integer]`
+        # is semantically identical here (colony_field.py just does
+        # `dict(c.get("grid") or {})` either way) and isn't affected.
+        "grid": {"_type": "map[integer]"},
         "cells": {"_type": "list"},
         "contact": {"_type": "list"},
         "temperature": _f(10.0),

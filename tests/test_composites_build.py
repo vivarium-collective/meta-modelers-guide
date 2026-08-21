@@ -34,7 +34,7 @@ def test_composite_builds(spec_path):
     # built where those optional deps are installed; skip elsewhere (e.g. base CI).
     if "spatio_flux" in raw:
         pytest.importorskip("spatio_flux")
-    if "CpmCellField" in raw:
+    if "CpmCellField" in raw or "CpmColonyField" in raw:
         pytest.importorskip("cpm")
     spec = json.loads(raw)
     assert spec.get("name"), f"{spec_path.name}: missing 'name'"
