@@ -1,0 +1,192 @@
+schema_version: 4
+name: cell-environment-coupling
+investigation: draft-to-living-cell
+title: Cell–Environment Coupling
+created: '2026-08-20'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Accepted
+question: Does the cellular interface become a genuine sense/act loop when the environment is a real diffusing spatial field the cell reads and acts back on?
+biological_summary: 'Fig 5 turns the cellular interface (Fig 4) into a relationship. The environment is not a set of scalars but a field: `environment.chemical_field` is refined from a scalar concentration into a real `map[float]` lattice — a 9-cell 1-D grid with a unit bump at the centre cell — and a real finite-difference diffusion process (`SpatialDiffusion`, `D · ∇²field · interval`, zero-flux/Neumann edges) runs on it, mass-conserving to round-off. A localized source-and-decay process (`ProductionDegradationField`) and a scalar mechanical-stress relaxation (`MechanicalRelax`) act on the shared fields alongside diffusion. The single cell (`SingleCellSpatial`) samples the chemical grid at its own lattice index and couples to it locally: it senses the field value there and acts back by taking up matter, which both feeds a biomass/shape proxy and depletes the field at that location; diffusion then carries the depletion outward from neighbouring cells. The cell also exerts traction (driven by the local chemical value plus the shared mechanical field) and drifts chemotactically up the local gradient. The key conceptual move is that sensing and acting are not two subsystems but one coupling: the same shared field store is what the cell reads and what it writes back to — the cell measurably reshapes the very gradient it depends on (niche construction), all behind the Fig 4 interface preserved unchanged (Law 2). Measured on the compiled fig05-executable: the cell draws down the bolus at its location (the field cell it senses, 1.0 → 0.2) as it takes up matter (uptake flux 0 → 0.34) and acts back mechanically (traction 0 → 0.41, mechanical field 0 → 0.94).'
+claim: Compiling the Fig 5 draft installs a real Laplacian-diffusion field and single-cell uptake; the cell depletes nutrient locally, diffusion refills it, and the cell reshapes the very gradient it depends on (niche construction) — interface preserved (Law 2).
+baseline:
+- name: cell-environment
+  composite: meta_modelers_guide.composites.fig05-cell-environment
+  params: {}
+- name: cell-environment-executable
+  composite: meta_modelers_guide.composites.fig05-executable
+  params: {}
+variants: []
+key_assumptions:
+- The environment's chemical field is a small, real 9-cell 1-D lattice (`map[float]`, GRID_N=9 in `handlers_fig05.py`), not a scalar stand-in and not a 15-node grid — corrected here from an earlier, larger figure quoted for the pre-split typed-interface study.
+- "Interface preservation (Law 2) is checked structurally: the compiler auto-detects that the handlers' `chemical_field` ports wire to a refined (grid) store and relaxes conformance for the leaf's schema only; the external interface (ports + wired paths) is unchanged."
+behavior_tests:
+- name: cell-draws-well
+  classification: primary
+  description: The cell senses the field at its location and draws it down — uptake flux climbs and the bolus cell falls.
+  measure:
+    kind: observable
+    path: uptake_flux
+    expr: last(uptake_flux)
+  pass_if:
+    op: '>='
+    value: 0.2
+    provenance: cell takes up from the field — uptake flux 0.0→0.34, bolus cell drawn down 1.0→0.2 (exec last≈0.34, fig05-executable)
+  requires_simulation: cell-environment-coupling
+- name: cell-acts-back
+  classification: primary
+  description: The cell acts back on its environment — traction rises from zero.
+  measure:
+    kind: observable
+    path: traction
+    expr: last(traction)
+  pass_if:
+    op: '>='
+    value: 0.3
+    provenance: cell acts back mechanically — traction 0.0→0.41 (exec last≈0.41, fig05-executable)
+  requires_simulation: cell-environment-coupling
+- name: mechanical-response
+  classification: primary
+  description: The cell drives a mechanical field in the shared environment.
+  measure:
+    kind: observable
+    path: mechanical_field
+    expr: last(mechanical_field)
+  pass_if:
+    op: '>='
+    value: 0.5
+    provenance: mechanical field driven by the cell 0.0→0.94 (exec last≈0.94, fig05-executable)
+  requires_simulation: cell-environment-coupling
+runs:
+- name: cell-environment-coupling
+  composite: cell-environment-coupling
+  emitter: RAMEmitter
+  id: cell-environment-coupling
+  status: completed
+  provenance: scripts/render_study_evidence.py — fig05-executable compiled from the Fig 5 draft, run to completion through the engine over one shared diffusing field store.
+  params: {}
+  outcomes:
+    CELL-DRAWS-WELL:
+      result: PASS
+      detail: uptake flux 0.0 → 0.34; bolus cell drawn down 1.0 → 0.2
+    CELL-ACTS-BACK:
+      result: PASS
+      detail: traction 0.0 → 0.41 (cell acts on its environment)
+    MECHANICAL-RESPONSE:
+      result: PASS
+      detail: mechanical field 0.0 → 0.94
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The Fig 4 interface closes into a genuine coupling: the cell senses the field at its location and draws it down by taking up matter. Confirmed: uptake flux 0.0 → 0.34, bolus cell 1.0 → 0.2 — the cell measurably reshapes the gradient it depends on (niche construction).'
+  evidence:
+    from_test: cell-draws-well
+    from_run: cell-environment-coupling
+    observed: uptake flux 0.0 → 0.34; bolus cell 1.0 → 0.2
+  provenance:
+    run_ids:
+    - cell-environment-coupling
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The cell acts back mechanically on its environment — sensing and acting are one coupling over the shared field store, not two subsystems. Confirmed: traction 0.0 → 0.41.'
+  evidence:
+    from_test: cell-acts-back
+    from_run: cell-environment-coupling
+    observed: traction 0.0 → 0.41
+  provenance:
+    run_ids:
+    - cell-environment-coupling
+- id: F-03
+  kind: biological
+  tier: observation
+  status: confirms
+  statement: 'The cell drives a mechanical field in the shared environment store. Confirmed: mechanical field 0.0 → 0.94.'
+  evidence:
+    from_test: mechanical-response
+    from_run: cell-environment-coupling
+    observed: mechanical field 0.0 → 0.94
+  provenance:
+    run_ids:
+    - cell-environment-coupling
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: The Fig 5 composite builds and fig05-executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16).
+  biological_validation:
+    result: PASS
+    basis: The coupling tests (uptake, traction, mechanical field) all pass on measured readouts against a real diffusing 9-cell lattice.
+  explanatory_gain:
+    result: POSITIVE
+    basis: Closing the Fig 4 interface into a Fig 5 sense/act loop over a real diffusing field makes "sensing and acting are one coupling, not two" and niche construction directly observable, behind an interface preserved unchanged (Law 2).
+conclusion: '## Claims
+
+  - The same interface that Fig 4 specifies closes into a sense/act loop over a real diffusing field: the cell draws down the bolus it senses (a field cell 1.0→0.2, uptake flux 0→0.34) and acts back mechanically (traction 0→0.41, mechanical field 0→0.94) — sensing and acting are one coupling over the shared field store, and the cell measurably reshapes the very gradient it depends on (niche construction), all behind an interface preserved unchanged (Law 2).
+
+
+  ## Evidence
+
+  - **CELL-DRAWS-WELL** — uptake flux 0.0 → 0.34; bolus cell drawn down 1.0 → 0.2
+
+  - **CELL-ACTS-BACK** — traction 0.0 → 0.41
+
+  - **MECHANICAL-RESPONSE** — mechanical field 0.0 → 0.94
+
+
+  ## Limitations
+
+  - Toy-real constants: diffusivity, uptake rate, biomass yield, and traction coefficient are illustrative, not fitted to a named organism or medium.
+
+  - A single diffusing field on a small 9-cell lattice with one cell; no multi-cell competition or cross-feeding (that is the new cell-cell-coupling study), and field mass is not tracked as a closed balance across the whole system.
+
+  - Niche construction is shown as a pattern (the cell measurably depletes its local field value) — not validated against a quantitative ecological or eco-evolutionary claim.
+
+  - Interface preservation (Law 2) is checked structurally; the chemical-field leaf''s schema is enriched (scalar → grid) while the declared ports and wiring are unchanged.
+
+
+  ## Next steps
+
+  - Add a second cell to the field to test competition and cross-feeding over the shared store (see the new cell-cell-coupling study).
+
+  - Track field mass as an explicit closed balance (source + decay + diffusion + uptake) to quantify niche construction rather than showing it qualitatively.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: The Fig 5 draft compiles to an executable that runs.
+    biological_validation: The paper's sense/act-coupling pattern is demonstrated at the toy-real (uncalibrated) level; structural interface preservation (Law 2) holds over a real diffusing field.
+    pipeline_unblocks:
+    - cell-cell-coupling
+  if_primary_tests_fail:
+    diagnose:
+    - compiler dropped/renamed an interface port (law 2 violation)
+    - the cell reads the field without acting back on it (uptake stays 0, traction/mechanical field never rise)
+    block_downstream: cell-cell-coupling (multi-cell coupling depends on this figure's single-cell sense/act loop)
+limitations:
+- The coupling is a single diffusing field on a small 9-cell 1-D lattice with one cell; no multi-cell competition or cross-feeding, and field mass is not tracked as a closed balance across the whole system (diffusion alone is mass-conserving to round-off; source/decay/uptake are not reconciled against it).
+- Constants (uptake rate, biomass yield, diffusivity, traction coefficient) are illustrative toy-real values, not fitted to a named organism or medium.
+- Niche construction is shown as a pattern — the cell measurably depletes the field value it senses — not as a validated quantitative ecological result.
+- "Interface preservation (Law 2) is structural: the compiler checks port names, types, and wiring; the chemical-field leaf's schema is enriched from scalar to grid because the handler environment explicitly refines it, and that refinement is itself part of the declared compilation contract, not a silent change."
+falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 5 interface, or if the cell reads the field without acting back on it (uptake stays 0 and traction/mechanical field never rise), or if the cell fails to measurably deplete the field value at its own location (no niche construction).
+visualizations:
+- name: fig05-executable-dynamics
+  address: html:fig05-executable.html
+  description: 'Interactive Fig 5: a closed sense/act loop. Over 8 steps, uptake_flux
+    climbs 0 → 0.34 as the cell draws down the local chemical bump, mechanical_field
+    rises 0 → 0.94 and traction 0 → 0.41 as the cell acts back mechanically, and
+    the cell''s own shape/mass proxy grows (mass 1.0 → 1.17, shape 1.0 → 1.07).
+    The cell depletes local nutrient, diffusion refills it — the cell reshapes
+    the very gradient it depends on (niche construction); interface preserved
+    (Law 2).'
+  config:
+    chart: html
+    caption: 'Interactive Fig 5: uptake_flux and mechanical_field climb together
+      as the cell senses the local field and acts back on it — one coupling, not
+      two separate subsystems.'
+parent_studies:
+- study: cellular-interface
+  condition: tests-passed
+experiment: Install a diffusing spatial nutrient field and a sense-and-act mechanism behind the Fig 5 interface, and run them over one shared field store. The compiler must preserve the declared interface exactly.
+result: 'Over the same kind of interface as Fig 4, the cell draws down the field it senses (a field cell 1.0→0.2) and acts back on it (traction 0→0.41, mechanical field 0→0.94), so sensing and acting close into a single loop over a real diffusing 9-cell lattice.'

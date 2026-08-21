@@ -1,0 +1,190 @@
+{
+  "name": "cellcell-executable-crossfeed",
+  "description": "Executable compilation of cellcell-coupling under handler environment 'cellcell-crossfeed' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
+  "requires": {
+    "processes": [
+      "CrossFeedingCell",
+      "NutrientPool"
+    ]
+  },
+  "provenance": {
+    "figure": "cellcell-coupling",
+    "environment": "cellcell-crossfeed",
+    "handlers": {
+      "SharedNutrientEnv": {
+        "handler": "NutrientPool",
+        "process_term": "GO:0031667"
+      },
+      "CellAgent": {
+        "handler": "CrossFeedingCell",
+        "process_term": "CBO:cellular process"
+      },
+      "RivalCellAgent": {
+        "handler": "CrossFeedingCell",
+        "process_term": "CBO:cellular process"
+      }
+    }
+  },
+  "state": {
+    "shared_env": {
+      "_type": "process",
+      "address": "local:NutrientPool",
+      "config": {
+        "supply": 0.5,
+        "capacity": 1.0,
+        "interval": 0.1
+      },
+      "inputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ]
+      },
+      "outputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ]
+      }
+    },
+    "cell_a_proc": {
+      "_type": "process",
+      "address": "local:CrossFeedingCell",
+      "config": {
+        "vmax": 0.6,
+        "km": 0.3,
+        "yield_": 0.5,
+        "maintenance": 0.1,
+        "via_gain": 0.4,
+        "return_frac": 0.7,
+        "interval": 0.1
+      },
+      "inputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ],
+        "viability": [
+          "cell_a",
+          "viability"
+        ]
+      },
+      "outputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ],
+        "biomass": [
+          "cell_a",
+          "biomass"
+        ],
+        "viability": [
+          "cell_a",
+          "viability"
+        ]
+      }
+    },
+    "cell_b_proc": {
+      "_type": "process",
+      "address": "local:CrossFeedingCell",
+      "config": {
+        "vmax": 0.6,
+        "km": 0.3,
+        "yield_": 0.5,
+        "maintenance": 0.1,
+        "via_gain": 0.4,
+        "return_frac": 0.7,
+        "interval": 0.1
+      },
+      "inputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ],
+        "viability": [
+          "cell_b",
+          "viability"
+        ]
+      },
+      "outputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ],
+        "biomass": [
+          "cell_b",
+          "biomass"
+        ],
+        "viability": [
+          "cell_b",
+          "viability"
+        ]
+      }
+    },
+    "env": {
+      "nutrient": {
+        "_type": "concentration",
+        "_value": 1.0,
+        "_default": 1.0
+      }
+    },
+    "cell_a": {
+      "biomass": {
+        "_type": "mass",
+        "_value": 0.0
+      },
+      "viability": {
+        "_type": "viability",
+        "_value": 1.0,
+        "_default": 1.0
+      }
+    },
+    "cell_b": {
+      "biomass": {
+        "_type": "mass",
+        "_value": 0.0
+      },
+      "viability": {
+        "_type": "viability",
+        "_value": 1.0,
+        "_default": 1.0
+      }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "Cross-feeding — both persist",
+        "observables": {
+          "nutrient": "float",
+          "viability": "float",
+          "viability_2": "float"
+        },
+        "subtitle": "Cell–cell coupling — symmetric handlers, byproduct returned to the pool"
+      },
+      "inputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ],
+        "viability": [
+          "cell_a",
+          "viability"
+        ],
+        "viability_2": [
+          "cell_b",
+          "viability"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
+    }
+  }
+}

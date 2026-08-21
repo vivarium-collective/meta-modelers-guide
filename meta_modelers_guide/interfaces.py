@@ -289,3 +289,83 @@ class MechanicalStress(DraftProcess):
 )
 class SingleCellProcesses(DraftProcess):
     pass
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Cell–cell coupling (paper §"Cell–cell coupling"; no dedicated figure).
+# Two cell agents share one environmental nutrient store; what is coupled is not
+# only state but CONSTRAINT — each cell's uptake reshapes the other's viability.
+# ─────────────────────────────────────────────────────────────────────────────
+@draft_process(
+    name="CellAgent",
+    inputs={"nutrient": "concentration"},
+    outputs={"nutrient": "concentration", "biomass": "mass", "viability": "viability"},
+    contract={
+        "summary": "A cell agent coupled to shared environmental nutrient.",
+        "behavior": "Takes up nutrient from a shared pool, grows biomass, and "
+                    "maintains viability only while uptake meets its maintenance "
+                    "demand; its uptake depletes the pool other cells depend on.",
+        "senses": "the shared environmental nutrient concentration.",
+        "affects": "the shared nutrient pool (depletion) and its own biomass and "
+                   "viability.",
+        "constraints": "nutrient mass is conserved across the shared pool; "
+                       "viability stays in [0,1] and falls when uptake < maintenance.",
+        "ports": {
+            "nutrient": "shared environmental nutrient concentration (mol·L⁻¹)",
+            "biomass": "cell biomass (kg)",
+            "viability": "in-bounds fraction; 1 = viable, 0 = starved (0–1)",
+        },
+    },
+)
+class CellAgent(DraftProcess):
+    pass
+
+
+@draft_process(
+    name="RivalCellAgent",
+    inputs={"nutrient": "concentration"},
+    outputs={"nutrient": "concentration", "biomass": "mass", "viability": "viability"},
+    contract={
+        "summary": "A second cell agent coupled to the SAME shared environmental "
+                   "nutrient as CellAgent — identical ports/contract, a distinct "
+                   "role so the two cells in the coupling composite can be handled "
+                   "asymmetrically by an env (compilation keys handlers by draft "
+                   "address, so two cells sharing one draft cannot receive "
+                   "different handler configs; two roles is how the ENV, not the "
+                   "draft, carries the asymmetry — see handler_envs.py).",
+        "behavior": "Takes up nutrient from a shared pool, grows biomass, and "
+                    "maintains viability only while uptake meets its maintenance "
+                    "demand; its uptake depletes the pool other cells depend on.",
+        "senses": "the shared environmental nutrient concentration.",
+        "affects": "the shared nutrient pool (depletion) and its own biomass and "
+                   "viability.",
+        "constraints": "nutrient mass is conserved across the shared pool; "
+                       "viability stays in [0,1] and falls when uptake < maintenance.",
+        "ports": {
+            "nutrient": "shared environmental nutrient concentration (mol·L⁻¹)",
+            "biomass": "cell biomass (kg)",
+            "viability": "in-bounds fraction; 1 = viable, 0 = starved (0–1)",
+        },
+    },
+)
+class RivalCellAgent(DraftProcess):
+    pass
+
+
+@draft_process(
+    name="SharedNutrientEnv",
+    inputs={"nutrient": "concentration"},
+    outputs={"nutrient": "concentration"},
+    contract={
+        "summary": "The shared environmental store the cells compete over.",
+        "behavior": "Holds and slowly replenishes the nutrient pool both cells "
+                    "read and deplete — the medium through which their interfaces "
+                    "are indirectly coupled.",
+        "senses": "the nutrient pool.",
+        "affects": "the nutrient pool via a bounded replenishment source.",
+        "constraints": "concentration stays non-negative.",
+        "ports": {"nutrient": "environmental nutrient concentration (mol·L⁻¹)"},
+    },
+)
+class SharedNutrientEnv(DraftProcess):
+    pass

@@ -32,6 +32,8 @@ BUILD: list[tuple[str, str, str]] = [
     ("fig10-1",       "fig10-1-division",          "fig10-1-executable"),
     ("fig10-2",       "fig10-2-development",       "fig10-2-executable"),
     ("fig10-3",       "fig10-3-evolution",         "fig10-3-executable"),
+    ("cellcell-compete",   "cellcell-coupling", "cellcell-executable-compete"),
+    ("cellcell-crossfeed", "cellcell-coupling", "cellcell-executable-crossfeed"),
 ]
 
 
@@ -44,7 +46,7 @@ def build_one(core, env_name, semantic_stem, output_stem) -> Path | None:
     from meta_modelers_guide.ontology import figure_provenance
     doc = {
         "name": output_stem,
-        "description": (f"EXECUTABLE compilation of {semantic_stem} under handler "
+        "description": (f"Executable compilation of {semantic_stem} under handler "
                         f"environment '{env_name}' — draft signatures replaced by "
                         f"conforming Process handlers (see compile.py). Runnable."),
         "requires": {"processes": sorted({s["handler"] for s in ENVS[env_name].values()})},

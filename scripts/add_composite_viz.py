@@ -29,12 +29,83 @@ NUMERIC = set(UNITS) | {"float"}
 TARGETS = [
     "fig04b-executable", "fig05-executable",
     "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba",
+    "fig06-disintegration-dynamics",
+    "cellcell-executable-compete", "cellcell-executable-crossfeed",
     "fig07-executable", "fig08-executable",
     "fig09a-executable", "fig09b-executable",
     "fig10-1-executable", "fig10-2-executable", "fig10-3-executable",
     "fig10-1-rewrite", "fig10-2-rewrite", "fig10-3-rewrite",
     "whole-cell",
 ]
+
+# Narrative overrides (Task: flagship disintegration figure) — a composite listed
+# here gets a curated, story-driven DynamicsPlot instead of the generic "every
+# numeric leaf, dynamic-range order" wiring: ``keep`` restricts which leaves are
+# wired at all (by their leaf/port name), and the remaining keys become extra
+# DynamicsPlot config (subtitle/phases/events/secondary_y/area — see
+# visualization.py's narrative-config docstring). Composites absent from this
+# dict keep the plain behaviour unchanged.
+STORY = {
+    "fig06-disintegration-dynamics": {
+        "keep": ["viability", "biomass", "debris", "temperature"],
+        "subtitle": "Fig 6 — a thermal shock pushes the cell past its viability bound",
+        "secondary_y": ["temperature"],
+        "area": ["debris"],
+        "phases": [
+            {"x0": 0, "x1": 8, "label": "viable", "color": "#1c7a77"},
+            {"x0": 8, "x1": 20, "label": "disintegrating", "color": "#b4531f"},
+        ],
+        "events": [{"x": 8, "label": "thermal shock (37→50 °C)"}],
+    },
+    "fig04b-executable": {
+        "keep": ["viability", "shape", "objective", "chemical", "growth_rate"],
+        "subtitle": "Fig 4 — a typed contract compiled to a bounded cell",
+        "phases": [{"x0": 0, "x1": 8, "label": "viable", "color": "#1c7a77"}],
+    },
+    "fig05-executable": {
+        "keep": ["uptake_flux", "mechanical_field", "shape", "mass"],
+        "subtitle": "Fig 5 — cell ↔ environment over a real diffusing field",
+    },
+    "cellcell-executable-compete": {
+        "keep": ["viability", "nutrient"],
+        "subtitle": "Cell–cell coupling — one shared nutrient pool, asymmetric handlers",
+        "events": [{"x": 2, "label": "cell_b viability < 0.5 — competitive exclusion"}],
+    },
+    "cellcell-executable-crossfeed": {
+        "keep": ["viability", "nutrient"],
+        "subtitle": "Cell–cell coupling — symmetric handlers, byproduct returned to the pool",
+    },
+    "fig07-executable": {
+        "keep": ["chemical_out", "electrical_out", "mechanical_out", "thermal_out"],
+        "subtitle": "Fig 7 — one proton flux drives four coupled channels",
+        "secondary_y": ["electrical_out", "mechanical_out", "thermal_out"],
+    },
+    "fig08-executable": {
+        "keep": ["rna", "ribosome", "proteins"],
+        "subtitle": "Fig 8 — transcription → translation → assembly, six levels deep",
+    },
+    "fig09a-executable": {
+        "keep": ["boundary", "membrane", "aggregate", "metabolites", "products", "copies"],
+        "subtitle": "Fig 9a — one function (containment), three conforming grains",
+    },
+    "fig09b-executable": {
+        "subtitle": "Fig 9b — the minimal cell: metabolism, containment, replication holding each other up",
+    },
+    "fig10-1-executable": {
+        "keep": ["dna", "biomass", "cell_count"],
+        "subtitle": "Fig 10a,b — growth reaches threshold, the place graph splits",
+        "events": [{"x": 6, "label": "division fires — mass conserved"}],
+    },
+    "fig10-2-executable": {
+        "keep": ["biofilm_mass", "ecm", "cells", "attached"],
+        "subtitle": "Fig 10c,d — a continuous, pre-declared biofilm store (not a place-graph rewrite)",
+    },
+    "fig10-3-executable": {
+        "keep": ["cell_count", "new_port"],
+        "subtitle": "Fig 10e,f — a config-driven port-onset ramp, not emergent selection",
+        "events": [{"x": 7, "label": "new_port crosses 0.5 — port switching on"}],
+    },
+}
 # Figures where watching the arc over time matters → also get DynamicsMovie.
 MOVIE = {
     "fig08-executable", "fig09a-executable", "fig09b-executable",
@@ -44,18 +115,21 @@ MOVIE = {
 }
 
 TITLES = {
-    "fig04b-executable": "Thermal interface — shape, objective, chemical",
-    "fig05-executable": "Cell ↔ environment — a closed sense/act loop",
+    "fig04b-executable": "The cellular interface, made to run",
+    "fig05-executable": "A closed sense/act loop",
     "fig06-executable-coarse": "Coarse metabolism (lumped yield)",
     "fig06-executable-kinetic": "Kinetic metabolism (Michaelis–Menten)",
     "fig06-executable-fba": "FBA metabolism (e_coli_core, with acetate overflow)",
-    "fig07-executable": "F1Fo ATP synthase — proton-motive-force-driven output",
-    "fig08-executable": "Central dogma — nested transcription/translation cascade",
-    "fig09a-executable": "Autopoiesis (coarse) — closure sustains the membrane",
-    "fig09b-executable": "Autopoiesis (minimal cell) — enzymes & membrane held up",
-    "fig10-1-executable": "Division — one cell becomes two",
-    "fig10-2-executable": "Development — cells reorganize into a colony",
-    "fig10-3-executable": "Evolution — a variant sweeps and gains a new port",
+    "fig06-disintegration-dynamics": "Disintegration — the cell → molecular level shift",
+    "cellcell-executable-compete": "Competition — the weaker cell starves",
+    "cellcell-executable-crossfeed": "Cross-feeding — both persist",
+    "fig07-executable": "ATP synthase — a proton-motive-force-driven rotary motor",
+    "fig08-executable": "The central-dogma cascade across six nested levels",
+    "fig09a-executable": "Closure sustains the interface — three conforming grains",
+    "fig09b-executable": "Closure sustains the interface — the minimal cell",
+    "fig10-1-executable": "Growth to division — one cell becomes two",
+    "fig10-2-executable": "A biofilm assembles",
+    "fig10-3-executable": "A variant gains a new port",
     "fig10-1-rewrite": "Division rewrite — the place graph splits",
     "fig10-2-rewrite": "Biofilm rewrite — the colony assembles",
     "fig10-3-rewrite": "Evolution rewrite — variation & selection",
@@ -81,10 +155,12 @@ def _emittable(state, prefix=()):
             yield from _emittable(v, prefix + (k,))
 
 
-def _viz_entry(address: str, title: str, leaves) -> dict:
+def _viz_entry(address: str, title: str, leaves, extra_config: dict | None = None) -> dict:
     """Build a Visualization step entry wired to the discovered leaves. Port names
     are the leaf name (last path segment), de-duplicated so collisions stay wired
-    to distinct stores."""
+    to distinct stores. ``extra_config`` (e.g. subtitle/phases/events/secondary_y/
+    area — see visualization.py's narrative-config docstring) is merged into the
+    step's config verbatim, on top of title/observables."""
     observables: dict[str, str] = {}
     inputs: dict[str, list] = {}
     used: set[str] = set()
@@ -99,10 +175,11 @@ def _viz_entry(address: str, title: str, leaves) -> dict:
         observables[name] = emit_t
         inputs[name] = path
     inputs["time"] = ["global_time"]
+    config = {"title": title, "observables": observables, **(extra_config or {})}
     return {
         "_type": "step",
         "address": f"local:{address}",
-        "config": {"title": title, "observables": observables},
+        "config": config,
         "inputs": inputs,
         "outputs": {"html": ["_viz", re.sub(r"[^0-9a-z]", "_", address.lower())]},
     }
@@ -118,6 +195,11 @@ def main():
         doc = json.loads(p.read_text())
         state = doc["state"]
         leaves = [lp for lp in _emittable(state) if lp[2]][:40]
+        story = dict(STORY.get(stem, {}))
+        keep = story.pop("keep", None)
+        if keep:
+            keep_set = set(keep)
+            leaves = [lp for lp in leaves if lp[2][-1] in keep_set]
         title = TITLES.get(stem, stem)
         state.pop("dynamics_viz", None)
         state.pop("dynamics_movie", None)
@@ -129,7 +211,7 @@ def main():
             p.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + "\n")
             print(f"  – {stem}: no fixed observables → relies on the auto topology filmstrip")
             continue
-        state["dynamics_viz"] = _viz_entry("DynamicsPlot", title, leaves)
+        state["dynamics_viz"] = _viz_entry("DynamicsPlot", title, leaves, story)
         extras = ["dynamics_viz"]
         if stem in MOVIE:
             state["dynamics_movie"] = _viz_entry("DynamicsMovie", title + " (movie)", leaves)

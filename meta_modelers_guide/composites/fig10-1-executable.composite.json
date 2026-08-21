@@ -1,6 +1,6 @@
 {
   "name": "fig10-1-executable",
-  "description": "EXECUTABLE compilation of fig10-1-division under handler environment 'fig10-1' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
+  "description": "Executable compilation of fig10-1-division under handler environment 'fig10-1' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
   "requires": {
     "processes": [
       "DNAReplicationODE",
@@ -185,17 +185,23 @@
       "_type": "step",
       "address": "local:DynamicsPlot",
       "config": {
-        "title": "Division — one cell becomes two",
+        "title": "Growth to division — one cell becomes two",
         "observables": {
           "dna": "float",
           "biomass": "float",
-          "energy": "float",
           "dna_2": "float",
           "biomass_2": "float",
           "dna_3": "float",
           "biomass_3": "float",
           "cell_count": "float"
-        }
+        },
+        "subtitle": "Fig 10a,b — growth reaches threshold, the place graph splits",
+        "events": [
+          {
+            "x": 6,
+            "label": "division fires — mass conserved"
+          }
+        ]
       },
       "inputs": {
         "dna": [
@@ -207,11 +213,6 @@
           "environ",
           "cell",
           "biomass"
-        ],
-        "energy": [
-          "environ",
-          "cell",
-          "energy"
         ],
         "dna_2": [
           "environ",
@@ -252,11 +253,10 @@
       "_type": "step",
       "address": "local:DynamicsMovie",
       "config": {
-        "title": "Division — one cell becomes two (movie)",
+        "title": "Growth to division — one cell becomes two (movie)",
         "observables": {
           "dna": "float",
           "biomass": "float",
-          "energy": "float",
           "dna_2": "float",
           "biomass_2": "float",
           "dna_3": "float",
@@ -274,11 +274,6 @@
           "environ",
           "cell",
           "biomass"
-        ],
-        "energy": [
-          "environ",
-          "cell",
-          "energy"
         ],
         "dna_2": [
           "environ",

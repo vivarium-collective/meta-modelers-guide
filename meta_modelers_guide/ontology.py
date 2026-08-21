@@ -92,6 +92,7 @@ PROCESS_KEYWORDS: list[tuple[str, dict]] = [
     ("interface",     {"ontology": "CBO", "label": "cellular interface"}),
     ("molecular",     {"ontology": "SBO", "label": "molecular mechanism"}),
     ("uptake",        {"ontology": "GO", "label": "transmembrane transport", "id": "GO:0055085"}),
+    ("nutrient",      {"ontology": "GO", "label": "response to nutrient levels", "id": "GO:0031667"}),
     ("environment",   {"ontology": "SBO", "label": "environmental process"}),
     ("thermal",       {"ontology": "PATO", "label": "temperature"}),
     ("production",    {"ontology": "GO", "label": "biosynthetic process", "id": "GO:0009058"}),

@@ -1,6 +1,6 @@
 {
   "name": "fig05-executable",
-  "description": "EXECUTABLE compilation of fig05-cell-environment under handler environment 'fig05' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
+  "description": "Executable compilation of fig05-cell-environment under handler environment 'fig05' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable.",
   "requires": {
     "processes": [
       "MechanicalRelax",
@@ -210,42 +210,23 @@
       "_type": "step",
       "address": "local:DynamicsPlot",
       "config": {
-        "title": "Cell ↔ environment — a closed sense/act loop",
+        "title": "A closed sense/act loop",
         "observables": {
-          "chemical_field": "map[string,float]",
           "mechanical_field": "float",
-          "barriers": "float",
           "uptake_flux": "float",
-          "traction": "float",
-          "location": "float",
           "mass": "float",
           "shape": "float"
-        }
+        },
+        "subtitle": "Fig 5 — cell ↔ environment over a real diffusing field"
       },
       "inputs": {
-        "chemical_field": [
-          "environment",
-          "chemical_field"
-        ],
         "mechanical_field": [
           "environment",
           "mechanical_field"
         ],
-        "barriers": [
-          "environment",
-          "barriers"
-        ],
         "uptake_flux": [
           "environment",
           "uptake_flux"
-        ],
-        "traction": [
-          "environment",
-          "traction"
-        ],
-        "location": [
-          "single_cell",
-          "location"
         ],
         "mass": [
           "single_cell",
