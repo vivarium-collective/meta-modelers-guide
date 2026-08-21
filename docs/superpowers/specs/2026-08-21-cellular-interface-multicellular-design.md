@@ -41,7 +41,7 @@ Slugs mirror `draft-to-living-cell`. ✅ = framework already installed; ➕ = sm
 |---|---|---|---|---|
 | 1 | `cellular-interface` | Fig 4 typed ports | one CPM cell as a bounded region exposing typed exchanges spatially (chemical via field, mechanical via adhesion/volume energy, viability via structural integrity) | ✅ cpm |
 | 2 | `cell-environment-coupling` **[FLAGSHIP]** | Fig 5 sense/act loop | one CPM cell in a spatio-flux diffusing nutrient field: senses local nutrient (bridge), runs dFBA, secretes, chemotaxes up-gradient | ✅ cpm + spatio-flux |
-| 3 | `cell-cell-coupling` | Fig 3 viability negotiation | many CPM cells competing for one shared nutrient field (dFBA each) → spatial competitive exclusion; cross-feeding via secreted byproducts | ✅ cpm + spatio-flux |
+| 3 | `cell-cell-coupling` | §Cell–cell coupling viability negotiation (no dedicated figure) | many CPM cells competing for one shared nutrient field (dFBA each) → spatial competitive exclusion; cross-feeding via secreted byproducts | ✅ cpm + spatio-flux |
 | 4 | `disintegration` | Fig 6 level shift | a CPM cell whose structural-integrity constraint releases when a stressor field crosses its viability bound → coherent cell domain dissolves into dispersed pixels/particles | ✅ cpm (→ particles) |
 | 5 | `molecular-interfaces` | Fig 7 molecular mechanism | a spatial reaction-diffusion enzymatic network (chemical channel), electrical/thermal/mechanical as coupled fields; cpm SBML subcellular as the molecular pathway | ➕ reaction-diffusion + ✅ spatio-flux/cpm-SBML |
 | 6 | `biomolecular-complementarity` | Fig 8 selectivity/condensates | differential-adhesion cell sorting (Steinberg = complementarity made spatial) + phase separation for condensates | ✅ cpm sorting + ➕ Cahn-Hilliard |

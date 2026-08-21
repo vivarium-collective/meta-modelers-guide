@@ -7,15 +7,15 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: 'Does Fig 10a,b''s growth-then-divide pattern hold spatially -- a CPM cell whose
+question: 'Does the paper''s §Growth and division growth-then-divide pattern (Fig 10a,b) hold spatially -- a CPM cell whose
   metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a
   threshold and divides via the native CPM engine operation `divide_cells` (mass-conserved),
   compounding into a small lineage over the run -- composed from independent frameworks
   (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`)?
 
   '
-biological_summary: 'This is the spatial realization of Fig 10a,b''s growth-then-divide pattern,
-  and the fourth study in this investigation, built on a new coupling process,
+biological_summary: 'This is the spatial realization of the paper''s §Growth and division
+  growth-then-divide pattern (Fig 10a,b), built on a new coupling process,
   `CpmGrowthDivision`, that owns a single CPM cell on a shared spatio-flux glucose field. Each
   tick the process reads glucose at the cell''s own CPM footprint, runs one dynamic-FBA step
   against `e_coli_core`, grows the cell''s CPM target volume from the biomass produced (the same
@@ -37,8 +37,7 @@ biological_summary: 'This is the spatial realization of Fig 10a,b''s growth-then
   CPM cell seeded on a uniform, abundant 60x60 glucose field (`glucose_vmax` deliberately tuned
   down to 1.5, `vol_threshold` 80, `reset_target` 40). Measured over a 36-tick run sampled every 3
   ticks (`tests/test_growth_division_regime.py`, `tests/test_cpm_growth_division.py`,
-  `tests/test_growth_division_viz.py`): the population steps up 1 -> 2 -> 2 -> 2 -> 4 -> 4 -> 4 ->
-  8 -> 8 -> 8 -> 13 -> 16, a monotonic non-decreasing staircase spanning roughly 3-4 generations
+  `tests/test_growth_division_viz.py`): the population steps up 1 -> 2 -> 2 -> 2 -> 4 -> 4 -> 5 -> 8 -> 8 -> 11 -> 14 -> 18, a monotonic non-decreasing staircase spanning roughly 3-4 generations
   from a single seed cell, never losing a cell to a phantom or a runaway single-cell absorbing the
   whole lattice. Per-cell CPM volume sawtooths in a bounded band (roughly 31-79 px) throughout the
   run -- each cell grows toward `vol_threshold` = 80, is halved by division back down near
@@ -51,14 +50,16 @@ biological_summary: 'This is the spatial realization of Fig 10a,b''s growth-then
   '
 claim: 'Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the
   native CPM engine operation `divide_cells` through a single coupling process
-  (`CpmGrowthDivision`) reproduces Fig 10a,b''s growth-then-divide pattern as genuine spatial
-  multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick
+  (`CpmGrowthDivision`) reproduces the paper''s §Growth and division growth-then-divide pattern
+  (Fig 10a,b) as genuine spatial multicellular compounding, not a scripted lineage or a lumped
+  stand-in for it: over a 36-tick
   run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase
-  (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while every cell''s CPM volume
+  (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations, while every cell''s CPM volume
   stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80 -- growth,
   crossing, division, and resumed growth in the daughters, all as direct simulation output from
   three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed
-  interface. This mirrors `draft-to-living-cell/growth-and-division`''s Fig 10a,b claim (growth
+  interface. This mirrors `draft-to-living-cell/growth-and-division`''s §Growth and division
+  claim (Fig 10a,b) (growth
   drives the cell''s own state across a threshold; crossing the threshold triggers division) but
   realizes the division event itself as the native spatial CPM operation `divide_cells` acting
   directly on lattice pixels, in contrast to that study''s place-graph rewrite (one node becoming
@@ -86,7 +87,7 @@ key_assumptions:
   `disintegration-spatial` gave its own resorption primitive: a chosen, code-verified engine
   operation standing in for a mechanism (cytokinesis) the underlying CPM engine does not itself
   simulate.'
-- 'The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 16 cells) bounded by the shared
+- 'The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 18 cells) bounded by the shared
   glucose field and the 60x60 lattice''s finite capacity, not by any hard-coded generation limit.
   `glucose_vmax` is deliberately tuned down from the brief''s literal reference value of 10.0 to
   1.5: at 10.0 every live cell grows fast enough to re-cross `vol_threshold` almost every tick, and
@@ -125,8 +126,8 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 8.0
-    provenance: 'n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks (12 samples, cadence
-      3) -- steps 1 -> 2 -> 4 -> 8 -> 16 (tests/test_growth_division_regime.py::test_population_steps_up_by_division,
+    provenance: 'n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence
+      3) -- steps 1 -> 2 -> 4 -> 8 -> 18 (tests/test_growth_division_regime.py::test_population_steps_up_by_division,
       tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics)'
   requires_simulation: growth-division-spatial
 - name: population-never-shrinks
@@ -140,7 +141,7 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 0.0
-    provenance: 'n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 is monotonic non-decreasing over the
+    provenance: 'n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the
       full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division
       asserts ns == sorted(ns))'
   requires_simulation: growth-division-spatial
@@ -217,7 +218,7 @@ runs:
   outcomes:
     POPULATION-STEPS-UP-BY-DIVISION:
       result: PASS
-      detail: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks
+      detail: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks
     POPULATION-NEVER-SHRINKS:
       result: PASS
       detail: n_cells trajectory is monotonic non-decreasing
@@ -237,15 +238,16 @@ findings:
   status: confirms
   statement: 'A single real CPM cell whose volume growth is driven by real per-footprint dFBA
     metabolism, coupled to the native CPM engine operation divide_cells through one process
-    (CpmGrowthDivision), reproduces Fig 10a,b''s growth-then-divide pattern as genuine spatial
-    compounding: the population steps up in a monotonic non-decreasing staircase, reaching
+    (CpmGrowthDivision), reproduces the paper''s §Growth and division growth-then-divide pattern
+    (Fig 10a,b) as genuine spatial compounding: the population steps up in a monotonic
+    non-decreasing staircase, reaching
     roughly 3-4 generations from a single seed cell, bounded by the shared glucose field and the
-    lattice''s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36
+    lattice''s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36
     ticks.'
   evidence:
     from_test: population-steps-up-by-division
     from_run: growth-division-spatial
-    observed: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks, monotonic non-decreasing
+    observed: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks, monotonic non-decreasing
   provenance:
     run_ids:
     - growth-division-spatial
@@ -301,7 +303,8 @@ conclusion_verdicts:
       mass-conservation control also passes, independent of the growth-division mechanism itself.
   explanatory_gain:
     result: POSITIVE
-    basis: 'Realizing Fig 10a,b''s growth-then-divide pattern with a real CPM cell''s volume driven
+    basis: 'Realizing the paper''s §Growth and division growth-then-divide pattern (Fig 10a,b)
+      with a real CPM cell''s volume driven
       by real per-footprint dFBA metabolism and divided by the native spatial CPM engine
       operation -- rather than a lumped ODE growing a scalar dna store and firing a place-graph
       rewrite -- makes draft-to-living-cell''s growth-and-division claim (growth drives the cell''s
@@ -313,16 +316,17 @@ conclusion: '## Claims
 
   - Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native
     CPM engine operation divide_cells through a single coupling process (CpmGrowthDivision)
-    reproduces Fig 10a,b''s growth-then-divide pattern as genuine spatial multicellular
-    compounding. Over a 36-tick run sampled every 3 ticks: the population steps up in a monotonic
-    non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while
+    reproduces the paper''s §Growth and division growth-then-divide pattern (Fig 10a,b) as
+    genuine spatial multicellular compounding. Over a 36-tick run sampled every 3 ticks: the
+    population steps up in a monotonic
+    non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations, while
     every cell''s CPM volume stays bounded in a sawtooth between reset_target = 40 and
     vol_threshold = 80.
 
 
   ## Evidence
 
-  - **POPULATION-STEPS-UP-BY-DIVISION** -- n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36
+  - **POPULATION-STEPS-UP-BY-DIVISION** -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36
     ticks
 
   - **POPULATION-NEVER-SHRINKS** -- n_cells trajectory is monotonic non-decreasing
@@ -356,14 +360,10 @@ conclusion: '## Claims
   - Each CPM cell gets its own independent cobra model copy, not one shared model instance across
     the lineage.
 
-  - This is the fourth of nine planned spatial-counterpart studies in this investigation; five
-    remain unbuilt (molecular interfaces, biomolecular complementarity, autopoiesis,
-    development-and-evolution, and the cellular-interface contract itself).
-
 
   ## Next steps
 
-  - Extend the run length or lattice size to see whether the staircase continues past 16 cells or
+  - Extend the run length or lattice size to see whether the staircase continues past 18 cells or
     saturates as glucose depletion and crowding dominate.
 
   - Add asymmetric division or size-dependent division timing so daughters need not divide in
@@ -374,8 +374,9 @@ conclusion_logic:
   if_primary_tests_pass:
     implementation_status: 'growth-division-spatial.composite.json builds and runs to completion
       through the engine over a 36-tick run.'
-    biological_validation: The spatial Fig 10a,b growth-then-divide pattern is demonstrated at the
-      toy-real (uncalibrated) level, with genuine per-footprint dFBA metabolism driving growth and
+    biological_validation: The spatial §Growth and division growth-then-divide pattern (Fig 10a,b)
+      is demonstrated at the toy-real (uncalibrated) level, with genuine per-footprint dFBA
+      metabolism driving growth and
       the native CPM divide_cells operation firing division at threshold, rather than a scripted
       lineage tree.
     pipeline_unblocks: []
@@ -406,7 +407,7 @@ limitations:
   mechanics. The trigger condition is genuine simulation state reached by real metabolism-driven
   growth; the split operation itself is an engine-provided primitive standing in for a mechanism
   (cytokinesis) the underlying CPM engine does not itself simulate.'
-- The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 16 cells), bounded by the shared
+- The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 18 cells), bounded by the shared
   glucose field and the 60x60 lattice's finite capacity, not by a hard-coded generation limit.
   glucose_vmax is deliberately tuned down to 1.5 (from a brief reference value of 10.0) so the
   population steps up as a legible staircase rather than every live cell re-crossing threshold
@@ -417,8 +418,6 @@ limitations:
 - 'The native divide_cells primitive this study''s division depends on is now runtime-verified
   directly (tests/test_cpm_divide_spike.py), independent of the growth-division composite''s own
   metabolism mechanism -- previously an untested primitive.'
-- This is the fourth of nine planned spatial-counterpart studies; five remain unbuilt (see the
-  investigation's own decisions_needed).
 - 'Read alongside its specification-stage analogue, `draft-to-living-cell/growth-and-division`:
   that study drives an autocatalytic ODE to grow the cell''s own dna store past a threshold, then
   fires division as a place-graph rewrite -- a structural change to the composition itself, one
@@ -434,30 +433,37 @@ falsifiability: Overturned if the population never steps up past 1 cell within t
 visualizations:
 - name: growth-division-spatial-movie
   address: image:viz/growth-division-spatial.gif
-  description: 'Animated GIF of the 36-tick growth-division run: a single CPM cell (colored by
-    cell id) on a shared 60x60 glucose field, growing as its per-footprint dFBA metabolism
-    produces biomass, then splitting into two daughters via native divide_cells once it crosses
-    vol_threshold -- visibly compounding into a small lineage of same-generation cells across the
-    lattice as the run progresses. Re-baked directly via
-    `meta_modelers_guide.cpm.viz.run_growth_division_frames` + `frames_to_gif` over the same run
-    cited in this study''s behavior tests, for provenance.'
+  description: 'Animated GIF of the 36-tick growth-division run: every live CPM cell on a shared
+    60x60 glucose Δ-from-t0 depletion panel (P1-c fix -- the field starts abundant and
+    near-uniform, so the raw heatmap used to render as flat saturated yellow with invisible
+    contours; the delta is where growth-driven consumption actually shows), each cell drawn as a
+    translucent footprint fill + contour colored by lineage/generation (founder hue + a
+    per-generation shade step, via `meta_modelers_guide.cpm.viz._lineage_colors` over the
+    `generation`/`max_generation` observables `CpmGrowthDivision` emits -- not a small palette
+    that recycles once the population passes ~6 cells), growing as its per-footprint dFBA
+    metabolism produces biomass, then splitting into two daughters via native divide_cells once it
+    crosses vol_threshold. Every division tick is stamped directly into the frame title as it
+    fires. Re-baked directly via `meta_modelers_guide.cpm.viz.run_growth_division_frames` +
+    `frames_to_gif` over the same run cited in this study''s behavior tests, for provenance.'
   config:
     chart: image
-    caption: 'Spatial growth-and-division over 36 ticks -- a single CPM cell compounds into a
-      small lineage (1,2,2,2,4,4,4,8,8,8,13,16 cells) as metabolism-driven volume growth
-      repeatedly crosses vol_threshold and native divide_cells splits each cell.'
+    caption: 'Spatial growth-and-division over 36 ticks -- a single founder cell compounds into a
+      lineage of distinguishably lineage/generation-colored daughters (18 cells by t=36 in the
+      re-baked run) as metabolism-driven volume growth repeatedly crosses vol_threshold and native
+      divide_cells splits each cell.'
 - name: growth-division-metrics
   address: html:viz/growth-division-metrics.html
   description: 'Interactive Plotly time-series panel of the same 36-tick run, synced to the GIF''s
-    time axis: n_cells and total_volume over the full run. n_cells steps up in a monotonic
-    non-decreasing staircase (1 -> 2 -> 4 -> 8 -> 16) while total_volume tracks the compounding
-    population -- the full grow-cross-divide-resume arc made directly visible. Re-baked directly
-    via `meta_modelers_guide.cpm.viz.metrics_panel` over the same run as the GIF, for provenance.
+    time axis: n_cells and total_volume over the full run, plus every division event (the same
+    tick markers the GIF frame titles carry) as dashed vertical lines. n_cells steps up in a
+    monotonic non-decreasing staircase while total_volume tracks the compounding population -- the
+    full grow-cross-divide-resume arc made directly visible. Re-baked directly via
+    `meta_modelers_guide.cpm.viz.metrics_panel` over the same run as the GIF, for provenance.
     Interactive: hover for exact per-tick values.'
   config:
     chart: html
-    caption: 'Synced n_cells/total_volume metrics for the growth-division run -- the population
-      staircase (1,2,2,2,4,4,4,8,8,8,13,16) over 36 ticks.'
+    caption: 'Synced n_cells/total_volume metrics for the growth-division run -- a monotonic
+      non-decreasing population staircase, division events marked, over 36 ticks.'
 parent_studies:
 - study: disintegration-spatial
   condition: tests-passed
@@ -470,12 +476,13 @@ experiment: 'Run the `growth-division-spatial` composite (`CpmGrowthDivision`, a
 
   '
 result: 'Over a 36-tick run sampled every 3 ticks, the CPM cell population steps up in a monotonic
-  non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations from a
+  non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations from a
   single seed cell, while every cell''s CPM volume stays bounded in a sawtooth between
   reset_target = 40 and vol_threshold = 80 -- growth, crossing, division, and resumed growth in
   the daughters, all as direct simulation output composed from three independently-developed
-  frameworks (viva-cpm + spatio-flux + cobra) through one coupling process. Fig 10a,b''s
-  growth-then-divide pattern holds as genuine spatial multicellular compounding, using the native
+  frameworks (viva-cpm + spatio-flux + cobra) through one coupling process. The paper''s
+  §Growth and division growth-then-divide pattern (Fig 10a,b) holds as genuine spatial
+  multicellular compounding, using the native
   spatial CPM division primitive in contrast to `draft-to-living-cell/growth-and-division`''s
   place-graph rewrite.
 
