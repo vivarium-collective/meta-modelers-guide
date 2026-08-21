@@ -509,16 +509,36 @@ falsifiability: Overturned if the faster competitor's biomass/volume margin over
 visualizations:
 - name: cellcell-compete-movie
   address: image:viz/cellcell-compete.gif
-  description: 'Animated GIF of the 20-tick competition run: two CPM cells (colored by cell id)
-    sharing one glucose field, seeded with parity but diverging fast as the higher-glucose_vmax
-    competitor (id 1) claims an ever-larger share of the shared lattice while the lower-vmax
-    competitor (id 2) is pushed toward a vestigial fragment of its starting footprint. Re-baked
-    directly via `meta_modelers_guide.cpm.viz.run_colony_frames` + `frames_to_gif` over the same
-    20-tick run cited in this study''s behavior tests, for provenance.'
+  description: 'Animated GIF of the 20-tick competition run (cadence 1, all 20 ticks captured --
+    the P1-c refactor fixed a choppy 10-frame cadence-2 bake): two CPM cells, each drawn as a
+    translucent footprint fill + contour (not contour-only, which vanishes once a cell fills most
+    of the frame) in a distinct lineage color, over a Δ-glucose depletion panel (glucose minus its
+    t=0 snapshot on a diverging colormap) rather than the raw field -- a raw glucose panel in this
+    regime goes uniformly dark as both competitors draw it down together, so the winner used to
+    read as an empty dead field; the delta panel is where "who''s winning" actually becomes
+    legible. The higher-glucose_vmax competitor (id 1) claims an ever-larger share of the shared
+    lattice while the lower-vmax competitor (id 2) is pushed toward a vestigial fragment of its
+    starting footprint. Re-baked directly via `meta_modelers_guide.cpm.viz.run_colony_frames` +
+    `frames_to_gif` over the same 20-tick run cited in this study''s behavior tests, for
+    provenance.'
   config:
     chart: image
     caption: 'Spatial competitive exclusion over 20 ticks -- the higher-vmax competitor (id 1)
-      claims the shared lattice; the lower-vmax competitor (id 2) is pushed to the margins.'
+      claims the shared lattice (filled, over the glucose depletion it drives); the lower-vmax
+      competitor (id 2) is pushed to the margins.'
+- name: cellcell-compete-metrics
+  address: html:viz/cellcell-compete-metrics.html
+  description: 'Interactive Plotly panel of the same 20-tick competition run, synced to the GIF''s
+    time axis: both competitors'' biomass PLUS the study''s headline number -- the biomass
+    divergence (id 1 / id 2 ratio) -- as its own bold trace on a secondary axis, previously never
+    plotted anywhere (the compete GIF had no metrics panel at all before this refactor). Ends at
+    the same 3.69x final margin (237.9 vs 64.5 biomass) cited in this study''s behavior tests.
+    Re-baked directly via `meta_modelers_guide.cpm.viz.metrics_panel` over the same run as the
+    GIF, for provenance. Interactive: hover for exact per-tick values.'
+  config:
+    chart: html
+    caption: 'Biomass divergence for the competition run -- the id 1 / id 2 biomass ratio climbs
+      to a 3.69x final margin over 20 ticks, the study''s headline number made directly visible.'
 - name: cellcell-crossfeed-movie
   address: image:viz/cellcell-crossfeed.gif
   description: 'Animated GIF of the 20-tick cross-feeding run: a glucose-to-acetate secretor (id

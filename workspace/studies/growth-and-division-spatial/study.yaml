@@ -434,30 +434,37 @@ falsifiability: Overturned if the population never steps up past 1 cell within t
 visualizations:
 - name: growth-division-spatial-movie
   address: image:viz/growth-division-spatial.gif
-  description: 'Animated GIF of the 36-tick growth-division run: a single CPM cell (colored by
-    cell id) on a shared 60x60 glucose field, growing as its per-footprint dFBA metabolism
-    produces biomass, then splitting into two daughters via native divide_cells once it crosses
-    vol_threshold -- visibly compounding into a small lineage of same-generation cells across the
-    lattice as the run progresses. Re-baked directly via
-    `meta_modelers_guide.cpm.viz.run_growth_division_frames` + `frames_to_gif` over the same run
-    cited in this study''s behavior tests, for provenance.'
+  description: 'Animated GIF of the 36-tick growth-division run: every live CPM cell on a shared
+    60x60 glucose Δ-from-t0 depletion panel (P1-c fix -- the field starts abundant and
+    near-uniform, so the raw heatmap used to render as flat saturated yellow with invisible
+    contours; the delta is where growth-driven consumption actually shows), each cell drawn as a
+    translucent footprint fill + contour colored by lineage/generation (founder hue + a
+    per-generation shade step, via `meta_modelers_guide.cpm.viz._lineage_colors` over the
+    `generation`/`max_generation` observables `CpmGrowthDivision` emits -- not a small palette
+    that recycles once the population passes ~6 cells), growing as its per-footprint dFBA
+    metabolism produces biomass, then splitting into two daughters via native divide_cells once it
+    crosses vol_threshold. Every division tick is stamped directly into the frame title as it
+    fires. Re-baked directly via `meta_modelers_guide.cpm.viz.run_growth_division_frames` +
+    `frames_to_gif` over the same run cited in this study''s behavior tests, for provenance.'
   config:
     chart: image
-    caption: 'Spatial growth-and-division over 36 ticks -- a single CPM cell compounds into a
-      small lineage (1,2,2,2,4,4,4,8,8,8,13,16 cells) as metabolism-driven volume growth
-      repeatedly crosses vol_threshold and native divide_cells splits each cell.'
+    caption: 'Spatial growth-and-division over 36 ticks -- a single founder cell compounds into a
+      lineage of distinguishably lineage/generation-colored daughters (18 cells by t=36 in the
+      re-baked run) as metabolism-driven volume growth repeatedly crosses vol_threshold and native
+      divide_cells splits each cell.'
 - name: growth-division-metrics
   address: html:viz/growth-division-metrics.html
   description: 'Interactive Plotly time-series panel of the same 36-tick run, synced to the GIF''s
-    time axis: n_cells and total_volume over the full run. n_cells steps up in a monotonic
-    non-decreasing staircase (1 -> 2 -> 4 -> 8 -> 16) while total_volume tracks the compounding
-    population -- the full grow-cross-divide-resume arc made directly visible. Re-baked directly
-    via `meta_modelers_guide.cpm.viz.metrics_panel` over the same run as the GIF, for provenance.
+    time axis: n_cells and total_volume over the full run, plus every division event (the same
+    tick markers the GIF frame titles carry) as dashed vertical lines. n_cells steps up in a
+    monotonic non-decreasing staircase while total_volume tracks the compounding population -- the
+    full grow-cross-divide-resume arc made directly visible. Re-baked directly via
+    `meta_modelers_guide.cpm.viz.metrics_panel` over the same run as the GIF, for provenance.
     Interactive: hover for exact per-tick values.'
   config:
     chart: html
-    caption: 'Synced n_cells/total_volume metrics for the growth-division run -- the population
-      staircase (1,2,2,2,4,4,4,8,8,8,13,16) over 36 ticks.'
+    caption: 'Synced n_cells/total_volume metrics for the growth-division run -- a monotonic
+      non-decreasing population staircase, division events marked, over 36 ticks.'
 parent_studies:
 - study: disintegration-spatial
   condition: tests-passed
