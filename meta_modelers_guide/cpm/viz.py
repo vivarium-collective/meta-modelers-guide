@@ -33,39 +33,57 @@ import numpy as np
 # --------------------------------------------------------------------------
 
 def _render_frame(lattice: np.ndarray, glucose: np.ndarray, acetate: np.ndarray,
-                   com: list[float] | None, time: float,
-                   glc_vmax: float, ace_vmax: float) -> np.ndarray:
+                   glucose_initial: np.ndarray, com: list[float] | None, time: float,
+                   glc_vmax: float, ace_vmax: float, depletion_vabs: float) -> np.ndarray:
     """Render one matplotlib (Agg) frame: glucose heatmap + cell footprint
-    outline + acetate plume contour + COM marker. Returns an (H, W, 3) uint8
-    RGB array (the figure canvas buffer).
+    outline + COM marker (left), glucose depletion (``glucose - glucose_initial``,
+    diverging colormap centered at 0) + footprint (middle), acetate plume +
+    footprint (right). Returns an (H, W, 3) uint8 RGB array (the figure canvas
+    buffer).
 
-    ``glc_vmax``/``ace_vmax`` are fixed across the whole run (computed once by
-    the caller from every captured frame) rather than per-frame maxima — a
-    per-frame max on the glucose panel would rescale color on every tick and
-    hide the depletion halo behind the field's own left-to-right gradient;
-    a fixed scale lets the halo actually read as a visible dip over time.
+    ``glc_vmax``/``ace_vmax``/``depletion_vabs`` are fixed across the whole run
+    (computed once by the caller from every captured frame) rather than
+    per-frame maxima — a per-frame max on the raw glucose panel would rescale
+    color on every tick and hide the depletion halo behind the field's own
+    left-to-right gradient. The middle panel is the direct fix for that: it
+    plots the DIFFERENCE from the initial field on a symmetric diverging scale
+    (blue = net consumed, red = net resupplied by diffusion), which is where
+    the niche-construction signal (the cell measurably drawing down its own
+    local nutrient) actually becomes legible, independent of the raw
+    gradient's much larger dynamic range.
     """
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 2, figsize=(9.0, 4.4), dpi=100)
-    ax_glc, ax_ace = axes
+    fig, axes = plt.subplots(1, 3, figsize=(13.2, 4.4), dpi=100)
+    ax_glc, ax_dep, ax_ace = axes
+
+    def _footprint_and_com(ax, edgecolor):
+        ax.contour(lattice > 0, levels=[0.5], colors="white", linewidths=1.6)
+        if com is not None:
+            ax.plot(com[0], com[1], marker="o", markersize=7,
+                    markerfacecolor="none", markeredgecolor=edgecolor, markeredgewidth=2.0)
 
     im = ax_glc.imshow(glucose, origin="lower", cmap="viridis", vmin=0.0, vmax=glc_vmax)
-    ax_glc.contour(lattice > 0, levels=[0.5], colors="white", linewidths=1.6)
-    if com is not None:
-        ax_glc.plot(com[0], com[1], marker="o", markersize=7,
-                    markerfacecolor="none", markeredgecolor="crimson", markeredgewidth=2.0)
+    _footprint_and_com(ax_glc, "crimson")
     ax_glc.set_title(f"glucose  (t={time:.1f})", fontsize=10)
     ax_glc.set_xticks([]); ax_glc.set_yticks([])
     fig.colorbar(im, ax=ax_glc, fraction=0.046, pad=0.04)
 
+    depletion = glucose - glucose_initial
+    # RdBu_r (not plain RdBu): matplotlib's RdBu maps negative->red/positive->blue,
+    # the opposite of the reading we want here (negative = net consumed = blue,
+    # positive = net resupplied by diffusion = red).
+    im_dep = ax_dep.imshow(depletion, origin="lower", cmap="RdBu_r",
+                            vmin=-depletion_vabs, vmax=depletion_vabs)
+    _footprint_and_com(ax_dep, "black")
+    ax_dep.set_title("glucose depletion  (Δ from t=0)", fontsize=10)
+    ax_dep.set_xticks([]); ax_dep.set_yticks([])
+    fig.colorbar(im_dep, ax=ax_dep, fraction=0.046, pad=0.04)
+
     im2 = ax_ace.imshow(acetate, origin="lower", cmap="magma", vmin=0.0, vmax=ace_vmax)
-    ax_ace.contour(lattice > 0, levels=[0.5], colors="white", linewidths=1.6)
-    if com is not None:
-        ax_ace.plot(com[0], com[1], marker="o", markersize=7,
-                    markerfacecolor="none", markeredgecolor="deepskyblue", markeredgewidth=2.0)
+    _footprint_and_com(ax_ace, "deepskyblue")
     ax_ace.set_title("acetate plume", fontsize=10)
     ax_ace.set_xticks([]); ax_ace.set_yticks([])
     fig.colorbar(im2, ax=ax_ace, fraction=0.046, pad=0.04)
@@ -97,6 +115,10 @@ def run_flagship_frames(composite_state: dict, core, steps: int = 20, cadence: i
     ny, nx = comp.state["fields"]["glucose"].shape
     n_ticks = max(int(steps) // max(int(cadence), 1), 1)
 
+    # Captured BEFORE the run loop so every frame's depletion panel diffs
+    # against the true initial condition, not a moving baseline.
+    glucose_initial = np.asarray(comp.state["fields"]["glucose"]).copy()
+
     metrics: dict[str, list[float]] = {
         "time": [], "volume": [], "local_nutrient": [], "biomass": [], "acetate_secreted": []
     }
@@ -111,7 +133,7 @@ def run_flagship_frames(composite_state: dict, core, steps: int = 20, cadence: i
         acetate = np.asarray(comp.state["fields"]["acetate"]).copy()
         obs = comp.state["obs"]
 
-        t = float(comp.state.get("global_time", (tick + 1) * cadence))
+        t = float((tick + 1) * cadence)
         com = obs.get("position")
 
         raw.append((lattice, glucose, acetate, com, t))
@@ -126,8 +148,11 @@ def run_flagship_frames(composite_state: dict, core, steps: int = 20, cadence: i
     # computed only after every tick has run, so a single pass over `raw`.
     glc_vmax = max((float(g.max()) for _, g, _, _, _ in raw), default=1e-9) or 1e-9
     ace_vmax = max((float(a.max()) for _, _, a, _, _ in raw), default=1e-9) or 1e-9
+    depletion_vabs = max(
+        (float(np.abs(g - glucose_initial).max()) for _, g, _, _, _ in raw), default=1e-9
+    ) or 1e-9
 
-    frames = [_render_frame(lat, g, a, com, t, glc_vmax, ace_vmax)
+    frames = [_render_frame(lat, g, a, glucose_initial, com, t, glc_vmax, ace_vmax, depletion_vabs)
               for lat, g, a, com, t in raw]
 
     return frames, metrics
