@@ -287,6 +287,169 @@ _save_viz('cell-environment-coupling-spatial', 'single-cell-in-a-field-metrics',
 # | acetate-secreted-and-diffuses | kind=observable path=fields.acetate expr=sum(fields.acetate) | op > value 0.0 provenance field-wide acetate 0 -> ~47.0 over 20 ticks, spreading into a plume around the cell's footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the plume is the third panel of the baked GIF) |
 # | net-glucose-consumed | kind=observable path=fields.glucose expr=sum(fields.glucose) | op < value 5940.0 provenance field-wide glucose total 5940.0 -> ~5908.4 over 20 ticks (~32 units net consumed); the local footprint drawdown is much sharper (up to ~18%) than the field-wide total because only the cell's footprint and its immediate diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop) |
 
+# ## Study: Cell–Cell Coupling, Spatial (`cell-cell-coupling-spatial`)
+#
+# **Question.** Does the Fig 3 viability-negotiation pattern hold as real spatial multicellularity —
+# multiple CPM cells sharing one diffusing nutrient field, each running its own dynamic-FBA step
+# at its own footprint, producing both competitive exclusion and cross-feeding — when the whole
+# colony is composed from independent frameworks through one N-cell coupling process
+# (`CpmColonyField`), rather than the lumped two-role, shared-scalar-pool stand-in
+# `draft-to-living-cell`'s Fig 3 study used?
+#
+# **Claim.** Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
+# single N-cell coupling process (`CpmColonyField`) reproduces Fig 3's viability-negotiation
+# pattern as genuine spatial multicellularity, not a scripted or lumped stand-in for it: over
+# 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives spatial
+# competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81 px), while a
+# different composite over the same coupling process — a localized glucose depot, a fast-diffusing
+# acetate byproduct, and an acetate-consuming role — sustains a cell that never touches glucose
+# (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass
+# 1.25 -> 3.79). Both regimes run through the same process; only the composite's cell roles and
+# field constants differ, mirroring `draft-to-living-cell/cell-cell-coupling`'s law-4 pattern
+# (two handler environments negotiate the shared-resource constraint differently over one
+# interface) at real spatial, per-footprint metabolic resolution.
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `cellcell-compete` | `meta_modelers_guide.composites.cellcell-compete` | 0 | — |
+# | `cellcell-crossfeed` | `meta_modelers_guide.composites.cellcell-crossfeed` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.cellcell-compete`** — `spec_meta_modelers_guide_composites_cellcell_compete` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_cellcell_compete = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-compete.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_compete)
+
+# === Edit parameters for composite 'cellcell-compete' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
+
+# process 'colony'  (local:CpmColonyField)
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['role'] = 'competitor'
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['seed_block'] = [12, 26, 0, 20, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['glucose_vmax'] = 10.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['role'] = 'competitor'
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['seed_block'] = [40, 26, 0, 48, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['glucose_vmax'] = 4.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][1]['j'] = 14.0
+
+# **Composite `meta_modelers_guide.composites.cellcell-crossfeed`** — `spec_meta_modelers_guide_composites_cellcell_crossfeed` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_cellcell_crossfeed = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-crossfeed.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed)
+
+# === Edit parameters for composite 'cellcell-crossfeed' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['diffusion_coeffs']['acetate'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
+
+# process 'colony'  (local:CpmColonyField)
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['grow_per_biomass'] = 30.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['role'] = 'secretor'
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['seed_block'] = [8, 26, 0, 16, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['glucose_vmax'] = 10.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['oxygen_vmax'] = 5.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['role'] = 'consumer'
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['seed_block'] = [22, 26, 0, 30, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['acetate_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['oxygen_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['j'] = 14.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: cell-cell-coupling-spatial ===
+STUDY = 'cell-cell-coupling-spatial'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **cellcell-compete-movie**
+
+# cellcell-compete-movie
+_save_viz('cell-cell-coupling-spatial', 'cellcell-compete-movie', _render_one('image:viz/cellcell-compete.gif', {'chart': 'image', 'caption': 'Spatial competitive exclusion over 20 ticks -- the higher-vmax competitor (id 1) claims the shared lattice; the lower-vmax competitor (id 2) is pushed to the margins.'}, RUNS_DB, STUDY_YAML))
+
+# **cellcell-crossfeed-movie**
+
+# cellcell-crossfeed-movie
+_save_viz('cell-cell-coupling-spatial', 'cellcell-crossfeed-movie', _render_one('image:viz/cellcell-crossfeed.gif', {'chart': 'image', 'caption': "Spatial cross-feeding over 20 ticks -- the secretor's (id 1) acetate plume reaches the consumer (id 2), which grows despite never touching glucose."}, RUNS_DB, STUDY_YAML))
+
+# **cellcell-crossfeed-metrics**
+
+# cellcell-crossfeed-metrics
+_save_viz('cell-cell-coupling-spatial', 'cellcell-crossfeed-metrics', _render_one('html:viz/cellcell-crossfeed-metrics.html', {'chart': 'html', 'caption': "Synced per-cell metrics for the cross-feeding run -- the consumer's local_glucose stays at 0.0 while local_acetate and biomass rise from the diffused plume, over 20 ticks."}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | competition-excludes-the-slower-cell | kind=observable path=obs.biomass expr=last(obs.biomass["1"]) / last(obs.biomass["2"]) | op > value 1.5 provenance biomass 237.9 (id 1, vmax 10) vs 64.5 (id 2, vmax 4) -> 3.69x ratio over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly) |
+# | competition-volume-tracks-biomass | kind=observable path=obs.volume expr=last(obs.volume["1"]) > last(obs.volume["2"]) | op > value 0.0 provenance volume 3511 px (id 1) vs 81 px (id 2) over 20 ticks -- the faster competitor claims most of the shared lattice (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell) |
+# | crossfeeding-consumer-blind-to-glucose | kind=observable path=obs.local_glucose expr=last(obs.local_glucose["2"]) | op < value 0.5 provenance consumer (id 2) local_glucose == 0.0 over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
+# | crossfeeding-consumer-grows-on-acetate-alone | kind=observable path=obs.biomass expr=last(obs.biomass["2"]) | op > value 1.25 provenance consumer (id 2) biomass 1.25 -> 3.79 (roughly 3x, back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
+# | crossfeeding-acetate-plume-reaches-consumer | kind=observable path=obs.local_acetate expr=last(obs.local_acetate["2"]) | op > value 0.0 provenance consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose's 0.4) acetate plume reaches the consumer's footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
+# | two-writer-additivity-conserves-mass | kind=observable path=fields.glucose expr=net change in sum(fields.glucose) over 3 ticks (final minus initial) | op == value -6.0 provenance a synthetic negative-control process (not this study's composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve) |
+
 # ## Open decisions
 # - Only 1 of the 9 planned spatial-counterpart studies exists (cell-environment-coupling-spatial, the flagship). The remaining 8 — cellular-interface, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution — are named in the design spec's increment plan but have no composite, study, or run. Treat this investigation's verdict as scoped to the flagship pattern only until the fan-out increments land.
 # - Chemotaxis toward the sensed field (directed up-gradient motion) is explicitly deferred to a follow-up variant of the flagship composite; the current flagship cell does not chemotax, only senses, metabolizes, grows, and secretes.
