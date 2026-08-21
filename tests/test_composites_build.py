@@ -39,6 +39,9 @@ def test_composite_builds(spec_path):
         pytest.importorskip("cobra")  # these processes load a cobra model at construction
     if "CpmDisintegration" in raw:
         pytest.importorskip("cpm")           # no cobra — disintegration is metabolism-free
+    if "CpmGrowthDivision" in raw:
+        pytest.importorskip("cpm")
+        pytest.importorskip("cobra")  # dFBA-driven growth
     spec = json.loads(raw)
     assert spec.get("name"), f"{spec_path.name}: missing 'name'"
     assert spec.get("state"), f"{spec_path.name}: missing 'state'"

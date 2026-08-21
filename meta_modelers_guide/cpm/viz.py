@@ -461,6 +461,140 @@ def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cade
 
 
 # --------------------------------------------------------------------------
+# Growth-and-division (single lineage compounding via `divide_cells`) frame
+# capture
+# --------------------------------------------------------------------------
+
+def _render_growth_division_frame(lattice: np.ndarray, glucose: np.ndarray,
+                                   coms: dict[str, list[float]], time: float,
+                                   glc_vmax: float) -> np.ndarray:
+    """Render one matplotlib (Agg) frame for a growth-division tick: the
+    glucose heatmap with every live cell's footprint outlined + COM-marked in
+    a distinct per-id "lineage" color. Returns an (H, W, 3) uint8 RGB array
+    (the figure canvas buffer).
+
+    Unlike the colony's ``_render_colony_frame`` (whose cell ids are fixed
+    from the start, known via ``cells`` config), growth-division ids are
+    created dynamically by ``world.divide_cells`` as the run proceeds (a
+    parent keeps its id, a fresh daughter id is minted) -- so the color for
+    id ``cid`` is computed directly from ``cid`` itself
+    (``_ID_PALETTE[(cid - 1) % len(_ID_PALETTE)]``) rather than from a
+    position in a pre-known id list. That keeps a given lineage's color
+    stable across every frame regardless of which tick first introduces it.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(1, 1, figsize=(6.6, 5.6), dpi=100)
+
+    im = ax.imshow(glucose, origin="lower", cmap="viridis", vmin=0.0, vmax=glc_vmax)
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="glucose")
+
+    ids = sorted(int(i) for i in np.unique(lattice) if i != 0)
+    for cid in ids:
+        fp = lattice == cid
+        if not fp.any():
+            continue
+        color = _ID_PALETTE[(cid - 1) % len(_ID_PALETTE)]
+        ax.contour(fp, levels=[0.5], colors=[color], linewidths=1.8)
+        com = coms.get(str(cid))
+        if com:
+            ax.plot(com[0], com[1], marker="o", markersize=6, markerfacecolor="none",
+                    markeredgecolor=color, markeredgewidth=1.8)
+
+    ax.set_title(f"growth & division: {len(ids)} cell(s) over glucose field  (t={time:.1f})",
+                 fontsize=10)
+    ax.set_xticks([]); ax.set_yticks([])
+    fig.tight_layout()
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_growth_division_frames(composite_state: dict, core, steps: int = 20, cadence: int = 1
+                                ) -> tuple[list[np.ndarray], dict[str, Any]]:
+    """Mirror :func:`run_colony_frames`, but for the growth-and-division
+    lineage study (``CpmGrowthDivision``): builds a fresh :class:`Composite`
+    from ``composite_state`` and runs it in a manual cadence loop, capturing
+    one animation frame + one metrics row per tick.
+
+    Reaches the live CPM world via the process instance whose ``address``
+    names ``CpmGrowthDivision`` (found generically, like ``run_colony_frames``
+    does for ``CpmColonyField``, rather than hardcoding the ``"cell"`` store
+    key).
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
+    arrays; ``metrics`` is ``{"time": [...], "n_cells": [...], "total_volume":
+    [...], "volume": {cell_id: [...]}}`` -- the first three are flat,
+    equal-length lists (one entry per frame, like the flagship/disintegration
+    shape) so ``metrics_panel`` can plot the population staircase directly.
+    ``volume`` is a BONUS per-cell map (like the colony's per-cell metrics)
+    but, unlike the colony's fixed-roster cells, growth-division cells are
+    born mid-run by division -- so each per-cell series is front-padded with
+    ``None`` for every tick before that id existed (rather than back-filled
+    with 0.0/held-last-value, which would misleadingly plot a nonexistent
+    cell at zero volume). Every ``volume`` series is kept the same length as
+    ``metrics["time"]``/``frames`` so a caller can zip them directly; Plotly
+    renders a leading gap for the ``None``s.
+    """
+    from process_bigraph import Composite
+
+    proc_key = next(
+        k for k, v in composite_state.items()
+        if isinstance(v, dict) and v.get("_type") == "process"
+        and "CpmGrowthDivision" in v.get("address", "")
+    )
+
+    comp = Composite({"state": composite_state}, core=core)
+
+    ny, nx = comp.state["fields"]["glucose"].shape
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    metrics: dict[str, Any] = {"time": [], "n_cells": [], "total_volume": [], "volume": {}}
+    raw: list[tuple[np.ndarray, np.ndarray, dict, float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        world = comp.state[proc_key]["instance"].world
+        lattice = np.array(world.snapshot()).reshape(ny, nx)
+        glucose = np.asarray(comp.state["fields"]["glucose"]).copy()
+        obs = comp.state["obs"]
+
+        t = float((tick + 1) * cadence)
+        coms = dict(obs.get("position", {}) or {})
+        vol_map = dict(obs.get("volume", {}) or {})
+
+        raw.append((lattice, glucose, coms, t))
+
+        metrics["time"].append(t)
+        metrics["n_cells"].append(float(obs.get("n_cells", 0.0)))
+        metrics["total_volume"].append(float(obs.get("total_volume", 0.0)))
+
+        n_so_far = len(metrics["time"])
+        for cidstr, v in vol_map.items():
+            series = metrics["volume"].get(cidstr)
+            if series is None:
+                series = [None] * (n_so_far - 1)  # not-yet-born padding
+                metrics["volume"][cidstr] = series
+            series.append(float(v))
+        for cidstr, series in metrics["volume"].items():
+            if len(series) < n_so_far:
+                series.append(None)  # dropped off the lattice this tick (shouldn't normally happen)
+
+    glc_vmax = max((float(g.max()) for _, g, _, _ in raw), default=1e-9) or 1e-9
+
+    frames = [_render_growth_division_frame(lat, g, coms, t, glc_vmax)
+              for lat, g, coms, t in raw]
+
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
 # GIF encoding
 # --------------------------------------------------------------------------
 
@@ -517,7 +651,7 @@ def metrics_panel(metrics: dict[str, Any], out_path: str | Path,
     """Write an interactive Plotly time-series panel of ``metrics`` to
     ``out_path`` as HTML.
 
-    Accepts either shape metrics comes in across this module's two frame
+    Accepts any of the shapes metrics comes in across this module's frame
     capturers, branching on it automatically so existing (flagship)
     call sites are unaffected:
 
@@ -526,6 +660,15 @@ def metrics_panel(metrics: dict[str, Any], out_path: str | Path,
     * per-cell (``run_colony_frames``): a dict of ``{metric: {cell_id:
       [...]}}`` id-string-keyed maps sharing a ``time`` axis, one trace per
       (metric, cell id) pair — delegated to ``_metrics_panel_percell``.
+    * disintegration (``run_disintegration_frames``): flat lists keyed by
+      ``area``/``mean_stressor``/``n_particles``/... — delegated to
+      ``_metrics_panel_disintegration``.
+    * growth-division (``run_growth_division_frames``): flat ``n_cells``/
+      ``total_volume`` lists PLUS an optional per-cell ``volume`` dict —
+      delegated to ``_metrics_panel_growth_division``. Checked before the
+      generic per-cell branch below (which would otherwise misroute on the
+      optional ``volume`` dict and drop the ``n_cells``/``total_volume``
+      traces it doesn't know about).
 
     Volume (O(10-100)), biomass (O(0.1)), and local_nutrient/acetate_secreted
     (O(1)) live on very different scales, so volume is plotted on a secondary
@@ -545,6 +688,8 @@ def metrics_panel(metrics: dict[str, Any], out_path: str | Path,
     a study's committed artifact so it matches that convention.
     """
     out_path = Path(out_path)
+    if "n_cells" in metrics and "total_volume" in metrics:
+        return _metrics_panel_growth_division(metrics, out_path, include_plotlyjs)
     if any(isinstance(v, dict) for k, v in metrics.items() if k != "time"):
         return _metrics_panel_percell(metrics, out_path, include_plotlyjs)
     if "n_particles" in metrics and "mean_stressor" in metrics:
@@ -727,6 +872,73 @@ def _metrics_panel_disintegration(metrics: dict[str, list[float]], out_path: Pat
         fig.add_vline(x=released_tick, line_dash="dash", line_color="rgba(120,20,20,0.6)",
                       annotation_text="released", annotation_position="top")
 
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
+def _metrics_panel_growth_division(metrics: dict[str, Any], out_path: Path,
+                                    include_plotlyjs: str | bool) -> str:
+    """Growth-division counterpart of :func:`metrics_panel` for
+    ``run_growth_division_frames``' output shape: flat ``n_cells``/
+    ``total_volume`` lists (like the flagship/disintegration shape) PLUS an
+    optional per-cell ``volume`` map (``{cell_id: [...]}``, front-padded with
+    ``None`` before a cell was born -- see that function's docstring).
+
+    ``n_cells`` (the 1->2->4->8 staircase, O(1-16)) is drawn as a bold
+    step-line (``line_shape="hv"``) on the primary left-hand axis;
+    ``total_volume`` (O(10-100s), scaling with the population) and any
+    optional per-cell ``volume`` sawtooth traces (same rough order of
+    magnitude as ``total_volume``, one thin dotted line per lineage, colored
+    to match ``_render_growth_division_frame``'s ``_ID_PALETTE`` id mapping)
+    share a secondary right-hand axis. Falls back to a small static HTML
+    table (just the three guaranteed flat series) if Plotly is unavailable.
+    """
+    times = metrics.get("time") or []
+    n_cells = metrics.get("n_cells") or []
+    total_volume = metrics.get("total_volume") or []
+    percell_volume = metrics.get("volume") or {}
+    cell_ids = sorted(percell_volume, key=lambda s: (len(s), s)) if isinstance(percell_volume, dict) else []
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        cols = ("time", "n_cells", "total_volume")
+        header = "".join(f"<th>{c}</th>" for c in cols)
+        rows = "".join(
+            "<tr>" + "".join(f"<td>{v}</td>" for v in vals) + "</tr>"
+            for vals in zip(times, n_cells, total_volume)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr>{header}</tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=n_cells, mode="lines+markers", name="n_cells",
+                              line=dict(width=3.0, color=_PALETTE[0], shape="hv")))
+    fig.add_trace(go.Scatter(x=times, y=total_volume, mode="lines+markers", name="total_volume",
+                              line=dict(width=2.2, color=_PALETTE[1]), yaxis="y2"))
+
+    for i, cid in enumerate(cell_ids):
+        ys = percell_volume.get(cid)
+        if not ys:
+            continue
+        color = _ID_PALETTE[i % len(_ID_PALETTE)]
+        fig.add_trace(go.Scatter(x=times, y=ys, mode="lines", name=f"volume (cell {cid})",
+                                  line=dict(width=1.3, color=color, dash="dot"),
+                                  yaxis="y2", connectgaps=False))
+
+    fig.update_layout(
+        title=dict(text="<b>growth &amp; division — synced metrics</b>", x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis=dict(title="n_cells", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis2=dict(title="volume (total / per-cell)", overlaying="y", side="right", showgrid=False),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.26, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
+    )
     out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
                                      config={"displayModeBar": False, "responsive": True}))
     return "plotly"

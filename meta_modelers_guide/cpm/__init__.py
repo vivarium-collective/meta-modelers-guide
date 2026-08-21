@@ -13,5 +13,6 @@ from __future__ import annotations
 from .cell_field import CpmCellField
 from .colony_field import CpmColonyField
 from .disintegration import CpmDisintegration
+from .growth_division import CpmGrowthDivision
 
-__all__ = ["CpmCellField", "CpmColonyField", "CpmDisintegration"]
+__all__ = ["CpmCellField", "CpmColonyField", "CpmDisintegration", "CpmGrowthDivision"]
