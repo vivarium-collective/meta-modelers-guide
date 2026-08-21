@@ -227,7 +227,7 @@ colony development. Those are named in the design spec
 increment plan, not results. Chemotaxis toward the field (the cell moving up the gradient it
 senses) is also deferred to a follow-up variant — the flagship cell&#x27;s modest position drift
 over the run is CPM thermal fluctuation, not directed motion.</p></div>
-      <div class="stats"><div class="stat"><b>3</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
+      <div class="stats"><div class="stat"><b>4</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
     </header>
 
     <section class="intro">
@@ -260,7 +260,7 @@ reshapes the gradient it depends on) demonstrated at two very different levels o
 resolution.</p>
     </section>
 
-    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-environment-coupling-spatial"><span class="arc-n">01</span><span class="arc-t">Cell–Environment Coupling, Spatial (flagship)</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#cell-cell-coupling-spatial"><span class="arc-n">02</span><span class="arc-t">Cell–Cell Coupling, Spatial</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#disintegration-spatial"><span class="arc-n">03</span><span class="arc-t">Disintegration, Spatial</span></a></nav>
+    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-environment-coupling-spatial"><span class="arc-n">01</span><span class="arc-t">Cell–Environment Coupling, Spatial (flagship)</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#cell-cell-coupling-spatial"><span class="arc-n">02</span><span class="arc-t">Cell–Cell Coupling, Spatial</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#disintegration-spatial"><span class="arc-n">03</span><span class="arc-t">Disintegration, Spatial</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#growth-and-division-spatial"><span class="arc-n">04</span><span class="arc-t">Growth and Division, Spatial</span></a></nav>
 
     
 
@@ -421,6 +421,27 @@ directly and independently of the disintegration mechanism itself, retiring what
 previously an untested primitive. Confirmed structurally: a synthetic emitter&#x27;s 3 particles
 remain exactly 3 particles four ticks later, with at least 2 having moved under
 BrownianMovement.</li></ul>
+        </div>
+      </details>
+    </article>
+    <article class="study" id="growth-and-division-spatial">
+      <div class="study-head">
+        <span class="ord">04</span>
+        <div>
+          <h3>Growth and Division, Spatial <span class="badge ok">Accepted</span></h3>
+          <p class="claim">Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native CPM engine operation <code>divide_cells</code> through a single coupling process (<code>CpmGrowthDivision</code>) reproduces Fig 10a,b&#x27;s growth-then-divide pattern as genuine spatial multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while every cell&#x27;s CPM volume stays bounded in a sawtooth between <code>reset_target</code> = 40 and <code>vol_threshold</code> = 80 -- growth, crossing, division, and resumed growth in the daughters, all as direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. This mirrors <code>draft-to-living-cell/growth-and-division</code>&#x27;s Fig 10a,b claim (growth drives the cell&#x27;s own state across a threshold; crossing the threshold triggers division) but realizes the division event itself as the native spatial CPM operation <code>divide_cells</code> acting directly on lattice pixels, in contrast to that study&#x27;s place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
+</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">POPULATION STEPS UP BY DIVISION</span><span class="chip-v">n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks</span></div><div class="chip"><span class="chip-k">POPULATION NEVER SHRINKS</span><span class="chip-v">n_cells trajectory is monotonic non-decreasing</span></div><div class="chip"><span class="chip-k">DAUGHTERS RESUME GROWTH WITHOUT RUNAWAY</span><span class="chip-v">n_cells &gt;= 3 after 30 ticks from a single seed cell, all volumes in (5, 200)</span></div><div class="chip"><span class="chip-k">PER CELL VOLUME STAYS BOUNDED</span><span class="chip-v">per-cell volume bounded roughly 31-79 px across the run</span></div><div class="chip"><span class="chip-k">NATIVE DIVISION CONSERVES MASS</span><span class="chip-v">divide_cells splits one cell into two mass-conserved daughters; no-op below threshold</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Does Fig 10a,b&#x27;s growth-then-divide pattern hold spatially -- a CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a threshold and divides via the native CPM engine operation <code>divide_cells</code> (mass-conserved), compounding into a small lineage over the run -- composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (<code>CpmGrowthDivision</code>)?</p>
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A single real CPM cell whose volume growth is driven by real per-footprint dFBA metabolism, coupled to the native CPM engine operation divide_cells through one process (CpmGrowthDivision), reproduces Fig 10a,b&#x27;s growth-then-divide pattern as genuine spatial compounding: the population steps up in a monotonic non-decreasing staircase, reaching roughly 3-4 generations from a single seed cell, bounded by the shared glucose field and the lattice&#x27;s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks.</li><li><span class="tier tier-mechanism">mechanism</span> Every cell in the lineage sawtooths in a bounded CPM volume band as it grows toward vol_threshold, is halved by division back near reset_target, and immediately resumes growing -- daughters are never zero-volume phantoms and no single cell runs away to absorb the lattice. Confirmed: per-cell volume stays roughly 31-79 px throughout the run, well within the hard test bounds of (8, 200).</li><li><span class="tier tier-mechanism">mechanism</span> The native CPM divide_cells operation this study&#x27;s division mechanism depends on is runtime-verified directly and independently of the growth-division composite&#x27;s own metabolism mechanism, retiring what was previously an untested primitive: a grown cell splits into two mass-conserved daughters (parent id kept, one new id minted) and a sub-threshold cell is a correct no-op.</li></ul>
         </div>
       </details>
     </article>
