@@ -227,7 +227,7 @@ colony development. Those are named in the design spec
 increment plan, not results. Chemotaxis toward the field (the cell moving up the gradient it
 senses) is also deferred to a follow-up variant — the flagship cell&#x27;s modest position drift
 over the run is CPM thermal fluctuation, not directed motion.</p></div>
-      <div class="stats"><div class="stat"><b>1</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
+      <div class="stats"><div class="stat"><b>2</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
     </header>
 
     <section class="intro">
@@ -260,7 +260,7 @@ reshapes the gradient it depends on) demonstrated at two very different levels o
 resolution.</p>
     </section>
 
-    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-environment-coupling-spatial"><span class="arc-n">01</span><span class="arc-t">Cell–Environment Coupling, Spatial (flagship)</span></a></nav>
+    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-environment-coupling-spatial"><span class="arc-n">01</span><span class="arc-t">Cell–Environment Coupling, Spatial (flagship)</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#cell-cell-coupling-spatial"><span class="arc-n">02</span><span class="arc-t">Cell–Cell Coupling, Spatial</span></a></nav>
 
     
 
@@ -336,6 +336,43 @@ secretion side of the coupling is as real as the uptake side. Confirmed: field-w
         </div>
       </details>
     </article>
+    <article class="study" id="cell-cell-coupling-spatial">
+      <div class="study-head">
+        <span class="ord">02</span>
+        <div>
+          <h3>Cell–Cell Coupling, Spatial <span class="badge ok">Accepted</span></h3>
+          <p class="claim">Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
+single N-cell coupling process (<code>CpmColonyField</code>) reproduces Fig 3&#x27;s viability-negotiation
+pattern as genuine spatial multicellularity, not a scripted or lumped stand-in for it: over
+20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives spatial
+competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81 px), while a
+different composite over the same coupling process — a localized glucose depot, a fast-diffusing
+acetate byproduct, and an acetate-consuming role — sustains a cell that never touches glucose
+(local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass
+1.25 -&gt; 3.79). Both regimes run through the same process; only the composite&#x27;s cell roles and
+field constants differ, mirroring <code>draft-to-living-cell/cell-cell-coupling</code>&#x27;s law-4 pattern
+(two handler environments negotiate the shared-resource constraint differently over one
+interface) at real spatial, per-footprint metabolic resolution.
+</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">COMPETITION EXCLUDES THE SLOWER CELL</span><span class="chip-v">biomass 237.9 (id 1) vs 64.5 (id 2) -- 3.69x margin</span></div><div class="chip"><span class="chip-k">COMPETITION VOLUME TRACKS BIOMASS</span><span class="chip-v">CPM volume 3511 px (id 1) vs 81 px (id 2)</span></div><div class="chip"><span class="chip-k">TWO WRITER ADDITIVITY CONSERVES MASS</span><span class="chip-v">disjoint per-cell field writes sum losslessly (tests/test_cpm_colony_two_writer.py)</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Does the Fig 3 viability-negotiation pattern hold as real spatial multicellularity —
+multiple CPM cells sharing one diffusing nutrient field, each running its own dynamic-FBA step
+at its own footprint, producing both competitive exclusion and cross-feeding — when the whole
+colony is composed from independent frameworks through one N-cell coupling process
+(<code>CpmColonyField</code>), rather than the lumped two-role, shared-scalar-pool stand-in
+<code>draft-to-living-cell</code>&#x27;s Fig 3 study used?</p>
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (<code>CpmColonyField</code>) reproduce Fig 3&#x27;s competitive-exclusion branch as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run.</li><li><span class="tier tier-mechanism">mechanism</span> Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#x27;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</li><li><span class="tier tier-mechanism">mechanism</span> The additive two-writer assumption <code>CpmColonyField</code>&#x27;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</li></ul>
+        </div>
+      </details>
+    </article>
     </section>
 
     
@@ -347,7 +384,7 @@ secretion side of the coupling is as real as the uptake side. Confirmed: field-w
       figure real dynamics. Readouts below are <strong>measured</strong>, not asserted: every executable
       and the whole cell were run and their observables recorded.</p>
       <div class="two-col">
-        <div><h4>Limitations (shared across every study)</h4><ul><li>e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass) are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not fitted to any organism or medium.</li><li>Chemotaxis toward the external field is deferred to a follow-up variant; the flagship cell senses, metabolizes, grows, and secretes, but does not move directionally up-gradient.</li><li>Growth is roughly exponential in this coupling, so the run is deliberately bounded to ~20-25 ticks to stay spatially legible.</li><li>The metabolized nutrient field is exclusively the spatio-flux <code>`fields</code>` store; the CPM cell&#x27;s own internal lattice/world lives inside viva-cpm&#x27;s Rust engine as a private, write-protected object the coupling process owns, not a process-bigraph store — no other process in the composite reads or writes it, and viva-cpm&#x27;s own internal field concept (field_at_cell/secretory_types) is separate machinery this composite does not use.</li><li>Only one of the nine planned spatial-counterpart studies exists; see the investigation&#x27;s own decisions_needed for the honest scope of what this investigation currently demonstrates.</li><li>This investigation is at an early stage: only the flagship study is built. The design spec
+        <div><h4>Limitations (shared across every study)</h4><ul><li>This investigation is at an early stage: only the flagship study is built. The design spec
 (<code>docs/superpowers/specs/2026-08-21-cellular-interface-multicellular-design.md</code>) lays out a
 complete 9-study analogy to <code>draft-to-living-cell</code>; this file and the flagship study reflect
 only the first increment of that plan.</li><li>Every mechanism here is toy-real: plausible constants, not calibrated to a named organism,
@@ -357,7 +394,7 @@ sensing, metabolism, growth, secretion, diffusion), not a quantitatively validat
 a lumped 9-cell 1-D grid with a scripted-shape cell; this study closes it over a real 60x60
 2D CPM cell with genuine shape and a real dynamic-FBA metabolism. Compare the two for the
 same interface claim at two very different mechanistic resolutions.</li></ul></div>
-        <div><h4>What would falsify the claim</h4><p>Overturned if the cell&#x27;s biomass or CPM lattice volume never rise over the run, if local footprint glucose never depletes despite ongoing consumption, if acetate never appears in the shared field (the O2 cap failing to force overflow, or the secretion write not reaching the field store), or if net field-wide glucose does not fall (the cell failing to act as a genuine sink on the shared field).</p></div>
+        <div><h4>What would falsify the claim</h4><p>—</p></div>
       </div>
     </section>
 
