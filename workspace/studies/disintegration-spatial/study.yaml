@@ -67,7 +67,7 @@ biological_summary: 'This is the spatial realization of Fig 6''s disintegration 
 
   debris store (8/tick, capped, until the footprint is exhausted). The debris cloud''s RMS spread
 
-  keeps strictly increasing after dissolution completes (5.52 at tick 16 to 7.91 at tick 24, an
+  keeps strictly increasing after dissolution completes (~5.3 at tick 16 to ~7.6 at tick 24, an
 
   8-tick post-dissolution window) -- genuine scattering, not particles piling up against a wall
 
@@ -135,7 +135,7 @@ key_assumptions:
 
   18), `viability_threshold` (0.5), `resorb_per_tick` (6.0), `max_particles_per_tick` (8), and
 
-  the diffusion coefficients (stressor D=4.0, debris diffusion_rate=2.0) are toy-real: plausible,
+  the diffusion coefficients (stressor D=4.0, debris diffusion_rate=1.0) are toy-real: plausible,
 
   hand-tuned magnitudes chosen to make hold -> cross -> resorb -> scatter all legible within a
 
@@ -234,8 +234,10 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 0.0
-    provenance: 'RMS spread grows monotonically from 5.52 (tick 16, dissolution complete) to 7.91
-      (tick 24) over an 8-tick post-dissolution window
+    provenance: 'RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3
+      (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact
+      magnitudes vary run-to-run (representative values shown); the strict INCREASE is the robust,
+      test-asserted claim
       (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)'
   requires_simulation: disintegration-spatial
 - name: particle-bridge-emits-then-scatters
@@ -286,7 +288,7 @@ runs:
       detail: 68 debris particles shed by tick 16
     DEBRIS-CLOUD-KEEPS-SCATTERING:
       result: PASS
-      detail: RMS spread grows from 5.52 (tick 16) to 7.91 (tick 24)
+      detail: RMS spread grows from ~5.3 (tick 16) to ~7.6 (tick 24)
     PARTICLE-BRIDGE-EMITS-THEN-SCATTERS:
       result: PASS
       detail: 3 synthetic particles emitted then scattered, bridge verified independently
@@ -327,13 +329,13 @@ findings:
 
     well after the cell itself has fully dissolved, under a separate stock BrownianMovement
 
-    process. Confirmed: 68 particles shed by tick 16, RMS spread 5.52 -> 7.91 over an 8-tick
+    process. Confirmed: 68 particles shed by tick 16, RMS spread ~5.3 -> ~7.6 over an 8-tick
 
     post-dissolution window.'
   evidence:
     from_test: debris-cloud-keeps-scattering
     from_run: disintegration-spatial
-    observed: 68 particles shed; RMS spread 5.52 (tick 16) -> 7.91 (tick 24)
+    observed: 68 particles shed; RMS spread ~5.3 (tick 16) -> ~7.6 (tick 24)
   provenance:
     run_ids:
     - disintegration-spatial
@@ -404,7 +406,7 @@ conclusion: '## Claims
     tick run: the cell holds coherent (area > 30) through tick 6, the footprint-local stressor
     mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick
     16, sheds 68 particles, and the debris cloud''s RMS spread keeps strictly increasing through
-    tick 24 (5.52 -> 7.91).
+    tick 24 (~5.3 -> ~7.6).
 
 
   ## Evidence
@@ -418,7 +420,7 @@ conclusion: '## Claims
 
   - **SHED-MATERIAL-BECOMES-DEBRIS-PARTICLES** -- 68 debris particles by tick 16
 
-  - **DEBRIS-CLOUD-KEEPS-SCATTERING** -- RMS spread 5.52 (tick 16) -> 7.91 (tick 24)
+  - **DEBRIS-CLOUD-KEEPS-SCATTERING** -- RMS spread ~5.3 (tick 16) -> ~7.6 (tick 24)
 
   - **PARTICLE-BRIDGE-EMITS-THEN-SCATTERS** -- 3 synthetic particles emitted then scattered,
     bridge verified independently
@@ -499,7 +501,7 @@ limitations:
   the dissolving cell, and do not fall under gravity.
 - The stressor field's radial gradient, viability_threshold, resorb_per_tick,
   max_particles_per_tick, and the diffusion coefficients (stressor D=4.0, debris
-  diffusion_rate=2.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter
+  diffusion_rate=1.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter
   all legible within a 20-24 tick run -- not fitted to a named stressor, material, or literature
   target.
 - Unlike studies 2-3 in this investigation (cell-environment-coupling-spatial,
@@ -576,7 +578,7 @@ experiment: 'Run the `disintegration-spatial` composite (`CpmDisintegration`, a 
 result: 'Over a deterministic 20-24 tick run, the CPM cell holds coherent (area > 30) through
   tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick == 7,
   the domain resorbs to area 0 by tick 16, sheds exactly 68 particles into a shared debris store,
-  and that debris cloud''s RMS spread keeps strictly increasing through tick 24 (5.52 -> 7.91) --
+  and that debris cloud''s RMS spread keeps strictly increasing through tick 24 (~5.3 -> ~7.6) --
   genuine scattering, not wall-saturation. Fig 6''s level-shift holds as real spatial
   dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through
   one coupling process plus one stock movement process.
