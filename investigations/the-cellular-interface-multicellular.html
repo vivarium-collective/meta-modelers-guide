@@ -227,7 +227,7 @@ colony development. Those are named in the design spec
 increment plan, not results. Chemotaxis toward the field (the cell moving up the gradient it
 senses) is also deferred to a follow-up variant — the flagship cell&#x27;s modest position drift
 over the run is CPM thermal fluctuation, not directed motion.</p></div>
-      <div class="stats"><div class="stat"><b>2</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
+      <div class="stats"><div class="stat"><b>3</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
     </header>
 
     <section class="intro">
@@ -260,7 +260,7 @@ reshapes the gradient it depends on) demonstrated at two very different levels o
 resolution.</p>
     </section>
 
-    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-environment-coupling-spatial"><span class="arc-n">01</span><span class="arc-t">Cell–Environment Coupling, Spatial (flagship)</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#cell-cell-coupling-spatial"><span class="arc-n">02</span><span class="arc-t">Cell–Cell Coupling, Spatial</span></a></nav>
+    <nav class="arc" aria-label="the arc"><a class="arc-node" href="#cell-environment-coupling-spatial"><span class="arc-n">01</span><span class="arc-t">Cell–Environment Coupling, Spatial (flagship)</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#cell-cell-coupling-spatial"><span class="arc-n">02</span><span class="arc-t">Cell–Cell Coupling, Spatial</span></a><span class="arc-arrow">→</span><a class="arc-node" href="#disintegration-spatial"><span class="arc-n">03</span><span class="arc-t">Disintegration, Spatial</span></a></nav>
 
     
 
@@ -370,6 +370,57 @@ colony is composed from independent frameworks through one N-cell coupling proce
 (<code>CpmColonyField</code>), rather than the lumped two-role, shared-scalar-pool stand-in
 <code>draft-to-living-cell</code>&#x27;s Fig 3 study used?</p>
           <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (<code>CpmColonyField</code>) reproduce Fig 3&#x27;s competitive-exclusion branch as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run.</li><li><span class="tier tier-mechanism">mechanism</span> Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#x27;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</li><li><span class="tier tier-mechanism">mechanism</span> The additive two-writer assumption <code>CpmColonyField</code>&#x27;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</li></ul>
+        </div>
+      </details>
+    </article>
+    <article class="study" id="disintegration-spatial">
+      <div class="study-head">
+        <span class="ord">03</span>
+        <div>
+          <h3>Disintegration, Spatial <span class="badge ok">Accepted</span></h3>
+          <p class="claim">Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
+particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the
+viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter)
+reproduces Fig 6&#x27;s level-shift as genuine spatial dissolution, not a scripted or lumped
+stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area &gt; 30) through
+tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick = 7, the
+domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
+spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
+coupling process plus one stock movement process, mirroring <code>draft-to-living-cell/disintegration</code>&#x27;s
+level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
+</p>
+        </div>
+      </div>
+      <div class="chips"><div class="chip"><span class="chip-k">CELL HOLDS COHERENT BEFORE CROSSING</span><span class="chip-v">area 61-66 through tick 6, released False, 0 particles</span></div><div class="chip"><span class="chip-k">STRESSOR CROSSES VIABILITY BOUND</span><span class="chip-v">released_tick == 7.0, deterministic</span></div><div class="chip"><span class="chip-k">DOMAIN RESORBS TO ZERO</span><span class="chip-v">area falls from 56 (tick 7) to 0 by tick 16</span></div><div class="chip"><span class="chip-k">SHED MATERIAL BECOMES DEBRIS PARTICLES</span><span class="chip-v">68 debris particles shed by tick 16</span></div><div class="chip"><span class="chip-k">DEBRIS CLOUD KEEPS SCATTERING</span><span class="chip-v">RMS spread grows from ~5.3 (tick 16) to ~7.6 (tick 24)</span></div><div class="chip"><span class="chip-k">PARTICLE BRIDGE EMITS THEN SCATTERS</span><span class="chip-v">3 synthetic particles emitted then scattered, bridge verified independently</span></div></div>
+      
+      <div class="figs"></div>
+      
+      <details class="more">
+        <summary>Question &amp; findings</summary>
+        <div class="more-body">
+          <h4>Question</h4><p>Does Fig 6&#x27;s level-shift hold spatially -- a coherent CPM cell that loses structural
+viability when a diffusing stressor field crosses its bound, its domain resorbing while its
+shed material becomes scattering physical particles -- composed from independent frameworks
+(viva-cpm + spatio-flux particles) through one coupling process (<code>CpmDisintegration</code> +
+<code>BrownianMovement</code>)?</p>
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A single real CPM cell coupled to a real spatio-flux stressor field through one
+coupling process (<code>CpmDisintegration</code>) reproduces Fig 6&#x27;s level-shift as genuine spatial
+dissolution: the cell holds coherent while the diffusing stressor field is below its
+footprint-local viability bound, then latches a release once that bound is crossed at a
+specific, deterministic tick, and its domain resorbs to full dissolution over the following
+ticks. Confirmed: area &gt; 30 through tick 6, released_tick == 7.0, area == 0 by tick 16, all
+deterministic across repeated runs.</li><li><span class="tier tier-mechanism">mechanism</span> The cell&#x27;s shed material does not vanish -- it becomes physical debris. As the
+domain resorbs, its vacated footprint pixels are converted into particles in a shared
+map[particle] store, and that debris cloud keeps scattering (RMS spread strictly increasing)
+well after the cell itself has fully dissolved, under a separate stock BrownianMovement
+process. Confirmed: 68 particles shed by tick 16, RMS spread ~5.3 -&gt; ~7.6 over an 8-tick
+post-dissolution window.</li><li><span class="tier tier-mechanism">mechanism</span> The CPM-to-particle bridge this study&#x27;s disintegration mechanism depends on --
+that a process can emit particles via the map <code>_add</code> sentinel into a shared map[particle]
+store, and a separate stock movement process can then move them -- is runtime-verified
+directly and independently of the disintegration mechanism itself, retiring what was
+previously an untested primitive. Confirmed structurally: a synthetic emitter&#x27;s 3 particles
+remain exactly 3 particles four ticks later, with at least 2 having moved under
+BrownianMovement.</li></ul>
         </div>
       </details>
     </article>
