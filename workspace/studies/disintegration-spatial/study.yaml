@@ -7,7 +7,7 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: 'Does Fig 6''s level-shift hold spatially -- a coherent CPM cell that loses structural
+question: 'Does the paper''s §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
 
   viability when a diffusing stressor field crosses its bound, its domain resorbing while its
 
@@ -18,9 +18,9 @@ question: 'Does Fig 6''s level-shift hold spatially -- a coherent CPM cell that 
   `BrownianMovement`)?
 
   '
-biological_summary: 'This is the spatial realization of Fig 6''s disintegration pattern, and the
+biological_summary: 'This is the spatial realization of the paper''s §Disintegration pattern
 
-  third study in this investigation, built on a new coupling process, `CpmDisintegration`, that
+  (Fig 6), built on a new coupling process, `CpmDisintegration`, that
 
   owns a single CPM cell (no metabolism/cobra path -- this study is about the viability-collapse
 
@@ -84,7 +84,7 @@ claim: 'Composing one real CPM cell with a real spatio-flux stressor field and a
 
   viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
 
-  reproduces Fig 6''s level-shift as genuine spatial dissolution, not a scripted or lumped
+  reproduces the paper''s §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
 
   stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area > 30) through
 
@@ -96,7 +96,7 @@ claim: 'Composing one real CPM cell with a real spatio-flux stressor field and a
 
   coupling process plus one stock movement process, mirroring `draft-to-living-cell/disintegration`''s
 
-  level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
+  §Disintegration level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
 
   '
 baseline:
@@ -165,7 +165,8 @@ behavior_tests:
 - name: cell-holds-coherent-before-crossing
   classification: primary
   description: Before the stressor crosses viability_threshold, the CPM cell stays coherent
-    (substantial area, released flag unset, no debris) -- the hold phase of Fig 6's level shift.
+    (substantial area, released flag unset, no debris) -- the hold phase of the §Disintegration
+    level shift (Fig 6).
   measure:
     kind: observable
     path: obs.area
@@ -299,9 +300,11 @@ findings:
   status: confirms
   statement: 'A single real CPM cell coupled to a real spatio-flux stressor field through one
 
-    coupling process (`CpmDisintegration`) reproduces Fig 6''s level-shift as genuine spatial
+    coupling process (`CpmDisintegration`) reproduces the paper''s §Disintegration level-shift
 
-    dissolution: the cell holds coherent while the diffusing stressor field is below its
+    (Fig 6) as genuine spatial dissolution: the cell holds coherent while the diffusing stressor
+
+    field is below its
 
     footprint-local viability bound, then latches a release once that bound is crossed at a
 
@@ -384,7 +387,8 @@ conclusion_verdicts:
       disintegration mechanism.
   explanatory_gain:
     result: POSITIVE
-    basis: 'Realizing Fig 6''s level-shift with a real CPM cell''s structural viability collapsing
+    basis: 'Realizing the paper''s §Disintegration level-shift (Fig 6) with a real CPM cell''s
+      structural viability collapsing
 
       under a real diffusing stressor field -- rather than a scripted viability scalar decaying
 
@@ -402,7 +406,8 @@ conclusion: '## Claims
   - Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
     particle-movement process through two coupling processes (`CpmDisintegration` for the
     viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
-    reproduces Fig 6''s level-shift as genuine spatial dissolution. Over a deterministic 20-24
+    reproduces the paper''s §Disintegration level-shift (Fig 6) as genuine spatial dissolution.
+    Over a deterministic 20-24
     tick run: the cell holds coherent (area > 30) through tick 6, the footprint-local stressor
     mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick
     16, sheds 68 particles, and the debris cloud''s RMS spread keeps strictly increasing through
@@ -448,10 +453,6 @@ conclusion: '## Claims
   - The released flag latches permanently once crossed and never un-crosses, even once the
     footprint empties and would otherwise read a misleadingly low stressor mean.
 
-  - This is the third of nine planned spatial-counterpart studies in this investigation; six
-    remain unbuilt (molecular interfaces, biomolecular complementarity, autopoiesis,
-    growth-and-division, development-and-evolution, and the cellular-interface contract itself).
-
 
   ## Next steps
 
@@ -468,7 +469,8 @@ conclusion_logic:
     implementation_status: 'disintegration-spatial.composite.json builds and runs to completion
 
       through the engine over a deterministic 20-24 tick run.'
-    biological_validation: The spatial Fig 6 level-shift pattern is demonstrated at the toy-real
+    biological_validation: The spatial §Disintegration level-shift pattern (Fig 6) is demonstrated
+      at the toy-real
       (uncalibrated) level, with genuine per-pixel CPM shape dynamics, a real diffusing stressor
       field, and a verified particle bridge behind the hold-cross-resorb-scatter arc, rather than
       a scripted trajectory.
@@ -515,11 +517,11 @@ limitations:
   shared map[particle] store, moved by a separate stock BrownianMovement process) is now
   runtime-verified directly (tests/test_particle_bridge_spike.py), independent of the
   disintegration mechanism itself -- previously an unverified primitive.'
-- This is the third of nine planned spatial-counterpart studies; six remain unbuilt (see the
-  investigation's own decisions_needed).
 - 'Read alongside its specification-stage analogue, `draft-to-living-cell/disintegration`: that
 
-  study closes Fig 6''s level-shift with a scripted viability scalar decaying on a thermal-shock
+  study closes the paper''s §Disintegration level-shift (Fig 6) with a scripted viability scalar
+
+  decaying on a thermal-shock
 
   timer, over a lumped cell-state composite. This study closes the same level-shift with a real
 
@@ -579,8 +581,8 @@ result: 'Over a deterministic 20-24 tick run, the CPM cell holds coherent (area 
   tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick == 7,
   the domain resorbs to area 0 by tick 16, sheds exactly 68 particles into a shared debris store,
   and that debris cloud''s RMS spread keeps strictly increasing through tick 24 (~5.3 -> ~7.6) --
-  genuine scattering, not wall-saturation. Fig 6''s level-shift holds as real spatial
-  dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through
+  genuine scattering, not wall-saturation. The paper''s §Disintegration level-shift (Fig 6) holds
+  as real spatial dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through
   one coupling process plus one stock movement process.
 
   '

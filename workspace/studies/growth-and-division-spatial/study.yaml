@@ -7,15 +7,15 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: 'Does Fig 10a,b''s growth-then-divide pattern hold spatially -- a CPM cell whose
+question: 'Does the paper''s §Growth and division growth-then-divide pattern (Fig 10a,b) hold spatially -- a CPM cell whose
   metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a
   threshold and divides via the native CPM engine operation `divide_cells` (mass-conserved),
   compounding into a small lineage over the run -- composed from independent frameworks
   (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`)?
 
   '
-biological_summary: 'This is the spatial realization of Fig 10a,b''s growth-then-divide pattern,
-  and the fourth study in this investigation, built on a new coupling process,
+biological_summary: 'This is the spatial realization of the paper''s §Growth and division
+  growth-then-divide pattern (Fig 10a,b), built on a new coupling process,
   `CpmGrowthDivision`, that owns a single CPM cell on a shared spatio-flux glucose field. Each
   tick the process reads glucose at the cell''s own CPM footprint, runs one dynamic-FBA step
   against `e_coli_core`, grows the cell''s CPM target volume from the biomass produced (the same
@@ -51,14 +51,16 @@ biological_summary: 'This is the spatial realization of Fig 10a,b''s growth-then
   '
 claim: 'Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the
   native CPM engine operation `divide_cells` through a single coupling process
-  (`CpmGrowthDivision`) reproduces Fig 10a,b''s growth-then-divide pattern as genuine spatial
-  multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick
+  (`CpmGrowthDivision`) reproduces the paper''s §Growth and division growth-then-divide pattern
+  (Fig 10a,b) as genuine spatial multicellular compounding, not a scripted lineage or a lumped
+  stand-in for it: over a 36-tick
   run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase
   (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while every cell''s CPM volume
   stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80 -- growth,
   crossing, division, and resumed growth in the daughters, all as direct simulation output from
   three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed
-  interface. This mirrors `draft-to-living-cell/growth-and-division`''s Fig 10a,b claim (growth
+  interface. This mirrors `draft-to-living-cell/growth-and-division`''s §Growth and division
+  claim (Fig 10a,b) (growth
   drives the cell''s own state across a threshold; crossing the threshold triggers division) but
   realizes the division event itself as the native spatial CPM operation `divide_cells` acting
   directly on lattice pixels, in contrast to that study''s place-graph rewrite (one node becoming
@@ -237,8 +239,9 @@ findings:
   status: confirms
   statement: 'A single real CPM cell whose volume growth is driven by real per-footprint dFBA
     metabolism, coupled to the native CPM engine operation divide_cells through one process
-    (CpmGrowthDivision), reproduces Fig 10a,b''s growth-then-divide pattern as genuine spatial
-    compounding: the population steps up in a monotonic non-decreasing staircase, reaching
+    (CpmGrowthDivision), reproduces the paper''s §Growth and division growth-then-divide pattern
+    (Fig 10a,b) as genuine spatial compounding: the population steps up in a monotonic
+    non-decreasing staircase, reaching
     roughly 3-4 generations from a single seed cell, bounded by the shared glucose field and the
     lattice''s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36
     ticks.'
@@ -301,7 +304,8 @@ conclusion_verdicts:
       mass-conservation control also passes, independent of the growth-division mechanism itself.
   explanatory_gain:
     result: POSITIVE
-    basis: 'Realizing Fig 10a,b''s growth-then-divide pattern with a real CPM cell''s volume driven
+    basis: 'Realizing the paper''s §Growth and division growth-then-divide pattern (Fig 10a,b)
+      with a real CPM cell''s volume driven
       by real per-footprint dFBA metabolism and divided by the native spatial CPM engine
       operation -- rather than a lumped ODE growing a scalar dna store and firing a place-graph
       rewrite -- makes draft-to-living-cell''s growth-and-division claim (growth drives the cell''s
@@ -313,8 +317,9 @@ conclusion: '## Claims
 
   - Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native
     CPM engine operation divide_cells through a single coupling process (CpmGrowthDivision)
-    reproduces Fig 10a,b''s growth-then-divide pattern as genuine spatial multicellular
-    compounding. Over a 36-tick run sampled every 3 ticks: the population steps up in a monotonic
+    reproduces the paper''s §Growth and division growth-then-divide pattern (Fig 10a,b) as
+    genuine spatial multicellular compounding. Over a 36-tick run sampled every 3 ticks: the
+    population steps up in a monotonic
     non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while
     every cell''s CPM volume stays bounded in a sawtooth between reset_target = 40 and
     vol_threshold = 80.
@@ -356,10 +361,6 @@ conclusion: '## Claims
   - Each CPM cell gets its own independent cobra model copy, not one shared model instance across
     the lineage.
 
-  - This is the fourth of nine planned spatial-counterpart studies in this investigation; five
-    remain unbuilt (molecular interfaces, biomolecular complementarity, autopoiesis,
-    development-and-evolution, and the cellular-interface contract itself).
-
 
   ## Next steps
 
@@ -374,8 +375,9 @@ conclusion_logic:
   if_primary_tests_pass:
     implementation_status: 'growth-division-spatial.composite.json builds and runs to completion
       through the engine over a 36-tick run.'
-    biological_validation: The spatial Fig 10a,b growth-then-divide pattern is demonstrated at the
-      toy-real (uncalibrated) level, with genuine per-footprint dFBA metabolism driving growth and
+    biological_validation: The spatial §Growth and division growth-then-divide pattern (Fig 10a,b)
+      is demonstrated at the toy-real (uncalibrated) level, with genuine per-footprint dFBA
+      metabolism driving growth and
       the native CPM divide_cells operation firing division at threshold, rather than a scripted
       lineage tree.
     pipeline_unblocks: []
@@ -417,8 +419,6 @@ limitations:
 - 'The native divide_cells primitive this study''s division depends on is now runtime-verified
   directly (tests/test_cpm_divide_spike.py), independent of the growth-division composite''s own
   metabolism mechanism -- previously an untested primitive.'
-- This is the fourth of nine planned spatial-counterpart studies; five remain unbuilt (see the
-  investigation's own decisions_needed).
 - 'Read alongside its specification-stage analogue, `draft-to-living-cell/growth-and-division`:
   that study drives an autocatalytic ODE to grow the cell''s own dna store past a threshold, then
   fires division as a place-graph rewrite -- a structural change to the composition itself, one
@@ -474,8 +474,9 @@ result: 'Over a 36-tick run sampled every 3 ticks, the CPM cell population steps
   single seed cell, while every cell''s CPM volume stays bounded in a sawtooth between
   reset_target = 40 and vol_threshold = 80 -- growth, crossing, division, and resumed growth in
   the daughters, all as direct simulation output composed from three independently-developed
-  frameworks (viva-cpm + spatio-flux + cobra) through one coupling process. Fig 10a,b''s
-  growth-then-divide pattern holds as genuine spatial multicellular compounding, using the native
+  frameworks (viva-cpm + spatio-flux + cobra) through one coupling process. The paper''s
+  §Growth and division growth-then-divide pattern (Fig 10a,b) holds as genuine spatial
+  multicellular compounding, using the native
   spatial CPM division primitive in contrast to `draft-to-living-cell/growth-and-division`''s
   place-graph rewrite.
 

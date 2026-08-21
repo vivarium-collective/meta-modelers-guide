@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-21
 **Investigation:** `the-cellular-interface-multicellular`
-**Analogue:** Fig 3 viability negotiation → spatial competitive exclusion + cross-feeding
+**Analogue:** the paper's §Cell–cell coupling viability negotiation (no dedicated figure) → spatial competitive exclusion + cross-feeding
 **Verified against installed code:** `cpm` (`~/code/viva-cpm/cpm/`, Rust `cpm_core`), `cobra` textbook `e_coli_core`, and the merged flagship `meta_modelers_guide/cpm/cell_field.py`.
 **Interpreter:** `~/code/meta-modelers-guide/.venv/bin/python`, `PYTHONPATH=<worktree>`.
 

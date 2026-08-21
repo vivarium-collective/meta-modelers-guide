@@ -71,6 +71,63 @@ def _validate_simulation_processes(ws_data: dict, registry: set | None) -> list[
     return errors
 
 
+## P1-b: figure-citation + sibling-staleness provenance checks (per study.yaml).
+#
+# Studies are individually-scoped artifacts; they must not count or reference
+# the build-state of sibling studies ("only built study", "N of nine planned
+# studies", "remain unbuilt", ...) — that scope belongs only in
+# investigation.yaml, and sibling-counting prose goes stale the moment another
+# study is accepted. And any bare "Fig N"/"Figure N" citation must carry a
+# stable section-title anchor (a "§" or the word "section" nearby): figure
+# numbers drift across paper revisions (the "Fig 3, viability negotiation"
+# incident — Fig 3 is actually the orchestration figure; cell-cell coupling
+# has no figure of its own), while section titles are stable.
+_SIBLING_STALENESS_PATTERNS = [
+    re.compile(r"only built study", re.IGNORECASE),
+    re.compile(r"only the flagship", re.IGNORECASE),
+    re.compile(r"remain(?:s|ing)?\s+unbuilt", re.IGNORECASE),
+    re.compile(r"do(?:es)? not exist yet", re.IGNORECASE),
+    re.compile(r"remaining\s+(?:one|two|three|four|five|six|seven|eight|nine)\b", re.IGNORECASE),
+    re.compile(
+        r"\b(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)\s+of\s+(?:the\s+)?nine\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"only one study exists", re.IGNORECASE),
+]
+
+_FIGURE_CITATION_RE = re.compile(r"\bFig(?:ure)?\.?\s*\d+[a-z]?\b", re.IGNORECASE)
+_SECTION_ANCHOR_RE = re.compile(r"§|\bsection\b", re.IGNORECASE)
+_FIGURE_ANCHOR_WINDOW = 200  # chars of context searched on each side of a Fig N citation
+
+
+def _check_study_sibling_staleness(text: str) -> list[str]:
+    """Return sibling build-state phrases found in a study.yaml's raw text.
+
+    A study.yaml must stand on its own regardless of how many sibling studies
+    in the same investigation are built — see investigation.yaml for that.
+    """
+    hits: list[str] = []
+    for pat in _SIBLING_STALENESS_PATTERNS:
+        hits.extend(m.group(0) for m in pat.finditer(text))
+    return list(dict.fromkeys(hits))  # de-dupe, preserve first-seen order
+
+
+def _check_study_bare_figure_citations(text: str) -> list[str]:
+    """Return 'Fig N'/'Figure N' citations with no section-title anchor nearby.
+
+    A citation is "safe" only if a §Section-title (or the word "section")
+    also appears within _FIGURE_ANCHOR_WINDOW chars of it, so the citation
+    survives a figure renumbering.
+    """
+    hits: list[str] = []
+    for m in _FIGURE_CITATION_RE.finditer(text):
+        start = max(0, m.start() - _FIGURE_ANCHOR_WINDOW)
+        end = min(len(text), m.end() + _FIGURE_ANCHOR_WINDOW)
+        if not _SECTION_ANCHOR_RE.search(text[start:end]):
+            hits.append(m.group(0))
+    return list(dict.fromkeys(hits))
+
+
 def _sha256(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -324,6 +381,23 @@ def main() -> None:
             s_status = study_data.get("status", "unknown")
             study_names.append(s_name)
             study_statuses.append(s_status)
+
+            # P1-b: sibling build-state staleness + bare figure-citation checks
+            # (raw text, not the parsed dict — folded YAML scalars would hide
+            # exact phrasing).
+            raw_text = study_yaml_path.read_text()
+            for phrase in _check_study_sibling_staleness(raw_text):
+                study_warnings.append(
+                    f"  WARN study {s_name}: sibling build-state phrase {phrase!r} — "
+                    "studies must not count or reference sibling build-state "
+                    "(that scope belongs only in investigation.yaml)"
+                )
+            for cite in _check_study_bare_figure_citations(raw_text):
+                study_warnings.append(
+                    f"  WARN study {s_name}: bare figure citation {cite!r} has no "
+                    "section-title anchor ('§' or 'section') nearby — figure numbers "
+                    "drift across paper revisions, cite the section too"
+                )
 
             # Validate against JSON schema if available
             if study_schema is not None:
