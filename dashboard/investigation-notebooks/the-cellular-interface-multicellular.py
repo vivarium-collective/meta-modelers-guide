@@ -41,16 +41,17 @@ if _os.environ.get("PYTHONUTF8") != "1":
 # shape, adhesion, and volume dynamics) on one side, and spatio-flux's diffusion-advection PDE
 # solver plus dynamic flux-balance analysis on the other? Composing two frameworks that were
 # never designed with each other in mind is exactly the paper's central claim about typed
-# interfaces made concrete: `CpmCellField`, the one coupling process this investigation has
-# built so far, is the interface where a CPM cell's footprint (a set of lattice pixels) is
-# translated into a spatio-flux field read, and where a dynamic-FBA solution (mmol/gDW/hr
-# fluxes) is translated back into a per-pixel field delta and a CPM target-volume update. Only
-# the flagship study, `cell-environment-coupling-spatial` (the spatial analogue of Fig 5's
-# sense/act loop), is built and run; the other eight patterns from `draft-to-living-cell`
-# (cell-cell coupling, disintegration, molecular interfaces, biomolecular complementarity,
-# autopoiesis, growth-and-division, development-and-evolution, and the cellular-interface
-# contract itself) are named as future increments in the design spec but have no composite,
-# study, or run yet.
+# interfaces made concrete: `CpmCellField`, the flagship's coupling process, is the interface
+# where a CPM cell's footprint (a set of lattice pixels) is translated into a spatio-flux
+# field read, and where a dynamic-FBA solution (mmol/gDW/hr fluxes) is translated back into a
+# per-pixel field delta and a CPM target-volume update. Four studies are built and run so far —
+# `cell-environment-coupling-spatial` (the flagship, the spatial analogue of Fig 5's sense/act
+# loop), `cell-cell-coupling-spatial`, `disintegration-spatial`, and
+# `growth-and-division-spatial`. The remaining patterns from `draft-to-living-cell` (molecular
+# interfaces, biomolecular complementarity, autopoiesis, development-and-evolution, and the
+# cellular-interface contract itself) are named as future increments in the design spec; some
+# are planned, one (biomolecular complementarity) is in progress with code done but its study
+# not yet accepted.
 #
 # The investigations are deliberate analogues, study-for-study, wherever the counterpart
 # exists: `cell-environment-coupling-spatial` here is the spatial realization of
@@ -184,7 +185,7 @@ def _render_one(address, config, runs_db, study_yaml):
 
 # ## Study: Cell–Environment Coupling, Spatial (flagship) (`cell-environment-coupling-spatial`)
 #
-# **Question.** Does the Fig 5 sense/act loop hold as real spatial metabolism — one CPM cell sensing
+# **Question.** Does the paper's §Cell–environment coupling sense/act loop (Fig 5) hold as real spatial metabolism — one CPM cell sensing
 # a diffusing nutrient field, running flux-balance analysis at its own footprint, growing, and
 # secreting a byproduct back into the field — when the cell and its environment are each real,
 # independently-built simulators (viva-cpm's Cellular Potts engine, spatio-flux's
@@ -192,8 +193,9 @@ def _render_one(address, config, runs_db, study_yaml):
 # (`CpmCellField`), rather than a scripted or lumped stand-in for that coupling?
 #
 # **Claim.** Composing a real CPM cell with a real spatio-flux nutrient field through one typed
-# coupling process (`CpmCellField`) reproduces the Fig 5 sense/act loop as genuine spatial
-# metabolism, not a scripted stand-in for it: over 20 ticks the cell runs dynamic-FBA at its own
+# coupling process (`CpmCellField`) reproduces the paper's §Cell–environment coupling sense/act
+# loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in for it: over 20 ticks the
+# cell runs dynamic-FBA at its own
 # footprint (`e_coli_core`, O2-capped to force acetate overflow), grows ~3.4x in CPM volume (32
 # -> 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
 # up to ~18% before diffusion partially resupplies it (niche construction), and secretes a
@@ -289,16 +291,17 @@ _save_viz('cell-environment-coupling-spatial', 'single-cell-in-a-field-metrics',
 
 # ## Study: Cell–Cell Coupling, Spatial (`cell-cell-coupling-spatial`)
 #
-# **Question.** Does the Fig 3 viability-negotiation pattern hold as real spatial multicellularity —
-# multiple CPM cells sharing one diffusing nutrient field, each running its own dynamic-FBA step
-# at its own footprint, producing both competitive exclusion and cross-feeding — when the whole
-# colony is composed from independent frameworks through one N-cell coupling process
-# (`CpmColonyField`), rather than the lumped two-role, shared-scalar-pool stand-in
-# `draft-to-living-cell`'s Fig 3 study used?
+# **Question.** Does the paper's §Cell–cell coupling viability-negotiation pattern (no dedicated
+# figure) hold as real spatial multicellularity — multiple CPM cells sharing one diffusing
+# nutrient field, each running its own dynamic-FBA step at its own footprint, producing both
+# competitive exclusion and cross-feeding — when the whole colony is composed from independent
+# frameworks through one N-cell coupling process (`CpmColonyField`), rather than the lumped
+# two-role, shared-scalar-pool stand-in `draft-to-living-cell`'s §Cell–cell coupling study used?
 #
 # **Claim.** Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
-# single N-cell coupling process (`CpmColonyField`) reproduces Fig 3's viability-negotiation
-# pattern as genuine spatial multicellularity, not a scripted or lumped stand-in for it: over
+# single N-cell coupling process (`CpmColonyField`) reproduces the paper's §Cell–cell coupling
+# viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
+# scripted or lumped stand-in for it: over
 # 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives spatial
 # competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81 px), while a
 # different composite over the same coupling process — a localized glucose depot, a fast-diffusing
@@ -425,7 +428,12 @@ print("No recorded runs for this study; nothing to reproduce.")
 # **cellcell-compete-movie**
 
 # cellcell-compete-movie
-_save_viz('cell-cell-coupling-spatial', 'cellcell-compete-movie', _render_one('image:viz/cellcell-compete.gif', {'chart': 'image', 'caption': 'Spatial competitive exclusion over 20 ticks -- the higher-vmax competitor (id 1) claims the shared lattice; the lower-vmax competitor (id 2) is pushed to the margins.'}, RUNS_DB, STUDY_YAML))
+_save_viz('cell-cell-coupling-spatial', 'cellcell-compete-movie', _render_one('image:viz/cellcell-compete.gif', {'chart': 'image', 'caption': 'Spatial competitive exclusion over 20 ticks -- the higher-vmax competitor (id 1) claims the shared lattice (filled, over the glucose depletion it drives); the lower-vmax competitor (id 2) is pushed to the margins.'}, RUNS_DB, STUDY_YAML))
+
+# **cellcell-compete-metrics**
+
+# cellcell-compete-metrics
+_save_viz('cell-cell-coupling-spatial', 'cellcell-compete-metrics', _render_one('html:viz/cellcell-compete-metrics.html', {'chart': 'html', 'caption': "Biomass divergence for the competition run -- the id 1 / id 2 biomass ratio climbs to a 3.69x final margin over 20 ticks, the study's headline number made directly visible."}, RUNS_DB, STUDY_YAML))
 
 # **cellcell-crossfeed-movie**
 
@@ -452,7 +460,7 @@ _save_viz('cell-cell-coupling-spatial', 'cellcell-crossfeed-metrics', _render_on
 
 # ## Study: Disintegration, Spatial (`disintegration-spatial`)
 #
-# **Question.** Does Fig 6's level-shift hold spatially -- a coherent CPM cell that loses structural
+# **Question.** Does the paper's §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
 # viability when a diffusing stressor field crosses its bound, its domain resorbing while its
 # shed material becomes scattering physical particles -- composed from independent frameworks
 # (viva-cpm + spatio-flux particles) through one coupling process (`CpmDisintegration` +
@@ -461,13 +469,13 @@ _save_viz('cell-cell-coupling-spatial', 'cellcell-crossfeed-metrics', _render_on
 # **Claim.** Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
 # particle-movement process through two coupling processes (`CpmDisintegration` for the
 # viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
-# reproduces Fig 6's level-shift as genuine spatial dissolution, not a scripted or lumped
+# reproduces the paper's §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
 # stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area > 30) through
 # tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick = 7, the
 # domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
 # spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
 # coupling process plus one stock movement process, mirroring `draft-to-living-cell/disintegration`'s
-# level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
+# §Disintegration level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
 
 # ### Parameters
 #
@@ -558,9 +566,9 @@ _save_viz('disintegration-spatial', 'disintegration-metrics', _render_one('html:
 
 # ## Study: Growth and Division, Spatial (`growth-and-division-spatial`)
 #
-# **Question.** Does Fig 10a,b's growth-then-divide pattern hold spatially -- a CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a threshold and divides via the native CPM engine operation `divide_cells` (mass-conserved), compounding into a small lineage over the run -- composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`)?
+# **Question.** Does the paper's §Growth and division growth-then-divide pattern (Fig 10a,b) hold spatially -- a CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a threshold and divides via the native CPM engine operation `divide_cells` (mass-conserved), compounding into a small lineage over the run -- composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`)?
 #
-# **Claim.** Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native CPM engine operation `divide_cells` through a single coupling process (`CpmGrowthDivision`) reproduces Fig 10a,b's growth-then-divide pattern as genuine spatial multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while every cell's CPM volume stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80 -- growth, crossing, division, and resumed growth in the daughters, all as direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. This mirrors `draft-to-living-cell/growth-and-division`'s Fig 10a,b claim (growth drives the cell's own state across a threshold; crossing the threshold triggers division) but realizes the division event itself as the native spatial CPM operation `divide_cells` acting directly on lattice pixels, in contrast to that study's place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
+# **Claim.** Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native CPM engine operation `divide_cells` through a single coupling process (`CpmGrowthDivision`) reproduces the paper's §Growth and division growth-then-divide pattern (Fig 10a,b) as genuine spatial multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations, while every cell's CPM volume stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80 -- growth, crossing, division, and resumed growth in the daughters, all as direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. This mirrors `draft-to-living-cell/growth-and-division`'s §Growth and division claim (Fig 10a,b) (growth drives the cell's own state across a threshold; crossing the threshold triggers division) but realizes the division event itself as the native spatial CPM operation `divide_cells` acting directly on lattice pixels, in contrast to that study's place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
 
 # ### Parameters
 #
@@ -632,12 +640,12 @@ print("No recorded runs for this study; nothing to reproduce.")
 # **growth-division-spatial-movie**
 
 # growth-division-spatial-movie
-_save_viz('growth-and-division-spatial', 'growth-division-spatial-movie', _render_one('image:viz/growth-division-spatial.gif', {'chart': 'image', 'caption': 'Spatial growth-and-division over 36 ticks -- a single CPM cell compounds into a small lineage (1,2,2,2,4,4,4,8,8,8,13,16 cells) as metabolism-driven volume growth repeatedly crosses vol_threshold and native divide_cells splits each cell.'}, RUNS_DB, STUDY_YAML))
+_save_viz('growth-and-division-spatial', 'growth-division-spatial-movie', _render_one('image:viz/growth-division-spatial.gif', {'chart': 'image', 'caption': 'Spatial growth-and-division over 36 ticks -- a single founder cell compounds into a lineage of distinguishably lineage/generation-colored daughters (18 cells by t=36 in the re-baked run) as metabolism-driven volume growth repeatedly crosses vol_threshold and native divide_cells splits each cell.'}, RUNS_DB, STUDY_YAML))
 
 # **growth-division-metrics**
 
 # growth-division-metrics
-_save_viz('growth-and-division-spatial', 'growth-division-metrics', _render_one('html:viz/growth-division-metrics.html', {'chart': 'html', 'caption': 'Synced n_cells/total_volume metrics for the growth-division run -- the population staircase (1,2,2,2,4,4,4,8,8,8,13,16) over 36 ticks.'}, RUNS_DB, STUDY_YAML))
+_save_viz('growth-and-division-spatial', 'growth-division-metrics', _render_one('html:viz/growth-division-metrics.html', {'chart': 'html', 'caption': 'Synced n_cells/total_volume metrics for the growth-division run -- a monotonic non-decreasing population staircase, division events marked, over 36 ticks.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -645,12 +653,12 @@ _save_viz('growth-and-division-spatial', 'growth-division-metrics', _render_one(
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | population-steps-up-by-division | kind=observable path=obs.n_cells expr=max(obs.n_cells) over the 36-tick run | op >= value 8.0 provenance n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks (12 samples, cadence 3) -- steps 1 -> 2 -> 4 -> 8 -> 16 (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics) |
-# | population-never-shrinks | kind=observable path=obs.n_cells expr=obs.n_cells == sorted(obs.n_cells) over the 36-tick run | op > value 0.0 provenance n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 is monotonic non-decreasing over the full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns)) |
+# | population-steps-up-by-division | kind=observable path=obs.n_cells expr=max(obs.n_cells) over the 36-tick run | op >= value 8.0 provenance n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence 3) -- steps 1 -> 2 -> 4 -> 8 -> 18 (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics) |
+# | population-never-shrinks | kind=observable path=obs.n_cells expr=obs.n_cells == sorted(obs.n_cells) over the 36-tick run | op > value 0.0 provenance n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns)) |
 # | daughters-resume-growth-without-runaway | kind=observable path=obs.n_cells expr=obs.n_cells after run(30) from a single seed cell (n0 = 1) | op >= value 3.0 provenance starting from n0 = 1, n_cells >= 3 after 30 ticks (at least 1 -> 2 -> ~4), with every per-cell volume bounded in (5, 200) -- no runaway single cell, no zero-volume phantom daughters (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
 # | per-cell-volume-stays-bounded | kind=observable path=obs.volume expr=range of per-cell CPM volume across all cells and all sampled ticks | op < value 200.0 provenance per-cell volumes stay bounded roughly 31-79 px across the 36-tick run (division halves a cell once it crosses vol_threshold = 80, resetting toward reset_target = 40, then it regrows); the tests' hard bounds (8 < v < 200) hold at every sampled tick (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
 # | native-division-conserves-mass | kind=observable path=cell_volumes expr=(vol_parent + vol_new_daughter) - vol_before_split, and divide_cells(500.0, 40.0) on a sub-threshold cell | op <= value 2.0 provenance divide_cells(80.0, 40.0) on a cell grown to ~150 splits it into two daughters (parent id kept + one new id) whose combined volume matches the pre-split volume within +-2 px (rounding); divide_cells(500.0, 40.0) on a cell at 60 (below threshold) returns [] -- a correct no-op (tests/test_cpm_divide_spike.py::test_divide_splits_one_into_two_mass_conserved, test_below_threshold_is_noop) |
 
 # ## Open decisions
-# - Only 1 of the 9 planned spatial-counterpart studies exists (cell-environment-coupling-spatial, the flagship). The remaining 8 — cellular-interface, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution — are named in the design spec's increment plan but have no composite, study, or run. Treat this investigation's verdict as scoped to the flagship pattern only until the fan-out increments land.
+# - Four of the 9 planned spatial-counterpart studies are built and run so far — cell-environment-coupling-spatial (the flagship), cell-cell-coupling-spatial, disintegration-spatial, and growth-and-division-spatial. The remaining patterns — cellular-interface, molecular-interfaces, biomolecular-complementarity, autopoiesis, development-and-evolution — are named in the design spec's increment plan; some are planned, biomolecular-complementarity is in progress (code done, study.yaml held). Treat this investigation's verdict as scoped to the built studies only until the remaining increments land.
 # - Chemotaxis toward the sensed field (directed up-gradient motion) is explicitly deferred to a follow-up variant of the flagship composite; the current flagship cell does not chemotax, only senses, metabolizes, grows, and secretes.
