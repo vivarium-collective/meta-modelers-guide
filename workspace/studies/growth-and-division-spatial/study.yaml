@@ -37,8 +37,7 @@ biological_summary: 'This is the spatial realization of the paper''s §Growth an
   CPM cell seeded on a uniform, abundant 60x60 glucose field (`glucose_vmax` deliberately tuned
   down to 1.5, `vol_threshold` 80, `reset_target` 40). Measured over a 36-tick run sampled every 3
   ticks (`tests/test_growth_division_regime.py`, `tests/test_cpm_growth_division.py`,
-  `tests/test_growth_division_viz.py`): the population steps up 1 -> 2 -> 2 -> 2 -> 4 -> 4 -> 4 ->
-  8 -> 8 -> 8 -> 13 -> 16, a monotonic non-decreasing staircase spanning roughly 3-4 generations
+  `tests/test_growth_division_viz.py`): the population steps up 1 -> 2 -> 2 -> 2 -> 4 -> 4 -> 5 -> 8 -> 8 -> 11 -> 14 -> 18, a monotonic non-decreasing staircase spanning roughly 3-4 generations
   from a single seed cell, never losing a cell to a phantom or a runaway single-cell absorbing the
   whole lattice. Per-cell CPM volume sawtooths in a bounded band (roughly 31-79 px) throughout the
   run -- each cell grows toward `vol_threshold` = 80, is halved by division back down near
@@ -55,7 +54,7 @@ claim: 'Composing one real CPM cell, growing via real per-footprint dFBA metabol
   (Fig 10a,b) as genuine spatial multicellular compounding, not a scripted lineage or a lumped
   stand-in for it: over a 36-tick
   run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase
-  (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while every cell''s CPM volume
+  (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations, while every cell''s CPM volume
   stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80 -- growth,
   crossing, division, and resumed growth in the daughters, all as direct simulation output from
   three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed
@@ -88,7 +87,7 @@ key_assumptions:
   `disintegration-spatial` gave its own resorption primitive: a chosen, code-verified engine
   operation standing in for a mechanism (cytokinesis) the underlying CPM engine does not itself
   simulate.'
-- 'The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 16 cells) bounded by the shared
+- 'The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 18 cells) bounded by the shared
   glucose field and the 60x60 lattice''s finite capacity, not by any hard-coded generation limit.
   `glucose_vmax` is deliberately tuned down from the brief''s literal reference value of 10.0 to
   1.5: at 10.0 every live cell grows fast enough to re-cross `vol_threshold` almost every tick, and
@@ -127,8 +126,8 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 8.0
-    provenance: 'n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks (12 samples, cadence
-      3) -- steps 1 -> 2 -> 4 -> 8 -> 16 (tests/test_growth_division_regime.py::test_population_steps_up_by_division,
+    provenance: 'n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence
+      3) -- steps 1 -> 2 -> 4 -> 8 -> 18 (tests/test_growth_division_regime.py::test_population_steps_up_by_division,
       tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics)'
   requires_simulation: growth-division-spatial
 - name: population-never-shrinks
@@ -142,7 +141,7 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 0.0
-    provenance: 'n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 is monotonic non-decreasing over the
+    provenance: 'n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the
       full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division
       asserts ns == sorted(ns))'
   requires_simulation: growth-division-spatial
@@ -219,7 +218,7 @@ runs:
   outcomes:
     POPULATION-STEPS-UP-BY-DIVISION:
       result: PASS
-      detail: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks
+      detail: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks
     POPULATION-NEVER-SHRINKS:
       result: PASS
       detail: n_cells trajectory is monotonic non-decreasing
@@ -243,12 +242,12 @@ findings:
     (Fig 10a,b) as genuine spatial compounding: the population steps up in a monotonic
     non-decreasing staircase, reaching
     roughly 3-4 generations from a single seed cell, bounded by the shared glucose field and the
-    lattice''s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36
+    lattice''s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36
     ticks.'
   evidence:
     from_test: population-steps-up-by-division
     from_run: growth-division-spatial
-    observed: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks, monotonic non-decreasing
+    observed: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks, monotonic non-decreasing
   provenance:
     run_ids:
     - growth-division-spatial
@@ -320,14 +319,14 @@ conclusion: '## Claims
     reproduces the paper''s §Growth and division growth-then-divide pattern (Fig 10a,b) as
     genuine spatial multicellular compounding. Over a 36-tick run sampled every 3 ticks: the
     population steps up in a monotonic
-    non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while
+    non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations, while
     every cell''s CPM volume stays bounded in a sawtooth between reset_target = 40 and
     vol_threshold = 80.
 
 
   ## Evidence
 
-  - **POPULATION-STEPS-UP-BY-DIVISION** -- n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36
+  - **POPULATION-STEPS-UP-BY-DIVISION** -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36
     ticks
 
   - **POPULATION-NEVER-SHRINKS** -- n_cells trajectory is monotonic non-decreasing
@@ -364,7 +363,7 @@ conclusion: '## Claims
 
   ## Next steps
 
-  - Extend the run length or lattice size to see whether the staircase continues past 16 cells or
+  - Extend the run length or lattice size to see whether the staircase continues past 18 cells or
     saturates as glucose depletion and crowding dominate.
 
   - Add asymmetric division or size-dependent division timing so daughters need not divide in
@@ -408,7 +407,7 @@ limitations:
   mechanics. The trigger condition is genuine simulation state reached by real metabolism-driven
   growth; the split operation itself is an engine-provided primitive standing in for a mechanism
   (cytokinesis) the underlying CPM engine does not itself simulate.'
-- The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 16 cells), bounded by the shared
+- The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 18 cells), bounded by the shared
   glucose field and the 60x60 lattice's finite capacity, not by a hard-coded generation limit.
   glucose_vmax is deliberately tuned down to 1.5 (from a brief reference value of 10.0) so the
   population steps up as a legible staircase rather than every live cell re-crossing threshold
@@ -477,7 +476,7 @@ experiment: 'Run the `growth-division-spatial` composite (`CpmGrowthDivision`, a
 
   '
 result: 'Over a 36-tick run sampled every 3 ticks, the CPM cell population steps up in a monotonic
-  non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations from a
+  non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations from a
   single seed cell, while every cell''s CPM volume stays bounded in a sawtooth between
   reset_target = 40 and vol_threshold = 80 -- growth, crossing, division, and resumed growth in
   the daughters, all as direct simulation output composed from three independently-developed
