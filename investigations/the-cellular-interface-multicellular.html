@@ -202,10 +202,12 @@ uptake/secretion back into the shared field as a spatial delta that spatio-flux&
 lattice pixels, on a 60x60 = 3600-pixel field — it does not come close to filling the lattice),
 depletes the glucose at its own footprint by up to ~18% before diffusion partially resupplies
 it, and secretes a spreading acetate plume — niche construction made spatially and
-metabolically real, not scripted. The remaining eight studies (a multi-cell competition
-counterpart, a structural-integrity release, molecular-scale reaction-diffusion, sorting and
-phase separation, a self-maintained protocell, growth-and-division, and colony development) are
-planned, not built; this file and the flagship study are honest about that.
+metabolically real, not scripted. Three more studies are built and run alongside the flagship —
+cell-cell coupling (multi-cell field competition), disintegration (structural-integrity
+release), and growth-and-division. The remaining five (the cellular-interface contract itself,
+molecular-scale reaction-diffusion, sorting and phase separation, a self-maintained protocell,
+and colony development) are planned or in progress, not yet built; this file is honest about
+that.
 </p>
       <div class="verdict"><span class="badge ok">running</span>
         <p>Partial and honest: the flagship pattern holds. <code>cell-environment-coupling-spatial</code>
@@ -218,13 +220,15 @@ diffuses outward into a plume (<code>tests/test_flagship_field.py</code>, <code>
 <code>tests/test_cpm_viz.py</code>). This is niche construction as a real spatial and metabolic
 consequence of coupling two independently-built simulators, not a scripted trajectory.
 
-What this investigation has NOT yet shown is the other eight patterns&#x27; spatial
-counterparts — cell-cell competition over a shared field, a CPM structural-integrity release
-analogous to disintegration, reaction-diffusion molecular mechanisms, differential-adhesion
-sorting and phase separation, a self-maintained protocell, CPM growth-and-division, and
-colony development. Those are named in the design spec
+Three sibling studies are also built and run — <code>cell-cell-coupling-spatial</code> (competitive
+exclusion and cross-feeding over a shared field), <code>disintegration-spatial</code> (a CPM
+structural-integrity release), and <code>growth-and-division-spatial</code> (CPM growth and division
+with partitioned daughter biomass). What this investigation has NOT yet shown is the
+remaining patterns&#x27; spatial counterparts — reaction-diffusion molecular mechanisms,
+differential-adhesion sorting and phase separation, a self-maintained protocell, colony
+development, and the cellular-interface contract itself. Those are named in the design spec
 (<code>docs/superpowers/specs/2026-08-21-cellular-interface-multicellular-design.md</code>) as the
-increment plan, not results. Chemotaxis toward the field (the cell moving up the gradient it
+increment plan; some are planned, others in progress. Chemotaxis toward the field (the cell moving up the gradient it
 senses) is also deferred to a follow-up variant — the flagship cell&#x27;s modest position drift
 over the run is CPM thermal fluctuation, not directed motion.</p></div>
       <div class="stats"><div class="stat"><b>4</b><span>studies</span></div><div class="stat"><b>6</b><span>executables</span></div><div class="stat"><b>6</b><span>checked signatures</span></div><div class="stat"><b>1</b><span>whole cell</span></div></div>
@@ -241,16 +245,17 @@ simulators — a Cellular Potts Model (viva-cpm, a Rust-backed lattice engine wi
 shape, adhesion, and volume dynamics) on one side, and spatio-flux&#x27;s diffusion-advection PDE
 solver plus dynamic flux-balance analysis on the other? Composing two frameworks that were
 never designed with each other in mind is exactly the paper&#x27;s central claim about typed
-interfaces made concrete: <code>CpmCellField</code>, the one coupling process this investigation has
-built so far, is the interface where a CPM cell&#x27;s footprint (a set of lattice pixels) is
-translated into a spatio-flux field read, and where a dynamic-FBA solution (mmol/gDW/hr
-fluxes) is translated back into a per-pixel field delta and a CPM target-volume update. Only
-the flagship study, <code>cell-environment-coupling-spatial</code> (the spatial analogue of Fig 5&#x27;s
-sense/act loop), is built and run; the other eight patterns from <code>draft-to-living-cell</code>
-(cell-cell coupling, disintegration, molecular interfaces, biomolecular complementarity,
-autopoiesis, growth-and-division, development-and-evolution, and the cellular-interface
-contract itself) are named as future increments in the design spec but have no composite,
-study, or run yet.</p>
+interfaces made concrete: <code>CpmCellField</code>, the flagship&#x27;s coupling process, is the interface
+where a CPM cell&#x27;s footprint (a set of lattice pixels) is translated into a spatio-flux
+field read, and where a dynamic-FBA solution (mmol/gDW/hr fluxes) is translated back into a
+per-pixel field delta and a CPM target-volume update. Four studies are built and run so far —
+<code>cell-environment-coupling-spatial</code> (the flagship, the spatial analogue of Fig 5&#x27;s sense/act
+loop), <code>cell-cell-coupling-spatial</code>, <code>disintegration-spatial</code>, and
+<code>growth-and-division-spatial</code>. The remaining patterns from <code>draft-to-living-cell</code> (molecular
+interfaces, biomolecular complementarity, autopoiesis, development-and-evolution, and the
+cellular-interface contract itself) are named as future increments in the design spec; some
+are planned, one (biomolecular complementarity) is in progress with code done but its study
+not yet accepted.</p>
 <p>The investigations are deliberate analogues, study-for-study, wherever the counterpart
 exists: <code>cell-environment-coupling-spatial</code> here is the spatial realization of
 <code>draft-to-living-cell/cell-environment-coupling</code>. Read them side by side — the lumped 9-cell
@@ -276,8 +281,10 @@ total rises from 0 to ~47 (mmol-equivalent field units) as the secreted plume di
 outward. Net field-wide glucose falls (~32 of 5940 total field mass consumed) even though the
 depletion signal is much sharper locally at the cell&#x27;s own footprint than in the field-wide
 total — the direct niche-construction signature.</li></ul></div>
-      <div><h3>Evidence against</h3><ul><li>The other eight <code>draft-to-living-cell</code> patterns have no spatial counterpart built yet — this
-investigation currently demonstrates one pattern (cell-environment coupling), not nine.</li><li>Chemotaxis (directed up-gradient motion) is deferred; the flagship cell senses and acts on
+      <div><h3>Evidence against</h3><ul><li>Five of the nine <code>draft-to-living-cell</code> patterns (molecular interfaces, biomolecular
+complementarity, autopoiesis, development-and-evolution, and the cellular-interface contract
+itself) have no spatial counterpart built and run yet — this investigation currently
+demonstrates four patterns, not nine.</li><li>Chemotaxis (directed up-gradient motion) is deferred; the flagship cell senses and acts on
 the field locally but does not move toward higher concentration.</li><li>The e_coli_core constants (<code>glucose_km</code>, <code>glucose_vmax</code>, <code>oxygen_vmax</code>, <code>box_volume_L</code>,
 <code>grow_per_biomass</code>) are toy-real — plausible, hand-tuned magnitudes chosen to produce
 gradual, spatially-legible dynamics over a short run, not fitted to any organism or medium.</li><li>The CPM lattice itself (the cell&#x27;s shape, occupied pixels, footprint) lives inside
@@ -297,8 +304,9 @@ spatio-flux <code>fields</code> store (glucose, acetate); the CPM&#x27;s own int
         <div>
           <h3>Cell–Environment Coupling, Spatial (flagship) <span class="badge ok">Accepted</span></h3>
           <p class="claim">Composing a real CPM cell with a real spatio-flux nutrient field through one typed
-coupling process (<code>CpmCellField</code>) reproduces the Fig 5 sense/act loop as genuine spatial
-metabolism, not a scripted stand-in for it: over 20 ticks the cell runs dynamic-FBA at its own
+coupling process (<code>CpmCellField</code>) reproduces the paper&#x27;s §Cell–environment coupling sense/act
+loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in for it: over 20 ticks the
+cell runs dynamic-FBA at its own
 footprint (<code>e_coli_core</code>, O2-capped to force acetate overflow), grows ~3.4x in CPM volume (32
 -&gt; 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
 up to ~18% before diffusion partially resupplies it (niche construction), and secretes a
@@ -313,14 +321,15 @@ diffusing acetate plume — two independently-built simulators talking through o
       <details class="more">
         <summary>Question &amp; findings</summary>
         <div class="more-body">
-          <h4>Question</h4><p>Does the Fig 5 sense/act loop hold as real spatial metabolism — one CPM cell sensing
+          <h4>Question</h4><p>Does the paper&#x27;s §Cell–environment coupling sense/act loop (Fig 5) hold as real spatial metabolism — one CPM cell sensing
 a diffusing nutrient field, running flux-balance analysis at its own footprint, growing, and
 secreting a byproduct back into the field — when the cell and its environment are each real,
 independently-built simulators (viva-cpm&#x27;s Cellular Potts engine, spatio-flux&#x27;s
 diffusion-advection and dynamic-FBA processes) composed through one typed coupling process
 (<code>CpmCellField</code>), rather than a scripted or lumped stand-in for that coupling?</p>
           <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A real CPM cell coupled to a real spatio-flux nutrient field through one typed
-process (<code>CpmCellField</code>) closes the Fig 5 sense/act loop as genuine spatial metabolism: it
+process (<code>CpmCellField</code>) closes the paper&#x27;s §Cell–environment coupling sense/act loop (Fig 5)
+as genuine spatial metabolism: it
 runs dynamic-FBA at its own footprint and grows both biologically (biomass) and structurally
 (CPM lattice volume). Confirmed: biomass 0.1 -&gt; ~0.37, CPM volume 32 -&gt; 110 px (~3.4x) over
 20 ticks, on a 3600-pixel lattice the cell occupies only ~3% of by the end.</li><li><span class="tier tier-mechanism">mechanism</span> The cell measurably depletes the local nutrient it senses before diffusion partially
@@ -342,8 +351,9 @@ secretion side of the coupling is as real as the uptake side. Confirmed: field-w
         <div>
           <h3>Cell–Cell Coupling, Spatial <span class="badge ok">Accepted</span></h3>
           <p class="claim">Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
-single N-cell coupling process (<code>CpmColonyField</code>) reproduces Fig 3&#x27;s viability-negotiation
-pattern as genuine spatial multicellularity, not a scripted or lumped stand-in for it: over
+single N-cell coupling process (<code>CpmColonyField</code>) reproduces the paper&#x27;s §Cell–cell coupling
+viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
+scripted or lumped stand-in for it: over
 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives spatial
 competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81 px), while a
 different composite over the same coupling process — a localized glucose depot, a fast-diffusing
@@ -363,13 +373,13 @@ interface) at real spatial, per-footprint metabolic resolution.
       <details class="more">
         <summary>Question &amp; findings</summary>
         <div class="more-body">
-          <h4>Question</h4><p>Does the Fig 3 viability-negotiation pattern hold as real spatial multicellularity —
-multiple CPM cells sharing one diffusing nutrient field, each running its own dynamic-FBA step
-at its own footprint, producing both competitive exclusion and cross-feeding — when the whole
-colony is composed from independent frameworks through one N-cell coupling process
-(<code>CpmColonyField</code>), rather than the lumped two-role, shared-scalar-pool stand-in
-<code>draft-to-living-cell</code>&#x27;s Fig 3 study used?</p>
-          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (<code>CpmColonyField</code>) reproduce Fig 3&#x27;s competitive-exclusion branch as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run.</li><li><span class="tier tier-mechanism">mechanism</span> Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#x27;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</li><li><span class="tier tier-mechanism">mechanism</span> The additive two-writer assumption <code>CpmColonyField</code>&#x27;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</li></ul>
+          <h4>Question</h4><p>Does the paper&#x27;s §Cell–cell coupling viability-negotiation pattern (no dedicated
+figure) hold as real spatial multicellularity — multiple CPM cells sharing one diffusing
+nutrient field, each running its own dynamic-FBA step at its own footprint, producing both
+competitive exclusion and cross-feeding — when the whole colony is composed from independent
+frameworks through one N-cell coupling process (<code>CpmColonyField</code>), rather than the lumped
+two-role, shared-scalar-pool stand-in <code>draft-to-living-cell</code>&#x27;s §Cell–cell coupling study used?</p>
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (<code>CpmColonyField</code>) reproduce the paper&#x27;s §Cell–cell coupling competitive-exclusion branch (no dedicated figure) as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run.</li><li><span class="tier tier-mechanism">mechanism</span> Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#x27;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</li><li><span class="tier tier-mechanism">mechanism</span> The additive two-writer assumption <code>CpmColonyField</code>&#x27;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</li></ul>
         </div>
       </details>
     </article>
@@ -381,13 +391,13 @@ colony is composed from independent frameworks through one N-cell coupling proce
           <p class="claim">Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
 particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the
 viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter)
-reproduces Fig 6&#x27;s level-shift as genuine spatial dissolution, not a scripted or lumped
+reproduces the paper&#x27;s §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
 stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area &gt; 30) through
 tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick = 7, the
 domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
 spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
 coupling process plus one stock movement process, mirroring <code>draft-to-living-cell/disintegration</code>&#x27;s
-level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
+§Disintegration level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
 </p>
         </div>
       </div>
@@ -398,14 +408,15 @@ level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
       <details class="more">
         <summary>Question &amp; findings</summary>
         <div class="more-body">
-          <h4>Question</h4><p>Does Fig 6&#x27;s level-shift hold spatially -- a coherent CPM cell that loses structural
+          <h4>Question</h4><p>Does the paper&#x27;s §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
 viability when a diffusing stressor field crosses its bound, its domain resorbing while its
 shed material becomes scattering physical particles -- composed from independent frameworks
 (viva-cpm + spatio-flux particles) through one coupling process (<code>CpmDisintegration</code> +
 <code>BrownianMovement</code>)?</p>
           <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A single real CPM cell coupled to a real spatio-flux stressor field through one
-coupling process (<code>CpmDisintegration</code>) reproduces Fig 6&#x27;s level-shift as genuine spatial
-dissolution: the cell holds coherent while the diffusing stressor field is below its
+coupling process (<code>CpmDisintegration</code>) reproduces the paper&#x27;s §Disintegration level-shift
+(Fig 6) as genuine spatial dissolution: the cell holds coherent while the diffusing stressor
+field is below its
 footprint-local viability bound, then latches a release once that bound is crossed at a
 specific, deterministic tick, and its domain resorbs to full dissolution over the following
 ticks. Confirmed: area &gt; 30 through tick 6, released_tick == 7.0, area == 0 by tick 16, all
@@ -429,19 +440,19 @@ BrownianMovement.</li></ul>
         <span class="ord">04</span>
         <div>
           <h3>Growth and Division, Spatial <span class="badge ok">Accepted</span></h3>
-          <p class="claim">Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native CPM engine operation <code>divide_cells</code> through a single coupling process (<code>CpmGrowthDivision</code>) reproduces Fig 10a,b&#x27;s growth-then-divide pattern as genuine spatial multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,4,8,8,8,13,16), spanning roughly 3-4 generations, while every cell&#x27;s CPM volume stays bounded in a sawtooth between <code>reset_target</code> = 40 and <code>vol_threshold</code> = 80 -- growth, crossing, division, and resumed growth in the daughters, all as direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. This mirrors <code>draft-to-living-cell/growth-and-division</code>&#x27;s Fig 10a,b claim (growth drives the cell&#x27;s own state across a threshold; crossing the threshold triggers division) but realizes the division event itself as the native spatial CPM operation <code>divide_cells</code> acting directly on lattice pixels, in contrast to that study&#x27;s place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
+          <p class="claim">Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native CPM engine operation <code>divide_cells</code> through a single coupling process (<code>CpmGrowthDivision</code>) reproduces the paper&#x27;s §Growth and division growth-then-divide pattern (Fig 10a,b) as genuine spatial multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations, while every cell&#x27;s CPM volume stays bounded in a sawtooth between <code>reset_target</code> = 40 and <code>vol_threshold</code> = 80 -- growth, crossing, division, and resumed growth in the daughters, all as direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. This mirrors <code>draft-to-living-cell/growth-and-division</code>&#x27;s §Growth and division claim (Fig 10a,b) (growth drives the cell&#x27;s own state across a threshold; crossing the threshold triggers division) but realizes the division event itself as the native spatial CPM operation <code>divide_cells</code> acting directly on lattice pixels, in contrast to that study&#x27;s place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
 </p>
         </div>
       </div>
-      <div class="chips"><div class="chip"><span class="chip-k">POPULATION STEPS UP BY DIVISION</span><span class="chip-v">n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks</span></div><div class="chip"><span class="chip-k">POPULATION NEVER SHRINKS</span><span class="chip-v">n_cells trajectory is monotonic non-decreasing</span></div><div class="chip"><span class="chip-k">DAUGHTERS RESUME GROWTH WITHOUT RUNAWAY</span><span class="chip-v">n_cells &gt;= 3 after 30 ticks from a single seed cell, all volumes in (5, 200)</span></div><div class="chip"><span class="chip-k">PER CELL VOLUME STAYS BOUNDED</span><span class="chip-v">per-cell volume bounded roughly 31-79 px across the run</span></div><div class="chip"><span class="chip-k">NATIVE DIVISION CONSERVES MASS</span><span class="chip-v">divide_cells splits one cell into two mass-conserved daughters; no-op below threshold</span></div></div>
+      <div class="chips"><div class="chip"><span class="chip-k">POPULATION STEPS UP BY DIVISION</span><span class="chip-v">n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks</span></div><div class="chip"><span class="chip-k">POPULATION NEVER SHRINKS</span><span class="chip-v">n_cells trajectory is monotonic non-decreasing</span></div><div class="chip"><span class="chip-k">DAUGHTERS RESUME GROWTH WITHOUT RUNAWAY</span><span class="chip-v">n_cells &gt;= 3 after 30 ticks from a single seed cell, all volumes in (5, 200)</span></div><div class="chip"><span class="chip-k">PER CELL VOLUME STAYS BOUNDED</span><span class="chip-v">per-cell volume bounded roughly 31-79 px across the run</span></div><div class="chip"><span class="chip-k">NATIVE DIVISION CONSERVES MASS</span><span class="chip-v">divide_cells splits one cell into two mass-conserved daughters; no-op below threshold</span></div></div>
       
       <div class="figs"></div>
       
       <details class="more">
         <summary>Question &amp; findings</summary>
         <div class="more-body">
-          <h4>Question</h4><p>Does Fig 10a,b&#x27;s growth-then-divide pattern hold spatially -- a CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a threshold and divides via the native CPM engine operation <code>divide_cells</code> (mass-conserved), compounding into a small lineage over the run -- composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (<code>CpmGrowthDivision</code>)?</p>
-          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A single real CPM cell whose volume growth is driven by real per-footprint dFBA metabolism, coupled to the native CPM engine operation divide_cells through one process (CpmGrowthDivision), reproduces Fig 10a,b&#x27;s growth-then-divide pattern as genuine spatial compounding: the population steps up in a monotonic non-decreasing staircase, reaching roughly 3-4 generations from a single seed cell, bounded by the shared glucose field and the lattice&#x27;s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,4,8,8,8,13,16 over 36 ticks.</li><li><span class="tier tier-mechanism">mechanism</span> Every cell in the lineage sawtooths in a bounded CPM volume band as it grows toward vol_threshold, is halved by division back near reset_target, and immediately resumes growing -- daughters are never zero-volume phantoms and no single cell runs away to absorb the lattice. Confirmed: per-cell volume stays roughly 31-79 px throughout the run, well within the hard test bounds of (8, 200).</li><li><span class="tier tier-mechanism">mechanism</span> The native CPM divide_cells operation this study&#x27;s division mechanism depends on is runtime-verified directly and independently of the growth-division composite&#x27;s own metabolism mechanism, retiring what was previously an untested primitive: a grown cell splits into two mass-conserved daughters (parent id kept, one new id minted) and a sub-threshold cell is a correct no-op.</li></ul>
+          <h4>Question</h4><p>Does the paper&#x27;s §Growth and division growth-then-divide pattern (Fig 10a,b) hold spatially -- a CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a threshold and divides via the native CPM engine operation <code>divide_cells</code> (mass-conserved), compounding into a small lineage over the run -- composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (<code>CpmGrowthDivision</code>)?</p>
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A single real CPM cell whose volume growth is driven by real per-footprint dFBA metabolism, coupled to the native CPM engine operation divide_cells through one process (CpmGrowthDivision), reproduces the paper&#x27;s §Growth and division growth-then-divide pattern (Fig 10a,b) as genuine spatial compounding: the population steps up in a monotonic non-decreasing staircase, reaching roughly 3-4 generations from a single seed cell, bounded by the shared glucose field and the lattice&#x27;s finite capacity. Confirmed: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks.</li><li><span class="tier tier-mechanism">mechanism</span> Every cell in the lineage sawtooths in a bounded CPM volume band as it grows toward vol_threshold, is halved by division back near reset_target, and immediately resumes growing -- daughters are never zero-volume phantoms and no single cell runs away to absorb the lattice. Confirmed: per-cell volume stays roughly 31-79 px throughout the run, well within the hard test bounds of (8, 200).</li><li><span class="tier tier-mechanism">mechanism</span> The native CPM divide_cells operation this study&#x27;s division mechanism depends on is runtime-verified directly and independently of the growth-division composite&#x27;s own metabolism mechanism, retiring what was previously an untested primitive: a grown cell splits into two mass-conserved daughters (parent id kept, one new id minted) and a sub-threshold cell is a correct no-op.</li></ul>
         </div>
       </details>
     </article>
@@ -456,10 +467,12 @@ BrownianMovement.</li></ul>
       figure real dynamics. Readouts below are <strong>measured</strong>, not asserted: every executable
       and the whole cell were run and their observables recorded.</p>
       <div class="two-col">
-        <div><h4>Limitations (shared across every study)</h4><ul><li>This investigation is at an early stage: only the flagship study is built. The design spec
+        <div><h4>Limitations (shared across every study)</h4><ul><li>This investigation is still mid-buildout: four of nine planned studies are built and run
+(the flagship plus cell-cell-coupling-spatial, disintegration-spatial, and
+growth-and-division-spatial). The design spec
 (<code>docs/superpowers/specs/2026-08-21-cellular-interface-multicellular-design.md</code>) lays out a
-complete 9-study analogy to <code>draft-to-living-cell</code>; this file and the flagship study reflect
-only the first increment of that plan.</li><li>Every mechanism here is toy-real: plausible constants, not calibrated to a named organism,
+complete 9-study analogy to <code>draft-to-living-cell</code>; this file reflects the current increment,
+not the finished plan.</li><li>Every mechanism here is toy-real: plausible constants, not calibrated to a named organism,
 medium, or literature target. The dynamics demonstrate the coupling pattern (real spatial
 sensing, metabolism, growth, secretion, diffusion), not a quantitatively validated cell.</li><li>Read alongside its specification-stage analogue,
 <code>draft-to-living-cell/cell-environment-coupling</code>: that study closes the same Fig 5 loop over
