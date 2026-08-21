@@ -260,14 +260,15 @@ behavior_tests:
   measure:
     kind: observable
     path: fields.glucose
-    expr: sum(fields.glucose)
+    expr: net change in sum(fields.glucose) over 3 ticks (final minus initial)
   pass_if:
     op: '=='
     value: -6.0
-    provenance: 'two synthetic single-pixel writers on disjoint pixels, each removing 1.0/tick over
-      3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently
-      correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve)'
-  requires_simulation: cellcell-compete
+    provenance: 'a synthetic negative-control process (not this study''s composites): two
+      single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net
+      field-wide change of exactly -6.0 with both pixels independently correct
+      (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve)'
+  requires_simulation: none
 runs:
 - name: cellcell-compete
   composite: cellcell-compete
