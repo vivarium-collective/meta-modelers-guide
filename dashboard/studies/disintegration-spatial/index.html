@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Study: cell-cell-coupling-spatial</title>
+<title>Study: disintegration-spatial</title>
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/style.css">
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/progress-track.css">
 <!-- Inherit the workbench light/dark theme (this page loads in an iframe;
@@ -14,7 +14,7 @@
 <header class="study-header">
   <div style="display:flex; align-items:baseline; gap:12px; justify-content:space-between;">
   <h1 class="study-title">
-    <span class="study-name" id="study-name" data-slug="cell-cell-coupling-spatial" title="cell-cell-coupling-spatial">Cell–Cell Coupling, Spatial</span>
+    <span class="study-name" id="study-name" data-slug="disintegration-spatial" title="disintegration-spatial">Disintegration, Spatial</span>
     
     <span class="study-kind-tag study-kind-computational" data-study-kind="computational" title="Study kind">computational</span>
     
@@ -34,7 +34,7 @@
     
 
     
-    <div id="readiness-panel" data-slug="cell-cell-coupling-spatial"></div>
+    <div id="readiness-panel" data-slug="disintegration-spatial"></div>
 
     
     
@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="4 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -146,12 +146,11 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Does the Fig 3 viability-negotiation pattern hold as real spatial multicellularity —
-multiple CPM cells sharing one diffusing nutrient field, each running its own dynamic-FBA step
-at its own footprint, producing both competitive exclusion and cross-feeding — when the whole
-colony is composed from independent frameworks through one N-cell coupling process
-(`CpmColonyField`), rather than the lumped two-role, shared-scalar-pool stand-in
-`draft-to-living-cell`&#39;s Fig 3 study used?
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Does Fig 6&#39;s level-shift hold spatially -- a coherent CPM cell that loses structural
+viability when a diffusing stressor field crosses its bound, its domain resorbing while its
+shed material becomes scattering physical particles -- composed from independent frameworks
+(viva-cpm + spatio-flux particles) through one coupling process (`CpmDisintegration` +
+`BrownianMovement`)?
 </p>
 
 <nav class="study-tabs" aria-label="Study sections">
@@ -563,76 +562,67 @@ colony is composed from independent frameworks through one N-cell coupling proce
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
-single N-cell coupling process (`CpmColonyField`) reproduces Fig 3&#39;s viability-negotiation
-pattern as genuine spatial multicellularity, not a scripted or lumped stand-in for it: over
-20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives spatial
-competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81 px), while a
-different composite over the same coupling process — a localized glucose depot, a fast-diffusing
-acetate byproduct, and an acetate-consuming role — sustains a cell that never touches glucose
-(local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass
-1.25 -&gt; 3.79). Both regimes run through the same process; only the composite&#39;s cell roles and
-field constants differ, mirroring `draft-to-living-cell/cell-cell-coupling`&#39;s law-4 pattern
-(two handler environments negotiate the shared-resource constraint differently over one
-interface) at real spatial, per-footprint metabolic resolution.
+      <p class="ctr-text">Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
+particle-movement process through two coupling processes (`CpmDisintegration` for the
+viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
+reproduces Fig 6&#39;s level-shift as genuine spatial dissolution, not a scripted or lumped
+stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area &gt; 30) through
+tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick = 7, the
+domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
+spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
+coupling process plus one stock movement process, mirroring `draft-to-living-cell/disintegration`&#39;s
+level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
 </p>
       
-      <div class="ctr-context">This is the spatial realization of Fig 3&#39;s cell-cell coupling pattern,
-and the second study in this investigation, built on the flagship&#39;s `CpmCellField` process
-generalized to `CpmColonyField` — one process instance that owns N CPM cells sharing one
-spatio-flux field grid, running one dynamic-FBA step per cell at its own lattice footprint each
-tick, and writing all N cells&#39; uptake/secretion deltas back into the shared field as one summed
-update. The additive two-writer assumption this depends on (two cells&#39; disjoint footprint
-deltas summing correctly into one shared `map[array]` fields store, conserving mass) is no
-longer an assumption — it is runtime-verified directly (`tests/test_cpm_colony_two_writer.py`):
-two synthetic single-pixel writers on disjoint pixels are each applied independently and sum
-losslessly over repeated ticks.
+      <div class="ctr-context">This is the spatial realization of Fig 6&#39;s disintegration pattern, and the
+third study in this investigation, built on a new coupling process, `CpmDisintegration`, that
+owns a single CPM cell (no metabolism/cobra path -- this study is about the viability-collapse
+trigger, not nutrient uptake) sitting on a shared spatio-flux `stressor` field. Each tick the
+process reads mean stressor over the cell&#39;s own CPM footprint; once that reading crosses
+`viability_threshold`, it LATCHES a `released` flag (never un-crosses) and ramps the cell&#39;s
+target volume toward zero, shedding each tick&#39;s vacated footprint pixels as debris particles
+into a shared `map[particle]` store that a stock spatio-flux `BrownianMovement` then scatters.
+The CPM-to-particle bridge this depends on -- a process emitting particles via the map `_add`
+sentinel that a separate stock movement process then moves -- is no longer an assumption; it is
+runtime-verified directly (`tests/test_particle_bridge_spike.py`): three synthetic particles
+emitted on one tick are still exactly three particles four ticks later, with at least two of
+them having moved.
 
-Two tuned regimes over the same `CpmColonyField` process demonstrate both branches of Fig 3&#39;s
-negotiation. COMPETITION (`meta_modelers_guide.composites.cellcell-compete`): two glucose
-competitors seeded on a uniform 3.0 mM glucose field, differing only in uptake capacity
-(`glucose_vmax` 10.0 vs 4.0). Measured over a 20-tick run
-(`tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell`,
-`tests/test_cpm_colony_field.py`): the faster competitor ends with biomass 237.9 against the
-slower competitor&#39;s 64.5 — a 3.69x margin — and CPM lattice volume 3511 px against 81 px, an
-even starker asymmetry, because CPM growth compounds superlinearly once one cell has
-out-competed the other for the shared glucose. The shared field is measurably drawn down by
-both cells drawing on the same pool, and the loser is left a near-vestigial fragment of the
-lattice it started with parity on — spatial competitive exclusion as a direct, unscripted
-consequence of two independent dFBA solves reading the same depleting field.
-
-CROSS-FEEDING (`meta_modelers_guide.composites.cellcell-crossfeed`): a glucose-to-acetate
-secretor (O2 cap 5, seeded at a localized 20 mM glucose depot in lattice columns 0-18) paired
-with an acetate-consuming cell (`acetate_vmax` 20) seeded well outside the glucose depot
-(columns 22-30), with acetate diffusing far faster than glucose in this regime (diffusion
-coefficient 15.0 vs 0.4) so the secreted byproduct plume can reach the consumer before the
-glucose gradient does. Measured over the same 20-tick run
-(`tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable`): the consumer&#39;s
-own local glucose reads 0.0 — it genuinely cannot touch glucose — while its local acetate reads
-1.30, and its biomass climbs from an initial 1.25 to 3.79 (roughly 3x) on that acetate alone,
-ending as a viable cell occupying 65 lattice pixels. The consumer&#39;s growth is back-loaded to
-the last several ticks of the run, once the secretor&#39;s plume has had time to diffuse the
-distance between the two cells&#39; footprints — growth is monotonic over the window measured, not
-smoothly exponential from tick 0.
+One tuned regime over `disintegration-spatial`
+(`meta_modelers_guide.composites.disintegration-spatial`) demonstrates the full arc:
+a single CPM cell centered on a 60x60 shared field grid inside a radial stressor gradient --
+low at the grid center where the cell is seeded, rising toward the periphery -- diffusing
+under spatio-flux `DiffusionAdvection`. Measured over a deterministic 20-tick run
+(`tests/test_cpm_disintegration.py`, `tests/test_disintegration_regime.py`,
+`tests/test_disintegration_viz.py`, verified over repeated runs): the cell holds coherent
+(area &gt; 30 pixels) through tick 6 with zero debris, the footprint-local stressor mean crosses
+`viability_threshold` at `released_tick = 7`, and from there the domain resorbs monotonically
+-- area 56 at tick 7 down to area 0 by tick 16 -- while shedding exactly 68 particles into the
+debris store (8/tick, capped, until the footprint is exhausted). The debris cloud&#39;s RMS spread
+keeps strictly increasing after dissolution completes (~5.3 at tick 16 to ~7.6 at tick 24, an
+8-tick post-dissolution window) -- genuine scattering, not particles piling up against a wall
+or the field boundary. The whole arc -- hold, cross, resorb, scatter -- is direct,
+code-verified simulation output from one coupling process plus one stock movement process, not
+a scripted trajectory.
 </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Run two `CpmColonyField` composites -- `cellcell-compete` (two glucose competitors, glucose_vmax 10.0 vs 4.0, one shared uniform glucose field) and `cellcell-crossfeed` (a glucose-to-acetate secretor plus an acetate-consuming cell, a localized glucose depot, and a fast-diffusing acetate byproduct) -- each to completion over 20 ticks through the process- bigraph engine, and measure whether uptake-capacity asymmetry alone drives spatial competitive exclusion, and whether a diffusing metabolic byproduct alone can sustain a cell that never touches its nominal nutrient.
+      <p class="ctr-text">Run the `disintegration-spatial` composite (`CpmDisintegration`, a single CPM cell on a shared 60x60 field grid inside a radial stressor gradient, coupled to a stock `BrownianMovement` particle-scatter process) to completion over 20-24 ticks through the process-bigraph engine, and measure whether a diffusing stressor field crossing a CPM cell&#39;s own viability bound is enough to trigger structural dissolution (domain resorption) and convert its shed material into a genuinely scattering debris cloud.
 </p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>cellcell-compete</code>, <code>cellcell-crossfeed</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field), the faster competitor ends with materially more biomass and CPM lattice volume than the slower one — spatial competitive exclusion.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The faster competitor&#39;s CPM lattice volume ends larger than the slower competitor&#39;s, confirming the biomass asymmetry carries through to structural (pixel-level) dominance, not just the internal FBA state.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Under the cross-feeding regime, the consumer cell&#39;s own local glucose concentration is effectively zero -- it is seeded outside the localized glucose depot and genuinely cannot touch glucose.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Despite never touching glucose, the consumer&#39;s biomass grows over the run -- it is living entirely on the secretor&#39;s diffused acetate byproduct.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Sanity check that the cross-feeding coupling is real, not two isolated cells -- the secretor&#39;s acetate byproduct measurably reaches the consumer&#39;s own footprint.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational control (not this study&#39;s scientific claim): the additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on -- disjoint per-cell footprint deltas summed into one shared field conserve mass -- holds structurally, independent of any dFBA mechanism.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>disintegration-spatial</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Before the stressor crosses viability_threshold, the CPM cell stays coherent (substantial area, released flag unset, no debris) -- the hold phase of Fig 6&#39;s level shift.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The footprint-local stressor mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Once released, the cell&#39;s target volume ramps toward zero and its CPM lattice footprint resorbs to full dissolution well within the run -- the domain genuinely disappearing, not merely shrinking.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell&#39;s vacated footprint pixels become debris particles in the shared map[particle] store as it resorbs -- shed material, not deleted mass.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The debris cloud&#39;s RMS spread strictly increases after dissolution completes -- genuine scattering under BrownianMovement, not particles piling up or stalling.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational control (not this study&#39;s scientific claim): the CPM-to-particle bridge this study depends on -- a process emitting particles via the map `_add` sentinel, moved by a separate stock BrownianMovement process -- works correctly, independent of any disintegration mechanism.</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over 20-tick runs, the competition regime drives a decisive spatial split from uptake- capacity asymmetry alone (biomass 237.9 vs 64.5, 3.69x; CPM volume 3511 vs 81 px), while the cross-feeding regime -- the same `CpmColonyField` process, a different composite -- sustains a consumer cell that never touches glucose (local glucose 0.0) purely via a diffusing acetate handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell). Fig 3&#39;s viability-negotiation pattern holds as genuine spatial multicellularity, composed from independent frameworks through one N-cell coupling process, one interface, two regimes.
+      <p class="ctr-text">Over a deterministic 20-24 tick run, the CPM cell holds coherent (area &gt; 30) through tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, sheds exactly 68 particles into a shared debris store, and that debris cloud&#39;s RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6) -- genuine scattering, not wall-saturation. Fig 6&#39;s level-shift holds as real spatial dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through one coupling process plus one stock movement process.
 </p>
       
       
@@ -647,9 +637,15 @@ smoothly exponential from tick 0.
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (`CpmColonyField`) reproduce Fig 3&#39;s competitive-exclusion branch as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run.</span>
+            <span class="finding-claim finding-statement">A single real CPM cell coupled to a real spatio-flux stressor field through one
+coupling process (`CpmDisintegration`) reproduces Fig 6&#39;s level-shift as genuine spatial
+dissolution: the cell holds coherent while the diffusing stressor field is below its
+footprint-local viability bound, then latches a release once that bound is crossed at a
+specific, deterministic tick, and its domain resorbs to full dissolution over the following
+ticks. Confirmed: area &gt; 30 through tick 6, released_tick == 7.0, area == 0 by tick 16, all
+deterministic across repeated runs.</span>
             
-            <span class="finding-chip">via <code>competition-excludes-the-slower-cell</code></span>
+            <span class="finding-chip">via <code>stressor-crosses-viability-bound</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -661,10 +657,10 @@ smoothly exponential from tick 0.
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> biomass 237.9 (id 1) vs 64.5 (id 2); volume 3511 px (id 1) vs 81 px (id 2) · 
+              <strong>observed:</strong> released_tick == 7.0; area 56 (tick 7) -&gt; 0 (tick 16) · 
               
-              via test <a href="#bt-competition-excludes-the-slower-cell" onclick="_gotoStudyTab('tests','bt-competition-excludes-the-slower-cell');return false;"><code>competition-excludes-the-slower-cell</code></a> · 
-              in run <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
+              via test <a href="#bt-stressor-crosses-viability-bound" onclick="_gotoStudyTab('tests','bt-stressor-crosses-viability-bound');return false;"><code>stressor-crosses-viability-bound</code></a> · 
+              in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
               
               
             </div>
@@ -673,12 +669,12 @@ smoothly exponential from tick 0.
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
+              runs: <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 1.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 7.0</code></div>
             
             
             
@@ -697,9 +693,14 @@ smoothly exponential from tick 0.
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#39;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</span>
+            <span class="finding-claim finding-statement">The cell&#39;s shed material does not vanish -- it becomes physical debris. As the
+domain resorbs, its vacated footprint pixels are converted into particles in a shared
+map[particle] store, and that debris cloud keeps scattering (RMS spread strictly increasing)
+well after the cell itself has fully dissolved, under a separate stock BrownianMovement
+process. Confirmed: 68 particles shed by tick 16, RMS spread ~5.3 -&gt; ~7.6 over an 8-tick
+post-dissolution window.</span>
             
-            <span class="finding-chip">via <code>crossfeeding-consumer-grows-on-acetate-alone</code></span>
+            <span class="finding-chip">via <code>debris-cloud-keeps-scattering</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -711,10 +712,10 @@ smoothly exponential from tick 0.
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> consumer local_glucose 0.0; local_acetate 1.30; biomass 1.25 -&gt; 3.79 · 
+              <strong>observed:</strong> 68 particles shed; RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24) · 
               
-              via test <a href="#bt-crossfeeding-consumer-grows-on-acetate-alone" onclick="_gotoStudyTab('tests','bt-crossfeeding-consumer-grows-on-acetate-alone');return false;"><code>crossfeeding-consumer-grows-on-acetate-alone</code></a> · 
-              in run <a href="#run-cellcell-crossfeed"><code>cellcell-crossfeed</code></a>
+              via test <a href="#bt-debris-cloud-keeps-scattering" onclick="_gotoStudyTab('tests','bt-debris-cloud-keeps-scattering');return false;"><code>debris-cloud-keeps-scattering</code></a> · 
+              in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
               
               
             </div>
@@ -723,12 +724,12 @@ smoothly exponential from tick 0.
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-cellcell-crossfeed"><code>cellcell-crossfeed</code></a>
+              runs: <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 1.25</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.0</code></div>
             
             
             
@@ -747,9 +748,15 @@ smoothly exponential from tick 0.
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The additive two-writer assumption `CpmColonyField`&#39;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</span>
+            <span class="finding-claim finding-statement">The CPM-to-particle bridge this study&#39;s disintegration mechanism depends on --
+that a process can emit particles via the map `_add` sentinel into a shared map[particle]
+store, and a separate stock movement process can then move them -- is runtime-verified
+directly and independently of the disintegration mechanism itself, retiring what was
+previously an untested primitive. Confirmed structurally: a synthetic emitter&#39;s 3 particles
+remain exactly 3 particles four ticks later, with at least 2 having moved under
+BrownianMovement.</span>
             
-            <span class="finding-chip">via <code>two-writer-additivity-conserves-mass</code></span>
+            <span class="finding-chip">via <code>particle-bridge-emits-then-scatters</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -761,10 +768,10 @@ smoothly exponential from tick 0.
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> two disjoint single-pixel writers each removing 1.0/tick over 3 ticks sum to a net field-wide change of exactly -6.0, with both individual pixels independently correct · 
+              <strong>observed:</strong> 3 particles emitted, unchanged count 4 ticks later, &gt;=2 moved · 
               
-              via test <a href="#bt-two-writer-additivity-conserves-mass" onclick="_gotoStudyTab('tests','bt-two-writer-additivity-conserves-mass');return false;"><code>two-writer-additivity-conserves-mass</code></a> · 
-              in run <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
+              via test <a href="#bt-particle-bridge-emits-then-scatters" onclick="_gotoStudyTab('tests','bt-particle-bridge-emits-then-scatters');return false;"><code>particle-bridge-emits-then-scatters</code></a> · 
+              in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
               
               
             </div>
@@ -773,12 +780,12 @@ smoothly exponential from tick 0.
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
+              runs: <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = -6.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 3.0</code></div>
             
             
             
@@ -803,7 +810,7 @@ smoothly exponential from tick 0.
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real, hand-tuned magnitudes chosen to make both regimes legible over a short run -- not fitted to any organism or medium.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build (ON and OFF give statistically indistinguishable fragmentation, and toggling it mid-run changes nothing), and lambda_volume/temperature are init-only with no runtime setters. A settled CPM domain cannot be shattered into scattered pixels in-lattice in this build -- the code-verified route is to resorb the cell and convert its shed pixels into particles. This is framed as a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not as emergent lattice fragmentation -- a real engine limitation, documented in docs/superpowers/api-maps/2026-08-21-disintegration-api-map.md.</span></div>
         
       </div>
       
@@ -820,11 +827,11 @@ smoothly exponential from tick 0.
   <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
     <h2 class="overview-label" style="margin:0">Model composition</h2>
     
-    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'cell-cell-coupling-spatial', 'the-cellular-interface-multicellular')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
+    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'disintegration-spatial', 'the-cellular-interface-multicellular')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
   </div>
 
   
-  <div id="model-composite-cards" class="model-composite-cards" data-study="cell-cell-coupling-spatial">
+  <div id="model-composite-cards" class="model-composite-cards" data-study="disintegration-spatial">
     <p class="muted" style="font-size:0.85em;margin:0">Loading composite card(s)…</p>
   </div>
 
@@ -842,59 +849,24 @@ smoothly exponential from tick 0.
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-compete" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.disintegration-spatial" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>cellcell-compete</strong>
+        <strong>disintegration-spatial</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-compete</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.disintegration-spatial</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-compete')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.disintegration-spatial')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="cellcell-compete"
-               value="meta_modelers_guide.composites.cellcell-compete" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="disintegration-spatial"
+               value="meta_modelers_guide.composites.disintegration-spatial" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="cellcell-compete">Set composite</button>
+                data-baseline-name="disintegration-spatial">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="cellcell-compete" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-crossfeed" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>cellcell-crossfeed</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-crossfeed</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-crossfeed')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="cellcell-crossfeed"
-               value="meta_modelers_guide.composites.cellcell-crossfeed" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="cellcell-crossfeed">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="cellcell-crossfeed" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="disintegration-spatial" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -950,7 +922,7 @@ smoothly exponential from tick 0.
 
   <h4>Latest run preview</h4>
   <p class="muted" style="font-size:0.9em">Per-store sparkline + first/last/min/max from the most recent run's emitted trajectory. This is a downsampled PREVIEW, not the full data — use the per-store or Download-all links for the complete arrays.</p>
-  <div id="results-preview" data-study="cell-cell-coupling-spatial">
+  <div id="results-preview" data-study="disintegration-spatial">
     <p class="empty-message">Loading results preview…</p>
   </div>
 
@@ -974,9 +946,9 @@ smoothly exponential from tick 0.
   <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
     <span class="muted" style="margin-right:auto;font-weight:600">Analysis result files</span>
     <a id="data-download-all" class="btn-mini" style="display:none"
-       href="/api/study-analysis-zip?study=cell-cell-coupling-spatial">Download all (.zip)</a>
+       href="/api/study-analysis-zip?study=disintegration-spatial">Download all (.zip)</a>
   </div>
-  <div id="data-files" data-study="cell-cell-coupling-spatial">
+  <div id="data-files" data-study="disintegration-spatial">
     <p class="empty-message">Loading result files…</p>
   </div>
 </div>
@@ -997,7 +969,7 @@ smoothly exponential from tick 0.
     interval/buffer, output location, and emit scope — from
     <code>lib/emitters.py</code> and this study's (or the workspace's)
     <code>runtime.default_emitter</code>.</p>
-    <div id="readouts-emitter" data-study="cell-cell-coupling-spatial">
+    <div id="readouts-emitter" data-study="disintegration-spatial">
       <p class="empty-message">Loading emitter configuration…</p>
     </div>
 
@@ -1009,7 +981,7 @@ smoothly exponential from tick 0.
     
     <div id="readouts-download" style="margin:0 0 16px 0"></div>
 
-    <div id="readouts-table" data-study="cell-cell-coupling-spatial">
+    <div id="readouts-table" data-study="disintegration-spatial">
       <p class="empty-message">Loading readouts from the composite emit plan…</p>
     </div>
 
@@ -1017,7 +989,7 @@ smoothly exponential from tick 0.
     <p class="muted" style="font-size:0.9em">Store path, dtype, shape
     <code>(n_steps, …)</code>, units, and a best-effort byte estimate for each emitted
     leaf.</p>
-    <div id="readouts-shapes" data-study="cell-cell-coupling-spatial">
+    <div id="readouts-shapes" data-study="disintegration-spatial">
       <p class="empty-message">Loading output shapes…</p>
     </div>
 
@@ -1032,7 +1004,7 @@ smoothly exponential from tick 0.
     
     
     <div class="viz-actions-row" style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'cell-cell-coupling-spatial')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
+      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'disintegration-spatial')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
     </div>
     
 
@@ -1096,10 +1068,10 @@ smoothly exponential from tick 0.
     
     
     
-    <li class="expected-behavior-item" id="bt-competition-excludes-the-slower-cell"
+    <li class="expected-behavior-item" id="bt-cell-holds-coherent-before-crossing"
         data-test-kind="behavioral"
         
-        data-pytest-node="competition-excludes-the-slower-cell"
+        data-pytest-node="cell-holds-coherent-before-crossing"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1108,19 +1080,19 @@ smoothly exponential from tick 0.
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">competition-excludes-the-slower-cell</strong>
+        <strong style="font-size: 0.9em;">cell-holds-coherent-before-crossing</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field), the faster competitor ends with materially more biomass and CPM lattice volume than the slower one — spatial competitive exclusion.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Before the stressor crosses viability_threshold, the CPM cell stays coherent (substantial area, released flag unset, no debris) -- the hold phase of Fig 6&#39;s level shift.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"1\"]) / last(obs.biomass[\"2\"])", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"op": "\u003e", "provenance": "biomass 237.9 (id 1, vmax 10) vs 64.5 (id 2, vmax 4) -\u003e 3.69x ratio over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly)", "value": 1.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.area at tick 6", "kind": "observable", "path": "obs.area"}
+pass_if: {"op": "\u003e", "provenance": "area 61-66 through tick 6, released stays False, n_particles == 0 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_holds_below_threshold)", "value": 30.0}</pre>
       </details>
       
       
@@ -1135,10 +1107,10 @@ pass_if: {"op": "\u003e", "provenance": "biomass 237.9 (id 1, vmax 10) vs 64.5 (
     
     
     
-    <li class="expected-behavior-item" id="bt-competition-volume-tracks-biomass"
+    <li class="expected-behavior-item" id="bt-stressor-crosses-viability-bound"
         data-test-kind="behavioral"
         
-        data-pytest-node="competition-volume-tracks-biomass"
+        data-pytest-node="stressor-crosses-viability-bound"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1147,19 +1119,19 @@ pass_if: {"op": "\u003e", "provenance": "biomass 237.9 (id 1, vmax 10) vs 64.5 (
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">competition-volume-tracks-biomass</strong>
+        <strong style="font-size: 0.9em;">stressor-crosses-viability-bound</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The faster competitor&#39;s CPM lattice volume ends larger than the slower competitor&#39;s, confirming the biomass asymmetry carries through to structural (pixel-level) dominance, not just the internal FBA state.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The footprint-local stressor mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.volume[\"1\"]) \u003e last(obs.volume[\"2\"])", "kind": "observable", "path": "obs.volume"}
-pass_if: {"op": "\u003e", "provenance": "volume 3511 px (id 1) vs 81 px (id 2) over 20 ticks -- the faster competitor claims most of the shared lattice (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell)", "value": 0.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.released_tick once obs.released first reads True", "kind": "observable", "path": "obs.released_tick"}
+pass_if: {"op": "==", "provenance": "released latches True at released_tick == 7.0, deterministic across repeated runs of the same composite (tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles, tests/test_disintegration_regime.py)", "value": 7.0}</pre>
       </details>
       
       
@@ -1174,10 +1146,10 @@ pass_if: {"op": "\u003e", "provenance": "volume 3511 px (id 1) vs 81 px (id 2) o
     
     
     
-    <li class="expected-behavior-item" id="bt-crossfeeding-consumer-blind-to-glucose"
+    <li class="expected-behavior-item" id="bt-domain-resorbs-to-zero"
         data-test-kind="behavioral"
         
-        data-pytest-node="crossfeeding-consumer-blind-to-glucose"
+        data-pytest-node="domain-resorbs-to-zero"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1186,19 +1158,19 @@ pass_if: {"op": "\u003e", "provenance": "volume 3511 px (id 1) vs 81 px (id 2) o
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">crossfeeding-consumer-blind-to-glucose</strong>
+        <strong style="font-size: 0.9em;">domain-resorbs-to-zero</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-crossfeed</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Under the cross-feeding regime, the consumer cell&#39;s own local glucose concentration is effectively zero -- it is seeded outside the localized glucose depot and genuinely cannot touch glucose.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Once released, the cell&#39;s target volume ramps toward zero and its CPM lattice footprint resorbs to full dissolution well within the run -- the domain genuinely disappearing, not merely shrinking.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.local_glucose[\"2\"])", "kind": "observable", "path": "obs.local_glucose"}
-pass_if: {"op": "\u003c", "provenance": "consumer (id 2) local_glucose == 0.0 over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 0.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.area at tick 16", "kind": "observable", "path": "obs.area"}
+pass_if: {"op": "==", "provenance": "area falls monotonically from 56 (tick 7) to 0 by tick 16, and stays 0 through tick 20 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles)", "value": 0.0}</pre>
       </details>
       
       
@@ -1213,10 +1185,10 @@ pass_if: {"op": "\u003c", "provenance": "consumer (id 2) local_glucose == 0.0 ov
     
     
     
-    <li class="expected-behavior-item" id="bt-crossfeeding-consumer-grows-on-acetate-alone"
+    <li class="expected-behavior-item" id="bt-shed-material-becomes-debris-particles"
         data-test-kind="behavioral"
         
-        data-pytest-node="crossfeeding-consumer-grows-on-acetate-alone"
+        data-pytest-node="shed-material-becomes-debris-particles"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1225,19 +1197,19 @@ pass_if: {"op": "\u003c", "provenance": "consumer (id 2) local_glucose == 0.0 ov
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">crossfeeding-consumer-grows-on-acetate-alone</strong>
+        <strong style="font-size: 0.9em;">shed-material-becomes-debris-particles</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-crossfeed</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Despite never touching glucose, the consumer&#39;s biomass grows over the run -- it is living entirely on the secretor&#39;s diffused acetate byproduct.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s vacated footprint pixels become debris particles in the shared map[particle] store as it resorbs -- shed material, not deleted mass.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"2\"])", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"op": "\u003e", "provenance": "consumer (id 2) biomass 1.25 -\u003e 3.79 (roughly 3x, back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 1.25}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "len(particles) once area reaches 0", "kind": "observable", "path": "particles"}
+pass_if: {"op": "\u003e=", "provenance": "exactly 68 debris particles shed by tick 16 (8/tick capped, deterministic across repeated runs), staying at 68 for the remainder of the run (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 20.0}</pre>
       </details>
       
       
@@ -1252,10 +1224,49 @@ pass_if: {"op": "\u003e", "provenance": "consumer (id 2) biomass 1.25 -\u003e 3.
     
     
     
-    <li class="expected-behavior-item" id="bt-crossfeeding-acetate-plume-reaches-consumer"
+    <li class="expected-behavior-item" id="bt-debris-cloud-keeps-scattering"
         data-test-kind="behavioral"
         
-        data-pytest-node="crossfeeding-acetate-plume-reaches-consumer"
+        data-pytest-node="debris-cloud-keeps-scattering"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">debris-cloud-keeps-scattering</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The debris cloud&#39;s RMS spread strictly increases after dissolution completes -- genuine scattering under BrownianMovement, not particles piling up or stalling.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "RMS radius of particle positions, tick 22 vs tick 16", "kind": "observable", "path": "particles"}
+pass_if: {"op": "\u003e", "provenance": "RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3 (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact magnitudes vary run-to-run (representative values shown); the strict INCREASE is the robust, test-asserted claim (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 0.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-particle-bridge-emits-then-scatters"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="particle-bridge-emits-then-scatters"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -1264,58 +1275,19 @@ pass_if: {"op": "\u003e", "provenance": "consumer (id 2) biomass 1.25 -\u003e 3.
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">crossfeeding-acetate-plume-reaches-consumer</strong>
-        
-        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-crossfeed</code></span>
-        
-      </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Sanity check that the cross-feeding coupling is real, not two isolated cells -- the secretor&#39;s acetate byproduct measurably reaches the consumer&#39;s own footprint.</div>
-      
-      
-      <details style="margin-top: 6px; font-size: 0.82em;">
-        <summary class="muted" style="cursor: pointer;">Assertion</summary>
-        
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.local_acetate[\"2\"])", "kind": "observable", "path": "obs.local_acetate"}
-pass_if: {"op": "\u003e", "provenance": "consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose\u0027s 0.4) acetate plume reaches the consumer\u0027s footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 0.0}</pre>
-      </details>
-      
-      
-      
-      
-    </li>
-    
-    
-    
-    
-    
-    
-    
-    
-    <li class="expected-behavior-item" id="bt-two-writer-additivity-conserves-mass"
-        data-test-kind="behavioral"
-        
-        data-pytest-node="two-writer-additivity-conserves-mass"
-        data-classification="diagnostic"
-        data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
-      
-        
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">two-writer-additivity-conserves-mass</strong>
+        <strong style="font-size: 0.9em;">particle-bridge-emits-then-scatters</strong>
         
         <span class="muted" style="font-size:0.78em">requires: <code>none</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Foundational control (not this study&#39;s scientific claim): the additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on -- disjoint per-cell footprint deltas summed into one shared field conserve mass -- holds structurally, independent of any dFBA mechanism.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Foundational control (not this study&#39;s scientific claim): the CPM-to-particle bridge this study depends on -- a process emitting particles via the map `_add` sentinel, moved by a separate stock BrownianMovement process -- works correctly, independent of any disintegration mechanism.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "net change in sum(fields.glucose) over 3 ticks (final minus initial)", "kind": "observable", "path": "fields.glucose"}
-pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not this study\u0027s composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve)", "value": -6.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "len(particles) unchanged and \u003e=2 positions moved, tick 1 vs tick 4", "kind": "observable", "path": "particles"}
+pass_if: {"op": "==", "provenance": "a synthetic emitter process (not this study\u0027s composite): 3 particles emitted on tick 1, still exactly 3 particles at tick 4, with at least 2 having moved (tests/test_particle_bridge_spike.py::test_emit_then_scatter)", "value": 3.0}</pre>
       </details>
       
       
@@ -1396,7 +1368,11 @@ pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not t
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">Both cellcell-compete.composite.json and cellcell-crossfeed.composite.json build and run to completion through the process-bigraph engine (tests/test_cellcell_regimes.py, tests/test_cpm_colony_field.py, tests/test_cpm_colony_viz.py); guarded skip when the optional cobra/cpm/spatio_flux dependencies are absent, matching this investigation&#39;s flagship and draft-to-living-cell&#39;s own FBA-grain convention.</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">disintegration-spatial.composite.json builds and runs to completion through the
+process-bigraph engine (tests/test_cpm_disintegration.py, tests/test_disintegration_regime.py,
+tests/test_disintegration_viz.py, tests/test_particle_bridge_spike.py); guarded skip when
+the optional cpm/spatio_flux dependencies are absent, matching this investigation&#39;s
+flagship and companion studies&#39; convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -1409,7 +1385,7 @@ pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not t
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from real 20-tick runs -- the competition regime drives a decisive biomass/volume split between two otherwise-identical competitors differing only in uptake capacity, and the cross-feeding regime sustains a consumer cell that never touches glucose purely via a diffused acetate handoff. The foundational two-writer additivity control also passes, independent of both regimes.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a real, deterministic 20-24 tick run -- the cell holds coherent, crosses its viability bound at a specific tick, resorbs to full dissolution, and sheds debris that keeps scattering after dissolution completes. The foundational particle-bridge control also passes, independent of the disintegration mechanism.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1422,7 +1398,13 @@ pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not t
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Generalizing the flagship&#39;s single-cell CpmCellField to an N-cell CpmColonyField and demonstrating both branches of Fig 3&#39;s viability-negotiation pattern -- competitive exclusion AND cross-feeding -- from the same coupling process, differing only in the composite&#39;s cell roles and field constants, makes draft-to-living-cell&#39;s law-4 claim (different handlers over one interface negotiate a shared-resource constraint differently) concrete at real spatial, per-footprint dFBA resolution that its lumped two-role, shared- scalar-pool analogue could not reach.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Realizing Fig 6&#39;s level-shift with a real CPM cell&#39;s structural viability collapsing
+under a real diffusing stressor field -- rather than a scripted viability scalar decaying
+on a timer -- makes draft-to-living-cell&#39;s disintegration claim (a cellular description
+stops being adequate and the right level of description drops to interacting molecular
+components) concrete at real spatial, per-pixel resolution: the shed &#34;molecular components&#34;
+are literal scattering particles in a shared field, not an abstract debris variable.
+</textarea>
         </label>
       </div>
     </div>
@@ -1437,10 +1419,11 @@ pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not t
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> Both cellcell-compete.composite.json and cellcell-crossfeed.composite.json build and run to completion through the engine over 20 ticks.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> disintegration-spatial.composite.json builds and runs to completion
+through the engine over a deterministic 20-24 tick run.</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The spatial Fig 3 viability-negotiation pattern is demonstrated at the toy-real (uncalibrated) level, with genuine per-cell CPM shape dynamics and independent dFBA solves behind both the competitive-exclusion and cross-feeding branches, rather than a scripted trajectory.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The spatial Fig 6 level-shift pattern is demonstrated at the toy-real (uncalibrated) level, with genuine per-pixel CPM shape dynamics, a real diffusing stressor field, and a verified particle bridge behind the hold-cross-resorb-scatter arc, rather than a scripted trajectory.</div>
         
         
       </div>
@@ -1450,11 +1433,11 @@ pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not t
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>the faster competitor&#39;s biomass/volume margin over the slower one collapses (uptake-capacity asymmetry not taking effect, or the shared field is not actually being depleted by both cells)</li><li>the consumer&#39;s local glucose is not near-zero (the localized glucose depot is leaking into the consumer&#39;s footprint, defeating the cross-feeding demonstration)</li><li>the consumer&#39;s biomass never rises despite zero local glucose (the acetate plume is not reaching it, or the consumer&#39;s acetate uptake/growth coupling is broken)</li><li>the two-writer additivity control fails to conserve mass (the N-cell field-write assumption CpmColonyField depends on is broken)</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the cell fails to hold coherent before crossing (the stressor gradient is too aggressive, or the cell&#39;s viability threshold is being crossed spuriously at the seed footprint)</li><li>released_tick drifts or the released flag never latches (the diffusion coefficient or gradient shape no longer brings the footprint-local mean above threshold within the run)</li><li>the domain fails to resorb to 0 (resorb_per_tick too small relative to the run length, or the target-volume ramp is not being applied after release)</li><li>shed particles are missing or the debris cloud stops scattering (the CPM-to-particle bridge is broken, or BrownianMovement is not wired to the particles store)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> future N&gt;2-cell population-scale spatial studies, all of which reuse CpmColonyField or its coupling pattern</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> any future spatial study reusing the CpmDisintegration pattern or the CPM-to-particle bridge (e.g. a spatial growth-and-division study that needs to shed material on division)</div>
         
       </div>
       
@@ -1467,30 +1450,30 @@ pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not t
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Composing N real CPM cells with one shared, real spatio-flux nutrient field through a single N-cell coupling process (<code>CpmColonyField</code>) reproduces Fig 3's viability-negotiation pattern as genuine spatial multicellularity. Over 20-tick runs: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives spatial competitive exclusion (biomass 237.9 vs 64.5, 3.69x; volume 3511 vs 81 px); a different composite over the same process -- localized glucose depot, fast-diffusing acetate byproduct, acetate-consuming role -- sustains a cell that never touches glucose (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79).</li>
+<li>Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter) reproduces Fig 6's level-shift as genuine spatial dissolution. Over a deterministic 20-24 tick run: the cell holds coherent (area &gt; 30) through tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, sheds 68 particles, and the debris cloud's RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6).</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>COMPETITION-EXCLUDES-THE-SLOWER-CELL</strong> -- biomass 237.9 (id 1) vs 64.5 (id 2), 3.69x margin</li>
-<li><strong>COMPETITION-VOLUME-TRACKS-BIOMASS</strong> -- CPM volume 3511 px (id 1) vs 81 px (id 2)</li>
-<li><strong>CROSSFEEDING-CONSUMER-BLIND-TO-GLUCOSE</strong> -- consumer local_glucose == 0.0</li>
-<li><strong>CROSSFEEDING-CONSUMER-GROWS-ON-ACETATE-ALONE</strong> -- consumer biomass 1.25 -&gt; 3.79 on acetate alone</li>
-<li><strong>CROSSFEEDING-ACETATE-PLUME-REACHES-CONSUMER</strong> -- consumer local_acetate == 1.30 by t=20</li>
-<li><strong>TWO-WRITER-ADDITIVITY-CONSERVES-MASS</strong> -- disjoint per-cell field writes sum losslessly, runtime-verified</li>
+<li><strong>CELL-HOLDS-COHERENT-BEFORE-CROSSING</strong> -- area 61-66 through tick 6, released False, 0 particles</li>
+<li><strong>STRESSOR-CROSSES-VIABILITY-BOUND</strong> -- released_tick == 7.0, deterministic</li>
+<li><strong>DOMAIN-RESORBS-TO-ZERO</strong> -- area falls from 56 (tick 7) to 0 (tick 16)</li>
+<li><strong>SHED-MATERIAL-BECOMES-DEBRIS-PARTICLES</strong> -- 68 debris particles by tick 16</li>
+<li><strong>DEBRIS-CLOUD-KEEPS-SCATTERING</strong> -- RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24)</li>
+<li><strong>PARTICLE-BRIDGE-EMITS-THEN-SCATTERS</strong> -- 3 synthetic particles emitted then scattered, bridge verified independently</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real -- plausible, hand-tuned magnitudes, not fitted to any organism or medium.</li>
-<li>The cross-feeding regime's acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally defensible (acetate is a smaller molecule) but was chosen, not fitted; the localized glucose depot is a deliberately engineered spatial arrangement, not a naturally arising gradient.</li>
-<li>The consumer's growth under cross-feeding is back-loaded to roughly the last 5 ticks of the run, once the acetate plume has had time to diffuse across the distance between the two cells' footprints -- monotonic over the measured window, not smoothly exponential from tick 0.</li>
-<li>Each CPM cell gets its own independent cobra model copy, not one shared model instance across the colony.</li>
-<li>CPM-native chemotaxis (directed motion toward a sensed gradient) remains out of scope for both regimes here.</li>
-<li>This is the second of nine planned spatial-counterpart studies in this investigation; seven remain unbuilt (disintegration, molecular interfaces, biomolecular complementarity, autopoiesis, growth-and-division, development-and-evolution, and the cellular-interface contract itself).</li>
+<li>The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build, and lambda_volume/temperature are init-only with no runtime setters, so a settled domain cannot be shattered into scattered pixels in-lattice. This is a chosen, honest realization of &quot;the coherent domain dissolves,&quot; not emergent lattice fragmentation -- a real engine limitation, documented in the API map.</li>
+<li>Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body pymunk physics -- they drift and scatter, they do not collide or fall.</li>
+<li>The stressor gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and diffusion coefficients are toy-real -- plausible, hand-tuned magnitudes chosen to make the full arc legible within a 20-24 tick run, not fitted to a named stressor or material.</li>
+<li>Unlike studies 2-3 in this investigation, this study's CPM cell has no metabolism/cobra path at all -- CpmDisintegration is built around the viability-collapse trigger alone.</li>
+<li>The released flag latches permanently once crossed and never un-crosses, even once the footprint empties and would otherwise read a misleadingly low stressor mean.</li>
+<li>This is the third of nine planned spatial-counterpart studies in this investigation; six remain unbuilt (molecular interfaces, biomolecular complementarity, autopoiesis, growth-and-division, development-and-evolution, and the cellular-interface contract itself).</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Extend <code>CpmColonyField</code> to N &gt; 2 cells to test whether the competitive/cross-feeding pattern generalizes to population-scale spatial negotiation.</li>
-<li>Add CPM-native chemotaxis so the consumer can move toward the sensed acetate plume rather than merely sitting in its path.</li>
+<li>Extend the debris-scatter mechanism with pymunk rigid-body physics so shed particles can collide and settle, rather than only diffusing.</li>
+<li>Investigate whether the connectivity/E1 no-op is a genuine viva-cpm upstream bug worth reporting, since a working structural-integrity lock would let a future study demonstrate in-lattice fragmentation directly.</li>
 <li>Fan out to the next spatial counterpart in the design spec's increment plan.</li>
 </ul>
 </div>
@@ -1510,26 +1493,32 @@ pass_if: {"op": "==", "provenance": "a synthetic negative-control process (not t
     <div class="overview-section">
       <h3 class="overview-label">Key assumptions</h3>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">e_coli_core-derived constants (`glucose_vmax` 10.0/4.0 for the two competitors,
-`acetate_vmax` 20 for the consumer, `grow_per_biomass` 30, the O2 cap of 5 on the secretor) are
-toy-real: plausible, hand-tuned magnitudes chosen to make competitive exclusion and cross-
-feeding both legible over a short (20-tick) run, not fitted to a named organism or medium.</li><li style="margin:2px 0">The cross-feeding regime&#39;s acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally
-defensible — acetate is a smaller molecule and diffuses faster than glucose in real aqueous
-media — but the specific ratio was chosen to make the byproduct plume legibly reach the
-consumer within a 20-tick run, not fitted to measured diffusion coefficients. Likewise the
-cross-feeding regime&#39;s localized 20 mM glucose depot (columns 0-18 only, with the consumer
-seeded outside it at columns 22-30) is a deliberately engineered spatial arrangement chosen so
-the consumer genuinely sees zero glucose (local_glucose == 0.0), not a naturally arising
-gradient.</li><li style="margin:2px 0">The consumer&#39;s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the
-20-tick run, once the secretor&#39;s acetate plume has had time to diffuse across the distance
-separating the two cells&#39; footprints — growth is monotonic over the measured window but is not
-a smooth exponential from tick 0, and a shorter run would show less of it.</li><li style="margin:2px 0">Each CPM cell in `CpmColonyField` gets its own independent cobra model copy, not one shared
-model instance across the colony — avoiding any risk of one cell&#39;s dFBA solve silently
-perturbing another&#39;s solver state, at the cost of N times the per-tick FBA solve cost.</li><li style="margin:2px 0">The additive two-writer assumption `CpmColonyField` depends on — that disjoint per-cell
-footprint deltas can be summed into one shared `map[array]` fields store and conserve mass — is
-no longer taken on faith; it is runtime-verified directly by
-`tests/test_cpm_colony_two_writer.py` against two synthetic single-pixel writers on disjoint
-pixels, independently of the colony process itself.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient, e.g. the consumer moving toward the secretor&#39;s acetate plume rather than merely sitting in its path) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li>
+        <li style="margin:2px 0">The disintegration mechanism realized here is **resorption + particle-shedding**, not
+in-lattice fragmentation. In this `viva-cpm` build the connectivity/&#34;E1&#34; structural-integrity
+constraint is a verified no-op (ON and OFF give statistically indistinguishable fragmentation
+under fragmenting energetics, and toggling it mid-run changes nothing -- documented in
+`docs/superpowers/api-maps/2026-08-21-disintegration-api-map.md`), and `lambda_volume` /
+`temperature` are init-only with no runtime setters, so a settled CPM domain cannot be
+shattered into scattered pixels in-lattice. The code-verified route taken here is to resorb the
+cell (`set_target_volume -&gt; 0`) and convert its shed pixels into particles via a separate,
+verified bridge. This is a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not
+emergent lattice fragmentation -- a real engine limitation, not a modeling shortcut taken for
+convenience.</li><li style="margin:2px 0">Debris particles move under spatio-flux `BrownianMovement` -- NumPy diffusion over a bounded
+grid -- not rigid-body pymunk physics. The shed particles drift and scatter; they do not
+collide with each other, with the dissolving cell, or fall under gravity.</li><li style="margin:2px 0">The stressor field&#39;s radial gradient (peak 1.5, ring onset at radius 5, saturating at radius
+18), `viability_threshold` (0.5), `resorb_per_tick` (6.0), `max_particles_per_tick` (8), and
+the diffusion coefficients (stressor D=4.0, debris diffusion_rate=1.0) are toy-real: plausible,
+hand-tuned magnitudes chosen to make hold -&gt; cross -&gt; resorb -&gt; scatter all legible within a
+20-tick run, not fitted to a named stressor, material, or literature target.</li><li style="margin:2px 0">Unlike studies 2-3 in this investigation (`cell-environment-coupling-spatial`,
+`cell-cell-coupling-spatial`), this study&#39;s CPM cell has NO metabolism/cobra path at all --
+`CpmDisintegration` is deliberately built around the viability-collapse trigger alone, not
+nutrient uptake or growth.</li><li style="margin:2px 0">The `released` flag LATCHES once the crossing happens and never un-crosses, even once the
+footprint empties and its mean-stressor reading would otherwise read 0.0 -- a deliberate design
+choice so an emptied, dissolved cell cannot spuriously &#34;recover&#34; viability.</li><li style="margin:2px 0">The CPM-to-particle bridge (a process emitting particles via the map `_add` sentinel into a
+shared `map[particle]` store, moved by a separate stock `BrownianMovement` process) is no
+longer an assumption; it is runtime-verified directly
+(`tests/test_particle_bridge_spike.py`) against a synthetic emitter, independently of the
+disintegration mechanism itself.</li>
       </ul>
     </div>
     
@@ -1539,7 +1528,13 @@ pixels, independently of the colony process itself.</li><li style="margin:2px 0"
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real, hand-tuned magnitudes chosen to make both regimes legible over a short run -- not fitted to any organism or medium.</li><li style="margin:2px 0">The cross-feeding regime&#39;s acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally defensible -- acetate is a smaller molecule and diffuses faster than glucose in real aqueous media -- but the specific ratio was chosen to make the plume legibly reach the consumer within 20 ticks, not fitted to measured diffusion coefficients; the localized 20 mM glucose depot is likewise a deliberately engineered spatial arrangement so the consumer genuinely sees zero glucose, not a naturally arising gradient.</li><li style="margin:2px 0">The consumer&#39;s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the 20-tick run, once the secretor&#39;s acetate plume has had time to diffuse across the distance separating the two cells&#39; footprints -- monotonic over the measured window, but not smoothly exponential from tick 0.</li><li style="margin:2px 0">Each CPM cell in CpmColonyField gets its own independent cobra model copy, not one shared model instance across the colony.</li><li style="margin:2px 0">The additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on is now runtime-verified directly (tests/test_cpm_colony_two_writer.py), independent of both regimes&#39; own dFBA mechanism -- previously an unverified assumption inherited from the flagship study.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li><li style="margin:2px 0">This is the second of nine planned spatial-counterpart studies; seven remain unbuilt (see the investigation&#39;s own decisions_needed).</li>
+        <li style="margin:2px 0">The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build (ON and OFF give statistically indistinguishable fragmentation, and toggling it mid-run changes nothing), and lambda_volume/temperature are init-only with no runtime setters. A settled CPM domain cannot be shattered into scattered pixels in-lattice in this build -- the code-verified route is to resorb the cell and convert its shed pixels into particles. This is framed as a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not as emergent lattice fragmentation -- a real engine limitation, documented in docs/superpowers/api-maps/2026-08-21-disintegration-api-map.md.</li><li style="margin:2px 0">Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body pymunk physics -- the particles drift and scatter, they do not collide with each other or with the dissolving cell, and do not fall under gravity.</li><li style="margin:2px 0">The stressor field&#39;s radial gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and the diffusion coefficients (stressor D=4.0, debris diffusion_rate=1.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter all legible within a 20-24 tick run -- not fitted to a named stressor, material, or literature target.</li><li style="margin:2px 0">Unlike studies 2-3 in this investigation (cell-environment-coupling-spatial, cell-cell-coupling-spatial), this study&#39;s CPM cell has no metabolism/cobra path at all -- CpmDisintegration is deliberately built around the viability-collapse trigger alone, not nutrient uptake or growth.</li><li style="margin:2px 0">The released flag latches once the crossing happens and never un-crosses, even once the footprint empties and its mean-stressor reading would otherwise read misleadingly low -- a deliberate design choice so a dissolved cell cannot spuriously &#34;recover&#34; viability.</li><li style="margin:2px 0">The CPM-to-particle bridge (a process emitting particles via the map `_add` sentinel into a shared map[particle] store, moved by a separate stock BrownianMovement process) is now runtime-verified directly (tests/test_particle_bridge_spike.py), independent of the disintegration mechanism itself -- previously an unverified primitive.</li><li style="margin:2px 0">This is the third of nine planned spatial-counterpart studies; six remain unbuilt (see the investigation&#39;s own decisions_needed).</li><li style="margin:2px 0">Read alongside its specification-stage analogue, `draft-to-living-cell/disintegration`: that
+study closes Fig 6&#39;s level-shift with a scripted viability scalar decaying on a thermal-shock
+timer, over a lumped cell-state composite. This study closes the same level-shift with a real
+CPM cell&#39;s structural viability collapsing under a real diffusing stressor field, its domain
+genuinely resorbing in lattice pixels rather than a scalar dropping toward zero, and its shed
+material becoming literal scattering particles rather than an abstract debris variable. Compare
+the two for the same disintegration claim at two very different mechanistic resolutions.</li>
       </ul>
     </div>
     
@@ -1566,8 +1561,8 @@ pixels, independently of the colony process itself.</li><li style="margin:2px 0"
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>3</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">3 PASS</span> ·
+        <strong>6</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">6 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -1604,7 +1599,7 @@ pixels, independently of the colony process itself.</li><li style="margin:2px 0"
 <script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "0911e2a86a8db5a2fd4f6e658b97019a89a129d4", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/0911e2a86a8db5a2fd4f6e658b97019a89a129d4", "branch": "main", "lockfile": "uv.lock@9e36867eef5c", "generated_at": "2026-08-21 17:42 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
-window._studyName = "cell-cell-coupling-spatial";
+window._studyName = "disintegration-spatial";
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.

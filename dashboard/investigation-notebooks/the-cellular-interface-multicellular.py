@@ -450,6 +450,112 @@ _save_viz('cell-cell-coupling-spatial', 'cellcell-crossfeed-metrics', _render_on
 # | crossfeeding-acetate-plume-reaches-consumer | kind=observable path=obs.local_acetate expr=last(obs.local_acetate["2"]) | op > value 0.0 provenance consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose's 0.4) acetate plume reaches the consumer's footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
 # | two-writer-additivity-conserves-mass | kind=observable path=fields.glucose expr=net change in sum(fields.glucose) over 3 ticks (final minus initial) | op == value -6.0 provenance a synthetic negative-control process (not this study's composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve) |
 
+# ## Study: Disintegration, Spatial (`disintegration-spatial`)
+#
+# **Question.** Does Fig 6's level-shift hold spatially -- a coherent CPM cell that loses structural
+# viability when a diffusing stressor field crosses its bound, its domain resorbing while its
+# shed material becomes scattering physical particles -- composed from independent frameworks
+# (viva-cpm + spatio-flux particles) through one coupling process (`CpmDisintegration` +
+# `BrownianMovement`)?
+#
+# **Claim.** Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
+# particle-movement process through two coupling processes (`CpmDisintegration` for the
+# viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
+# reproduces Fig 6's level-shift as genuine spatial dissolution, not a scripted or lumped
+# stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area > 30) through
+# tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick = 7, the
+# domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
+# spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
+# coupling process plus one stock movement process, mirroring `draft-to-living-cell/disintegration`'s
+# level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `disintegration-spatial` | `meta_modelers_guide.composites.disintegration-spatial` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.disintegration-spatial`** — `spec_meta_modelers_guide_composites_disintegration_spatial` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_disintegration_spatial = load_spec(REPO / 'meta_modelers_guide/composites/disintegration-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_disintegration_spatial)
+
+# === Edit parameters for composite 'disintegration-spatial' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['diffusion_coeffs']['stressor'] = 4.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['boundary_conditions']['stressor']['default']['type'] = 'neumann'
+
+# process 'cell'  (local:CpmDisintegration)
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['bounds']['x'] = 60.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['bounds']['y'] = 60.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['seed_block'] = [26, 26, 0, 34, 34, 1]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['target_volume'] = 64.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['viability_threshold'] = 0.5
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['resorb_per_tick'] = 6.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['max_particles_per_tick'] = 8
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['mcs'] = 3
+
+# process 'move'  (local:!spatio_flux.processes.particles.BrownianMovement)
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['move']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['move']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['move']['config']['diffusion_rate'] = 1.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: disintegration-spatial ===
+STUDY = 'disintegration-spatial'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **disintegration-spatial-movie**
+
+# disintegration-spatial-movie
+_save_viz('disintegration-spatial', 'disintegration-spatial-movie', _render_one('image:viz/disintegration-spatial.gif', {'chart': 'image', 'caption': 'Spatial disintegration -- the cell holds, then resorbs once the diffusing stressor field crosses its viability bound at tick 7, shedding a scattering debris cloud.'}, RUNS_DB, STUDY_YAML))
+
+# **disintegration-metrics**
+
+# disintegration-metrics
+_save_viz('disintegration-spatial', 'disintegration-metrics', _render_one('html:viz/disintegration-metrics.html', {'chart': 'html', 'caption': 'Synced metrics for the disintegration run -- area collapses at released_tick == 7, particle count climbs to 68 and holds, over 20-24 ticks.'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | cell-holds-coherent-before-crossing | kind=observable path=obs.area expr=obs.area at tick 6 | op > value 30.0 provenance area 61-66 through tick 6, released stays False, n_particles == 0 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_holds_below_threshold) |
+# | stressor-crosses-viability-bound | kind=observable path=obs.released_tick expr=obs.released_tick once obs.released first reads True | op == value 7.0 provenance released latches True at released_tick == 7.0, deterministic across repeated runs of the same composite (tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles, tests/test_disintegration_regime.py) |
+# | domain-resorbs-to-zero | kind=observable path=obs.area expr=obs.area at tick 16 | op == value 0.0 provenance area falls monotonically from 56 (tick 7) to 0 by tick 16, and stays 0 through tick 20 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles) |
+# | shed-material-becomes-debris-particles | kind=observable path=particles expr=len(particles) once area reaches 0 | op >= value 20.0 provenance exactly 68 debris particles shed by tick 16 (8/tick capped, deterministic across repeated runs), staying at 68 for the remainder of the run (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris) |
+# | debris-cloud-keeps-scattering | kind=observable path=particles expr=RMS radius of particle positions, tick 22 vs tick 16 | op > value 0.0 provenance RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3 (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact magnitudes vary run-to-run (representative values shown); the strict INCREASE is the robust, test-asserted claim (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris) |
+# | particle-bridge-emits-then-scatters | kind=observable path=particles expr=len(particles) unchanged and >=2 positions moved, tick 1 vs tick 4 | op == value 3.0 provenance a synthetic emitter process (not this study's composite): 3 particles emitted on tick 1, still exactly 3 particles at tick 4, with at least 2 having moved (tests/test_particle_bridge_spike.py::test_emit_then_scatter) |
+
 # ## Open decisions
 # - Only 1 of the 9 planned spatial-counterpart studies exists (cell-environment-coupling-spatial, the flagship). The remaining 8 — cellular-interface, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution — are named in the design spec's increment plan but have no composite, study, or run. Treat this investigation's verdict as scoped to the flagship pattern only until the fan-out increments land.
 # - Chemotaxis toward the sensed field (directed up-gradient motion) is explicitly deferred to a follow-up variant of the flagship composite; the current flagship cell does not chemotax, only senses, metabolizes, grows, and secretes.
