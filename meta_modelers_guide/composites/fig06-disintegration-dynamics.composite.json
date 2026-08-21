@@ -228,6 +228,73 @@
           "global_time"
         ]
       }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "Disintegration — the cell → molecular level shift",
+        "observables": {
+          "temperature": "float",
+          "biomass": "float",
+          "viability": "float",
+          "debris": "float"
+        },
+        "subtitle": "Fig 6 — a thermal shock pushes the cell past its viability bound",
+        "secondary_y": [
+          "temperature"
+        ],
+        "area": [
+          "debris"
+        ],
+        "phases": [
+          {
+            "x0": 0,
+            "x1": 8,
+            "label": "viable",
+            "color": "#1c7a77"
+          },
+          {
+            "x0": 8,
+            "x1": 20,
+            "label": "disintegrating",
+            "color": "#b4531f"
+          }
+        ],
+        "events": [
+          {
+            "x": 8,
+            "label": "thermal shock (37→50 °C)"
+          }
+        ]
+      },
+      "inputs": {
+        "temperature": [
+          "environment",
+          "temperature"
+        ],
+        "biomass": [
+          "cell",
+          "biomass"
+        ],
+        "viability": [
+          "cell",
+          "viability"
+        ],
+        "debris": [
+          "cell",
+          "debris"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
     }
   }
 }
