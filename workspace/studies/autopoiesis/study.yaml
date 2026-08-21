@@ -208,6 +208,52 @@ limitations:
 - Containment in fig09b is supplied from its own driver pool in parallel with the metabolism/replication/expression loop, not fed by their outputs.
 falsifiability: Overturned if enzymes.concentration (or another loop-internal quantity) never rises above its zero/seed value across a full run — meaning the coupled loop never actually turns and a downstream process is silently running on a seeded rather than produced pool — or if containment's three declared grains fail to produce genuinely non-identical dynamics under compilation (meaning the grain-swap installed the same effective handler three times rather than three distinct conforming ones).
 visualizations:
+- name: fig09a-executable-dynamics
+  address: html:fig09a-executable.html
+  description: 'Interactive Fig 9a: closure sustains the interface, one function
+    (containment) across three conforming grains. Measured over 10 engine steps:
+    containment_coarse.boundary 0.0 → 1.5, containment_selforg.membrane 0.0 →
+    2.0, containment_molecular.aggregate 0.0 → 1.0 — three distinct grains of one
+    function, each moving under its own handler, plus metabolism''s two grains
+    diverging in kind (metabolism_coarse.metabolites 0.0 → 6.0 vs
+    metabolism_selforg.products 0.0 → 3.0) and replication''s two numeric grains
+    both accumulating copies (replication_coarse.copies 0.0 → 2.0,
+    replication_selforg.copies 0.0 → 1.5). The same biological function, realized
+    by different conforming handlers at different grains, behind one interface
+    (Law 4).'
+  config:
+    chart: html
+    caption: 'Interactive Fig 9a: containment''s three grains (boundary, membrane,
+      aggregate) plus metabolism''s two (metabolites, products) and replication''s
+      two (copies) — one interface, several conforming handlers.'
+- name: fig09a-executable-movie
+  address: html:fig09a-executable-movie.html
+  config:
+    chart: html
+    caption: Animated replay of the fig09a grain trajectories.
+- name: fig09b-executable-dynamics
+  address: html:fig09b-executable.html
+  description: 'Interactive Fig 9b: closure sustains the interface, the minimal
+    cell. Over 10 engine steps: enzymes.concentration 0.0 → 0.95 (metabolism''s
+    catalyst pool exists only because gene expression made it), energy.energy
+    1.0 → 1.31 as metabolism fluxes, genes.concentration 1.0 → 1.69 as
+    replication spends that energy, proteins.concentration 0.0 → 1.70,
+    nucleic_acids.concentration 0.0 → 0.49, metabolites.concentration 0.0 →
+    0.41, and membrane.area 0.0 → 1.5 from its own lipid driver pool. The three
+    processes maintain one another so the interface is produced by the coupling
+    itself — the Maturana-Varela closure pattern, demonstrated qualitatively, not
+    validated autopoiesis (no boundary-maintenance criterion, no steady-state
+    self-production, no perturbation-recovery test is applied).'
+  config:
+    chart: html
+    caption: 'Interactive Fig 9b: the minimal cell''s shared component pools all
+      turning over together — enzymes, energy, genes, proteins, nucleic acids,
+      metabolites, membrane area.'
+- name: fig09b-executable-movie
+  address: html:fig09b-executable-movie.html
+  config:
+    chart: html
+    caption: Animated replay of the fig09b minimal-cell trajectories.
 - name: fig09-illustration
   address: image:visualizations/fig09-illustration.png
   config:

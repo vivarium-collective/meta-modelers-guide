@@ -181,6 +181,23 @@ limitations:
 - One mechanism (F1Fo ATP synthase) realizes the Fig 7 interface; the port set admits other molecular mechanisms but only this one is installed and measured.
 falsifiability: Overturned if the compiled ATP-synthase executable fails to synthesize ATP on its chemical output port (chemical_out stays at seed), if compilation drops or renames a physical-channel port (Law 2 violated), or if the other three channels fail to move together with the chemical channel (revealing the "one coupled flux" claim is false and the channels are actually independent).
 visualizations:
+- name: fig07-executable-dynamics
+  address: html:fig07-executable.html
+  description: 'Interactive Fig 7: the F1Fo ATP synthase as a four-channel transducer.
+    One shared proton flux drives all four outputs at once — chemical_out (ATP
+    synthesis flux) steps 0 → 100 at t=1 and holds; electrical_out, mechanical_out,
+    and thermal_out are computed from the same flux (proton current, rotary power,
+    waste heat) but, at these literature rate constants, land near machine-precision
+    zero (~1e-17 to 1e-18) and are too small to render as visible traces at this
+    scale — present in the state, invisible on the chart. PMF drives ATP synthesis;
+    the four-channel interface is preserved even though only the chemical channel
+    is visually distinguishable here.'
+  config:
+    chart: html
+    caption: 'Interactive Fig 7: chemical_out (ATP) steps from 0 to 100 as the proton
+      flux turns on; the three other channels are computed from the same flux but
+      are ~1e-17–1e-18 in magnitude at these constants, effectively invisible next
+      to ATP''s O(100) scale.'
 - name: fig07-illustration
   address: image:visualizations/fig07-illustration.png
   config:

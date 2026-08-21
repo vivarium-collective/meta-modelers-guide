@@ -195,6 +195,26 @@ limitations:
 - Growth is a single autocatalytic ODE (k·dna·energy); it is not coupled to a full metabolic or spatial nutrient field in this figure.
 falsifiability: Overturned if the growth process never drives dna across the threshold (the rewrite never fires), if the division fails to spawn two structurally-new daughter nodes, or if mass is not conserved across the partition (the parent's biomass is not driven to 0 while the daughters receive M/2 each).
 visualizations:
+- name: fig10-1-executable-dynamics
+  address: html:fig10-1-executable.html
+  description: 'Interactive Fig 10a,b: growth to division, one cell becomes two.
+    DNA grows autocatalytically (parent cell.dna 1.0 → 3.06 over 8 steps) and
+    crosses the division threshold (dna_threshold=2.0) between steps 5 and 6; the
+    dashed event line marks the rewrite firing — cell_count goes 1 → 2, each
+    daughter inherits dna (0 → 2.75) and half the parent''s biomass (0 → 0.5)
+    while the parent''s own biomass falls to 0. DNA grows to threshold, the place
+    graph splits, parent biomass partitioned to two daughters — mass conserved
+    (Law 2′).'
+  config:
+    chart: html
+    caption: 'Interactive Fig 10a,b: dna climbs past threshold, the dashed line
+      marks the division rewrite firing, cell_count steps 1→2, and biomass is
+      partitioned (not duplicated) between the two daughters.'
+- name: fig10-1-executable-movie
+  address: html:fig10-1-executable-movie.html
+  config:
+    chart: html
+    caption: Animated replay of growth → division (a Play button sweeps a marker along each curve).
 - name: growth-and-division-dynamics
   address: image:visualizations/growth-and-division-dynamics.svg
   config:

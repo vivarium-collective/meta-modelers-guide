@@ -147,6 +147,48 @@
         "_value": 1.0,
         "_default": 1.0
       }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "Competition — the weaker cell starves",
+        "observables": {
+          "nutrient": "float",
+          "viability": "float",
+          "viability_2": "float"
+        },
+        "subtitle": "Cell–cell coupling — one shared nutrient pool, asymmetric handlers",
+        "events": [
+          {
+            "x": 2,
+            "label": "cell_b viability < 0.5 — competitive exclusion"
+          }
+        ]
+      },
+      "inputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ],
+        "viability": [
+          "cell_a",
+          "viability"
+        ],
+        "viability_2": [
+          "cell_b",
+          "viability"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
     }
   }
 }

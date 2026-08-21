@@ -211,6 +211,30 @@ limitations:
 - Several driver pools in the tree (ribosomal_subunits, transcription_regulation_complex, extracellular_matrix.interstitial_matrix, membrane.transmembrane_transporters) are inputs to the cascade and are never written by any handler, so they stay at seed by construction — not evidence of interface failure, but not dynamically demonstrated either.
 falsifiability: Overturned if the compiled cascade fails to populate the metabolite or mRNA pools (observables stay at seed), if compilation drops or renames a port at any nesting level (the deepest leaf goes unresolved or undriven), or if the ribosome pool at the deepest leaf is found to be structurally present but never actually wired into the assembly-dilution loop (interface declared but not preserved in practice).
 visualizations:
+- name: fig08-executable-dynamics
+  address: html:fig08-executable.html
+  description: 'Interactive Fig 8: the central-dogma cascade across six nested
+    levels. mRNA (rna) rises 0 → 0.178 as transcription reads DNA nested five
+    levels down; the ribosome pool at the deepest-nested organelle leaf climbs
+    0.5 → 0.501 as it is actively maintained; protein rises 0 → 0.008 as
+    translation reads RNA plus that ribosome pool. Molecular mechanisms compose
+    into a six-level nested place graph, and the interface survives the deepest
+    nesting (Law 2). Honest framing: complementarity/selectivity is the paper''s
+    organizing idea for why such hierarchies form, not a mechanism this executable
+    builds — what is demonstrated is hierarchical assembly, a coupled cascade
+    reading and writing fixed, pre-wired store paths with no binding-affinity
+    calculation.'
+  config:
+    chart: html
+    caption: 'Interactive Fig 8: the transcription → translation → assembly cascade
+      — mRNA 0→0.178, ribosome 0.5→0.501, protein 0→0.008 — over the six-level
+      nested place graph.'
+- name: fig08-executable-movie
+  address: html:fig08-executable-movie.html
+  config:
+    chart: html
+    caption: 'Animated replay of the same cascade (Play button sweeps a marker
+      along each curve).'
 - name: fig08-nested-hierarchy
   address: image:visualizations/fig08-nested-hierarchy.svg
   config:

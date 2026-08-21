@@ -236,7 +236,50 @@ limitations:
 - 'On the compiled/executable path, the biofilm''s cell and ECM state are continuous, pre-declared scalar stores present from step 0 — no place-graph node insertion occurs there. Genuine runtime node insertion/removal exists only in the separate Live-Topology composites (fig10-2-rewrite, fig10-3-rewrite), and even there the colonization/mutation schedule is a fixed wall-clock timer with a hardcoded mutant fitness advantage — not gated by the community''s own internal state.'
 - 'One deterministic run per composite (10 steps for the continuous-path executables); no replicate seeds, no parameter sweep over onset_rate/capacity/grow_every/mutate_at.'
 falsifiability: 'Overturned if the biofilm''s shared interface fails to accumulate state, if the interface changes across compilation (breaking Law 2), if the evolution port fails to switch on or the ancestral population fails to grow under selection, or if the draft composites turn out to have nontrivial dynamics (contradicting their status as inert scaffolds).'
-visualizations: []
+visualizations:
+- name: fig10-2-executable-dynamics
+  address: html:fig10-2-executable.html
+  description: 'Interactive: a biofilm assembles. Over 10 engine steps,
+    biofilm_mass climbs 0 → 3.09, ecm 0 → 2.47, cells 1.00 → 2.09, and attached
+    0 → 1.85 — the individual cellular interfaces genuinely become part of a
+    collective (biofilm) interface that couples to the environment as one
+    composite (Law 2 preserved exactly). EXPLICIT caveat: this is a pattern
+    demonstration, not a validated result — biofilm nesting is pre-declared from
+    step 0 (a continuous scalar store, not discrete cell nodes inserted at
+    runtime); the paper itself calls development/evolution "an open and
+    substantial challenge."'
+  config:
+    chart: html
+    caption: 'Interactive: biofilm_mass, ecm, cells, and attached all climb
+      together over the pre-declared biofilm store — the collective interface
+      accumulating state, not a place-graph rewrite.'
+- name: fig10-2-executable-movie
+  address: html:fig10-2-executable-movie.html
+  config:
+    chart: html
+    caption: Animated replay of the biofilm assembling.
+- name: fig10-3-executable-dynamics
+  address: html:fig10-3-executable.html
+  description: 'Interactive: a variant gains a new port. Over 10 engine steps,
+    cell_O157.new_port ramps 0 → 0.65 (the dashed line marks it crossing 0.5,
+    roughly its half-open point) while cell_ecoli.cell_count grows 1 → 4 under a
+    fixed-constant selection ODE. EXPLICIT caveat: this is a pattern
+    demonstration, not a validated result — selection is an ODE with viability
+    and fitness held at fixed constants (not a real fitness landscape or
+    genotype-driven differential fitness), and the new port is a config-driven
+    first-order onset ramp (onset_rate=0.1), not an emergent evolutionary
+    innovation; the paper itself calls this transition "an open and substantial
+    challenge."'
+  config:
+    chart: html
+    caption: 'Interactive: new_port ramps on as a scripted config-driven onset
+      while cell_count grows under a fixed-constant selection ODE — real
+      dynamics, but not emergent selection.'
+- name: fig10-3-executable-movie
+  address: html:fig10-3-executable-movie.html
+  config:
+    chart: html
+    caption: Animated replay of the port-onset ramp and population growth.
 parent_studies:
 - study: growth-and-division
   condition: tests-passed

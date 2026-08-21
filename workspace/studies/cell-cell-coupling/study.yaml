@@ -222,6 +222,34 @@ limitations:
 - 'Toy-real constants: vmax, km, maintenance, via_gain, return_frac, supply, and capacity are illustrative values chosen to demonstrate the qualitative pattern, not fitted to a named organism or medium.'
 - 'No explicit death/removal event: a cell driven near-zero viability (cell_b under competition) remains a live node in the composition rather than being structurally removed.'
 falsifiability: Overturned if the competition env fails to drive the weaker cell's viability below the viable band while the stronger persists, if the cross-feeding env fails to keep both cells viable over the same coupling interface, if the shared nutrient store is not measurably depleted under competition (coupling not real), or if the two handler envs compile to different external interfaces than the inert draft (a Law 2 violation).
+visualizations:
+- name: cellcell-executable-compete-dynamics
+  address: html:cellcell-executable-compete.html
+  description: 'Interactive: competition — the weaker cell starves. cell_a''s
+    viability holds at 1.0 the whole run while cell_b''s collapses fast, dropping
+    below 0.5 within the first two steps (the dashed line marks competitive
+    exclusion); by t=20, cell_b viability ≈ 0.0001. The shared nutrient pool
+    settles at ≈0.20, measurably depleted — confirming the coupling is real, not
+    two isolated cells. Two cells over one shared nutrient negotiate viability;
+    same coupling interface, one handler env with asymmetric vmax (Law 4).'
+  config:
+    chart: html
+    caption: 'Interactive: cell_a and cell_b viability diverge fast under
+      competition — the weaker cell is driven out of its viable band while the
+      shared nutrient pool is measurably depleted.'
+- name: cellcell-executable-crossfeed-dynamics
+  address: html:cellcell-executable-crossfeed.html
+  description: 'Interactive: cross-feeding — both persist. Over the same coupling
+    interface, only the handler swapped for a symmetric vmax with byproduct
+    return, both cell_a and cell_b viability stay at 1.0 the whole run and the
+    shared nutrient pool settles higher (≈0.54) because the returned byproduct
+    offsets combined uptake. Two cells over one shared nutrient negotiate
+    viability; same coupling interface, a different handler env (Law 4).'
+  config:
+    chart: html
+    caption: 'Interactive: under cross-feeding, both cells'' viability stays up
+      and the shared pool settles higher than under competition — same interface,
+      different handler.'
 parent_studies:
 - study: cell-environment-coupling
   condition: tests-passed

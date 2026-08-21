@@ -149,6 +149,42 @@
         "_value": 1.0,
         "_default": 1.0
       }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "Cross-feeding — both persist",
+        "observables": {
+          "nutrient": "float",
+          "viability": "float",
+          "viability_2": "float"
+        },
+        "subtitle": "Cell–cell coupling — symmetric handlers, byproduct returned to the pool"
+      },
+      "inputs": {
+        "nutrient": [
+          "env",
+          "nutrient"
+        ],
+        "viability": [
+          "cell_a",
+          "viability"
+        ],
+        "viability_2": [
+          "cell_b",
+          "viability"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
     }
   }
 }
