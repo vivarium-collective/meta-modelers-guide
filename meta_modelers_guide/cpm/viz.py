@@ -210,7 +210,8 @@ def frames_to_gif(frames: list[np.ndarray], out_path: str | Path, fps: int = 6) 
 _PALETTE = ["#0d6e6b", "#a5620f", "#3f9e99", "#657572", "#c98a3a"]
 
 
-def metrics_panel(metrics: dict[str, list[float]], out_path: str | Path) -> str:
+def metrics_panel(metrics: dict[str, list[float]], out_path: str | Path,
+                   include_plotlyjs: str | bool = "inline") -> str:
     """Write an interactive Plotly time-series panel of ``metrics`` (a dict of
     equal-length lists sharing a ``time`` axis) to ``out_path`` as HTML.
 
@@ -218,6 +219,18 @@ def metrics_panel(metrics: dict[str, list[float]], out_path: str | Path) -> str:
     (O(1)) live on very different scales, so volume is plotted on a secondary
     right-hand y-axis and everything else shares the primary left-hand axis.
     Falls back to a small static HTML table if Plotly is unavailable.
+
+    ``include_plotlyjs`` is passed straight through to Plotly's ``fig.to_html``.
+    The default ``"inline"`` bakes the full ~4.5 MB Plotly.js library into the
+    same ``<script>`` tag as the figure's own ``Plotly.newPlot`` call — fine for
+    a throwaway/tmp render, but it defeats the workspace's shared-plotly.js
+    convention other studies' baked ``viz/*.html`` follow (a small file with a
+    ``<script src="../../../plotly.min.js">`` pointing at the one workspace-root
+    copy), which is also what the self-contained investigation-report inliner
+    expects (it strips a *separate* library-only ``<script src=…>`` tag, not one
+    that also carries ``newPlot``). Pass a relative path to ``plotly.min.js``
+    (e.g. ``"../../../plotly.min.js"`` from ``studies/<slug>/viz/``) when baking
+    a study's committed artifact so it matches that convention.
     """
     out_path = Path(out_path)
     times = metrics.get("time") or list(range(len(next(iter(metrics.values()), []))))
@@ -257,6 +270,6 @@ def metrics_panel(metrics: dict[str, list[float]], out_path: str | Path) -> str:
         legend=dict(orientation="h", yanchor="bottom", y=-0.26, xanchor="left", x=0),
         hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
     )
-    out_path.write_text(fig.to_html(include_plotlyjs="inline", full_html=True,
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
                                      config={"displayModeBar": False, "responsive": True}))
     return "plotly"
