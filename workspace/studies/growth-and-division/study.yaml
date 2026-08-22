@@ -6,7 +6,14 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
+units_and_time:
+  tick: 1 tick = unspecified physical time (dimensionless model time); the run is 36 ticks sampled every 3.
+  quantities: CPM volume (in lattice pixels), n_cells, generation, and the shared glucose field are dimensionless model units on a 60x60 lattice. glucose_vmax=1.5, vol_threshold=80, reset_target=40, and the ~3% field-depletion figure are dimensionless model magnitudes -- not calibrated mM or physical rates.
+acceptance_criteria:
+- Metabolism-driven volume growth crossing vol_threshold should fire division and add cells, so a single founder should compound into a multi-generation lineage -- the population should step up and never shrink.
+- Each cell''s volume should sawtooth in a bounded band (grow toward vol_threshold, halve at division toward reset_target, resume), with no runaway single cell absorbing the lattice and no zero-volume phantom daughters.
+- Siblings coupled through one shared glucose field should desynchronize as the colony crowds, so the population staircase should depart from clean powers of two rather than staying in lockstep.
 question: 'A cell grows, crosses a threshold, and divides -- and its daughters do not necessarily
   divide together. This is the paper''s §Growth and division growth-then-divide pattern (Fig
   10a,b): metabolism drives a cell''s own state across a threshold, crossing it fires division
@@ -79,7 +86,7 @@ biological_summary: 'A cell metabolizes, grows, crosses a threshold, and divides
   the staircase survives, but the phenomenon itself.
 
 
-  HONEST caveat on what actually bounds the staircase: with `glucose_vmax` = 1.5 on an abundant
+  Caveat on what actually bounds the staircase: with `glucose_vmax` = 1.5 on an abundant
   uniform field, field-wide glucose barely dips -- roughly 3% over the full 36-tick run (43180 ->
   41826 arbitrary field units) -- so nutrient depletion is a weak brake, not the dominant one.
   What visibly slows and desynchronizes division is lattice crowding: by the end of the run the
@@ -139,7 +146,7 @@ key_assumptions:
   two cells"), the parent''s
   pre-division biomass is split between the two daughters proportional to their post-division
   lattice volumes, mass-conserving, not reset to a fixed value that would discard it. This mirrors
-  the honest framing `disintegration` gave its own resorption primitive: a chosen,
+  the framing `disintegration` gave its own resorption primitive: a chosen,
   code-verified engine operation standing in for a mechanism (cytokinesis) the underlying CPM
   engine does not itself simulate.'
 - 'The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 18 cells), not by any hard-coded
@@ -153,7 +160,7 @@ key_assumptions:
   18-cell colony packs to roughly two-thirds occupancy within its own bounding footprint even
   though the full 60x60 lattice remains only ~26% occupied overall. "Bounded by the shared glucose
   field" overstates the nutrient contribution; "bounded by lattice crowding and, more weakly,
-  shared-glucose depletion" is the honest claim.'
+  shared-glucose depletion" is the accurate framing.'
 - 'Each CPM cell gets its own independent cobra model copy, not one shared model instance across
   the lineage -- the same convention as `cell-cell-coupling`''s `CpmColonyField` -- keyed
   off the live cell ids read from the engine''s own snapshot each tick, so newly divided daughters
@@ -185,8 +192,12 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 8.0
-    provenance: 'n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence
-      3) -- steps 1 -> 2 -> 4 -> 8 -> 18 (tests/test_growth_division_regime.py::test_population_steps_up_by_division,
+    kind: acceptance_criterion
+    provenance: 'prior -- metabolism-driven growth crossing vol_threshold should fire division and grow
+      the population across at least 3 generations from one seed cell; expect n_cells >= 8. Confirmed --
+      n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence 3) -- steps 1 -> 2
+      -> 4 -> 8 -> 18. The 8 is a threshold pin on the a-priori direction, not a golden value
+      (tests/test_growth_division_regime.py::test_population_steps_up_by_division,
       tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics)'
   requires_simulation: growth-division-spatial
 - name: population-never-shrinks
@@ -200,9 +211,11 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 0.0
-    provenance: 'n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the
-      full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division
-      asserts ns == sorted(ns))'
+    kind: acceptance_criterion
+    provenance: 'prior -- division only adds cells, so the population should be monotonic non-decreasing
+      (never lose a cell to a phantom or scripted removal). Confirmed -- n_cells trajectory
+      1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the full 36-tick run
+      (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns))'
   requires_simulation: growth-division-spatial
 - name: daughters-resume-growth-without-runaway
   classification: primary
@@ -216,9 +229,12 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 3.0
-    provenance: 'starting from n0 = 1, n_cells >= 3 after 30 ticks (at least 1 -> 2 -> ~4), with
-      every per-cell volume bounded in (5, 200) -- no runaway single cell, no zero-volume phantom
-      daughters (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)'
+    kind: acceptance_criterion
+    provenance: 'prior -- daughters should resume growth after being split, so from one seed cell the
+      population should grow past 1 with no runaway single cell and no zero-volume phantom daughters;
+      expect n_cells >= 3 after 30 ticks. Confirmed -- starting from n0 = 1, n_cells >= 3 after 30 ticks
+      (at least 1 -> 2 -> ~4), with every per-cell volume bounded in (5, 200)
+      (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)'
   requires_simulation: growth-division-spatial
 - name: per-cell-volume-stays-bounded
   classification: primary
@@ -232,9 +248,11 @@ behavior_tests:
   pass_if:
     op: '<'
     value: 200.0
-    provenance: 'per-cell volumes stay bounded roughly 31-79 px across the 36-tick run (division
-      halves a cell once it crosses vol_threshold = 80, resetting toward reset_target = 40, then
-      it regrows); the tests'' hard bounds (8 < v < 200) hold at every sampled tick
+    kind: regression_pin
+    provenance: 'the 200-px ceiling is a post-hoc guard set well above the observed band -- per-cell
+      volumes stay bounded roughly 31-79 px across the 36-tick run (division halves a cell once it crosses
+      vol_threshold = 80, resetting toward reset_target = 40, then it regrows); the tests'' hard bounds
+      (8 < v < 200) hold at every sampled tick
       (tests/test_growth_division_regime.py::test_population_steps_up_by_division,
       tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)'
   requires_simulation: growth-division-spatial
@@ -253,9 +271,11 @@ behavior_tests:
   pass_if:
     op: '<='
     value: 2.0
-    provenance: 'divide_cells(80.0, 40.0) on a cell grown to ~150 splits it into two daughters (parent
-      id kept + one new id) whose combined volume matches the pre-split volume within +-2 px
-      (rounding); divide_cells(500.0, 40.0) on a cell at 60 (below threshold) returns [] -- a
+    kind: regression_pin
+    provenance: 'foundational correctness control -- the 2-px bound is a rounding tolerance, not a
+      directional prediction. divide_cells(80.0, 40.0) on a cell grown to ~150 splits it into two
+      daughters (parent id kept + one new id) whose combined volume matches the pre-split volume within
+      +-2 px (rounding); divide_cells(500.0, 40.0) on a cell at 60 (below threshold) returns [] -- a
       correct no-op (tests/test_cpm_divide_spike.py::test_divide_splits_one_into_two_mass_conserved,
       test_below_threshold_is_noop)'
   requires_simulation: none
@@ -277,9 +297,13 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 1.0
-    provenance: 'n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 departs from powers of two starting
-      at tick 21 (5 cells) and stays desynchronized through 11, 14, 18; at the final tick, live
-      cells span 5 distinct generations (0 through 4) simultaneously in the same 18-cell colony
+    kind: acceptance_criterion
+    provenance: 'prior -- siblings coupled through one shared glucose field should grow at different local
+      rates as the colony crowds, so the staircase should depart from clean powers of two rather than
+      staying in lockstep; expect at least one off-power-of-two sample. Confirmed -- n_cells trajectory
+      1,2,2,2,4,4,5,8,8,11,14,18 departs from powers of two starting at tick 21 (5 cells) and stays
+      desynchronized through 11, 14, 18; at the final tick, live cells span 5 distinct generations (0
+      through 4) simultaneously in the same 18-cell colony
       (tests/test_growth_division_regime.py::test_division_desynchronizes_from_lockstep_powers_of_two)'
   requires_simulation: growth-division-spatial
 - name: lineage-compounds-into-a-tree
@@ -295,9 +319,12 @@ behavior_tests:
   pass_if:
     op: '>='
     value: 3.0
-    provenance: 'max_generation reaches 4 by the end of the 36-tick run (trajectory
-      0,1,1,1,2,2,2,3,3,3,3,4 across the 12 sampled ticks); founder id 1 stays generation 0
-      throughout; every daughter''s generation == its recorded parent''s generation + 1
+    kind: acceptance_criterion
+    provenance: 'prior -- repeated division should compound a single founder into a genuine
+      multi-generation lineage tree, so max_generation should grow several generations deep; expect
+      max_generation >= 3. Confirmed -- max_generation reaches 4 by the end of the 36-tick run (trajectory
+      0,1,1,1,2,2,2,3,3,3,3,4 across the 12 sampled ticks); founder id 1 stays generation 0 throughout;
+      every daughter''s generation == its recorded parent''s generation + 1
       (tests/test_growth_division_regime.py::test_lineage_compounds_into_a_multigeneration_tree)'
   requires_simulation: growth-division-spatial
 runs:
@@ -524,7 +551,7 @@ conclusion: '## Claims
     two-thirds occupancy within its own bounding footprint even though the full 60x60 lattice
     remains only ~26% occupied overall. "Bounded by the shared glucose field" overstated the
     nutrient contribution; "bounded by lattice crowding and, more weakly, shared-glucose
-    depletion" is the honest claim.
+    depletion" is the accurate framing.
 
   - Each CPM cell gets its own independent cobra model copy, not one shared model instance across
     the lineage.
@@ -595,7 +622,7 @@ limitations:
   the 18-cell colony packs to roughly two-thirds occupancy within its own bounding footprint even
   though the full 60x60 lattice remains only ~26% occupied overall. "Bounded by the shared glucose
   field" overstates the nutrient contribution; "bounded by lattice crowding and, more weakly,
-  shared-glucose depletion" is the honest claim.'
+  shared-glucose depletion" is the accurate framing.'
 - Each CPM cell gets its own independent cobra model copy, not one shared model instance across
   the lineage -- the same convention as cell-cell-coupling's CpmColonyField -- keyed off
   the live cell ids read from the engine's own snapshot each tick.

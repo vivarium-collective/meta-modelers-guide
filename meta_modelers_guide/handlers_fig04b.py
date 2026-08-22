@@ -167,6 +167,219 @@ class CellularInterfaceHandler(Process):
         }
 
 
+# ── Fig 4b · a SECOND conforming handler: same contract, different mechanism ──
+# The whole point of the cellular-interface *contract* (Fig 4b) is that it names
+# only the externally observable exchange relation — the typed ``cell`` ports —
+# and commits to no internal mechanism. ``CellularInterfaceHandler`` realizes it
+# with first-order (diffusion-limited) uptake + independent Monod growth +
+# Arrhenius thermal death. This handler realizes the SAME contract (byte-identical
+# ``inputs``/``outputs``) with a genuinely DIFFERENT internal organization, each
+# interface relation carried by a different functional law:
+#
+#   * uptake        — a SATURABLE MEMBRANE CARRIER (Michaelis–Menten transporter),
+#                     ``-Vmax·c/(Ku + c)``, operating below saturation — a bending,
+#                     capacity-limited flux rather than the twin's straight
+#                     first-order ``-uptake_rate·c``.
+#   * growth        — a COOPERATIVE (Moser / Hill, n>1) growth law,
+#                     ``growth_max·cⁿ/(Kⁿ + cⁿ)``, a sigmoid rather than the twin's
+#                     n=1 Monod hyperbola.
+#   * thermal death — a Q10 temperature-coefficient power law,
+#                     ``k(T) = k_opt · Q10^((T−T_opt)/10)``, rather than Arrhenius.
+#
+# The parameters are fitted so the interface-level observables track
+# ``CellularInterfaceHandler``'s across the interface's whole OPERATING RANGE of
+# chemical supply (chem ∈ [0.2, 2.5] at T = 37 °C) — not just at one point — to
+# within a measured, non-zero tolerance (max relative divergence ~10%, dominated
+# by the cooperative growth law; see ``tests/test_cellular_interface_substitutability``).
+# Two independent boxes, one coarse-grained cellular-interface relation:
+# mechanism-independence measured across the operating range of the contract itself.
+
+class CooperativeCellularInterfaceHandler(Process):
+    """The cellular interface realized by a DIFFERENT internal mechanism than
+    :class:`CellularInterfaceHandler`: a saturable Michaelis–Menten membrane
+    carrier for uptake, an independent cooperative (Moser/Hill n>1) growth law, and
+    Q10 thermal death — where the twin uses first-order uptake, Monod growth, and
+    Arrhenius death. Declares byte-identical ports to ``CellularInterfaceHandler``
+    and, across the interface's operating range of chemical supply, produces
+    interface observables that agree with it within tolerance — the same externally
+    observable relation from a genuinely different box."""
+
+    config_schema = {
+        # saturable membrane-carrier uptake (Michaelis–Menten): -Vmax·c/(Ku + c).
+        # Ku sits well above the operating range so the carrier runs below
+        # saturation — a bending, capacity-limited flux, not the twin's first-order
+        # straight line; fitted (with Vmax) to track -uptake_rate·c to <9% over
+        # chem ∈ [0.2, 2.5].
+        "uptake_vmax": _f(10.6),         # carrier maximum uptake rate
+        "uptake_ku": _f(12.0),           # carrier half-saturation concentration
+        # independent cooperative (Moser/Hill) growth: growth_max·cⁿ/(Kⁿ + cⁿ),
+        # n>1 → a sigmoid, a genuinely different law from the twin's n=1 Monod
+        # hyperbola; K,n fitted to track it to ~10% over chem ∈ [0.2, 2.5].
+        "growth_max": _f(0.6),           # max specific growth rate (hr⁻¹)
+        "growth_k": _f(0.455),           # growth half-saturation concentration
+        "growth_n": _f(1.3),             # cooperativity exponent (>1)
+        # goal-directed accretion (same downstream couplings as the Monod twin)
+        "shape_growth_coupling": _f(1.0),  # volume gained per unit growth·interval
+        "objective_yield": _f(0.5),        # biomass-proxy gained per unit growth
+        # thermal death — Q10 power law, k(T) = k_opt · Q10^((T−T_opt)/10).
+        # k_opt is pinned to the Arrhenius twin's death rate at the 37 °C optimum
+        # so viability tracks it there; Q10 sets how death accelerates with heat.
+        "death_rate_opt": _f(0.0039),    # first-order death rate at T_opt (per min)
+        "death_q10": _f(6.0),            # thermal-death temperature coefficient
+        "temp_opt": _f(37.0),            # optimal temperature (°C); heat-flux zero point
+        "viability_init": _f(1.0),       # starting viability (matches ENV init)
+        # linear physical responses to the other drivers (same as the twin)
+        "elasticity": _f(0.1),           # force returned per unit applied force
+        "membrane_conductance": _f(0.05),  # current per unit voltage (Ohm)
+        "thermal_conductance": _f(0.02),   # heat flux per °C above optimum
+        "signaling_gain": _f(0.4),         # signaling rate at chemical saturation
+    }
+
+    def inputs(self):
+        return {
+            "chemical_ext": "concentration",
+            "mechanical_ext": "force",
+            "electrical_ext": "voltage",
+            "thermal_ext": "temperature",
+        }
+
+    def outputs(self):
+        return {
+            "chemical": "chemical_flux",
+            "mechanical": "force",
+            "electrical": "current",
+            "thermal": "heat_flux",
+            "growth_rate": "growth_rate",
+            "shape": "volume",
+            "signaling": "signaling_rate",
+            "objective": "objective",
+            "viability": "viability",
+        }
+
+    def _set(self, port, value):
+        """Delta that carries the additive store for an instantaneous port to
+        ``value`` (set-semantics over process-bigraph's accumulate-by-default)."""
+        if not hasattr(self, "_last"):
+            self._last = {}
+        delta = value - self._last.get(port, 0.0)
+        self._last[port] = value
+        return delta
+
+    def update(self, state, interval):
+        c = self.config
+        chem = float(state.get("chemical_ext", 0.0))
+        mech = float(state.get("mechanical_ext", 0.0))
+        volt = float(state.get("electrical_ext", 0.0))
+        temp = float(state.get("thermal_ext", 0.0))
+
+        # saturable membrane-carrier uptake: a capacity-limited (bending) flux
+        uptake = c["uptake_vmax"] * chem / (c["uptake_ku"] + chem) if (c["uptake_ku"] + chem) else 0.0
+        chemical_flux = -uptake                        # net uptake (negative)
+
+        # independent cooperative (Moser/Hill) growth on the chemical supply
+        n = c["growth_n"]
+        cn = chem ** n
+        kn = c["growth_k"] ** n
+        gdenom = kn + cn
+        saturation = cn / gdenom if gdenom else 0.0
+        growth = c["growth_max"] * saturation
+
+        # instantaneous exchange responses (same linear laws as the Monod twin)
+        force = c["elasticity"] * mech                            # elastic return
+        current = c["membrane_conductance"] * volt               # Ohmic
+        heat_flux = c["thermal_conductance"] * (temp - c["temp_opt"])  # Fourier
+        signaling = c["signaling_gain"] * saturation             # cooperative-scaled
+
+        # Q10 thermal death: k(T) = k_opt · Q10^((T−T_opt)/10), dV/dt = −k(T)·V.
+        # Integrated exactly per step (exp) to stay in [0, 1]. Time in minutes.
+        k_death = c["death_rate_opt"] * c["death_q10"] ** ((temp - c["temp_opt"]) / 10.0)
+        v = getattr(self, "_viability", c["viability_init"])
+        dv = v * (math.exp(-k_death * interval) - 1.0)          # V·(e^{-kΔt} − 1) ≤ 0
+        self._viability = v + dv
+
+        # accumulating pools: volume + biomass-proxy objective grow with growth
+        d_shape = c["shape_growth_coupling"] * growth * interval
+        d_objective = c["objective_yield"] * growth * interval
+
+        return {
+            "chemical": self._set("chemical", chemical_flux),
+            "mechanical": self._set("mechanical", force),
+            "electrical": self._set("electrical", current),
+            "thermal": self._set("thermal", heat_flux),
+            "growth_rate": self._set("growth_rate", growth),
+            "signaling": self._set("signaling", signaling),
+            "shape": d_shape,
+            "objective": d_objective,
+            "viability": dv,
+        }
+
+
+# ── Fig 4b · a NATIVE Law-1 impostor for the cellular-interface contract ──────
+# Law 1 (conformance) says the compiler rejects any handler whose declared ports
+# do not match the draft's signature. Until now this study demonstrated Law 1 only
+# by cross-referencing the *metabolism*-signature impostor `NonConformingMetabolism`
+# (handlers_fig06_fba.py) — a different contract. This is the cellular interface's
+# OWN impostor: it looks like a cellular-interface handler and even carries genuine
+# uptake/growth dynamics, but it DROPS the higher-level cellular ports `viability`
+# and `objective` from its declared `outputs`. Compiling it against the
+# `CellularInterface` draft (or `check_conformance`-ing it) raises `CompileError`
+# naming those missing ports — Law 1 enforced natively at this figure, not borrowed.
+
+class NonConformingCellularInterface(Process):
+    """An IMPOSTOR handler for the Fig 4b cellular-interface signature —
+    deliberately non-conforming, to make Law 1's type judgment a visible scene
+    *native to this study*.
+
+    It declares the four environmental inputs and most exchange outputs correctly,
+    but DROPS the ``viability`` and ``objective`` ports the ``CellularInterface``
+    signature requires. Compiling it (or ``check_conformance``) raises
+    ``CompileError`` naming the missing ``viability``/``objective`` ports — the
+    mechanical proof that the same compiler this study relies on rejects a handler
+    that breaks *this* figure's declared port contract, structurally, at compile
+    time.
+    """
+
+    config_schema = {
+        "uptake_rate": _f(0.8),
+        "growth_max": _f(0.6),
+        "km": _f(0.5),
+    }
+
+    def inputs(self):
+        return {
+            "chemical_ext": "concentration",
+            "mechanical_ext": "force",
+            "electrical_ext": "voltage",
+            "thermal_ext": "temperature",
+        }
+
+    def outputs(self):
+        # WRONG: the required higher-level cellular ports 'viability: viability'
+        # and 'objective: objective' are missing — a cell whose interface no
+        # longer reports whether the cellular description still holds, nor the
+        # goal it pursues, is not the contract's cell.
+        return {
+            "chemical": "chemical_flux",
+            "mechanical": "force",
+            "electrical": "current",
+            "thermal": "heat_flux",
+            "growth_rate": "growth_rate",
+            "shape": "volume",
+            "signaling": "signaling_rate",
+        }
+
+    def update(self, state, interval):
+        c = self.config
+        chem = float(state.get("chemical_ext", 0.0))
+        denom = c["km"] + chem
+        growth = c["growth_max"] * chem / denom if denom else 0.0
+        return {
+            "chemical": -c["uptake_rate"] * chem,
+            "growth_rate": growth,
+            "shape": growth * interval,
+        }
+
+
 # ── handler environment ⟦C⟧_H : the compiler swaps this in for the draft ──────
 # init sets store leaves' ``_default`` (process-bigraph realize IGNORES _value):
 # the environmental drivers seed the sim, and viability/shape start at their

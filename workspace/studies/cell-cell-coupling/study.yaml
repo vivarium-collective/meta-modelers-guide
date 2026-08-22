@@ -6,14 +6,14 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
 question: 'Does the paper''s §Cell–cell coupling viability-negotiation pattern (no dedicated
 
   figure) hold as real spatial multicellularity — multiple CPM cells sharing one diffusing
 
   nutrient field, each running its own dynamic-FBA step at its own footprint, producing both
 
-  competitive exclusion and cross-feeding — when the whole colony is composed from independent
+  resource preemption between two cells and cross-feeding — when the whole colony is composed from independent
 
   frameworks through one N-cell coupling process (`CpmColonyField`), rather than the lumped
 
@@ -45,7 +45,7 @@ biological_summary: 'This is the spatial realization of the paper''s §Cell–ce
 
   paper''s §Cell–cell coupling negotiation (no dedicated figure). COMPETITION (`meta_modelers_guide.composites.cellcell-compete`): two glucose
 
-  competitors seeded on a uniform 3.0 mM glucose field, differing only in uptake capacity
+  competitors seeded on a uniform glucose field (3.0 model units), differing only in uptake capacity
 
   (`glucose_vmax` 10.0 vs 4.0). Measured over a 20-tick run
 
@@ -63,7 +63,9 @@ biological_summary: 'This is the spatial realization of the paper''s §Cell–ce
 
   the lattice it started with parity on. This is asymmetric growth under shared-resource
 
-  competition — a trend TOWARD competitive exclusion, not exclusion reached: the loser''s biomass
+  competition — resource preemption between two cells, not population-level competitive exclusion (which
+
+  would require dividing populations): the loser''s biomass
 
   still GREW from its 1.25 seed to 64.5 (~51.6x) and stays far above any viable-biomass floor, so
 
@@ -73,9 +75,11 @@ biological_summary: 'This is the spatial realization of the paper''s §Cell–ce
 
   lattice, with the field nearly exhausted by t=20 — the endpoint is as much a finite-size
 
-  lattice-saturation artifact as a biological one (by t≈30 the winner fills the whole lattice and
+  lattice-saturation artifact as a biological one (a single cell swelling to ~97.5% of the lattice
 
-  the still-viable loser is simply crowded off it, evicted rather than starved). This is exactly
+  without ever dividing is a lattice artifact, not physiology; by t≈30 the winner fills the whole
+
+  lattice and the still-viable loser is simply crowded off it, evicted rather than starved). This is exactly
 
   the paper''s §Cell–cell coupling distinction that "what is coupled is not only state, but
 
@@ -108,7 +112,7 @@ biological_summary: 'This is the spatial realization of the paper''s §Cell–ce
 
   regime realizes it concretely: a glucose-to-acetate
 
-  secretor (O2 cap 5, seeded at a localized 20 mM glucose depot in lattice columns 0-18) paired
+  secretor (O2 cap 5, seeded at a localized glucose depot (20 model units) in lattice columns 0-18) paired
 
   with an acetate-consuming cell (`acetate_vmax` 20) seeded well outside the glucose depot
 
@@ -161,11 +165,15 @@ claim: 'Composing N real CPM cells with one shared, real spatio-flux nutrient fi
 
   20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric
 
-  growth toward competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81
+  growth via resource preemption between the two cells (biomass ratio 2.9-3.7x across 5 seeds,
+
+  3.69x on the flagship seed; volume 3511 vs 81
 
   px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
 
-  bound), while a
+  bound; population-level competitive exclusion would need dividing populations, and the winner''s
+
+  ~97.5%-lattice swell without division is a saturation artifact), while a
 
   different composite over the same coupling process — a localized glucose depot, a fast-diffusing
 
@@ -192,24 +200,47 @@ baseline:
 - name: cellcell-crossfeed-knockout
   composite: meta_modelers_guide.composites.cellcell-crossfeed-knockout
   params: {}
-variants: []
+variants:
+- name: cellcell-compete-mm
+  composite: meta_modelers_guide.composites.cellcell-compete-mm
+  description: 'Cell-cell (colony) interface surrogate-calibration twin of the competition
+    baseline (a tuned MM stand-in): the SAME colony interface `CpmColonyField`, its per-cell metabolism swapped
+    from constraint-based dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free
+    Michaelis-Menten / Monod metabolism (`mechanism: mm`) BEHIND THE BYTE-IDENTICAL
+    `CpmColonyField` ports. Each competitor keeps its OWN saturating glucose uptake
+    v = glucose_vmax*glc/(glucose_km+glc) -- the very kinetics the dFBA path MM-limits its
+    exchange bound with -- so the vmax 10-vs-4 asymmetry that drives the resource-preemption split is
+    preserved by construction; growth is then a fixed biomass yield (mm_yield*v) and acetate
+    a fixed overflow fraction (mm_overflow*v standing in for the dFBA O2-cap mixed-acid
+    overflow). The mm_* params (mm_yield 0.075, mm_overflow 0.034) are TUNED so the colony
+    interface-level observables track the dFBA competition baseline (2 knobs fit to the colony
+    observables); they are not derived
+    from the dFBA solution. This lifts the flagship single-cell dFBA<->MM surrogate calibration up
+    to the multi-cell composition level -- surrogate calibration, not yet mechanism-independence; a
+    held-out condition neither mechanism was tuned on is the named next step.'
+  params:
+    mechanism: mm
+    mm_yield: 0.075
+    mm_overflow: 0.034
 key_assumptions:
 - 'e_coli_core-derived constants (`glucose_vmax` 10.0/4.0 for the two competitors,
 
   `acetate_vmax` 20 for the consumer, `grow_per_biomass` 30, the O2 cap of 5 on the secretor) are
 
-  toy-real: plausible, hand-tuned magnitudes chosen to make competitive exclusion and cross-
+  toy-real: plausible, hand-tuned magnitudes chosen to make resource preemption and cross-
 
   feeding both legible over a short (20-tick) run, not fitted to a named organism or medium.'
-- 'The cross-feeding regime''s acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally
+- 'The cross-feeding regime''s acetate/glucose diffusion ratio (15.0 vs 0.4 = 37.5x) is a
 
-  defensible — acetate is a smaller molecule and diffuses faster than glucose in real aqueous
+  legibility choice, not a calibration: acetate does diffuse faster than glucose (it is a smaller
 
-  media — but the specific ratio was chosen to make the byproduct plume legibly reach the
+  molecule), but the real aqueous ratio is only ~1.5-2x (glucose ≈ 600 µm²/s, acetate ≈ 1100 µm²/s),
+
+  so 37.5x is roughly 20x the physical ratio. The specific ratio was chosen to make the byproduct plume legibly reach the
 
   consumer within a 20-tick run, not fitted to measured diffusion coefficients. Likewise the
 
-  cross-feeding regime''s localized 20 mM glucose depot (columns 0-18 only, with the consumer
+  cross-feeding regime''s localized glucose depot (20 model units) (columns 0-18 only, with the consumer
 
   seeded outside it at columns 22-30) is a deliberately engineered spatial arrangement chosen so
 
@@ -245,19 +276,21 @@ key_assumptions:
   growing or holding), one that has fallen below it is in net mass-loss toward death. This is a
   deliberately minimal, toy-real viability notion, not a fitted maintenance/decay bound; the
   process emits no explicit viability flag, so viability is read off the per-cell biomass
-  observable. The point it establishes is honest and robust to the exact floor value: the
+  observable. The point it establishes is robust to the exact floor value: the
   competition loser ends at 64.5 (51.6x the floor), so it is displaced, not excluded.'
-- 'The competition regime reaches NO true competitive exclusion over the run measured — it
-  imposes no death and no viability constraint on a losing cell, so the loser (biomass 64.5, 81
+- 'The competition regime is resource preemption between two single, never-dividing cells, NOT
+  population-level competitive exclusion (which would need dividing populations). It imposes no
+  death and no viability constraint on a losing cell, so the loser (biomass 64.5, 81
   px) is spatially displaced, not eliminated. The winner''s 3511-px endpoint is ~97.5% of the
-  3600-px lattice with the field nearly spent by t=20, so that endpoint is partly a finite-size
-  lattice-saturation artifact; extending the run to t≈30 fills the lattice and crowds the still-
-  viable loser off it (eviction, not starvation). Strict exclusion would require coupling a
-  viability constraint, not only shared state — the paper''s §Cell–cell coupling distinction.'
+  3600-px lattice with the field nearly spent by t=20 — a single cell swelling to fill the lattice
+  without dividing is a finite-size saturation artifact, not physiology; extending the run to t≈30
+  fills the lattice and crowds the still-viable loser off it (eviction, not starvation). Strict
+  exclusion would require coupling a viability constraint (and dividing populations), not only
+  shared state — the paper''s §Cell–cell coupling distinction.'
 - 'MULTI-SEED ROBUSTNESS (the headline is a range, not a single-seed point). The competition
   headline ratio (3.69x, id 1 / id 2 biomass) is a SINGLE-SEED reading of a stochastic CPM
   Metropolis trajectory. A 5-seed sweep (`tests/test_cellcell_multiseed.py`, seeds 1-5, CPM seed
-  varied via the now config-overridable `CpmColonyField` seed) gives the honest range: ratio
+  varied via the now config-overridable `CpmColonyField` seed) gives the range: ratio
   2.9x-3.7x, mean ~3.2x -- the hard-coded single-seed 3.69x is the TOP of the band, not its
   middle. The qualitative claim is seed-robust: the faster competitor (id 1, glucose_vmax 10)
   wins on both biomass and lattice volume at every seed, always by > 1.5x. This study establishes
@@ -271,22 +304,37 @@ key_assumptions:
   the consumer off the lattice). The consumer is therefore the only cell in the control (id 1),
   and its glucose exchange stays off by role, so the slowly-diffusing glucose depot it cannot eat
   is harmless to the control.'
+acceptance_criteria:
+- The higher-uptake-capacity cell should end with more biomass and more lattice volume than the lower-capacity cell — resource preemption ordering (a sign/ordering prior stated before running).
+- An acetate-consuming cell seeded away from glucose should grow only via the secretor's diffused acetate, and should fail to grow when the secretor is removed (necessity).
+- Disjoint per-cell field writes should sum losslessly into one shared field — mass conservation.
+units_and_time:
+  time: 1 tick = unspecified physical time (dimensionless model time); runs are 20 ticks.
+  quantities: glucose/acetate field values, biomass, and CPM lattice volume (px) are dimensionless model units. The "3.0 mM" / "20 mM" glucose figures printed elsewhere are decorative — dimensionless model units, not calibrated mM — and the diffusion coefficients are legibility choices, not measured values.
+external_anchors:
+- 'aqueous diffusivities: glucose ≈ 600 µm²/s, acetate ≈ 1100 µm²/s → real acetate/glucose ratio ≈ 1.5-2x (order-of-magnitude anchor, not a calibration target). The study''s 37.5x ratio (15.0 vs 0.4) is a legibility choice — roughly 20x the physical ratio — chosen so the plume reaches the consumer within 20 ticks, not "directionally defensible" calibration.'
+- 'acetate yield under overflow ≈ 0.3-0.5 mol acetate / mol glucose; glucose uptake ≈ 10 mmol/gDW/hr (E. coli aerobic) (order-of-magnitude anchors, not calibration targets).'
 behavior_tests:
 - name: competition-excludes-the-slower-cell
   classification: primary
   description: Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field),
     the faster competitor ends with materially more biomass and CPM lattice volume than the
-    slower one — spatial competitive exclusion.
+    slower one — spatial resource preemption between the two cells (not population-level competitive
+    exclusion, which would need dividing populations).
   measure:
     kind: observable
     path: obs.biomass
     expr: 'last(obs.biomass["1"]) / last(obs.biomass["2"])'
   pass_if:
+    kind: acceptance_criterion
     op: '>'
     value: 1.5
-    provenance: 'biomass 237.9 (id 1, vmax 10) vs 64.5 (id 2, vmax 4) -> 3.69x ratio over 20 ticks
+    provenance: 'prior: the higher-uptake-capacity cell (glucose_vmax 10) should end with more
+      biomass than the lower-capacity cell (vmax 4) → expect ratio > 1 (pin floor 1.5). Observed:
+      multi-seed band 2.9-3.7x (3.69x on the flagship seed; biomass 237.9 vs 64.5) over 20 ticks
       (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell,
-      tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly)'
+      tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly;
+      tests/test_cellcell_multiseed.py for the 5-seed band)'
   requires_simulation: cellcell-compete
 - name: competition-volume-tracks-biomass
   classification: primary
@@ -298,18 +346,22 @@ behavior_tests:
     path: obs.volume
     expr: 'last(obs.volume["1"]) > last(obs.volume["2"])'
   pass_if:
+    kind: acceptance_criterion
     op: '>'
     value: 0.0
-    provenance: 'volume 3511 px (id 1) vs 81 px (id 2) over 20 ticks -- the faster competitor
-      claims most of the shared lattice (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell)'
+    provenance: 'prior: the biomass winner should also hold more lattice volume → expect
+      volume(id1) > volume(id2). Observed: 3511 px (id 1) vs 81 px (id 2) over 20 ticks; the
+      winner''s 3511 px is ~97.5% of the 3600-px lattice, a finite-size saturation endpoint rather
+      than unbounded dominance (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell)'
   requires_simulation: cellcell-compete
 - name: competition-loser-displaced-not-excluded
   classification: diagnostic
   control: positive
-  description: 'Honest boundary on the competition claim: the LOSER is out-competed spatially but
+  description: 'Boundary on the competition claim: the LOSER is out-competed spatially but
     stays FAR above the viable-biomass floor (its 1.25 seed biomass) -- so it is displaced, not
-    driven below any viability bound. "Competitive exclusion" here is asymmetric growth toward a
-    finite-size saturation endpoint, not death of the loser: this study couples state (a shared
+    driven below any viability bound. This is resource preemption between two single, never-dividing
+    cells reaching a finite-size saturation endpoint, not death of the loser and not population-level
+    competitive exclusion (which would need dividing populations): this study couples state (a shared
     field) but no viability constraint (§Cell–cell coupling -- what is coupled is not only state
     but constraint; here, only state).'
   measure:
@@ -317,9 +369,12 @@ behavior_tests:
     path: obs.biomass
     expr: 'last(obs.biomass["2"])   # loser final biomass, vs the 1.25 viable-biomass floor'
   pass_if:
+    kind: acceptance_criterion
     op: '>'
     value: 1.25
-    provenance: 'loser (id 2) ends at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits
+    provenance: 'prior: this study couples shared state but imposes no viability constraint, so the
+      loser should stay above its 1.25 seed (displaced, not excluded). Observed: loser (id 2) ends
+      at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits
       far above the viable-biomass floor, while holding only 81 px against the winner''s 3511 px
       (~97.5% of the 3600-px lattice): spatially displaced, not excluded. Extending the run to
       t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation)
@@ -335,9 +390,11 @@ behavior_tests:
     path: obs.local_glucose
     expr: 'last(obs.local_glucose["2"])'
   pass_if:
+    kind: regression_pin
     op: <
     value: 0.5
-    provenance: 'consumer (id 2) local_glucose == 0.0 over 20 ticks
+    provenance: 'by construction the consumer is seeded outside the localized glucose depot;
+      consumer (id 2) local_glucose == 0.0 over 20 ticks
       (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)'
   requires_simulation: cellcell-crossfeed
 - name: crossfeeding-consumer-grows-on-acetate-alone
@@ -349,10 +406,12 @@ behavior_tests:
     path: obs.biomass
     expr: 'last(obs.biomass["2"])'
   pass_if:
+    kind: acceptance_criterion
     op: '>'
     value: 1.25
-    provenance: 'consumer (id 2) biomass 1.25 -> 3.79 (roughly 3x, back-loaded to the last ~5 ticks
-      once the acetate plume arrives) over 20 ticks
+    provenance: 'prior: an acetate-consuming cell fed only the secretor''s diffused acetate should
+      grow above its 1.25 seed. Observed: consumer (id 2) biomass 1.25 -> 3.79 (roughly 3x,
+      back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks
       (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)'
   requires_simulation: cellcell-crossfeed
 - name: crossfeeding-acetate-plume-reaches-consumer
@@ -367,11 +426,13 @@ behavior_tests:
     path: obs.local_acetate
     expr: 'last(obs.local_acetate["2"])'
   pass_if:
+    kind: acceptance_criterion
     op: '>'
     value: 0.0
-    provenance: 'consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing
-      (coefficient 15.0 vs glucose''s 0.4) acetate plume reaches the consumer''s footprint
-      (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)'
+    provenance: 'prior: the fast-diffusing acetate plume should reach the consumer''s footprint →
+      expect local_acetate > 0. Observed: consumer (id 2) local_acetate == 1.30 by t=20, confirming
+      the fast-diffusing (coefficient 15.0 vs glucose''s 0.4) acetate plume reaches the consumer''s
+      footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)'
   requires_simulation: cellcell-crossfeed
 - name: two-writer-additivity-conserves-mass
   classification: diagnostic
@@ -386,11 +447,14 @@ behavior_tests:
     path: fields.glucose
     expr: net change in sum(fields.glucose) over 3 ticks (final minus initial)
   pass_if:
+    kind: regression_pin
     op: '=='
     value: -6.0
-    provenance: 'a synthetic structural-control process (not this study''s composites): two
-      single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net
-      field-wide change of exactly -6.0 with both pixels independently correct
+    deterministic_pin: true
+    provenance: 'deterministic structural identity — exact only while the integer per-tick deltas
+      and engine apply order are fixed. A synthetic structural-control process (not this study''s
+      composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks,
+      sum to a net field-wide change of exactly -6.0 with both pixels independently correct
       (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve)'
   requires_simulation: none
 - name: crossfeeding-secretor-knockout-consumer-fails-to-grow
@@ -407,13 +471,69 @@ behavior_tests:
     path: obs.biomass
     expr: 'last(obs.biomass["1"])   # consumer-alone final biomass; expected to stay at the seed'
   pass_if:
+    kind: acceptance_criterion
     op: <=
     value: 1.2500001
-    provenance: 'consumer (id 1) biomass stays at its 1.25 seed and local_acetate stays 0.0 over
+    provenance: 'prior: remove the secretor so no acetate is produced anywhere, and the consumer
+      should fail to grow — biomass stays at its 1.25 seed. Observed: consumer (id 1) biomass stays
+      at its 1.25 seed and local_acetate stays 0.0 over
       20 ticks with the secretor removed -- it persists on the lattice (~35 px) but flatly fails
       to grow, versus 1.25 -> 3.79 in the full cross-feed regime
       (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow)'
   requires_simulation: cellcell-crossfeed-knockout
+- name: colony-interface-observables-substitutable
+  classification: primary
+  description: 'Interface surrogate calibration at the CELL-CELL (colony) level: a tuned MM colony
+    is fit to reproduce the dFBA colony''s observables behind the same colony
+    interface `CpmColonyField`, its per-cell metabolism swapped dFBA -> lumped Michaelis-Menten
+    (`cellcell-compete-mm`, `mechanism: mm`) behind byte-identical ports. The two colonies''
+    interface-level observables (per-cell + total biomass, the competition ratio, total CPM
+    lattice volume, the acetate plume, net glucose depletion) agree within a stated tolerance --
+    the mm_* params were tuned to preserve the interaction variables, so this is surrogate
+    calibration ("a tuned surrogate matches the coarse-grained relation"), not identical internals
+    and not yet mechanism-independence; a held-out test is the named next step. Note the ~0.2%
+    CPM-volume agreement is measured at ~97.5% lattice saturation (a finite-lattice ceiling both
+    mechanisms hit) -- a saturation artifact, with a pre-saturation comparison pending.'
+  measure:
+    kind: observable
+    path: obs.biomass, obs.volume, fields.acetate, fields.glucose
+    expr: per-observable abs(dFBA - MM) / dFBA over a 20-tick run
+  pass_if:
+    kind: regression_pin
+    op: <
+    value: 0.15
+    provenance: 'over 20 ticks (tests/test_cellcell_substitutability.py::test_colony_interface_observables_substitutable):
+      per-cell biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1%/0.3%), total biomass 302.4 vs 287.6
+      (4.9%), competition ratio 3.69x vs 3.47x (5.9%), total CPM volume 3592 vs 3600 px (0.2%),
+      acetate 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%) -- every colony
+      interface observable within ~6%; the two composites also expose byte-identical CpmColonyField
+      ports (::test_colony_ports_are_byte_identical). ARTIFACT FLAG: the ~0.2% CPM-volume agreement
+      (3592 vs 3600 px) is measured at ~97.5% lattice saturation -- both mechanisms hit the same
+      3600-px finite-lattice ceiling, so that near-perfect agreement is a saturation artifact, not
+      independent evidence; a pre-saturation comparison (shorter run or larger lattice) is pending.
+      This is surrogate calibration: the mm_* params (mm_yield 0.075, mm_overflow 0.034) were tuned
+      to match (2 knobs), not derived from the dFBA solution; a held-out condition neither mechanism
+      was tuned on is the named next step.'
+  requires_simulation: cellcell-compete-mm
+- name: mm-colony-runs-without-cobra
+  classification: diagnostic
+  control: positive
+  description: 'The surrogate-model payoff: the MM colony realizes the same colony<->field
+    interface (both cells grow off their 1.25 seed, the field''s glucose is drawn down, an acetate
+    plume is secreted) with cobra BLOCKED -- a mechanism that runs where the dFBA original could
+    not.'
+  measure:
+    kind: observable
+    path: obs.biomass
+    expr: 'min(last(obs.biomass["1"]), last(obs.biomass["2"])) with cobra import blocked'
+  pass_if:
+    kind: regression_pin
+    op: '>'
+    value: 1.25
+    provenance: 'with cobra import blocked, the MM colony grows both competitors off the 1.25 seed,
+      depletes glucose, and secretes an acetate plume
+      (tests/test_cellcell_substitutability.py::test_mm_colony_runs_without_cobra)'
+  requires_simulation: cellcell-compete-mm
 runs:
 - name: cellcell-compete
   composite: cellcell-compete
@@ -421,7 +541,7 @@ runs:
   id: cellcell-compete
   status: completed
   provenance: 'meta_modelers_guide/composites/cellcell-compete.composite.json (CpmColonyField,
-    two glucose competitors, glucose_vmax 10.0 vs 4.0, uniform 3.0 mM glucose field) run 20 ticks
+    two glucose competitors, glucose_vmax 10.0 vs 4.0, uniform glucose field (3.0 model units)) run 20 ticks
     to completion through the process-bigraph engine
     (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell,
     tests/test_cpm_colony_field.py); the baked GIF was re-rendered directly via
@@ -441,13 +561,39 @@ runs:
     TWO-WRITER-ADDITIVITY-CONSERVES-MASS:
       result: PASS
       detail: disjoint per-cell field writes sum losslessly (tests/test_cpm_colony_two_writer.py)
+- name: cellcell-compete-mm
+  composite: cellcell-compete-mm
+  emitter: RAMEmitter
+  id: cellcell-compete-mm
+  status: completed
+  provenance: 'meta_modelers_guide/composites/cellcell-compete-mm.composite.json (CpmColonyField,
+    the cellcell-compete competition colony with each cell''s per-cell metabolism swapped from
+    dynamic-FBA to a lumped, cobra-free Michaelis-Menten metabolism, mechanism=mm, mm_yield 0.075,
+    mm_overflow 0.034, byte-identical CpmColonyField ports) run 20 ticks to completion through the
+    process-bigraph engine and compared head-to-head against the dFBA baseline
+    (tests/test_cellcell_substitutability.py::test_colony_interface_observables_substitutable,
+    ::test_mm_colony_runs_without_cobra, ::test_colony_ports_are_byte_identical).'
+  params:
+    mechanism: mm
+    mm_yield: 0.075
+    mm_overflow: 0.034
+  outcomes:
+    COLONY-INTERFACE-OBSERVABLES-SUBSTITUTABLE:
+      result: PASS
+      detail: 'dFBA vs MM agree within ~6% on every colony observable: per-cell biomass
+        237.9/64.5 vs 223.3/64.3, competition ratio 3.69x vs 3.47x, total CPM volume 3592 vs 3600
+        px, acetate 431.5 vs 430.8, net glucose depleted 10677 vs 10764'
+    MM-COLONY-RUNS-WITHOUT-COBRA:
+      result: PASS
+      detail: the MM colony grows both cells, depletes glucose, and secretes an acetate plume with
+        cobra import blocked -- the surrogate-model payoff
 - name: cellcell-crossfeed
   composite: cellcell-crossfeed
   emitter: RAMEmitter
   id: cellcell-crossfeed
   status: completed
   provenance: 'meta_modelers_guide/composites/cellcell-crossfeed.composite.json (CpmColonyField,
-    glucose->acetate secretor + acetate-consuming cell, localized 20 mM glucose depot cols 0-18,
+    glucose->acetate secretor + acetate-consuming cell, localized glucose depot (20 model units) cols 0-18,
     acetate/glucose diffusion 15.0/0.4) run 20 ticks to completion through the process-bigraph
     engine (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable,
     tests/test_cpm_colony_viz.py::test_colony_gif_and_percell_metrics); the baked GIF + per-cell
@@ -491,10 +637,12 @@ findings:
     shared-resource-competition branch (no dedicated figure) as genuine spatial multicellularity:
     an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4),
     with each cell running its own independent dFBA solve at its own footprint on the same
-    depleting field, drives a decisive biomass and lattice-volume split -- asymmetric growth
-    TOWARD competitive exclusion. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81
-    px, over a 20-tick run. (Strict exclusion is not reached -- the loser is displaced but stays
-    viable; see F-04.)'
+    depleting field, drives a decisive biomass and lattice-volume split -- resource preemption
+    between the two cells. Confirmed: biomass ratio 2.9-3.7x across 5 seeds (3.69x on the flagship
+    seed; 237.9 vs 64.5), CPM volume 3511 vs 81
+    px, over a 20-tick run. (This is resource preemption between two single, never-dividing cells,
+    not population-level competitive exclusion, which would need dividing populations -- the loser is
+    displaced but stays viable; see F-04.)'
   evidence:
     from_test: competition-excludes-the-slower-cell
     from_run: cellcell-compete
@@ -506,8 +654,9 @@ findings:
   kind: biological
   tier: mechanism
   status: partial
-  statement: 'The competition regime reaches asymmetric growth, NOT true competitive exclusion,
-    over the run measured. The loser''s biomass GREW from its 1.25 seed to 64.5 (~51.6x) -- far
+  statement: 'The competition regime reaches asymmetric growth via resource preemption between two
+    single, never-dividing cells, NOT population-level competitive exclusion (which would need
+    dividing populations), over the run measured. The loser''s biomass GREW from its 1.25 seed to 64.5 (~51.6x) -- far
     above the viable-biomass floor -- while shrinking to an 81-px fragment against the winner''s
     3511 px: it is spatially DISPLACED, not driven below any viability bound. This study couples
     STATE (one shared field) but imposes no viability CONSTRAINT (no death, no viability bound),
@@ -581,6 +730,47 @@ findings:
   provenance:
     run_ids:
     - cellcell-compete
+- id: F-06
+  kind: methodological
+  tier: mechanism
+  status: confirms
+  statement: 'INTERFACE SURROGATE CALIBRATION AT THE CELL-CELL LEVEL -- a tuned Michaelis-Menten
+    colony reproduces the dFBA colony''s interface observables behind the same colony interface
+    `CpmColonyField`, its per-cell metabolism swapped from constraint-based dynamic-FBA (cobra
+    e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten / Monod metabolism
+    (`cellcell-compete-mm`, `mechanism: mm`) BEHIND THE BYTE-IDENTICAL `CpmColonyField` ports,
+    with the two colonies compared head-to-head. This lifts the flagship single-cell dFBA<->MM
+    surrogate calibration one composition level up, to the multi-cell colony: each competitor
+    keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry
+    is preserved by construction), while growth becomes a fixed biomass yield and
+    acetate a fixed overflow fraction. Confirmed: over 20 ticks the tuned MM colony reproduces the
+    coarse-grained colony<->field interface -- per-cell
+    biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1% / 0.3%), total biomass 302.4 vs 287.6
+    (4.9%), the competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600
+    px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764
+    (0.8%); every colony interface observable agrees within ~6%. The MM colony additionally
+    runs with cobra BLOCKED -- the surrogate-model payoff, a mechanism that runs where the
+    dFBA original could not. ARTIFACT FLAG: the ~0.2% CPM-volume agreement (3592 vs 3600 px) is
+    measured at ~97.5% lattice saturation -- both mechanisms hit the same 3600-px finite-lattice
+    ceiling, so that near-perfect agreement is a saturation artifact, not independent evidence; a
+    pre-saturation comparison (shorter run or larger lattice) is pending. This is surrogate
+    calibration: the mm_* params (mm_yield 0.075, mm_overflow
+    0.034) were TUNED to preserve the interaction variables (2 knobs) -- the claim is "a tuned
+    surrogate matches the coarse-grained relation across the tested run", not identical internals,
+    and not a derivation of MM from the dFBA solution; a held-out condition neither mechanism was
+    tuned on is the named next step that would upgrade this from surrogate calibration to
+    mechanism-independence.'
+  evidence:
+    from_test: colony-interface-observables-substitutable
+    from_run: cellcell-compete-mm
+    observed: 'dFBA vs MM (20 ticks): per-cell biomass 237.9/64.5 vs 223.3/64.3 (6.1%/0.3%),
+      total biomass 302.4 vs 287.6 (4.9%), competition ratio 3.69x vs 3.47x (5.9%), total CPM
+      volume 3592 vs 3600 px (0.2%), acetate 431.5 vs 430.8 (0.2%), net glucose depleted 10677
+      vs 10764 (0.8%); MM colony runs cobra-free (cobra blocked)'
+  provenance:
+    run_ids:
+    - cellcell-compete
+    - cellcell-compete-mm
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -595,8 +785,9 @@ conclusion_verdicts:
     result: PASS
     basis: All primary behavior tests pass on measured readouts from real 20-tick runs -- the
       competition regime drives a decisive biomass/volume split between two otherwise-identical
-      competitors differing only in uptake capacity (asymmetric growth TOWARD competitive
-      exclusion; the loser is displaced but stays viable, 51.6x above the viable-biomass floor,
+      competitors differing only in uptake capacity (asymmetric growth via resource preemption
+      between the two cells -- not population-level competitive exclusion, which would need dividing
+      populations; the loser is displaced but stays viable, 51.6x above the viable-biomass floor,
       not driven below any viability bound -- this study couples shared state, not a viability
       constraint), and the cross-feeding regime sustains a consumer cell that never touches
       glucose purely via a diffused acetate handoff. Two structural/foundational verifications
@@ -608,8 +799,8 @@ conclusion_verdicts:
     result: POSITIVE
     basis: Generalizing the flagship's single-cell CpmCellField to an N-cell CpmColonyField and
       demonstrating both branches of the paper's §Cell–cell coupling viability-negotiation
-      pattern (no dedicated figure) -- shared-resource competition (asymmetric growth toward
-      exclusion) AND cross-feeding -- from the same
+      pattern (no dedicated figure) -- shared-resource competition (asymmetric growth via resource
+      preemption) AND cross-feeding -- from the same
       coupling process, differing only in the
       composite's cell roles and field constants, makes this investigation's law-4 claim
       (different handlers over one interface negotiate a shared-resource constraint differently)
@@ -622,11 +813,13 @@ conclusion: '## Claims
     N-cell coupling process (`CpmColonyField`) reproduces the paper''s §Cell–cell coupling
     viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity. Over
     20-tick runs: an uptake-capacity asymmetry alone
-    (glucose_vmax 10 vs 4) drives asymmetric growth TOWARD competitive exclusion (biomass 237.9 vs
-    64.5, 3.69x; volume 3511 vs 81 px) -- the loser is spatially displaced but stays viable (its
-    biomass grew ~51.6x above the 1.25 seed floor), not driven below a viability bound, and the
-    winner''s ~97.5%-lattice endpoint is partly a finite-size saturation artifact, so strict
-    exclusion is not reached; a different composite over the same process -- localized glucose
+    (glucose_vmax 10 vs 4) drives asymmetric growth via resource preemption between the two cells
+    (biomass ratio 2.9-3.7x across 5 seeds, 3.69x on the flagship seed; 237.9 vs
+    64.5; volume 3511 vs 81 px) -- the loser is spatially displaced but stays viable (its
+    biomass grew ~51.6x above the 1.25 seed floor), not driven below a viability bound; this is
+    resource preemption between two single, never-dividing cells, not population-level competitive
+    exclusion (which would need dividing populations), and the winner''s ~97.5%-lattice swell
+    without division is a finite-size saturation artifact; a different composite over the same process -- localized glucose
     depot, fast-diffusing acetate byproduct, acetate-consuming role -- sustains a cell that never
     touches glucose (local glucose 0.0) purely via a diffusing cross-feeding handoff (local
     acetate 1.30, biomass 1.25 -> 3.79), and a secretor-knockout control shows that handoff is
@@ -669,9 +862,10 @@ conclusion: '## Claims
   - e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are
     toy-real -- plausible, hand-tuned magnitudes, not fitted to any organism or medium.
 
-  - The cross-feeding regime''s acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally
-    defensible (acetate is a smaller molecule) but was chosen, not fitted; the localized glucose
-    depot is a deliberately engineered spatial arrangement, not a naturally arising gradient.
+  - The cross-feeding regime''s acetate/glucose diffusion ratio (15.0 vs 0.4 = 37.5x) is a
+    legibility choice, not a calibration: acetate does diffuse faster, but the real aqueous ratio is
+    only ~1.5-2x, so 37.5x is roughly 20x the physical ratio (chosen, not fitted); the localized
+    glucose depot is a deliberately engineered spatial arrangement, not a naturally arising gradient.
 
   - The consumer''s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the
     run, once the acetate plume has had time to diffuse across the distance between the two
@@ -699,8 +893,8 @@ conclusion_logic:
     biological_validation: The spatial §Cell–cell coupling viability-negotiation pattern (no
       dedicated figure) is demonstrated at the
       toy-real (uncalibrated) level, with genuine per-cell CPM shape dynamics and independent
-      dFBA solves behind both the shared-resource-competition (asymmetric growth toward exclusion;
-      loser displaced, not excluded) and cross-feeding branches, rather than a scripted
+      dFBA solves behind both the shared-resource-competition (asymmetric growth via resource
+      preemption; loser displaced, not excluded) and cross-feeding branches, rather than a scripted
       trajectory. The cross-feeding handoff is pinned as necessary by the secretor-knockout
       control (no acetate -> no consumer growth).
     pipeline_unblocks: []
@@ -720,27 +914,30 @@ conclusion_logic:
     block_downstream: 'future N>2-cell population-scale spatial studies, all of which reuse
       CpmColonyField or its coupling pattern'
 limitations:
-- '"Competitive exclusion" is not literally reached: the competition loser is spatially displaced
-  (ends at 81 px, biomass 64.5 -- still 51.6x above its 1.25 seed / viable-biomass floor) but is
-  never driven below a viability bound. This study couples shared STATE (one field) but no
-  viability CONSTRAINT (no death, no viability bound on a losing cell), so the honest phenomenon
-  is asymmetric growth TOWARD exclusion, not exclusion. The winner''s 3511-px endpoint is ~97.5%
-  of the 3600-px lattice with the field nearly exhausted by t=20, so that endpoint is partly a
-  finite-size lattice-saturation artifact; extending the run to t≈30 fills the lattice and crowds
-  the still-viable loser off it (eviction, not starvation), which a viability-constraint coupling
-  would be needed to turn into genuine exclusion.'
-- 'The competition headline ratio (3.69x biomass, id 1 / id 2) is a single-seed number; a 5-seed
-  robustness sweep (tests/test_cellcell_multiseed.py) puts the honest range at ~2.9x-3.7x (mean
-  ~3.2x), with the single-seed 3.69x at the top of the band and the faster competitor winning
+- 'The regime is resource preemption between two single, never-dividing cells, NOT population-level
+  competitive exclusion (which would need dividing populations): the competition loser is spatially
+  displaced (ends at 81 px, biomass 64.5 -- still 51.6x above its 1.25 seed / viable-biomass floor)
+  but is never driven below a viability bound. This study couples shared STATE (one field) but no
+  viability CONSTRAINT (no death, no viability bound on a losing cell), so the phenomenon
+  is resource preemption, not exclusion. The winner''s 3511-px endpoint is ~97.5%
+  of the 3600-px lattice with the field nearly exhausted by t=20 -- a single cell swelling to fill
+  the lattice without dividing is a finite-size saturation artifact, not physiology; extending the
+  run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation),
+  which a viability-constraint coupling and dividing populations would be needed to turn into genuine
+  exclusion.'
+- 'The competition headline is a multi-seed band, not a single-seed point: a 5-seed robustness
+  sweep (tests/test_cellcell_multiseed.py) puts the biomass ratio at ~2.9x-3.7x (mean
+  ~3.2x), with the single-seed flagship 3.69x at the TOP of the band, and the faster competitor winning
   every seed by > 1.5x. See key_assumptions for the convention this establishes for the
   investigation.'
 - e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are
   toy-real, hand-tuned magnitudes chosen to make both regimes legible over a short run -- not
   fitted to any organism or medium.
-- 'The cross-feeding regime''s acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally
-  defensible -- acetate is a smaller molecule and diffuses faster than glucose in real aqueous
-  media -- but the specific ratio was chosen to make the plume legibly reach the consumer within
-  20 ticks, not fitted to measured diffusion coefficients; the localized 20 mM glucose depot is
+- 'The cross-feeding regime''s acetate/glucose diffusion ratio (15.0 vs 0.4 = 37.5x) is a legibility
+  choice, not a calibration -- acetate does diffuse faster than glucose (smaller molecule), but the
+  real aqueous ratio is only ~1.5-2x (glucose ≈ 600 µm²/s, acetate ≈ 1100 µm²/s), so 37.5x is roughly
+  20x the physical ratio, chosen to make the plume legibly reach the consumer within
+  20 ticks, not fitted to measured diffusion coefficients; the localized glucose depot (20 model units) is
   likewise a deliberately engineered spatial arrangement so the consumer genuinely sees zero
   glucose, not a naturally arising gradient.'
 - The consumer's growth under cross-feeding is back-loaded to roughly the last 5 ticks of the
@@ -763,7 +960,8 @@ limitations:
 - The shared nutrient field has no continuous supply term; the competition regime depletes a
   fixed initial mass, producing a finite-lattice-saturation artifact (the winner ends near
   full-lattice while the field is nearly exhausted). A continuous nutrient-supply term (a
-  bounded first-order source) would remove this confound and let true competitive exclusion or
+  bounded first-order source) would remove this confound and let population-level competitive
+  exclusion (with dividing populations) or
   a genuine steady state be tested rather than transient depletion.
 - The compete, crossfeed, and knockout composites are asserted in prose to share the same
   external colony interface, but this is not verified by a structural check; a diagnostic test
@@ -795,7 +993,7 @@ visualizations:
     provenance.'
   config:
     chart: image
-    caption: 'Spatial competitive exclusion over 20 ticks -- the higher-vmax competitor (id 1)
+    caption: 'Spatial resource preemption over 20 ticks -- the higher-vmax competitor (id 1)
       claims the shared lattice (filled, over the glucose depletion it drives); the lower-vmax
       competitor (id 2) is pushed to the margins.'
 - name: cellcell-compete-metrics
@@ -844,14 +1042,17 @@ experiment: 'Run two `CpmColonyField` composites -- `cellcell-compete` (two gluc
   glucose_vmax 10.0 vs 4.0, one shared uniform glucose field) and `cellcell-crossfeed` (a
   glucose-to-acetate secretor plus an acetate-consuming cell, a localized glucose depot, and a
   fast-diffusing acetate byproduct) -- each to completion over 20 ticks through the process-
-  bigraph engine, and measure whether uptake-capacity asymmetry alone drives spatial competitive
-  exclusion, and whether a diffusing metabolic byproduct alone can sustain a cell that never
-  touches its nominal nutrient.
+  bigraph engine, and measure whether uptake-capacity asymmetry alone drives spatial resource
+  preemption between the two cells, and whether a diffusing metabolic byproduct alone can sustain a
+  cell that never touches its nominal nutrient.
 
   '
 result: 'Over 20-tick runs, the competition regime drives a decisive spatial split from uptake-
-  capacity asymmetry alone (biomass 237.9 vs 64.5, 3.69x; CPM volume 3511 vs 81 px) -- asymmetric
-  growth TOWARD competitive exclusion, though not exclusion reached: the loser is displaced but
+  capacity asymmetry alone (biomass ratio 2.9-3.7x across 5 seeds, 3.69x on the flagship seed; 237.9
+  vs 64.5; CPM volume 3511 vs 81 px) -- asymmetric
+  growth via resource preemption between the two cells, not population-level competitive exclusion
+
+  (which would need dividing populations): the loser is displaced but
   still viable (its biomass grew ~51.6x, far above the 1.25 seed floor), never driven below a
   viability bound, and the winner''s ~97.5%-lattice endpoint is partly a finite-size saturation
   artifact -- this study couples shared state, not a viability constraint. The

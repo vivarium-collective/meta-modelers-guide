@@ -158,10 +158,20 @@ class GrayScott(Process):
         # Domain-count threshold (`n_domains`'s `v > thr` label mask) --
         # matches the Task-1 spike's DOMAIN_THRESHOLD default.
         "thr": _f(DOMAIN_THRESHOLD),
-        # Reserved for a future stochastic-seeding variant -- the current
-        # gs_step physics is fully deterministic (no RNG); kept in the
-        # schema per the Task-2 interface spec so callers can pin it now
-        # (mirrors Protocell's currently-inert `seed`).
+        # NOTE: this `seed` is INERT and a value passed here is SILENTLY
+        # IGNORED. The gs_step physics is fully deterministic (no RNG), and
+        # the one stochastic step -- the noisy nucleation IC from `seed_uv`
+        # (which DOES draw from `np.random.default_rng(seed)`) -- is run
+        # OFFLINE and its result is BAKED as the `u`/`v` arrays in the
+        # composite's `state.fields`. This process only ever READS those
+        # arrays from the store and emits deltas; it never regenerates the IC.
+        # So the seed that actually shaped the pattern is the one used when
+        # the composite was baked, not this config value. To vary the IC
+        # seed you must re-bake the composite's `u`/`v` with
+        # `seed_uv(seed=...)` (that belongs in the composite/study, not here).
+        # Kept in the schema per the Task-2 interface spec for uniformity so
+        # callers can pin it, and as the hook a future in-process stochastic
+        # variant would use.
         "seed": {"_type": "integer", "_default": 1},
         # Thermal (Arrhenius) channel -- only take effect when a
         # `temperature` field is present in the store (see module

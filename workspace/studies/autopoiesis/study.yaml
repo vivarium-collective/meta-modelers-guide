@@ -6,7 +6,14 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
+units_and_time:
+  tick: 1 tick = unspecified physical time (dimensionless model time); the run is 36 ticks = 1800 internal reaction-diffusion steps (50 steps_per_tick).
+  quantities: membrane density phi, enclosed_area (in lattice pixels), and membrane_mass are dimensionless model units on a 64x64 lattice -- not calibrated to a physical membrane. D=0.02, k_decay=0.01, k_prod=0.03, thr=0.30 are dimensionless model constants, not fitted physical rates.
+acceptance_criteria:
+- A membrane whose production is gated on the boundary staying topologically closed should persist, while the same membrane with production knocked out (k_prod=0, identical seed and wiring) should lose closure and decay -- the ON arm holds, the OFF arm dies.
+- Breaking the boundary so nothing is enclosed should shut off the closure-gated production irreversibly (a viability bound) -- the punctured ring should not rebuild from nothing.
+- Because the closure gate is what conditions production, flipping the single production rate constant should flip persistence into dissipation -- persistence should track the authored closure gate, not seed geometry or diffusion alone.
 question: 'The paper''s §Self-organized processes section states the autopoiesis criterion as a boundary
   problem, not a bookkeeping one: "A membrane alone is insufficient: a vesicle may form a boundary without
   constituting a living system. A stronger criterion is that the processes inside the boundary collectively
@@ -43,17 +50,19 @@ biological_summary: 'The paper''s §Self-organized processes section (its autopo
   -1.0 (it never breaks within the window) and membrane_mass held above zero. The vesicle control
   COLLAPSES: with production knocked out, the ring decays and diffuses, its topological closure is lost
   by step ~96, enclosed_area falls to 0, and persists == 0.0. Flipping one rate constant flips
-  persistence into dissipation -- the contrast IS the demonstration that persistence is caused by the
-  internal loop, not by the seed geometry or diffusion alone.
+  persistence into dissipation -- within this authored construction the contrast shows the production loop
+  is what maintains the boundary, not the seed geometry or diffusion alone.
 
 
-  What is honestly demonstrated, and what is not. FIRST, closure is demonstrated, not merely asserted:
-  persistence is caused by the internal loop, proven two ways -- the k_prod=0 knockout (the single
-  differing variable; it flips persist -> collapse) and the fatal-puncture viability bound (take the
-  closed-loop steady state, zero a wedge of the membrane so nothing is enclosed, and production -- gated
-  on closure -- cannot rebuild the boundary from nothing; the punctured ring relaxes toward phi=0). That
-  puncture is beer2023''s viability bound made concrete: cross it and the shared state can no longer be
-  maintained. SECOND, the homeostatic plateau is METASTABLE, not eternal, and that is the physically
+  What is honestly demonstrated, and what is not. FIRST, the closure criterion is AUTHORED, not emergent:
+  the closure-dependence is hand-coded via a global binary_fill_holes topological observer, so what this
+  study shows is the criterion IMPLEMENTED and its consequences consequence-tested -- not a boundary that
+  made and sustained itself from local physics. Within that authored construction, the production loop is
+  what maintains the boundary, shown two ways -- the k_prod=0 knockout (the single differing variable; it
+  flips persist -> collapse) and the fatal-puncture viability bound (take the closed-loop steady state,
+  zero a wedge of the membrane so nothing is enclosed, and production -- gated on the authored closure test
+  -- cannot rebuild the boundary from nothing; the punctured ring relaxes toward phi=0). That puncture is
+  beer2023''s viability bound made concrete -- cross it and the shared state can no longer be maintained. SECOND, the homeostatic plateau is METASTABLE, not eternal, and that is the physically
   correct signature of finite closure, not a defect. A closed toy system with no external material influx
   self-maintains over a bounded window (~2000 internal steps, vastly longer than the control''s ~96-step
   collapse) and then eventually runs down; perpetual self-maintenance would require a genuine energy or
@@ -61,29 +70,38 @@ biological_summary: 'The paper''s §Self-organized processes section (its autopo
   result. THIRD, the reaction-diffusion physics has no RNG: the seed config is accepted but currently
   inert, so persistence is NOT seed-dependent (unlike this investigation''s CPM/Metropolis studies), and
   the multi-seed test''s reported range is a degenerate single point (enclosed_area == 149 at every seed
-  1-5) -- stated plainly rather than dressed as stochastic robustness. FOURTH, this is a minimal
-  self-maintaining boundary, NOT real membrane chemistry or metabolism: what is demonstrated is
-  operational closure (knockout-provable causation plus a viability bound), not lipid biophysics, not a
-  metabolic network, not molecular self-production. Read this side by side with the
+  1-5) -- a degenerate single point, not stochastic robustness. FOURTH, this is a minimal
+  self-maintaining boundary, NOT real membrane chemistry or metabolism: what is demonstrated is authored
+  operational closure (the criterion implemented, its knockout and puncture consequences verified), not
+  lipid biophysics, not a metabolic network, not molecular self-production. A mechanistically-local
+  version -- an interior precursor that collapses when the membrane leaks, so closure-dependence follows
+  from local physics rather than a global observer -- is the named next step. Read this side by side with the
   lumped ODE predecessor, which built the same closure idea as a compiled minimal-cell
   coupling of metabolism/containment/replication with no boundary-maintenance criterion applied; this
   study supplies exactly the boundary-maintenance criterion that one named as its own next step, at a
   very different mechanistic resolution.'
 claim: 'The paper''s §Self-organized processes autopoiesis criterion -- a membrane persists because the
-  processes inside the boundary maintain the organization that keeps those processes possible -- holds as
-  a 2D spatial mechanism. A scalar membrane field under reaction-diffusion, with production gated on the
-  boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior
-  area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse
-  within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked
-  out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -> 0, persists ==
-  0.0. Flipping one rate constant flips persistence into dissipation, so persistence is CAUSED by the
-  internal loop -- confirmed independently by a fatal-puncture viability bound (beer2023): breaking the
-  boundary so nothing is enclosed shuts off closure-gated production, and the ring cannot rebuild from
-  nothing. The honest boundaries of the claim are stated as findings, not buried: the homeostatic plateau
-  is metastable, not eternal (the physically-correct signature of a closed system with no external influx,
-  not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT
-  seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal
-  self-maintaining boundary demonstrating operational closure, NOT real membrane chemistry or metabolism.'
+  processes inside the boundary maintain the organization that keeps those processes possible -- is
+  IMPLEMENTED here as an AUTHORED operational-closure criterion and its consequences are tested. The
+  closure-dependence is hand-coded (production is gated by a global binary_fill_holes topological
+  observer), NOT emergent from local physics; the persistence, knockout, and puncture results all follow
+  from that construction, and are worthwhile because the criterion is implemented and its consequences are
+  verified -- not because closure arose on its own. A scalar membrane field under reaction-diffusion, with
+  production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS:
+  enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0
+  and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the
+  production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96,
+  enclosed_area -> 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so
+  within this authored construction the production loop is what maintains the boundary -- confirmed
+  independently by a fatal-puncture viability bound (beer2023): breaking the boundary so nothing is
+  enclosed shuts off the closure-gated production, and the ring cannot rebuild from nothing. The boundaries
+  of the claim are stated as findings: the homeostatic plateau is metastable, not eternal (the
+  physically-correct signature of a closed system with no external influx, not a defect); the
+  reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the
+  multi-seed range is a degenerate single point); the maintenance gate is an authored global topological
+  test, so a mechanistically-local version (an interior precursor that collapses when the membrane leaks)
+  is the named next step, not something this build shows; and this is a minimal self-maintaining boundary
+  demonstrating authored operational closure, NOT real membrane chemistry or metabolism.'
 baseline:
 - name: protocell-autopoietic
   composite: meta_modelers_guide.composites.protocell-autopoietic
@@ -100,14 +118,16 @@ key_assumptions:
   ability to make boundary material is conditioned on the boundary it maintains. This is operational
   closure (knockout-provable causation plus a viability bound), not real membrane chemistry, metabolism,
   or molecular self-production.'
-- 'Persistence is CAUSED by the internal loop, and this is proven, not assumed. The closed loop
-  (k_prod=0.03) and the vesicle control (k_prod=0.0) differ in exactly one variable -- the production
-  rate constant -- with an identical seed, identical wiring, and identical D/k_decay/thr/dt. The knockout
-  flips persistence into collapse, isolating the loop as the cause. A second, independent proof is the
+- 'The closure criterion is AUTHORED (production is gated by a global binary_fill_holes topological
+  observer, not emergent from local physics); within that construction, persistence is a consequence of
+  the internal loop, and this is consequence-tested, not merely assumed. The closed loop (k_prod=0.03)
+  and the vesicle control (k_prod=0.0) differ in exactly one variable -- the production rate constant --
+  with an identical seed, identical wiring, and identical D/k_decay/thr/dt. The knockout flips persistence
+  into collapse, isolating the loop within the authored construction. A second consequence-test is the
   fatal-puncture viability bound (beer2023): from the closed-loop steady state, zeroing a wedge of the
-  membrane so nothing is enclosed shuts off closure-gated production, and the ring cannot rebuild the
-  boundary from nothing -- it relaxes toward phi=0.'
-- 'The homeostatic plateau is METASTABLE, not perpetual -- and this is the honest, physically-correct
+  membrane so nothing is enclosed shuts off the authored closure-gated production, and the ring cannot
+  rebuild the boundary from nothing -- it relaxes toward phi=0.'
+- 'The homeostatic plateau is METASTABLE, not perpetual -- and this is the physically-correct
   signature of finite closure, not a defect to apologize for. A closed toy system with no external
   material influx self-maintains over a bounded window (~2000 internal steps, versus the control''s
   ~96-step collapse) and eventually runs down (the ring breaks past ~2450-2650 steps even with production
@@ -147,8 +167,13 @@ behavior_tests:
   pass_if:
     op: ==
     value: 1.0
-    provenance: persists == 1.0 with membrane_mass > 0 over a 1800-step (36-tick) run comfortably inside
-      the ~2000-step homeostatic-plateau window (tests/test_protocell.py::test_closed_loop_persists_within_stable_window,
+    kind: acceptance_criterion
+    deterministic_pin: true
+    provenance: prior -- a membrane whose production is gated on staying topologically closed should
+      persist; expect persists == 1.0. Confirmed -- persists == 1.0 with membrane_mass > 0 over a
+      1800-step (36-tick) run comfortably inside the ~2000-step homeostatic-plateau window. The exact ==
+      1.0 is a deterministic pin (persists is binary and the RD physics has no RNG) -- exact only while the
+      engine build is fixed (tests/test_protocell.py::test_closed_loop_persists_within_stable_window,
       tests/test_autopoiesis_regime.py::test_closed_loop_persists)
   requires_simulation: protocell-autopoietic
 - name: closed-loop-encloses-interior
@@ -163,8 +188,10 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 50.0
-    provenance: enclosed_area plateaus at ~149 px (seed ~465 px), homeostasis not runaway growth; loose
-      50-px floor (not the exact 149) so the bound is not a golden-value pin (tests/test_protocell_physics.py::test_closed_loop_persists_with_area_homeostasis,
+    kind: regression_pin
+    provenance: enclosed_area plateaus at ~149 px (seed ~465 px), homeostasis not runaway growth; the
+      50-px floor was set after observing the ~149 px plateau -- a loose regression pin (not the exact 149,
+      so it is not a golden-value pin) (tests/test_protocell_physics.py::test_closed_loop_persists_with_area_homeostasis,
       tests/test_autopoiesis_regime.py::test_persistence_is_multiseed_robust)
   requires_simulation: protocell-autopoietic
 - name: closed-loop-never-collapses
@@ -179,17 +206,21 @@ behavior_tests:
   pass_if:
     op: ==
     value: -1.0
+    kind: regression_pin
+    deterministic_pin: true
     provenance: collapse_tick == -1.0 across the 1800-step window -- the closed loop never broke inside
-      the plateau (tests/test_protocell.py::test_closed_loop_persists_within_stable_window,
+      the plateau. The -1.0 is a sentinel deterministic pin (no RNG) -- exact only while the engine build
+      is fixed (tests/test_protocell.py::test_closed_loop_persists_within_stable_window,
       tests/test_autopoiesis_regime.py::test_closed_loop_persists)
   requires_simulation: protocell-autopoietic
 - name: vesicle-control-collapses
   classification: primary
   control: negative
-  description: 'Single-variable knockout, the load-bearing control: identical seed and wiring, production
-    knocked out via k_prod=0. Without the internal maintenance loop the membrane is a mere vesicle -- it
-    decays and diffuses and its topological closure is lost, so persists flips to 0.0. This is what proves
-    the closed loop''s persistence is CAUSED by the loop, not by the seed or diffusion.'
+  description: 'Single-variable knockout: identical seed and wiring, production knocked out via k_prod=0.
+    Without the internal maintenance loop the membrane is a mere vesicle -- it decays and diffuses and its
+    topological closure is lost, so persists flips to 0.0. This is what shows that, within the authored
+    closure construction, the closed loop''s persistence tracks the production loop, not the seed or
+    diffusion.'
   measure:
     kind: observable
     path: obs.persists
@@ -197,8 +228,13 @@ behavior_tests:
   pass_if:
     op: ==
     value: 0.0
-    provenance: 'k_prod=0 (the only differing variable): persists == 0.0, closure lost -- the knockout
-      that flips persist -> collapse (tests/test_protocell.py::test_negative_control_k_prod_zero_collapses,
+    kind: acceptance_criterion
+    deterministic_pin: true
+    provenance: 'prior -- a vesicle with production OFF (k_prod=0) should decay below its ON counterpart
+      and lose closure; expect persists == 0.0. Confirmed -- k_prod=0 (the only differing variable):
+      persists == 0.0, closure lost -- the knockout flips persist -> collapse. The == 0.0 is a
+      deterministic pin (persists is binary, no RNG), exact only while the engine build is fixed
+      (tests/test_protocell.py::test_negative_control_k_prod_zero_collapses,
       tests/test_autopoiesis_regime.py::test_vesicle_control_collapses)'
   requires_simulation: protocell-vesicle-control
 - name: vesicle-control-loses-enclosure
@@ -214,8 +250,11 @@ behavior_tests:
   pass_if:
     op: ==
     value: 0.0
+    kind: regression_pin
+    deterministic_pin: true
     provenance: enclosed_area -> 0 by step ~96 (collapse_tick ~96), the membrane ring decays and its
-      closure is lost (tests/test_protocell_physics.py::test_negative_control_k_prod_zero_collapses,
+      closure is lost. The == 0.0 is a deterministic pin (no RNG) -- exact only while the engine build is
+      fixed (tests/test_protocell_physics.py::test_negative_control_k_prod_zero_collapses,
       tests/test_autopoiesis_regime.py::test_vesicle_control_collapses)
   requires_simulation: protocell-vesicle-control
 - name: puncture-is-fatal
@@ -232,8 +271,13 @@ behavior_tests:
   pass_if:
     op: ==
     value: 0.0
-    provenance: after puncturing a 60-degree wedge, enclosed_area stays 0 for 1500 steps and phi.sum() ->
-      ~0 even with k_prod at its canonical value -- closure-gated production cannot rebuild from nothing
+    kind: acceptance_criterion
+    deterministic_pin: true
+    provenance: prior -- breaking the boundary so nothing is enclosed should shut off the authored
+      closure-gated production irreversibly (a viability bound); expect enclosed_area stays 0, no recovery.
+      Confirmed -- after puncturing a 60-degree wedge, enclosed_area stays 0 for 1500 steps and phi.sum()
+      -> ~0 even with k_prod at its canonical value -- the authored closure gate cannot rebuild from
+      nothing. The == 0.0 is a deterministic pin (no RNG) -- exact only while the engine build is fixed
       (tests/test_protocell_physics.py::test_puncture_is_fatal_no_recovery)
   requires_simulation: none
 runs:
@@ -298,12 +342,13 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The paper''s §Self-organized processes autopoiesis criterion holds spatially: a scalar
-    membrane field whose production is gated on the boundary staying topologically closed, and self-limited
-    by enclosed area, PERSISTS -- enclosed interior area plateaus at ~149 px (homeostasis, throttled down
-    from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 across an 1800-step window.
-    A membrane persists because the process inside the boundary maintains the organization that keeps that
-    process possible.'
+  statement: 'The paper''s §Self-organized processes autopoiesis criterion is implemented as an AUTHORED
+    operational-closure criterion and consequence-tested: a scalar membrane field whose production is
+    gated (by a global binary_fill_holes topological observer, not local physics) on the boundary staying
+    topologically closed, and self-limited by enclosed area, PERSISTS -- enclosed interior area plateaus at
+    ~149 px (homeostasis, throttled down from the ~465 px seed) with persists == 1.0 and collapse_tick ==
+    -1.0 across an 1800-step window. Under this authored criterion the membrane persists because the
+    production loop inside the boundary maintains the organization the criterion tests for.'
   evidence:
     from_test: closed-loop-persists
     from_run: protocell-autopoietic
@@ -315,13 +360,14 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Closure is DEMONSTRATED, not asserted: persistence is caused by the internal production
-    loop, proven two independent ways. FIRST, the single-variable knockout -- the vesicle control
-    (k_prod=0, identical seed and wiring, the only difference the production loop) COLLAPSES: closure is
-    lost by step ~96, enclosed_area -> 0, persists == 0.0. Flipping one rate constant flips persistence
-    into dissipation. SECOND, the fatal-puncture viability bound (beer2023): from the closed-loop steady
-    state, zeroing a membrane wedge so nothing is enclosed shuts off closure-gated production, and the
-    ring cannot rebuild from nothing (enclosed_area stays 0 for 1500 steps, phi -> ~0).'
+  statement: 'The consequences of the authored closure criterion are verified two independent ways --
+    within this construction persistence tracks the internal production loop. FIRST, the single-variable
+    knockout -- the vesicle control (k_prod=0, identical seed and wiring, the only difference the
+    production loop) COLLAPSES: closure is lost by step ~96, enclosed_area -> 0, persists == 0.0. Flipping
+    one rate constant flips persistence into dissipation. SECOND, the fatal-puncture viability bound
+    (beer2023): from the closed-loop steady state, zeroing a membrane wedge so nothing is enclosed shuts
+    off the authored closure-gated production, and the ring cannot rebuild from nothing (enclosed_area
+    stays 0 for 1500 steps, phi -> ~0).'
   evidence:
     from_test: vesicle-control-collapses
     from_run: protocell-vesicle-control
@@ -330,46 +376,6 @@ findings:
     run_ids:
     - protocell-vesicle-control
     - puncture-viability-bound
-- id: F-03
-  kind: biological
-  tier: observation
-  status: partial
-  statement: 'Honesty point, load-bearing not buried: the homeostatic plateau is METASTABLE, not eternal,
-    and that is the physically-correct signature of finite closure. A closed toy system with no external
-    material influx self-maintains over a bounded window (~2000 internal steps, vastly longer than the
-    control''s ~96-step collapse) and then eventually runs down (the ring breaks past ~2450-2650 steps
-    even with production on). Perpetual self-maintenance from a closed box would require a genuine
-    energy/material influx and would be the LESS physical result -- so the metastability is the honest,
-    correct outcome, named as a finding rather than glossed as a defect. External-influx / open-system
-    autopoiesis is the natural next step (deferred).'
-  evidence:
-    observed: closed loop stable through ~2000 steps and validated to 1800; breakdown observed past
-      ~2450-2650 steps even with production on -- a closed system with no external influx eventually runs
-      down, verified directly against the physics module and the plateau-window rulings
-    discovered_during: authoring this study on the biology-first bar
-  provenance:
-    run_ids:
-    - protocell-autopoietic
-- id: F-04
-  kind: biological
-  tier: observation
-  status: partial
-  statement: 'Two further honest boundaries, stated plainly. DETERMINISM: the reaction-diffusion physics
-    has NO RNG -- the Protocell seed config is accepted but currently inert -- so persistence is NOT
-    seed-dependent, unlike this investigation''s CPM/Metropolis studies. The multi-seed regression varies
-    seed 1-5 (the documented interface for a future stochastic variant, and the guard that would catch
-    seed silently starting to matter) but today yields an EXACT invariant, enclosed_area == 149 at every
-    seed; the reported range is a degenerate single point, not stochastic robustness. TOY SCOPE: this is
-    a minimal self-maintaining boundary demonstrating operational closure (knockout-provable causation
-    plus a viability bound), NOT real membrane chemistry, a metabolic network, or molecular
-    self-production.'
-  evidence:
-    from_test: closed-loop-encloses-interior
-    from_run: protocell-autopoietic
-    observed: enclosed_area == 149 at every seed 1-5 (degenerate range, seed inert); operational closure demonstrated, not membrane chemistry
-  provenance:
-    run_ids:
-    - protocell-autopoietic
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -383,29 +389,34 @@ conclusion_verdicts:
     basis: All primary behavior tests pass on measured readouts. The closed loop persists (enclosed_area
       plateaus ~149 px, persists == 1.0, collapse_tick == -1.0) while the single-variable k_prod=0 control
       collapses (enclosed_area -> 0 by step ~96, persists == 0.0), and the fatal-puncture viability bound
-      independently confirms closure-gated production cannot rebuild from a broken boundary. The
-      metastability, determinism, and toy-scope boundaries are reported as findings, not claimed away.
+      independently confirms the authored closure-gated production cannot rebuild from a broken boundary.
+      The metastability, determinism, and toy-scope boundaries -- and the fact that the closure gate is
+      authored, not emergent -- are reported as limitations, not claimed away.
   explanatory_gain:
     result: POSITIVE
     basis: Putting the paper's §Self-organized processes autopoiesis criterion on the lattice turns "a
       membrane persists because the processes inside maintain the organization that keeps them possible"
-      into a knockout-provable spatial mechanism -- the k_prod=0 knockout and the fatal-puncture viability
-      bound supply exactly the boundary-maintenance criterion the specification-stage analogue
-      a coarser, specification-stage lumped realization named as its own missing next step.
+      into an AUTHORED, consequence-tested spatial criterion -- the k_prod=0 knockout and the
+      fatal-puncture viability bound verify the consequences of a hand-coded global closure gate (not an
+      emergent one), supplying the boundary-maintenance criterion a coarser, specification-stage lumped
+      realization named as its own missing next step, and naming a mechanistically-local version as the
+      next step from here.
 conclusion: '## Claims
 
 
-  - The paper''s §Self-organized processes autopoiesis criterion holds as a 2D spatial mechanism: a
-  scalar membrane field with production gated on topological closure and self-limited by enclosed area
-  PERSISTS (enclosed_area plateaus ~149 px, persists == 1.0, collapse_tick == -1.0 over 1800 steps),
-  while the single-variable k_prod=0 vesicle control COLLAPSES (enclosed_area -> 0 by step ~96, persists
-  == 0.0). Flipping one rate constant flips persistence into dissipation.
+  - The paper''s §Self-organized processes autopoiesis criterion is implemented as an AUTHORED
+  operational-closure criterion (production gated by a global binary_fill_holes topological observer, not
+  emergent from local physics) and its consequences are tested on a 2D lattice: a scalar membrane field
+  with production gated on topological closure and self-limited by enclosed area PERSISTS (enclosed_area
+  plateaus ~149 px, persists == 1.0, collapse_tick == -1.0 over 1800 steps), while the single-variable
+  k_prod=0 vesicle control COLLAPSES (enclosed_area -> 0 by step ~96, persists == 0.0). Flipping one rate
+  constant flips persistence into dissipation.
 
 
-  - Closure is demonstrated, not asserted: persistence is CAUSED by the internal loop, proven by the
-  knockout (the only differing variable) and independently by a fatal-puncture viability bound (beer2023)
-  -- breaking the boundary so nothing is enclosed shuts off closure-gated production, and the ring cannot
-  rebuild from nothing.
+  - The consequences of the authored closure criterion are verified two ways -- within this construction
+  persistence tracks the internal production loop: the knockout (the only differing variable) and
+  independently the fatal-puncture viability bound (beer2023) -- breaking the boundary so nothing is
+  enclosed shuts off the authored closure-gated production, and the ring cannot rebuild from nothing.
 
 
   ## Evidence
@@ -432,9 +443,14 @@ conclusion: '## Claims
   ## Limitations
 
 
+  - The closure criterion is AUTHORED, not emergent: closure-dependence is hand-coded via a global
+  binary_fill_holes topological observer, so the knockout and puncture results are consequence-tests of an
+  implemented criterion, not evidence that a boundary made and sustained itself from local physics.
+
+
   - The homeostatic plateau is metastable, not eternal -- the physically-correct signature of a closed
   system with no external material influx (perpetual self-maintenance would need a genuine influx and
-  would be the less physical result). Named as a finding, not a defect.
+  would be the less physical result), not a defect.
 
 
   - The reaction-diffusion physics has no RNG; persistence is deterministic and NOT seed-dependent (the
@@ -442,12 +458,18 @@ conclusion: '## Claims
   investigation''s CPM/Metropolis studies.
 
 
-  - This is a minimal self-maintaining boundary demonstrating operational closure (knockout-provable
-  causation plus a viability bound), NOT real membrane chemistry, a metabolic network, or molecular
-  self-production. Parameters are tuned demonstration values, not fitted to any organism.
+  - This is a minimal self-maintaining boundary demonstrating authored operational closure (the criterion
+  implemented, its knockout and puncture consequences verified), NOT real membrane chemistry, a metabolic
+  network, or molecular self-production. Parameters are tuned demonstration values, not fitted to any
+  organism.
 
 
   ## Next steps
+
+
+  - Mechanistically-local closure: replace the global binary_fill_holes observer with local physics in
+  which an interior precursor collapses when the membrane leaks, so closure-dependence follows from the
+  local dynamics rather than an authored global topological test.
 
 
   - Graded puncture self-repair: replace the current global-binary closure gate and maintenance-against-decay
@@ -463,10 +485,11 @@ conclusion_logic:
     implementation_status: Both protocell-autopoietic.composite.json and protocell-vesicle-control.composite.json
       build and run to completion through the engine (1800 and 300 internal steps respectively), directly
       from their JSON specs.
-    biological_validation: The paper's §Self-organized processes autopoiesis criterion is demonstrated
-      spatially at the toy-real (tuned, uncalibrated) level as operational closure -- knockout-provable
-      causation plus a viability bound -- with the metastability, determinism, and toy-scope boundaries
-      reported as findings rather than claimed away.
+    biological_validation: The paper's §Self-organized processes autopoiesis criterion is implemented
+      spatially at the toy-real (tuned, uncalibrated) level as an AUTHORED operational-closure criterion
+      (a global binary_fill_holes gate, not emergent) whose consequences -- the k_prod=0 knockout and the
+      fatal-puncture viability bound -- are verified, with the authored-gate, metastability, determinism,
+      and toy-scope boundaries reported as limitations rather than claimed away.
     pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
@@ -478,18 +501,23 @@ conclusion_logic:
       production is firing with nothing enclosed, breaking the viability bound)
     block_downstream: none -- no study in this workspace is gated on this closure demonstration.
 limitations:
+- 'The closure criterion is AUTHORED, not emergent: closure-dependence is hand-coded via a global
+  binary_fill_holes topological observer, so the knockout and puncture results are consequence-tests of an
+  implemented criterion, not evidence that a boundary made and sustained itself from local physics. A
+  mechanistically-local version (an interior precursor that collapses when the membrane leaks) is the
+  named next step.'
 - 'The homeostatic plateau is metastable, not perpetual: a closed toy system with no external material
   influx self-maintains over a bounded window (~2000 internal steps, versus the control''s ~96-step
-  collapse) and eventually runs down. This is the honest, physically-correct signature of finite closure
-  -- perpetual self-maintenance would require a genuine energy/material influx -- not a defect, and it is
-  stated as a finding rather than glossed.'
+  collapse) and eventually runs down. This is the physically-correct signature of finite closure --
+  perpetual self-maintenance would require a genuine energy/material influx -- not a defect.'
 - 'The reaction-diffusion physics has no RNG. The Protocell seed config is accepted but currently inert,
   so persistence is deterministic and NOT seed-dependent (unlike this investigation''s CPM/Metropolis
   studies). The multi-seed regression''s reported range is a degenerate single point (enclosed_area == 149
-  at every seed 1-5), stated plainly rather than dressed as stochastic robustness.'
+  at every seed 1-5), not stochastic robustness.'
 - 'This is a minimal self-maintaining boundary, NOT real membrane chemistry or metabolism. What is
-  demonstrated is operational closure -- knockout-provable causation (the k_prod=0 flip) plus a viability
-  bound (the fatal puncture) -- not lipid biophysics, a metabolic network, or molecular self-production.'
+  demonstrated is authored operational closure -- the criterion implemented, its consequences verified via
+  the k_prod=0 flip and the fatal puncture -- not lipid biophysics, a metabolic network, or molecular
+  self-production.'
 - 'The parameters (D=0.02, k_decay=0.01, k_prod=0.03, thr=0.30) are tuned demonstration values, not fitted
   to a measured membrane or organism, and no literature acceptance band is claimed. D=0.02 sits inside the
   mild second-order-diffusion CFL D <= 0.25; the process raises on an unstable dt rather than silently
@@ -558,11 +586,14 @@ experiment: 'Run two reaction-diffusion protocell composites to completion throu
 result: The autopoietic closed loop persists -- enclosed interior area plateaus at ~149 px (homeostasis,
   down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 over 1800 steps -- while the
   single-variable k_prod=0 vesicle control collapses (enclosed_area -> 0 by step ~96, persists == 0.0),
-  realizing the paper's §Self-organized processes autopoiesis criterion as a spatial mechanism. Closure is
-  demonstrated, not asserted -- persistence is caused by the internal loop, proven by the knockout (the only
-  differing variable) and independently by a fatal-puncture viability bound (beer2023) -- breaking the
-  boundary shuts off closure-gated production and the ring cannot rebuild from nothing. The honest
-  boundaries are reported as findings -- the plateau is metastable not eternal (the physically-correct
-  signature of a closed system with no external influx), the physics is deterministic so persistence is
-  not seed-dependent (the multi-seed range is a degenerate single point), and this is a minimal
-  self-maintaining boundary demonstrating operational closure, not real membrane chemistry or metabolism.
+  implementing the paper's §Self-organized processes autopoiesis criterion as an AUTHORED
+  operational-closure criterion (gated by a global binary_fill_holes topological observer, not emergent
+  from local physics) and testing its consequences. Within this authored construction persistence tracks
+  the internal loop, verified by the knockout (the only differing variable) and independently by a
+  fatal-puncture viability bound (beer2023) -- breaking the boundary shuts off the authored closure-gated
+  production and the ring cannot rebuild from nothing. The boundaries are reported as limitations -- the
+  closure gate is authored not emergent (a mechanistically-local version is the named next step), the
+  plateau is metastable not eternal (the physically-correct signature of a closed system with no external
+  influx), the physics is deterministic so persistence is not seed-dependent (the multi-seed range is a
+  degenerate single point), and this is a minimal self-maintaining boundary demonstrating authored
+  operational closure, not real membrane chemistry or metabolism.

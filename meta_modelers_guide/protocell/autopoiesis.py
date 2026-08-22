@@ -137,10 +137,17 @@ class Protocell(Process):
         "thr": _f(0.30),
         "dt": _f(1.0),
         "steps_per_tick": {"_type": "integer", "_default": 50},
-        # Reserved for a future stochastic seed variant -- the current
-        # `rd_step`/`seed_annulus` physics is fully deterministic (no RNG),
-        # so this is accepted but currently inert; kept in the schema per
-        # the Task-2 interface spec so callers can pin it now.
+        # NOTE: this `seed` is INERT and a value passed here is SILENTLY
+        # IGNORED. Unlike gray_scott's `seed_uv`, `seed_annulus` draws NO
+        # randomness at all -- the whole `rd_step`/`seed_annulus` pipeline is
+        # deterministic, so there is no stochastic quantity for a seed to
+        # steer. The IC (`phi`) is likewise BAKED as an array in the
+        # composite's `state.fields` and only READ here (delta-emission), so
+        # even if the IC were stochastic this config seed would not reach it;
+        # re-baking the composite `phi` would be the place to vary it. Kept in
+        # the schema per the Task-2 interface spec for uniformity so callers
+        # can pin it, and as the hook a future in-process stochastic variant
+        # would use.
         "seed": {"_type": "integer", "_default": 1},
     }
 

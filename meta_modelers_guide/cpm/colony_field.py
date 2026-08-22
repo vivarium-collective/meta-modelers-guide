@@ -80,6 +80,26 @@ class CpmColonyField(Process):
         "box_volume_L": _f(1e-6),
         "glucose_km": _f(0.5),
         "acetate_km": _f(0.5),
+        # --- interface-substitutability: swappable per-cell INTERNAL metabolism ---
+        # `mechanism` selects the box behind the fixed colony<->field interface. The
+        # PORTS (inputs/outputs) are byte-identical across mechanisms; only the
+        # internal organization that realizes each cell's uptake/growth/secretion
+        # differs. This is the flagship `CpmCellField` substitutability swap lifted
+        # one level up, to the multi-cell colony interface.
+        #   "dfba" (default, backward-compatible): per-cell constraint-based
+        #          dynamic-FBA on e_coli_core (requires cobra), the loop above.
+        #   "mm":   a lumped Michaelis-Menten / Monod metabolism per cell with NO
+        #          cobra. Each cell keeps its OWN role-specific MM uptake kinetics
+        #          (competitor/secretor: glucose_vmax*glc/(glucose_km+glc);
+        #          consumer: acetate_vmax*ac/(acetate_km+ac)) -- so the per-cell
+        #          asymmetry that drives competition/cross-feeding is preserved by
+        #          construction -- then realizes growth by a fixed biomass yield
+        #          (mm_yield*v) and, for glucose feeders, acetate overflow
+        #          (mm_overflow*v standing in for the dFBA's O2-cap-driven mixed-acid
+        #          overflow). See `_mm` and tests/test_cellcell_substitutability.py.
+        "mechanism": {"_type": "string", "_default": "dfba"},
+        "mm_yield": _f(0.09),      # biomass yield mu = mm_yield * v (growth per uptake)
+        "mm_overflow": _f(0.5),    # acetate secreted per unit glucose uptake (feeders)
     }
 
     def inputs(self):
@@ -105,14 +125,26 @@ class CpmColonyField(Process):
     def __init__(self, config=None, core=None):
         super().__init__(config, core=core)
         from cpm.schema import load_world
-        try:
-            from cobra.io import load_model
-        except Exception as exc:  # pragma: no cover - exercised only without cobra
-            raise RuntimeError(
-                "CpmColonyField requires the optional 'cobra' package "
-                "(pip install -e .[simulators]).") from exc
 
         c = self.config
+        self.mechanism = str(c.get("mechanism", "dfba"))
+        if self.mechanism not in ("dfba", "mm"):
+            raise ValueError(
+                f"CpmColonyField: unknown mechanism {self.mechanism!r} "
+                "(expected 'dfba' or 'mm').")
+        load_model = None
+        if self.mechanism == "dfba":
+            # Only the dFBA mechanism needs cobra; the "mm" (Michaelis-Menten)
+            # mechanism runs without it, so the import stays inside this branch and
+            # the mm path never touches cobra (the substitutability payoff).
+            try:
+                from cobra.io import load_model
+            except Exception as exc:  # pragma: no cover - exercised only without cobra
+                raise RuntimeError(
+                    "CpmColonyField(mechanism='dfba') requires the optional 'cobra' "
+                    "package (pip install -e .[simulators]); use mechanism='mm' for "
+                    "the cobra-free Michaelis-Menten metabolism.") from exc
+
         grid = dict(c.get("grid") or {})
         nx, ny = int(grid.get("nx", 40)), int(grid.get("ny", 40))
         self._nx, self._ny = nx, ny
@@ -162,6 +194,12 @@ class CpmColonyField(Process):
             self._roles[cid] = role
             self._cell_cfgs[cid] = cfg
             self.biomass[cid] = init_biomass
+
+            if self.mechanism == "mm":
+                # The Michaelis-Menten mechanism carries no cobra model; per-cell
+                # kinetics come straight from the cell cfg (glucose_vmax/acetate_vmax
+                # + the colony km's) in `_mm`. Nothing to load here.
+                continue
 
             model = load_model("textbook")
             if role in ("competitor", "secretor"):
@@ -221,6 +259,62 @@ class CpmColonyField(Process):
             d_sub = glc_flux * biomass * interval / box_volume_L
         return d_biomass, d_sub, d_ac
 
+    def _mm(self, cid, local_conc, interval):
+        """One lumped Michaelis-Menten / Monod step for cell `cid` -- a COMPLETELY
+        DIFFERENT internal organization from `_fba` (no LP, no stoichiometry, no
+        cobra) that returns the SAME (d_biomass, d_substrate, d_byproduct) shape and
+        flows through the SAME mass-conservative writeback in `update()`. This is the
+        colony-level interface-substitutability demonstration: swap each cell's box,
+        keep the ports.
+
+        The cell keeps its OWN role-specific MM uptake kinetics -- the very same
+        saturating uptake the dFBA path MM-limits its exchange bound with -- so the
+        per-cell asymmetry (glucose_vmax 10 vs 4 in competition; the secretor/consumer
+        split in cross-feeding) is preserved by construction:
+            competitor/secretor:  v = glucose_vmax * glc / (glucose_km + glc)
+            consumer:             v = acetate_vmax * ac / (acetate_km + ac)
+        Growth is a fixed biomass yield of that uptake; a glucose feeder additionally
+        secretes acetate as a fixed overflow fraction (standing in for the dFBA's
+        O2-cap-driven mixed-acid overflow); a consumer's substrate IS acetate (uptake,
+        no byproduct), exactly as `_fba` treats the consumer:
+            mu (growth rate) = mm_yield   * v   -> d_biomass = mu * biomass * dt
+            acetate overflow = mm_overflow * v  (feeders only)
+        Units mirror `_fba` exactly (flux * biomass * dt / box_volume_L), so the
+        idealized-then-clamped mass balance in `update()` applies unchanged."""
+        role = self._roles[cid]
+        cfg = self._cell_cfgs[cid]
+        c = self.config
+        biomass = self.biomass[cid]
+        box_volume_L = float(c["box_volume_L"])
+        mm_yield = float(c["mm_yield"])
+        if local_conc <= 0:
+            return 0.0, 0.0, 0.0
+        if role == "consumer":
+            vmax = float(cfg.get("acetate_vmax", 10.0))
+            km = float(c["acetate_km"])
+            v = vmax * local_conc / (km + local_conc)
+            d_biomass = mm_yield * v * biomass * interval
+            ac_flux = -v  # negative = uptake, mirrors EX_ac_e for a consumer
+            d_ac = ac_flux * biomass * interval / box_volume_L
+            return d_biomass, d_ac, d_ac  # substrate IS acetate; no separate byproduct
+        # competitor / secretor: glucose uptake, acetate overflow byproduct
+        vmax = float(cfg.get("glucose_vmax", 10.0))
+        km = float(c["glucose_km"])
+        v = vmax * local_conc / (km + local_conc)
+        d_biomass = mm_yield * v * biomass * interval
+        glc_flux = -v                              # negative = uptake, mirrors EX_glc__D_e
+        ac_flux = float(c["mm_overflow"]) * v      # positive = secretion, mirrors EX_ac_e
+        d_sub = glc_flux * biomass * interval / box_volume_L
+        d_ac = ac_flux * biomass * interval / box_volume_L
+        return d_biomass, d_sub, d_ac
+
+    def _metabolize(self, cid, local_conc, interval):
+        """Dispatch to the configured per-cell internal mechanism behind the fixed
+        colony<->field interface."""
+        if self.mechanism == "mm":
+            return self._mm(cid, local_conc, interval)
+        return self._fba(cid, local_conc, interval)
+
     @staticmethod
     def _clamp_removal(field, fp, requested_delta):
         """Mass-conservative removal: clamp `requested_delta` (<=0) against what
@@ -268,7 +362,7 @@ class CpmColonyField(Process):
             local_glc_obs[key] = local_glc
             local_ac_obs[key] = local_ac
 
-            d_biomass, d_sub_request, d_byproduct = self._fba(
+            d_biomass, d_sub_request, d_byproduct = self._metabolize(
                 cid, local_ac if role == "consumer" else local_glc, interval)
 
             if role == "consumer":

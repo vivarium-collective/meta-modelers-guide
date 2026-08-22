@@ -365,8 +365,8 @@ def study_figures(study: dict) -> list[str]:
 
 def confidence_badge(study: dict) -> str:
     c = str(study.get("confidence") or "").strip()
-    cls = {"Accepted": "ok", "Investigating": "warn", "Planned": "muted",
-           "Refuted": "bad"}.get(c, "muted")
+    cls = {"Accepted": "ok", "Provisional": "warn", "Investigating": "warn",
+           "Planned": "muted", "Refuted": "bad"}.get(c, "muted")
     return f'<span class="badge {cls}">{esc(c or "—")}</span>' if c else ""
 
 
@@ -657,6 +657,10 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
 
     verdict = execu.get("verdict", "")
     status = str(inv.get("status") or "").strip()
+    vstatus = str(execu.get("verdict_status") or "").strip()
+    # Reflect the honest verdict_status in the header badge, not a green 'ok' for 'running'.
+    vbadge_label = vstatus or status or "complete"
+    vbadge_cls = {"needs_calibration": "warn", "passed": "ok", "refuted": "bad"}.get(vstatus, "ok")
     nstudies_word = {8: "eight", 9: "nine", 10: "ten", 11: "eleven",
                      12: "twelve"}.get(len(studies), str(len(studies)))
 
@@ -665,7 +669,7 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
       <span class="kicker">Executable atlas · <em>A meta-modeler's guide to the cellular interface</em></span>
       <h1>{esc(inv.get('title') or slug)}</h1>
       <p class="thesis">{md_inline(inv.get('lead') or execu.get('what_is_this') or '')}</p>
-      <div class="verdict"><span class="badge ok">{esc(status or 'complete')}</span>
+      <div class="verdict"><span class="badge {vbadge_cls}">{esc(vbadge_label)}</span>
         <p>{md_inline(verdict)}</p></div>
       <div class="stats">{stat_html}</div>
     </header>

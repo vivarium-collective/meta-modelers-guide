@@ -6,7 +6,7 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
 question: 'The paper''s §Molecular compositions section (Fig 8) frames its subject as a question about
   interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that
   behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates?
@@ -54,7 +54,7 @@ biological_summary: 'Steinberg''s differential-adhesion sorting is the paper''s 
   1], and no NaN appears.
 
 
-  Honesty point, stated plainly because the paper''s central question demands it. The condensate study
+  Honesty point. The condensate study
   demonstrates a boundary forming -- phase separation, mass-conserved, with an emergent interface -- but
   it does not yet demonstrate the condensate doing interface work: selectively concentrating or excluding
   a second species, the property that would let it act as a functional, regulatable compartment rather
@@ -121,12 +121,28 @@ key_assumptions:
   is verified stable over ~20000 steps, while dt=0.05 blows up to NaN within a few thousand steps -- the
   process raises loudly rather than silently emitting NaN. The pinned dt is a numerical calibration anchor,
   not a physical one.
-- 'Honesty boundary, restated as an assumption because it scopes the whole study: the condensate demonstrates
+- 'Scope boundary: the condensate demonstrates
   phase separation (a mass-conserved boundary forming with an emergent interface), not interface work.
   It does not selectively concentrate or exclude a second species, which is the property that would make
   it a functional, regulatable boundary rather than a transient aggregate in the terms of the paper''s
   §Molecular compositions central question (Fig 8). That is named as the next step, not glossed as already
   done.'
+acceptance_criteria:
+- Under a differential-adhesion J-matrix (homotypic favorable, heterotypic costly), a mixed checkerboard
+  demixes so like sits with like -- the heterotypic-interface fraction collapses to a low value.
+- The demixing is real sorting, not dissolution -- the live-cell pixel count is retained (cohesion guard),
+  and under neutral contact energies (all J equal) the same checkerboard does NOT demix.
+- A near-critical Cahn-Hilliard composition field phase-separates into two domains bounded by a sharp
+  emergent interface, with total mass conserved (mass-conserving by construction).
+units_and_time:
+  time: 1 tick = unspecified physical time (dimensionless model time); the sorting run is ~600 Monte Carlo
+    steps and the condensate run is 10000 explicit steps at dt=0.002 dimensionless.
+  quantities: 'contact energies J (2/11/8), temperature T=10, the composition field phi, phi_var, phi_mean,
+    and the Cahn-Hilliard parameters M=1/kappa=0.5/dt=0.002 are dimensionless model units; lattice sizes
+    (70x70, 64x64), cell size (5x5), and pixel/cell counts are lattice units, not calibrated physical
+    lengths or masses.'
+  note: No quantity is fitted to a measured tissue or condensate; both regimes are tuned demonstration
+    primitives.
 behavior_tests:
 - name: sorting-heterotypic-interface-collapses
   classification: primary
@@ -139,10 +155,15 @@ behavior_tests:
     expr: last(obs.hetero_frac)
   pass_if:
     op: <
+    kind: acceptance_criterion
     value: 0.2
-    provenance: hetero_frac ~0.64 at first observation -> ~0.06 by ~600 MCS (raw seeded checkerboard ~1.0
-      before relaxation), roughly an order-of-magnitude collapse (tests/test_sorting_regime.py::test_sorting_demixes_cohesively,
-      tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite, tests/test_cpm_sorting_spike.py::test_checkerboard_demixes_and_stays_cohesive)
+    provenance: 'prior: Steinberg differential-adhesion sorting predicts that two cell types differing only
+      in contact energetics demix a mixed checkerboard -> the heterotypic-interface fraction collapses to a
+      low value. Observed: hetero_frac ~0.64 at first observation -> ~0.06 by ~600 MCS (raw seeded
+      checkerboard ~1.0 before relaxation), roughly an order-of-magnitude collapse; the < 0.2 threshold is
+      a post-hoc pin, the collapse-direction is the a-priori prediction
+      (tests/test_sorting_regime.py::test_sorting_demixes_cohesively,
+      tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite, tests/test_cpm_sorting_spike.py::test_checkerboard_demixes_and_stays_cohesive)'
   requires_simulation: cell-sorting-spatial
 - name: sorting-clump-stays-cohesive
   classification: primary
@@ -154,10 +175,14 @@ behavior_tests:
     expr: abs(last(obs.cell_pixels) - first(obs.cell_pixels)) / first(obs.cell_pixels)
   pass_if:
     op: <
+    kind: acceptance_criterion
     value: 0.1
-    provenance: cell_pixels ~1530 held to <1% drift over ~600 MCS (well inside the 10% cohesion bound)
-      while hetero_frac collapsed -- the clump sorted, it did not dissolve (tests/test_sorting_regime.py::test_sorting_demixes_cohesively,
-      tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)
+    provenance: 'prior: real sorting moves cells while conserving the clump, so in the cohesive-and-mobile
+      regime the total live-cell pixel count is retained (a dissolved clump would falsely read as a perfect
+      sort). Observed: cell_pixels ~1530 held to <1% drift over ~600 MCS (well inside the 10% cohesion
+      bound) while hetero_frac collapsed -- the clump sorted, it did not dissolve
+      (tests/test_sorting_regime.py::test_sorting_demixes_cohesively,
+      tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)'
   requires_simulation: cell-sorting-spatial
 - name: sorting-conserves-cell-count
   classification: diagnostic
@@ -169,9 +194,12 @@ behavior_tests:
     expr: last(obs.n_type1)
   pass_if:
     op: ==
+    kind: regression_pin
+    deterministic_pin: true
     value: 32.0
     provenance: n_type1 == n_type2 == 32 for the full ~600 MCS run -- no cell created, destroyed, or merged,
-      just moved (tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)
+      just moved. The == 32.0 is the seeded per-type count held as a conservation invariant, exact only
+      while the engine and seeding are fixed (tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)
   requires_simulation: cell-sorting-spatial
 - name: sorting-neutral-J-does-not-sort
   classification: diagnostic
@@ -186,11 +214,13 @@ behavior_tests:
     expr: last(obs.hetero_frac)
   pass_if:
     op: '>'
+    kind: acceptance_criterion
     value: 0.5
-    provenance: 'a neutral-J composite re-run (all J=8):
-      neutral J (all=8), T=10, same checkerboard stays mixed at hetero_frac ~0.52 over 600 MCS vs ~0.06
-      for the differential-J regime -- the causality control for J. Documented regime sweep, not a committed
-      pytest in this build.'
+    provenance: 'prior: without a contact-energy asymmetry (all J=8, heterotypic no costlier than homotypic)
+      there is no thermodynamic drive to demix, so the checkerboard should stay mixed -> hetero_frac stays
+      high. Observed: a neutral-J composite re-run (all J=8), T=10, same checkerboard stays mixed at
+      hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime -- the causality control for J.
+      Documented regime sweep, not a committed pytest in this build.'
   requires_simulation: none
 - name: condensate-phase-separates
   classification: primary
@@ -203,10 +233,14 @@ behavior_tests:
     expr: last(obs.phi_var)
   pass_if:
     op: '>'
+    kind: acceptance_criterion
     value: 0.3
-    provenance: phi_var ~7e-5 -> ~0.38 over 10000 steps (64x64 field, M=1, kappa=0.5, dt=0.002) -- two
-      domains formed, bounded by a sharp emergent interface (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved,
-      tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)
+    provenance: 'prior: a near-critical Cahn-Hilliard field undergoes spinodal decomposition into two
+      phases, so the field variance rises from near-zero toward the coexistence variance. Observed: phi_var
+      ~7e-5 -> ~0.38 over 10000 steps (64x64 field, M=1, kappa=0.5, dt=0.002) -- two domains formed, bounded
+      by a sharp emergent interface; the > 0.3 threshold is a post-hoc pin, the variance rise is the
+      a-priori prediction (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved,
+      tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)'
   requires_simulation: condensate-cahn-hilliard
 - name: condensate-conserves-mass
   classification: primary
@@ -219,9 +253,12 @@ behavior_tests:
     expr: abs(last(obs.phi_mean) - first(obs.phi_mean))
   pass_if:
     op: <
+    kind: acceptance_criterion
     value: 0.001
-    provenance: 'phi_mean drift ~4e-18 over 10000 steps (mass-conserving by construction: the update is
-      a divergence of a flux) (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved,
+    provenance: 'prior: Cahn-Hilliard dynamics conserve total mass by construction (the update is a
+      divergence of a flux), so the field mean is invariant across the run -- distinguishing it from a
+      non-conservative Allen-Cahn interface. Observed: phi_mean drift ~4e-18 over 10000 steps (to numerical
+      round-off) (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved,
       tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)'
   requires_simulation: condensate-cahn-hilliard
 - name: condensate-stays-bounded
@@ -234,9 +271,11 @@ behavior_tests:
     expr: last(obs.phi_min)
   pass_if:
     op: '>'
+    kind: regression_pin
     value: -1.05
-    provenance: phi bounded to [-0.989, 0.982] at run end (no NaN); the process raises loudly if dt exceeds
-      the ~dx^4/(16*M*kappa) stability limit rather than emitting NaN (tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded,
+    provenance: phi bounded to [-0.989, 0.982] at run end (no NaN); the -1.05 floor is a numerical-stability
+      guard set after observing the run. The process raises loudly if dt exceeds the ~dx^4/(16*M*kappa)
+      stability limit rather than emitting NaN (tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded,
       tests/test_cahn_hilliard.py::test_dt_above_stability_limit_raises_instead_of_nan)
   requires_simulation: condensate-cahn-hilliard
 runs:
@@ -321,27 +360,6 @@ findings:
   provenance:
     run_ids:
     - condensate-cahn-hilliard
-- id: F-03
-  kind: biological
-  tier: observation
-  status: partial
-  statement: 'Honesty point, load-bearing for the paper''s central question. The condensate study demonstrates
-    a boundary forming -- phase separation, mass-conserved, with an emergent interface -- but NOT the
-    condensate doing interface work: it does not selectively concentrate or exclude a second species.
-    That selective-permeability property is exactly what would make the interface a functional, regulatable
-    boundary rather than a transient or unregulated aggregate, which is the discriminator the paper''s
-    §Molecular compositions question (Fig 8) turns on. It is named here as the natural next step, not
-    claimed as already shown. Likewise the sorting study demonstrates differential-adhesion demixing with
-    a cohesion guard, not a molecular binding-affinity/selectivity term.'
-  evidence:
-    observed: CahnHilliard evolves a single scalar phi with no second species and no selective partitioning
-      term; CpmSorting minimizes contact energy under a fixed J matrix with no partner-choice term --
-      verified directly against the process source, not asserted from the paper's narrative
-    discovered_during: authoring this study on the biology-first bar
-  provenance:
-    run_ids:
-    - condensate-cahn-hilliard
-    - cell-sorting-spatial
 - id: F-04
   kind: biological
   tier: mechanism
