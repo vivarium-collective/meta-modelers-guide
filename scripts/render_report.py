@@ -461,46 +461,61 @@ def _processes(comp: dict) -> list[dict]:
     return procs
 
 
-def spec_block_html(study: dict, ws: Path) -> str:
-    """The interface contract (the coupling process's typed ports) and the model
-    definition (composite processes + their parameters) read straight from the
-    baseline composite — the model that produced this study's results."""
-    baselines = study.get("baseline") or []
-    if not baselines:
-        return ""
-    comp = load_composite(ws, baselines[0].get("composite", ""))
-    procs = [p for p in _processes(comp) if p["cls"] not in _EMITTERS]
-    if not procs:
-        return ""
-    prim = max(procs, key=lambda p: len(p["outputs"]))
-
-    reads = " · ".join(prim["inputs"].keys()) or "—"
-    exposes = " · ".join(prim["outputs"].keys()) or "—"
-    contract = (
-        '<div class="spec-panel contract">'
-        f'<div class="spec-h"><span class="spec-tag">interface contract</span>'
-        f'<code class="spec-cls">{esc(prim["cls"])}</code></div>'
-        f'<div class="port"><span class="port-k">reads</span><code>{esc(reads)}</code></div>'
-        f'<div class="port"><span class="port-k">exposes</span><code>{esc(exposes)}</code></div>'
-        '</div>')
-
+def _model_panel(comp: dict, label: str, param_limit: int, extra_rows: str = "") -> str:
+    """One 'model definition' panel: every process in a composite with its params.
+    ``label`` (the baseline name) is shown when a study has more than one."""
     rows = []
-    for p in procs:
-        params = _fmt_params(p["config"])
+    for p in (pp for pp in _processes(comp) if pp["cls"] not in _EMITTERS):
+        params = _fmt_params(p["config"], param_limit)
         pstr = "".join(f'<span class="pm"><b>{esc(k)}</b> {esc(v)}</span>' for k, v in params)
         rows.append(f'<div class="proc"><code class="proc-cls">{esc(p["cls"])}</code>'
                     f'<span class="proc-params">{pstr or "—"}</span></div>')
+    lbl = f'<span class="spec-sub">{esc(label)}</span>' if label else ""
+    return (
+        '<div class="spec-panel modeldef">'
+        f'<div class="spec-h"><span class="spec-tag">model definition</span>{lbl}'
+        f'<code class="spec-cls">{esc(comp.get("name",""))}</code></div>'
+        f'{"".join(rows)}{extra_rows}</div>')
+
+
+def spec_block_html(study: dict, ws: Path) -> str:
+    """The interface contract (the primary process's typed ports) and the model
+    definition — a panel per baseline composite, so a study realized several ways
+    (e.g. the cellular interface: lumped modalities, executable, and spatial)
+    shows every composition, read straight from the composite JSON."""
+    baselines = study.get("baseline") or []
+    comps = [(str(b.get("name") or ""), load_composite(ws, b.get("composite", "")))
+             for b in baselines]
+    comps = [(n, c) for n, c in comps if _processes(c)]
+    if not comps:
+        return ""
+
+    # interface contract — the primary (most-exposed) process of the first baseline
+    procs0 = [p for p in _processes(comps[0][1]) if p["cls"] not in _EMITTERS]
+    prim = max(procs0, key=lambda p: len(p["outputs"])) if procs0 else None
+    contract = ""
+    if prim:
+        reads = " · ".join(prim["inputs"].keys()) or "—"
+        exposes = " · ".join(prim["outputs"].keys()) or "—"
+        contract = (
+            '<div class="spec-panel contract">'
+            f'<div class="spec-h"><span class="spec-tag">interface contract</span>'
+            f'<code class="spec-cls">{esc(prim["cls"])}</code></div>'
+            f'<div class="port"><span class="port-k">reads</span><code>{esc(reads)}</code></div>'
+            f'<div class="port"><span class="port-k">exposes</span><code>{esc(exposes)}</code></div>'
+            '</div>')
+
+    multi = len(comps) > 1
+    limit = 6 if multi else 9
     variants = study.get("variants") or []
     vstr = ""
     if variants:
         vs = " · ".join(f'<code>{esc(v.get("name",""))}</code>' for v in variants)
         vstr = f'<div class="proc"><span class="port-k">variants</span><span class="proc-params">{vs}</span></div>'
-    model = (
-        '<div class="spec-panel modeldef">'
-        f'<div class="spec-h"><span class="spec-tag">model definition</span>'
-        f'<code class="spec-cls">{esc(comp.get("name",""))}</code></div>'
-        f'{"".join(rows)}{vstr}</div>')
-    return f'<div class="spec">{contract}{model}</div>'
+    panels = "".join(
+        _model_panel(c, (n if multi else ""), limit, vstr if i == 0 else "")
+        for i, (n, c) in enumerate(comps))
+    return f'<div class="spec">{contract}{panels}</div>'
 
 
 def study_card(study: dict, order: int, inv_map: dict, ws: Path) -> str:
@@ -904,6 +919,7 @@ figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:1
 .spec-tag{font:700 .62rem var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
 .contract .spec-tag{color:var(--teal)}
 .modeldef .spec-tag{color:var(--ochre)}
+.spec-sub{font:600 .7rem var(--mono);color:var(--ink-2)}
 .spec-cls{font-family:var(--mono);font-size:.82rem;color:var(--ink);background:none;padding:0}
 .port{display:flex;gap:10px;align-items:baseline;margin:5px 0;font-size:.82rem}
 .port-k{flex:none;width:60px;font:600 .64rem var(--sans);text-transform:uppercase;letter-spacing:.05em;
