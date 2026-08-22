@@ -581,7 +581,8 @@ def run_colony_frames(composite_state: dict, core, steps: int = 20, cadence: int
 
 def _render_disintegration_frame(stressor: np.ndarray, footprint: np.ndarray,
                                   particle_px: list[tuple[float, float]], time: float,
-                                  stressor_vmax: float, *, event_label: str | None = None
+                                  stressor_vmax: float, *, event_label: str | None = None,
+                                  field_label: str = "stressor"
                                   ) -> np.ndarray:
     """Render one matplotlib (Agg) frame: the ``stressor`` field as a heatmap
     background, the CPM cell's footprint drawn via the shared
@@ -600,7 +601,7 @@ def _render_disintegration_frame(stressor: np.ndarray, footprint: np.ndarray,
     fig, ax = plt.subplots(1, 1, figsize=(6.4, 5.6), dpi=100)
 
     im = ax.imshow(stressor, origin="lower", cmap="inferno", vmin=0.0, vmax=stressor_vmax)
-    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="stressor")
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label=field_label)
 
     _footprint_fill(ax, footprint, "deepskyblue", fill_alpha=0.5, contour_color="white")
 
@@ -661,7 +662,12 @@ def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cade
 
     comp = Composite({"state": composite_state}, core=core)
 
-    ny, nx = comp.state["fields"]["stressor"].shape
+    # Which species carries the viability stressor is a CpmDisintegration config
+    # knob (`stressor_field`, default "stressor"); the disintegration-spatial
+    # composite sets it to "acetate" so the field panel is labeled by the actual
+    # molecule (the relational-molecule arc: acetate as toxin here).
+    field_name = str(composite_state[proc_key]["config"].get("stressor_field", "stressor"))
+    ny, nx = comp.state["fields"][field_name].shape
     bounds = dict(composite_state[proc_key]["config"].get("bounds") or {})
     bx = float(bounds.get("x", nx))
     by = float(bounds.get("y", ny))
@@ -679,7 +685,7 @@ def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cade
         world = comp.state[proc_key]["instance"].world
         lattice = np.array(world.snapshot()).reshape(ny, nx)
         footprint = lattice > 0
-        stressor = np.asarray(comp.state["fields"]["stressor"]).copy()
+        stressor = np.asarray(comp.state["fields"][field_name]).copy()
         obs = comp.state["obs"]
         particles = comp.state.get("particles", {}) or {}
 
@@ -710,7 +716,8 @@ def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cade
 
     frames = [
         _render_disintegration_frame(s, fp, ppx, t, stressor_vmax,
-                                      event_label=_event_label_for_tick(events, t))
+                                      event_label=_event_label_for_tick(events, t),
+                                      field_label=field_name)
         for s, fp, ppx, t in raw
     ]
 
