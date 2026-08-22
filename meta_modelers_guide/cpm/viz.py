@@ -950,6 +950,188 @@ def run_growth_division_frames(composite_state: dict, core, steps: int = 20, cad
 
 
 # --------------------------------------------------------------------------
+# Development & evolution (heritable-trait colony) frame capture
+# --------------------------------------------------------------------------
+
+def _render_evolution_frame(lattice: np.ndarray, glucose: np.ndarray,
+                             glucose_initial: np.ndarray, coms: dict[str, list[float]],
+                             vmax_map: dict[int, float], time: float,
+                             trait_lo: float, trait_hi: float, depletion_vabs: float,
+                             pattern_name: str, *, event_label: str | None = None) -> np.ndarray:
+    """Render one matplotlib (Agg) frame for a development-and-evolution
+    tick: LEFT panel — the raw glucose field as a muted grayscale background
+    (so it doesn't compete with the trait colormap) with every live cell's
+    translucent footprint fill + contour + COM marker, colored by its
+    heritable trait ``vmax`` on a continuous ``viridis`` colormap FIXED at
+    ``[trait_lo, trait_hi]`` across the whole run (computed once by the
+    caller from every captured frame, like every other renderer's
+    ``*_vmax``/``vabs`` — a per-frame rescale would hide the population's
+    trait SHIFT under a rescaling artifact instead of a real color change);
+    RIGHT panel — the shared :func:`_delta_field` glucose-depletion panel
+    (development's core-vs-rim signal, same convention as
+    ``_render_growth_division_frame``) with the same trait-colored
+    footprints overlaid, so a viewer can read development (the Δ-field
+    core/rim structure) and evolution (the trait-color shift) off the same
+    frame. Returns an (H, W, 3) uint8 RGB array (the figure canvas buffer).
+    ``event_label`` (from :func:`_event_label_for_tick`) stamps the shared
+    title the moment a division fires.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib import cm
+    from matplotlib.colors import Normalize
+
+    fig, axes = plt.subplots(1, 2, figsize=(13.2, 4.4), dpi=100)
+    ax_trait, ax_dev = axes
+
+    norm = Normalize(vmin=trait_lo, vmax=trait_hi)
+    cmap = plt.get_cmap("viridis")
+
+    glc_vmax = float(glucose.max()) or 1e-9
+    im = ax_trait.imshow(glucose, origin="lower", cmap="Greys", vmin=0.0, vmax=glc_vmax)
+    fig.colorbar(im, ax=ax_trait, fraction=0.046, pad=0.04, label="glucose")
+
+    ids = sorted(int(i) for i in np.unique(lattice) if i != 0)
+    for cid in ids:
+        fp = lattice == cid
+        if not fp.any():
+            continue
+        color = cmap(norm(vmax_map.get(cid, trait_lo)))
+        _footprint_fill(ax_trait, fp, color, fill_alpha=0.65, contour_color=color)
+        _com_marker(ax_trait, coms.get(str(cid)), color="white", markersize=5)
+    ax_trait.set_title("colony — filled by heritable trait (vmax)", fontsize=10)
+    ax_trait.set_xticks([]); ax_trait.set_yticks([])
+
+    sm = cm.ScalarMappable(norm=norm, cmap="viridis")
+    sm.set_array([])
+    fig.colorbar(sm, ax=ax_trait, fraction=0.046, pad=0.12, label="vmax (trait)")
+
+    _delta_field(ax_dev, fig, glucose, glucose_initial, depletion_vabs,
+                 "glucose depletion (Δ from t=0) — core/rim development", cbar_label="Δ glucose")
+    for cid in ids:
+        fp = lattice == cid
+        if not fp.any():
+            continue
+        color = cmap(norm(vmax_map.get(cid, trait_lo)))
+        _footprint_fill(ax_dev, fp, color, fill_alpha=0.35, contour_color=color)
+    ax_dev.set_xticks([]); ax_dev.set_yticks([])
+
+    _pattern_title(fig, pattern_name, time, event_label=event_label)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_evolution_frames(composite_state: dict, core, steps: int = 45, cadence: int = 5
+                          ) -> tuple[list[np.ndarray], dict[str, Any]]:
+    """Mirror :func:`run_growth_division_frames`, but for the development-
+    and-evolution study (``CpmEvolution``): builds a fresh :class:`Composite`
+    from ``composite_state`` and runs it in a manual cadence loop, capturing
+    one animation frame + one metrics row per tick.
+
+    Reaches the live CPM world via the process instance whose ``address``
+    names ``CpmEvolution`` (found generically, like ``run_growth_division_
+    frames`` does for ``CpmGrowthDivision``, rather than hardcoding a store
+    key) for the lattice snapshot. Each cell's heritable trait is read
+    straight from the composite's own ``vmax`` observable (``obs["vmax"]``,
+    ``CpmEvolution``'s ``overwrite[map[float]]`` output) rather than reaching
+    into the process instance's private ``self.vmax`` — the observable IS
+    the trait, already keyed the same way every other per-cell observable
+    here is.
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8
+    RGB arrays; ``metrics`` is ``{"time": [...], "mean_vmax": [...],
+    "var_vmax": [...], "rim_core_ratio": [...], "n_cells": [...]}`` — flat,
+    equal-length lists (one entry per frame, like the flagship/growth-
+    division shape), drawn straight from the composite's ``obs`` store after
+    each tick, plus the explicit panel-dispatch marker ``metrics["_panel"] =
+    "evolution"`` (see :func:`metrics_panel`). ``mean_vmax`` rises over the
+    run under selection (the flagship composite); ``rim_core_ratio`` grows
+    above 1.0 as the colony develops core-vs-rim glucose heterogeneity.
+    ``division_events`` marks every tick where ``n_cells`` increased, via the
+    shared ``events`` convention (:func:`_event_label_for_tick`/
+    :func:`_event_vlines`), same as growth-division.
+    """
+    from process_bigraph import Composite
+
+    proc_key = next(
+        k for k, v in composite_state.items()
+        if isinstance(v, dict) and v.get("_type") == "process"
+        and "CpmEvolution" in v.get("address", "")
+    )
+
+    comp = Composite({"state": composite_state}, core=core)
+
+    ny, nx = comp.state["fields"]["glucose"].shape
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    glucose_initial = np.asarray(comp.state["fields"]["glucose"]).copy()
+
+    metrics: dict[str, Any] = {
+        "time": [], "mean_vmax": [], "var_vmax": [], "rim_core_ratio": [], "n_cells": [],
+    }
+    raw: list[tuple[np.ndarray, np.ndarray, dict, dict, float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        world = comp.state[proc_key]["instance"].world
+        lattice = np.array(world.snapshot()).reshape(ny, nx)
+        glucose = np.asarray(comp.state["fields"]["glucose"]).copy()
+        obs = comp.state["obs"]
+
+        t = float((tick + 1) * cadence)
+        coms = dict(obs.get("position", {}) or {})
+        vmax_map = {int(k): float(v) for k, v in (obs.get("vmax") or {}).items()}
+
+        raw.append((lattice, glucose, coms, vmax_map, t))
+
+        metrics["time"].append(t)
+        metrics["mean_vmax"].append(float(obs.get("mean_vmax", 0.0)))
+        metrics["var_vmax"].append(float(obs.get("var_vmax", 0.0)))
+        metrics["rim_core_ratio"].append(float(obs.get("rim_core_ratio", 1.0)))
+        metrics["n_cells"].append(float(obs.get("n_cells", 0.0)))
+
+    depletion_vabs = max(
+        (float(np.abs(g - glucose_initial).max()) for _, g, _, _, _ in raw), default=1e-9
+    ) or 1e-9
+
+    # Fixed trait color scale across the whole run (see docstring): the
+    # run's own observed min/max, not a per-frame rescale, so a founder ->
+    # descendant shift reads as a real color change.
+    all_traits = [v for _, _, _, vmap, _ in raw for v in vmap.values()]
+    trait_lo = min(all_traits) if all_traits else 0.0
+    trait_hi = max(all_traits) if all_traits else 1.0
+    if trait_hi <= trait_lo:
+        trait_hi = trait_lo + 1e-6
+
+    events: list[tuple[float, str]] = []
+    prev_n: float | None = None
+    for t, n in zip(metrics["time"], metrics["n_cells"]):
+        if prev_n is not None and n > prev_n:
+            events.append((t, f"division → {int(n)} cells"))
+        prev_n = n
+
+    frames = [
+        _render_evolution_frame(
+            lat, g, glucose_initial, coms, vmap, t, trait_lo, trait_hi, depletion_vabs,
+            "Development & evolution — a trait evolving under selection",
+            event_label=_event_label_for_tick(events, t),
+        )
+        for lat, g, coms, vmap, t in raw
+    ]
+
+    metrics["_panel"] = "evolution"
+    metrics["division_events"] = events
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
 # Sorting (differential-adhesion, two-type checkerboard demixing) frame
 # capture
 # --------------------------------------------------------------------------
@@ -2012,6 +2194,65 @@ def _metrics_panel_gray_scott(metrics: dict[str, list[float]], out_path: Path,
     return "plotly"
 
 
+def _metrics_panel_evolution(metrics: dict[str, Any], out_path: Path,
+                              include_plotlyjs: str | bool) -> str:
+    """Development-and-evolution counterpart of :func:`metrics_panel` for
+    ``run_evolution_frames``' output shape (flat equal-length lists).
+    ``mean_vmax`` (evolution's headline number — the population trait mean
+    rising under selection) gets the primary left-hand axis;
+    ``rim_core_ratio`` (development's headline number — the radial core-vs-
+    rim glucose heterogeneity, starting near 1.0 and growing above it) gets
+    a secondary right-hand axis, same reasoning as
+    ``_metrics_panel_gray_scott``'s ``v_var``/``n_domains`` split. Every
+    division event (``metrics["division_events"]``, the same ``events``
+    convention the GIF frame titles use) is marked with a dashed vertical
+    line via the shared :func:`_event_vlines`. Falls back to a small static
+    HTML table if Plotly is unavailable.
+    """
+    times = metrics.get("time") or []
+    mean_vmax = metrics.get("mean_vmax") or []
+    rim_core_ratio = metrics.get("rim_core_ratio") or []
+    division_events = metrics.get("division_events") or []
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        rows = "".join(
+            f"<tr><td>{t}</td><td>{m}</td><td>{r}</td></tr>"
+            for t, m, r in zip(times, mean_vmax, rim_core_ratio)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr><th>time</th><th>mean_vmax</th>"
+            f"<th>rim_core_ratio</th></tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=mean_vmax, mode="lines+markers", name="mean_vmax",
+                              line=dict(width=2.8, color=_PALETTE[0])))
+    fig.add_trace(go.Scatter(x=times, y=rim_core_ratio, mode="lines+markers", name="rim_core_ratio",
+                              line=dict(width=2.2, color=_PALETTE[1], dash="dot"),
+                              yaxis="y2"))
+
+    fig.update_layout(
+        title=dict(text="<b>development &amp; evolution — synced metrics</b>",
+                    x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis=dict(title="mean_vmax (evolution)", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis2=dict(title="rim_core_ratio (development)", overlaying="y", side="right",
+                    showgrid=False),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
+    )
+    _event_vlines(fig, division_events, times)
+
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
 # Explicit renderer→panel-kind dispatch table (see `metrics_panel`'s
 # docstring): every `run_*_frames` in this module stamps `metrics["_panel"]`
 # with its own kind name, looked up here instead of sniffed from which keys
@@ -2022,6 +2263,7 @@ _METRICS_PANEL_DISPATCH: dict[str, Any] = {
     "colony_compete": _metrics_panel_compete,
     "disintegration": _metrics_panel_disintegration,
     "growth_division": _metrics_panel_growth_division,
+    "evolution": _metrics_panel_evolution,
     "sorting": _metrics_panel_sorting,
     "cahn_hilliard": _metrics_panel_cahn_hilliard,
     "protocell": _metrics_panel_protocell,
