@@ -6,10 +6,10 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
 question: 'When a single cell metabolizes at its own location, does it measurably reshape the very
 
-  nutrient gradient it depends on — niche construction (odling1996) — closing the paper''s
+  nutrient gradient it depends on — environmental modification (local resource depletion + secretion) — closing the paper''s
 
   §Cell–environment coupling sense → metabolize → secrete loop (Fig 5) as real spatial
 
@@ -34,7 +34,7 @@ biological_summary: 'A cell does not merely inhabit its environment — it remak
 
   cell sits in a nutrient gradient, eats at its own location, and secretes a byproduct back into
 
-  the field, measurably reshaping the very gradient it depends on: niche construction (odling1996),
+  the field, measurably reshaping the very gradient it depends on: environmental modification (local resource depletion + secretion),
 
   realized spatially. This is the paper''s §Cell–environment coupling sense → metabolize → secrete
 
@@ -97,17 +97,19 @@ biological_summary: 'A cell does not merely inhabit its environment — it remak
 
   end, nowhere near filling the field. Local footprint glucose peaks at 1.15 (t=2, after diffusion
 
-  briefly outpaces the cell''s own uptake) then falls to 0.94 by t=20, an up-to-~18% local
+  briefly outpaces the cell''s own uptake) then falls to 0.94 by t=20 — ~18% peak-to-trough (the peak
 
-  drawdown as the cell''s own consumption outpaces the partial resupply diffusion provides. Field-wide,
+  at t=2 is created by diffusion inflow after t=0) and ~6% from the initial condition — as the cell''s
+
+  own consumption outpaces the partial resupply diffusion provides. Field-wide,
 
   net glucose falls by about 32 units (5940 -> 5908, out of the field''s full 3600-pixel total
 
   mass) — a small fraction of the whole field, because only the cell''s own footprint and its
 
-  immediate diffusive neighborhood are touched, which is exactly the local, footprint-scale niche
+  immediate diffusive neighborhood are touched, which is exactly the local, footprint-scale
 
-  construction the composite is built to show rather than a field-wide depletion event. Acetate,
+  environmental modification the composite is built to show rather than a field-wide depletion event. Acetate,
 
   starting at zero everywhere, rises to a field-wide total of about 47 by t=20 as the secreted
 
@@ -130,7 +132,9 @@ claim: 'Composing a real CPM cell with a real spatio-flux nutrient field through
 
   -> 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
 
-  up to ~18% before diffusion partially resupplies it (niche construction), and secretes a
+  up to ~18% peak-to-trough (~6% from the initial condition) before diffusion partially resupplies it
+
+  (environmental modification), and secretes a
 
   diffusing acetate plume — two independently-built simulators talking through one typed port.
 
@@ -142,9 +146,11 @@ baseline:
 variants:
 - name: mm-mechanism
   composite: meta_modelers_guide.composites.single-cell-in-a-field-mm
-  description: 'Interface-substitutability twin (this investigation''s demonstration of the paper''s
+  description: 'Interface surrogate-calibration twin (a tuned Michaelis-Menten stand-in — this
 
-    central claim): the flagship with the cell''s INTERNAL metabolism swapped from constraint-based
+    investigation''s test of the paper''s substitutability idea, at the level of surrogate
+
+    calibration): the flagship with the cell''s INTERNAL metabolism swapped from constraint-based
 
     dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped Michaelis–Menten / Monod metabolism
 
@@ -152,11 +158,15 @@ variants:
 
     v = mm_vmax·glc/(mm_km+glc); biomass gain mm_yield·v; acetate overflow mm_overflow·v — a fixed
 
-    overflow fraction standing in for the dFBA''s O2-cap-driven mixed-acid overflow. The MM params
+    overflow fraction standing in for the dFBA''s O2-cap-driven mixed-acid overflow. The 4 MM params
 
     (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) are TUNED so the interface-level
 
-    observables track the dFBA flagship; they are not derived from the dFBA solution.'
+    observables track the dFBA flagship (4 knobs fit to ~4 interface observables); they are not
+
+    derived from the dFBA solution. This is surrogate calibration, not yet mechanism-independence —
+
+    a held-out condition neither mechanism was tuned on is the named next step.'
   params:
     mechanism: mm
     mm_vmax: 4.0
@@ -191,6 +201,17 @@ key_assumptions:
   variant; the flagship cell senses, metabolizes, grows, and secretes, but does not chemotax —
   its modest position drift over the run (roughly (17,17) seed to about (18.7, 30.3) by t=20) is
   CPM thermal fluctuation under the configured temperature, not directed motion.
+acceptance_criteria:
+- A cell metabolizing at its footprint should end with more biomass than it started — growth under nutrients.
+- Under an O2 cap, overflow metabolism should secrete acetate ( > 0 ); lifting the cap should remove that secretion (uncapped acetate ≈ 0).
+- The metabolizing cell should be a net sink on the shared field — total glucose should fall below its initial value.
+- Per-species field mass should be conserved — initial mass plus every writer's reported net exchange should equal final mass.
+units_and_time:
+  time: 1 tick = unspecified physical time (dimensionless model time); runs are bounded to ~20-25 ticks.
+  quantities: glucose/acetate field values, biomass, and CPM lattice volume (px) are dimensionless model units. box_volume_L, glucose_km/glucose_vmax and the field concentrations are hand-tuned toy-real magnitudes, not calibrated to mM or to a named medium.
+external_anchors:
+- 'acetate yield under overflow ≈ 0.3-0.5 mol acetate / mol glucose (order-of-magnitude anchor, not a calibration target).'
+- 'glucose uptake ≈ 10 mmol/gDW/hr (E. coli aerobic) (order-of-magnitude anchor, not a calibration target).'
 behavior_tests:
 - name: cell-metabolizes-and-grows
   classification: primary
@@ -202,9 +223,12 @@ behavior_tests:
     path: obs.biomass
     expr: last(obs.biomass)
   pass_if:
+    kind: acceptance_criterion
     op: '>'
     value: 0.1
-    provenance: 'over 20 ticks, biomass 0.1 -> ~0.37 (tests/test_flagship_field.py::test_flagship_sense_act_loop;
+    provenance: 'prior: a cell metabolizing at its footprint should end with more biomass than its
+      0.1 seed (growth under nutrients) → expect final biomass > 0.1. Observed over 20 ticks:
+      biomass 0.1 -> ~0.37 (tests/test_flagship_field.py::test_flagship_sense_act_loop;
       tests/test_cpm_cell_field.py::test_cell_metabolizes_grows_and_reshapes_field asserts the
       same pattern on a smaller 40x40 grid over 12 ticks)'
   requires_simulation: single-cell-in-a-field
@@ -217,10 +241,11 @@ behavior_tests:
     path: obs.volume
     expr: last(obs.volume)
   pass_if:
+    kind: regression_pin
     op: '>'
     value: 40.0
-    provenance: 'CPM volume 32 -> 110 px over 20 ticks (~3.4x), ~3% of the 60x60=3600px lattice
-      (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
+    provenance: 'pin set after the run — CPM volume 32 -> 110 px over 20 ticks (~3.4x), ~3% of the
+      60x60=3600px lattice; 40 px is a floor above the 32 px seed (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
   requires_simulation: single-cell-in-a-field
 - name: acetate-secreted-and-diffuses
   classification: primary
@@ -232,11 +257,13 @@ behavior_tests:
     path: fields.acetate
     expr: sum(fields.acetate)
   pass_if:
+    kind: acceptance_criterion
     op: '>'
     value: 0.0
-    provenance: 'field-wide acetate 0 -> ~47.0 over 20 ticks, spreading into a plume around the
-      cell''s footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the plume
-      is the third panel of the baked GIF)'
+    provenance: 'prior: overflow metabolism under an O2 cap secretes acetate → expect field-wide
+      acetate > 0. Observed: field-wide acetate 0 -> ~47.0 over 20 ticks, spreading into a plume
+      around the cell''s footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the
+      plume is the third panel of the baked GIF)'
   requires_simulation: single-cell-in-a-field
 - name: net-glucose-consumed
   classification: primary
@@ -247,12 +274,15 @@ behavior_tests:
     path: fields.glucose
     expr: sum(fields.glucose)
   pass_if:
+    kind: acceptance_criterion
     op: <
     value: 5940.0
-    provenance: 'field-wide glucose total 5940.0 -> ~5908.4 over 20 ticks (~32 units net consumed);
-      the local footprint drawdown is much sharper (up to ~18%) than the field-wide total because
-      only the cell''s footprint and its immediate diffusive neighborhood are touched
-      (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
+    provenance: 'prior: a metabolizing cell is a net sink on the shared field → expect total glucose
+      to fall below its 5940.0 initial. Observed: field-wide glucose total 5940.0 -> ~5908.4 over 20
+      ticks (~32 units net consumed); the local footprint drawdown is much sharper — ~18%
+      peak-to-trough (the peak is created by diffusion inflow after t=0) and ~6% from the initial
+      condition — than the field-wide total, because only the cell''s footprint and its immediate
+      diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
   requires_simulation: single-cell-in-a-field
 - name: o2-cap-forces-acetate-overflow
   classification: diagnostic
@@ -273,11 +303,14 @@ behavior_tests:
     path: fields.acetate
     expr: sum(fields.acetate) with oxygen uncapped vs capped
   pass_if:
+    kind: acceptance_criterion
     op: approx_equal
     value: 0.0
-    provenance: 'field-wide acetate over 20 ticks: capped flagship 0 -> ~47.0, O2-uncapped 0 -> 0.0
-      (exactly), a >100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully
-      instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow;
+    provenance: 'prior: lifting the O2 cap removes the overflow driver, so unconstrained e_coli_core
+      respires fully → expect uncapped acetate ≈ 0. Observed field-wide acetate over 20 ticks: capped
+      flagship 0 -> ~47.0, O2-uncapped 0 -> 0.0 (exactly), a >100x collapse; uncapped biomass ~2.35 vs
+      capped ~0.37 (the cell respires fully instead of overflowing)
+      (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow;
       composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json)'
   requires_simulation: single-cell-in-a-field-o2uncapped
 - name: field-mass-balance-closes
@@ -298,6 +331,7 @@ behavior_tests:
     path: fields.glucose, fields.acetate
     expr: abs(final_mass - (initial_mass + Σ writer_net_exchange)) per species
   pass_if:
+    kind: regression_pin
     op: <
     value: 1.0e-06
     provenance: 'both glucose and acetate ledgers close to < 1e-6 over 15 ticks; cell net glucose
@@ -307,30 +341,34 @@ behavior_tests:
   requires_simulation: single-cell-in-a-field
 - name: interface-substitutable-across-mechanisms
   classification: primary
-  description: 'The paper''s central thesis, run: two DIFFERENT internal metabolisms — constraint-based
+  description: 'Surrogate calibration of the paper''s substitutability idea: a tuned Michaelis-Menten
 
-    dynamic-FBA (cobra e_coli_core, O2-capped) and a lumped, cobra-free Michaelis–Menten / Monod
+    twin (cobra-free) is fit to reproduce the dFBA flagship''s cell↔field interface observables
 
-    metabolism (`single-cell-in-a-field-mm`) — realize the SAME coarse-grained cell↔field interface
+    behind the byte-identical `CpmCellField` ports. The MM twin''s 4 free params are TUNED to preserve
 
-    behind the byte-identical `CpmCellField` ports. Tuned to preserve the interaction variables, the
+    the interaction variables (4 knobs fit to ~4 observables), so its interface-level observables
 
-    MM twin''s interface-level observables (final biomass, total acetate secreted, CPM volume, net
+    (final biomass, total acetate secreted, CPM volume, net glucose depletion) agree with the dFBA
 
-    glucose depletion) agree with the dFBA flagship within ~10% (all four within a 30% tolerance).'
+    flagship within ~10% (all four within a 30% tolerance). This is surrogate calibration, not yet
+
+    mechanism-independence — a held-out condition neither mechanism was tuned on is the named next step.'
   measure:
     kind: observable
     path: obs.biomass, obs.volume, fields.acetate, fields.glucose
     expr: per-observable abs(dFBA - MM) / dFBA over a 20-tick run
   pass_if:
+    kind: regression_pin
     op: <
     value: 0.30
     provenance: 'over 20 ticks (tests/test_substitutability.py::test_interface_observables_substitutable):
       biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 (10%), field-wide acetate 47.02 vs
       47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — every interface observable within ~10%;
-      the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the substitutability
-      payoff. MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to match,
-      not derived from the dFBA solution.'
+      the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the surrogate-model
+      payoff. The 4 MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to
+      match (4 knobs fit to ~4 observables), not derived from the dFBA solution; a held-out sub-range
+      neither was tuned on is the named next step.'
   requires_simulation: single-cell-in-a-field-mm
 runs:
 - name: single-cell-in-a-field
@@ -356,7 +394,8 @@ runs:
       detail: field-wide acetate 0 -> ~47.0 as the plume spreads
     NET-GLUCOSE-CONSUMED:
       result: PASS
-      detail: field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown up to ~18%
+      detail: field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown ~18% peak-to-trough
+        (~6% from initial)
 - name: single-cell-in-a-field-o2uncapped
   composite: single-cell-in-a-field-o2uncapped
   emitter: RAMEmitter
@@ -378,8 +417,8 @@ runs:
   emitter: RAMEmitter
   id: single-cell-in-a-field-mm
   status: completed
-  provenance: 'Interface-substitutability twin (this investigation''s demonstration of the paper''s
-    §2 / §Cellular interface central claim): meta_modelers_guide/composites/single-cell-in-a-field-mm.composite.json
+  provenance: 'Interface surrogate-calibration twin (a tuned MM stand-in testing the paper''s
+    §2 / §Cellular interface substitutability idea at the level of surrogate calibration): meta_modelers_guide/composites/single-cell-in-a-field-mm.composite.json
     — identical to the flagship except the cell''s internal metabolism is swapped from dFBA to a
     lumped, cobra-free Michaelis–Menten metabolism (mechanism: mm) behind the byte-identical
     CpmCellField ports — run 20 ticks through the process-bigraph engine head-to-head with the dFBA
@@ -395,8 +434,8 @@ runs:
     INTERFACE-SUBSTITUTABLE-ACROSS-MECHANISMS:
       result: PASS
       detail: 'dFBA vs MM over 20 ticks: biomass 0.370 vs 0.342 (7.5%), CPM volume 110 vs 99 (10%),
-        field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — same
-        coarse-grained interface from two different internal organizations'
+        field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — a tuned
+        surrogate reproduces the coarse-grained interface (held-out test pending)'
 findings:
 - id: F-01
   kind: biological
@@ -428,11 +467,13 @@ findings:
   status: confirms
   statement: 'The cell measurably depletes the local nutrient it senses before diffusion partially
 
-    resupplies it — niche construction as a direct spatial-metabolic consequence, not a scripted
+    resupplies it — environmental modification as a direct spatial-metabolic consequence, not a scripted
 
     trajectory. Confirmed: local footprint glucose concentration peaks at 1.15 (t=2) and falls to
 
-    0.94 by t=20, an up-to-~18% local drawdown, while the field-wide glucose total falls by only
+    0.94 by t=20 — ~18% peak-to-trough (the peak is created by diffusion inflow after t=0) and ~6%
+
+    from the initial condition — while the field-wide glucose total falls by only
 
     ~32 of 5940 units — the depletion signature is sharply local to the cell''s own footprint and
 
@@ -440,7 +481,7 @@ findings:
   evidence:
     from_test: net-glucose-consumed
     from_run: single-cell-in-a-field
-    observed: local footprint glucose 1.15 -> 0.94 (peak-to-trough, ~18%); field-wide glucose
+    observed: local footprint glucose 1.15 -> 0.94 (~18% peak-to-trough, ~6% from initial); field-wide glucose
       5940.0 -> ~5908.4
   provenance:
     run_ids:
@@ -490,9 +531,13 @@ findings:
   kind: methodological
   tier: mechanism
   status: confirms
-  statement: 'INTERFACE SUBSTITUTABILITY — this investigation''s demonstration of the paper''s central
+  statement: 'INTERFACE SURROGATE CALIBRATION — a tuned Michaelis-Menten twin reproduces the
 
-    claim. The paper (§2 / §Cellular interface) argues that "this substitutability is not only a
+    flagship''s cell↔field interface observables, this investigation''s test of the paper''s
+
+    substitutability idea at the level of surrogate calibration. The paper (§2 / §Cellular interface)
+
+    argues that "this substitutability is not only a
 
     software convenience. It allows the interface itself to become the object of comparison:
 
@@ -500,31 +545,37 @@ findings:
 
     internal organizations may sometimes be represented through the same coarse-grained interface
 
-    when they preserve the interaction variables relevant to that description." Here that claim is
+    when they preserve the interaction variables relevant to that description." Here that idea is
 
-    run: the flagship cell''s INTERNAL metabolism is swapped from constraint-based dynamic-FBA (cobra
+    put to a first test: the flagship cell''s INTERNAL metabolism is swapped from constraint-based
 
-    e_coli_core, O2-capped) to a lumped, cobra-free Michaelis–Menten / Monod metabolism
+    dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis–Menten / Monod metabolism
 
     (`single-cell-in-a-field-mm`, `mechanism: mm`) behind the BYTE-IDENTICAL `CpmCellField` ports,
 
-    and the interface-level observables are compared head-to-head. Confirmed: over 20 ticks the two
+    and the interface-level observables are compared head-to-head. Confirmed: over 20 ticks the tuned
 
-    different internal organizations realize the same coarse-grained cell↔field interface — final
+    MM twin reproduces the coarse-grained cell↔field interface — final
 
     biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 px (10%), total acetate secreted
 
     47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 units (6.2%); every interface observable
 
-    agrees within ~10%. The MM twin additionally runs with NO cobra at all — the substitutability
+    agrees within ~10%. The MM twin additionally runs with NO cobra at all — the surrogate-model
 
-    payoff, a mechanism that runs where the original could not. Stated honestly: the MM params
+    payoff, a mechanism that runs where the original could not. This is surrogate calibration, not yet
+
+    mechanism-independence: the 4 MM params
 
     (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were TUNED to preserve the interaction
 
-    variables — the claim is "same coarse-grained relation", not identical internals, and not a
+    variables (4 knobs fit to ~4 observables) — the claim is "a tuned surrogate matches the coarse-grained
 
-    derivation of MM from the dFBA solution.'
+    relation across the tested run", not identical internals, and not a
+
+    derivation of MM from the dFBA solution. A held-out condition neither mechanism was tuned on is the
+
+    named next step that would upgrade this from surrogate calibration to mechanism-independence.'
   evidence:
     from_test: interface-substitutable-across-mechanisms
     from_run: single-cell-in-a-field-mm
@@ -547,7 +598,7 @@ conclusion_verdicts:
     result: PASS
     basis: 'All four primary behavior tests pass on measured readouts from a real 20-tick run — the
       cell metabolizes and grows (biomass, CPM volume), depletes its own local nutrient before
-      diffusion resupplies it (niche construction), and secretes a diffusing acetate plume — and
+      diffusion resupplies it (environmental modification), and secretes a diffusing acetate plume — and
       the two foundational controls hold. The O2-uncapped control demonstrates the overflow is
       caused by the O2 cap (uncapped acetate ~0), and the closed field mass-balance ledger closes
       to < 1e-6 for glucose and acetate.'
@@ -560,9 +611,9 @@ conclusion_verdicts:
       one interface neither framework was built with the other in mind for.
 conclusion: '## Claims
 
-  - A single cell reshapes the very nutrient gradient it depends on — niche construction
+  - A single cell reshapes the very nutrient gradient it depends on — environmental modification
 
-    (odling1996), realized spatially. Composing a real CPM cell with a real spatio-flux nutrient
+    (local resource depletion + secretion), realized spatially. Composing a real CPM cell with a real spatio-flux nutrient
 
     field through one typed coupling process (`CpmCellField`) reproduces the paper''s
 
@@ -574,9 +625,11 @@ conclusion: '## Claims
 
     Over 20 ticks the cell grows ~3.4x in CPM volume (32 -> 110 px, ~3% of a 60x60 lattice it does
 
-    not come close to filling), depletes its own local glucose by up to ~18% before diffusion
+    not come close to filling), depletes its own local glucose by ~18% peak-to-trough (~6% from the
 
-    partially resupplies it (niche construction), and secretes a diffusing acetate plume from an
+    initial condition) before diffusion partially resupplies it (environmental modification), and
+
+    secretes a diffusing acetate plume from an
 
     O2-capped dynamic-FBA overflow mechanism.
 
@@ -591,9 +644,9 @@ conclusion: '## Claims
 
   - **ACETATE-SECRETED-AND-DIFFUSES** — field-wide acetate 0 -> ~47.0 as the plume spreads
 
-  - **NET-GLUCOSE-CONSUMED** — field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown up
+  - **NET-GLUCOSE-CONSUMED** — field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown
 
-    to ~18%
+    ~18% peak-to-trough (~6% from initial)
 
   - **O2-CAP-FORCES-ACETATE-OVERFLOW** (foundational control) — O2-uncapped acetate 0 -> 0.0
 
@@ -695,7 +748,7 @@ visualizations:
 
     depletion (Δ from t=0) on a diverging blue/red scale centered at zero — blue where the cell
 
-    has net-consumed glucose relative to the initial condition (the niche-construction halo
+    has net-consumed glucose relative to the initial condition (the environmental-modification halo
 
     forming around the cell''s footprint), red where diffusion has net-resupplied a cell; (right)
 
@@ -710,7 +763,7 @@ visualizations:
     chart: image
     caption: 'Glucose (with footprint + COM) | glucose depletion halo (Δ from t=0) | acetate
 
-      plume, over the 20-tick flagship run. The middle panel is the direct niche-construction
+      plume, over the 20-tick flagship run. The middle panel is the direct environmental-modification
 
       signal: the cell measurably reshapes the very gradient it depends on.'
 - name: single-cell-in-a-field-metrics
@@ -746,16 +799,18 @@ experiment: 'Run `single-cell-in-a-field.composite.json` — a real CPM cell (vi
 
   metabolizes (dynamic-FBA against `e_coli_core`, O2-capped to force acetate overflow), grows
 
-  (both biomass and CPM lattice volume), depletes the local nutrient it senses (niche
+  (both biomass and CPM lattice volume), depletes the local nutrient it senses (environmental
 
-  construction), and secretes a diffusing acetate plume.
+  modification), and secretes a diffusing acetate plume.
 
   '
 result: 'Over 20 ticks the cell grows ~3.4x in CPM volume (32 -> 110 px, ~3% of a 60x60 lattice it
 
-  does not fill), depletes its own local glucose by up to ~18% before diffusion partially
+  does not fill), depletes its own local glucose by ~18% peak-to-trough (~6% from the initial
 
-  resupplies it, and secretes a diffusing acetate plume (field-wide acetate 0 -> ~47.0) from an
+  condition) before diffusion partially resupplies it, and secretes a diffusing acetate plume
+
+  (field-wide acetate 0 -> ~47.0) from an
 
   O2-capped dynamic-FBA overflow mechanism — demonstrated to be O2-cap-caused by an uncapped
 

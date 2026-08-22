@@ -6,7 +6,14 @@ created: '2026-08-22'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
+units_and_time:
+  tick: 1 tick = unspecified physical time (dimensionless model time); the runs are 45 ticks.
+  quantities: rim_core_ratio, mean_vmax, var_vmax, n_cells, and the shared glucose field are dimensionless model units on a 60x60 lattice. vmax0=1.5, mut_sigma=0.3, vol_threshold=80, reset_target=40 are dimensionless model magnitudes -- not calibrated mM or physical rates.
+acceptance_criteria:
+- DEVELOPMENT -- a growing colony on a shared depleting glucose field should form core-vs-rim physiological heterogeneity, so the radial rim-core glucose ratio should rise above 1.0 (core more depleted than rim).
+- EVOLUTION -- if a heritable glucose-uptake trait feeds each cell''s own dFBA uptake, selection through differential division should shift the population-mean trait UP relative to the no-selection and no-mutation controls.
+- The no-mutation control (trait cannot vary) should stay exactly at the founder value with zero variance, and the no-selection control (trait mutates but confers no fitness) should drift undirected -- so a directional up-shift should appear only in the selection-ON arm.
 question: 'The paper''s §Development and evolution section (Fig 10c-f) extends the interface idea
   across time: individual cellular interfaces become embedded in a COLLECTIVE interface defined
   by shared state -- a growing colony develops physiological heterogeneity (a depleted core
@@ -16,9 +23,9 @@ question: 'The paper''s §Development and evolution section (Fig 10c-f) extends 
   growing CPM colony on a shared depleting glucose field form emergent core-vs-rim heterogeneity
   (DEVELOPMENT), and does a heritable per-cell glucose-uptake trait (vmax) shift its population
   mean UP under shared-field selection (EVOLUTION) -- and, crucially, is that directional shift
-  caused by SELECTION rather than mutation alone? The load-bearing design is a DUAL control:
+  caused by SELECTION rather than mutation alone? The design is a DUAL control:
   against the selection-ON colony, a no-mutation arm (the trait cannot vary) and a no-selection
-  arm (the trait mutates but confers no fitness) isolate selection as the cause. This study
+  arm (the trait mutates but confers no fitness) test whether selection, not mutation or drift, drives it. This study
   REUSES study 8''s dividing colony (`growth-and-division`, `CpmGrowthDivision`) unchanged
   and adds ONLY one heritable coupling parameter -- the paper''s claim that the interfaces and
   couplings are themselves evolvable features of organization, made concrete by making one
@@ -44,7 +51,10 @@ biological_summary: 'The paper''s §Development and evolution section (Fig 10c-f
   of a 45-tick run -- the core is measurably more depleted than the rim. Nothing imposes this: it
   is the same shared-field mass-balance that produced study 8''s division desync, now read as a
   spatial gradient -- physiological heterogeneity EMERGING from shared-field competition
-  (stewart2008/flemming2016 biofilm physiological heterogeneity), not a patterning program.
+  (stewart2008/flemming2016 biofilm physiological heterogeneity), not a patterning program. The
+  1.0 -> ~1.44 rim-core trajectory is a SINGLE-SEED reading (the flagship seed 3); a 5-seed band with
+  per-cell scatter is the named next step (Tier C, deferred), so the gradient''s magnitude is
+  illustrative, not an ensemble result.
 
 
   EVOLUTION -- one heritable trait, selected on the shared field. Each cell carries a heritable
@@ -56,29 +66,34 @@ biological_summary: 'The paper''s §Development and evolution section (Fig 10c-f
   and so its trait proliferates -- selection through DIFFERENTIAL DIVISION on the shared depleting
   field, not an externally-imposed fitness function. Measured across seeds 1-5 (45 ticks, founder
   vmax0=1.5): the population mean `vmax` shifts UP in 4/5 seeds (delta range [-0.116, +0.700], mean
-  +0.221), with one seed reversing -- reported honestly as a fraction, not "always."
+  +0.221), with one seed reversing -- reported as a fraction, not "always."
 
 
-  THE DUAL CONTROL isolates selection as the cause. Two negative controls, each identical to the
-  selection-ON colony but for one flag. NO-MUTATION (`mutate: false`, a BOOLEAN flag -- never a
-  `mut_sigma: 0.0` float override, which bigraph_schema silently drops): the trait cannot vary, so
-  the population mean stays EXACTLY the founder value 1.500 with zero variance in every seed (0/5
-  shift) -- no raw material for selection to act on. NO-SELECTION (`selection: false`): the trait
-  still mutates (`var_vmax > 0`, raw variance builds) but every cell''s dFBA uses the fixed founder
-  vmax0 regardless of its own trait, so the trait confers no fitness -- the mean drifts UNDIRECTED
-  (up in only 2/5 seeds, mean delta -0.039, near zero). Only the selection-ON arm shifts the mean
-  directionally (4/5). Mutation alone (no-selection) does not; the absence of variation
-  (no-mutation) cannot: the directional trait shift is CAUSED by selection.
+  THE DUAL CONTROL points to selection as the driver, though the sample is under-powered. Two
+  negative controls, each identical to the selection-ON colony but for one flag. NO-MUTATION
+  (`mutate: false`, a BOOLEAN flag -- never a `mut_sigma: 0.0` float override, which bigraph_schema
+  silently drops): the trait cannot vary, so the population mean stays EXACTLY the founder value 1.500
+  with zero variance in every seed (0/5 shift) -- no raw material for selection to act on.
+  NO-SELECTION (`selection: false`): the trait still mutates (`var_vmax > 0`, raw variance builds) but
+  every cell''s dFBA uses the fixed founder vmax0 regardless of its own trait, so the trait confers no
+  fitness -- the mean drifts UNDIRECTED (up in only 2/5 seeds, mean delta -0.039, near zero). The
+  selection-ON arm shifts the mean up in 4/5 seeds while the no-selection arm does so in only 2/5 --
+  a pattern CONSISTENT WITH selection, not proof of it: with n=5 seeds, 4/5 vs 2/5 is not statistically
+  significant, so this points to selection as the driver but does not establish it. A drift-null
+  ensemble at >=20 seeds with a rank test, and re-gating on that ensemble statistic rather than the
+  flagship seed 3, is the named next step (Tier C, deferred). The absence of variation in the
+  no-mutation arm (0/5) shows heritable variation is necessary; the directional up-shift being present
+  only under selection is consistent with selection being the driver.
 
 
-  What is honestly demonstrated, and what is not. FIRST, this is a strict UPGRADE over the
+  What is demonstrated, and what is not. FIRST, this is a strict UPGRADE over the
   non-spatial study 9: real heritable variation and real fitness-based selection (differential
   division on a shared field) replace that study''s empty variation handler and fixed-constant
   ODE. SECOND, the two halves pull the same knob: both development heterogeneity and evolution
   intensify with stronger field depletion, and the colony saturates its own footprint on the
   60x60 lattice by roughly generation 4-6, so both are demonstrated within that bounded window --
   a larger grid or a leaner field would run more generations and sharpen the gradient, at the cost
-  of the same crowding that drives the heterogeneity. Stated plainly rather than glossed. THIRD,
+  of the same crowding that drives the heterogeneity. THIRD,
   the scope is a TOY evo-devo: DEVELOPMENT here is shared-field-driven core/rim physiological
   heterogeneity, NOT morphogenesis, signalling, or a genetic patterning program; EVOLUTION is ONE
   scalar heritable trait under resource selection, NOT genome or regulatory-network evolution and
@@ -90,17 +105,21 @@ claim: 'The paper''s §Development and evolution section (Fig 10c-f) holds as a 
   the real dividing CPM colony, REUSING study 8''s `CpmGrowthDivision` unchanged and adding only a
   heritable per-cell coupling parameter. DEVELOPMENT: a growing colony on a shared depleting
   glucose field forms emergent core-vs-rim physiological heterogeneity -- the radial rim-core
-  glucose ratio grows from 1.0 to ~1.44 over 45 ticks (core more depleted than rim), a collective
-  interface not imposed but emerging from shared-field competition. EVOLUTION: a heritable
-  glucose-uptake trait (vmax) shifts its population mean UP under shared-field selection in 4/5
-  seeds (delta range [-0.116, +0.700], mean +0.221; one seed reverses -- the honest multi-seed
-  result). A DUAL control isolates the cause: the no-mutation control stays exactly at the founder
-  value with zero variance (0/5 seeds, no raw material), and the no-selection control mutates
-  (var > 0) but drifts undirected (2/5 up, mean -0.039). Only selection-ON shifts the mean
-  directionally, so the trait shift is CAUSED by selection -- operating via differential division
-  on the shared field (higher-vmax cells grow/divide more, so their trait proliferates), not by
-  mutation alone. The honest boundaries are stated as findings: the development and evolution
-  halves pull the same field-depletion knob and both saturate within the ~gen 4-6 crowding window;
+  glucose ratio grows from 1.0 to ~1.44 over 45 ticks (core more depleted than rim, a single-seed
+  reading on the flagship seed 3; a 5-seed band is the named next step), a collective interface not
+  imposed but emerging from shared-field competition. EVOLUTION: a heritable glucose-uptake trait
+  (vmax) shifts its population mean UP under shared-field selection in 4/5 seeds (delta range
+  [-0.116, +0.700], mean +0.221; one seed reverses -- the multi-seed result). A DUAL control points
+  to selection: the no-mutation control stays exactly at the founder value with zero variance (0/5
+  seeds, no raw material), and the no-selection control mutates (var > 0) but drifts undirected (2/5
+  up, mean -0.039). The directional up-shift appears only under selection (4/5 vs 2/5), a pattern
+  CONSISTENT WITH selection operating via differential division on the shared field (higher-vmax
+  cells grow/divide more, so their trait proliferates) -- but with n=5 seeds 4/5 vs 2/5 is not
+  statistically significant, so this points to selection as the driver without establishing it; a
+  drift-null at >=20 seeds with a rank test, and re-gating on that ensemble statistic rather than
+  the flagship seed 3, is the named next step. The committed gate currently evaluates the flagship
+  seed 3. The boundaries are stated as findings: the development and evolution halves pull the same
+  field-depletion knob and both saturate within the ~gen 4-6 crowding window;
   the scope is a toy evo-devo (development = shared-field core/rim heterogeneity, NOT
   morphogenesis; evolution = one scalar trait under resource selection, NOT genome evolution;
   facilitated variation -- evolving the ports/couplings themselves -- is a named deferral).'
@@ -137,7 +156,7 @@ key_assumptions:
   glucose, grows faster, crosses `vol_threshold` sooner, divides more, and its trait proliferates
   -- selection through DIFFERENTIAL DIVISION on the shared depleting field. The trait shift and the
   fact that selected populations reach more cells are the SAME mechanism (selection acting through
-  division rate), not two independent findings -- stated plainly.'
+  division rate), not two independent findings.'
 - 'The DUAL control isolates selection, and both controls are built to avoid two verified config
   traps. NO-MUTATION is a BOOLEAN flag (`mutate: false`), never a `mut_sigma: 0.0` float override
   -- bigraph_schema silently drops a `0.0` float override (schema default retained), so a
@@ -150,7 +169,7 @@ key_assumptions:
   `seed` config is threaded into BOTH the CPM potts spec (world construction -- the base process
   hardcodes `potts.seed=1`, so without this every "different seed" replays one Metropolis
   trajectory) AND the mutation RNG. Across seeds 1-5, selection-ON shifts the mean up in 4/5 seeds
-  (one reverses); the reported 4/5 is the honest result, following the multi-seed convention
+  (one reverses); the reported 4/5 is the result, following the multi-seed convention
   established on `cell-cell-coupling` (`tests/test_cellcell_multiseed.py`).'
 - 'The two halves pull the SAME knob (field depletion), and the demonstration is bounded by
   crowding. Both development heterogeneity and evolution intensify with stronger field depletion,
@@ -182,8 +201,12 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 1.2
-    provenance: 'rim_core_ratio grows 1.0 (5 ticks) -> ~1.44 (45 ticks) on the flagship seed 3;
-      loose 1.2 floor (not the exact 1.44) so the bound is not a golden-value pin
+    kind: acceptance_criterion
+    provenance: 'prior -- a growing colony on a shared depleting field should form core-vs-rim
+      heterogeneity, so rim_core_ratio should rise above 1.0 (core more depleted than rim); the 1.2 floor
+      is a loose pin on that a-priori direction (not the exact 1.44). Confirmed -- rim_core_ratio grows
+      1.0 (5 ticks) -> ~1.44 (45 ticks) on the flagship seed 3. SINGLE-SEED (flagship seed 3); a 5-seed
+      band + per-cell scatter is the named next step (Tier C)
       (tests/test_dev_evo_regime.py::test_development_heterogeneity_emerges,
       tests/test_cpm_evolution.py::test_rim_core_ratio_shows_heterogeneity)'
   requires_simulation: development-evolution-spatial
@@ -192,7 +215,7 @@ behavior_tests:
   description: 'EVOLUTION: under selection (trait feeds dFBA uptake, mutation ON), the population
     mean `vmax` ends clearly above the founder value -- selection through differential division on
     the shared depleting field. Reported as a multi-seed fraction: UP in 4/5 seeds (delta range
-    [-0.116, +0.700], mean +0.221), one seed reversing -- the honest stochastic result.'
+    [-0.116, +0.700], mean +0.221), one seed reversing -- the multi-seed stochastic result.'
   measure:
     kind: observable
     path: obs.mean_vmax
@@ -200,9 +223,14 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 1.6
-    provenance: 'flagship seed 3: mean_vmax 1.500 -> 2.200 (+0.700); multi-seed (seeds 1-5)
-      UP in 4/5, range [-0.116, +0.700], mean +0.221 -- asserted as a fraction, not per-seed
-      (tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection,
+    kind: acceptance_criterion
+    provenance: 'prior -- if the heritable trait feeds each cell''s dFBA uptake, selection through
+      differential division should shift the population-mean vmax UP above the founder 1.5; expect
+      mean_vmax > 1.6. Confirmed on the flagship seed 3: mean_vmax 1.500 -> 2.200 (+0.700); multi-seed
+      (seeds 1-5) UP in 4/5, range [-0.116, +0.700], mean +0.221 -- reported as a fraction, not per-seed.
+      The committed gate currently evaluates the flagship seed 3; with n=5 the 4/5-vs-2/5 contrast is not
+      statistically significant, so re-gating on a >=20-seed ensemble statistic is the named next step
+      (Tier C) (tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection,
       tests/test_cpm_evolution.py::test_selection_shifts_mean_vmax_up,
       tests/test_cpm_evolution_spike.py::test_selection_shifts_mean_trait_up)'
   requires_simulation: development-evolution-spatial
@@ -220,9 +248,11 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 0.0
-    provenance: 'seed 3 spike: across 69 division events |child-parent| max ~0.997 (~3.3 sigma),
-      mean ~0.252 (~0.85 sigma = E|N(0,0.3)|), 99% within 3 sigma; var_vmax builds > 0 only when
-      mutation is on (tests/test_cpm_evolution_spike.py::test_trait_inheritance_within_3_sigma,
+    kind: regression_pin
+    provenance: 'wiring-correctness diagnostic (var_vmax > 0 confirms mutation reaches the trait). seed 3
+      spike: across 69 division events |child-parent| max ~0.997 (~3.3 sigma), mean ~0.252 (~0.85 sigma =
+      E|N(0,0.3)|), 99% within 3 sigma; var_vmax builds > 0 only when mutation is on
+      (tests/test_cpm_evolution_spike.py::test_trait_inheritance_within_3_sigma,
       tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection)'
   requires_simulation: none
 - name: no-mutation-control-static
@@ -240,8 +270,13 @@ behavior_tests:
   pass_if:
     op: ==
     value: 1.5
-    provenance: 'mutate=false: mean_vmax == 1.500 exactly and var_vmax == 0.0 in every seed 1-5
-      (0/5 shift) -- the BOOLEAN-flag control that genuinely reaches the process
+    kind: acceptance_criterion
+    deterministic_pin: true
+    provenance: 'prior -- with the trait unable to vary (mutate=false), there is no raw material for
+      selection, so the population mean should stay exactly at the founder 1.500 with zero variance.
+      Confirmed -- mutate=false: mean_vmax == 1.500 exactly and var_vmax == 0.0 in every seed 1-5 (0/5
+      shift) -- the BOOLEAN-flag control that genuinely reaches the process. The == 1.500 is exact
+      because no mutation occurs (a deterministic pin) -- exact only while the engine build is fixed
       (tests/test_dev_evo_regime.py::test_no_mutation_control_is_static,
       tests/test_cpm_evolution.py::test_no_mutation_control_is_static,
       tests/test_cpm_evolution_spike.py::test_no_mutation_control_is_static)'
@@ -262,8 +297,13 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 0.0
-    provenance: 'selection=false: var_vmax > 0 (still mutates) but the mean drifts undirected --
-      UP in 2/5 seeds, delta range [-0.270, +0.112], mean -0.039 (vs selection-ON 4/5, +0.221)
+    kind: acceptance_criterion
+    provenance: 'prior -- with selection off but mutation on, the trait should still mutate (var_vmax > 0)
+      while conferring no fitness, so the mean should drift undirected rather than shifting up. Confirmed
+      -- selection=false: var_vmax > 0 (still mutates) but the mean drifts undirected -- UP in 2/5 seeds,
+      delta range [-0.270, +0.112], mean -0.039 (vs selection-ON 4/5, +0.221). The committed gate asserts
+      only var_vmax > 0; the 2/5 undirected drift is the reported (ungated) contrast, and with n=5 the
+      4/5-vs-2/5 gap is not statistically significant
       (tests/test_dev_evo_regime.py::test_no_selection_control_does_not_directionally_shift)'
   requires_simulation: development-evolution-no-selection
 runs:
@@ -326,11 +366,12 @@ findings:
   statement: 'DEVELOPMENT holds spatially: a growing CPM colony on a shared depleting glucose field
     forms EMERGENT core-vs-rim physiological heterogeneity -- the radial rim-core glucose ratio
     (`rim_core_ratio`) grows from 1.0 (few cells, no readable gradient) to ~1.44 over a 45-tick run,
-    the core measurably more depleted than the rim. Each cell''s individual glucose interface
-    becomes embedded in a COLLECTIVE interface defined by the shared field (the paper''s
-    §Development and evolution section, Fig 10c-d). Nothing imposes the structure -- it is the same
-    shared-field mass-balance that drove study 8''s division desync, read radially (stewart2008/
-    flemming2016 biofilm physiological heterogeneity).'
+    the core measurably more depleted than the rim. This is a SINGLE-SEED reading (the flagship seed 3);
+    a 5-seed band with per-cell scatter is the named next step (Tier C), so the ~1.44 magnitude is
+    illustrative, not an ensemble result. Each cell''s individual glucose interface becomes embedded in a
+    COLLECTIVE interface defined by the shared field (the paper''s §Development and evolution section, Fig
+    10c-d). Nothing imposes the structure -- it is the same shared-field mass-balance that drove study
+    8''s division desync, read radially (stewart2008/flemming2016 biofilm physiological heterogeneity).'
   evidence:
     from_test: development-heterogeneity-emerges
     from_run: development-evolution-spatial
@@ -342,14 +383,18 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'EVOLUTION holds spatially, and the DUAL control proves the directional trait shift is
-    CAUSED by SELECTION. Selection-ON: the population mean `vmax` shifts UP in 4/5 seeds (delta
-    range [-0.116, +0.700], mean +0.221) -- one seed reverses, the honest multi-seed result.
-    NO-MUTATION control (`mutate: false`, BOOLEAN): mean stays EXACTLY the founder 1.500, var 0, in
-    every seed (0/5) -- no raw material. NO-SELECTION control (`selection: false`): the trait
-    mutates (var > 0) but the mean drifts UNDIRECTED (2/5 up, mean -0.039). Only selection-ON shifts
-    the mean directionally: mutation alone does not, absent variation cannot -- so selection is the
-    cause.'
+  statement: 'EVOLUTION holds spatially, and the DUAL control points to SELECTION as the driver of the
+    directional trait shift -- consistent with selection, though the n=5 sample is under-powered.
+    Selection-ON: the population mean `vmax` shifts UP in 4/5 seeds (delta range [-0.116, +0.700], mean
+    +0.221) -- one seed reverses, the multi-seed result. NO-MUTATION control (`mutate: false`, BOOLEAN):
+    mean stays EXACTLY the founder 1.500, var 0, in every seed (0/5) -- no raw material. NO-SELECTION
+    control (`selection: false`): the trait mutates (var > 0) but the mean drifts UNDIRECTED (2/5 up,
+    mean -0.039). The directional up-shift appears only under selection (4/5 vs 2/5), which is CONSISTENT
+    WITH selection operating through differential division -- but 4/5 vs 2/5 at n=5 is not statistically
+    significant, so this points to selection without establishing it. The committed gate currently
+    evaluates the flagship seed 3; a drift-null at >=20 seeds with a rank test, re-gated on that ensemble
+    statistic, is the named next step (Tier C). What is established: heritable variation is necessary (the
+    no-mutation 0/5 arm), and the up-shift is present only when the trait feeds fitness.'
   evidence:
     from_test: selection-shifts-mean-trait-up
     from_run: development-evolution-spatial
@@ -363,60 +408,18 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'Selection operates via a concrete MECHANISM: differential division on the shared
-    depleting field. The heritable trait `vmax` IS the cell''s own dFBA glucose-uptake parameter, so
-    a higher-vmax cell draws more glucose, grows faster, crosses `vol_threshold` sooner, divides
-    more, and its trait proliferates. The trait rides study 8''s verified creation-order
-    parent<->daughter pairing (the same one used for biomass/lineage) with the daughter inheriting
-    the parent''s trait plus a Gaussian mutation -- confirmed correct across 69 division events (99%
-    within 3 sigma). The trait shift and the larger selected colonies are the SAME mechanism
+  statement: 'The MECHANISM by which selection would act is concrete and its wiring verified:
+    differential division on the shared depleting field. The heritable trait `vmax` IS the cell''s own
+    dFBA glucose-uptake parameter, so a higher-vmax cell draws more glucose, grows faster, crosses
+    `vol_threshold` sooner, divides more, and its trait proliferates. The trait rides study 8''s verified
+    creation-order parent<->daughter pairing (the same one used for biomass/lineage) with the daughter
+    inheriting the parent''s trait plus a Gaussian mutation -- confirmed correct across 69 division events
+    (99% within 3 sigma). The trait shift and the larger selected colonies are the SAME proposed mechanism
     (selection through division rate), not two independent findings.'
   evidence:
     from_test: trait-inheritance-within-3-sigma
     from_run: development-evolution-spatial
     observed: 69 division events, |child-parent| 99% within 3 sigma (mean ~0.85 sigma); selected populations reach more cells
-  provenance:
-    run_ids:
-    - development-evolution-spatial
-- id: F-04
-  kind: biological
-  tier: observation
-  status: partial
-  statement: 'Honesty point, load-bearing not buried: the DEVELOPMENT and EVOLUTION halves pull the
-    SAME knob (field depletion), and the demonstration is bounded by crowding. Both intensify with
-    stronger field depletion, and the colony saturates its own 60x60 footprint by roughly
-    generation 4-6, so both halves are demonstrated within that bounded window. A larger grid or a
-    leaner/higher-uptake field would run more generations and sharpen the radial gradient -- but at
-    the cost of the same crowding that itself drives the heterogeneity. The constants are toy-real,
-    not fitted; the selection signal is real but modest (mean +0.22) and stochastic (one seed
-    reversed), which is exactly why the claim is reported as a 4/5 fraction, not a single-seed
-    headline. External-grid / longer-run evo-devo is the natural next step.'
-  evidence:
-    observed: colony saturates 60x60 by ~gen 4-6; selection mean +0.22 with 4/5 up, one reversing;
-      rim/core gradient monotone but bounded by the same crowding that drives it
-    discovered_during: authoring this study on the biology-first bar
-  provenance:
-    run_ids:
-    - development-evolution-spatial
-- id: F-05
-  kind: biological
-  tier: observation
-  status: partial
-  statement: 'The SCOPE is a toy evo-devo, stated plainly. DEVELOPMENT = shared-field-driven
-    core/rim physiological heterogeneity, NOT morphogenesis, signalling, or a genetic patterning
-    program (the collective interface is a measured resource gradient, not a regulated body plan).
-    EVOLUTION = ONE scalar heritable trait (glucose `vmax`) under resource selection -- heritable
-    variation + selection + a directional mean shift with clean dual controls -- NOT genome or
-    regulatory-network evolution, NOT speciation. kirschner2005 "facilitated variation" -- evolving
-    the ports/couplings THEMSELVES, not a parameter of a fixed port -- is a NAMED DEFERRAL:
-    this study mutates a parameter of a fixed coupling, exactly the axis the
-    non-spatial analogue''s reviewer said would move it from pattern to phenomenon. It is,
-    nonetheless, a strict upgrade over that non-spatial study -- real heritable variation and real
-    fitness-based selection replace its empty variation handler and fixed-constant ODE.'
-  evidence:
-    observed: development = measured resource gradient (not a body plan); evolution = one heritable
-      parameter of a fixed coupling under resource selection (facilitated variation deferred)
-    discovered_during: authoring this study on the biology-first bar
   provenance:
     run_ids:
     - development-evolution-spatial
@@ -433,16 +436,18 @@ conclusion_verdicts:
   biological_validation:
     result: PASS
     basis: All primary behavior tests pass on measured readouts. DEVELOPMENT -- rim_core_ratio grows
-      1.0 -> ~1.44 (emergent core/rim heterogeneity). EVOLUTION -- mean_vmax shifts up in 4/5 seeds
-      under selection while the no-mutation control stays exactly at the founder (0/5) and the
-      no-selection control drifts undirected (2/5, mean ~0), isolating selection as the cause of the
-      directional shift, which operates via differential division on the shared field. The
-      same-knob/crowding bound and the toy evo-devo scope (facilitated variation deferred) are
-      reported as findings, not claimed away.
+      1.0 -> ~1.44 (emergent core/rim heterogeneity), a single-seed reading on the flagship seed 3.
+      EVOLUTION -- mean_vmax shifts up in 4/5 seeds under selection while the no-mutation control stays
+      exactly at the founder (0/5) and the no-selection control drifts undirected (2/5, mean ~0), a
+      pattern CONSISTENT WITH selection driving the directional shift via differential division; the n=5
+      sample is under-powered (4/5 vs 2/5 is not significant), the committed gate evaluates the flagship
+      seed 3, and a >=20-seed drift-null with a rank test is the named next step. The single-seed
+      development reading, the same-knob/crowding bound, and the toy evo-devo scope (facilitated variation
+      deferred) are reported as limitations, not claimed away.
   explanatory_gain:
     result: POSITIVE
     basis: Putting the paper's §Development and evolution section on the real dividing colony turns
-      two of biology's hardest transitions into runnable, honestly-controlled spatial mechanisms --
+      two of biology's hardest transitions into runnable, controlled spatial mechanisms --
       development as a measured collective interface, evolution as a heritable coupling parameter
       selected by differential division -- supplying exactly the phenomenon (real heritable
       variation, real fitness-based selection) a coarser, non-spatial lumped
@@ -453,15 +458,19 @@ conclusion: '## Claims
 
   - DEVELOPMENT holds spatially: a growing CPM colony on a shared depleting glucose field forms
   emergent core-vs-rim physiological heterogeneity -- rim_core_ratio grows 1.0 -> ~1.44 over 45
-  ticks (core more depleted than rim), a collective interface not imposed but emerging from
-  shared-field competition (the paper''s §Development and evolution section, Fig 10c-d).
+  ticks (core more depleted than rim, a single-seed reading on the flagship seed 3; a 5-seed band is
+  the named next step), a collective interface not imposed but emerging from shared-field competition
+  (the paper''s §Development and evolution section, Fig 10c-d).
 
 
   - EVOLUTION holds spatially: a heritable glucose-uptake trait (vmax) shifts its population mean
   UP under shared-field selection in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221; one seed
-  reverses). A DUAL control isolates the cause -- the no-mutation control stays exactly at the
+  reverses). A DUAL control points to selection -- the no-mutation control stays exactly at the
   founder (0/5), the no-selection control drifts undirected (2/5, mean -0.039) -- so the directional
-  shift is CAUSED by selection, operating via differential division on the shared field.
+  shift is CONSISTENT WITH selection operating via differential division on the shared field. With
+  n=5 seeds, 4/5 vs 2/5 is not statistically significant, and the committed gate evaluates the
+  flagship seed 3; a >=20-seed drift-null with a rank test, re-gated on the ensemble statistic, is
+  the named next step.
 
 
   - This REUSES study 8''s CpmGrowthDivision unchanged and adds only one heritable coupling
@@ -495,8 +504,17 @@ conclusion: '## Claims
   more generations and sharpen the gradient, at the cost of the same crowding that drives it.
 
 
-  - The selection signal is real but modest (mean +0.22) and stochastic (one seed reversed) --
-  reported as a 4/5 fraction, never a single-seed headline.
+  - The rim_core_ratio 1.0 -> ~1.44 development reading is SINGLE-SEED (the flagship seed 3); a 5-seed
+  band with per-cell scatter is the named next step, so the gradient magnitude is illustrative, not an
+  ensemble result.
+
+
+  - The evolution result is UNDER-POWERED at n=5 seeds: the mean shift is real but modest (mean +0.22)
+  and stochastic (one seed reversed), and 4/5 up under selection vs 2/5 in the no-selection control is
+  not statistically significant -- so the dual control is CONSISTENT WITH selection but does not
+  establish causation. The committed gate currently evaluates the flagship seed 3. A drift-null at
+  >=20 seeds with a rank test, re-gated on that ensemble statistic rather than the flagship seed, is
+  the named next step.
 
 
   - Toy evo-devo scope: development = shared-field core/rim heterogeneity (NOT morphogenesis /
@@ -522,9 +540,11 @@ conclusion_logic:
       CpmGrowthDivision unchanged via two no-op hooks (`_cell_glucose_vmax`, `_on_division`).
     biological_validation: The paper's §Development and evolution section is demonstrated spatially
       at the toy-real level -- development as a measured emergent collective interface (rim/core
-      heterogeneity) and evolution as a heritable coupling parameter shifted UP by selection
-      through differential division, with a dual control isolating selection as the cause and the
-      same-knob/crowding bound plus toy-scope (facilitated variation deferred) reported as findings.
+      heterogeneity, single-seed on the flagship seed 3) and evolution as a heritable coupling parameter
+      shifted UP in a pattern consistent with selection through differential division, with a dual control
+      that points to selection but is under-powered at n=5 (4/5 vs 2/5 not significant; committed gate on
+      the flagship seed 3), and the single-seed development reading, same-knob/crowding bound, and
+      toy-scope (facilitated variation deferred) reported as limitations.
     pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
@@ -542,10 +562,16 @@ limitations:
   stronger depletion, and the colony saturates its own 60x60 footprint by roughly generation 4-6,
   so both are demonstrated within that bounded window. A larger grid or leaner/higher-uptake field
   would run more generations and sharpen the radial gradient -- at the cost of the same crowding
-  that itself drives the heterogeneity. Stated as a finding, not glossed.'
-- 'The selection signal is real but modest (mean +0.22) and stochastic: across seeds 1-5 the mean
-  shifts up in 4/5 (one seed reverses, delta -0.116). Reported as a multi-seed fraction with range,
-  never a single flattering seed -- the honest result of a bounded stochastic Metropolis trajectory.'
+  that itself drives the heterogeneity.'
+- 'The DEVELOPMENT reading (rim_core_ratio 1.0 -> ~1.44) is SINGLE-SEED (the flagship seed 3); a
+  5-seed band with per-cell scatter is the named next step (Tier C), so the ~1.44 magnitude is
+  illustrative, not an ensemble result.'
+- 'The EVOLUTION result is UNDER-POWERED at n=5 seeds. The mean shift is real but modest (mean +0.22)
+  and stochastic (one seed reverses, delta -0.116); 4/5 up under selection vs 2/5 in the no-selection
+  control is NOT statistically significant, so the dual control is CONSISTENT WITH selection but does
+  not establish it as the cause. The committed gate currently evaluates the flagship seed 3. A
+  drift-null at >=20 seeds with a rank test, re-gated on that ensemble statistic rather than the
+  flagship seed, is the named next step (Tier C).'
 - 'This is a TOY evo-devo. DEVELOPMENT = shared-field-driven core/rim physiological heterogeneity,
   NOT morphogenesis, signalling, or a genetic patterning program. EVOLUTION = ONE scalar heritable
   trait (glucose vmax) under resource selection, NOT genome/regulatory-network evolution, NOT
@@ -569,7 +595,7 @@ falsifiability: 'Overturned if the colony develops no emergent radial heterogene
   the no-mutation control is NOT static (mean drifting from the founder 1.500 under mutate=false --
   the BOOLEAN flag ignored or a mut_sigma=0.0 float override silently dropped so it secretly
   mutates), or if the no-selection control shifts up as strongly as selection-ON (selection=false
-  not actually making the trait fitness-neutral -- failing to isolate selection as the cause).'
+  not actually making the trait fitness-neutral -- failing to distinguish selection from drift).'
 visualizations:
 - name: development-evolution-spatial-movie
   address: image:viz/development-evolution-spatial.gif
@@ -592,7 +618,7 @@ visualizations:
     the population mean `vmax` rising (evolution -- selection through differential division) plotted
     with `rim_core_ratio` climbing above 1.0 (development -- the emergent collective interface),
     alongside `var_vmax` (mutation supplying raw material) and `n_cells` (the compounding colony).
-    The traces together are the load-bearing evidence that BOTH halves run on one colony: the trait
+    The traces together are the evidence that BOTH halves run on one colony: the trait
     mean shifts up as the radial heterogeneity emerges, over the same ticks. Interactive: hover for
     exact per-tick values.'
   config:
@@ -612,22 +638,27 @@ experiment: 'Run three development-evolution composites to completion through th
   Measure DEVELOPMENT via the radial rim-core glucose ratio (rim_core_ratio, core-vs-rim
   heterogeneity binned by distance from the colony centroid) and EVOLUTION via the population mean
   and variance of the trait (mean_vmax, var_vmax), reporting the mean shift as a multi-seed fraction
-  and using the dual control to isolate selection as the cause of the directional trait shift.'
+  and using the dual control to test whether the directional trait shift is consistent with selection.'
 result: 'DEVELOPMENT holds spatially -- the growing colony forms emergent core-vs-rim physiological
   heterogeneity (rim_core_ratio grows 1.0 -> ~1.44 over 45 ticks, the core more depleted than the
-  rim), a collective interface emerging from shared-field competition, not imposed. EVOLUTION holds
+  rim; a single-seed reading on the flagship seed 3, with a 5-seed band the named next step), a
+  collective interface emerging from shared-field competition, not imposed. EVOLUTION holds
   spatially -- the heritable glucose-uptake trait (vmax) shifts its population mean UP under
   shared-field selection in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221; one seed reverses,
-  the honest multi-seed result), operating via differential division on the shared depleting field
-  (higher-vmax cells grow/divide more, so their trait proliferates). The DUAL control isolates
-  selection as the cause: the no-mutation control stays EXACTLY at the founder value 1.500 with zero
-  variance (0/5 shift -- no raw material), and the no-selection control mutates (var > 0) but drifts
-  undirected (2/5 up, mean -0.039). Only the selection-ON arm shifts the mean directionally, so the
-  trait shift is CAUSED by selection, not mutation alone. This REUSES study 8''s CpmGrowthDivision
-  unchanged and adds only one heritable coupling parameter, realizing the paper''s §Development and
-  evolution section (Fig 10c-f) on the real dividing colony. The honest boundaries are reported as
-  findings -- the two halves pull the same field-depletion knob and both saturate within the ~gen
-  4-6 crowding window, and the scope is a toy evo-devo (development = shared-field core/rim
-  heterogeneity, NOT morphogenesis; evolution = one scalar trait under resource selection, NOT
+  the multi-seed result), a pattern consistent with selection operating via differential division on
+  the shared depleting field (higher-vmax cells grow/divide more, so their trait proliferates). The
+  DUAL control points to selection: the no-mutation control stays EXACTLY at the founder value 1.500
+  with zero variance (0/5 shift -- no raw material), and the no-selection control mutates (var > 0)
+  but drifts undirected (2/5 up, mean -0.039). The directional up-shift appears only under selection
+  (4/5 vs 2/5), CONSISTENT WITH selection rather than mutation alone -- but the n=5 sample is
+  under-powered (4/5 vs 2/5 is not statistically significant) and the committed gate evaluates the
+  flagship seed 3, so a >=20-seed drift-null with a rank test, re-gated on the ensemble statistic, is
+  the named next step. This REUSES study 8''s CpmGrowthDivision unchanged and adds only one heritable
+  coupling parameter, realizing the paper''s §Development and evolution section (Fig 10c-f) on the
+  real dividing colony. The boundaries are reported as limitations -- the development reading is
+  single-seed, the evolution result under-powered, the two halves pull the same field-depletion knob
+  and both saturate within the ~gen 4-6 crowding window, and the scope is a toy evo-devo (development
+  = shared-field core/rim heterogeneity, NOT morphogenesis; evolution = one scalar trait under
+  resource selection, NOT
   genome evolution; kirschner2005 facilitated variation -- evolving the ports/couplings themselves
   -- is a named deferral).'

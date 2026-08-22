@@ -6,9 +6,9 @@ created: '2026-08-20'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
 question: Can the cellular boundary be specified as nothing but typed, unit-bearing exchange ports (chemical mol·s⁻¹, mechanical N, electrical C·s⁻¹, thermal J·s⁻¹) plus higher-level variables (growth, shape, objective, viability) — with no committed mechanism — and compiled, by installing one conforming handler, into a bounded, goal-directed cell whose interface is exactly the one declared?
-biological_summary: 'A cell, viewed from the outside, is a small alphabet of exchange variables: fluxes of matter (chemical, mol·s⁻¹), forces (mechanical, N), currents (electrical, C·s⁻¹) and heat (thermal, J·s⁻¹), together with higher-level cellular quantities — growth rate (hr⁻¹), shape, an objective the cell pursues, and a viability that says whether the cellular description still holds. Fig 4 is that alphabet: Fig 4a draws four interaction-modality cards (nutrient exchange, motile force, growth rate, electrical signaling) as inert draft processes — unit-bearing ports and a behavior contract, no update dynamics. Fig 4b assembles the minimal cellular interface itself: one cell (draft process) that senses environmental drivers and exposes its physical exchange ports plus the higher-level cellular ports, all carrying declared units. Installing one conforming handler (`CellularInterfaceHandler`) turns the inert draft into a bounded, goal-directed cell with genuine toy-real dynamics while the ports and their wiring are preserved unchanged: chemical is taken up by Monod kinetics and drives Monod growth, growth accretes both shape (a volume proxy) and a biomass-proxy objective, viability follows an honest first-order Arrhenius thermal-death law (holds near 37 degC, collapses within minutes at 55 degC — the E. coli D-value reference), and the remaining physical ports (mechanical, electrical, thermal, signaling) carry small, physically-plausible linear responses to their drivers. Measured on the compiled fig04b-executable: chemical flux goes 0.0 to -0.8 (net uptake) and drives shape 1.0 to 4.2 and objective 0.0 to 1.6. This is the base cell contract that Law 1 (conformance) protects: the compiler checks a candidate handler''s declared ports against the draft''s signature before it will install it, and rejects a handler that renames or drops a port with a CompileError naming what is missing. The one concrete impostor implemented in this codebase, `NonConformingMetabolism` (in `handlers_fig06_fba.py`, exercised by `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`), breaks the *metabolism* interface used in the disintegration/Fig 6 study, not a cellular-interface-specific contract — but it is the mechanical proof that the same compiler mechanism this study relies on (Law 1) rejects any handler that breaks its declared port contract, structurally, at compile time.'
+biological_summary: 'A cell, viewed from the outside, is a small alphabet of exchange variables: fluxes of matter (chemical, mol·s⁻¹), forces (mechanical, N), currents (electrical, C·s⁻¹) and heat (thermal, J·s⁻¹), together with higher-level cellular quantities — growth rate (hr⁻¹), shape, an objective the cell pursues, and a viability that says whether the cellular description still holds. Fig 4 is that alphabet: Fig 4a draws four interaction-modality cards (nutrient exchange, motile force, growth rate, electrical signaling) as inert draft processes — unit-bearing ports and a behavior contract, no update dynamics. Fig 4b assembles the minimal cellular interface itself: one cell (draft process) that senses environmental drivers and exposes its physical exchange ports plus the higher-level cellular ports, all carrying declared units. Installing one conforming handler (`CellularInterfaceHandler`) turns the inert draft into a bounded, goal-directed cell with genuine toy-real dynamics while the ports and their wiring are preserved unchanged: chemical is taken up by Monod kinetics and drives Monod growth, growth accretes both shape (a volume proxy) and a biomass-proxy objective, viability follows a first-order Arrhenius thermal-death law (holds near 37 degC, collapses within minutes at 55 degC — the E. coli D-value reference), and the remaining physical ports (mechanical, electrical, thermal, signaling) carry small, physically-plausible linear responses to their drivers. Measured on the compiled fig04b-executable: chemical flux goes 0.0 to -0.8 (net uptake) and drives shape 1.0 to 4.2 and objective 0.0 to 1.6. This is the base cell contract that Law 1 (conformance) protects: the compiler checks a candidate handler''s declared ports against the draft''s signature before it will install it, and rejects a handler that renames or drops a port with a CompileError naming what is missing. A native impostor for this figure, `NonConformingCellularInterface` (in `handlers_fig04b.py`, exercised by `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler`), supplies conforming inputs but drops the required `viability` and `objective` output ports, and the compiler rejects it with a CompileError naming exactly those two missing ports — the mechanical proof that Law 1 rejects any handler that breaks this study''s own declared port contract, structurally, at compile time.'
 claim: The cell's interface is authored as an inert typed contract and compiled to a running bounded cell; a non-conforming handler that breaks the port contract is rejected at compile time with a CompileError naming the missing ports (Law 1 conformance).
 baseline:
 - name: interaction-modalities
@@ -27,10 +27,17 @@ variants:
 - name: cellular-interface-executable-alt
   composite: meta_modelers_guide.composites.fig04b-executable-alt
   params: {}
-  description: The same typed cellular-interface contract realized by a second, independent handler (CooperativeCellularInterfaceHandler) — a saturable Michaelis-Menten membrane-carrier uptake, an independent cooperative Moser/Hill (n>1) growth law, and Q10 thermal death — behind byte-identical cell ports, where the Monod twin uses first-order uptake, Monod growth, and Arrhenius death. Fitted so the interface observables track the fig04b-executable across the chemical operating range chem∈[0.2,2.5] to within ~10% (a concentration sweep, not a single point).
+  description: The same typed cellular-interface contract realized by a second, independent handler (CooperativeCellularInterfaceHandler) — a saturable Michaelis-Menten membrane-carrier uptake, an independent cooperative Moser/Hill (n>1) growth law, and Q10 thermal death — behind byte-identical cell ports, where the Monod twin uses first-order uptake, Monod growth, and Arrhenius death. Fitted (surrogate calibration — the twin's ~4 free params tuned to the interface observables) so they track the fig04b-executable across the chemical operating range chem∈[0.2,2.5] to within ~10% (a concentration sweep, not a single point; a held-out sub-range test is the named next step).
 key_assumptions:
-- Law 1 (conformance) is demonstrated mechanically by `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, which lives in the disintegration/Fig 6 metabolism-signature code (`handlers_fig06_fba.py`'s `NonConformingMetabolism`), not by a cellular-interface-specific impostor — no such impostor exists in this codebase, and none is claimed. The compiler mechanism it exercises (reject a handler whose declared ports don't match the draft's signature) is the same mechanism that would reject a non-conforming handler installed behind this study's Fig 4 interface.
+- Law 1 (conformance) is demonstrated mechanically by a native impostor for this figure, `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler`, exercising `handlers_fig04b.py`'s `NonConformingCellularInterface` (conforming inputs, but it drops the required `viability` and `objective` output ports). The compiler rejects it with a CompileError naming those two missing ports — the same conformance check that protects any handler installed behind this study's Fig 4 interface.
 - Conformance checking is structural — port names, types, and wiring — not units, dimensions, or runtime behavior. Ports carry unit labels (mol·s⁻¹, N, C·s⁻¹, J·s⁻¹, hr⁻¹, ...) that document intended dimension but are name-only annotations, not machine-enforced.
+acceptance_criteria:
+- Installing one conforming handler should drive non-trivial dynamics on the declared ports — shape grows above its seed, chemical flux goes net-negative (uptake), and the objective climbs from zero.
+- A handler whose declared ports do not match the draft signature should be rejected at compile time (Law 1 conformance), not silently accepted.
+- The inert draft, with no handler installed, should produce no dynamics — shape stays at its seed.
+units_and_time:
+  time: 1 tick = unspecified physical time (dimensionless model time).
+  quantities: shape, objective, viability, and the physical-port readouts are dimensionless model units. The port unit labels (mol·s⁻¹, N, C·s⁻¹, J·s⁻¹, hr⁻¹) are name-only annotations documenting intended dimension — not machine-enforced and not calibrated to physical units.
 behavior_tests:
 - name: shape-growth
   classification: primary
@@ -40,6 +47,7 @@ behavior_tests:
     path: shape
     expr: max(shape)
   pass_if:
+    kind: regression_pin
     op: '>='
     value: 2.0
     provenance: 'executable run: shape 1.0→4.2 (chemical uptake drives growth); exec last≈4.2 (fig04b-executable)'
@@ -52,6 +60,7 @@ behavior_tests:
     path: chemical
     expr: min(chemical)
   pass_if:
+    kind: regression_pin
     op: <=
     value: -0.5
     provenance: 'chemical flux 0.0→-0.8 (net uptake across the interface); exec last≈-0.8 (fig04b-executable)'
@@ -64,6 +73,7 @@ behavior_tests:
     path: objective
     expr: last(objective)
   pass_if:
+    kind: regression_pin
     op: '>='
     value: 1.0
     provenance: 'objective 0.0→1.6 as growth proceeds; exec last≈1.6 (fig04b-executable)'
@@ -71,12 +81,14 @@ behavior_tests:
 - name: draft-is-inert
   classification: diagnostic
   control: negative
+  expected_result: fail
   description: 'One-line sanity check (not the study''s control): the inert draft has empty updates by construction, so shape stays at its 1.0 seed and fails this threshold by design — confirming the framework''s definition of a draft, not a scientific counterfactual.'
   measure:
     kind: observable
     path: shape
     expr: max(shape)
   pass_if:
+    kind: regression_pin
     op: '>='
     value: 2.0
     provenance: 'inert-draft run: shape stays 1.0 (empty update by construction) → fails by design (expected-fail control)'
@@ -143,11 +155,11 @@ findings:
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'Law 1 (conformance) is machine-checked at compile time: a handler whose declared ports do not match the draft signature is rejected with a CompileError naming the missing ports. The one concrete impostor in the codebase, `NonConformingMetabolism`, breaks the metabolism interface used by the disintegration/Fig 6 study (not a cellular-interface-specific contract), but it is the mechanical proof that the compiler enforces the same Law-1 structural check for any declared interface, including this one — no cellular-interface-specific impostor exists, and none is claimed here.'
+  statement: 'Law 1 (conformance) is machine-checked at compile time: a handler whose declared ports do not match the draft signature is rejected with a CompileError naming the missing ports. A native impostor for this figure, `NonConformingCellularInterface`, supplies conforming inputs but drops the required `viability` and `objective` output ports, and the compiler rejects it naming exactly those two — the mechanical proof that the same Law-1 structural check protects this figure''s own interface.'
   evidence:
-    from_test: tests/test_fba.py::test_impostor_handler_rejected_by_compiler
-    observed: 'compile_composite raises CompileError; the message names the missing "biomass" and "secretions" ports'
-    discovered_during: authoring this study — cross-referenced from the disintegration/Fig 6 codebase, not run as part of this study's own baselines
+    from_test: tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler
+    observed: 'compile_composite raises CompileError; the message names the missing "viability" and "objective" ports'
+    discovered_during: authoring this study — the native impostor runs as part of this study's own tests (tests/test_cellular_interface_impostor.py), not only cross-referenced
   expected:
     summary: Law 1 conformance predicts any handler whose ports diverge from the declared signature is refused at compile time.
   provenance:
@@ -156,26 +168,26 @@ findings:
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'The same `CellularInterfaceHandler` contract, unchanged, composed with a spatial diffusion field via a field↔point adapter — evidence the interface is substrate-independent. Only the chemical modality is spatialized here; mechanical, electrical, and thermal remain lumped. Taking the byte-identical fig04b handler and composing a spatio-flux `DiffusionAdvection` chemical field behind its chemical port (through the small `FieldPointCoupling` adapter that samples the field over the cell''s footprint and writes the handler''s uptake flux back as a spatial delta) yields a running 2D composite: the field depletes at the footprint (niche construction, footprint mean 1.68 → 1.43 over 20 steps) and the concentration the interface senses now varies with position on the gradient — a cell on the low side senses ≈0.74 and grows slower, one on the high side senses ≈2.1 and grows faster — rather than a fixed constant.'
+  statement: 'The same `CellularInterfaceHandler` contract, unchanged, composed with a spatial diffusion field via a field↔point adapter — evidence the interface is substrate-independent. Only the chemical modality is spatialized here; mechanical, electrical, and thermal remain lumped. Taking the byte-identical fig04b handler and composing a spatio-flux `DiffusionAdvection` chemical field behind its chemical port (through the small `FieldPointCoupling` adapter that samples the field over the cell''s footprint and writes the handler''s uptake flux back as a spatial delta) yields a running 2D composite: the field depletes at the footprint (environmental modification — local resource depletion, footprint mean 1.68 → 1.43 over 20 steps) and the concentration the interface senses now varies with position on the gradient — a cell on the low side senses ≈0.74 and grows slower, one on the high side senses ≈2.1 and grows faster — rather than a fixed constant.'
   evidence:
     from_test: tests/test_cellular_interface_spatial.py
     observed: 'footprint field mean 1.68 → 1.43 (net uptake depletes the field where the cell feeds); sensed chemical_ext ≈0.74 (low side) vs ≈2.1 (high side), growth_rate follows the local field'
     discovered_during: authoring the spatial translation of this study — the unchanged handler composed over a spatio-flux field via a new field-point adapter
   expected:
-    summary: If the interface is genuinely substrate-independent, the unchanged handler should run against a spatial field with the same ports, sensing a spatially-varying concentration and constructing a depletion niche.
+    summary: If the interface is genuinely substrate-independent, the unchanged handler should run against a spatial field with the same ports, sensing a spatially-varying concentration and depleting the local field where it feeds.
   provenance:
     run_ids: []
 - id: F-06
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'The abstract cellular-interface contract is itself substitutable across the interface''s operating range, not merely at one tuned point: two independent handlers behind byte-identical cell ports — the Monod twin (first-order uptake + independent Monod growth + Arrhenius thermal death) vs a genuinely different box (a saturable Michaelis-Menten membrane-carrier uptake + an independent cooperative Moser/Hill (n=1.3) growth law + Q10 thermal death) — produce interface observables that agree within ~10.5% when chemical supply is SWEPT across chem∈[0.2,2.5]. Measured max relative divergence over the sweep: chemical flux 8.6% (saturable carrier vs first-order line), growth_rate 10.5% (cooperative sigmoid vs Monod hyperbola); driven over a ramp through the whole range the integrated observables diverge at most shape 7.7%, objective 10.5%, viability 0.01%. The divergence is real and non-zero — the two mechanisms are different functional forms — but stays under a 15% band across the operating range. This is mechanism-independence measured at the level of the contract itself, complementing the metabolism-level swap (dFBA vs Michaelis-Menten) and the colony-level swap: the same externally observable relation realized by a genuinely different internal box, exercised across a range of inputs rather than pinned at a single operating point.'
+  statement: 'A tuned second handler behind byte-identical cell ports reproduces the interface observables across the chemical operating range — surrogate calibration, not yet mechanism-independence. Two handlers behind byte-identical cell ports — the Monod twin (first-order uptake + independent Monod growth + Arrhenius thermal death) vs a genuinely different box (a saturable Michaelis-Menten membrane-carrier uptake + an independent cooperative Moser/Hill (n=1.3) growth law + Q10 thermal death) — produce interface observables that agree within ~10.5% when chemical supply is SWEPT across chem∈[0.2,2.5]. Measured max relative divergence over the sweep: chemical flux 8.6% (saturable carrier vs first-order line), growth_rate 10.5% (cooperative sigmoid vs Monod hyperbola); driven over a ramp through the whole range the integrated observables diverge at most shape 7.7%, objective 10.5%, viability 0.01% — all under a 15% band across the operating range. This is surrogate calibration — the second handler''s ~4 free parameters (vmax, km, cooperative-growth params, Q10) are tuned to reproduce the same ~4 interface observables (4 knobs fit to ~4 constraints), not yet mechanism-independence. The sweep across chem∈[0.2,2.5] is stronger evidence than a single tuned point, but a held-out condition neither handler was fit on — tune the twin on a sub-range, then test on a disjoint held-out sub-range — is the named next step. Complements the metabolism-level swap (dFBA vs Michaelis-Menten) and the colony-level swap.'
   evidence:
     from_test: tests/test_cellular_interface_substitutability.py
     observed: 'ports byte-identical (inputs/outputs diff empty); concentration sweep chem∈[0.2,2.5]: max flux divergence 8.6%, max growth_rate divergence 10.5%; ramp-integrated: shape 7.7%, objective 10.5%, viability 0.01%; overall max ~10.5% < 15% tolerance across the operating range'
     discovered_during: authoring the interface-realization swap — a second conforming handler with a genuinely different internal mechanism installed behind the unchanged Fig 4 ports, then measured across the chemical operating range
   expected:
-    summary: If the cellular-interface contract is genuinely mechanism-independent, a second handler with a different internal mechanism but identical ports should reproduce the interface observables not just at one point but across the interface's operating range of chemical supply, within tolerance.
+    summary: A second handler with a different internal mechanism but identical ports, its ~4 free params tuned to the interface observables, should reproduce them across the chemical operating range within tolerance (surrogate calibration). Mechanism-independence proper would require agreement on a held-out sub-range neither handler was tuned on — the named next step.
   provenance:
     run_ids: []
 conclusion_verdicts:
@@ -184,13 +196,13 @@ conclusion_verdicts:
     basis: The Fig 4a and Fig 4b composites build and fig04b-executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16).
   biological_validation:
     result: PASS
-    basis: The interface tests (shape, chemical, objective) all pass on measured readouts; the inert-draft sanity check stays at its 1.0 shape seed, isolating the installed handler as the cause. Law 1 conformance is confirmed mechanically by an existing test in the metabolism-interface codebase (cross-referenced honestly, not claimed as cellular-interface-specific).
+    basis: The interface tests (shape, chemical, objective) all pass on measured readouts; the inert-draft sanity check stays at its 1.0 shape seed, isolating the installed handler as the cause. Law 1 conformance is confirmed mechanically by a native impostor test for this figure (`NonConformingCellularInterface`, which drops the viability and objective ports).
   explanatory_gain:
     result: POSITIVE
-    basis: Compiling the inert Fig 4 interface into a running, bounded, goal-directed cell makes structural conformance (Law 1) and interface preservation directly observable, and separates the interface-specification claim from the mechanism-independence claim now homed in disintegration/Fig 6.
+    basis: Compiling the inert Fig 4 interface into a running, bounded, goal-directed cell makes structural conformance (Law 1) and interface preservation directly observable — with a native impostor for this figure proving the compiler rejects a handler that drops declared ports — and separates the interface-specification claim from the mechanism-independence claim now homed in disintegration/Fig 6.
 conclusion: '## Claims
 
-  - Given one conforming handler, the cellular interface becomes a bounded, goal-directed cell: chemical is taken up across the interface (flux 0.0→−0.8) and drives growth, so shape climbs 1.0→4.2 and the objective rises 0.0→1.6, all while the declared port set is preserved unchanged. The compiler enforces this contract structurally (Law 1): a handler that breaks the port names/types/wiring is rejected at compile time with a CompileError naming the missing ports — demonstrated by the codebase''s one concrete impostor, `NonConformingMetabolism`, which breaks the metabolism interface (see disintegration/Fig 6), not this study''s own baselines.
+  - Given one conforming handler, the cellular interface becomes a bounded, goal-directed cell: chemical is taken up across the interface (flux 0.0→−0.8) and drives growth, so shape climbs 1.0→4.2 and the objective rises 0.0→1.6, all while the declared port set is preserved unchanged. The compiler enforces this contract structurally (Law 1): a handler that breaks the port names/types/wiring is rejected at compile time with a CompileError naming the missing ports — demonstrated by this figure''s own native impostor, `NonConformingCellularInterface`, which drops the required `viability` and `objective` ports.
 
 
   ## Evidence
@@ -201,7 +213,7 @@ conclusion: '## Claims
 
   - **OBJECTIVE-CLIMBS** — objective 0.0 → 1.6 (goal-directed progress)
 
-  - **Law 1 (conformance)** — `tests/test_fba.py::test_impostor_handler_rejected_by_compiler` raises `CompileError` naming the missing ports when an impostor handler is installed (cross-referenced from disintegration/Fig 6; not a cellular-interface-specific impostor)
+  - **Law 1 (conformance)** — `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler` raises `CompileError` naming the missing `viability`/`objective` ports when the native impostor `NonConformingCellularInterface` is installed behind this figure''s interface
 
 
   ## Limitations
@@ -210,14 +222,14 @@ conclusion: '## Claims
 
   - Conformance (Law 1) is checked structurally — port names, types, and wiring — not units, dimensions, or runtime behavior. Units are name-only labels.
 
-  - No cellular-interface-specific impostor handler exists in this codebase; Law 1 is demonstrated by cross-referencing the metabolism-interface impostor test, honestly labeled as such.
+  - Law 1 is demonstrated by a native impostor for this figure (`NonConformingCellularInterface`, dropping the viability and objective ports), checked structurally at compile time — port names, types, and wiring, not units, dimensions, or runtime behavior.
 
 
   ## Next steps
 
   - Install a second, independent handler behind the Fig 4 interface to show mechanism-independence directly at this figure (Law 4 currently lives at disintegration/Fig 6 and autopoiesis/Fig 9).
 
-  - Consider adding a cellular-interface-specific impostor (e.g. a handler that drops the viability port) so Law 1 has a demonstration native to this figure, not only a cross-reference.'
+  - Done — a cellular-interface-specific impostor (`NonConformingCellularInterface`, which drops the viability and objective ports) now gives Law 1 a demonstration native to this figure (`tests/test_cellular_interface_impostor.py`).'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: The Fig 4 draft compiles to an executable that runs.
@@ -233,7 +245,7 @@ limitations:
 - One handler realizes the Fig 4 interface (chemical uptake driving Monod growth); the port set admits many mechanisms but only this one is installed and measured.
 - Constants (uptake rate, growth rate, thermal-death Arrhenius parameters) are illustrative toy-real values, not fitted to a named organism or medium.
 - Conformance (Law 1) is structural only. The compiler checks port names, types, and wiring against the signature; it does not check units, dimensions, invariants, or runtime behavior. Units are name-only labels on ports (mol·s⁻¹, N, C·s⁻¹, J·s⁻¹, hr⁻¹, ...) that document intended dimension but are not machine-enforced.
-- No impostor handler specific to the cellular interface exists in this codebase. Law 1 is demonstrated by citing `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, whose impostor (`NonConformingMetabolism`) actually breaks the metabolism signature used in the disintegration/Fig 6 study — the same compiler mechanism, cross-referenced honestly rather than claimed as native to this figure.
+- Law 1 has a native impostor for this figure — `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler` installs `NonConformingCellularInterface` (conforming inputs, but it drops the required `viability` and `objective` output ports) and the compiler rejects it with a CompileError naming those two ports. Conformance is structural only — port names, types, and wiring, not units or runtime behavior.
 falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 4 interface, if installing the handler leaves shape flat (no growth) or the objective unchanged, or if a non-conforming handler is found to compile without error against any declared interface (Law 1 not enforced).
 visualizations:
 - name: cellular-interface-spatial
@@ -244,7 +256,7 @@ visualizations:
     to right-high gradient) shows the cell''s fixed circular footprint; a running
     mini-panel tracks the sensed chemical_ext (footprint-mean concentration, 1.68
     -> 1.41) alongside the interface''s growth_rate (0 -> 0.44) over 24 ticks,
-    while the field depletes at the footprint (niche construction) as the interface''s
+    while the field depletes at the footprint (environmental modification) as the interface''s
     net uptake is written back into the field.'
   config:
     chart: image
@@ -282,4 +294,4 @@ visualizations:
     chart: image
 parent_studies: []
 experiment: Start with the Fig 4 interface as an inert specification, install a bounded-cell mechanism behind it, and run the resulting composite. The compiler must preserve the declared interface exactly, and must reject any handler whose ports don't match it (Law 1).
-result: 'The interface is preserved while the installed mechanism produces dynamics: chemical uptake drives growth and progress toward the cell''s objective (shape 1.0→4.2, objective 0.0→1.6). Law 1 conformance is confirmed mechanically by the codebase''s one impostor test, which lives in the metabolism-interface code (disintegration/Fig 6) rather than being specific to this figure — cited honestly rather than fabricated as native.'
+result: 'The interface is preserved while the installed mechanism produces dynamics: chemical uptake drives growth and progress toward the cell''s objective (shape 1.0→4.2, objective 0.0→1.6). Law 1 conformance is confirmed mechanically by a native impostor for this figure (`NonConformingCellularInterface`, which drops the viability and objective ports), rejected at compile time with a CompileError naming those two ports.'

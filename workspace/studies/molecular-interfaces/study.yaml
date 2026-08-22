@@ -6,18 +6,20 @@ created: '2026-08-22'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Accepted
+confidence: Provisional
 question: 'The paper''s §Molecular interface (Fig 7) frames a molecule not as a lump of state but as a
   typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal --
   through which molecules bind, react, and transmit force and heat. It even names the public databases
   (PDB, Reactome, ChEBI, GO) as "partial specifications of molecular interfaces and their types". This
   study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY?
-  Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized,
-  i.e. Turing / reaction-diffusion patterning) turn a near-uniform seed into emergent spatial structure,
-  and does a temperature field GRADE that structure (the THERMAL channel, an Arrhenius rate modulation)
-  -- so that two of the interface''s physical channels demonstrably COMPOSE over one shared spatial field?
-  The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable
-  and isolates the diffusion-driven instability as the cause of structure, so the contrast between pattern
+  Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized
+  as finite-amplitude, nucleation-driven Gray-Scott reaction-diffusion patterning -- not linear-instability
+  Turing sensu stricto) turn a near-uniform seed into emergent spatial structure, and does a static uniform
+  temperature field acting as an Arrhenius rate multiplier (no heat transport, no reaction->heat feedback)
+  GRADE that structure -- so that a temperature PARAMETER demonstrably modulates the spatialized chemical
+  channel over one shared spatial field? The causal control -- equal diffusion (Du = Dv), chemistry
+  untouched -- differs in exactly one variable and isolates the diffusion asymmetry as the cause of
+  structure (a regime-specific conclusion for this Gray-Scott system), so the contrast between pattern
   and uniformity is the finding.'
 biological_summary: 'The paper''s §Molecular interface (Fig 7) makes a molecule a typed interface: it
   exposes physical channels -- chemical fluxes, electrostatic fields, mechanical forces, thermal transfer
@@ -25,18 +27,23 @@ biological_summary: 'The paper''s §Molecular interface (Fig 7) makes a molecule
   specification-stage, point-scale lumped realization made ONE molecule''s four channels executable at a
   POINT (an F1Fo ATP synthase whose chemical/electrostatic/mechanical/thermal ports were wired as a typed
   draft and compiled). This study takes the CHEMICAL channel off the point and onto a 2D lattice, and adds
-  the THERMAL channel on top of it, to ask whether a molecular interface''s channels compose spatially.
+  a static uniform temperature field on top of it, to ask whether a temperature PARAMETER can modulate the
+  spatialized chemical channel over one shared field.
 
 
   The chemical channel is realized as a Gray-Scott reaction-diffusion system on a 128x128 periodic grid:
   a local autocatalytic chemistry (U + 2V -> 3V, V -> P) coupled to DIFFERENTIAL diffusion (Dv < Du), the
-  textbook route by which a near-uniform state becomes Turing-unstable and breaks into spots (turing1952).
+  route by which a near-uniform Gray-Scott state, seeded with finite-amplitude nucleation patches, breaks
+  into spots -- finite-amplitude, nucleation-driven patterning, NOT the linear-instability Turing mechanism
+  sensu stricto (cf. turing1952).
   The update is explicit-Euler du/dt = Du*lap(u) - U*V^2 + F*(1-U), dv/dt = Dv*lap(v) + U*V^2 - (F+k)*V on
   the periodic 5-point Laplacian, canonical spot regime Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0 (CFL
   max(Du,Dv)*dt*4 = 0.64 < 1, guarded at construction). The thermal channel is a second, orthogonal port:
-  when a temperature field is present the reaction term is scaled elementwise by the Arrhenius factor
-  rate = exp(-Ea*(1/T - 1/Tref)) -- T above Tref speeds the chemistry, below slows it, and rate == 1 with
-  no field, so the thermal channel is genuinely additive to the chemical one rather than replacing it.
+  when a static uniform temperature field is present the reaction term is scaled elementwise by the
+  Arrhenius factor rate = exp(-Ea*(1/T - 1/Tref)) -- T above Tref speeds the chemistry, below slows it, and
+  rate == 1 with no field. There is no heat transport and no reaction->heat feedback: the temperature field
+  is a static rate MULTIPLIER, so the temperature parameter modulates the chemical channel additively
+  rather than being a second physically-transported channel.
 
 
   Realizing the paper''s databases claim, honestly. The paper calls PDB/Reactome/ChEBI/GO "partial
@@ -55,11 +62,12 @@ biological_summary: 'The paper''s §Molecular interface (Fig 7) makes a molecule
   spatial variance v_var rises from ~0.0011 toward ~0.0119 by 8000 internal steps and the field resolves
   into ~12 connected v-domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12,
   chemistry identical) stays UNIFORM -- v_var ~= 0 (patterned == 0.0) -- so the structure is caused by the
-  diffusion asymmetry (the Turing instability), not by the chemistry alone: removing only the differential
-  diffusion removes the pattern. The THERMAL channel GRADES that pattern rather than destroying it: a
+  diffusion asymmetry (a finite-amplitude, nucleation-driven instability, not linear-Turing sensu stricto),
+  not by the chemistry alone: removing only the differential diffusion removes the pattern (a regime-specific
+  conclusion for this Gray-Scott system). The THERMAL channel GRADES that pattern rather than destroying it: a
   raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) coarsens the flagship from ~12 domains to ~2
-  and lowers v_var from ~0.0119 to ~0.0096 while staying comfortably patterned -- a real second modality
-  modulating the first, not a chemistry collapse. (An earlier, hotter setting Ea=1.0/T=1.5 was found to
+  and lowers v_var from ~0.0119 to ~0.0096 while staying comfortably patterned -- a temperature parameter
+  modulating the chemical channel, not a chemistry collapse. (An earlier, hotter setting Ea=1.0/T=1.5 was found to
   OVERSHOOT -- the reaction runs away and collapses the pattern to near-uniform -- and was retuned to the
   milder graded setting; the overshoot is pinned as a direct-physics assertion so "graded, not collapsed"
   is tested against its own failure mode.) Because the physics has no RNG, the multi-seed check re-draws
@@ -67,29 +75,33 @@ biological_summary: 'The paper''s §Molecular interface (Fig 7) makes a molecule
   [8, 12] -- the pattern forms for every seed, stated as a band rather than a single golden value.
 
 
-  Honest scope -- the four-modality finding, stated plainly. This study realizes TWO of the molecular
-  interface''s four physical channels spatially: the CHEMICAL channel (reaction-diffusion / Turing
-  patterning) and the THERMAL channel (Arrhenius rate modulation grading it). The ELECTROSTATIC and
+  Scope -- the four-modality finding. This study spatializes ONE of the molecular interface''s four
+  physical channels -- the CHEMICAL channel (finite-amplitude, nucleation-driven Gray-Scott reaction-diffusion
+  patterning) -- and modulates it with a temperature PARAMETER (a static uniform temperature field acting
+  as an Arrhenius rate multiplier; no heat transport, no reaction->heat feedback). The ELECTROSTATIC and
   MECHANICAL channels are the named gap -- no charge field, no force or tension, is exposed or measured
   here (owned in investigation.yaml''s what_this_does_not_demonstrate, as a named deferral).
   And this is a TOY reaction-diffusion demonstration: emergent spatial structure from a minimal
   autocatalytic chemistry with tuned, uncalibrated constants, NOT real molecular structure or conformation
   (nothing at PDB resolution), NOT a fitted reaction network, NOT a resolved database mapping. What is
-  demonstrated is that a molecular interface''s chemical and thermal channels COMPOSE spatially over one
-  shared field; what is not is the other two channels, real molecular structure, and a live database type
+  demonstrated is that a temperature parameter modulates the spatialized chemical channel over one shared
+  field (one physical channel modulated by a temperature parameter, not two physically-transported channels
+  composing); what is not is the other channels, real molecular structure, and a live database type
   system.'
-claim: 'The paper''s §Molecular interface (Fig 7) holds spatially for two of its four physical channels.
-  The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V ->
-  3V plus differential diffusion Dv < Du), turns a near-uniform seed into an emergent Turing spot pattern:
-  v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion
-  causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM
-  (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion-driven instability, not the
-  chemistry alone. The THERMAL channel -- a raised temperature field scaling the reaction by the Arrhenius
-  factor exp(-Ea*(1/T - 1/Tref)) -- GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -> ~2, v_var ~0.0119
-  -> ~0.0096) while staying patterned: a real second modality composing over the same field, not a
-  collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial
-  field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The honest boundaries
-  are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap;
+claim: 'The paper''s §Molecular interface (Fig 7) holds spatially for its CHEMICAL channel, and a
+  temperature parameter modulates it. The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion
+  system (local autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du), turns a near-uniform seed
+  into an emergent finite-amplitude, nucleation-driven Gray-Scott spot pattern (not linear-instability
+  Turing sensu stricto): v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0).
+  The equal-diffusion causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable)
+  stays UNIFORM (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion asymmetry, not the
+  chemistry alone -- a regime-specific conclusion for this Gray-Scott system. A static uniform temperature
+  field acting as an Arrhenius rate multiplier exp(-Ea*(1/T - 1/Tref)) (no heat transport, no reaction->heat
+  feedback) GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -> ~2, v_var ~0.0119 -> ~0.0096) while staying
+  patterned: a temperature parameter modulating the chemical channel, not a second physically-transported
+  channel and not a collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into
+  the initial field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The
+  boundaries are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap;
   the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is
   realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping;
   and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.'
@@ -108,9 +120,11 @@ key_assumptions:
 - 'The interface tested here is the paper''s §Molecular interface (Fig 7): a molecule as a typed interface
   exposing physical channels (chemical, electrostatic, mechanical, thermal). This study realizes the
   CHEMICAL channel spatially as Gray-Scott reaction-diffusion (local autocatalysis U + 2V -> 3V, V -> P
-  plus differential diffusion Dv < Du -- Turing patterning; turing1952) and the THERMAL channel as an
-  Arrhenius elementwise rate modulation exp(-Ea*(1/T - 1/Tref)) on the reaction term. The ELECTROSTATIC
-  and MECHANICAL channels are NOT realized -- they are the named four-modality gap, not demonstrated here.'
+  plus differential diffusion Dv < Du -- finite-amplitude, nucleation-driven patterning, not
+  linear-instability Turing sensu stricto; cf. turing1952) and adds a temperature PARAMETER as a static
+  uniform temperature field acting as an Arrhenius elementwise rate multiplier exp(-Ea*(1/T - 1/Tref)) on
+  the reaction term (no heat transport, no reaction->heat feedback). The ELECTROSTATIC and MECHANICAL
+  channels are NOT realized -- they are the named four-modality gap, not demonstrated here.'
 - 'The databases hook is ILLUSTRATIVE typed-port annotation, not a resolved mapping. The paper names
   PDB/Reactome/ChEBI/GO as "partial specifications of molecular interfaces and their types"; here that is
   gestured at by TYPING the Gray-Scott species and reaction with placeholder database-style identifiers
@@ -118,18 +132,22 @@ key_assumptions:
   reaction record). This is a concrete gesture at what typing a molecular interface against a database
   would mean -- NOT a claim that these toy species resolve to real PDB structures, Reactome pathway
   fragments, or ChEBI/GO entries. A real Reactome-fragment mapping / live database fetch is a deferral.'
-- 'The pattern is CAUSED by the diffusion-driven (Turing) instability, and this is proven by a
+- 'The pattern is CAUSED by the differential-diffusion instability (finite-amplitude, nucleation-driven,
+  not linear-Turing sensu stricto), and this is shown by a
   single-variable causal control, not assumed. The flagship (Du=0.16, Dv=0.08) and the equal-diffusion
   control (Du=Dv=0.12) share identical chemistry (F, k), identical seed, identical wiring and step count;
   the ONLY difference is whether diffusion is differential. Removing the asymmetry removes the pattern
   (v_var ~= 0, exactly 0.0 in the control), isolating differential diffusion -- not the reaction alone --
   as the cause of spatial structure.'
-- 'The thermal channel is genuinely ADDITIVE, not a re-parameterization of the chemical one. The reaction
-  term is scaled by rate = exp(-Ea*(1/T - 1/Tref)); with NO temperature field present rate == 1 everywhere
-  and the process is pure chemistry, byte-identical to the chemical-only flagship. The thermal composite
-  differs from the flagship in exactly the Arrhenius parameters and the presence of a raised temperature
-  field -- Du/Dv/F/k/dt/steps_per_tick are held equal (asserted in tests/test_molecular_regime.py), so the
-  coarsening is attributable to temperature, not to a changed chemistry or diffusion regime.'
+- 'The temperature parameter modulates the chemical channel additively, not as a re-parameterization of it.
+  The reaction term is scaled by rate = exp(-Ea*(1/T - 1/Tref)); with NO temperature field present rate == 1
+  everywhere and the process is pure chemistry, byte-identical to the chemical-only flagship. The thermal
+  composite differs from the flagship in exactly the Arrhenius parameters and the presence of a raised
+  static uniform temperature field -- Du/Dv/F/k/dt/steps_per_tick are held equal (asserted in
+  tests/test_molecular_regime.py), so the coarsening is attributable to the temperature parameter, not to a
+  changed chemistry or diffusion regime. The temperature field is a static rate multiplier with no heat
+  transport and no reaction->heat feedback -- this is one physical channel modulated by a temperature
+  parameter, not two physically-transported channels composing.'
 - 'The parameters are tuned demonstration values, not fitted. The canonical spot regime (Du=0.16, Dv=0.08,
   F=0.037, k=0.06, dt=1.0) sits in the classic Gray-Scott spot window and comfortably inside the explicit
   reaction-diffusion CFL limit (max(Du,Dv)*dt*4 = 0.64 < 1; the process raises on an unstable config
@@ -143,27 +161,48 @@ key_assumptions:
   the INITIAL near-uniform field with seed_uv(seed=s) for s in 1-5 (everything else held fixed) and reports
   the resulting band -- v_var in [0.01157, 0.01193], n_domains in [8, 12] -- as genuine sensitivity of the
   emergent pattern to the nucleation-patch placement, not as a per-tick stochastic process.'
+acceptance_criteria:
+- The canonical differential-diffusion Gray-Scott regime (Du > Dv) destabilizes a near-uniform seed into
+  a finite-amplitude spot pattern (many discrete domains, not one blob).
+- Removing only the diffusion asymmetry (Du = Dv, chemistry unchanged) removes the pattern -- the control
+  stays uniform, isolating differential diffusion as the cause (regime-specific to Gray-Scott).
+- A temperature parameter (a static uniform field acting as an Arrhenius rate multiplier) modulates the
+  chemical pattern -- grading it rather than collapsing it -- rather than being a second physically-transported channel.
+units_and_time:
+  time: 1 tick = unspecified physical time (dimensionless model time); each tick is steps_per_tick=500
+    internal explicit-Euler steps at dt=1.0 dimensionless, and the run is 16 ticks (8000 steps).
+  quantities: 'u/v/p composition fields, v_var, F, k, and the diffusion coefficients Du/Dv are
+    dimensionless model units; the temperature T=1.2, Tref=1.0 and activation Ea=0.15 are dimensionless
+    Arrhenius parameters, NOT calibrated Kelvin or kJ/mol -- the temperature field is a static uniform
+    rate multiplier, not a physically-transported heat field.'
+  note: No literature acceptance band is claimed; these are tuned demonstration values, not fitted.
 behavior_tests:
 - name: pattern-forms
   classification: primary
   description: 'The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16,
-    Dv=0.08) destabilizes the near-uniform seed into an emergent Turing spot pattern -- v_var rises above
-    the pattern floor and the gated patterned flag reads 1.0.'
+    Dv=0.08) destabilizes the near-uniform seed into an emergent finite-amplitude Gray-Scott spot pattern
+    (not linear-instability Turing sensu stricto) -- v_var rises above the pattern floor and the gated
+    patterned flag reads 1.0.'
   measure:
     kind: observable
     path: obs.patterned
     expr: last(obs.patterned)
   pass_if:
     op: ==
+    kind: acceptance_criterion
+    deterministic_pin: true
     value: 1.0
-    provenance: 'patterned == 1.0 with v_var rising ~0.0011 -> ~0.0119 over 8000 internal steps (16 ticks x
-      steps_per_tick=500), canonical spot regime (tests/test_molecular_regime.py::test_turing_pattern_forms,
+    provenance: 'prior: the canonical Gray-Scott spot regime (Du > Dv) destabilizes a near-uniform seed
+      into a finite-amplitude spot pattern -> expect patterned == 1.0. Observed: patterned == 1.0 with
+      v_var rising ~0.0011 -> ~0.0119 over 8000 internal steps (16 ticks x steps_per_tick=500). The == 1.0
+      is a gated 0/1 flag, exact only while the engine and seed draw are fixed
+      (tests/test_molecular_regime.py::test_turing_pattern_forms,
       tests/test_gray_scott.py, tests/test_gray_scott_physics.py)'
   requires_simulation: molecular-turing-pattern
 - name: pattern-has-multiple-domains
   classification: primary
   description: 'The pattern is genuine spatial structure, not a single blob: the field resolves into more
-    than one connected v-concentration domain (~12 spots at the canonical regime), the Turing spot
+    than one connected v-concentration domain (~12 spots at the canonical regime), the Gray-Scott spot
     signature.'
   measure:
     kind: observable
@@ -171,65 +210,80 @@ behavior_tests:
     expr: last(obs.n_domains)
   pass_if:
     op: '>'
+    kind: acceptance_criterion
     value: 1.0
-    provenance: n_domains ~= 12 at 8000 steps (loose > 1 floor, not the exact 12, so the bound is not a
-      golden-value pin); multi-seed band n_domains in [8, 12]
-      (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)
+    provenance: 'prior: a genuine spot pattern resolves into MANY discrete domains, not one blob -> expect
+      n_domains > 1. Observed: n_domains ~= 12 at 8000 steps (loose > 1 floor, not the exact 12, so the
+      bound is not a golden-value pin); multi-seed band n_domains in [8, 12]
+      (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)'
   requires_simulation: molecular-turing-pattern
 - name: equal-diffusion-control-uniform
   classification: primary
   control: negative
-  description: 'Single-variable causal control, the load-bearing one: identical chemistry and seed, but
-    equal diffusion (Du = Dv = 0.12) -- the differential-diffusion asymmetry removed. The Turing
-    instability never triggers, so the field stays uniform (patterned == 0.0). This is what proves the
-    pattern is CAUSED by the diffusion asymmetry, not the chemistry alone.'
+  description: 'Single-variable causal control: identical chemistry and seed, but equal diffusion
+    (Du = Dv = 0.12) -- the differential-diffusion asymmetry removed. The diffusion-driven instability
+    never triggers, so the field stays uniform (patterned == 0.0). This is what shows the pattern is
+    CAUSED by the diffusion asymmetry, not the chemistry alone -- a regime-specific conclusion for this
+    Gray-Scott system.'
   measure:
     kind: observable
     path: obs.patterned
     expr: last(obs.patterned)
   pass_if:
     op: ==
+    kind: acceptance_criterion
+    deterministic_pin: true
     value: 0.0
-    provenance: 'Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to
-      1e-6) -- differential diffusion removed, no pattern
+    provenance: 'prior: Gray-Scott patterning requires differential diffusion (Dv < Du); removing the
+      asymmetry (Du = Dv) removes the pattern -> expect the control to stay uniform, patterned == 0.0.
+      Observed: Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to
+      1e-6). The == 0.0 flag is exact only while the engine and seed are fixed; the "differential diffusion
+      is the cause" conclusion is regime-specific for this Gray-Scott system
       (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform)'
   requires_simulation: molecular-equal-diffusion-control
 - name: thermal-channel-still-patterns
   classification: primary
-  description: 'The thermal channel GRADES rather than destroys: with a raised uniform temperature field
-    (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction, the field is still comfortably patterned
-    (patterned == 1.0, v_var above the floor) -- a real second modality modulating the pattern, not a
-    chemistry collapse.'
+  description: 'The temperature parameter GRADES rather than destroys: with a static uniform temperature
+    field (Ea=0.15, Tref=1.0, T=1.2) acting as an Arrhenius rate multiplier on the reaction (no heat
+    transport, no reaction->heat feedback), the field is still comfortably patterned (patterned == 1.0,
+    v_var above the floor) -- a temperature parameter modulating the chemical channel, not a chemistry
+    collapse.'
   measure:
     kind: observable
     path: obs.patterned
     expr: last(obs.patterned)
   pass_if:
     op: ==
+    kind: regression_pin
+    deterministic_pin: true
     value: 1.0
-    provenance: thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); a hotter
-      Ea=1.0/T=1.5 setting was verified to OVERSHOOT into near-uniform collapse and retuned to this graded
-      setting (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)
+    provenance: 'thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); this
+      graded setting was TUNED after a hotter Ea=1.0/T=1.5 setting was verified to OVERSHOOT into
+      near-uniform collapse -- so the pass is a pin on the retuned setting, exact only while the engine and
+      seed are fixed (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)'
   requires_simulation: molecular-thermal-graded
 - name: thermal-channel-coarsens
   classification: primary
-  description: 'The mechanism of the thermal grading, made explicit: the raised temperature field coarsens
-    the pattern to markedly fewer, larger domains than the no-temperature flagship at the same step count
-    (~12 -> ~2), the direct signature of the thermal channel acting on the chemical one.'
+  description: 'The mechanism of the thermal grading, made explicit: the raised static temperature field
+    coarsens the pattern to markedly fewer, larger domains than the no-temperature flagship at the same
+    step count (~12 -> ~2), the direct signature of the temperature parameter acting on the chemical
+    channel.'
   measure:
     kind: observable
     path: obs.n_domains
     expr: last(obs.n_domains)
   pass_if:
     op: <
+    kind: regression_pin
     value: 8.0
-    provenance: thermal n_domains ~= 2 versus the flagship''s ~12 at the same 8000 steps; loose < 8 bound
-      (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate, not a
-      golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)
+    provenance: 'thermal n_domains ~= 2 versus the flagship''s ~12 at the same 8000 steps; loose < 8 bound
+      (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate set after
+      observing the run, not a golden-value pin
+      (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)'
   requires_simulation: molecular-thermal-graded
 - name: pattern-is-multiseed-robust
   classification: diagnostic
-  description: 'The Turing pattern forms across seeds 1-5, not just the seed=1 draw baked into the
+  description: 'The Gray-Scott pattern forms across seeds 1-5, not just the seed=1 draw baked into the
     composite. Because the physics is deterministic (no RNG), the seed is re-drawn into the INITIAL
     near-uniform field; v_var stays above the floor for every seed and is reported as a range, with
     n_domains reported as a range too (seed-sensitive by nucleation-patch placement).'
@@ -239,9 +293,10 @@ behavior_tests:
     expr: last(obs.v_var)
   pass_if:
     op: '>'
+    kind: regression_pin
     value: 0.004
     provenance: 'v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12];
-      the gate is > 2*PATTERN_FLOOR = 0.004, the band floor with margin, not the observed edge
+      the gate is > 2*PATTERN_FLOOR = 0.004, the observed band floor with margin, set after the run
       (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust)'
   requires_simulation: molecular-turing-pattern
 runs:
@@ -260,7 +315,7 @@ runs:
   outcomes:
     PATTERN-FORMS:
       result: PASS
-      detail: patterned == 1.0; v_var ~0.0011 -> ~0.0119 over 8000 steps -- emergent Turing spot pattern
+      detail: patterned == 1.0; v_var ~0.0011 -> ~0.0119 over 8000 steps -- emergent Gray-Scott spot pattern
     PATTERN-HAS-MULTIPLE-DOMAINS:
       result: PASS
       detail: n_domains ~= 12 connected v-domains (multi-seed band [8, 12]) -- genuine spatial structure
@@ -278,7 +333,7 @@ runs:
     EQUAL-DIFFUSION-CONTROL-UNIFORM:
       result: PASS
       detail: 'Du=Dv=0.12 (only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0) -- no
-        Turing instability, the causal control'
+        diffusion-driven instability, the causal control'
 - name: molecular-thermal-graded
   composite: molecular-thermal-graded
   emitter: RAMEmitter
@@ -317,10 +372,10 @@ findings:
   status: confirms
   statement: 'The paper''s §Molecular interface (Fig 7) CHEMICAL channel holds spatially: a Gray-Scott
     reaction-diffusion system (local autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du) turns
-    a near-uniform seed into an emergent Turing spot pattern -- v_var rises ~0.0011 -> ~0.0119 and the
-    field resolves into ~12 connected domains (patterned == 1.0). Local molecular reactions plus
-    differential diffusion produce emergent spatial structure, the molecular interface''s chemical channel
-    made spatial.'
+    a near-uniform seed into an emergent finite-amplitude, nucleation-driven Gray-Scott spot pattern (not
+    linear-instability Turing sensu stricto) -- v_var rises ~0.0011 -> ~0.0119 and the field resolves into
+    ~12 connected domains (patterned == 1.0). Local molecular reactions plus differential diffusion produce
+    emergent spatial structure, the molecular interface''s chemical channel made spatial.'
   evidence:
     from_test: pattern-forms
     from_run: molecular-turing-pattern
@@ -332,11 +387,12 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The pattern is CAUSED by the diffusion-driven (Turing) instability, proven by a
+  statement: 'The pattern is CAUSED by the differential-diffusion asymmetry, shown by a
     single-variable causal control. The equal-diffusion control (Du = Dv = 0.12 -- identical chemistry,
     seed, and wiring, the only difference the removal of the differential-diffusion asymmetry) stays
     UNIFORM: v_var ~= 0 (exactly 0.0), patterned == 0.0. Removing only the diffusion asymmetry removes the
-    structure, isolating differential diffusion -- not the chemistry alone -- as its cause.'
+    structure, isolating differential diffusion -- not the chemistry alone -- as its cause. This "differential
+    diffusion is the cause" conclusion is regime-specific for this Gray-Scott system.'
   evidence:
     from_test: equal-diffusion-control-uniform
     from_run: molecular-equal-diffusion-control
@@ -348,13 +404,15 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The THERMAL channel composes with the chemical one over the same field: a raised uniform
-    temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction GRADES the pattern rather
-    than destroying it -- coarsening it from ~12 domains to ~2 and lowering v_var ~0.0119 -> ~0.0096 while
-    staying comfortably patterned (patterned == 1.0). A real second physical modality modulating the
-    first. (A hotter Ea=1.0/T=1.5 setting overshoots into near-uniform collapse and was retuned; the
-    overshoot is pinned as a direct-physics assertion, so "graded, not collapsed" is tested against its
-    own failure mode.) Two of the molecular interface''s four channels demonstrably compose spatially.'
+  statement: 'A temperature PARAMETER modulates the chemical channel over the same field: a static uniform
+    temperature field (Ea=0.15, Tref=1.0, T=1.2) acting as an Arrhenius rate multiplier on the reaction
+    (no heat transport, no reaction->heat feedback) GRADES the pattern rather than destroying it --
+    coarsening it from ~12 domains to ~2 and lowering v_var ~0.0119 -> ~0.0096 while staying comfortably
+    patterned (patterned == 1.0). This is a temperature parameter modulating one physical channel, NOT two
+    physically-transported channels composing. (A hotter Ea=1.0/T=1.5 setting overshoots into near-uniform
+    collapse and was retuned; the overshoot is pinned as a direct-physics assertion, so "graded, not
+    collapsed" is tested against its own failure mode.) The chemical channel is spatialized and a
+    temperature parameter demonstrably modulates it.'
   evidence:
     from_test: thermal-channel-coarsens
     from_run: molecular-thermal-graded
@@ -362,32 +420,11 @@ findings:
   provenance:
     run_ids:
     - molecular-thermal-graded
-- id: F-04
-  kind: biological
-  tier: observation
-  status: partial
-  statement: 'The honest scope, load-bearing not buried -- the FOUR-MODALITY finding. This study realizes
-    TWO of the paper''s four molecular-interface channels spatially (CHEMICAL: reaction-diffusion / Turing;
-    THERMAL: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named gap -- no
-    charge field, no force or tension, is exposed or measured (owned in investigation.yaml as a
-    named deferral). Further: this is a TOY reaction-diffusion demonstration with tuned,
-    uncalibrated constants -- emergent structure from a minimal autocatalytic chemistry, NOT real
-    molecular structure or conformation (nothing at PDB resolution). And the databases claim
-    (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an
-    ILLUSTRATIVE typed-port annotation over the Gray-Scott species, NOT a resolved database mapping; a real
-    Reactome-fragment mapping / live database fetch is a deferral.'
-  evidence:
-    observed: two channels realized (chemical + thermal); electrostatic + mechanical are the named gap;
-      toy reaction-diffusion, not PDB-level structure; database typing illustrative, not resolved
-    discovered_during: authoring this study on the biology-first bar
-  provenance:
-    run_ids:
-    - molecular-turing-pattern
 - id: F-05
   kind: biological
   tier: observation
   status: partial
-  statement: 'DETERMINISM, stated plainly. The Gray-Scott physics has NO RNG -- the GrayScott seed config
+  statement: 'DETERMINISM. The Gray-Scott physics has NO RNG -- the GrayScott seed config
     key is accepted but currently inert -- so the multi-seed check re-draws the INITIAL near-uniform field
     with seed_uv(seed=s) for s in 1-5 (everything else fixed) rather than varying a per-tick stochastic
     process. The pattern forms for every seed; v_var in [0.01157, 0.01193] and n_domains in [8, 12] are
@@ -412,33 +449,36 @@ conclusion_verdicts:
     result: PASS
     basis: All primary behavior tests pass on measured readouts. The chemical channel patterns (v_var
       ~0.0011 -> ~0.0119, ~12 domains, patterned == 1.0) while the single-variable equal-diffusion causal
-      control stays uniform (v_var ~= 0, patterned == 0.0), and the thermal channel grades the pattern
+      control stays uniform (v_var ~= 0, patterned == 0.0), and a temperature parameter grades the pattern
       (~12 -> ~2 domains, v_var ~0.0119 -> ~0.0096) while staying patterned. The four-modality gap
       (electrostatic + mechanical), the toy-scope boundary, and the illustrative (not resolved) database
       typing are reported as findings, not claimed away.
   explanatory_gain:
     result: POSITIVE
     basis: Putting the paper's §Molecular interface (Fig 7) on the lattice turns "a molecule is a typed
-      interface exposing physical channels" into a spatial mechanism where two of those channels
-      demonstrably compose -- the chemical channel (reaction-diffusion patterning, causally isolated by
-      the equal-diffusion control) and the thermal channel (Arrhenius grading) over one shared field. It
-      takes a coarser, point-scale lumped realization, which made one
-      molecule's four channels executable at a POINT (F1Fo ATP synthase), and makes the chemical channel
-      SPATIAL, adding a composing thermal channel.
+      interface exposing physical channels" into a spatial mechanism where the chemical channel is
+      spatialized (finite-amplitude, nucleation-driven Gray-Scott patterning, causally isolated by the
+      equal-diffusion control) and a temperature parameter (a static uniform Arrhenius rate multiplier)
+      demonstrably modulates it over one shared field. It takes a coarser, point-scale lumped realization,
+      which made one molecule's four channels executable at a POINT (F1Fo ATP synthase), and makes the
+      chemical channel SPATIAL, adding a temperature parameter that modulates it -- not a second
+      physically-transported channel.
 conclusion: '## Claims
 
 
   - The paper''s §Molecular interface (Fig 7) chemical channel holds as a 2D spatial mechanism: a
   Gray-Scott reaction-diffusion system (autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du)
-  turns a near-uniform seed into an emergent Turing spot pattern (v_var ~0.0011 -> ~0.0119, ~12 domains,
-  patterned == 1.0), while the single-variable equal-diffusion causal control (Du = Dv = 0.12) stays
-  UNIFORM (v_var ~= 0, patterned == 0.0). Removing only the diffusion asymmetry removes the pattern.
+  turns a near-uniform seed into an emergent finite-amplitude, nucleation-driven Gray-Scott spot pattern
+  (not linear-instability Turing sensu stricto; v_var ~0.0011 -> ~0.0119, ~12 domains, patterned == 1.0),
+  while the single-variable equal-diffusion causal control (Du = Dv = 0.12) stays UNIFORM (v_var ~= 0,
+  patterned == 0.0). Removing only the diffusion asymmetry removes the pattern (a regime-specific conclusion
+  for this Gray-Scott system).
 
 
-  - The thermal channel composes with the chemical one: a raised temperature field Arrhenius-scaling the
-  reaction (Ea=0.15, T=1.2) GRADES the pattern (~12 -> ~2 domains, v_var ~0.0119 -> ~0.0096) while staying
-  patterned -- a real second modality, not a collapse. Two of the molecular interface''s four channels
-  demonstrably compose spatially.
+  - A temperature parameter modulates the chemical channel: a static uniform temperature field acting as an
+  Arrhenius rate multiplier (Ea=0.15, T=1.2; no heat transport, no reaction->heat feedback) GRADES the
+  pattern (~12 -> ~2 domains, v_var ~0.0119 -> ~0.0096) while staying patterned -- a temperature parameter
+  modulating one physical channel, not a second physically-transported channel and not a collapse.
 
 
   ## Evidence
@@ -465,9 +505,12 @@ conclusion: '## Claims
   ## Limitations
 
 
-  - Two of the molecular interface''s four physical channels are realized spatially (chemical + thermal);
-  the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or
-  tension, is exposed or measured. Owned in investigation.yaml as a named deferral.
+  - Only the CHEMICAL channel is spatialized as a genuine physical channel (Gray-Scott patterning); the
+  THERMAL modality is a temperature PARAMETER (a static uniform Arrhenius rate multiplier, no heat transport,
+  no reaction->heat feedback), not a second physically-transported channel. The ELECTROSTATIC and MECHANICAL
+  channels are the named four-modality gap -- no charge field, no force or tension, is exposed or measured.
+  So one physical channel is spatialized and a temperature parameter modulates it, not "two channels compose."
+  Owned in investigation.yaml as a named deferral.
 
 
   - This is a toy reaction-diffusion demonstration with tuned, uncalibrated constants -- emergent spatial
@@ -490,8 +533,8 @@ conclusion: '## Claims
 
 
   - The electrostatic and mechanical channels made spatial (a charge field driving electromigration; a
-  mechanical force/tension coupling), so more than two of the molecular interface''s four channels compose
-  on one field.
+  mechanical force/tension coupling), so more than one of the molecular interface''s four channels is
+  genuinely spatialized as a physically-transported channel on one field.
 
 
   - A real Reactome-fragment mapping / live database fetch that TYPES the Gray-Scott ports against actual
@@ -502,9 +545,9 @@ conclusion_logic:
       molecular-equal-diffusion-control, molecular-thermal-graded) build and run to completion through the
       engine (8000 internal steps each), directly from their JSON specs.
     biological_validation: The paper's §Molecular interface (Fig 7) is demonstrated spatially at the
-      toy-real (tuned, uncalibrated) level for two of its four channels -- the chemical channel
-      (reaction-diffusion patterning, causally isolated by the equal-diffusion control) and the thermal
-      channel (Arrhenius grading) composing over one shared field -- with the four-modality gap, the
+      toy-real (tuned, uncalibrated) level for its chemical channel (Gray-Scott reaction-diffusion
+      patterning, causally isolated by the equal-diffusion control) modulated by a temperature parameter
+      (a static uniform Arrhenius rate multiplier) over one shared field -- with the four-modality gap, the
       toy-scope boundary, and the illustrative database typing reported as findings rather than claimed away.
     pipeline_unblocks: []
   if_primary_tests_fail:
@@ -518,10 +561,14 @@ conclusion_logic:
       flagship -- the temperature field is not reaching the reaction term)
     block_downstream: none -- no study in this workspace is gated on this molecular-channel demonstration.
 limitations:
-- 'Two of the molecular interface''s four physical channels are realized spatially (chemical:
-  reaction-diffusion / Turing; thermal: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels
-  are the named four-modality gap -- no charge field, no force or tension, is exposed or measured here.
-  This is owned in investigation.yaml''s what_this_does_not_demonstrate, as a named deferral.'
+- 'Only the CHEMICAL channel is realized as a genuine spatial physical channel (finite-amplitude,
+  nucleation-driven Gray-Scott reaction-diffusion patterning, not linear-instability Turing sensu stricto).
+  The THERMAL modality is a temperature PARAMETER, not a second physically-transported channel -- a static
+  uniform temperature field acting as an Arrhenius rate multiplier, with no heat transport and no
+  reaction->heat feedback. The ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no
+  charge field, no force or tension, is exposed or measured here. So one physical channel is spatialized and
+  a temperature parameter modulates it; this is not "two physical channels compose." Owned in
+  investigation.yaml''s what_this_does_not_demonstrate, as a named deferral.'
 - 'This is a toy reaction-diffusion demonstration, NOT real molecular structure or conformation. What is
   demonstrated is emergent spatial structure from a minimal autocatalytic chemistry with tuned,
   uncalibrated constants -- nothing at PDB resolution, no fitted reaction network, no calibrated molecule.'
@@ -539,13 +586,13 @@ limitations:
   the multi-seed range (v_var in [0.01157, 0.01193], n_domains in [8, 12]) is produced by re-drawing the
   initial near-uniform field for seeds 1-5, reflecting sensitivity to nucleation-patch placement, not a
   per-tick stochastic process.'
-- Only two of the four physical channels (chemical and thermal) are realized; a point-scale
+- Only the chemical channel is spatialized (with a temperature parameter modulating it); a point-scale
   predecessor drove all four channels (chemical, electrical, mechanical, thermal) from one
   coupled proton flux via a concrete rotary-ATP-synthase mechanism. Spatializing the electrical
-  and mechanical channels, and realizing a named molecular machine rather than a generic
-  reaction-diffusion chemistry, remain open.
+  and mechanical channels as genuine physically-transported channels, and realizing a named molecular
+  machine rather than a generic reaction-diffusion chemistry, remain open.
 - The specialized enzymatic subports (substrate, cofactor, catalyst, product) are not
-  addressed; only the top-level chemical and thermal physical channels are realized spatially.
+  addressed; only the top-level chemical channel is realized spatially, modulated by a temperature parameter.
 falsifiability: Overturned if the flagship fails to pattern within the 8000-step window (v_var stays near
   0 or patterned != 1.0 -- differential diffusion not destabilizing the seed), if the equal-diffusion
   control DOES pattern (v_var rising with Du = Dv -- the structure not actually caused by the diffusion
@@ -556,26 +603,30 @@ visualizations:
   address: image:viz/molecular-turing-pattern.gif
   description: 'Animated GIF of the flagship chemical-channel run: a near-uniform Gray-Scott seed on a
     128x128 periodic field (u~=1, v~=0 plus small noise and a few nucleation patches) destabilizes under
-    the canonical differential-diffusion regime (Du=0.16, Dv=0.08) into an emergent Turing spot pattern --
+    the canonical differential-diffusion regime (Du=0.16, Dv=0.08) into an emergent finite-amplitude,
+    nucleation-driven Gray-Scott spot pattern (not linear-instability Turing sensu stricto) --
     the molecular interface''s chemical channel (§Molecular interface, Fig 7) made spatial: local
     autocatalytic reactions plus differential diffusion producing emergent spatial structure. Re-baked over
     the same run cited in this study''s behavior tests, for provenance.'
   config:
     chart: image
-    caption: 'Chemical channel -- Turing pattern formation: a near-uniform Gray-Scott seed breaks into ~12
-      emergent spots (v_var ~0.0011 -> ~0.0119) under differential diffusion (Dv < Du).'
+    caption: 'Chemical channel -- Gray-Scott pattern formation: a near-uniform Gray-Scott seed breaks into
+      ~12 emergent spots (v_var ~0.0011 -> ~0.0119) under differential diffusion (Dv < Du), finite-amplitude
+      and nucleation-driven (not linear-instability Turing sensu stricto).'
 - name: molecular-thermal-graded-movie
   address: image:viz/molecular-thermal-graded.gif
   description: 'Animated GIF of the thermal-channel run: the IDENTICAL chemistry, diffusion, and seed as
     the flagship, plus a raised uniform temperature field (T=1.2) Arrhenius-scaling the reaction (Ea=0.15).
     The pattern GRADES -- coarsening to fewer, larger domains (~12 -> ~2) while staying patterned rather
-    than collapsing. Watch it beside the flagship GIF: the temperature field is a real second physical
-    channel modulating the chemical one, not a chemistry collapse. Re-baked over the run cited in this
-    study''s behavior tests.'
+    than collapsing. Watch it beside the flagship GIF: the temperature field is a static rate multiplier
+    (no heat transport, no reaction->heat feedback) -- a temperature parameter modulating the chemical
+    channel, not a chemistry collapse and not a second physically-transported channel. Re-baked over the
+    run cited in this study''s behavior tests.'
   config:
     chart: image
-    caption: 'Thermal channel -- a raised temperature field grades the chemical pattern: Arrhenius-scaled
-      reaction (Ea=0.15, T=1.2) coarsens ~12 domains to ~2, v_var ~0.0119 -> ~0.0096 (graded, not collapsed).'
+    caption: 'Temperature parameter -- a static uniform temperature field grades the chemical pattern:
+      Arrhenius-scaled reaction (Ea=0.15, T=1.2) coarsens ~12 domains to ~2, v_var ~0.0119 -> ~0.0096
+      (graded, not collapsed).'
 - name: molecular-metrics
   address: html:viz/molecular-metrics.html
   description: 'Interactive Plotly panel of the flagship run, synced to the GIF''s time axis: the
@@ -598,16 +649,19 @@ experiment: 'Run three Gray-Scott reaction-diffusion composites to completion th
   and seed), and molecular-thermal-graded (identical chemistry/diffusion/seed plus a raised uniform
   temperature field T=1.2 Arrhenius-scaling the reaction, Ea=0.15). Measure whether the flagship patterns
   (v_var above the floor, patterned == 1.0, more than one domain) while the equal-diffusion control stays
-  uniform (v_var ~= 0), and whether the thermal channel grades the pattern (coarser -- fewer domains, lower
-  but still-patterned v_var) rather than collapsing it; re-draw the initial field for seeds 1-5 and report
+  uniform (v_var ~= 0), and whether a temperature parameter grades the pattern (coarser -- fewer domains,
+  lower but still-patterned v_var) rather than collapsing it; re-draw the initial field for seeds 1-5 and report
   v_var / n_domains as a range.'
 result: 'The chemical channel patterns -- the near-uniform Gray-Scott seed destabilizes under differential
-  diffusion into an emergent Turing spot pattern (v_var ~0.0011 -> ~0.0119, ~12 domains, patterned == 1.0)
+  diffusion into an emergent finite-amplitude, nucleation-driven Gray-Scott spot pattern (not
+  linear-instability Turing sensu stricto; v_var ~0.0011 -> ~0.0119, ~12 domains, patterned == 1.0)
   -- while the single-variable equal-diffusion causal control (Du=Dv=0.12) stays uniform (v_var ~= 0,
   patterned == 0.0), realizing the paper''s §Molecular interface (Fig 7) chemical channel as a spatial
-  mechanism and isolating differential diffusion as the cause. The thermal channel composes over the same
-  field -- a raised temperature field (Ea=0.15, T=1.2) grades the pattern (~12 -> ~2 domains, v_var ~0.0119
-  -> ~0.0096) while staying patterned, a real second modality, not a collapse. The honest boundaries are
+  mechanism and isolating differential diffusion as the cause (regime-specific to Gray-Scott). A temperature
+  parameter modulates that same field -- a static uniform temperature field acting as an Arrhenius rate
+  multiplier (Ea=0.15, T=1.2; no heat transport, no reaction->heat feedback) grades the pattern (~12 -> ~2
+  domains, v_var ~0.0119 -> ~0.0096) while staying patterned, a temperature parameter modulating one
+  physical channel, not a second physically-transported channel and not a collapse. The honest boundaries are
   reported as findings -- the electrostatic and mechanical channels are the named four-modality gap, this
   is a toy reaction-diffusion demonstration and not real molecular structure, and the databases claim is
   realized as illustrative typed-port annotation over the Gray-Scott species rather than a resolved mapping.
