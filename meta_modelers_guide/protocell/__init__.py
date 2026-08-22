@@ -4,16 +4,19 @@ self-limiting internal-maintenance loop gated on the boundary's own topology.
 Pure numpy/scipy over a `fields` store, independent of the CPM (`cpm/`) and
 condensate (`condensate/`) processes -- they never interact.
 
-Re-exports ``Protocell`` so ``meta_modelers_guide.core._iter_own_process_classes``
-(which walks only this package's immediate submodules via ``pkgutil.iter_modules``)
-finds the class when it imports this subpackage: it inspects ``dir(module)`` on
-whatever ``pkgutil`` yields for ``meta_modelers_guide.protocell``, which is this
+Re-exports ``Protocell`` and ``ProtocellV2`` so
+``meta_modelers_guide.core._iter_own_process_classes`` (which walks only this
+package's immediate submodules via ``pkgutil.iter_modules``) finds the classes
+when it imports this subpackage: it inspects ``dir(module)`` on whatever
+``pkgutil`` yields for ``meta_modelers_guide.protocell``, which is this
 ``__init__`` module itself, not ``autopoiesis`` beneath it. Mirrors
 ``meta_modelers_guide/condensate/__init__.py``'s re-export of ``CahnHilliard``
-exactly.
+exactly. ``ProtocellV2`` is the genuinely-local-mechanism autopoiesis (an
+interior precursor field, no global closure observer in the update); see
+``autopoiesis.py``'s v2 notes.
 """
 from __future__ import annotations
 
-from .autopoiesis import Protocell
+from .autopoiesis import Protocell, ProtocellV2
 
-__all__ = ["Protocell"]
+__all__ = ["Protocell", "ProtocellV2"]

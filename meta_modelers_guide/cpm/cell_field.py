@@ -62,6 +62,29 @@ class CpmCellField(Process):
         "mm_vmax": _f(10.0), "mm_km": _f(0.5),
         "mm_yield": _f(0.09),      # biomass yield mu = mm_yield * v  (growth per uptake)
         "mm_overflow": _f(0.5),    # acetate secreted per unit glucose uptake
+        # --- steady-state regime: cell-independent field source/sink + biomass turnover -
+        # The flagship is a pure TRANSIENT (no source terms) — it never reaches a
+        # source/sink equilibrium. These four terms (all default 0.0 -> OFF, so the
+        # flagship is byte-identical) add a standing environmental supply/degradation
+        # field plus biomass turnover, turning the composite into a chemostat-like
+        # regime with a genuine flux fixed point:
+        #   glucose SOURCE (first-order relaxation toward a setpoint, applied
+        #     grid-wide): dG = glucose_source_rate * (glucose_source_target - G) * dt
+        #   acetate DECAY (first-order sink, grid-wide): dA = -acetate_decay_rate * A * dt
+        #   biomass CARRYING CAPACITY (logistic growth saturation): growth is scaled
+        #     by max(0, 1 - biomass/biomass_capacity), so biomass approaches a fixed
+        #     stationary-phase ceiling instead of compounding without bound (the
+        #     flagship's unbounded exponential growth is why the flagship run is capped
+        #     at ~20-25 ticks). A dilution term alone gives NO interior biomass fixed
+        #     point in this coupling — the cell's per-pixel uptake scales with
+        #     biomass/footprint-area (both grow together), so local glucose equilibrates
+        #     at a biomass-independent value and mu never falls to a dilution rate. The
+        #     logistic cap is what makes biomass, and therefore every metabolic flux,
+        #     reach a verifiable d/dt -> 0 steady state.
+        "glucose_source_rate": _f(0.0),
+        "glucose_source_target": _f(0.0),
+        "acetate_decay_rate": _f(0.0),
+        "biomass_capacity": _f(0.0),   # 0.0 -> unbounded (flagship); >0 -> logistic cap
     }
 
     def inputs(self):
@@ -218,6 +241,15 @@ class CpmCellField(Process):
         ratio = (clamped_d_glc / requested_d_glc) if requested_d_glc < 0 else 1.0
         d_biomass *= ratio
         d_ac *= ratio
+        # Steady-state regime only (default 0.0 -> no-op): logistic carrying capacity.
+        # Scaling growth by (1 - biomass/B_cap) drives biomass to a stationary-phase
+        # ceiling B_cap, so growth (and hence every metabolic flux) reaches a fixed
+        # point instead of compounding exponentially — the condition for a verifiable
+        # d(biomass)/dt -> 0 steady state. Only positive growth is capped; a dilution
+        # term alone has no interior biomass fixed point in this coupling (see config).
+        b_cap = float(self.config["biomass_capacity"])
+        if b_cap > 0.0 and d_biomass > 0.0:
+            d_biomass *= max(0.0, 1.0 - self.biomass / b_cap)
         self.biomass = max(self.biomass + d_biomass, 1e-9)
 
         # Write the clamped uptake/secretion back to the field. Glucose is removed
@@ -235,6 +267,21 @@ class CpmCellField(Process):
             weights = (glc_fp / total_fp) if total_fp > 0 else np.full(area, 1.0 / area)
             dglc[fp] = clamped_d_glc * weights
             dace[fp] = d_ac / area
+
+        # Steady-state regime only (default rates 0.0 -> no-op): a cell-INDEPENDENT
+        # standing supply/degradation field applied grid-wide, on top of the cell's own
+        # footprint metabolism above. Glucose is replenished by first-order relaxation
+        # toward a setpoint (a standing feed) and acetate decays first-order (a washout
+        # sink); together with biomass dilution they close a chemostat-like flux balance
+        # the pure-transient flagship cannot reach. These are genuine open-system source
+        # terms — field mass is deliberately NOT conserved here (that is the point of a
+        # steady state); the flagship's mass-balance control uses the default-off path.
+        k_src = float(self.config["glucose_source_rate"])
+        if k_src:
+            dglc += k_src * (float(self.config["glucose_source_target"]) - glucose) * interval
+        k_dec = float(self.config["acetate_decay_rate"])
+        if k_dec:
+            dace += -k_dec * acetate * interval
 
         # grow the CPM cell from biomass, then step the world
         target = float(self.config["grow_per_biomass"]) * self.biomass
