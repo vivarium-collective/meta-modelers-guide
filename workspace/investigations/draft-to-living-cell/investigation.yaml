@@ -243,8 +243,12 @@ scientific_argument:
     (mechanical, electrical) are unrealized investigation-wide; the composition is framework-level,
     not per-cell; and learning, the arc's next rung, is not yet built.
   - >-
-    Chemotaxis (directed up-gradient motion) is deferred; the flagship agent senses and acts on the
-    field locally but does not move toward higher concentration.
+    Chemotaxis is now built and measured (F-08): a chemotaxis variant biases the CPM Metropolis
+    pixel-copy up the sensed shared-glucose gradient (a gradient-directed external-potential force
+    behind the same CpmCellField ports), achieving genuine directed up-gradient motion (~90x the
+    flagship's thermal drift) that reaches a ~2.1x richer region and out-grows the stationary control
+    (+13% biomass, +36% volume); the base flagship remains non-motile by design (variant off by
+    default, byte-identical).
   - >-
     The e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass)
     are toy-real — plausible, hand-tuned magnitudes chosen to produce gradual, spatially-legible
@@ -355,7 +359,10 @@ at_a_glance:
     global binary_fill_holes observer in the loop: closure persists ~2451 steps, the precursor
     knockout collapses ~26x faster, and a puncture starves the membrane locally and never self-heals
     (a real local prediction). The v1 authored-closure criterion is superseded; the boundary made and
-    sustained from the inside, executable — the plateau still metastable on a finite closed budget.
+    sustained from the inside, executable — but the plateau is metastable, and honestly not steady:
+    the open-system driven version (v2-open) is built and measured, and a local external drive does
+    NOT reach steady self-maintenance — it destabilizes the ring into faster runaway filling (the
+    metastability is geometric, not a finite budget). EMERGE is genuinely-emergent-but-metastable.
 - study: growth-and-division
   role: >-
     [COMPOSE × division] Compose the interface with real per-footprint dFBA metabolism and a
@@ -503,8 +510,9 @@ limitations:
   coupling process that owns a private viva-cpm world object; cells are not processes and have no
   ports of their own.
 - >-
-  Chemotaxis (directed motion up the sensed gradient) is deferred to a follow-up variant of the
-  flagship; the agent senses, metabolizes, grows, and secretes, but does not move up-gradient.
+  Chemotaxis (directed motion up the sensed gradient) is built and measured as a flagship variant
+  (F-08) — the agent senses, metabolizes, grows, secretes, AND moves up-gradient (~90x thermal
+  drift, +13% biomass vs the stationary control); the base flagship stays non-motile by design.
 - >-
   Learning — a cell whose history of interaction changes its future regulation to keep itself viable
   — is the arc's next rung, named but not yet built.
@@ -534,8 +542,14 @@ acceptance_criteria:
     its self-secreted interior precursor and sustains closure ~2451 steps; the precursor knockout
     (s_p=0) collapses ~26x faster (~step 95); and a wedge puncture bleeds the interior so the membrane
     starves locally (~2 vs ~79 intact) and never self-heals — with no global binary_fill_holes
-    observer anywhere in the update loop. The plateau is metastable on a finite closed budget; an
-    open-system driven version is the remaining next step.
+    observer anywhere in the update loop. The plateau is metastable, and the open-system version is
+    now built and measured (v2-open): a local external drive does NOT convert emergent closure into
+    indefinite self-maintenance — it destabilizes the ring into faster collapse (loss at ~591 vs
+    ~2451 steps), and an ~80-point drive sweep found no local drive reaching a bounded steady state,
+    because the metastability is geometric (secreted precursor pools in the shrinking pocket and
+    autocatalytically thickens the membrane inward), not finite-budget exhaustion. The controls hold
+    — drive rescues neither the precursor knockout nor a puncture — so closure stays load-bearing.
+    An honest measure of how hard steady emergent closure is; steady self-maintenance is unmet.
   - >-
     Selection prior — MET. Under selection-by-differential-division the population-mean uptake trait
     drifts UP relative to a no-selection control. Measured over a 30-seed ensemble per arm
