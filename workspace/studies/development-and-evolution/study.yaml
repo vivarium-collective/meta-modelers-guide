@@ -1,7 +1,7 @@
 schema_version: 4
 name: development-and-evolution
 investigation: draft-to-living-cell
-title: Development and Evolution, Spatial
+title: Development and Evolution
 created: '2026-08-22'
 status: complete
 phase: Decide
@@ -19,7 +19,7 @@ question: 'The paper''s §Development and evolution section (Fig 10c-f) extends 
   caused by SELECTION rather than mutation alone? The load-bearing design is a DUAL control:
   against the selection-ON colony, a no-mutation arm (the trait cannot vary) and a no-selection
   arm (the trait mutates but confers no fitness) isolate selection as the cause. This study
-  REUSES study 8''s dividing colony (`growth-and-division-spatial`, `CpmGrowthDivision`) unchanged
+  REUSES study 8''s dividing colony (`growth-and-division`, `CpmGrowthDivision`) unchanged
   and adds ONLY one heritable coupling parameter -- the paper''s claim that the interfaces and
   couplings are themselves evolvable features of organization, made concrete by making one
   coupling parameter heritable and selectable on the colony that already grows and divides.'
@@ -116,7 +116,7 @@ baseline:
   params: {}
 variants: []
 key_assumptions:
-- 'This study REUSES study 8''s dividing colony (`CpmGrowthDivision`, `growth-and-division-spatial`)
+- 'This study REUSES study 8''s dividing colony (`CpmGrowthDivision`, `growth-and-division`)
   UNCHANGED and adds ONLY a heritable per-cell trait plus the dev/evo observables. `CpmEvolution`
   is a minimal subclass wired through the base''s two no-op hooks: `_cell_glucose_vmax(cid)`
   (returns this cell''s heritable `vmax` instead of the population-wide constant) and
@@ -151,7 +151,7 @@ key_assumptions:
   hardcodes `potts.seed=1`, so without this every "different seed" replays one Metropolis
   trajectory) AND the mutation RNG. Across seeds 1-5, selection-ON shifts the mean up in 4/5 seeds
   (one reverses); the reported 4/5 is the honest result, following the multi-seed convention
-  established on `cell-cell-coupling-spatial` (`tests/test_cellcell_multiseed.py`).'
+  established on `cell-cell-coupling` (`tests/test_cellcell_multiseed.py`).'
 - 'The two halves pull the SAME knob (field depletion), and the demonstration is bounded by
   crowding. Both development heterogeneity and evolution intensify with stronger field depletion,
   and the colony saturates the 60x60 lattice by roughly generation 4-6, so both are demonstrated
@@ -165,8 +165,8 @@ key_assumptions:
   interface is a measured resource gradient, not a regulated body plan). EVOLUTION = ONE scalar
   heritable trait (glucose `vmax`) under resource selection, NOT genome/regulatory-network
   evolution and NOT speciation. kirschner2005 "facilitated variation" -- evolving the
-  ports/couplings THEMSELVES rather than a parameter of a fixed port -- is a NAMED DEFERRAL
-  (docs/superpowers/deferrals.md): this study mutates a parameter of a fixed coupling.'
+  ports/couplings THEMSELVES rather than a parameter of a fixed port -- is a NAMED DEFERRAL:
+  this study mutates a parameter of a fixed coupling.'
 behavior_tests:
 - name: development-heterogeneity-emerges
   classification: primary
@@ -408,8 +408,8 @@ findings:
     EVOLUTION = ONE scalar heritable trait (glucose `vmax`) under resource selection -- heritable
     variation + selection + a directional mean shift with clean dual controls -- NOT genome or
     regulatory-network evolution, NOT speciation. kirschner2005 "facilitated variation" -- evolving
-    the ports/couplings THEMSELVES, not a parameter of a fixed port -- is a NAMED DEFERRAL
-    (deferrals.md): this study mutates a parameter of a fixed coupling, exactly the axis the
+    the ports/couplings THEMSELVES, not a parameter of a fixed port -- is a NAMED DEFERRAL:
+    this study mutates a parameter of a fixed coupling, exactly the axis the
     non-spatial analogue''s reviewer said would move it from pattern to phenomenon. It is,
     nonetheless, a strict upgrade over that non-spatial study -- real heritable variation and real
     fitness-based selection replace its empty variation handler and fixed-constant ODE.'
@@ -509,7 +509,7 @@ conclusion: '## Claims
 
   - Facilitated variation (kirschner2005): evolve the ports/couplings THEMSELVES -- mutate the
   wiring, not a parameter of a fixed coupling -- the axis that moves this from pattern to
-  phenomenon (named deferral, deferrals.md).
+  phenomenon (a named deferral).
 
 
   - Larger grid / leaner field: run more generations past the ~gen 4-6 crowding bound to sharpen
@@ -552,7 +552,7 @@ limitations:
   speciation. The constants (vmax0 1.5, mut_sigma 0.3, vol_threshold 80, reset_target 40) are
   toy-real, not fitted to any organism, and no literature acceptance band is claimed.'
 - 'kirschner2005 "facilitated variation" -- evolving the ports/couplings THEMSELVES rather than a
-  parameter of a fixed port -- is a NAMED DEFERRAL (docs/superpowers/deferrals.md). This study
+  parameter of a fixed port -- is a NAMED DEFERRAL. This study
   mutates a parameter of a fixed coupling; mutating the wiring/ports is the axis that would move it
   from pattern to phenomenon, and it is out of scope for this first realization.'
 - 'Selection is entangled with crowding by construction: higher-vmax cells divide faster and reach
@@ -600,7 +600,7 @@ visualizations:
     caption: 'Development-evolution metrics -- mean_vmax rising (evolution) alongside rim_core_ratio
       climbing above 1.0 (development), with var_vmax and n_cells, over 45 ticks on one colony.'
 parent_studies:
-- study: growth-and-division-spatial
+- study: growth-and-division
   condition: tests-passed
 experiment: 'Run three development-evolution composites to completion through the process-bigraph
   engine directly from their JSON specs, each a growing CPM colony (CpmEvolution, study 8''s

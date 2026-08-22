@@ -1,7 +1,7 @@
 schema_version: 4
 name: cell-environment-coupling
 investigation: draft-to-living-cell
-title: Cell–Environment Coupling, Spatial (flagship)
+title: Cell–Environment Coupling (flagship)
 created: '2026-08-21'
 status: complete
 phase: Decide
@@ -632,9 +632,9 @@ conclusion: '## Claims
 
   - Add directed chemotaxis (motion up the sensed gradient) as a variant of this composite.
 
-  - Fan out to the next spatial counterpart, multi-cell competition over one shared field
+  - Multi-cell competition over one shared field is realized in `cell-cell-coupling`, which reuses
 
-    (`cell-cell-coupling`''s spatial analogue), reusing `CpmCellField` for each competing cell.'
+    `CpmCellField` for each competing cell.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: 'single-cell-in-a-field.composite.json builds and runs to completion
@@ -645,7 +645,7 @@ conclusion_logic:
       dynamics and dynamic-FBA optimization behind the coupling rather than a scripted trajectory
       (directed control/chemotaxis remains the deferred half of the paper's loop).
     pipeline_unblocks:
-    - cell-cell-coupling-spatial (planned; not yet built)
+    - cell-cell-coupling
   if_primary_tests_fail:
     diagnose:
     - the cell's biomass or CPM volume never rises (metabolism or growth-coupling broken)
@@ -653,7 +653,7 @@ conclusion_logic:
     - acetate never appears in the field (O2 cap not forcing overflow, or the secretion write
       is not reaching the shared field store)
     - net field-wide glucose does not fall (the cell is not acting as a genuine sink)
-    block_downstream: 'the remaining 8 planned spatial-counterpart studies, all of which reuse
+    block_downstream: 'the other eight studies, now all built, most of which reuse
       CpmCellField or its coupling pattern'
 limitations:
 - e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass)

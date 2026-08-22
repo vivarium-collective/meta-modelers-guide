@@ -1,7 +1,7 @@
 schema_version: 4
 name: disintegration
 investigation: draft-to-living-cell
-title: Disintegration, Spatial
+title: Disintegration
 created: '2026-08-21'
 status: complete
 phase: Decide
@@ -11,7 +11,7 @@ question: 'Does the paper''s §Disintegration level-shift (Fig 6) hold spatially
 
   viability when a diffusing field of acetate (the SAME metabolic byproduct that is waste-and-food
 
-  in `cell-cell-coupling-spatial`, here toxic at high local concentration) crosses its viability
+  in `cell-cell-coupling`, here toxic at high local concentration) crosses its viability
 
   bound, its domain resorbing while its shed material becomes scattering physical particles -- composed from independent frameworks
 
@@ -32,7 +32,7 @@ biological_summary: 'This is the spatial realization of the paper''s §Disintegr
 
   the observable stays named `mean_stressor`) -- the SAME molecule that is the secretor''s
 
-  metabolic waste and the consumer''s sole carbon food in `cell-cell-coupling-spatial`. This is
+  metabolic waste and the consumer''s sole carbon food in `cell-cell-coupling`. This is
 
   the paper''s closing §Disintegration/§Cell–cell coupling claim in action: an environmental
 
@@ -178,9 +178,9 @@ key_assumptions:
 
   constraint is a verified no-op (ON and OFF give statistically indistinguishable fragmentation
 
-  under fragmenting energetics, and toggling it mid-run changes nothing -- documented in
+  under fragmenting energetics, and toggling it mid-run changes nothing -- a verified engine
 
-  `docs/superpowers/api-maps/2026-08-21-disintegration-api-map.md`), and `lambda_volume` /
+  limitation), and `lambda_volume` /
 
   `temperature` are init-only with no runtime setters, so a settled CPM domain cannot be
 
@@ -207,9 +207,9 @@ key_assumptions:
   hand-tuned magnitudes chosen to make hold -> cross -> resorb -> scatter all legible within a
 
   20-tick run, not fitted to a named stressor, material, or literature target.'
-- 'Unlike studies 2-3 in this investigation (`cell-environment-coupling-spatial`,
+- 'Unlike studies 2-3 in this investigation (`cell-environment-coupling`,
 
-  `cell-cell-coupling-spatial`), this study''s CPM cell has NO metabolism/cobra path at all --
+  `cell-cell-coupling`), this study''s CPM cell has NO metabolism/cobra path at all --
 
   `CpmDisintegration` is deliberately built around the viability-collapse trigger alone, not
 
@@ -493,7 +493,7 @@ conclusion: '## Claims
     increase is the robust, reproducible claim.
 
   - The stressor is literally `acetate` -- the SAME molecule that is metabolic waste and
-    cross-feeding food in `cell-cell-coupling-spatial`, here a toxin whose high local concentration
+    cross-feeding food in `cell-cell-coupling`, here a toxin whose high local concentration
     crosses the cell''s viability bound. This carries the paper''s closing relational-molecule
     claim (§Cell–cell coupling): one molecule counting as nutrient, signal, or toxin through its
     consequences for viability -- nutrient/food there, toxin here.
@@ -556,7 +556,7 @@ conclusion: '## Claims
     reporting, since a working structural-integrity lock would let a future study demonstrate
     in-lattice fragmentation directly.
 
-  - Fan out to the next spatial counterpart in the design spec''s increment plan.'
+  - Fan out to the next spatial counterpart in the planned increments.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: 'disintegration-spatial.composite.json builds and runs to completion
@@ -589,8 +589,7 @@ limitations:
   runtime setters. A settled CPM domain cannot be shattered into scattered pixels in-lattice in
   this build -- the code-verified route is to resorb the cell and convert its shed pixels into
   particles. This is framed as a chosen, honest realization of "the coherent domain dissolves,"
-  not as emergent lattice fragmentation -- a real engine limitation, documented in
-  docs/superpowers/api-maps/2026-08-21-disintegration-api-map.md.
+  not as emergent lattice fragmentation -- a real, documented engine limitation.
 - Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body
   pymunk physics -- the particles drift and scatter, they do not collide with each other or with
   the dissolving cell, and do not fall under gravity.
@@ -599,8 +598,8 @@ limitations:
   diffusion_rate=1.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter
   all legible within a 20-24 tick run -- not fitted to a named stressor, material, or literature
   target.
-- Unlike studies 2-3 in this investigation (cell-environment-coupling-spatial,
-  cell-cell-coupling-spatial), this study's CPM cell has no metabolism/cobra path at all --
+- Unlike studies 2-3 in this investigation (cell-environment-coupling,
+  cell-cell-coupling), this study's CPM cell has no metabolism/cobra path at all --
   CpmDisintegration is deliberately built around the viability-collapse trigger alone, not
   nutrient uptake or growth.
 - The released flag latches once the crossing happens and never un-crosses, even once the
@@ -661,7 +660,7 @@ visualizations:
     caption: 'Synced metrics for the disintegration run -- area collapses at released_tick == 7,
       particle count climbs to 68 and holds, over 20-24 ticks.'
 parent_studies:
-- study: cell-cell-coupling-spatial
+- study: cell-cell-coupling
   condition: tests-passed
 experiment: 'Run the `disintegration-spatial` composite (`CpmDisintegration`, a single CPM cell
   on a shared 60x60 field grid inside a radial acetate gradient, coupled to a stock
@@ -682,7 +681,7 @@ result: 'Over a 20-24 tick run, the CPM cell holds coherent (area > 30) through
   robust, test-asserted claim. The paper''s §Disintegration level-shift (Fig 6) holds
   as real spatial dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through
   one coupling process plus one stock movement process. The stressor here is literally `acetate`,
-  the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling-spatial`
+  the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling`
   -- one molecule whose meaning is set relationally by each cell''s interface (§Cell–cell coupling):
   nutrient there, toxin here. And the scatter phase reads directly as §Disintegration''s failure
   cascade -- the actively maintained, far-from-equilibrium cell relaxing, once viability is lost,

@@ -1,7 +1,7 @@
 schema_version: 4
 name: biomolecular-complementarity
 investigation: draft-to-living-cell
-title: Biomolecular Complementarity, Spatial
+title: Biomolecular Complementarity
 created: '2026-08-21'
 status: complete
 phase: Decide
@@ -462,7 +462,7 @@ conclusion_logic:
       demixing and Cahn-Hilliard phase separation -- with the condensate's interface-work gap scoped honestly
       rather than claimed.
     pipeline_unblocks:
-    - autopoiesis-spatial
+    - autopoiesis
   if_primary_tests_fail:
     diagnose:
     - the heterotypic-interface fraction does not collapse (the differential-J regime is not taking effect,
@@ -473,7 +473,7 @@ conclusion_logic:
       update is not a proper flux divergence)
     - the field goes non-finite (dt above the biharmonic stability limit -- the process should raise,
       not emit NaN)
-    block_downstream: autopoiesis-spatial (a self-maintained-boundary study builds on the phase-separation
+    block_downstream: autopoiesis (a self-maintained-boundary study builds on the phase-separation
       primitive here)
 limitations:
 - 'The condensate demonstrates phase separation (a mass-conserved boundary forming with an emergent interface),
@@ -557,7 +557,7 @@ visualizations:
     caption: Condensate phase-separation variance -- phi_var climbs from ~7e-5 to ~0.38 over 10000 steps
       as the field separates into two domains, mass conserved.
 parent_studies:
-- study: cell-environment-coupling-spatial
+- study: cell-environment-coupling
   condition: tests-passed
 experiment: 'Run two independent CPM/phase-field composites to completion through the process-bigraph
   engine: cell-sorting-spatial (CpmSorting, an 8x8 checkerboard of two cell types under a differential-adhesion

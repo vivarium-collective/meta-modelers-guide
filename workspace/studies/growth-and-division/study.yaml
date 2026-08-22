@@ -1,7 +1,7 @@
 schema_version: 4
 name: growth-and-division
 investigation: draft-to-living-cell
-title: Growth and Division, Spatial
+title: Growth and Division
 created: '2026-08-21'
 status: complete
 phase: Decide
@@ -33,7 +33,7 @@ biological_summary: 'A cell metabolizes, grows, crosses a threshold, and divides
   on a uniform, abundant 60x60 glucose field (`glucose_vmax` deliberately tuned down to 1.5,
   `vol_threshold` 80, `reset_target` 40) grows its volume from real per-footprint dFBA metabolism
   against `e_coli_core` (the same metabolism-drives-growth mechanism as the flagship,
-  `cell-environment-coupling-spatial`), and once its CPM volume crosses `vol_threshold`, the
+  `cell-environment-coupling`), and once its CPM volume crosses `vol_threshold`, the
   native engine operation `divide_cells(vol_threshold, reset_target)` splits it into two
   mass-conserved daughters (parent keeps its id, one new id is minted), partitions the parent''s
   tracked biomass across them proportional to their post-split lattice volumes -- not resetting
@@ -139,7 +139,7 @@ key_assumptions:
   two cells"), the parent''s
   pre-division biomass is split between the two daughters proportional to their post-division
   lattice volumes, mass-conserving, not reset to a fixed value that would discard it. This mirrors
-  the honest framing `disintegration-spatial` gave its own resorption primitive: a chosen,
+  the honest framing `disintegration` gave its own resorption primitive: a chosen,
   code-verified engine operation standing in for a mechanism (cytokinesis) the underlying CPM
   engine does not itself simulate.'
 - 'The run spans roughly 3-4 generations (1 -> 2 -> 4 -> 8 -> 18 cells), not by any hard-coded
@@ -155,7 +155,7 @@ key_assumptions:
   field" overstates the nutrient contribution; "bounded by lattice crowding and, more weakly,
   shared-glucose depletion" is the honest claim.'
 - 'Each CPM cell gets its own independent cobra model copy, not one shared model instance across
-  the lineage -- the same convention as `cell-cell-coupling-spatial`''s `CpmColonyField` -- keyed
+  the lineage -- the same convention as `cell-cell-coupling`''s `CpmColonyField` -- keyed
   off the live cell ids read from the engine''s own snapshot each tick, so newly divided daughters
   are picked up automatically without scripted lineage bookkeeping.'
 - 'The native `divide_cells` primitive this study''s division depends on is no longer an
@@ -539,7 +539,7 @@ conclusion: '## Claims
     mechanism directly (a center-vs-edge growth-rate readout), rather than inferring it from
     staircase desync alone.
 
-  - Fan out to the next spatial counterpart in the design spec''s increment plan.'
+  - Fan out to the next spatial counterpart in the planned increments.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: 'growth-division-spatial.composite.json builds and runs to completion
@@ -597,7 +597,7 @@ limitations:
   field" overstates the nutrient contribution; "bounded by lattice crowding and, more weakly,
   shared-glucose depletion" is the honest claim.'
 - Each CPM cell gets its own independent cobra model copy, not one shared model instance across
-  the lineage -- the same convention as cell-cell-coupling-spatial's CpmColonyField -- keyed off
+  the lineage -- the same convention as cell-cell-coupling's CpmColonyField -- keyed off
   the live cell ids read from the engine's own snapshot each tick.
 - 'The native divide_cells primitive this study''s division depends on is now runtime-verified
   directly (tests/test_cpm_divide_spike.py), independent of the growth-division composite''s own
@@ -655,7 +655,7 @@ visualizations:
     caption: 'Synced n_cells/total_volume metrics for the growth-division run -- a monotonic
       non-decreasing population staircase, division events marked, over 36 ticks.'
 parent_studies:
-- study: disintegration-spatial
+- study: disintegration
   condition: tests-passed
 experiment: 'Run the `growth-division-spatial` composite (`CpmGrowthDivision`, a single CPM cell
   seeded on a uniform abundant 60x60 glucose field, glucose_vmax=1.5, vol_threshold=80,
