@@ -220,7 +220,11 @@ behavior_tests:
       there is no thermodynamic drive to demix, so the checkerboard should stay mixed -> hetero_frac stays
       high. Observed: a neutral-J composite re-run (all J=8), T=10, same checkerboard stays mixed at
       hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime -- the causality control for J.
-      Documented regime sweep, not a committed pytest in this build.'
+      Now a committed, rerunnable pytest -- tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort
+      builds the neutral-J composite (all J=8, same checkerboard/T/mcs as the flagship) and runs it end-to-end
+      through the process-bigraph engine, asserting hetero_frac stays > 0.4 (observed ~0.52) with the clump
+      cohesive (pixels <10% drift, counts 32/32) -- promoted from the prior documented-only regime sweep.'
+  committed_test: tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort
   requires_simulation: none
 - name: condensate-phase-separates
   classification: primary
@@ -302,8 +306,8 @@ runs:
       detail: n_type1 == n_type2 == 32 throughout -- cells moved, none created or destroyed
     SORTING-NEUTRAL-J-DOES-NOT-SORT:
       result: PASS
-      detail: neutral J (all=8) stays mixed at hetero_frac ~0.52 (neutral-J composite re-run, documented, not a committed test) --
-        J causality control
+      detail: neutral J (all=8) stays mixed at hetero_frac ~0.52 (now a committed pytest,
+        tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort) -- J causality control
 - name: condensate-cahn-hilliard
   composite: condensate-cahn-hilliard
   emitter: RAMEmitter
@@ -366,8 +370,9 @@ findings:
   status: confirms
   statement: 'The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral
     contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding
-    contact-energy asymmetry as the cause of sorting. Confirmed by a neutral-J composite re-run (documented, not a committed test): neutral
-    J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.'
+    contact-energy asymmetry as the cause of sorting. Confirmed by a committed pytest
+    (tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort) that runs the neutral-J composite
+    end-to-end: neutral J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.'
   evidence:
     from_test: sorting-neutral-J-does-not-sort
     from_run: cell-sorting-spatial

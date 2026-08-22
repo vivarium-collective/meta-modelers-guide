@@ -162,11 +162,19 @@ variants:
 
     (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) are TUNED so the interface-level
 
-    observables track the dFBA flagship (4 knobs fit to ~4 interface observables); they are not
+    observables track the dFBA flagship (4 knobs fit to 4 interface observables — exactly determined,
 
-    derived from the dFBA solution. This is surrogate calibration, not yet mechanism-independence —
+    so a good tuned fit is unsurprising); they are not derived from the dFBA solution. The named next
 
-    a held-out condition neither mechanism was tuned on is the named next step.'
+    step is now RUN — a genuine held-out test (peer-review M2). With those 4 params FROZEN, dFBA vs MM
+
+    was compared on conditions neither was tuned on. Two-sided, honest result — inside the calibrated
+
+    glucose-limited, fixed-O2 regime the substitution is mechanism-independent (a different initial
+
+    glucose field and a 2x-longer run both hold within ~13%), but the MM box is BLIND to oxygen — on a
+
+    held-out O2 cap (dFBA 2.5 -> 5.0) agreement collapses to ~74%, the honest boundary of the swap.'
   params:
     mechanism: mm
     mm_vmax: 4.0
@@ -341,19 +349,21 @@ behavior_tests:
   requires_simulation: single-cell-in-a-field
 - name: interface-substitutable-across-mechanisms
   classification: primary
-  description: 'Surrogate calibration of the paper''s substitutability idea: a tuned Michaelis-Menten
+  description: 'Surrogate calibration of the paper''s substitutability idea (the TUNED-condition
 
-    twin (cobra-free) is fit to reproduce the dFBA flagship''s cell↔field interface observables
+    baseline for the held-out test below) — a tuned Michaelis-Menten twin (cobra-free) is fit to
 
-    behind the byte-identical `CpmCellField` ports. The MM twin''s 4 free params are TUNED to preserve
+    reproduce the dFBA flagship''s cell↔field interface observables behind the byte-identical
 
-    the interaction variables (4 knobs fit to ~4 observables), so its interface-level observables
+    `CpmCellField` ports. The MM twin''s 4 free params are TUNED to preserve the interaction variables
 
-    (final biomass, total acetate secreted, CPM volume, net glucose depletion) agree with the dFBA
+    (4 knobs fit to 4 observables — exactly determined), so its interface-level observables (final
 
-    flagship within ~10% (all four within a 30% tolerance). This is surrogate calibration, not yet
+    biomass, total acetate secreted, CPM volume, net glucose depletion) agree with the dFBA flagship
 
-    mechanism-independence — a held-out condition neither mechanism was tuned on is the named next step.'
+    within ~10% on the tuned condition (all four within a 30% tolerance). On its own this is surrogate
+
+    calibration — the held-out gate `interface-substitutable-held-out` is what tests independence.'
   measure:
     kind: observable
     path: obs.biomass, obs.volume, fields.acetate, fields.glucose
@@ -367,8 +377,47 @@ behavior_tests:
       47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — every interface observable within ~10%;
       the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the surrogate-model
       payoff. The 4 MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to
-      match (4 knobs fit to ~4 observables), not derived from the dFBA solution; a held-out sub-range
-      neither was tuned on is the named next step.'
+      match (4 knobs fit to 4 observables — exactly determined); the held-out gate below tests them frozen.'
+  requires_simulation: single-cell-in-a-field-mm
+- name: interface-substitutable-held-out
+  classification: primary
+  description: 'HELD-OUT test of the surrogate (peer-review M2) — the real conversion of surrogate
+
+    calibration into a genuine held-out test. The 4 MM params stay FROZEN at their tuned values and
+
+    dFBA vs MM are compared on conditions NEITHER was tuned on. Honest two-sided result. Inside the
+
+    calibrated glucose-limited, fixed-O2 regime the substitution is mechanism-independent, not just a
+
+    fit — on a held-out initial glucose field (flat 3.0, not the tuned 0.3→3.0 gradient) every
+
+    interface observable agrees within ~12%, and out to a 2x-longer run (40 ticks) within ~13%. But
+
+    the MM box carries no oxygen variable — on a held-out O2 cap (dFBA 2.5→5.0, dFBA-only) agreement
+
+    COLLAPSES to ~74% (dFBA nearly quadruples biomass/volume; the O2-blind MM twin cannot follow).
+
+    Mechanism-independence holds within the calibrated regime; the O2 axis is the surrogate''s blind
+
+    spot and the honest boundary of the swap.'
+  measure:
+    kind: observable
+    path: obs.biomass, obs.volume, fields.acetate, fields.glucose
+    expr: per-observable abs(dFBA - MM) / dFBA on held-out conditions, MM params frozen
+  pass_if:
+    kind: acceptance_criterion
+    op: <
+    value: 0.15
+    provenance: 'HELD-OUT, MM params frozen (tests/test_substitutability_heldout.py). GATE — held-out
+      glucose field flat 3.0 over 20 ticks — biomass dFBA 0.531 vs MM 0.480 (9.7%), CPM volume 160 vs
+      141 (11.9%), acetate 74.9 vs 73.8 (1.4%), net glucose depleted 49.1 vs 52.7 (7.3%) — worst 11.9%,
+      within the 0.15 band (::test_heldout_glucose_field_substitutable). CORROBORATION — 40-tick run —
+      biomass 1.282 vs 1.123 (12.4%), volume 383 vs 335 (12.5%), acetate 207 vs 199 (4.1%), glucose
+      139 vs 142 (2.0%) — worst 12.5% (::test_heldout_longer_run_substitutable). BOUNDARY (diagnostic,
+      not gated small) — held-out O2 cap 2.5→5.0 diverges 73-74% on biomass/volume (dFBA 1.282/382 vs
+      frozen MM 0.342/99): the surrogate is blind to O2 (::test_surrogate_is_blind_to_oxygen_heldout).
+      Degrees of freedom — 4 free MM params vs 4 interface observables (exactly determined), so the
+      tuned fit was guaranteed; the held-out agreement in-regime is the real evidence.'
   requires_simulation: single-cell-in-a-field-mm
 runs:
 - name: single-cell-in-a-field
@@ -433,9 +482,14 @@ runs:
   outcomes:
     INTERFACE-SUBSTITUTABLE-ACROSS-MECHANISMS:
       result: PASS
-      detail: 'dFBA vs MM over 20 ticks: biomass 0.370 vs 0.342 (7.5%), CPM volume 110 vs 99 (10%),
-        field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — a tuned
-        surrogate reproduces the coarse-grained interface (held-out test pending)'
+      detail: 'dFBA vs MM over 20 ticks (tuned condition): biomass 0.370 vs 0.342 (7.5%), CPM volume
+        110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6
+        (6.2%) — a tuned surrogate reproduces the coarse-grained interface'
+    INTERFACE-SUBSTITUTABLE-HELD-OUT:
+      result: PASS
+      detail: 'HELD-OUT, MM params frozen — flat-3.0 glucose field within 11.9%, 40-tick run within
+        12.5% (mechanism-independent in-regime); but a held-out O2 cap 2.5→5.0 diverges ~74% —
+        the MM surrogate is blind to oxygen (the honest boundary of the swap)'
 findings:
 - id: F-01
   kind: biological
@@ -530,7 +584,7 @@ findings:
 - id: F-05
   kind: methodological
   tier: mechanism
-  status: confirms
+  status: partial
   statement: 'INTERFACE SURROGATE CALIBRATION — a tuned Michaelis-Menten twin reproduces the
 
     flagship''s cell↔field interface observables, this investigation''s test of the paper''s
@@ -569,18 +623,44 @@ findings:
 
     (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were TUNED to preserve the interaction
 
-    variables (4 knobs fit to ~4 observables) — the claim is "a tuned surrogate matches the coarse-grained
+    variables (4 knobs fit to 4 observables — exactly determined) — the claim is "a tuned surrogate
 
-    relation across the tested run", not identical internals, and not a
+    matches the coarse-grained relation", not identical internals, and not a derivation of MM from the
 
-    derivation of MM from the dFBA solution. A held-out condition neither mechanism was tuned on is the
+    dFBA solution.
 
-    named next step that would upgrade this from surrogate calibration to mechanism-independence.'
+
+    HELD-OUT TEST NOW RUN (peer-review M2) — the named next step is done, and re-levels this finding
+
+    honestly on both sides. With the 4 MM params FROZEN at their tuned values, dFBA vs MM were compared
+
+    on conditions neither was tuned on (tests/test_substitutability_heldout.py). Inside the calibrated
+
+    glucose-limited, fixed-O2 regime the substitution is MECHANISM-INDEPENDENT, not just a fit — a
+
+    held-out initial glucose field (flat 3.0, not the tuned 0.3→3.0 gradient) agrees within 11.9% on
+
+    every observable, and a 2x-longer run (40 ticks) within 12.5%. But the lumped MM box carries NO
+
+    oxygen variable, and that is its blind spot — on a held-out O2 cap (dFBA 2.5→5.0) dFBA nearly
+
+    quadruples its biomass/volume while the O2-blind MM twin is unchanged, so agreement COLLAPSES to
+
+    ~74%. The honest re-level — mechanism-independence WITHIN the calibrated regime (held-out within
+
+    ~13% on the glucose/time axes), surrogate calibration only ACROSS the O2 axis the MM box has no
+
+    variable for. Degrees of freedom — 4 free MM params vs 4 interface observables (exactly determined),
+
+    so the tuned fit was guaranteed a priori; the in-regime held-out agreement is the load-bearing
+
+    evidence, and the O2-axis collapse is the load-bearing limitation.'
   evidence:
-    from_test: interface-substitutable-across-mechanisms
+    from_test: interface-substitutable-held-out
     from_run: single-cell-in-a-field-mm
-    observed: 'dFBA vs MM (20 ticks): biomass 0.370 vs 0.342 (7.5%), CPM volume 110 vs 99 (10%),
-      acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%); MM runs cobra-free'
+    observed: 'TUNED (20 ticks): biomass 0.370 vs 0.342 (7.5%), volume 110 vs 99 (10%), acetate 47.02
+      vs 47.02 (~0%), glucose 31.6 vs 33.6 (6.2%). HELD-OUT frozen: flat-3.0 field within 11.9%,
+      40-tick within 12.5%; held-out O2 cap 2.5→5.0 diverges ~74% (MM blind to O2). MM runs cobra-free'
   provenance:
     run_ids:
     - single-cell-in-a-field

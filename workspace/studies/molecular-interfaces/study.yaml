@@ -239,7 +239,12 @@ behavior_tests:
       Observed: Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to
       1e-6). The == 0.0 flag is exact only while the engine and seed are fixed; the "differential diffusion
       is the cause" conclusion is regime-specific for this Gray-Scott system
-      (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform)'
+      (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform).
+      Q8 -- the single-variable claim is now proven at the byte level: tests/test_equal_diffusion_control_t0.py
+      asserts the control and flagship composites carry BYTE-IDENTICAL t=0 u/v fields (same seed_uv(n=128, seed=1)
+      draw, same nucleation patches -- verified np.array.tobytes() equal) and that their GrayScott configs differ
+      in EXACTLY {Du, Dv} and nothing else, so the diffusion coefficient is provably the only varied variable.'
+  committed_test: tests/test_equal_diffusion_control_t0.py
   requires_simulation: molecular-equal-diffusion-control
 - name: thermal-channel-still-patterns
   classification: primary

@@ -18,8 +18,17 @@ verified-working bridge (see below), not a CPM-native shatter.
 Particle bridge (verified shape, docs/superpowers/api-maps/2026-08-21-disintegration-
 api-map.md §5): after release, each tick diffs the previous vs current footprint
 mask (`vacated = prev_fp & ~curr_fp`), and for up to `max_particles_per_tick`
-vacated pixels emits ONE new particle apiece at its mapped pixel-center via the
-map `_add` sentinel, with ids from a monotonic counter (never random/uuid/time).
+FRESH vacated pixels emits ONE new particle apiece at its mapped pixel-center via
+the map `_add` sentinel, with ids from a monotonic counter (never random/uuid/
+time). "Fresh" is load-bearing: a pixel can be vacated, re-occupied by ordinary
+CPM (Metropolis) fluctuation as the footprint drifts/reshapes while resorbing,
+then vacated AGAIN -- so an `_shed_pixels` set records every pixel already shed
+and re-vacated pixels are skipped, or the second vacation would emit a second
+particle at the same pixel center and manufacture mass. This closes the
+CPM->particle mass ledger (tests/test_disintegration_ledger.py): every shed
+particle is a distinct lattice pixel, so shed particle count == distinct vacated
+pixels and never exceeds the unique-vacated-pixel total -- shed material, not
+deleted-then-recreated mass.
 A separate process (stock `BrownianMovement`, wired in a later task) is what
 actually scatters the emitted particles -- this process never moves them itself.
 
@@ -144,6 +153,16 @@ class CpmDisintegration(Process):
         # module docstring's mask-timing order).
         self._prev_fp = self._footprint()
 
+        # every lattice pixel this cell has ALREADY shed as a particle. A pixel
+        # can be vacated, re-occupied by ordinary CPM (Metropolis) fluctuation as
+        # the footprint drifts/reshapes while it resorbs, then vacated AGAIN --
+        # without this guard the second vacation would shed a SECOND particle at
+        # the same pixel center, manufacturing mass (a genuine double-count found
+        # by the CPM->particle mass ledger, tests/test_disintegration_ledger.py:
+        # 6 pixels were re-vacated in the flagship run). Each physical pixel may
+        # shed at most one particle, so re-vacated pixels are skipped here.
+        self._shed_pixels: set[tuple[int, int]] = set()
+
     def _footprint(self):
         lat = np.array(self.world.snapshot()).reshape(self._ny, self._nx)
         live_ids = sorted(set(int(i) for i in np.unique(lat)) - {0})
@@ -201,12 +220,24 @@ class CpmDisintegration(Process):
         if self._released:
             vacated = self._prev_fp & ~curr_fp
             rows, cols = np.nonzero(vacated)
-            n_shed = min(len(rows), self._max_particles_per_tick)
-            for k in range(n_shed):
+            # Emit one particle per FRESH vacated pixel (never one already shed --
+            # a re-vacated pixel that was re-occupied by CPM fluctuation would
+            # otherwise double-count, manufacturing mass; see `_shed_pixels`).
+            # The per-tick cap `max_particles_per_tick` limits genuine (fresh)
+            # emissions, so a skipped re-vacated pixel does not consume a slot.
+            emitted = 0
+            for r, c in zip(rows.tolist(), cols.tolist()):
+                if emitted >= self._max_particles_per_tick:
+                    break
+                key = (int(r), int(c))
+                if key in self._shed_pixels:
+                    continue
+                self._shed_pixels.add(key)
                 self._pid += 1
                 pid = f"debris_{self._pid:06d}"
-                pos = self._pixel_center(int(rows[k]), int(cols[k]))
+                pos = self._pixel_center(int(r), int(c))
                 particles_delta[pid] = {"id": pid, "position": pos, "mass": 1.0}
+                emitted += 1
 
         self._prev_fp = curr_fp
 
