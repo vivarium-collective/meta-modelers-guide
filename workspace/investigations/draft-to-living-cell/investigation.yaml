@@ -7,45 +7,54 @@ object_of_evaluation: composition-protocol
 runtime:
   default_emitter: sqlite
 question: >-
-  Does the paper's central claim hold in executable form — that a biological interface can be
-  treated as a modeling choice and a testable hypothesis, so that composing heterogeneous,
-  independently-built simulators through one typed interface per pattern reproduces the paper's
-  cellular composition patterns? And does the same interface survive being realized by very
-  different mechanisms behind it — a Cellular Potts cell versus a lumped-ODE cell, dynamic
-  flux-balance analysis versus a lumped Michaelis-Menten kinetic — as the paper's substitutability
-  claim predicts? The subject here is the interface; process bigraphs (Vivarium) are the example
-  substrate we use to make it executable.
+  The paper treats a biological interface as a scientific object — something you can compose with
+  other entities, swap the mechanism behind, and watch emerge from the inside. Does that hold in
+  executable form? Across nine composition patterns this investigation asks three things about the
+  interface. COMPOSE — when one typed interface is coupled to other entities, outward to a nutrient
+  field and to neighbouring cells and inward to a metabolism and a membrane, does the composition
+  produce the emergent consequence the paper predicts (niche construction, competition,
+  cross-feeding, pattern, division), on genuine simulation output rather than a scripted trajectory?
+  SWAP — is the same interface substitutable, so the externally observable relation survives when
+  the mechanism behind it is replaced (dynamic-FBA by a lumped Michaelis-Menten kinetic) — and does
+  that hold at more than one level of composition, not just inside a single cell? EMERGE — can a
+  cell's boundary itself be an emergent product of its own internal processes, produced and
+  maintained from the inside rather than merely given? The subject is the interface; process bigraphs
+  (Vivarium) are the example substrate we use to make it executable.
 hypothesis: >-
-  The paper's composition patterns are properties of the interfaces, not of any particular
-  mechanism behind them. One typed coupling process per pattern is enough to compose
-  independently-built frameworks (viva-cpm, spatio-flux) without either one knowing about the
-  other; each study is a behavior-gated test of an interface hypothesis, passing or failing on
-  genuine simulation output rather than a scripted trajectory; and where the same interface is
-  realized by two different mechanisms the externally observable relation is preserved — an
-  executable instance of the paper's equivalence-class claim.
+  An interface is a property of a composition, not of any single mechanism behind it, and the three
+  moves the paper makes with it are all executable. COMPOSE: coupling one typed interface to other
+  entities — outward to an environment and neighbours, inward to a metabolism and a membrane — yields
+  emergent behaviour the interface alone does not have, and every study measures such a consequence
+  on genuine simulation output. SWAP: where the same interface is realized by two different
+  mechanisms the observable relation is preserved — shown as a measured result (interface observables
+  agreeing within ~10%) at two levels, the single-cell metabolism and the multi-cell colony, with the
+  remaining levels an explicit, honestly-flagged frontier. EMERGE: a cell's boundary
+  can be produced and sustained by internal composition — a membrane that runs its own maintenance
+  persists, while the identical membrane without that process decays — the interface made, not
+  assumed. Each study is a behavior-gated test of one of these claims.
 lead: >-
-  This investigation turns the cellular-interface paper's nine composition patterns into
-  executable, behavior-gated interface tests. Each pattern is a hypothesis about which
-  interactions matter, expressed as one typed coupling process; running the composite either
-  reproduces the pattern's characteristic behavior or it does not. Read in order, the nine studies
-  trace an arc — interface, individuality, viability, self-maintenance, agency, adaptation — from
-  the bare interface contract to a growing, competing, self-maintaining, evolving agent. These are
-  demonstrations, not fitted models: every constant is toy-real, chosen for legible dynamics over a
-  short run, and every study states its honest gap. Process bigraphs and Vivarium are the example
-  substrate, not the thesis — the thesis is that interfaces are a natural level at which
-  heterogeneous mechanisms compose and can be compared. The flagship, cell-environment-coupling,
-  makes the outward sense/act loop concrete: one coupling process reads a spatio-flux nutrient grid
-  at a real CPM cell's own footprint, runs one dynamic-FBA step there (e_coli_core, oxygen-capped
-  to force acetate overflow), grows the cell's CPM target volume from the biomass produced, and
-  writes the uptake and secretion back into the shared field as a spatial delta that spatio-flux's
-  DiffusionAdvection then spreads. Over 20 ticks the cell grows roughly 3.4x (32 to 110 CPM lattice
-  pixels on a 60x60 field), depletes the glucose at its own footprint by up to ~18% before
-  diffusion partially resupplies it, and leaves a spreading acetate plume — niche construction made
-  spatial and metabolic, not scripted. All nine patterns now have a study: eight realized as real
-  2D spatial mechanisms — most as compositions of two independently-built simulators, a few as a
-  single spatial reaction-diffusion or phase-field mechanism — plus the foundational
-  cellular-interface contract itself. Learning — a cell whose history of interaction changes its
-  future regulation to keep itself viable — is the arc's open next rung, named but not yet built.
+  This investigation turns the paper's nine composition patterns into executable, behavior-gated
+  tests of three things you can do with a cellular interface: COMPOSE it, SWAP the mechanism behind
+  it, and watch it EMERGE. Compose is the through-line — every study couples one typed interface to
+  other entities and measures the emergent consequence. The flagship, cell-environment-coupling,
+  reads a spatio-flux nutrient grid at a real CPM cell's own footprint, runs one dynamic-FBA step
+  (e_coli_core, oxygen-capped to force acetate overflow), grows the cell from the biomass, and writes
+  uptake and secretion back into the field: over 20 ticks the cell grows roughly 3.4x (32 to 110 CPM
+  pixels on a 60x60 field), depletes its own footprint glucose by up to ~18% before diffusion
+  resupplies it, and leaves a spreading acetate plume — niche construction, the emergent consequence
+  of composing a cell interface with an environment, not a scripted trajectory. Compose the same kind
+  of interface with neighbours and competition and cross-feeding emerge; with internal reaction and
+  diffusion, a Turing pattern; with a division rule, a lineage. Swap is the paper's equivalence-class
+  claim, measured: the same interface realized by a different mechanism preserves the observable
+  relation — dynamic-FBA versus a lumped Michaelis-Menten kinetic behind the byte-identical flagship
+  ports agree within ~10%, and the same swap holds at the multi-cell colony interface too, so
+  substitutability is shown at more than one level of composition (the remaining levels are an honest,
+  named frontier). Emerge is the inward move: a membrane produced and maintained by its own internal
+  process persists, while the identical membrane with that process switched off decays — the boundary
+  made from the inside, not assumed. Read in order the nine studies still trace an arc, from the bare
+  interface contract to a growing, competing, self-maintaining, evolving agent. These are
+  demonstrations with toy-real constants, not fitted models, and every study states its honest gap;
+  process bigraphs and Vivarium are the example substrate, not the thesis.
 executive:
   what_is_this: >-
     "From Draft to Living Cell" is the executable companion to the meta-modeler's guide: the
@@ -64,12 +73,18 @@ executive:
     this executable — they are how the patterns are expressed, not the claim being tested.
 
 
-    The paper's substitutability claim — that different mechanisms may realize the same externally
-    observable relation, so interfaces provide a natural level at which heterogeneous mechanisms can
-    be compared — is shown concretely rather than asserted: the flagship swaps its internal
-    metabolism from dynamic-FBA to a lumped Michaelis-Menten kinetic behind the byte-identical
-    CpmCellField ports, and the interface-level observables agree within ~10%. Same interface,
-    different mechanism, preserved behavior.
+    The paper makes three moves with such an interface, and each is executable here. COMPOSE it with
+    other entities — outward to an environment and neighbours, inward to a metabolism and a membrane —
+    and an emergent consequence appears that the interface alone does not have; every study measures
+    one. SWAP the mechanism behind it and the observable relation is preserved — shown as a measured
+    result at two levels of composition: the flagship swaps its internal metabolism from dynamic-FBA
+    to a lumped Michaelis-Menten kinetic behind byte-identical CpmCellField ports (observables within
+    ~10%), and the cell-cell colony swaps the same mechanism behind byte-identical CpmColonyField
+    ports with the observables preserved. Broadening the measured swap to the remaining levels is a
+    named frontier, not a silent gap. EMERGE — the interface is not only composed and swapped but
+    made: in autopoiesis a membrane is produced and maintained by its own internal process, decaying
+    the moment that process is switched off. Same interface, different mechanism, at more than one
+    level; and a boundary that makes itself.
   verdict: >-
     The pattern set is complete and the central claim holds in executable form. All nine of the
     paper's composition patterns have a study; eight are realized as real 2D spatial compositions
@@ -155,13 +170,15 @@ what_this_does_not_demonstrate: >-
   the arc's next rung. These are the honest boundary of the claim, not hidden caveats.
 scientific_argument:
   main_claim: >-
-    A biological interface is simultaneously a modeling choice and a testable hypothesis about which
-    interactions matter, and the paper's composition patterns are properties of those interfaces
-    rather than of the mechanisms behind them. Composing independently-built simulators through one
-    typed process per pattern reproduces each pattern's characteristic behavior as genuine
-    simulation output, and the same interface, realized by a different mechanism, preserves the
-    externally observable relation. The interface — for the flagship, CpmCellField — is the
-    load-bearing artifact: it, not either framework alone, is what makes the composition possible.
+    A biological interface is a scientific object defined by three things you can do with it, and all
+    three are executable here. COMPOSE — coupling the interface to other entities (outward to an
+    environment and neighbours, inward to a metabolism and a membrane) produces emergent behaviour the
+    interface alone does not have, measured on genuine simulation output in every study. SWAP — the
+    same interface realized by a different mechanism preserves the externally observable relation, a
+    measured result at two levels of composition (the single-cell metabolism and the multi-cell
+    colony). EMERGE — the interface itself can be an emergent product of internal composition,
+    produced and maintained from the inside rather than given. The interface — not either framework
+    alone — is the load-bearing artifact that makes each of these possible.
   evidence_for:
   - >-
     cell-environment-coupling (the outward sense/act flagship) — a real CPM cell reads a spatio-flux
@@ -175,11 +192,16 @@ scientific_argument:
     though the depletion signal is much sharper locally at the cell's own footprint than in the
     field-wide total — the direct niche-construction signature.
   - >-
-    Substitutability, run concretely — the flagship's internal metabolism is swapped from dynamic-FBA
-    to a lumped Michaelis-Menten kinetic behind the byte-identical CpmCellField ports, and the
-    interface-level observables (growth, local depletion, secretion) agree within ~10%. Same
-    interface, different mechanism, preserved behavior: the paper's equivalence-class claim made
-    executable.
+    Substitutability, run concretely and at two levels of composition (the SWAP move). At the single
+    cell: the flagship's internal metabolism is swapped from dynamic-FBA to a lumped Michaelis-Menten
+    kinetic behind the byte-identical CpmCellField ports, and the interface-level observables (growth,
+    local depletion, secretion) agree within ~10%. At the multi-cell colony: the same swap behind the
+    byte-identical CpmColonyField ports preserves the colony observables to within ~6% (total biomass
+    302.4 vs 287.6, competition ratio 3.69x vs 3.47x, total volume and acetate plume within ~0.2%),
+    and the Michaelis-Menten arm runs with cobra absent entirely. Same interface, different mechanism,
+    preserved behavior at more than one level: the paper's equivalence-class claim made executable.
+    Broadening the measured swap to the remaining levels (the interface's own realizations, the
+    environment mechanism) is a named frontier, not a silent gap.
   evidence_against:
   - >-
     Each study realizes only part of its pattern's full claim: two of the four physical modalities
@@ -244,61 +266,75 @@ biological_story: >-
 at_a_glance:
 - study: cellular-interface
   role: >-
-    The contract itself (inward and outward meet) — a cell's exposed variables (footprint, fluxes,
-    shape, viability) ARE its interface; the study makes the inside/outside boundary and the two
-    directions of composition explicit. The foundation the other eight patterns build on.
+    [EMERGE · the contract] A cell's exposed variables (footprint, fluxes, shape, viability) ARE its
+    interface; the study makes the inside/outside boundary explicit and shows the same contract behind
+    different realizations (lumped modalities, executable handler, and a spatial composition with a
+    diffusion field). The foundation cell-environment-coupling composes from.
 - study: cell-environment-coupling
   role: >-
-    Outward, reciprocal (sense -> act). The flagship: a real CPM agent coupled to a real spatio-flux
-    nutrient field through one typed process (CpmCellField) — senses local glucose, runs dynamic-FBA
-    (e_coli_core, O2-capped to force acetate overflow), grows (~3.4x CPM volume), and secretes a
-    diffusing acetate plume. Also carries the substitutability demonstration (dynamic-FBA vs lumped
-    Michaelis-Menten behind the same interface). Niche construction as genuine spatial-metabolic
-    output, not a scripted trajectory.
+    [COMPOSE × environment · SWAP · flagship] Compose the cell interface with a real spatio-flux
+    nutrient field (CpmCellField) — senses local glucose, runs dynamic-FBA (e_coli_core, O2-capped to
+    force acetate overflow), grows ~3.4x, secretes a diffusing plume: niche construction as an
+    emergent consequence, not a scripted trajectory. Carries the measured SWAP: dynamic-FBA vs a
+    lumped Michaelis-Menten kinetic behind byte-identical ports, interface observables within ~10%.
 - study: cell-cell-coupling
   role: >-
-    Outward (cell <-> cell). Multi-cell competition and cross-feeding over a shared field: agents
-    reshape the resource each other depends on, driving competitive exclusion or metabolic
-    interdependence through the same field interface.
+    [COMPOSE × cells · SWAP] Compose the interface with neighbours over a shared field → competitive
+    exclusion and metabolic cross-feeding emerge. Carries the second measured SWAP, at the multi-cell
+    colony interface: the colony's per-cell metabolism swapped dynamic-FBA -> lumped Michaelis-Menten
+    behind byte-identical CpmColonyField ports, observables preserved — substitutability at a second
+    level of composition.
 - study: disintegration
   role: >-
-    Inward, undone. Viability collapse: as the maintaining processes fail, the cell ceases to be the
-    appropriate unit of description and molecular processes (resorption, shedding) take its place —
-    death as a change in the level of description, not a scripted event.
+    [COMPOSE fails] The interface dissolves: composed with a rising toxin field, viability crosses a
+    threshold and the cell ceases to be the appropriate unit of description — molecular processes
+    (resorption, shedding) take its place. Death as a change in the level of description. The foil to
+    autopoiesis (a boundary lost from outside, not maintained from within).
 - study: molecular-interfaces
   role: >-
-    Inward (molecular channels compose the interface's physical ports). Reaction-diffusion patterning
-    realizing two of the four physical modalities — a chemical channel and a genuine thermal channel
-    (a temperature field Arrhenius-scaling the reaction rate).
+    [COMPOSE internal · channels] Reaction composed with differential diffusion → a Turing pattern
+    emerges (causally isolated by an equal-diffusion control going uniform); adding a thermal channel
+    composes a second physical modality that coarsens the pattern. The interface's chemical + thermal
+    ports realized from internal composition.
 - study: biomolecular-complementarity
   role: >-
-    Inward (molecular complementarity composes selective boundaries). Differential-adhesion sorting
-    and Cahn-Hilliard phase separation as two mechanistic resolutions of the same complementarity
-    interface.
+    [EMERGE (formation) · COMPOSE] A phase boundary is PRODUCED from a well-mixed field by internal
+    spinodal decomposition (mass-conserved) — interface formation from the inside; and differential
+    adhesion composes cells into sorted domains. Formation without maintenance — the partial case
+    autopoiesis completes.
 - study: autopoiesis
   role: >-
-    Inward — internal processes composing to PRODUCE the interface and its viability bound. A
-    self-maintaining membrane against a decaying vesicle control; connects directly to the paper's
-    individual criterion (a boundary alone is not enough).
+    [EMERGE · the full case] The membrane is produced AND maintained by its own internal process: it
+    persists with production on, and the identical membrane with production switched off (single-knob
+    control) loses closure and decays to zero. The boundary made and sustained from the inside — the
+    paper's individual criterion, executable.
 - study: growth-and-division
   role: >-
-    Outward, replicated. CPM growth driven by real per-footprint dFBA metabolism, then division that
-    partitions daughter biomass — the interface reproducing itself, with multi-generation lineage
-    compounding and sibling divergence.
+    [COMPOSE × division] Compose the interface with real per-footprint dFBA metabolism and a
+    volume-gated division rule → a lineage emerges: multi-generation growth, bounded sawtooth volume,
+    sibling desynchronization by crowding. The interface reproducing itself.
 - study: development-and-evolution
   role: >-
-    Both directions, across timescales. A colony develops a rim/core organization and evolves a
-    heritable uptake trait under selection via differential division — the same viability criterion
-    organizing adaptation across timescales. The capstone.
+    [COMPOSE across timescales · capstone] A colony develops a rim/core organization (emergent from
+    internal mass balance) and evolves a heritable uptake trait under selection-by-differential-
+    division — mean trait up in 4/5 seeds versus frozen no-mutation and undirected no-selection
+    controls. Composition organizing adaptation across timescales.
 how_to_read: >-
-  Read the nine studies as an arc — cellular-interface (the contract), then cell-environment-coupling
-  (the outward sense/act flagship), cell-cell-coupling, disintegration, molecular-interfaces,
-  biomolecular-complementarity, autopoiesis, growth-and-division, and development-and-evolution (the
-  capstone). Each is a behavior-gated test of one interface hypothesis: the composite either
-  reproduces the pattern's characteristic behavior on genuine simulation output or it does not. Each
-  study is labeled by its direction of composition — outward (cell to environment or to other cells)
-  or inward (internal processes composing to produce the interface) — and states, in the paper's own
-  vocabulary, exactly what it does and does not demonstrate.
+  Read the nine studies as three moves the paper makes with an interface, not only a linear arc.
+  COMPOSE is the through-line — every study couples the interface to other entities and measures the
+  emergent consequence: cell-environment-coupling (× an environment → niche construction),
+  cell-cell-coupling (× other cells → competition and cross-feeding), molecular-interfaces (internal
+  reaction + diffusion → a Turing pattern), growth-and-division (× a division rule → a lineage),
+  development-and-evolution (across timescales → adaptation), and disintegration (composition failing
+  → the interface dissolves). SWAP — cell-environment-coupling and cell-cell-coupling each carry a
+  measured substitutability result (dynamic-FBA versus a lumped Michaelis-Menten kinetic behind
+  byte-identical ports, observables preserved) at two different levels of composition; broadening the
+  measured swap to the other levels is the named frontier. EMERGE — cellular-interface makes the
+  contract explicit, biomolecular-complementarity produces a boundary from a well-mixed field, and
+  autopoiesis produces AND maintains one from the inside (with a single-knob control that decays
+  without it). Each study is a behavior-gated test on genuine simulation output, tagged by move in the
+  at-a-glance above, and states in the paper's own vocabulary exactly what it does and does not
+  demonstrate.
 capstone: development-and-evolution
 coverage_note: >-
   All nine of the paper's composition patterns now have a study: eight realized as real 2D spatial
@@ -331,17 +367,26 @@ glossary:
     once a modeling choice (what to expose, what to abstract) and a testable hypothesis (each study
     passes or fails a behavior gate on its chosen interface). The subject of this investigation;
     process bigraphs are the substrate used to express it.
-- term: Substitutability
+- term: Substitutability (the SWAP move)
   definition: >-
     The paper's equivalence-class claim: different mechanisms may realize the same externally
     observable relation, so an interface is a natural level at which heterogeneous mechanisms can be
-    compared. Shown here by swapping the flagship's dynamic-FBA metabolism for a lumped
-    Michaelis-Menten kinetic behind the same CpmCellField ports, with the observables preserved.
+    compared. Shown as a measured result at two levels of composition — the flagship's metabolism
+    (dynamic-FBA vs a lumped Michaelis-Menten kinetic behind byte-identical CpmCellField ports) and
+    the cell-cell colony (the same swap behind byte-identical CpmColonyField ports) — with the
+    interface observables preserved each time. Broadening it to the other levels is a named frontier.
+- term: The three moves (compose · swap · emerge)
+  definition: >-
+    The three things the paper does with an interface, and the spine of this investigation. COMPOSE
+    it with other entities — outward to an environment and neighbours, inward to a metabolism and a
+    membrane — and an emergent consequence appears. SWAP the mechanism behind it and the observable
+    relation is preserved. EMERGE: the interface itself is produced and maintained by internal
+    composition, not given. Every study is a behavior-gated test of one of these moves.
 - term: Composition direction
   definition: >-
     Outward composition couples a cell to its environment and to other cells; inward composition is
     internal processes composing to produce the interface and its viability constraints. Every study
-    is labeled by direction.
+    is labeled by direction and by the move (compose / swap / emerge) it demonstrates.
 - term: Toy-real
   definition: Plausible, hand-tuned constants (e.g. glucose_km, glucose_vmax, oxygen_vmax,
     box_volume_L, grow_per_biomass) chosen to produce legible, gradual dynamics over a short
@@ -365,11 +410,12 @@ competing_frameworks:
     The behavior of a composition pattern is a property of the specific mechanism used to realize it,
     so changing the mechanism behind a cell (dynamic-FBA to a lumped kinetic, a CPM cell to a lumped
     ODE cell) would change the externally observable relation.
-  discriminated_by: >-
-    The flagship realizes the same cell-environment interface with two different internal mechanisms
-    (dynamic-FBA and a lumped Michaelis-Menten kinetic) behind byte-identical CpmCellField ports and
-    finds the interface-level observables agree within ~10% — evidence that the pattern is a property
-    of the interface, not the mechanism, as the paper's equivalence-class claim predicts.
+    The same interface is realized with two different internal mechanisms (dynamic-FBA and a lumped
+    Michaelis-Menten kinetic) behind byte-identical ports, at two levels of composition — the
+    single-cell flagship (CpmCellField, observables within ~10%) and the multi-cell colony
+    (CpmColonyField, observables preserved) — and the interface-level relation holds each time,
+    evidence that the pattern is a property of the interface, not the mechanism, as the paper's
+    equivalence-class claim predicts.
 studies:
 - cellular-interface
 - cell-environment-coupling
