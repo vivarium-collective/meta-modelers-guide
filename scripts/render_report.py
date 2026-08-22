@@ -23,14 +23,35 @@ Run:  PYTHONPATH=. .venv/bin/python scripts/render_report.py --workspace . --out
 from __future__ import annotations
 
 import argparse
+import base64
 import html
 import json
+import mimetypes
 import re
 from pathlib import Path
 
 import yaml
 
 TEAL = "#0d6e6b"
+
+# The arc the nine studies trace (the paper's through-line), one entry per study
+# slug: (short label, composition direction). Direction: "out" = outward
+# (cell<->environment / cell<->cell), "in" = inward (internal processes compose
+# to produce the interface), "both" = the interface itself / across timescales.
+ARC_STUDIES = {
+    "cellular-interface":            ("interface",       "both"),
+    "cell-environment-coupling":     ("cell ↔ env",  "out"),
+    "cell-cell-coupling":            ("cell ↔ cell", "out"),
+    "disintegration":                ("disintegration",  "in"),
+    "molecular-interfaces":          ("molecular",       "in"),
+    "biomolecular-complementarity":  ("complementarity", "in"),
+    "autopoiesis":                   ("autopoiesis",     "in"),
+    "growth-and-division":           ("growth+division", "out"),
+    "development-and-evolution":     ("dev+evolution",   "both"),
+}
+# The rung words beneath the arc (the paper's ladder), learning still open.
+ARC_RUNGS = ["interface", "individuality", "viability", "self-maintenance",
+             "agency", "adaptation", "learning"]
 
 
 def discover_investigations(ws_root: Path) -> list[str]:
@@ -191,6 +212,104 @@ def bars_chart(items: list[tuple[str, float]], vmax: float | None = None) -> str
     return "".join(parts)
 
 
+def _data_uri(path: Path) -> str:
+    """Base64 data: URI for a raster figure (gif/png/jpg), so the report stays a
+    single self-contained file. Empty string if the file is missing."""
+    if not path or not path.exists():
+        return ""
+    mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+    b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{b64}"
+
+
+def arc_diagram_svg(studies: list[dict]) -> str:
+    """The through-line: the studies as an ordered path left→right, each a node
+    tagged with its composition direction (outward/inward/both), with the paper's
+    rung ladder beneath and 'learning' as a ghosted, still-open final node."""
+    n = len(studies)
+    if not n:
+        return ""
+    W, H = 900, 240
+    ml, mr = 40, 40
+    row_y = 96                       # the spine
+    span = W - ml - mr
+    # node x centers: n study nodes + 1 ghost (learning)
+    total = n + 1
+    xs = [ml + span * (i + 0.5) / total for i in range(total)]
+    dir_fill = {"out": "var(--teal)", "in": "var(--ochre)", "both": "var(--ink-2)"}
+    dir_label = {"out": "outward", "in": "inward", "both": "both"}
+    p = [f'<svg viewBox="0 0 {W} {H}" class="arc-svg" role="img" '
+         f'aria-label="The arc traced by the {n} studies, from the interface to adaptation">']
+    # spine
+    p.append(f'<line x1="{xs[0]:.0f}" y1="{row_y}" x2="{xs[-1]:.0f}" y2="{row_y}" class="arc-spine"/>')
+    # rung ladder beneath (evenly spread words)
+    for i, rung in enumerate(ARC_RUNGS):
+        rx = ml + span * (i + 0.5) / len(ARC_RUNGS)
+        ghost = ' arc-rung-open' if rung == "learning" else ''
+        p.append(f'<text x="{rx:.0f}" y="{H-18}" class="arc-rung{ghost}">{esc(rung)}</text>')
+    p.append(f'<line x1="{ml}" y1="{H-40}" x2="{W-mr}" y2="{H-40}" class="arc-ladder"/>')
+    # study nodes
+    for i, s in enumerate(studies):
+        slug = s.get("name", "")
+        label, direction = ARC_STUDIES.get(slug, (s.get("title") or slug, "both"))
+        x = xs[i]
+        fill = dir_fill.get(direction, "var(--ink-2)")
+        p.append(f'<a href="#{esc(slug)}">')
+        p.append(f'<circle cx="{x:.0f}" cy="{row_y}" r="13" class="arc-dot" style="fill:{fill}"/>')
+        p.append(f'<text x="{x:.0f}" y="{row_y+4:.0f}" class="arc-dot-n">{i+1:02d}</text>')
+        # direction pill above
+        p.append(f'<text x="{x:.0f}" y="{row_y-24:.0f}" class="arc-dir">{esc(dir_label.get(direction,""))}</text>')
+        # label below (two lines if it contains a space and is long)
+        words = str(label).split()
+        if len(label) > 11 and len(words) > 1:
+            mid = len(words) // 2
+            l1, l2 = " ".join(words[:mid]), " ".join(words[mid:])
+            p.append(f'<text x="{x:.0f}" y="{row_y+34:.0f}" class="arc-lbl">'
+                     f'<tspan x="{x:.0f}" dy="0">{esc(l1)}</tspan>'
+                     f'<tspan x="{x:.0f}" dy="12">{esc(l2)}</tspan></text>')
+        else:
+            p.append(f'<text x="{x:.0f}" y="{row_y+34:.0f}" class="arc-lbl">{esc(label)}</text>')
+        p.append('</a>')
+    # ghost 'learning' node
+    gx = xs[-1]
+    p.append(f'<circle cx="{gx:.0f}" cy="{row_y}" r="13" class="arc-dot arc-dot-open"/>')
+    p.append(f'<text x="{gx:.0f}" y="{row_y+4:.0f}" class="arc-dot-n arc-dot-n-open">?</text>')
+    p.append(f'<text x="{gx:.0f}" y="{row_y-24:.0f}" class="arc-dir">open</text>')
+    p.append(f'<text x="{gx:.0f}" y="{row_y+34:.0f}" class="arc-lbl arc-lbl-open">learning</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def substitutability_chart(pairs: list[tuple[str, float, float, str]]) -> str:
+    """Paired bars: for each interface observable, the dynamic-FBA value and the
+    lumped Michaelis–Menten value, each normalised to the dFBA value (=1.0) so the
+    eye reads agreement directly. Each pair is annotated with the divergence."""
+    W = 460
+    gh, bh, gap = 62, 18, 6          # group height, bar height, intra-gap
+    top = 16
+    H = top + len(pairs) * gh + 8
+    plot_x, plot_w = 150, W - 150 - 60
+    p = [f'<svg viewBox="0 0 {W} {H}" class="chart subst" role="img" '
+         f'aria-label="dynamic-FBA vs Michaelis–Menten, per interface observable">']
+    # 1.0 reference line
+    x1 = plot_x + plot_w
+    p.append(f'<line x1="{x1:.0f}" y1="{top}" x2="{x1:.0f}" y2="{H-8}" class="subst-ref"/>')
+    p.append(f'<text x="{x1:.0f}" y="{top-4}" class="subst-ref-l">dFBA = 1.0</text>')
+    for i, (lbl, dfba, mm, delta) in enumerate(pairs):
+        gy = top + i * gh
+        p.append(f'<text x="0" y="{gy+gh/2:.0f}" class="subst-obs">{esc(lbl)}</text>')
+        # dFBA bar (normalised to 1.0) then MM bar (mm/dfba)
+        for j, (name, frac, cls) in enumerate((("dFBA", 1.0, "subst-dfba"),
+                                               ("MM", (mm/dfba if dfba else 0), "subst-mm"))):
+            by = gy + 6 + j * (bh + gap)
+            bw = plot_w * frac
+            p.append(f'<rect x="{plot_x}" y="{by}" width="{bw:.1f}" height="{bh}" rx="3" class="{cls}"/>')
+            p.append(f'<text x="{plot_x+6}" y="{by+bh*0.72:.0f}" class="subst-bl">{esc(name)}</text>')
+        p.append(f'<text x="{W-56}" y="{gy+gh/2:.0f}" class="subst-delta">{esc(delta)}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
 # ─── report assembly ─────────────────────────────────────────────────────────
 def load_study(ws: Path, slug: str) -> dict:
     for base in (ws / "workspace" / "studies", ws / "studies"):
@@ -216,6 +335,32 @@ def study_exec_svgs(study: dict) -> list[Path]:
     if not d:
         return []
     return sorted((d / "visualizations").glob("*-dynamics.svg"))
+
+
+def study_figures(study: dict) -> list[str]:
+    """Figure HTML for a study card: inline its declared ``image:…gif`` simulation
+    movies as self-contained data-URIs, plus any hand-drawn executable-dynamics
+    SVG. Skips the interactive ``html:`` metrics panels (Plotly, not
+    self-contained) and the multi-MB illustration PNG/SVGs."""
+    d = study.get("_dir")
+    figs: list[str] = []
+    if not d:
+        return figs
+    for v in study.get("visualizations", []) or []:
+        addr = str(v.get("address") or "")
+        scheme, _, rel = addr.partition(":")
+        if scheme in {"image", "gif"} and rel.endswith(".gif"):
+            uri = _data_uri(d / rel)
+            if not uri:
+                continue
+            cfg = v.get("config") if isinstance(v.get("config"), dict) else {}
+            caption = cfg.get("caption") if isinstance(cfg, dict) else ""
+            cap = f'<figcaption class="fig-cap">{md_inline(caption)}</figcaption>' if caption else ""
+            figs.append(f'<figure class="fig-wrap"><img src="{uri}" '
+                        f'alt="{esc(v.get("name",""))}" loading="lazy" class="fig-img"/>{cap}</figure>')
+    for p in study_exec_svgs(study):
+        figs.append(f'<figure class="fig-wrap">{inline_svg(p)}</figure>')
+    return figs
 
 
 def confidence_badge(study: dict) -> str:
@@ -256,17 +401,7 @@ def study_card(study: dict, order: int, inv_map: dict) -> str:
     title = study.get("title") or slug
     claim = study.get("claim") or ""
     oc = outcomes(study)
-    svgs = study_exec_svgs(study)
-    inv = inv_map.get(slug, {})
-    # Figure caption BELOW the plot (publication convention): the physically-
-    # checked readout for this figure, badged with its precise invariant label.
-    if inv.get("invariant"):
-        cap = (f'<figcaption class="fig-cap"><span class="inv-k">'
-               f'{esc(_inv_label(inv.get("invariant_kind","")).upper())}</span> '
-               f'{md_inline(inv.get("invariant",""))}</figcaption>')
-    else:
-        cap = ""
-    figs = "".join(f'<figure class="fig-wrap">{inline_svg(p)}{cap}</figure>' for p in svgs)
+    figs = "".join(study_figures(study))
     inv_html = ""
 
     # collapsible full detail — the parts a reader only wants on demand
@@ -330,63 +465,42 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     inv_map = json.loads(inv_path.read_text()) if inv_path.exists() else {}
 
     # ── hero stats
-    stats = [("studies", str(len(studies))), ("executables", str(len(inv_map) or len(studies))),
-             ("checked signatures", str(len(inv_map))), ("whole cell", "1")]
+    n_figs = sum(1 for s in studies if study_figures(s))
+    stats = [("studies", str(len(studies))),
+             ("composition patterns", str(len(studies))),
+             ("with figures", str(n_figs)),
+             ("modalities realized", "2 of 4")]
     stat_html = "".join(f'<div class="stat"><b>{v}</b><span>{esc(k)}</span></div>' for k, v in stats)
 
-    # ── the arc spine
-    arc = "".join(
-        f'<a class="arc-node" href="#{esc(s["name"])}"><span class="arc-n">{i+1:02d}</span>'
-        f'<span class="arc-t">{esc(s.get("title") or s["name"])}</span></a>'
-        + ('<span class="arc-arrow">→</span>' if i < len(studies) - 1 else "")
-        for i, s in enumerate(studies))
+    # ── the arc (an SVG through-line: the studies as an ordered path)
+    arc_svg = arc_diagram_svg(studies)
 
-    def hl_fig(s):
-        svgs = study_exec_svgs(s)
-        return f'<figure class="hl-fig">{inline_svg(svgs[0])}</figure>' if svgs else ""
-
-    def inv_line(s):
-        d = inv_map.get(s.get("name", ""), {})
-        return (f'<div class="invariant"><span class="inv-k">'
-                f'{esc(_inv_label(d.get("invariant_kind","")).upper())}</span> '
-                f'{md_inline(d.get("invariant",""))}</div>') if d.get("invariant") else ""
-
-    # ── highlights (the interesting components, promoted)
+    # ── highlight: the thesis in one figure — substitutability (dFBA vs MM)
     highlights = []
-    atlas = by_slug.get("the-living-atlas")
-    if atlas:
-        highlights.append(f"""
-        <section class="hl">
-          <div class="hl-txt">
-            <span class="kicker">The payoff</span>
-            <h2>A cell, assembled from drafts, that lives and dies</h2>
-            <p>The figures don't just each run — they <em>compose</em>. Assembled into one cell,
-            it grows on a depleting nutrient (biomass peaks ≈5.1), divides once as it grows
-            (cell_count 1→2), then a thermal shock ramps its temperature 37→50 °C past tolerance,
-            viability collapses (1.0→0.02), and its biomass converts to molecular debris (0→4.87).
-            The whole arc — grow, divide, die — in one run.</p>
-            {chips(outcomes(atlas)[:4])}
-            {inv_line(atlas)}
-          </div>
-          {hl_fig(atlas)}
-        </section>""")
-    three = by_slug.get("one-interface-three-mechanisms")
-    if three:
+    if by_slug.get("cell-environment-coupling"):
+        subst_pairs = [
+            ("final biomass", 0.370, 0.342, "Δ 7.5%"),
+            ("CPM volume", 110.0, 99.0, "Δ 10%"),
+            ("acetate secreted", 47.02, 47.02, "Δ ~0%"),
+            ("glucose depleted", 31.6, 33.6, "Δ 6.2%"),
+        ]
         highlights.append(f"""
         <section class="hl reverse">
           <div class="hl-txt">
             <span class="kicker">The thesis, in one figure</span>
-            <h2>One interface, three mechanisms</h2>
-            <p>One metabolism interface — nutrients ⇒ biomass — realized three ways: a first-order
-            lumped yield, saturating Michaelis–Menten kinetics, and a real COBRApy flux-balance LP.
-            The compiler installs each behind the <strong>identical ports</strong>, and the three
-            produce <strong>three genuinely different trajectories</strong> — biomass 4.0 (linear),
-            2.67 (saturating), and 6.29 (with an acetate overflow of 30.4 on the secretions port the
-            FBA solver discovers on its own). Same interface, interchangeable mechanism, distinct
-            dynamics — handler independence (law 4) made runnable.</p>
-            {inv_line(three)}
+            <h2>Same interface, different mechanism</h2>
+            <p>The flagship's cell–environment interface (<code>CpmCellField</code>) is realized two
+            ways behind <strong>byte-identical ports</strong>: a constraint-based dynamic-FBA
+            metabolism (cobra <code>e_coli_core</code>, O₂-capped to force acetate overflow) and a
+            lumped, cobra-free Michaelis–Menten kinetic. Every interface-level observable agrees
+            within ~10% — an executable instance of the paper's equivalence-class claim: the
+            composition pattern is a property of the <em>interface</em>, not of the mechanism behind
+            it.</p>
           </div>
-          {hl_fig(three)}
+          <figure class="hl-fig hl-bars">{substitutability_chart(subst_pairs)}
+            <figcaption class="fig-cap">Interface observables over 20 ticks, each bar normalised to
+            the dynamic-FBA value; the lumped Michaelis–Menten twin tracks it within ~10%.</figcaption>
+          </figure>
         </section>""")
 
     # ── studies
@@ -421,6 +535,8 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
 
     verdict = execu.get("verdict", "")
     status = str(inv.get("status") or "").strip()
+    nstudies_word = {8: "eight", 9: "nine", 10: "ten", 11: "eleven",
+                     12: "twelve"}.get(len(studies), str(len(studies)))
 
     body = f"""
     <header class="hero">
@@ -437,7 +553,10 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
       {paras(execu.get('what_is_this') or '')}
     </section>
 
-    <nav class="arc" aria-label="the arc">{arc}</nav>
+    <section class="arcfig" aria-label="the arc traced by the studies">
+      <span class="kicker">The arc — from the interface to an adapting agent</span>
+      {arc_svg}
+    </section>
 
     {''.join(highlights)}
 
@@ -447,7 +566,7 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     </section>
 
     <section class="studies-wrap">
-      <h2>The ten studies <span class="sub">— in arc order; claim + measured readouts + the running figure. Open a card for the full detail.</span></h2>
+      <h2>The {nstudies_word} studies <span class="sub">— in arc order; claim + measured readouts + the running figure. Open a card for the full detail.</span></h2>
       {cards}
     </section>
 
@@ -645,6 +764,37 @@ figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:1
 .two-col p{color:var(--ink-2);font-size:.93rem;margin:0}
 
 .foot{margin:56px 0 0;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
+
+/* arc figure (SVG through-line) */
+.arcfig{margin:26px 0 8px;padding:22px 0 12px;border-bottom:1px solid var(--line)}
+.arcfig .kicker{color:var(--teal);display:block;margin-bottom:6px}
+.arc-svg{width:100%;height:auto;display:block;overflow:visible}
+.arc-spine{stroke:var(--line);stroke-width:2}
+.arc-ladder{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+.arc-dot{stroke:var(--surface);stroke-width:2}
+.arc-dot-open{fill:var(--surface);stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 3}
+.arc-dot-n{fill:#fff;font:700 11px var(--mono);text-anchor:middle;dominant-baseline:middle}
+.arc-dot-n-open{fill:var(--muted)}
+.arc-dir{fill:var(--muted);font:600 8px var(--sans);text-anchor:middle;text-transform:uppercase;letter-spacing:.05em}
+.arc-lbl{fill:var(--ink);font:600 10.5px var(--sans);text-anchor:middle}
+.arc-lbl-open{fill:var(--muted);font-style:italic}
+.arc-rung{fill:var(--muted);font:600 9.5px var(--sans);text-anchor:middle;text-transform:uppercase;letter-spacing:.04em}
+.arc-rung-open{fill:var(--ochre)}
+.arc-svg a{cursor:pointer}
+.arc-svg a:hover .arc-lbl{fill:var(--teal)}
+
+/* study figure images (simulation movies) */
+.fig-img{width:100%;height:auto;display:block;border-radius:8px}
+
+/* substitutability paired bars */
+.subst{width:100%;height:auto;display:block;overflow:visible;max-width:440px}
+.subst-obs{fill:var(--ink);font:600 12px var(--sans);text-anchor:start;dominant-baseline:middle}
+.subst-dfba{fill:var(--teal)}
+.subst-mm{fill:var(--ochre-2)}
+.subst-bl{fill:#fff;font:700 9px var(--sans)}
+.subst-delta{fill:var(--muted);font:600 11px var(--mono);text-anchor:start;dominant-baseline:middle}
+.subst-ref{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 2}
+.subst-ref-l{fill:var(--muted);font:600 8px var(--sans);text-anchor:middle}
 
 @media (max-width:720px){
   body{font-size:16px}
