@@ -51,9 +51,11 @@ from scipy.ndimage import binary_fill_holes
 # Small fraction of the seed's own mass used as the `persists` mass floor --
 # see module docstring / Task-1 api-map open risk #2. Chosen well below the
 # Task-1 physics test's observed homeostatic-plateau mass range
-# (0.4x-2.5x seed mass) and well above the negative control's post-collapse
-# mass (< 5.0, decaying toward 0), so it discriminates the two regimes
-# cleanly without being sensitive to the exact fraction chosen.
+# (0.4x-2.5x seed mass). The negative control's mass decays monotonically to ~0
+# (< 5.0 by ~600 steps), but persistence is an AND gate and the control's
+# enclosed_area hits 0 first (~step 96), so the control is rejected regardless
+# of the exact mass margin — the floor discriminates the two regimes cleanly
+# without being sensitive to the fraction chosen.
 MASS_FLOOR_FRAC = 0.05
 
 
