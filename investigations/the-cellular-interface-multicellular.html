@@ -352,7 +352,24 @@ secretion side of the coupling is as real as the uptake side. Confirmed: field-w
 asserted from code: lifting the oxygen bound (O2-uncapped control, oxygen_vmax 2.5 -&gt; 1000)
 collapses acetate secretion to ~0 while the capped flagship secretes a real plume — the cell
 respires fully instead of overflowing (and grows faster for it). Confirmed: field-wide acetate
-capped 0 -&gt; ~47.0 vs uncapped 0 -&gt; 0.0 (exactly); uncapped biomass ~2.35 vs capped ~0.37.</li></ul>
+capped 0 -&gt; ~47.0 vs uncapped 0 -&gt; 0.0 (exactly); uncapped biomass ~2.35 vs capped ~0.37.</li><li><span class="tier tier-mechanism">mechanism</span> INTERFACE SUBSTITUTABILITY — this investigation&#x27;s demonstration of the paper&#x27;s central
+claim. The paper (§2 / §Cellular interface) argues that &quot;this substitutability is not only a
+software convenience. It allows the interface itself to become the object of comparison:
+different mechanisms may realize the same externally observable relation&quot;, and that &quot;different
+internal organizations may sometimes be represented through the same coarse-grained interface
+when they preserve the interaction variables relevant to that description.&quot; Here that claim is
+run: the flagship cell&#x27;s INTERNAL metabolism is swapped from constraint-based dynamic-FBA (cobra
+e_coli_core, O2-capped) to a lumped, cobra-free Michaelis–Menten / Monod metabolism
+(<code>single-cell-in-a-field-mm</code>, <code>mechanism: mm</code>) behind the BYTE-IDENTICAL <code>CpmCellField</code> ports,
+and the interface-level observables are compared head-to-head. Confirmed: over 20 ticks the two
+different internal organizations realize the same coarse-grained cell↔field interface — final
+biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 px (10%), total acetate secreted
+47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 units (6.2%); every interface observable
+agrees within ~10%. The MM twin additionally runs with NO cobra at all — the substitutability
+payoff, a mechanism that runs where the original could not. Stated honestly: the MM params
+(mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were TUNED to preserve the interaction
+variables — the claim is &quot;same coarse-grained relation&quot;, not identical internals, and not a
+derivation of MM from the dFBA solution.</li></ul>
         </div>
       </details>
     </article>
