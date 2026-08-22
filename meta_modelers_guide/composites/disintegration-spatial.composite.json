@@ -1,6 +1,6 @@
 {
   "name": "disintegration-spatial",
-  "description": "The disintegration study flagship: a single coherent CPM cell (CpmDisintegration, no metabolism/cobra path) sits centered on a shared 60x60 fields grid inside a radial acetate gradient -- the stressor species is `acetate`, the SAME molecule that is metabolic waste to the secretor and sole carbon food to the consumer in cell-cell-coupling-spatial; here its high peripheral concentration reads as a toxin. Low at the grid center (where the cell is seeded) and rising toward the periphery (peak 1.5, ring onset at radius 5, saturating at radius 18), the acetate field diffuses under spatio-flux DiffusionAdvection (D=4.0, no-flux/neumann boundary on all sides, so total acetate mass is conserved and simply relaxes toward its spatial mean). Each tick the cell reads mean acetate over its own CPM footprint (the CpmDisintegration `stressor_field` config points at the `acetate` species; the observable stays named mean_stressor); as the peripheral acetate diffuses inward the footprint-local mean rises and crosses viability_threshold=0.5 around tick 6-7, LATCHING the release flag. Once released, the process resorbs the cell toward zero target volume (resorb_per_tick=6.0) and sheds each tick's vacated footprint pixels as debris particles (up to 8/tick) into a shared map[particle] store, which a stock spatio-flux BrownianMovement then scatters. The cell fully dissolves (area -> 0) roughly 9-10 ticks after release, so a ~20-tick run shows hold -> cross -> resorb -> scatter end to end. Timing verified by direct Composite(...).run(N) inspection of state[\"obs\"] during authoring (released_tick ~= 7, area == 0 by ~tick 16).",
+  "description": "The disintegration study flagship: a single coherent CPM cell (CpmDisintegration, no metabolism/cobra path) sits centered on a shared 60x60 fields grid inside a radial acetate gradient -- the stressor species is `acetate`, the SAME molecule that is metabolic waste to the secretor and sole carbon food to the consumer in cell-cell-coupling-spatial; here its high peripheral concentration reads as a toxin. Low at the grid center (where the cell is seeded) and rising toward the periphery (peak 1.5, ring onset at radius 5, saturating at radius 18), the acetate field diffuses under spatio-flux DiffusionAdvection (D=4.0, no-flux/neumann boundary on all sides, so total acetate mass is conserved and simply relaxes toward its spatial mean). Each tick the cell reads mean acetate over its own CPM footprint (the CpmDisintegration `stressor_field` config points at the `acetate` species; the observable stays named mean_stressor); as the peripheral acetate diffuses inward the footprint-local mean rises and crosses viability_threshold=0.5 around tick 6-7, LATCHING the release flag. Once released, the process resorbs the cell toward zero target volume (resorb_per_tick=6.0) and sheds each tick's vacated footprint pixels as debris particles (up to 8/tick) into a shared map[particle] store, which a seeded BrownianMovement (SeededBrownianMovement, a reproducible drop-in for the stock spatio-flux process) then scatters deterministically. The cell fully dissolves (area -> 0) roughly 9-10 ticks after release, so a ~20-tick run shows hold -> cross -> resorb -> scatter end to end. Timing verified by direct Composite(...).run(N) inspection of state[\"obs\"] during authoring (released_tick ~= 7, area == 0 by ~tick 16).",
   "requires": {},
   "provenance": {
     "kind": "composed",
@@ -3849,7 +3849,7 @@
     },
     "move": {
       "_type": "process",
-      "address": "local:!spatio_flux.processes.particles.BrownianMovement",
+      "address": "local:SeededBrownianMovement",
       "config": {
         "bounds": [
           60.0,
@@ -3859,7 +3859,8 @@
           60,
           60
         ],
-        "diffusion_rate": 1.0
+        "diffusion_rate": 1.0,
+        "seed": 1
       },
       "inputs": {
         "particles": [

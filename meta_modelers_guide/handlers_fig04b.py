@@ -314,6 +314,72 @@ class CooperativeCellularInterfaceHandler(Process):
         }
 
 
+# ── Fig 4b · a NATIVE Law-1 impostor for the cellular-interface contract ──────
+# Law 1 (conformance) says the compiler rejects any handler whose declared ports
+# do not match the draft's signature. Until now this study demonstrated Law 1 only
+# by cross-referencing the *metabolism*-signature impostor `NonConformingMetabolism`
+# (handlers_fig06_fba.py) — a different contract. This is the cellular interface's
+# OWN impostor: it looks like a cellular-interface handler and even carries genuine
+# uptake/growth dynamics, but it DROPS the higher-level cellular ports `viability`
+# and `objective` from its declared `outputs`. Compiling it against the
+# `CellularInterface` draft (or `check_conformance`-ing it) raises `CompileError`
+# naming those missing ports — Law 1 enforced natively at this figure, not borrowed.
+
+class NonConformingCellularInterface(Process):
+    """An IMPOSTOR handler for the Fig 4b cellular-interface signature —
+    deliberately non-conforming, to make Law 1's type judgment a visible scene
+    *native to this study*.
+
+    It declares the four environmental inputs and most exchange outputs correctly,
+    but DROPS the ``viability`` and ``objective`` ports the ``CellularInterface``
+    signature requires. Compiling it (or ``check_conformance``) raises
+    ``CompileError`` naming the missing ``viability``/``objective`` ports — the
+    mechanical proof that the same compiler this study relies on rejects a handler
+    that breaks *this* figure's declared port contract, structurally, at compile
+    time.
+    """
+
+    config_schema = {
+        "uptake_rate": _f(0.8),
+        "growth_max": _f(0.6),
+        "km": _f(0.5),
+    }
+
+    def inputs(self):
+        return {
+            "chemical_ext": "concentration",
+            "mechanical_ext": "force",
+            "electrical_ext": "voltage",
+            "thermal_ext": "temperature",
+        }
+
+    def outputs(self):
+        # WRONG: the required higher-level cellular ports 'viability: viability'
+        # and 'objective: objective' are missing — a cell whose interface no
+        # longer reports whether the cellular description still holds, nor the
+        # goal it pursues, is not the contract's cell.
+        return {
+            "chemical": "chemical_flux",
+            "mechanical": "force",
+            "electrical": "current",
+            "thermal": "heat_flux",
+            "growth_rate": "growth_rate",
+            "shape": "volume",
+            "signaling": "signaling_rate",
+        }
+
+    def update(self, state, interval):
+        c = self.config
+        chem = float(state.get("chemical_ext", 0.0))
+        denom = c["km"] + chem
+        growth = c["growth_max"] * chem / denom if denom else 0.0
+        return {
+            "chemical": -c["uptake_rate"] * chem,
+            "growth_rate": growth,
+            "shape": growth * interval,
+        }
+
+
 # ── handler environment ⟦C⟧_H : the compiler swaps this in for the draft ──────
 # init sets store leaves' ``_default`` (process-bigraph realize IGNORES _value):
 # the environmental drivers seed the sim, and viability/shape start at their
