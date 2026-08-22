@@ -59,6 +59,15 @@ class CpmDisintegration(Process):
         "resorb_per_tick": _f(6.0),
         "max_particles_per_tick": {"_type": "integer", "_default": 8},
         "mcs": {"_type": "integer", "_default": 3},
+        # Which species in the shared `fields` store carries the viability
+        # stressor. Default `"stressor"` for backward compatibility (the
+        # process/regime tests that build their own state with a `"stressor"`
+        # field stay green); the disintegration-spatial composite sets this to
+        # `"acetate"` so the stressor IS the cross-feeding byproduct molecule --
+        # waste/food in cell-cell-coupling-spatial, toxin here (the paper's
+        # relational-molecule claim). The observable stays named `mean_stressor`
+        # (it is the mean stressor reading; the stressor is now acetate).
+        "stressor_field": {"_type": "string", "_default": "stressor"},
     }
 
     def inputs(self):
@@ -122,6 +131,7 @@ class CpmDisintegration(Process):
         self._resorb_per_tick = float(c["resorb_per_tick"])
         self._max_particles_per_tick = int(c["max_particles_per_tick"])
         self._mcs = int(c["mcs"])
+        self._stressor_field = str(c.get("stressor_field", "stressor"))
 
         self._target = target_volume
         self._released = False
@@ -155,7 +165,7 @@ class CpmDisintegration(Process):
     def update(self, state, interval):
         self._tick += 1
         fields = state.get("fields", {})
-        stressor = np.asarray(fields.get("stressor"), dtype=float)
+        stressor = np.asarray(fields.get(self._stressor_field), dtype=float)
 
         # re-derive the live id every tick (never cached) -- after resorption the
         # id lingers as a zeroed slot in cell_volumes()/cell_coms() (API map Q6).

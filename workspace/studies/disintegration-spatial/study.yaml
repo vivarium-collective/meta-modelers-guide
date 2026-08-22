@@ -9,9 +9,11 @@ gate_status: passed
 confidence: Accepted
 question: 'Does the paper''s §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
 
-  viability when a diffusing stressor field crosses its bound, its domain resorbing while its
+  viability when a diffusing field of acetate (the SAME metabolic byproduct that is waste-and-food
 
-  shed material becomes scattering physical particles -- composed from independent frameworks
+  in `cell-cell-coupling-spatial`, here toxic at high local concentration) crosses its viability
+
+  bound, its domain resorbing while its shed material becomes scattering physical particles -- composed from independent frameworks
 
   (viva-cpm + spatio-flux particles) through one coupling process (`CpmDisintegration` +
 
@@ -24,9 +26,25 @@ biological_summary: 'This is the spatial realization of the paper''s §Disintegr
 
   owns a single CPM cell (no metabolism/cobra path -- this study is about the viability-collapse
 
-  trigger, not nutrient uptake) sitting on a shared spatio-flux `stressor` field. Each tick the
+  trigger, not nutrient uptake) sitting on a shared spatio-flux `acetate` field. The stressor
 
-  process reads mean stressor over the cell''s own CPM footprint; once that reading crosses
+  species here is literally `acetate` (the process reads it via config `stressor_field: acetate`;
+
+  the observable stays named `mean_stressor`) -- the SAME molecule that is the secretor''s
+
+  metabolic waste and the consumer''s sole carbon food in `cell-cell-coupling-spatial`. This is
+
+  the paper''s closing §Disintegration/§Cell–cell coupling claim in action: an environmental
+
+  variable acquires its significance relationally, a molecule counting as nutrient, signal, or
+
+  toxin through its consequences for viability. The same acetate that keeps a cross-feeding
+
+  consumer alive elsewhere becomes, at high local concentration, the toxin that pushes THIS cell
+
+  across its viability bound. Each tick the
+
+  process reads mean acetate over the cell''s own CPM footprint; once that reading crosses
 
   `viability_threshold`, it LATCHES a `released` flag (never un-crosses) and ramps the cell''s
 
@@ -49,7 +67,7 @@ biological_summary: 'This is the spatial realization of the paper''s §Disintegr
 
   (`meta_modelers_guide.composites.disintegration-spatial`) demonstrates the full arc:
 
-  a single CPM cell centered on a 60x60 shared field grid inside a radial stressor gradient --
+  a single CPM cell centered on a 60x60 shared field grid inside a radial acetate gradient --
 
   low at the grid center where the cell is seeded, rising toward the periphery -- diffusing
 
@@ -59,7 +77,9 @@ biological_summary: 'This is the spatial realization of the paper''s §Disintegr
 
   `tests/test_disintegration_viz.py`, verified over repeated runs): the cell holds coherent
 
-  (area > 30 pixels) through tick 6 with zero debris, the footprint-local stressor mean crosses
+  (area > 30 pixels) through tick 6 with zero debris, the footprint-local acetate mean (the
+
+  observable `mean_stressor`) crosses
 
   `viability_threshold` at `released_tick = 7`, and from there the domain resorbs monotonically
 
@@ -77,8 +97,31 @@ biological_summary: 'This is the spatial realization of the paper''s §Disintegr
 
   a scripted trajectory.
 
+
+  This is precisely the failure cascade the paper''s §Disintegration describes: once viability is
+
+  lost, energy production can no longer sustain transport, membranes lose integrity, gradients
+
+  collapse, and the system transitions from an actively maintained, far-from-equilibrium state to
+
+  one dominated by diffusion, equilibration, and mechanical relaxation. The two phases of the run
+
+  read directly as that transition: while the cell holds, an actively maintained CPM domain
+
+  resists the rising acetate; once released, the shed material is handed to `BrownianMovement`,
+
+  and the scattering debris cloud IS the diffusion-dominated, equilibrating regime -- the
+
+  far-from-equilibrium cell relaxing toward equilibrium as literal drifting particles. As the
+
+  paper notes, most models do not represent this transition explicitly: agent-based models remove
+
+  cells mid-simulation, and whole-cell models assume viability -- so a spatial model that carries
+
+  a coherent domain all the way through its own dissolution into diffusing debris is the point.
+
   '
-claim: 'Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
+claim: 'Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux
 
   particle-movement process through two coupling processes (`CpmDisintegration` for the
 
@@ -88,7 +131,7 @@ claim: 'Composing one real CPM cell with a real spatio-flux stressor field and a
 
   stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area > 30) through
 
-  tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick = 7, the
+  tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick = 7, the
 
   domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
 
@@ -131,11 +174,11 @@ key_assumptions:
   grid -- not rigid-body pymunk physics. The shed particles drift and scatter; they do not
 
   collide with each other, with the dissolving cell, or fall under gravity.'
-- 'The stressor field''s radial gradient (peak 1.5, ring onset at radius 5, saturating at radius
+- 'The acetate field''s radial gradient (peak 1.5, ring onset at radius 5, saturating at radius
 
   18), `viability_threshold` (0.5), `resorb_per_tick` (6.0), `max_particles_per_tick` (8), and
 
-  the diffusion coefficients (stressor D=4.0, debris diffusion_rate=1.0) are toy-real: plausible,
+  the diffusion coefficients (acetate D=4.0, debris diffusion_rate=1.0) are toy-real: plausible,
 
   hand-tuned magnitudes chosen to make hold -> cross -> resorb -> scatter all legible within a
 
@@ -164,7 +207,7 @@ key_assumptions:
 behavior_tests:
 - name: cell-holds-coherent-before-crossing
   classification: primary
-  description: Before the stressor crosses viability_threshold, the CPM cell stays coherent
+  description: Before the acetate crosses viability_threshold, the CPM cell stays coherent
     (substantial area, released flag unset, no debris) -- the hold phase of the §Disintegration
     level shift (Fig 6).
   measure:
@@ -180,7 +223,7 @@ behavior_tests:
   requires_simulation: disintegration-spatial
 - name: stressor-crosses-viability-bound
   classification: primary
-  description: The footprint-local stressor mean crosses viability_threshold and the released
+  description: The footprint-local acetate mean crosses viability_threshold and the released
     flag latches, at a specific, deterministic tick -- the level-shift trigger itself.
   measure:
     kind: observable
@@ -266,7 +309,7 @@ runs:
   id: disintegration-spatial
   status: completed
   provenance: 'meta_modelers_guide/composites/disintegration-spatial.composite.json
-    (CpmDisintegration, single CPM cell on a 60x60 shared field grid inside a radial stressor
+    (CpmDisintegration, single CPM cell on a 60x60 shared field grid inside a radial acetate
     gradient, DiffusionAdvection D=4.0, viability_threshold=0.5, resorb_per_tick=6.0,
     max_particles_per_tick=8) run 20-24 ticks to completion through the process-bigraph engine
     (tests/test_cpm_disintegration.py, tests/test_disintegration_regime.py); the baked GIF +
@@ -298,11 +341,11 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'A single real CPM cell coupled to a real spatio-flux stressor field through one
+  statement: 'A single real CPM cell coupled to a real spatio-flux acetate field through one
 
     coupling process (`CpmDisintegration`) reproduces the paper''s §Disintegration level-shift
 
-    (Fig 6) as genuine spatial dissolution: the cell holds coherent while the diffusing stressor
+    (Fig 6) as genuine spatial dissolution: the cell holds coherent while the diffusing acetate
 
     field is below its
 
@@ -390,7 +433,7 @@ conclusion_verdicts:
     basis: 'Realizing the paper''s §Disintegration level-shift (Fig 6) with a real CPM cell''s
       structural viability collapsing
 
-      under a real diffusing stressor field -- rather than a scripted viability scalar decaying
+      under a real diffusing acetate field -- rather than a scripted viability scalar decaying
 
       on a timer -- makes draft-to-living-cell''s disintegration claim (a cellular description
 
@@ -403,15 +446,28 @@ conclusion_verdicts:
       '
 conclusion: '## Claims
 
-  - Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
+  - Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux
     particle-movement process through two coupling processes (`CpmDisintegration` for the
     viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
     reproduces the paper''s §Disintegration level-shift (Fig 6) as genuine spatial dissolution.
     Over a deterministic 20-24
-    tick run: the cell holds coherent (area > 30) through tick 6, the footprint-local stressor
+    tick run: the cell holds coherent (area > 30) through tick 6, the footprint-local acetate
     mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick
     16, sheds 68 particles, and the debris cloud''s RMS spread keeps strictly increasing through
     tick 24 (~5.3 -> ~7.6).
+
+  - The stressor is literally `acetate` -- the SAME molecule that is metabolic waste and
+    cross-feeding food in `cell-cell-coupling-spatial`, here a toxin whose high local concentration
+    crosses the cell''s viability bound. This carries the paper''s closing relational-molecule
+    claim (§Cell–cell coupling): one molecule counting as nutrient, signal, or toxin through its
+    consequences for viability -- nutrient/food there, toxin here.
+
+  - The two phases realize §Disintegration''s failure cascade end to end: an actively maintained,
+    far-from-equilibrium CPM domain, once viability is lost, relaxes into a diffusion-dominated,
+    equilibrating debris cloud under `BrownianMovement`. Most models skip this transition
+    explicitly -- agent-based models remove cells mid-simulation and whole-cell models assume
+    viability -- so carrying a coherent domain through its own dissolution into diffusing debris is
+    the explanatory gain.
 
 
   ## Evidence
@@ -443,7 +499,7 @@ conclusion: '## Claims
   - Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body
     pymunk physics -- they drift and scatter, they do not collide or fall.
 
-  - The stressor gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and
+  - The acetate gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and
     diffusion coefficients are toy-real -- plausible, hand-tuned magnitudes chosen to make the
     full arc legible within a 20-24 tick run, not fitted to a named stressor or material.
 
@@ -471,13 +527,13 @@ conclusion_logic:
       through the engine over a deterministic 20-24 tick run.'
     biological_validation: The spatial §Disintegration level-shift pattern (Fig 6) is demonstrated
       at the toy-real
-      (uncalibrated) level, with genuine per-pixel CPM shape dynamics, a real diffusing stressor
+      (uncalibrated) level, with genuine per-pixel CPM shape dynamics, a real diffusing acetate
       field, and a verified particle bridge behind the hold-cross-resorb-scatter arc, rather than
       a scripted trajectory.
     pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
-    - the cell fails to hold coherent before crossing (the stressor gradient is too aggressive,
+    - the cell fails to hold coherent before crossing (the acetate gradient is too aggressive,
       or the cell's viability threshold is being crossed spuriously at the seed footprint)
     - released_tick drifts or the released flag never latches (the diffusion coefficient or
       gradient shape no longer brings the footprint-local mean above threshold within the run)
@@ -501,8 +557,8 @@ limitations:
 - Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body
   pymunk physics -- the particles drift and scatter, they do not collide with each other or with
   the dissolving cell, and do not fall under gravity.
-- The stressor field's radial gradient, viability_threshold, resorb_per_tick,
-  max_particles_per_tick, and the diffusion coefficients (stressor D=4.0, debris
+- The acetate field's radial gradient, viability_threshold, resorb_per_tick,
+  max_particles_per_tick, and the diffusion coefficients (acetate D=4.0, debris
   diffusion_rate=1.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter
   all legible within a 20-24 tick run -- not fitted to a named stressor, material, or literature
   target.
@@ -525,14 +581,14 @@ limitations:
 
   timer, over a lumped cell-state composite. This study closes the same level-shift with a real
 
-  CPM cell''s structural viability collapsing under a real diffusing stressor field, its domain
+  CPM cell''s structural viability collapsing under a real diffusing acetate field, its domain
 
   genuinely resorbing in lattice pixels rather than a scalar dropping toward zero, and its shed
 
   material becoming literal scattering particles rather than an abstract debris variable. Compare
 
   the two for the same disintegration claim at two very different mechanistic resolutions.'
-falsifiability: Overturned if the cell fails to hold coherent before the stressor crosses its
+falsifiability: Overturned if the cell fails to hold coherent before the acetate crosses its
   viability bound, if the crossing tick is not deterministic across repeated runs of the same
   composite, if the domain fails to resorb to near-zero area within the run, if shed pixels do
   not appear as particles in the shared store, if the debris cloud's RMS spread fails to increase
@@ -543,7 +599,7 @@ visualizations:
 - name: disintegration-spatial-movie
   address: image:viz/disintegration-spatial.gif
   description: 'Animated GIF of the disintegration run: a single CPM cell centered on a shared
-    60x60 field grid inside a radial stressor gradient, diffusing inward from the periphery. The
+    60x60 field grid inside a radial acetate gradient, diffusing inward from the periphery. The
     cell holds coherent through tick 6, then visibly shrinks as it resorbs once released_tick ==
     7, its vacated pixels appearing as a scattering debris cloud that keeps spreading outward
     even after the domain has fully dissolved. Re-baked directly via
@@ -551,13 +607,14 @@ visualizations:
     cited in this study''s behavior tests, for provenance.'
   config:
     chart: image
-    caption: 'Spatial disintegration -- the cell holds, then resorbs once the diffusing stressor
+    caption: 'Spatial disintegration -- the cell holds, then resorbs once the diffusing acetate
       field crosses its viability bound at tick 7, shedding a scattering debris cloud.'
 - name: disintegration-metrics
   address: html:viz/disintegration-metrics.html
   description: 'Interactive Plotly time-series panel of the same run, synced to the GIF''s time
-    axis: area, mean footprint stressor, particle count, and connected-component count over the
-    full run. Area falls from ~62 to 0 as released_tick == 7 is crossed, mean stressor rises past
+    axis: area, mean footprint acetate (the observable mean_stressor), particle count, and
+    connected-component count over the
+    full run. Area falls from ~62 to 0 as released_tick == 7 is crossed, mean acetate rises past
     viability_threshold at the same tick, and particle count climbs to 68 and holds flat once
     resorption completes -- the full hold-cross-resorb-scatter arc made directly visible.
     Re-baked directly via `meta_modelers_guide.cpm.viz.metrics_panel` over the same run as the
@@ -570,19 +627,25 @@ parent_studies:
 - study: cell-cell-coupling-spatial
   condition: tests-passed
 experiment: 'Run the `disintegration-spatial` composite (`CpmDisintegration`, a single CPM cell
-  on a shared 60x60 field grid inside a radial stressor gradient, coupled to a stock
+  on a shared 60x60 field grid inside a radial acetate gradient, coupled to a stock
   `BrownianMovement` particle-scatter process) to completion over 20-24 ticks through the
-  process-bigraph engine, and measure whether a diffusing stressor field crossing a CPM cell''s
+  process-bigraph engine, and measure whether a diffusing acetate field crossing a CPM cell''s
   own viability bound is enough to trigger structural dissolution (domain resorption) and convert
   its shed material into a genuinely scattering debris cloud.
 
   '
 result: 'Over a deterministic 20-24 tick run, the CPM cell holds coherent (area > 30) through
-  tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick == 7,
+  tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7,
   the domain resorbs to area 0 by tick 16, sheds exactly 68 particles into a shared debris store,
   and that debris cloud''s RMS spread keeps strictly increasing through tick 24 (~5.3 -> ~7.6) --
   genuine scattering, not wall-saturation. The paper''s §Disintegration level-shift (Fig 6) holds
   as real spatial dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through
-  one coupling process plus one stock movement process.
+  one coupling process plus one stock movement process. The stressor here is literally `acetate`,
+  the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling-spatial`
+  -- one molecule whose meaning is set relationally by each cell''s interface (§Cell–cell coupling):
+  nutrient there, toxin here. And the scatter phase reads directly as §Disintegration''s failure
+  cascade -- the actively maintained, far-from-equilibrium cell relaxing, once viability is lost,
+  into a diffusion-dominated debris cloud, the transition most models skip (agent-based models
+  delete the cell, whole-cell models assume viability).
 
   '
