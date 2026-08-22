@@ -36,7 +36,12 @@ def test_composite_builds(spec_path):
         pytest.importorskip("spatio_flux")
     if "CpmCellField" in raw or "CpmColonyField" in raw:
         pytest.importorskip("cpm")
-        pytest.importorskip("cobra")  # these processes load a cobra model at construction
+        # CpmCellField loads a cobra model at construction ONLY for its default
+        # dFBA mechanism; the Michaelis-Menten mechanism ("mechanism": "mm") is
+        # cobra-free (the interface-substitutability twin), so require cobra only
+        # when this composite does not select the mm mechanism.
+        if '"mechanism": "mm"' not in raw and '"mechanism":"mm"' not in raw:
+            pytest.importorskip("cobra")
     if "CpmDisintegration" in raw:
         pytest.importorskip("cpm")           # no cobra — disintegration is metabolism-free
     if "CpmGrowthDivision" in raw:

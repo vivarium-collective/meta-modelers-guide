@@ -46,6 +46,22 @@ class CpmCellField(Process):
         "box_volume_L": _f(1e-6),
         "glucose_km": _f(0.5), "glucose_vmax": _f(10.0),
         "oxygen_vmax": _f(15.0),  # microaerobic cap -> forces acetate overflow
+        # --- interface-substitutability: swappable INTERNAL metabolism ---------
+        # `mechanism` selects the box behind the fixed cell<->field interface. The
+        # PORTS (inputs/outputs) are byte-identical across mechanisms; only the
+        # internal organization that realizes uptake/growth/secretion differs.
+        #   "dfba" (default, backward-compatible): constraint-based dynamic-FBA on
+        #          e_coli_core (requires cobra), the flagship metabolism above.
+        #   "mm":   a lumped Michaelis-Menten / Monod metabolism with NO cobra --
+        #          uptake v = mm_vmax * glc/(mm_km+glc); biomass gain = mm_yield*v;
+        #          acetate overflow = mm_overflow*v (a fixed overflow fraction
+        #          standing in for the dFBA's O2-cap-driven mixed-acid overflow).
+        # See `_mm` and the substitutability study/test for the tuning that makes
+        # the two mechanisms preserve the same coarse-grained interface variables.
+        "mechanism": {"_type": "string", "_default": "dfba"},
+        "mm_vmax": _f(10.0), "mm_km": _f(0.5),
+        "mm_yield": _f(0.09),      # biomass yield mu = mm_yield * v  (growth per uptake)
+        "mm_overflow": _f(0.5),    # acetate secreted per unit glucose uptake
     }
 
     def inputs(self):
@@ -84,17 +100,27 @@ class CpmCellField(Process):
         }
         self.world = load_world(spec)
         self.biomass = float(c["biomass0"])
-        # one cobra e_coli_core, loaded once
-        try:
-            from cobra.io import load_model
-        except Exception as exc:  # pragma: no cover - exercised only without cobra
-            raise RuntimeError(
-                "CpmCellField requires the optional 'cobra' package "
-                "(pip install -e .[simulators]).") from exc
-        self._model = load_model("textbook")
-        # cap respiratory capacity so glycolytic flux forces mixed-acid (acetate)
-        # overflow rather than pure aerobic respiration (see module docstring)
-        self._model.reactions.EX_o2_e.lower_bound = -float(c["oxygen_vmax"])
+        self.mechanism = str(c["mechanism"])
+        self._model = None
+        if self.mechanism == "dfba":
+            # one cobra e_coli_core, loaded once. Only the dFBA mechanism needs
+            # cobra; the "mm" (Michaelis-Menten) mechanism runs without it, so the
+            # import stays inside this branch and the mm path never touches cobra.
+            try:
+                from cobra.io import load_model
+            except Exception as exc:  # pragma: no cover - exercised only without cobra
+                raise RuntimeError(
+                    "CpmCellField(mechanism='dfba') requires the optional 'cobra' "
+                    "package (pip install -e .[simulators]); use mechanism='mm' for "
+                    "the cobra-free Michaelis-Menten metabolism.") from exc
+            self._model = load_model("textbook")
+            # cap respiratory capacity so glycolytic flux forces mixed-acid (acetate)
+            # overflow rather than pure aerobic respiration (see module docstring)
+            self._model.reactions.EX_o2_e.lower_bound = -float(c["oxygen_vmax"])
+        elif self.mechanism != "mm":
+            raise ValueError(
+                f"CpmCellField: unknown mechanism {self.mechanism!r} "
+                "(expected 'dfba' or 'mm').")
 
     def _footprint(self):
         lat = np.array(self.world.snapshot()).reshape(self._ny, self._nx)
@@ -134,6 +160,40 @@ class CpmCellField(Process):
         d_ac = ac_flux * self.biomass * interval / c["box_volume_L"]
         return d_biomass, d_glc, d_ac
 
+    def _mm(self, glucose_conc, interval):
+        """One lumped Michaelis-Menten / Monod metabolism step -- a COMPLETELY
+        DIFFERENT internal organization from `_fba` (no LP, no stoichiometry, no
+        cobra) that returns the SAME `(d_biomass, d_glc, d_ac)` shape and flows
+        through the SAME mass-conservative writeback in `update()`. This is the
+        interface-substitutability demonstration: swap the box, keep the ports.
+
+        Michaelis-Menten glucose uptake rate (per unit biomass, mmol/gDW/hr):
+            v = mm_vmax * glc / (mm_km + glc)
+        drives growth by a fixed biomass yield and acetate by a fixed overflow
+        fraction (standing in for the dFBA's O2-cap-driven mixed-acid overflow):
+            mu (growth rate)   = mm_yield   * v      -> d_biomass = mu * biomass * dt
+            acetate flux       = mm_overflow * v     -> secretion, same units as v
+        The glucose-uptake flux is -v (negative = uptake), so d_glc mirrors the
+        dFBA path's `glc_flux * biomass * dt / box_volume_L` exactly and the
+        idealized-then-clamped mass balance in `update()` applies unchanged."""
+        c = self.config
+        if glucose_conc <= 0:
+            return 0.0, 0.0, 0.0
+        v = c["mm_vmax"] * glucose_conc / (c["mm_km"] + glucose_conc)
+        mu = c["mm_yield"] * v
+        d_biomass = mu * self.biomass * interval
+        glc_flux = -v                       # negative = uptake, mirrors EX_glc__D_e
+        ac_flux = c["mm_overflow"] * v      # positive = secretion, mirrors EX_ac_e
+        d_glc = glc_flux * self.biomass * interval / c["box_volume_L"]
+        d_ac = ac_flux * self.biomass * interval / c["box_volume_L"]
+        return d_biomass, d_glc, d_ac
+
+    def _metabolize(self, glucose_conc, interval):
+        """Dispatch to the configured internal mechanism behind the fixed interface."""
+        if self.mechanism == "mm":
+            return self._mm(glucose_conc, interval)
+        return self._fba(glucose_conc, interval)
+
     def update(self, state, interval):
         fields = state.get("fields", {})
         glucose = np.asarray(fields.get("glucose"))
@@ -142,7 +202,7 @@ class CpmCellField(Process):
         area = max(int(fp.sum()), 1)
         local_glc = float(glucose[fp].mean()) if fp.any() else 0.0
 
-        d_biomass, requested_d_glc, d_ac = self._fba(local_glc, interval)
+        d_biomass, requested_d_glc, d_ac = self._metabolize(local_glc, interval)
 
         # Mass-balance: the FBA solution above is idealized (sized off the mean
         # local concentration), but only glucose actually present at the footprint
