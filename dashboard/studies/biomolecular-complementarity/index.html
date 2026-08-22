@@ -696,7 +696,7 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding contact-energy asymmetry as the cause of sorting. Confirmed by a neutral-J composite re-run (documented, not a committed test): neutral J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.</span>
+            <span class="finding-claim finding-statement">The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding contact-energy asymmetry as the cause of sorting. Confirmed by a committed pytest (tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort) that runs the neutral-J composite end-to-end: neutral J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.</span>
             
             <span class="finding-chip">via <code>sorting-neutral-J-does-not-sort</code></span>
             
@@ -1186,7 +1186,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.hetero_frac)", "kind": "observable", "path": "obs.hetero_frac"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: without a contact-energy asymmetry (all J=8, heterotypic no costlier than homotypic) there is no thermodynamic drive to demix, so the checkerboard should stay mixed -\u003e hetero_frac stays high. Observed: a neutral-J composite re-run (all J=8), T=10, same checkerboard stays mixed at hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime -- the causality control for J. Documented regime sweep, not a committed pytest in this build.", "value": 0.5}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: without a contact-energy asymmetry (all J=8, heterotypic no costlier than homotypic) there is no thermodynamic drive to demix, so the checkerboard should stay mixed -\u003e hetero_frac stays high. Observed: a neutral-J composite re-run (all J=8), T=10, same checkerboard stays mixed at hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime -- the causality control for J. Now a committed, rerunnable pytest -- tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort builds the neutral-J composite (all J=8, same checkerboard/T/mcs as the flagship) and runs it end-to-end through the process-bigraph engine, asserting hetero_frac stays \u003e 0.4 (observed ~0.52) with the clump cohesive (pixels \u003c10% drift, counts 32/32) -- promoted from the prior documented-only regime sweep.", "value": 0.5}</pre>
       </details>
       
       
@@ -1603,7 +1603,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "phi bounded t
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "2b57251304b63a114bcf4bf94b1f5b8b01ed1091", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/2b57251304b63a114bcf4bf94b1f5b8b01ed1091", "branch": "main", "lockfile": "uv.lock@f614867f376e", "generated_at": "2026-08-22 19:03 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "ebf32cafa819670a0f9db3fad73cde92343bc5ae", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/ebf32cafa819670a0f9db3fad73cde92343bc5ae", "branch": "main", "lockfile": "uv.lock@f614867f376e", "generated_at": "2026-08-22 20:30 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "biomolecular-complementarity";

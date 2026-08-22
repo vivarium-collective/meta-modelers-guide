@@ -571,7 +571,7 @@ resorption schedule (resorb_per_tick=6.0): the trigger timing is simulation-deri
 footprint-local acetate crossing a viability bound), the resorption ramp itself is scripted -- not a
 lumped scalar stand-in: over a fixed-seed deterministic 20-tick CPM run, the cell holds coherent
 (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at
-released_tick = 7, the domain resorbs to area 0 by tick 16, and its 68 shed pixels become a
+released_tick = 7, the domain resorbs to area 0 by tick 16, and its 63 shed pixels become a
 debris cloud whose RMS spread strictly increases through tick 24 (the trajectory -- hold, cross,
 resorb, particle count -- reproduces exactly; the scatter cloud moves under unseeded
 `BrownianMovement`, so its exact RMS magnitudes are representative of one run, not
@@ -614,9 +614,9 @@ fixed-seed deterministic and reproduces exactly run to run (measured over a 20-t
 (area &gt; 30 pixels) through tick 6 with zero debris, the footprint-local acetate mean (the
 observable `mean_stressor`) crosses
 `viability_threshold` at `released_tick = 7`, and from there the domain resorbs monotonically
--- area 56 at tick 7 down to area 0 by tick 16 -- while shedding exactly 68 particles into the
-debris store (8/tick, capped, until the footprint is exhausted). Every one of those numbers --
-`released_tick`, the area trajectory, and the 68-particle shed count -- is reproducible exactly,
+-- area 56 at tick 7 down to area 0 by tick 16 -- while shedding exactly 63 particles into the
+debris store (up to 8/tick, capped, until the footprint is exhausted). Every one of those numbers --
+`released_tick`, the area trajectory, and the 63-particle shed count -- is reproducible exactly,
 because the CPM engine is fixed-seed and the shedding logic is a deterministic function of the
 footprint diff. The debris cloud&#39;s scatter is now deterministic too: it moves under a seeded
 `SeededBrownianMovement` (seed=1, a seed-adding subclass of the stock spatio-flux process, since
@@ -655,14 +655,14 @@ a coherent domain all the way through its own dissolution into diffusing debris 
       
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>disintegration-spatial</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Before the acetate crosses viability_threshold, the CPM cell stays coherent (substantial area, released flag unset, no debris) -- the hold phase of the §Disintegration level shift (Fig 6).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The footprint-local acetate mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Once released, the cell&#39;s target volume ramps toward zero and its CPM lattice footprint resorbs to full dissolution well within the run -- the domain genuinely disappearing, not merely shrinking.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell&#39;s vacated footprint pixels appear as debris particles in the shared map[particle] store as it resorbs. Whether this is conserved shed mass or a double-count is unresolved -- the shed count (68) exceeds the cell area at release (56 px) -- and awaits a CPM-&gt;particle mass ledger (see limitations); the &#34;shed material, not deleted mass&#34; reading is on hold until that ledger closes.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The debris cloud&#39;s RMS spread strictly increases after dissolution completes -- genuine scattering under BrownianMovement, not particles piling up or stalling.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational control (not this study&#39;s scientific claim): the CPM-to-particle bridge this study depends on -- a process emitting particles via the map `_add` sentinel, moved by a separate stock BrownianMovement process -- works correctly, independent of any disintegration mechanism.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Before the acetate crosses viability_threshold, the CPM cell stays coherent (substantial area, released flag unset, no debris) -- the hold phase of the §Disintegration level shift (Fig 6).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The footprint-local acetate mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Once released, the cell&#39;s target volume ramps toward zero and its CPM lattice footprint resorbs to full dissolution well within the run -- the domain genuinely disappearing, not merely shrinking.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell&#39;s vacated footprint pixels appear as debris particles in the shared map[particle] store as it resorbs, and the CPM-&gt;particle conversion conserves mass -- the CPM-&gt;particle ledger closes. The shed count (63) exceeds the cell area at the release instant (56 px) not because mass is manufactured but because the footprint DRIFTS and reshapes under Metropolis dynamics while it resorbs, traversing 69 distinct lattice pixels over its released lifetime rather than the 56 held at one instant; each distinct pixel sheds at most one particle (an earlier logic double-shed 6 re-vacated pixels -- 68 particles over 62 distinct pixels -- now fixed with an already-shed-pixel guard). Shed material, not deleted-then-recreated mass.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The CPM-&gt;particle conversion conserves mass -- every shed debris particle is a distinct vacated lattice pixel, so the shed count equals the distinct-vacated-pixel count and never exceeds the total unique vacated pixels. Answers peer-review issue M5 (the apparent 68-vs-56 double-count).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The debris cloud&#39;s RMS spread strictly increases after dissolution completes -- genuine scattering under BrownianMovement, not particles piling up or stalling.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational control (not this study&#39;s scientific claim): the CPM-to-particle bridge this study depends on -- a process emitting particles via the map `_add` sentinel, moved by a separate stock BrownianMovement process -- works correctly, independent of any disintegration mechanism.</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a 20-24 tick run, the CPM cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds exactly 68 particles into a shared debris store -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly run to run. That debris cloud&#39;s RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run) -- genuine scattering, not wall-saturation; BrownianMovement is unseeded, so the exact RMS magnitudes vary run-to-run and are representative rather than reproducible, but the strict increase is the robust, test-asserted claim. The paper&#39;s §Disintegration level-shift (Fig 6) holds as spatial dissolution with a scripted resorption ramp (resorb_per_tick=6.0) -- the trigger timing is simulation-derived, the resorption schedule is scripted -- composed from independent frameworks (viva-cpm + spatio-flux particles) through one coupling process plus one stock movement process. The stressor here is literally `acetate`, the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling` -- one molecule whose meaning is set relationally by each cell&#39;s interface (§Cell–cell coupling): nutrient there, toxin here. And the scatter phase reads directly as §Disintegration&#39;s failure cascade -- the actively maintained, far-from-equilibrium cell relaxing, once viability is lost, into a diffusion-dominated debris cloud, the transition most models skip (agent-based models delete the cell, whole-cell models assume viability).
+      <p class="ctr-text">Over a 20-24 tick run, the CPM cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds exactly 63 particles into a shared debris store -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly run to run. The CPM-&gt;particle mass ledger closes (63 shed == 63 distinct vacated pixels &lt;= 69 unique vacated -- shed material, not deleted-then-recreated mass; building it caught and fixed a real 6-pixel double-count). That debris cloud&#39;s RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run) -- genuine scattering, not wall-saturation; BrownianMovement is unseeded, so the exact RMS magnitudes vary run-to-run and are representative rather than reproducible, but the strict increase is the robust, test-asserted claim. The paper&#39;s §Disintegration level-shift (Fig 6) holds as spatial dissolution with a scripted resorption ramp (resorb_per_tick=6.0) -- the trigger timing is simulation-derived, the resorption schedule is scripted -- composed from independent frameworks (viva-cpm + spatio-flux particles) through one coupling process plus one stock movement process. The stressor here is literally `acetate`, the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling` -- one molecule whose meaning is set relationally by each cell&#39;s interface (§Cell–cell coupling): nutrient there, toxin here. And the scatter phase reads directly as §Disintegration&#39;s failure cascade -- the actively maintained, far-from-equilibrium cell relaxing, once viability is lost, into a diffusion-dominated debris cloud, the transition most models skip (agent-based models delete the cell, whole-cell models assume viability).
 </p>
       
       
@@ -739,14 +739,19 @@ deterministic across repeated runs.</span>
 As the domain resorbs, its vacated footprint pixels are emitted as particles in a shared
 map[particle] store, and that debris cloud keeps scattering (RMS spread strictly increasing)
 well after the cell itself has fully dissolved, under a separate stock BrownianMovement
-process. Confirmed: 68 particles shed by tick 16 (deterministic, reproduces exactly); RMS
+process. Confirmed: 63 particles shed by tick 16 (deterministic, reproduces exactly); RMS
 spread ~5.3 -&gt; ~7.6 over an 8-tick post-dissolution window in a representative run --
 BrownianMovement is unseeded, so the exact magnitudes vary run-to-run, but the strict increase
-is the robust, test-asserted claim. Whether mass is CONSERVED through the transition (shed
-material, not deleted-then-recreated mass) is on hold pending a CPM-&gt;particle ledger -- the 68
-shed vs 56 px at release is an unresolved possible double-count (see limitations).</span>
+is the robust, test-asserted claim. Mass IS conserved through the transition -- shed material,
+not deleted-then-recreated mass: a CPM-&gt;particle ledger closes it (each shed particle is a
+distinct vacated lattice pixel, so 63 shed == 63 distinct vacated pixels &lt;= 69 unique vacated).
+The 63-vs-56px gap is legitimate footprint drift -- the cell traverses 69 distinct pixels over
+its released lifetime as its shape reshapes while resorbing, not the 56 held at the release
+instant. Building the ledger caught and fixed a real double-count (a pre-fix logic shed 68
+particles over only 62 distinct pixels, re-shedding 6 re-vacated pixels); the fixed shedding
+guards against re-shedding any pixel.</span>
             
-            <span class="finding-chip">via <code>debris-cloud-keeps-scattering</code></span>
+            <span class="finding-chip">via <code>cpm-particle-mass-ledger-closes</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -758,9 +763,9 @@ shed vs 56 px at release is an unresolved possible double-count (see limitations
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> 68 particles shed (deterministic); RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24) (representative -- BrownianMovement is unseeded, exact magnitudes vary run-to-run) · 
+              <strong>observed:</strong> 63 particles shed == 63 distinct vacated pixels &lt;= 69 unique vacated (ledger closes, pre-fix double-count of 6 found and fixed); RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24) (representative -- BrownianMovement is unseeded, exact magnitudes vary run-to-run) · 
               
-              via test <a href="#bt-debris-cloud-keeps-scattering" onclick="_gotoStudyTab('tests','bt-debris-cloud-keeps-scattering');return false;"><code>debris-cloud-keeps-scattering</code></a> · 
+              via test <a href="#bt-cpm-particle-mass-ledger-closes" onclick="_gotoStudyTab('tests','bt-cpm-particle-mass-ledger-closes');return false;"><code>cpm-particle-mass-ledger-closes</code></a> · 
               in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
               
               
@@ -775,7 +780,7 @@ shed vs 56 px at release is an unresolved possible double-count (see limitations
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ledger_closes n_particles_shed (63) == distinct_vacated_pixels (63) and &lt;= unique_vacated_pixels (69)</code></div>
             
             
             
@@ -1248,14 +1253,53 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s vacated footprint pixels appear as debris particles in the shared map[particle] store as it resorbs. Whether this is conserved shed mass or a double-count is unresolved -- the shed count (68) exceeds the cell area at release (56 px) -- and awaits a CPM-&gt;particle mass ledger (see limitations); the &#34;shed material, not deleted mass&#34; reading is on hold until that ledger closes.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s vacated footprint pixels appear as debris particles in the shared map[particle] store as it resorbs, and the CPM-&gt;particle conversion conserves mass -- the CPM-&gt;particle ledger closes. The shed count (63) exceeds the cell area at the release instant (56 px) not because mass is manufactured but because the footprint DRIFTS and reshapes under Metropolis dynamics while it resorbs, traversing 69 distinct lattice pixels over its released lifetime rather than the 56 held at one instant; each distinct pixel sheds at most one particle (an earlier logic double-shed 6 re-vacated pixels -- 68 particles over 62 distinct pixels -- now fixed with an already-shed-pixel guard). Shed material, not deleted-then-recreated mass.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "len(particles) once area reaches 0", "kind": "observable", "path": "particles"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: as the domain resorbs, its vacated footprint pixels are emitted as debris particles that accumulate in the shared store -\u003e expect a substantial, growing particle count. Observed: exactly 68 debris particles shed by tick 16 (8/tick capped, deterministic across repeated runs), staying at 68 for the remainder of the run; the \u003e= 20.0 floor is a loose pin, the accumulation is the a-priori prediction. The 68-vs-56px discrepancy is an unresolved possible double-count pending a mass ledger (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 20.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: as the domain resorbs, its vacated footprint pixels are emitted as debris particles that accumulate in the shared store -\u003e expect a substantial, growing particle count. Observed: exactly 63 debris particles shed by tick 16 (up to 8/tick capped, deterministic across repeated runs), staying at 63 for the remainder of the run; the \u003e= 20.0 floor is a loose pin, the accumulation is the a-priori prediction. The CPM-\u003eparticle mass ledger closes: 63 shed particles == 63 distinct vacated pixels (no double-count) \u003c= 69 unique vacated pixels; the 63-vs-56px gap is legitimate footprint drift, not manufactured mass (tests/test_disintegration_ledger.py::test_cpm_particle_ledger_closes_and_double_count_is_fixed, tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 20.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-cpm-particle-mass-ledger-closes"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="cpm-particle-mass-ledger-closes"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">cpm-particle-mass-ledger-closes</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The CPM-&gt;particle conversion conserves mass -- every shed debris particle is a distinct vacated lattice pixel, so the shed count equals the distinct-vacated-pixel count and never exceeds the total unique vacated pixels. Answers peer-review issue M5 (the apparent 68-vs-56 double-count).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "n_particles_shed vs distinct-vacated-pixels vs unique-vacated-pixels over the release phase", "kind": "derived", "path": "particles"}
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledger_closes", "provenance": "built an external CPM-\u003eparticle mass ledger (never reading the process\u0027s private state or the movement-scrambled particle positions) that replays the footprint diff vacated = prev_fp \u0026 ~curr_fp tick by tick. Measured on the fixed-seed run: 75 per-tick vacation events over 69 unique pixels; the pre-fix policy min(vacated, cap) shed 68 particles over only 62 distinct pixels -- 6 re-vacated pixels double-shed (6 units of manufactured mass, exactly the M5 68-vs-56 gap). An already-shed-pixel guard now sheds 63 particles at 63 distinct pixels, equal to the live particle-store growth and \u003c= 69 unique vacated; the ledger closes -- shed material, not deleted-then-recreated mass (tests/test_disintegration_ledger.py::test_cpm_particle_ledger_closes_and_double_count_is_fixed, tests/test_disintegration_mass.py::test_shed_particles_equal_fresh_vacated_pixels_within_per_tick_cap)", "value": "n_particles_shed (63) == distinct_vacated_pixels (63) and \u003c= unique_vacated_pixels (69)"}</pre>
       </details>
       
       
@@ -1496,7 +1540,7 @@ through the engine over a deterministic 20-24 tick run.</div>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter) reproduces the paper's §Disintegration level-shift (Fig 6) as spatial dissolution with a scripted resorption ramp (resorb_per_tick=6.0) -- simulation-derived trigger timing, scripted resorption. Over a 20-24 tick run: the cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds 68 particles -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly. The debris cloud's RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run); BrownianMovement is unseeded, so those exact magnitudes vary run-to-run -- only the strict increase is the robust, reproducible claim.</li>
+<li>Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter) reproduces the paper's §Disintegration level-shift (Fig 6) as spatial dissolution with a scripted resorption ramp (resorb_per_tick=6.0) -- simulation-derived trigger timing, scripted resorption. Over a 20-24 tick run: the cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds 63 particles -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly. The CPM-&gt;particle mass ledger closes -- 63 shed == 63 distinct vacated pixels &lt;= 69 unique vacated, shed material not deleted-then-recreated mass (building it caught and fixed a real 6-pixel double-count; see limitations). The debris cloud's RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run); BrownianMovement is unseeded, so those exact magnitudes vary run-to-run -- only the strict increase is the robust, reproducible claim.</li>
 <li>The stressor is literally <code>acetate</code> -- the SAME molecule that is metabolic waste and cross-feeding food in <code>cell-cell-coupling</code>, here a toxin whose high local concentration crosses the cell's viability bound. This carries the paper's closing relational-molecule claim (§Cell–cell coupling): one molecule counting as nutrient, signal, or toxin through its consequences for viability -- nutrient/food there, toxin here.</li>
 <li>The two phases realize §Disintegration's failure cascade end to end: an actively maintained, far-from-equilibrium CPM domain, once viability is lost, relaxes into a diffusion-dominated, equilibrating debris cloud under <code>BrownianMovement</code>. Most models skip this transition explicitly -- agent-based models remove cells mid-simulation and whole-cell models assume viability -- so carrying a coherent domain through its own dissolution into diffusing debris is the explanatory gain.</li>
 </ul>
@@ -1505,7 +1549,8 @@ through the engine over a deterministic 20-24 tick run.</div>
 <li><strong>CELL-HOLDS-COHERENT-BEFORE-CROSSING</strong> -- area 61-66 through tick 6, released False, 0 particles</li>
 <li><strong>STRESSOR-CROSSES-VIABILITY-BOUND</strong> -- released_tick == 7.0, deterministic</li>
 <li><strong>DOMAIN-RESORBS-TO-ZERO</strong> -- area falls from 56 (tick 7) to 0 (tick 16)</li>
-<li><strong>SHED-MATERIAL-BECOMES-DEBRIS-PARTICLES</strong> -- 68 debris particles by tick 16</li>
+<li><strong>SHED-MATERIAL-BECOMES-DEBRIS-PARTICLES</strong> -- 63 debris particles by tick 16, each a distinct vacated pixel</li>
+<li><strong>CPM-PARTICLE-MASS-LEDGER-CLOSES</strong> -- 63 shed == 63 distinct vacated pixels &lt;= 69 unique vacated; a pre-fix double-count of 6 re-vacated pixels found and fixed (answers peer-review M5)</li>
 <li><strong>DEBRIS-CLOUD-KEEPS-SCATTERING</strong> -- RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24), a representative run (BrownianMovement is unseeded; the strict increase is the robust claim)</li>
 <li><strong>PARTICLE-BRIDGE-EMITS-THEN-SCATTERS</strong> -- 3 synthetic particles emitted then scattered, bridge verified independently</li>
 </ul>
@@ -1574,7 +1619,7 @@ disintegration mechanism itself.</li>
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build (ON and OFF give statistically indistinguishable fragmentation, and toggling it mid-run changes nothing), and lambda_volume/temperature are init-only with no runtime setters. A settled CPM domain cannot be shattered into scattered pixels in-lattice in this build -- the code-verified route is to resorb the cell and convert its shed pixels into particles. This is framed as a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not as emergent lattice fragmentation -- a real, documented engine limitation.</li><li style="margin:2px 0">Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body pymunk physics -- the particles drift and scatter, they do not collide with each other or with the dissolving cell, and do not fall under gravity.</li><li style="margin:2px 0">The acetate field&#39;s radial gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and the diffusion coefficients (acetate D=4.0, debris diffusion_rate=1.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter all legible within a 20-24 tick run -- not fitted to a named stressor, material, or literature target.</li><li style="margin:2px 0">Unlike studies 2-3 in this investigation (cell-environment-coupling, cell-cell-coupling), this study&#39;s CPM cell has no metabolism/cobra path at all -- CpmDisintegration is deliberately built around the viability-collapse trigger alone, not nutrient uptake or growth.</li><li style="margin:2px 0">The released flag latches once the crossing happens and never un-crosses, even once the footprint empties and its mean-stressor reading would otherwise read misleadingly low -- a deliberate design choice so a dissolved cell cannot spuriously &#34;recover&#34; viability.</li><li style="margin:2px 0">The CPM-to-particle bridge (a process emitting particles via the map `_add` sentinel into a shared map[particle] store, moved by a separate stock BrownianMovement process) is now runtime-verified directly (tests/test_particle_bridge_spike.py), independent of the disintegration mechanism itself -- previously an unverified primitive.</li><li style="margin:2px 0">A CPM-&gt;particle mass ledger is still PENDING, and the &#34;shed material, not deleted mass&#34; claim is on hold until it closes. The shed particle count (68) exceeds the cell area at release (56 px), an unresolved possible double-count -- the shedding logic may emit more particles than the footprint it vacates. Until a ledger reconciles vacated-pixel mass against emitted-particle count, the study demonstrates that shed pixels APPEAR as scattering debris, not that mass is conserved through the transition. (The ledger itself is out of scope here -- this re-levels the language and records the open discrepancy.)</li><li style="margin:2px 0">Read against a lumped, specification-stage realization of the same pattern: that
+        <li style="margin:2px 0">The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build (ON and OFF give statistically indistinguishable fragmentation, and toggling it mid-run changes nothing), and lambda_volume/temperature are init-only with no runtime setters. A settled CPM domain cannot be shattered into scattered pixels in-lattice in this build -- the code-verified route is to resorb the cell and convert its shed pixels into particles. This is framed as a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not as emergent lattice fragmentation -- a real, documented engine limitation.</li><li style="margin:2px 0">Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body pymunk physics -- the particles drift and scatter, they do not collide with each other or with the dissolving cell, and do not fall under gravity.</li><li style="margin:2px 0">The acetate field&#39;s radial gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and the diffusion coefficients (acetate D=4.0, debris diffusion_rate=1.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter all legible within a 20-24 tick run -- not fitted to a named stressor, material, or literature target.</li><li style="margin:2px 0">Unlike studies 2-3 in this investigation (cell-environment-coupling, cell-cell-coupling), this study&#39;s CPM cell has no metabolism/cobra path at all -- CpmDisintegration is deliberately built around the viability-collapse trigger alone, not nutrient uptake or growth.</li><li style="margin:2px 0">The released flag latches once the crossing happens and never un-crosses, even once the footprint empties and its mean-stressor reading would otherwise read misleadingly low -- a deliberate design choice so a dissolved cell cannot spuriously &#34;recover&#34; viability.</li><li style="margin:2px 0">The CPM-to-particle bridge (a process emitting particles via the map `_add` sentinel into a shared map[particle] store, moved by a separate stock BrownianMovement process) is now runtime-verified directly (tests/test_particle_bridge_spike.py), independent of the disintegration mechanism itself -- previously an unverified primitive.</li><li style="margin:2px 0">The CPM-&gt;particle mass ledger is CLOSED (answers peer-review issue M5, previously PENDING). An external ledger -- reading only the CPM lattice via world.snapshot(), never the process&#39;s private state nor the movement-scrambled particle positions -- replays the footprint diff vacated = prev_fp &amp; ~curr_fp tick by tick. Building it caught a REAL double-count: the pre-fix shedding (min(vacated, cap), no memory) shed 68 particles over only 62 distinct pixels, because a pixel can be vacated, re-occupied by ordinary CPM fluctuation as the footprint drifts while resorbing, then vacated again -- and was shed a second time at the same pixel center (6 such re-vacated pixels = 6 units of manufactured mass, exactly the 68-vs-56 gap M5 flagged). Note the weak bound shed(68) &lt;= unique_vacated(69) held even for the buggy version, which is why it masked the bug -- only shed == distinct-pixels exposes it. Fixed with an already-shed-pixel guard (cap now counts FRESH emissions): the process sheds 63 particles at 63 distinct pixels, equal to the live particle-store growth and &lt;= 69 unique vacated pixels. The ledger closes -- shed material, not deleted-then-recreated mass. The 63-vs-56px gap is legitimate footprint drift: the cell traverses 69 distinct lattice pixels over its released lifetime, not the 56 held at the release instant. The remaining 69-63 = 6 gap is the per-tick cap dropping the steepest vacation ticks (vacated-but-unshed, the safe under-counting direction), never mass double-counted (tests/test_disintegration_ledger.py, tests/test_disintegration_mass.py).</li><li style="margin:2px 0">Read against a lumped, specification-stage realization of the same pattern: that
 kind of model closes the paper&#39;s §Disintegration level-shift (Fig 6) with a scripted viability scalar
 decaying on a thermal-shock
 timer, over a lumped cell-state composite. This study closes the same level-shift with a real
@@ -1608,8 +1653,8 @@ the two for the same disintegration claim at two very different mechanistic reso
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>6</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">6 PASS</span> ·
+        <strong>7</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">7 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -1643,7 +1688,7 @@ the two for the same disintegration claim at two very different mechanistic reso
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "2b57251304b63a114bcf4bf94b1f5b8b01ed1091", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/2b57251304b63a114bcf4bf94b1f5b8b01ed1091", "branch": "main", "lockfile": "uv.lock@f614867f376e", "generated_at": "2026-08-22 19:03 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "ebf32cafa819670a0f9db3fad73cde92343bc5ae", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/ebf32cafa819670a0f9db3fad73cde92343bc5ae", "branch": "main", "lockfile": "uv.lock@f614867f376e", "generated_at": "2026-08-22 20:30 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "disintegration";
