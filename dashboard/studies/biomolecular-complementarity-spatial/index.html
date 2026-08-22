@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Study: growth-and-division</title>
+<title>Study: biomolecular-complementarity-spatial</title>
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/style.css">
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/progress-track.css">
 <!-- Inherit the workbench light/dark theme (this page loads in an iframe;
@@ -14,7 +14,7 @@
 <header class="study-header">
   <div style="display:flex; align-items:baseline; gap:12px; justify-content:space-between;">
   <h1 class="study-title">
-    <span class="study-name" id="study-name" data-slug="growth-and-division" title="growth-and-division">Growth and Division</span>
+    <span class="study-name" id="study-name" data-slug="biomolecular-complementarity-spatial" title="biomolecular-complementarity-spatial">Biomolecular Complementarity, Spatial</span>
     
     <span class="study-kind-tag study-kind-biological" data-study-kind="biological" title="Study kind">biological</span>
     
@@ -34,7 +34,7 @@
     
 
     
-    <div id="readiness-panel" data-slug="growth-and-division"></div>
+    <div id="readiness-panel" data-slug="biomolecular-complementarity-spatial"></div>
 
     
     
@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="4 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -146,7 +146,7 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Does growth — an autocatalytic, energy-coupled DNA-replication process that plays the role of environment-coupled uptake — drive the cell&#39;s own dna store across a threshold, and does crossing that threshold fire a genuine structural rewrite of the place graph (one cell node becoming two daughter nodes at runtime, mass conserved) rather than a pre-declared post-structure animated on a wall clock?</p>
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> The paper&#39;s §Molecular compositions section (Fig 8) frames its subject as a question about interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates? This study puts two spatial primitives of that question on the lattice. Differential-adhesion cell sorting -- Steinberg&#39;s Differential Adhesion Hypothesis -- is complementarity made spatial: a mixed population of two cell types, distinguished only by which contacts they find energetically favorable, demixes so that like sits with like and the heterotypic boundary between them collapses, a direct spatial reading of which interface variables must align for two cells to stay coupled. Biomolecular-condensate phase separation is the diffuse-interface counterpart: a scalar composition field, seeded near-critical, spontaneously separates into two phases divided by a sharp interface -- a boundary forming out of a well-mixed medium, the way a condensate droplet does. Each is a real 2D spatial mechanism run through the process-bigraph engine; the two are independent demonstrations, not one coupled model.</p>
 
 <nav class="study-tabs" aria-label="Study sections">
   
@@ -557,1231 +557,32 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Growth precedes and drives division: an autocatalytic, energy-coupled DNA-replication process grows the cell&#39;s own dna store until it crosses a threshold, and crossing that threshold triggers a change to the composition itself — one cell becomes two through a graph rewrite that creates new nodes at runtime and conserves mass (the parent is halved, not doubled), not a pre-drawn pair on a timer (Law 2′, rewrite conformance vs wiring; Law 2, interface preserved across the rewrite).</p>
+      <p class="ctr-text">Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 8) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard (heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 Monte Carlo steps) while staying cohesive (live-cell pixels ~1530, &lt;1% drift; per-type counts constant at 32/32) -- like sitting with like is the spatial reading of which interface variables must align for coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it demonstrates a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate. Neither regime computes a binding affinity; both are tuned demonstration primitives, not fitted to a measured tissue or condensate. The two run as independent processes through the process-bigraph engine, with no coupling between them.</p>
       
-      <div class="ctr-context">Fig 10 rewrites the cell across time in two coupled moves: growth first, then division. Growth is not free — it is driven by an autocatalytic DNA-replication process, d[dna]/dt = k·dna·energy, that plays the role of environment-coupled uptake feeding the cell&#39;s internal stores (the same &#34;sense energy from the environment, grow an internal store&#34; pattern as Fig 5&#39;s cell-environment coupling, here specialised to DNA). This growth process is what drives dna 1 → 3.06 over the run — it is the mechanism that reaches the division threshold, not a scripted ramp. Division is the sharpest structural consequence: it is not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction rule in Milner&#39;s sense whose reactum has more nodes than its redex. The trigger is the cell&#39;s own grown state, not a timer: when the replicated ``dna`` crosses ``dna_threshold`` = 2.0, the rewrite fires exactly once. There is no wall clock, no ``division_time``, no scheduled tick — the cell divides because ``dna &gt;= threshold``, and it only reaches that threshold because growth put it there. At the event the parent&#39;s biomass is partitioned, not duplicated: the parent node&#39;s biomass is driven to 0 and each of the two daughters receives M/2, so mass is conserved (one cell node → two daughter nodes). Measured on the compiled composite fig10-1-executable, the parent&#39;s ``dna`` climbs 1 → 3.06 (growth) and crosses the threshold; the rewrite fires; ``cell_count`` goes 1 → 2; each daughter inherits DNA (0 → 2.75) and half the parent&#39;s biomass (0 → 0.5) while the parent&#39;s biomass falls to 0. The daughters are structurally new — they do not exist in the initial state — which is exactly what makes this an event-driven rewrite rather than an animation of a pre-built pair.</div>
+      <div class="ctr-context">Steinberg&#39;s differential-adhesion sorting is the paper&#39;s §Molecular compositions complementarity (Fig 8) read spatially: molecules bind the partners they recognize and not others, and at the scale of cells that same selectivity shows up as which contacts are cheap and which are costly. Give two cell types a contact-energy matrix in which homotypic contact is favorable and heterotypic contact is expensive, and a well-mixed checkerboard self-organizes -- like cells cluster, unlike cells pull apart, and the heterotypic interface shrinks. That is the question of which interface variables must align for coupling to occur, made mechanical: cells stay adjacent exactly where their adhesion preferences are complementary.
+
+The condensate side realizes the paper&#39;s other §Molecular compositions mechanism (Fig 8). Following banani2017 as the paper does, weak multivalent interactions among biomolecules can drive liquid-liquid phase separation into droplets that acquire emergent physical properties -- surface tension, viscosity, and selective permeability -- and that introduce new interface variables the surrounding system must now reckon with: binding states, complex composition, local density, and phase boundaries. Here that is modeled as a Cahn-Hilliard scalar composition field: a double-well free energy plus an interfacial-gradient penalty drives mass-conserving spinodal decomposition, so a near-critical field separates into two phases bounded by a sharp, emergent interface.
+
+Measured this build. SORTING (meta_modelers_guide.composites.cell-sorting-spatial): an 8x8 checkerboard of 64 cells (32 type-1 / 32 type-2, 5x5 px each, 70x70 lattice) demixes over ~600 Monte Carlo steps -- the heterotypic-interface fraction collapses from a clearly-mixed ~0.64 at the first observation (the raw seeded checkerboard is ~1.0 before any relaxation) to ~0.06, roughly an order-of-magnitude drop, while a cohesion guard confirms the clump did not merely dissolve: total live-cell pixels hold near ~1530 (well under the 10% drift bound) and the per-type counts stay exactly 32/32. The cohesion guard is load-bearing, not decoration -- the heterotypic-interface fraction alone falls to 0.0 when the cells boil off into medium at high temperature, which would read as a perfect sort of an empty lattice, so a dissolved clump must never be misread as sorted. CONDENSATE (meta_modelers_guide.composites.condensate-cahn-hilliard): a 64x64 composition field seeded with near-critical noise (mean 0, +/-0.025) phase-separates over 10000 steps -- the field variance rises from ~7e-5 to ~0.38 as two domains form, total mass is conserved to ~4e-18 (the composition is redistributed, not created or destroyed), the field stays bounded in [-1, 1], and no NaN appears.
+
+Honesty point, stated plainly because the paper&#39;s central question demands it. The condensate study demonstrates a boundary forming -- phase separation, mass-conserved, with an emergent interface -- but it does not yet demonstrate the condensate doing interface work: selectively concentrating or excluding a second species, the property that would let it act as a functional, regulatable compartment rather than a transient aggregate. That is precisely the discriminator the paper&#39;s §Molecular compositions question turns on, and it is the natural next step, not something this study already shows. The sorting study likewise demonstrates differential-adhesion demixing with a cohesion guard, not molecular binding-affinity selectivity: there is no partner-choice term, exactly as the specification-stage analogue study draft-to-living-cell/biomolecular-complementarity scopes its own selectivity gap. Both regimes are tuned, not fitted: the sorting J-triple (homotypic 2, heterotypic 11, medium 8) and temperature 10 sit in a narrow cohesive-and-mobile window (T=1 freezes the mixed state, T&gt;=200 dissolves the cells), and the Cahn-Hilliard scheme is numerically stiff, its timestep pinned at dt=0.002 against the biharmonic stability limit. This is the spatial counterpart to draft-to-living-cell/biomolecular-complementarity, which built the same complementarity pattern as a nested-hierarchy expression cascade; read the two side by side for the same interface idea at two very different mechanistic resolutions.</div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Install a Milner reaction rule behind the Fig 10 division interface, let an autocatalytic, energy-coupled DNA-replication process grow the cell&#39;s dna to the threshold (the Fig 10 analogue of environment-coupled uptake growing an internal store), and observe the rewrite fire.</p>
+      <p class="ctr-text">Run two independent CPM/phase-field composites to completion through the process-bigraph engine: cell-sorting-spatial (CpmSorting, an 8x8 checkerboard of two cell types under a differential-adhesion J-triple, ~600 Monte Carlo steps) and condensate-cahn-hilliard (CahnHilliard, a 64x64 near-critical composition field, 10000 steps). Measure whether contact-energy complementarity alone drives spatial cell sorting (heterotypic-interface fraction collapsing while the clump stays cohesive), and whether a near-critical composition field phase-separates into a mass-conserved, bounded two-phase state with an emergent interface.</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>division</code>, <code>division-rewrite</code>, <code>division-executable</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The autocatalytic, energy-coupled DNA-replication process (d[dna]/dt = k·dna·energy) grows the cell&#39;s own dna store from 1 → 3.06, crossing dna_threshold = 2.0 — growth, not a timer, is what puts the cell at the division trigger.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell&#39;s replicated DNA crosses ``dna_threshold`` = 2.0 (parent dna 1 → 3.06) and the rewrite fires once — cell_count goes 1 → 2. The trigger is DNA state grown by the cell itself, not a wall clock.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The rewrite spawns two structurally-new daughter nodes and conserves mass: each daughter inherits DNA (0 → 2.75) and half the parent&#39;s biomass (0 → 0.5) while the parent&#39;s biomass is driven to 0 (M → M/2 + M/2, not M → 2M).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">One-line sanity check (not the study&#39;s control): the inert draft has empty updates by construction, so it stays at seed cell_count 1 and fails this threshold by design. This confirms the framework&#39;s definition of a draft, not a scientific counterfactual.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>cell-sorting-spatial</code>, <code>condensate-cahn-hilliard</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Under differential adhesion (homotypic J=2, heterotypic J=11, medium J=8, T=10), the mixed checkerboard demixes: the heterotypic-interface fraction collapses from a clearly-mixed start toward a sorted low value.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Cohesion guard: the demixing is real sorting, not dissolution. The total live-cell pixel count is retained (well within a 10% drift bound), so a dissolved clump is not misread as sorted.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Regression check that sorting moves cells rather than creating or destroying them: the per-type cell counts stay exactly 32/32 throughout the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Negative control isolating J-regime causality: under neutral contact energies (all J=8, so heterotypic contact is no more costly than homotypic) the same checkerboard at T=10 does NOT demix -- proving the sorting is driven by the differential-J regime, not by CPM Metropolis dynamics per se.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The near-critical Cahn-Hilliard composition field undergoes spinodal decomposition into two phases: the field variance rises from near-zero toward the coexistence variance as an interface forms.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The phase separation redistributes composition, it does not create or destroy it: the field mean (total mass) is conserved across the whole run -- the mass-conservation property that distinguishes Cahn-Hilliard from a non-conservative Allen-Cahn interface.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Numerical-stability guard: at the pinned dt=0.002 the stiff biharmonic scheme stays bounded in the physical two-phase range [-1, 1] and emits no NaN -- a larger dt would blow up instead.</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">The cell&#39;s replicated dna, driven by the growth process, climbs 1 → 3.06 and crosses the threshold (2.0); the single cell node is replaced by two structurally-new daughters, each inheriting dna → 2.75 and half the parent&#39;s biomass (→ 0.5) while the parent&#39;s biomass falls to 0 — a genuine, mass-conserving structural rewrite driven by the cell&#39;s own growth, not a timer.</p>
-      
-      <figure class="ctr-figure"><svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 388.8 252" xmlns="http://www.w3.org/2000/svg" version="1.1" style="max-width:100%;height:auto" preserveAspectRatio="xMidYMid meet">
- <metadata>
-  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-   <cc:Work>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-08-18T09:55:17.117090</dc:date>
-    <dc:format>image/svg+xml</dc:format>
-    <dc:creator>
-     <cc:Agent>
-      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
-     </cc:Agent>
-    </dc:creator>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <defs>
-  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
- </defs>
- <g id="figure_1">
-  <g id="patch_1">
-   <path d="M 0 252 
-L 388.8 252 
-L 388.8 0 
-L 0 0 
-z
-" style="fill: #ffffff"/>
-  </g>
-  <g id="axes_1">
-   <g id="patch_2">
-    <path d="M 33.64 212.2 
-L 378 212.2 
-L 378 46.52 
-L 33.64 46.52 
-z
-" style="fill: #ffffff"/>
-   </g>
-   <g id="matplotlib.axis_1">
-    <g id="xtick_1">
-     <g id="line2d_1">
-      <path d="M 49.292727 212.2 
-L 49.292727 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_2">
-      <defs>
-       <path id="ma1ba67a0db" d="M 0 0 
-L 0 3.5 
-" style="stroke: #000000; stroke-width: 0.8"/>
-      </defs>
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="49.292727" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_1">
-      <!-- 0 -->
-      <g transform="translate(46.111477 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-13" d="M 2034 4250 
-Q 1547 4250 1301 3770 
-Q 1056 3291 1056 2328 
-Q 1056 1369 1301 889 
-Q 1547 409 2034 409 
-Q 2525 409 2770 889 
-Q 3016 1369 3016 2328 
-Q 3016 3291 2770 3770 
-Q 2525 4250 2034 4250 
-z
-M 2034 4750 
-Q 2819 4750 3233 4129 
-Q 3647 3509 3647 2328 
-Q 3647 1150 3233 529 
-Q 2819 -91 2034 -91 
-Q 1250 -91 836 529 
-Q 422 1150 422 2328 
-Q 422 3509 836 4129 
-Q 1250 4750 2034 4750 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-13"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_2">
-     <g id="line2d_3">
-      <path d="M 88.424545 212.2 
-L 88.424545 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_4">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="88.424545" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_2">
-      <!-- 1 -->
-      <g transform="translate(85.243295 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-14" d="M 794 531 
-L 1825 531 
-L 1825 4091 
-L 703 3866 
-L 703 4441 
-L 1819 4666 
-L 2450 4666 
-L 2450 531 
-L 3481 531 
-L 3481 0 
-L 794 0 
-L 794 531 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-14"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_3">
-     <g id="line2d_5">
-      <path d="M 127.556364 212.2 
-L 127.556364 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_6">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="127.556364" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_3">
-      <!-- 2 -->
-      <g transform="translate(124.375114 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-15" d="M 1228 531 
-L 3431 531 
-L 3431 0 
-L 469 0 
-L 469 531 
-Q 828 903 1448 1529 
-Q 2069 2156 2228 2338 
-Q 2531 2678 2651 2914 
-Q 2772 3150 2772 3378 
-Q 2772 3750 2511 3984 
-Q 2250 4219 1831 4219 
-Q 1534 4219 1204 4116 
-Q 875 4013 500 3803 
-L 500 4441 
-Q 881 4594 1212 4672 
-Q 1544 4750 1819 4750 
-Q 2544 4750 2975 4387 
-Q 3406 4025 3406 3419 
-Q 3406 3131 3298 2873 
-Q 3191 2616 2906 2266 
-Q 2828 2175 2409 1742 
-Q 1991 1309 1228 531 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-15"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_4">
-     <g id="line2d_7">
-      <path d="M 166.688182 212.2 
-L 166.688182 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_8">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="166.688182" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_4">
-      <!-- 3 -->
-      <g transform="translate(163.506932 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-16" d="M 2597 2516 
-Q 3050 2419 3304 2112 
-Q 3559 1806 3559 1356 
-Q 3559 666 3084 287 
-Q 2609 -91 1734 -91 
-Q 1441 -91 1130 -33 
-Q 819 25 488 141 
-L 488 750 
-Q 750 597 1062 519 
-Q 1375 441 1716 441 
-Q 2309 441 2620 675 
-Q 2931 909 2931 1356 
-Q 2931 1769 2642 2001 
-Q 2353 2234 1838 2234 
-L 1294 2234 
-L 1294 2753 
-L 1863 2753 
-Q 2328 2753 2575 2939 
-Q 2822 3125 2822 3475 
-Q 2822 3834 2567 4026 
-Q 2313 4219 1838 4219 
-Q 1578 4219 1281 4162 
-Q 984 4106 628 3988 
-L 628 4550 
-Q 988 4650 1302 4700 
-Q 1616 4750 1894 4750 
-Q 2613 4750 3031 4423 
-Q 3450 4097 3450 3541 
-Q 3450 3153 3228 2886 
-Q 3006 2619 2597 2516 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-16"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_5">
-     <g id="line2d_9">
-      <path d="M 205.82 212.2 
-L 205.82 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_10">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="205.82" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_5">
-      <!-- 4 -->
-      <g transform="translate(202.63875 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-17" d="M 2419 4116 
-L 825 1625 
-L 2419 1625 
-L 2419 4116 
-z
-M 2253 4666 
-L 3047 4666 
-L 3047 1625 
-L 3713 1625 
-L 3713 1100 
-L 3047 1100 
-L 3047 0 
-L 2419 0 
-L 2419 1100 
-L 313 1100 
-L 313 1709 
-L 2253 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-17"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_6">
-     <g id="line2d_11">
-      <path d="M 244.951818 212.2 
-L 244.951818 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_12">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="244.951818" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_6">
-      <!-- 5 -->
-      <g transform="translate(241.770568 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-18" d="M 691 4666 
-L 3169 4666 
-L 3169 4134 
-L 1269 4134 
-L 1269 2991 
-Q 1406 3038 1543 3061 
-Q 1681 3084 1819 3084 
-Q 2600 3084 3056 2656 
-Q 3513 2228 3513 1497 
-Q 3513 744 3044 326 
-Q 2575 -91 1722 -91 
-Q 1428 -91 1123 -41 
-Q 819 9 494 109 
-L 494 744 
-Q 775 591 1075 516 
-Q 1375 441 1709 441 
-Q 2250 441 2565 725 
-Q 2881 1009 2881 1497 
-Q 2881 1984 2565 2268 
-Q 2250 2553 1709 2553 
-Q 1456 2553 1204 2497 
-Q 953 2441 691 2322 
-L 691 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-18"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_7">
-     <g id="line2d_13">
-      <path d="M 284.083636 212.2 
-L 284.083636 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_14">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="284.083636" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_7">
-      <!-- 6 -->
-      <g transform="translate(280.902386 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-19" d="M 2113 2584 
-Q 1688 2584 1439 2293 
-Q 1191 2003 1191 1497 
-Q 1191 994 1439 701 
-Q 1688 409 2113 409 
-Q 2538 409 2786 701 
-Q 3034 994 3034 1497 
-Q 3034 2003 2786 2293 
-Q 2538 2584 2113 2584 
-z
-M 3366 4563 
-L 3366 3988 
-Q 3128 4100 2886 4159 
-Q 2644 4219 2406 4219 
-Q 1781 4219 1451 3797 
-Q 1122 3375 1075 2522 
-Q 1259 2794 1537 2939 
-Q 1816 3084 2150 3084 
-Q 2853 3084 3261 2657 
-Q 3669 2231 3669 1497 
-Q 3669 778 3244 343 
-Q 2819 -91 2113 -91 
-Q 1303 -91 875 529 
-Q 447 1150 447 2328 
-Q 447 3434 972 4092 
-Q 1497 4750 2381 4750 
-Q 2619 4750 2861 4703 
-Q 3103 4656 3366 4563 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-19"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_8">
-     <g id="line2d_15">
-      <path d="M 323.215455 212.2 
-L 323.215455 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_16">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="323.215455" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_8">
-      <!-- 7 -->
-      <g transform="translate(320.034205 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-1a" d="M 525 4666 
-L 3525 4666 
-L 3525 4397 
-L 1831 0 
-L 1172 0 
-L 2766 4134 
-L 525 4134 
-L 525 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-1a"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_9">
-     <g id="line2d_17">
-      <path d="M 362.347273 212.2 
-L 362.347273 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_18">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="362.347273" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_9">
-      <!-- 8 -->
-      <g transform="translate(359.166023 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-1b" d="M 2034 2216 
-Q 1584 2216 1326 1975 
-Q 1069 1734 1069 1313 
-Q 1069 891 1326 650 
-Q 1584 409 2034 409 
-Q 2484 409 2743 651 
-Q 3003 894 3003 1313 
-Q 3003 1734 2745 1975 
-Q 2488 2216 2034 2216 
-z
-M 1403 2484 
-Q 997 2584 770 2862 
-Q 544 3141 544 3541 
-Q 544 4100 942 4425 
-Q 1341 4750 2034 4750 
-Q 2731 4750 3128 4425 
-Q 3525 4100 3525 3541 
-Q 3525 3141 3298 2862 
-Q 3072 2584 2669 2484 
-Q 3125 2378 3379 2068 
-Q 3634 1759 3634 1313 
-Q 3634 634 3220 271 
-Q 2806 -91 2034 -91 
-Q 1263 -91 848 271 
-Q 434 634 434 1313 
-Q 434 1759 690 2068 
-Q 947 2378 1403 2484 
-z
-M 1172 3481 
-Q 1172 3119 1398 2916 
-Q 1625 2713 2034 2713 
-Q 2441 2713 2670 2916 
-Q 2900 3119 2900 3481 
-Q 2900 3844 2670 4047 
-Q 2441 4250 2034 4250 
-Q 1625 4250 1398 4047 
-Q 1172 3844 1172 3481 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-1b"/>
-      </g>
-     </g>
-    </g>
-    <g id="text_10">
-     <!-- time -->
-     <g transform="translate(196.783125 239.27875) scale(0.08 -0.08)">
-      <defs>
-       <path id="DejaVuSans-57" d="M 1172 4494 
-L 1172 3500 
-L 2356 3500 
-L 2356 3053 
-L 1172 3053 
-L 1172 1153 
-Q 1172 725 1289 603 
-Q 1406 481 1766 481 
-L 2356 481 
-L 2356 0 
-L 1766 0 
-Q 1100 0 847 248 
-Q 594 497 594 1153 
-L 594 3053 
-L 172 3053 
-L 172 3500 
-L 594 3500 
-L 594 4494 
-L 1172 4494 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-4c" d="M 603 3500 
-L 1178 3500 
-L 1178 0 
-L 603 0 
-L 603 3500 
-z
-M 603 4863 
-L 1178 4863 
-L 1178 4134 
-L 603 4134 
-L 603 4863 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-50" d="M 3328 2828 
-Q 3544 3216 3844 3400 
-Q 4144 3584 4550 3584 
-Q 5097 3584 5394 3201 
-Q 5691 2819 5691 2113 
-L 5691 0 
-L 5113 0 
-L 5113 2094 
-Q 5113 2597 4934 2840 
-Q 4756 3084 4391 3084 
-Q 3944 3084 3684 2787 
-Q 3425 2491 3425 1978 
-L 3425 0 
-L 2847 0 
-L 2847 2094 
-Q 2847 2600 2669 2842 
-Q 2491 3084 2119 3084 
-Q 1678 3084 1418 2786 
-Q 1159 2488 1159 1978 
-L 1159 0 
-L 581 0 
-L 581 3500 
-L 1159 3500 
-L 1159 2956 
-Q 1356 3278 1631 3431 
-Q 1906 3584 2284 3584 
-Q 2666 3584 2933 3390 
-Q 3200 3197 3328 2828 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-48" d="M 3597 1894 
-L 3597 1613 
-L 953 1613 
-Q 991 1019 1311 708 
-Q 1631 397 2203 397 
-Q 2534 397 2845 478 
-Q 3156 559 3463 722 
-L 3463 178 
-Q 3153 47 2828 -22 
-Q 2503 -91 2169 -91 
-Q 1331 -91 842 396 
-Q 353 884 353 1716 
-Q 353 2575 817 3079 
-Q 1281 3584 2069 3584 
-Q 2775 3584 3186 3129 
-Q 3597 2675 3597 1894 
-z
-M 3022 2063 
-Q 3016 2534 2758 2815 
-Q 2500 3097 2075 3097 
-Q 1594 3097 1305 2825 
-Q 1016 2553 972 2059 
-L 3022 2063 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-57"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(39.203125 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(66.984375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(164.390625 0)"/>
-     </g>
-    </g>
-   </g>
-   <g id="matplotlib.axis_2">
-    <g id="ytick_1">
-     <g id="line2d_19">
-      <path d="M 33.64 204.669091 
-L 378 204.669091 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_20">
-      <defs>
-       <path id="m3b5607395f" d="M 0 0 
-L -3.5 0 
-" style="stroke: #000000; stroke-width: 0.8"/>
-      </defs>
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="204.669091" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_11">
-      <!-- 0.0 -->
-      <g transform="translate(10.736875 208.467919) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-11" d="M 684 794 
-L 1344 794 
-L 1344 0 
-L 684 0 
-L 684 794 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-13"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_2">
-     <g id="line2d_21">
-      <path d="M 33.64 180.050416 
-L 378 180.050416 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_22">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="180.050416" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_12">
-      <!-- 0.5 -->
-      <g transform="translate(10.736875 183.849244) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-13"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_3">
-     <g id="line2d_23">
-      <path d="M 33.64 155.43174 
-L 378 155.43174 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_24">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="155.43174" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_13">
-      <!-- 1.0 -->
-      <g transform="translate(10.736875 159.230568) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_4">
-     <g id="line2d_25">
-      <path d="M 33.64 130.813065 
-L 378 130.813065 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_26">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="130.813065" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_14">
-      <!-- 1.5 -->
-      <g transform="translate(10.736875 134.611893) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_5">
-     <g id="line2d_27">
-      <path d="M 33.64 106.194389 
-L 378 106.194389 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_28">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="106.194389" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_15">
-      <!-- 2.0 -->
-      <g transform="translate(10.736875 109.993217) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_6">
-     <g id="line2d_29">
-      <path d="M 33.64 81.575714 
-L 378 81.575714 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_30">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="81.575714" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_16">
-      <!-- 2.5 -->
-      <g transform="translate(10.736875 85.374542) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_7">
-     <g id="line2d_31">
-      <path d="M 33.64 56.957038 
-L 378 56.957038 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_32">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="56.957038" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_17">
-      <!-- 3.0 -->
-      <g transform="translate(10.736875 60.755867) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-16"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-   </g>
-   <g id="line2d_33">
-    <path d="M 49.292727 204.669091 
-L 88.424545 194.821621 
-L 127.556364 183.49703 
-L 166.688182 170.473751 
-L 205.82 155.49698 
-L 244.951818 138.273693 
-L 284.083636 118.466913 
-L 323.215455 95.689116 
-L 362.347273 69.49465 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_34">
-    <path d="M 49.292727 204.669091 
-L 88.424545 194.821621 
-L 127.556364 183.49703 
-L 166.688182 170.473751 
-L 205.82 155.49698 
-L 244.951818 138.273693 
-L 284.083636 118.466913 
-L 323.215455 95.689116 
-L 362.347273 69.49465 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_35">
-    <path d="M 49.292727 155.43174 
-L 88.424545 148.046137 
-L 127.556364 139.552694 
-L 166.688182 129.785235 
-L 205.82 118.552657 
-L 244.951818 105.635191 
-L 284.083636 90.780107 
-L 323.215455 73.696759 
-L 362.347273 54.050909 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_36">
-    <path d="M 49.292727 155.43174 
-L 88.424545 155.43174 
-L 127.556364 155.43174 
-L 166.688182 155.43174 
-L 205.82 155.43174 
-L 244.951818 155.43174 
-L 284.083636 204.669091 
-L 323.215455 204.669091 
-L 362.347273 204.669091 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_37">
-    <path d="M 49.292727 155.43174 
-L 88.424545 155.43174 
-L 127.556364 155.43174 
-L 166.688182 155.43174 
-L 205.82 155.43174 
-L 244.951818 155.43174 
-L 284.083636 106.194389 
-L 323.215455 106.194389 
-L 362.347273 106.194389 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_38">
-    <path d="M 49.292727 204.669091 
-L 88.424545 204.669091 
-L 127.556364 204.669091 
-L 166.688182 204.669091 
-L 205.82 204.669091 
-L 244.951818 204.669091 
-L 284.083636 180.050416 
-L 323.215455 180.050416 
-L 362.347273 180.050416 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #1c7a77; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="patch_3">
-    <path d="M 33.64 212.2 
-L 33.64 46.52 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="patch_4">
-    <path d="M 33.64 212.2 
-L 378 212.2 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="text_18">
-    <!-- fig10 1 -->
-    <g style="fill: #16211f" transform="translate(188.36375 40.52) scale(0.1 -0.1)">
-     <defs>
-      <path id="DejaVuSans-13af" d="M 3431 3500 
-L 3431 0 
-L 2853 0 
-L 2853 3053 
-L 1275 3053 
-L 1275 0 
-L 697 0 
-L 697 3053 
-L 147 3053 
-L 147 3500 
-L 697 3500 
-L 697 3744 
-Q 697 4316 967 4589 
-Q 1238 4863 1797 4863 
-L 2375 4863 
-L 2375 4384 
-L 1825 4384 
-Q 1516 4384 1395 4259 
-Q 1275 4134 1275 3809 
-L 1275 3500 
-L 3431 3500 
-z
-M 2853 4856 
-L 3431 4856 
-L 3431 4128 
-L 2853 4128 
-L 2853 4856 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-4a" d="M 2906 1791 
-Q 2906 2416 2648 2759 
-Q 2391 3103 1925 3103 
-Q 1463 3103 1205 2759 
-Q 947 2416 947 1791 
-Q 947 1169 1205 825 
-Q 1463 481 1925 481 
-Q 2391 481 2648 825 
-Q 2906 1169 2906 1791 
-z
-M 3481 434 
-Q 3481 -459 3084 -895 
-Q 2688 -1331 1869 -1331 
-Q 1566 -1331 1297 -1286 
-Q 1028 -1241 775 -1147 
-L 775 -588 
-Q 1028 -725 1275 -790 
-Q 1522 -856 1778 -856 
-Q 2344 -856 2625 -561 
-Q 2906 -266 2906 331 
-L 2906 616 
-Q 2728 306 2450 153 
-Q 2172 0 1784 0 
-Q 1141 0 747 490 
-Q 353 981 353 1791 
-Q 353 2603 747 3093 
-Q 1141 3584 1784 3584 
-Q 2172 3584 2450 3431 
-Q 2728 3278 2906 2969 
-L 2906 3500 
-L 3481 3500 
-L 3481 434 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-3" transform="scale(0.015625)"/>
-     </defs>
-     <use xlink:href="#DejaVuSans-13af"/>
-     <use xlink:href="#DejaVuSans-4a" transform="translate(62.984375 0)"/>
-     <use xlink:href="#DejaVuSans-14" transform="translate(126.46875 0)"/>
-     <use xlink:href="#DejaVuSans-13" transform="translate(190.09375 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(253.71875 0)"/>
-     <use xlink:href="#DejaVuSans-14" transform="translate(285.5 0)"/>
-    </g>
-   </g>
-   <g id="legend_1">
-    <g id="line2d_39">
-     <path d="M 39.49 55.033984 
-L 45.99 55.033984 
-L 52.49 55.033984 
-" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_19">
-     <!-- dna -->
-     <g transform="translate(57.69 57.308984) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-47" d="M 2906 2969 
-L 2906 4863 
-L 3481 4863 
-L 3481 0 
-L 2906 0 
-L 2906 525 
-Q 2725 213 2448 61 
-Q 2172 -91 1784 -91 
-Q 1150 -91 751 415 
-Q 353 922 353 1747 
-Q 353 2572 751 3078 
-Q 1150 3584 1784 3584 
-Q 2172 3584 2448 3432 
-Q 2725 3281 2906 2969 
-z
-M 947 1747 
-Q 947 1113 1208 752 
-Q 1469 391 1925 391 
-Q 2381 391 2643 752 
-Q 2906 1113 2906 1747 
-Q 2906 2381 2643 2742 
-Q 2381 3103 1925 3103 
-Q 1469 3103 1208 2742 
-Q 947 2381 947 1747 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-51" d="M 3513 2113 
-L 3513 0 
-L 2938 0 
-L 2938 2094 
-Q 2938 2591 2744 2837 
-Q 2550 3084 2163 3084 
-Q 1697 3084 1428 2787 
-Q 1159 2491 1159 1978 
-L 1159 0 
-L 581 0 
-L 581 3500 
-L 1159 3500 
-L 1159 2956 
-Q 1366 3272 1645 3428 
-Q 1925 3584 2291 3584 
-Q 2894 3584 3203 3211 
-Q 3513 2838 3513 2113 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-44" d="M 2194 1759 
-Q 1497 1759 1228 1600 
-Q 959 1441 959 1056 
-Q 959 750 1161 570 
-Q 1363 391 1709 391 
-Q 2188 391 2477 730 
-Q 2766 1069 2766 1631 
-L 2766 1759 
-L 2194 1759 
-z
-M 3341 1997 
-L 3341 0 
-L 2766 0 
-L 2766 531 
-Q 2569 213 2275 61 
-Q 1981 -91 1556 -91 
-Q 1019 -91 701 211 
-Q 384 513 384 1019 
-Q 384 1609 779 1909 
-Q 1175 2209 1959 2209 
-L 2766 2209 
-L 2766 2266 
-Q 2766 2663 2505 2880 
-Q 2244 3097 1772 3097 
-Q 1472 3097 1187 3025 
-Q 903 2953 641 2809 
-L 641 3341 
-Q 956 3463 1253 3523 
-Q 1550 3584 1831 3584 
-Q 2591 3584 2966 3190 
-Q 3341 2797 3341 1997 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-47"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(126.859375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_40">
-     <path d="M 39.49 64.784492 
-L 45.99 64.784492 
-L 52.49 64.784492 
-" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_20">
-     <!-- dna -->
-     <g transform="translate(57.69 67.059492) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-47"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(126.859375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_41">
-     <path d="M 39.49 74.535 
-L 45.99 74.535 
-L 52.49 74.535 
-" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_21">
-     <!-- dna -->
-     <g transform="translate(57.69 76.81) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-47"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(126.859375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_42">
-     <path d="M 39.49 84.285508 
-L 45.99 84.285508 
-L 52.49 84.285508 
-" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_22">
-     <!-- biomass -->
-     <g transform="translate(57.69 86.560508) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-45" d="M 3116 1747 
-Q 3116 2381 2855 2742 
-Q 2594 3103 2138 3103 
-Q 1681 3103 1420 2742 
-Q 1159 2381 1159 1747 
-Q 1159 1113 1420 752 
-Q 1681 391 2138 391 
-Q 2594 391 2855 752 
-Q 3116 1113 3116 1747 
-z
-M 1159 2969 
-Q 1341 3281 1617 3432 
-Q 1894 3584 2278 3584 
-Q 2916 3584 3314 3078 
-Q 3713 2572 3713 1747 
-Q 3713 922 3314 415 
-Q 2916 -91 2278 -91 
-Q 1894 -91 1617 61 
-Q 1341 213 1159 525 
-L 1159 0 
-L 581 0 
-L 581 4863 
-L 1159 4863 
-L 1159 2969 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-52" d="M 1959 3097 
-Q 1497 3097 1228 2736 
-Q 959 2375 959 1747 
-Q 959 1119 1226 758 
-Q 1494 397 1959 397 
-Q 2419 397 2687 759 
-Q 2956 1122 2956 1747 
-Q 2956 2369 2687 2733 
-Q 2419 3097 1959 3097 
-z
-M 1959 3584 
-Q 2709 3584 3137 3096 
-Q 3566 2609 3566 1747 
-Q 3566 888 3137 398 
-Q 2709 -91 1959 -91 
-Q 1206 -91 779 398 
-Q 353 888 353 1747 
-Q 353 2609 779 3096 
-Q 1206 3584 1959 3584 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-56" d="M 2834 3397 
-L 2834 2853 
-Q 2591 2978 2328 3040 
-Q 2066 3103 1784 3103 
-Q 1356 3103 1142 2972 
-Q 928 2841 928 2578 
-Q 928 2378 1081 2264 
-Q 1234 2150 1697 2047 
-L 1894 2003 
-Q 2506 1872 2764 1633 
-Q 3022 1394 3022 966 
-Q 3022 478 2636 193 
-Q 2250 -91 1575 -91 
-Q 1294 -91 989 -36 
-Q 684 19 347 128 
-L 347 722 
-Q 666 556 975 473 
-Q 1284 391 1588 391 
-Q 1994 391 2212 530 
-Q 2431 669 2431 922 
-Q 2431 1156 2273 1281 
-Q 2116 1406 1581 1522 
-L 1381 1569 
-Q 847 1681 609 1914 
-Q 372 2147 372 2553 
-Q 372 3047 722 3315 
-Q 1072 3584 1716 3584 
-Q 2034 3584 2315 3537 
-Q 2597 3491 2834 3397 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-45"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(91.265625 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(152.453125 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(249.859375 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(311.140625 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(363.234375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_43">
-     <path d="M 39.49 94.036016 
-L 45.99 94.036016 
-L 52.49 94.036016 
-" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_23">
-     <!-- cell_count -->
-     <g transform="translate(57.69 96.311016) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-46" d="M 3122 3366 
-L 3122 2828 
-Q 2878 2963 2633 3030 
-Q 2388 3097 2138 3097 
-Q 1578 3097 1268 2742 
-Q 959 2388 959 1747 
-Q 959 1106 1268 751 
-Q 1578 397 2138 397 
-Q 2388 397 2633 464 
-Q 2878 531 3122 666 
-L 3122 134 
-Q 2881 22 2623 -34 
-Q 2366 -91 2075 -91 
-Q 1284 -91 818 406 
-Q 353 903 353 1747 
-Q 353 2603 823 3093 
-Q 1294 3584 2113 3584 
-Q 2378 3584 2631 3529 
-Q 2884 3475 3122 3366 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-4f" d="M 603 4863 
-L 1178 4863 
-L 1178 0 
-L 603 0 
-L 603 4863 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-42" d="M 3263 -1063 
-L 3263 -1509 
-L -63 -1509 
-L -63 -1063 
-L 3263 -1063 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-58" d="M 544 1381 
-L 544 3500 
-L 1119 3500 
-L 1119 1403 
-Q 1119 906 1312 657 
-Q 1506 409 1894 409 
-Q 2359 409 2629 706 
-Q 2900 1003 2900 1516 
-L 2900 3500 
-L 3475 3500 
-L 3475 0 
-L 2900 0 
-L 2900 538 
-Q 2691 219 2414 64 
-Q 2138 -91 1772 -91 
-Q 1169 -91 856 284 
-Q 544 659 544 1381 
-z
-M 1991 3584 
-L 1991 3584 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-46"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(54.984375 0)"/>
-      <use xlink:href="#DejaVuSans-4f" transform="translate(116.515625 0)"/>
-      <use xlink:href="#DejaVuSans-4f" transform="translate(144.296875 0)"/>
-      <use xlink:href="#DejaVuSans-42" transform="translate(172.078125 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(222.078125 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(277.0625 0)"/>
-      <use xlink:href="#DejaVuSans-58" transform="translate(338.25 0)"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(401.625 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(465 0)"/>
-     </g>
-    </g>
-    <g id="line2d_44">
-     <path d="M 39.49 103.786523 
-L 45.99 103.786523 
-L 52.49 103.786523 
-" style="fill: none; stroke: #1c7a77; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_24">
-     <!-- biomass -->
-     <g transform="translate(57.69 106.061523) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-45"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(91.265625 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(152.453125 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(249.859375 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(311.140625 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(363.234375 0)"/>
-     </g>
-    </g>
-   </g>
-  </g>
-  <g id="text_25">
-   <!-- divide -->
-   <g style="fill: #16211f" transform="translate(177.72125 10.878281) scale(0.11 -0.11)">
-    <defs>
-     <path id="DejaVuSans-59" d="M 191 3500 
-L 800 3500 
-L 1894 563 
-L 2988 3500 
-L 3597 3500 
-L 2284 0 
-L 1503 0 
-L 191 3500 
-z
-" transform="scale(0.015625)"/>
-    </defs>
-    <use xlink:href="#DejaVuSans-47"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-    <use xlink:href="#DejaVuSans-59" transform="translate(91.265625 0)"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(150.453125 0)"/>
-    <use xlink:href="#DejaVuSans-47" transform="translate(178.234375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(241.71875 0)"/>
-   </g>
-  </g>
- </g>
- <defs>
-  <clipPath id="p3b06cd484e">
-   <rect x="33.64" y="46.52" width="344.36" height="165.68"/>
-  </clipPath>
- </defs>
-</svg>
-</figure>
+      <p class="ctr-text">Differential adhesion alone demixes the mixed checkerboard -- heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS while the clump stays cohesive (pixels ~1530, &lt;1% drift; counts 32/32) and a neutral-J control does not sort -- the paper&#39;s §Molecular compositions complementarity (Fig 8) as a spatial mechanism. Independently, the Cahn-Hilliard field phase-separates into two domains bounded by a sharp interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps), mass conserved to ~4e-18 and bounded in [-1, 1]. The condensate forms a boundary but does not yet do interface work (no selective concentration/exclusion of a second species) -- a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate.</p>
       
       
     <div class="overview-section findings-section">
@@ -1795,9 +596,9 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">An autocatalytic, energy-coupled DNA-replication process (d[dna]/dt = k·dna·energy) grows the cell&#39;s own dna store across the division threshold. Confirmed: parent dna climbs 1 → 3.06, crossing dna_threshold 2.0 — growth is the mechanism that reaches the trigger, not a scripted ramp.</span>
+            <span class="finding-claim finding-statement">Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 8) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard so that like sits with like -- the spatial reading of which interface variables must align for coupling. Confirmed: heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS, while the clump stays cohesive (live-cell pixels ~1530, &lt;1% drift) and per-type counts hold at 32/32.</span>
             
-            <span class="finding-chip">via <code>growth-crosses-threshold</code></span>
+            <span class="finding-chip">via <code>sorting-heterotypic-interface-collapses</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -1809,10 +610,10 @@ z
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> parent dna 1 → 3.06, driven by the k·dna·energy growth process, crossing threshold 2.0 · 
+              <strong>observed:</strong> hetero_frac ~0.64 -&gt; ~0.06; cell_pixels ~1530 (&lt;1% drift); n_type1 = n_type2 = 32 · 
               
-              via test <a href="#bt-growth-crosses-threshold" onclick="_gotoStudyTab('tests','bt-growth-crosses-threshold');return false;"><code>growth-crosses-threshold</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              via test <a href="#bt-sorting-heterotypic-interface-collapses" onclick="_gotoStudyTab('tests','bt-sorting-heterotypic-interface-collapses');return false;"><code>sorting-heterotypic-interface-collapses</code></a> · 
+              in run <a href="#run-cell-sorting-spatial"><code>cell-sorting-spatial</code></a>
               
               
             </div>
@@ -1821,12 +622,12 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-cell-sorting-spatial"><code>cell-sorting-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 2.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 0.2</code></div>
             
             
             
@@ -1845,9 +646,9 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Replicated DNA crossing a threshold fires a division event — no wall clock. Confirmed: parent dna 1 → 3.06 crosses dna_threshold 2.0, the rewrite fires once, cell_count 1 → 2.</span>
+            <span class="finding-claim finding-statement">A Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017 (§Molecular compositions, Fig 8): weak-interaction-driven phase separation into droplets with an emergent interface. Confirmed as spinodal decomposition: a near-critical field separates into two phases (variance ~7e-5 -&gt; ~0.38 over 10000 steps) bounded by a sharp interface, with total mass conserved to ~4e-18 and the field bounded in [-1, 1]. A boundary forms out of a well-mixed medium, mass-conserved.</span>
             
-            <span class="finding-chip">via <code>division-fires</code></span>
+            <span class="finding-chip">via <code>condensate-phase-separates</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -1859,10 +660,10 @@ z
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> parent dna 1 → 3.06 crosses threshold 2.0; cell_count 1 → 2 (one division) · 
+              <strong>observed:</strong> phi_var ~7e-5 -&gt; ~0.38; phi_mean drift ~4e-18; phi bounded [-0.989, 0.982] · 
               
-              via test <a href="#bt-division-fires" onclick="_gotoStudyTab('tests','bt-division-fires');return false;"><code>division-fires</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              via test <a href="#bt-condensate-phase-separates" onclick="_gotoStudyTab('tests','bt-condensate-phase-separates');return false;"><code>condensate-phase-separates</code></a> · 
+              in run <a href="#run-condensate-cahn-hilliard"><code>condensate-cahn-hilliard</code></a>
               
               
             </div>
@@ -1871,12 +672,12 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-condensate-cahn-hilliard"><code>condensate-cahn-hilliard</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.3</code></div>
             
             
             
@@ -1891,28 +692,26 @@ z
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-partial">
         <details class="finding-details">
           <summary class="finding-row">
-            <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The division spawns two structurally-new daughter nodes and conserves mass. Confirmed: each daughter inherits dna 0 → 2.75 and biomass 0 → 0.5 while the parent biomass falls to 0 (the parent is halved, not doubled).</span>
-            
-            <span class="finding-chip">via <code>daughters-spawn</code></span>
+            <span class="finding-status-glyph">◐</span>
+            <span class="finding-claim finding-statement">Honesty point, load-bearing for the paper&#39;s central question. The condensate study demonstrates a boundary forming -- phase separation, mass-conserved, with an emergent interface -- but NOT the condensate doing interface work: it does not selectively concentrate or exclude a second species. That selective-permeability property is exactly what would make the interface a functional, regulatable boundary rather than a transient or unregulated aggregate, which is the discriminator the paper&#39;s §Molecular compositions question (Fig 8) turns on. It is named here as the natural next step, not claimed as already shown. Likewise the sorting study demonstrates differential-adhesion demixing with a cohesion guard, not a molecular binding-affinity/selectivity term.</span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
               <span class="finding-id">F-03</span>
               <span class="finding-kind">biological</span>
-              <span class="finding-status-text">confirms literature</span>
+              <span class="finding-status-text">partial literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> each daughter dna 0 → 2.75, biomass 0 → 0.5; parent biomass → 0 (mass conserved) · 
+              <strong>observed:</strong> CahnHilliard evolves a single scalar phi with no second species and no selective partitioning term; CpmSorting minimizes contact energy under a fixed J matrix with no partner-choice term -- verified directly against the process source, not asserted from the paper&#39;s narrative · 
               
-              via test <a href="#bt-daughters-spawn" onclick="_gotoStudyTab('tests','bt-daughters-spawn');return false;"><code>daughters-spawn</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              
+              
               
               
             </div>
@@ -1921,12 +720,10 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-condensate-cahn-hilliard"><code>condensate-cahn-hilliard</code></a>, <a href="#run-cell-sorting-spatial"><code>cell-sorting-spatial</code></a>
             </div>
             
             
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.0</code></div>
             
             
             
@@ -1945,9 +742,9 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Sanity check on the framework&#39;s definition: the inert draft, with no mechanism, has an empty update and stays at seed. Confirmed: inert draft cell_count stays 1 (it fails the division threshold by design — the definition of a draft, not a scientific control).</span>
+            <span class="finding-claim finding-statement">The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding contact-energy asymmetry as the cause of sorting. Confirmed by a neutral-J composite re-run (documented, not a committed test): neutral J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.</span>
             
-            <span class="finding-chip">via <code>draft-is-inert</code></span>
+            <span class="finding-chip">via <code>sorting-neutral-J-does-not-sort</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -1959,10 +756,10 @@ z
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> inert draft stays at cell_count 1 (empty update by construction) · 
+              <strong>observed:</strong> neutral J (all=8) hetero_frac ~0.52 (no sort) vs differential-J ~0.06 · 
               
-              via test <a href="#bt-draft-is-inert" onclick="_gotoStudyTab('tests','bt-draft-is-inert');return false;"><code>draft-is-inert</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              via test <a href="#bt-sorting-neutral-J-does-not-sort" onclick="_gotoStudyTab('tests','bt-sorting-neutral-J-does-not-sort');return false;"><code>sorting-neutral-J-does-not-sort</code></a> · 
+              in run <a href="#run-cell-sorting-spatial"><code>cell-sorting-spatial</code></a>
               
               
             </div>
@@ -1971,12 +768,12 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-cell-sorting-spatial"><code>cell-sorting-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.5</code></div>
             
             
             
@@ -2001,7 +798,7 @@ z
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Symmetric division with a fixed DNA threshold; asymmetric division, septum placement, and size control are not modelled.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">The condensate demonstrates phase separation (a mass-conserved boundary forming with an emergent interface), not interface work: it does not selectively concentrate or exclude a second species, the property that distinguishes a functional, regulatable boundary from a transient or unregulated aggregate in the paper&#39;s §Molecular compositions central question (Fig 8). This is the honest gap and the natural next step, stated explicitly rather than glossed.</span></div>
         
       </div>
       
@@ -2018,11 +815,11 @@ z
   <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
     <h2 class="overview-label" style="margin:0">Model composition</h2>
     
-    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'growth-and-division', 'draft-to-living-cell')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
+    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'biomolecular-complementarity-spatial', 'the-cellular-interface-multicellular')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
   </div>
 
   
-  <div id="model-composite-cards" class="model-composite-cards" data-study="growth-and-division">
+  <div id="model-composite-cards" class="model-composite-cards" data-study="biomolecular-complementarity-spatial">
     <p class="muted" style="font-size:0.85em;margin:0">Loading composite card(s)…</p>
   </div>
 
@@ -2040,24 +837,24 @@ z
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-1-division" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cell-sorting-spatial" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>division</strong>
+        <strong>cell-sorting-spatial</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-1-division</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cell-sorting-spatial</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-1-division')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.cell-sorting-spatial')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="division"
-               value="meta_modelers_guide.composites.fig10-1-division" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="cell-sorting-spatial"
+               value="meta_modelers_guide.composites.cell-sorting-spatial" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="division">Set composite</button>
+                data-baseline-name="cell-sorting-spatial">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="division" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="cell-sorting-spatial" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -2075,59 +872,24 @@ z
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-1-rewrite" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.condensate-cahn-hilliard" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>division-rewrite</strong>
+        <strong>condensate-cahn-hilliard</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-1-rewrite</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.condensate-cahn-hilliard</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-1-rewrite')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.condensate-cahn-hilliard')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="division-rewrite"
-               value="meta_modelers_guide.composites.fig10-1-rewrite" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="condensate-cahn-hilliard"
+               value="meta_modelers_guide.composites.condensate-cahn-hilliard" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="division-rewrite">Set composite</button>
+                data-baseline-name="condensate-cahn-hilliard">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="division-rewrite" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-1-executable" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>division-executable</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-1-executable</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-1-executable')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="division-executable"
-               value="meta_modelers_guide.composites.fig10-1-executable" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="division-executable">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="division-executable" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="condensate-cahn-hilliard" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -2183,7 +945,7 @@ z
 
   <h4>Latest run preview</h4>
   <p class="muted" style="font-size:0.9em">Per-store sparkline + first/last/min/max from the most recent run's emitted trajectory. This is a downsampled PREVIEW, not the full data — use the per-store or Download-all links for the complete arrays.</p>
-  <div id="results-preview" data-study="growth-and-division">
+  <div id="results-preview" data-study="biomolecular-complementarity-spatial">
     <p class="empty-message">Loading results preview…</p>
   </div>
 
@@ -2207,9 +969,9 @@ z
   <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
     <span class="muted" style="margin-right:auto;font-weight:600">Analysis result files</span>
     <a id="data-download-all" class="btn-mini" style="display:none"
-       href="/api/study-analysis-zip?study=growth-and-division">Download all (.zip)</a>
+       href="/api/study-analysis-zip?study=biomolecular-complementarity-spatial">Download all (.zip)</a>
   </div>
-  <div id="data-files" data-study="growth-and-division">
+  <div id="data-files" data-study="biomolecular-complementarity-spatial">
     <p class="empty-message">Loading result files…</p>
   </div>
 </div>
@@ -2230,7 +992,7 @@ z
     interval/buffer, output location, and emit scope — from
     <code>lib/emitters.py</code> and this study's (or the workspace's)
     <code>runtime.default_emitter</code>.</p>
-    <div id="readouts-emitter" data-study="growth-and-division">
+    <div id="readouts-emitter" data-study="biomolecular-complementarity-spatial">
       <p class="empty-message">Loading emitter configuration…</p>
     </div>
 
@@ -2242,7 +1004,7 @@ z
     
     <div id="readouts-download" style="margin:0 0 16px 0"></div>
 
-    <div id="readouts-table" data-study="growth-and-division">
+    <div id="readouts-table" data-study="biomolecular-complementarity-spatial">
       <p class="empty-message">Loading readouts from the composite emit plan…</p>
     </div>
 
@@ -2250,7 +1012,7 @@ z
     <p class="muted" style="font-size:0.9em">Store path, dtype, shape
     <code>(n_steps, …)</code>, units, and a best-effort byte estimate for each emitted
     leaf.</p>
-    <div id="readouts-shapes" data-study="growth-and-division">
+    <div id="readouts-shapes" data-study="biomolecular-complementarity-spatial">
       <p class="empty-message">Loading output shapes…</p>
     </div>
 
@@ -2265,7 +1027,7 @@ z
     
     
     <div class="viz-actions-row" style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'growth-and-division')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
+      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'biomolecular-complementarity-spatial')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
     </div>
     
 
@@ -2329,10 +1091,10 @@ z
     
     
     
-    <li class="expected-behavior-item" id="bt-growth-crosses-threshold"
+    <li class="expected-behavior-item" id="bt-sorting-heterotypic-interface-collapses"
         data-test-kind="behavioral"
         
-        data-pytest-node="growth-crosses-threshold"
+        data-pytest-node="sorting-heterotypic-interface-collapses"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -2341,19 +1103,19 @@ z
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">growth-crosses-threshold</strong>
+        <strong style="font-size: 0.9em;">sorting-heterotypic-interface-collapses</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>cell-sorting-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The autocatalytic, energy-coupled DNA-replication process (d[dna]/dt = k·dna·energy) grows the cell&#39;s own dna store from 1 → 3.06, crossing dna_threshold = 2.0 — growth, not a timer, is what puts the cell at the division trigger.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Under differential adhesion (homotypic J=2, heterotypic J=11, medium J=8, T=10), the mixed checkerboard demixes: the heterotypic-interface fraction collapses from a clearly-mixed start toward a sorted low value.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(dna)", "kind": "observable", "path": "dna"}
-pass_if: {"op": "\u003e=", "provenance": "growth process (k\u00b7dna\u00b7energy) drives parent dna 1 \u2192 3.06, crossing dna_threshold 2.0 (exec fig10-1-executable)", "value": 2.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.hetero_frac)", "kind": "observable", "path": "obs.hetero_frac"}
+pass_if: {"op": "\u003c", "provenance": "hetero_frac ~0.64 at first observation -\u003e ~0.06 by ~600 MCS (raw seeded checkerboard ~1.0 before relaxation), roughly an order-of-magnitude collapse (tests/test_sorting_regime.py::test_sorting_demixes_cohesively, tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite, tests/test_cpm_sorting_spike.py::test_checkerboard_demixes_and_stays_cohesive)", "value": 0.2}</pre>
       </details>
       
       
@@ -2368,10 +1130,10 @@ pass_if: {"op": "\u003e=", "provenance": "growth process (k\u00b7dna\u00b7energy
     
     
     
-    <li class="expected-behavior-item" id="bt-division-fires"
+    <li class="expected-behavior-item" id="bt-sorting-clump-stays-cohesive"
         data-test-kind="behavioral"
         
-        data-pytest-node="division-fires"
+        data-pytest-node="sorting-clump-stays-cohesive"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -2380,19 +1142,19 @@ pass_if: {"op": "\u003e=", "provenance": "growth process (k\u00b7dna\u00b7energy
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">division-fires</strong>
+        <strong style="font-size: 0.9em;">sorting-clump-stays-cohesive</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>cell-sorting-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s replicated DNA crosses ``dna_threshold`` = 2.0 (parent dna 1 → 3.06) and the rewrite fires once — cell_count goes 1 → 2. The trigger is DNA state grown by the cell itself, not a wall clock.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Cohesion guard: the demixing is real sorting, not dissolution. The total live-cell pixel count is retained (well within a 10% drift bound), so a dissolved clump is not misread as sorted.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_count)", "kind": "observable", "path": "cell_count"}
-pass_if: {"op": "\u003e=", "provenance": "DNA crosses threshold 2.0 (parent dna 1\u21923.06) \u2192 rewrite fires once, cell_count 1\u21922 (exec fig10-1-executable, tests/test_compilation.py::test_fig10_division_is_event_driven)", "value": 1.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "abs(last(obs.cell_pixels) - first(obs.cell_pixels)) / first(obs.cell_pixels)", "kind": "observable", "path": "obs.cell_pixels"}
+pass_if: {"op": "\u003c", "provenance": "cell_pixels ~1530 held to \u003c1% drift over ~600 MCS (well inside the 10% cohesion bound) while hetero_frac collapsed -- the clump sorted, it did not dissolve (tests/test_sorting_regime.py::test_sorting_demixes_cohesively, tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)", "value": 0.1}</pre>
       </details>
       
       
@@ -2407,49 +1169,10 @@ pass_if: {"op": "\u003e=", "provenance": "DNA crosses threshold 2.0 (parent dna 
     
     
     
-    <li class="expected-behavior-item" id="bt-daughters-spawn"
+    <li class="expected-behavior-item" id="bt-sorting-conserves-cell-count"
         data-test-kind="behavioral"
         
-        data-pytest-node="daughters-spawn"
-        data-classification="primary"
-        data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
-      
-        
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">daughters-spawn</strong>
-        
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
-        
-      </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The rewrite spawns two structurally-new daughter nodes and conserves mass: each daughter inherits DNA (0 → 2.75) and half the parent&#39;s biomass (0 → 0.5) while the parent&#39;s biomass is driven to 0 (M → M/2 + M/2, not M → 2M).</div>
-      
-      
-      <details style="margin-top: 6px; font-size: 0.82em;">
-        <summary class="muted" style="cursor: pointer;">Assertion</summary>
-        
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(dna)", "kind": "observable", "path": "dna"}
-pass_if: {"op": "\u003e=", "provenance": "division spawns two new daughters (exec daughter dna 0\u21922.75; each daughter biomass 0\u21920.5, parent biomass \u21920 \u2014 mass conserved; tests/test_compilation.py::test_rewrite_conformance_against_wiring, tests/test_fig10_rewrite.py::test_cell_divides_into_two_daughters)", "value": 1.0}</pre>
-      </details>
-      
-      
-      
-      
-    </li>
-    
-    
-    
-    
-    
-    
-    
-    
-    <li class="expected-behavior-item" id="bt-draft-is-inert"
-        data-test-kind="behavioral"
-        
-        data-pytest-node="draft-is-inert"
+        data-pytest-node="sorting-conserves-cell-count"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -2458,19 +1181,175 @@ pass_if: {"op": "\u003e=", "provenance": "division spawns two new daughters (exe
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">draft-is-inert</strong>
+        <strong style="font-size: 0.9em;">sorting-conserves-cell-count</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>cell-sorting-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">One-line sanity check (not the study&#39;s control): the inert draft has empty updates by construction, so it stays at seed cell_count 1 and fails this threshold by design. This confirms the framework&#39;s definition of a draft, not a scientific counterfactual.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Regression check that sorting moves cells rather than creating or destroying them: the per-type cell counts stay exactly 32/32 throughout the run.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_count)", "kind": "observable", "path": "cell_count"}
-pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_count 1 (empty update by construction) \u2192 fails by design (expected-fail control)", "value": 1.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_type1)", "kind": "observable", "path": "obs.n_type1"}
+pass_if: {"op": "==", "provenance": "n_type1 == n_type2 == 32 for the full ~600 MCS run -- no cell created, destroyed, or merged, just moved (tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)", "value": 32.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-sorting-neutral-J-does-not-sort"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="sorting-neutral-J-does-not-sort"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">sorting-neutral-J-does-not-sort</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>none</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Negative control isolating J-regime causality: under neutral contact energies (all J=8, so heterotypic contact is no more costly than homotypic) the same checkerboard at T=10 does NOT demix -- proving the sorting is driven by the differential-J regime, not by CPM Metropolis dynamics per se.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.hetero_frac)", "kind": "observable", "path": "obs.hetero_frac"}
+pass_if: {"op": "\u003e", "provenance": "a neutral-J composite re-run (all J=8): neutral J (all=8), T=10, same checkerboard stays mixed at hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime -- the causality control for J. Documented regime sweep, not a committed pytest in this build.", "value": 0.5}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-condensate-phase-separates"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="condensate-phase-separates"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">condensate-phase-separates</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>condensate-cahn-hilliard</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The near-critical Cahn-Hilliard composition field undergoes spinodal decomposition into two phases: the field variance rises from near-zero toward the coexistence variance as an interface forms.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.phi_var)", "kind": "observable", "path": "obs.phi_var"}
+pass_if: {"op": "\u003e", "provenance": "phi_var ~7e-5 -\u003e ~0.38 over 10000 steps (64x64 field, M=1, kappa=0.5, dt=0.002) -- two domains formed, bounded by a sharp emergent interface (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved, tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)", "value": 0.3}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-condensate-conserves-mass"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="condensate-conserves-mass"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">condensate-conserves-mass</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>condensate-cahn-hilliard</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The phase separation redistributes composition, it does not create or destroy it: the field mean (total mass) is conserved across the whole run -- the mass-conservation property that distinguishes Cahn-Hilliard from a non-conservative Allen-Cahn interface.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "abs(last(obs.phi_mean) - first(obs.phi_mean))", "kind": "observable", "path": "obs.phi_mean"}
+pass_if: {"op": "\u003c", "provenance": "phi_mean drift ~4e-18 over 10000 steps (mass-conserving by construction: the update is a divergence of a flux) (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved, tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)", "value": 0.001}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-condensate-stays-bounded"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="condensate-stays-bounded"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">condensate-stays-bounded</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>condensate-cahn-hilliard</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Numerical-stability guard: at the pinned dt=0.002 the stiff biharmonic scheme stays bounded in the physical two-phase range [-1, 1] and emits no NaN -- a larger dt would blow up instead.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.phi_min)", "kind": "observable", "path": "obs.phi_min"}
+pass_if: {"op": "\u003e", "provenance": "phi bounded to [-0.989, 0.982] at run end (no NaN); the process raises loudly if dt exceeds the ~dx^4/(16*M*kappa) stability limit rather than emitting NaN (tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded, tests/test_cahn_hilliard.py::test_dt_above_stability_limit_raises_instead_of_nan)", "value": -1.05}</pre>
       </details>
       
       
@@ -2551,7 +1430,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All figure composites build and every executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16).</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">Both cell-sorting-spatial.composite.json and condensate-cahn-hilliard.composite.json build and run to completion through the process-bigraph engine (tests/test_sorting_regime.py, tests/test_cpm_sorting.py, tests/test_cpm_sorting_spike.py, tests/test_cahn_hilliard.py, tests/test_sorting_viz.py); guarded skip when the optional cpm dependency is absent, matching this investigation&#39;s convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -2564,7 +1443,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Growth-crosses-threshold, division-fires, and daughters-spawn all pass — the cell&#39;s own energy-coupled growth process drives dna across the threshold, the rewrite fires once, and mass is conserved across the partition; the inert draft stays at cell_count 1, so growth-and-division is a real runtime mechanism, not an animation. Confirmed by tests/test_compilation.py::test_fig10_division_is_event_driven (DNA-threshold trigger, not a wall clock), tests/test_compilation.py::test_rewrite_conformance_against_wiring (the rewrite&#39;s reactum conforms to the wiring it produces), and tests/test_fig10_rewrite.py (the rewrite mechanism itself — one cell/one chromosome → two daughters, each keeping DNA, topology growing monotonically).</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts. Sorting demixes (hetero_frac ~0.64 -&gt; ~0.06) while staying cohesive (pixels ~1530, &lt;1% drift; counts 32/32), and the neutral-J control confirms J causality; the condensate phase-separates (variance ~7e-5 -&gt; ~0.38) with mass conserved (~4e-18 drift) and the field bounded. The condensate&#39;s interface-work gap is reported honestly rather than claimed as tested.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -2577,7 +1456,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Watching growth (an autocatalytic, energy-coupled DNA-replication process) drive one cell node to be replaced by two structurally-new daughters — fired by the cell&#39;s own state crossing a threshold, with mass conserved — makes growth-then-division-as-graph-rewrite concrete rather than animated on a clock.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Putting Steinberg differential-adhesion sorting and Cahn-Hilliard phase separation on the lattice makes the paper&#39;s §Molecular compositions complementarity (Fig 8) concrete as spatial mechanism -- like-sits-with-like as which interface variables must align, and a condensate boundary forming out of a well-mixed field -- at a mechanistic resolution the specification-stage analogue draft-to-living-cell/biomolecular-complementarity could not reach, while separating the boundary-forming claim it does demonstrate from the interface-work claim it does not.</textarea>
         </label>
       </div>
     </div>
@@ -2592,14 +1471,14 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> The figure draft compiles to an executable that runs.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> Both cell-sorting-spatial.composite.json and condensate-cahn-hilliard.composite.json build and run to completion through the engine (~600 MCS and 10000 steps respectively).</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s pattern is demonstrated at the toy-real (uncalibrated) level; growth drives the DNA-threshold trigger, the structural rewrite runs, and mass is conserved.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s §Molecular compositions complementarity (Fig 8) is demonstrated spatially at the toy-real (tuned, uncalibrated) level as two independent primitives -- differential-adhesion demixing and Cahn-Hilliard phase separation -- with the condensate&#39;s interface-work gap scoped honestly rather than claimed.</div>
         
         
         <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>development-and-evolution</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>autopoiesis-spatial</li></ul>
         </div>
         
       </div>
@@ -2609,11 +1488,11 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>the DNA-replication (growth) process never drives dna across the threshold (the rewrite never fires)</li><li>the rewrite fails to spawn two structurally-new daughter nodes, or fails to conserve mass across the partition</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the heterotypic-interface fraction does not collapse (the differential-J regime is not taking effect, or the seeding is not adjacent so t0 is already falsely low)</li><li>the fraction collapses but the cohesion guard fails -- the clump dissolved into medium (temperature too high) and a false &#39;perfect sort&#39; of an empty lattice is being read</li><li>the Cahn-Hilliard field variance does not rise (no phase separation), or mass is not conserved (the update is not a proper flux divergence)</li><li>the field goes non-finite (dt above the biharmonic stability limit -- the process should raise, not emit NaN)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> development-and-evolution (the paper&#39;s development/evolution figures build on this figure&#39;s growth-and-division rewrite)</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> autopoiesis-spatial (a self-maintained-boundary study builds on the phase-separation primitive here)</div>
         
       </div>
       
@@ -2626,22 +1505,60 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>An autocatalytic, energy-coupled DNA-replication process (growth) drives the cell's own dna store from 1 → 3.06, crossing dna_threshold = 2.0, which triggers a single division event: the cell node is replaced by two structurally-new daughter nodes and cell_count goes 1→2. The rewrite conserves mass — the parent's biomass fully partitions (parent→0, each daughter M/2=0.5), it is not duplicated. There is no wall clock: the trigger is <code>dna &gt;= threshold</code>, and dna only gets there because growth put it there.</li>
+<li>
+<p>Differential-adhesion cell sorting reproduces the paper's §Molecular compositions complementarity (Fig 8) as a spatial mechanism: two cell types differing only in which contacts they find favorable demix a well-mixed checkerboard (hetero_frac ~0.64 -&gt; ~0.06 over ~600 MCS) while staying cohesive (pixels ~1530, &lt;1% drift; counts 32/32). A neutral-J control (all J=8) does not sort, isolating the contact-energy asymmetry as the cause.</p>
+</li>
+<li>
+<p>A Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps), mass conserved to ~4e-18, field bounded in [-1, 1].</p>
+</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>GROWTH-CROSSES-THRESHOLD</strong> — the k·dna·energy growth process drives parent dna 1 → 3.06, crossing dna_threshold 2.0</li>
-<li><strong>DIVISION-FIRES</strong> — parent dna 1 → 3.06 crosses dna_threshold 2.0 → rewrite fires once, cell_count 1 → 2</li>
-<li><strong>DAUGHTERS-SPAWN</strong> — each daughter dna 0 → 2.75, biomass 0 → 0.5; parent biomass → 0 (mass conserved)</li>
-<li><strong>DRAFT-IS-INERT</strong> — sanity check: the inert draft (empty update) stays at cell_count 1 by construction</li>
+<li>
+<p><strong>SORTING-HETEROTYPIC-INTERFACE-COLLAPSES</strong> -- hetero_frac ~0.64 -&gt; ~0.06, roughly an order of magnitude</p>
+</li>
+<li>
+<p><strong>SORTING-CLUMP-STAYS-COHESIVE</strong> -- cell_pixels ~1530, &lt;1% drift (cohesion guard, 10% bound)</p>
+</li>
+<li>
+<p><strong>SORTING-CONSERVES-CELL-COUNT</strong> -- n_type1 = n_type2 = 32 throughout</p>
+</li>
+<li>
+<p><strong>SORTING-NEUTRAL-J-DOES-NOT-SORT</strong> -- neutral J holds hetero_frac ~0.52 (J causality control)</p>
+</li>
+<li>
+<p><strong>CONDENSATE-PHASE-SEPARATES</strong> -- phi_var ~7e-5 -&gt; ~0.38, sharp emergent interface</p>
+</li>
+<li>
+<p><strong>CONDENSATE-CONSERVES-MASS</strong> -- phi_mean drift ~4e-18</p>
+</li>
+<li>
+<p><strong>CONDENSATE-STAYS-BOUNDED</strong> -- phi in [-0.989, 0.982], no NaN, at pinned dt=0.002</p>
+</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real growth-and-division: the growth rate constant, DNA threshold, replication and segregation constants are illustrative; the rewrite fires once and division is symmetric.</li>
+<li>
+<p>The condensate forms a boundary but does not do interface work -- it does not selectively concentrate or exclude a second species, the property that distinguishes a functional, regulatable boundary from a transient aggregate in the paper's §Molecular compositions central question (Fig 8). Named as the next step, not glossed.</p>
+</li>
+<li>
+<p>Neither regime computes a binding affinity; sorting is differential-adhesion demixing, not molecular selectivity, matching how draft-to-living-cell/biomolecular-complementarity scopes its own selectivity gap.</p>
+</li>
+<li>
+<p>Both regimes are tuned, not fitted: the sorting J-triple satisfies Steinberg's sorting inequality (11 &gt; 1/2*(2+2)) but the magnitudes and T=10 sit in a narrow cohesive-and-mobile window (T=1 freezes, T&gt;=200 dissolves); the Cahn-Hilliard scheme is numerically stiff, dt pinned at 0.002. No fitted literature band is claimed because these are demonstration primitives, not models of a specific tissue or condensate.</p>
+</li>
+<li>
+<p>The two demonstrations are independent and uncoupled; phi is not coupled to the CPM cells.</p>
+</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Add repeated, size-controlled, or asymmetric division rules to test the growth-and-rewrite mechanism under realistic division control.</li>
+<li>
+<p>Make the condensate do interface work: add a second species and a selective-partitioning coupling so a droplet demonstrably concentrates or excludes it -- turning the paper's central-question discriminator (functional regulatable boundary vs transient aggregate) into a tested pass/fail rather than a narrated one.</p>
+</li>
+<li>
+<p>Add a genuine complementarity/selectivity term to the sorting side (a binding-affinity or partner-choice mechanism with a non-cognate binder to reject), closing the gap between complementarity-as-organizing-idea and complementarity-as-tested-mechanism.</p>
+</li>
 </ul>
 </div>
     </div>
@@ -2660,7 +1577,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
     <div class="overview-section">
       <h3 class="overview-label">Key assumptions</h3>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Growth is modelled by DNAReplicationODE: d[dna]/dt = k·dna·energy (k=0.15), an autocatalytic process driven by a free-energy input — the Fig 10 analogue of the environment-coupled uptake that grows internal stores elsewhere in the paper (cf. Fig 5&#39;s cell-environment coupling).</li><li style="margin:2px 0">The division rewrite fires exactly once per run (symmetric division, fixed dna_threshold = 2.0); asymmetric division, septum placement, repeated division cycles, and size control are not modelled.</li>
+        <li style="margin:2px 0">Cell sorting here is differential-adhesion demixing (Steinberg), the spatial reading of the paper&#39;s §Molecular compositions complementarity (Fig 8) -- not a molecular binding-affinity or selectivity mechanism. There is no partner-choice term, no impostor binder that could be rejected to demonstrate selectivity by contrast; cells simply minimize contact energy under a fixed J matrix. This mirrors how the specification-stage analogue draft-to-living-cell/biomolecular-complementarity scopes its own selectivity gap: complementarity is the organizing idea, demixing is what is demonstrated.</li><li style="margin:2px 0">The sorting regime is tuned, not fitted. The contact-energy triple (homotypic J=2, heterotypic J=11, medium J=8) satisfies Steinberg&#39;s sorting inequality J(1,2) &gt; 1/2*(J(1,1)+J(2,2)) (11 &gt; 2) -- a qualitative, theory-grounded calibration anchor -- but the magnitudes and the temperature (T=10) were chosen to sit in a narrow cohesive-and-mobile window, not fitted to a measured tissue. Outside that window the demonstration fails in two distinct ways documented in the code-verified API map&#39;s regime sweep: T=1 freezes the mixed state (no rearrangement), while T&gt;=200 dissolves the cells into medium. No fitted literature band is claimed because these are demonstration primitives of a sorting mechanism, not a model of a specific organism&#39;s tissue.</li><li style="margin:2px 0">The heterotypic-interface fraction is only meaningful alongside its cohesion guard. Read alone the fraction falls to 0.0 when the clump dissolves (total intercell edges -&gt; 0, a false &#39;perfect sort&#39; of an empty lattice), so the sorted claim is gated on both signals together: the fraction must drop AND the total live-cell pixel count must be retained within ~10% of its starting value. Both hold here (fraction ~0.64 -&gt; ~0.06; pixels ~1530, &lt;1% drift).</li><li style="margin:2px 0">The condensate is an independent, uncoupled second demonstration. The Cahn-Hilliard field phi does not touch the CPM cells, any dFBA/cobra path, or the sorting process at all -- it is a scalar field over its own fields store. The two are separate spatial readings of complementarity-as-separation (discrete adhesion energy vs continuous composition field), deliberately not coupled; coupling phi to the cells is out of scope and unverified.</li><li style="margin:2px 0">The Cahn-Hilliard scheme is numerically stiff and its timestep is pinned. The explicit biharmonic (nabla^4) term has an approximate stability limit dt &lt; dx^4/(16*M*kappa); dt=0.002 (with M=1, kappa=0.5, dx=1) is verified stable over ~20000 steps, while dt=0.05 blows up to NaN within a few thousand steps -- the process raises loudly rather than silently emitting NaN. The pinned dt is a numerical calibration anchor, not a physical one.</li><li style="margin:2px 0">Honesty boundary, restated as an assumption because it scopes the whole study: the condensate demonstrates phase separation (a mass-conserved boundary forming with an emergent interface), not interface work. It does not selectively concentrate or exclude a second species, which is the property that would make it a functional, regulatable boundary rather than a transient aggregate in the terms of the paper&#39;s §Molecular compositions central question (Fig 8). That is named as the next step, not glossed as already done.</li>
       </ul>
     </div>
     
@@ -2670,7 +1587,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Symmetric division with a fixed DNA threshold; asymmetric division, septum placement, and size control are not modelled.</li><li style="margin:2px 0">The rewrite fires once (cell_count 1→2); repeated division and spatial structure among daughters are not modelled.</li><li style="margin:2px 0">Growth is a single autocatalytic ODE (k·dna·energy); it is not coupled to a full metabolic or spatial nutrient field in this figure.</li>
+        <li style="margin:2px 0">The condensate demonstrates phase separation (a mass-conserved boundary forming with an emergent interface), not interface work: it does not selectively concentrate or exclude a second species, the property that distinguishes a functional, regulatable boundary from a transient or unregulated aggregate in the paper&#39;s §Molecular compositions central question (Fig 8). This is the honest gap and the natural next step, stated explicitly rather than glossed.</li><li style="margin:2px 0">Neither regime computes a binding affinity. Cell sorting is differential-adhesion demixing (Steinberg), not a molecular selectivity/partner-choice mechanism -- there is no non-cognate binder that could be rejected to demonstrate selectivity by contrast, matching how draft-to-living-cell/biomolecular-complementarity scopes its own selectivity gap.</li><li style="margin:2px 0">The sorting regime is tuned, not fitted. The J-triple (2/11/8) satisfies Steinberg&#39;s sorting inequality J(1,2) &gt; 1/2*(J(1,1)+J(2,2)) as a qualitative theory anchor, but the magnitudes and temperature (T=10) were chosen to sit in a narrow cohesive-and-mobile window (T=1 freezes the mixed state, T&gt;=200 dissolves the cells); no fitted literature band is claimed.</li><li style="margin:2px 0">The heterotypic-interface fraction is only valid alongside the cohesion guard -- read alone it falls to 0.0 when the clump dissolves (a false &#39;perfect sort&#39;), so the sorted claim is gated on both the fraction dropping AND the live-cell pixel count being retained.</li><li style="margin:2px 0">The Cahn-Hilliard scheme is numerically stiff; its timestep is pinned at dt=0.002 against the biharmonic stability limit dt &lt; dx^4/(16*M*kappa). It is a diffuse-interface analogue of a condensate, not a mechanistic model of a specific biomolecular condensate.</li><li style="margin:2px 0">The sorting and condensate demonstrations are independent and uncoupled -- phi is not coupled to the CPM cells; they are two separate spatial readings of complementarity-as-separation, deliberately not one model.</li>
       </ul>
     </div>
     
@@ -2735,7 +1652,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
 <script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "6431d1a196ed2e62f583663b4de05c0ce42c0dd4", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/6431d1a196ed2e62f583663b4de05c0ce42c0dd4", "branch": "main", "lockfile": "uv.lock@b706f7b7d3b8", "generated_at": "2026-08-22 00:20 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
-window._studyName = "growth-and-division";
+window._studyName = "biomolecular-complementarity-spatial";
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
