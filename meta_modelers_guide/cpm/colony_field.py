@@ -133,9 +133,15 @@ class CpmColonyField(Process):
             }
             for cfg in cell_cfgs
         ]
+        # CPM Metropolis seed: defaults to 1 (every composite stays deterministic
+        # and reproduces its headline single-seed number), but is config-overridable
+        # so a multi-seed robustness sweep can vary it without touching the composite
+        # (see tests/test_cellcell_multiseed.py). This is the seed-sweep convention
+        # studies 5/7/9 copy.
+        seed = int(c.get("seed", 1))
         spec = {
             "potts": {"dims": [nx, ny, 1], "boundary": "noflux", "neighbor_order": 2,
-                      "temperature": float(c["temperature"]), "seed": 1},
+                      "temperature": float(c["temperature"]), "seed": seed},
             "cells": spec_cells,
             "contact": contact,
         }
