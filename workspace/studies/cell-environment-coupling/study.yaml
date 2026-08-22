@@ -181,6 +181,28 @@ variants:
     mm_km: 0.5
     mm_yield: 0.024
     mm_overflow: 1.4
+- name: steadystate
+  composite: meta_modelers_guide.composites.single-cell-in-a-field-steadystate
+  description: 'M7d steady-state regime (peer review) — the flagship is a pure transient
+    (no source terms — every flagship claim is a transient reading, never a source/sink
+    equilibrium). This variant adds three cell-INDEPENDENT terms behind the same
+    `CpmCellField` ports so the composite becomes a chemostat-like regime with a genuine
+    flux fixed point — a first-order glucose SOURCE (grid-wide relaxation toward a setpoint,
+    `glucose_source_rate` 0.15 toward `glucose_source_target` 1.5), a first-order acetate
+    DECAY sink (`acetate_decay_rate` 0.2), and a logistic biomass carrying capacity
+    (`biomass_capacity` 0.5) that halts exponential growth at a stationary-phase ceiling.
+    A biomass dilution term alone gives NO interior fixed point in this coupling — the
+    cell''s per-pixel uptake scales with biomass/footprint-area (both grow together), so
+    local glucose equilibrates at a biomass-independent value and mu never falls to a
+    dilution rate — the logistic cap is what forces biomass, and hence every flux, to a
+    steady state. Field mass is deliberately NOT conserved here (open-system source/sink);
+    that is the point of a steady state. Run ~120 ticks it reaches a verified steady state
+    (see the `steadystate-flux-equilibrium` acceptance criterion below).'
+  params:
+    glucose_source_rate: 0.15
+    glucose_source_target: 1.5
+    acetate_decay_rate: 0.2
+    biomass_capacity: 0.5
 key_assumptions:
 - 'e_coli_core constants (`glucose_km` 0.5, `glucose_vmax` 3.5, `oxygen_vmax` 2.5,
 
@@ -419,6 +441,69 @@ behavior_tests:
       Degrees of freedom — 4 free MM params vs 4 interface observables (exactly determined), so the
       tuned fit was guaranteed; the held-out agreement in-regime is the real evidence.'
   requires_simulation: single-cell-in-a-field-mm
+- name: steadystate-flux-equilibrium
+  classification: diagnostic
+  control: positive
+  gate_class: acceptance_criterion
+  description: 'M7d steady-state check (peer review) — the flagship is a pure transient with
+    no source terms, so every flagship number is a transient reading, never a source/sink
+    equilibrium. The `single-cell-in-a-field-steadystate` variant adds a first-order glucose
+    source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and
+    is run ~120 ticks to a VERIFIED flux steady state — d(biomass)/dt and both field fluxes
+    fall below tolerance while the cell keeps metabolizing at maintenance. This answers the
+    limitation the flagship itself flags (the field has no continuous source or decay term).'
+  measure:
+    kind: observable
+    path: obs.biomass, fields.glucose, fields.acetate
+    expr: max per-tick relative change of biomass and of each field total over the final 10 of 120 ticks
+  pass_if:
+    kind: acceptance_criterion
+    op: <
+    value: 0.001
+    provenance: 'STEADY STATE REACHED. Criterion — over the final 10 of 120 ticks the max
+      per-tick relative change of biomass and of both field totals is < 0.1%. Measured
+      (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state) —
+      biomass 0.0015%/tick, field glucose 0.0001%/tick, field acetate 0.014%/tick, all three
+      below the 0.1% tolerance. Standing steady-state values — biomass ~0.500 (the
+      biomass_capacity ceiling), CPM volume ~147 px (stable to CPM thermal noise ~3 px),
+      local footprint glucose ~1.356, field glucose total ~5372 (uptake balanced by source),
+      field acetate total ~31.5 (secretion balanced by decay). The cell is alive and
+      metabolizing at the fixed point, not a dead/zeroed field.'
+  requires_simulation: single-cell-in-a-field-steadystate
+- name: cadence-convergence
+  classification: diagnostic
+  control: positive
+  gate_class: rigor_check
+  description: 'M7d cadence rigor check (peer review) — the flagship''s operator-split
+    CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are
+    CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 ->
+    0.5 -> 0.25) and measuring the drift in the four gated observables between the two finest
+    levels tests whether the pinned trajectories are cadence-converged. Convergence band is
+    <= 10%. HONEST two-sided result — the three TIME-INTEGRATED gated observables converge
+    tightly, but the INSTANTANEOUS local-footprint glucose does NOT (it is the one pinned
+    trajectory that moves under refinement, flagged on F-02 below).'
+  measure:
+    kind: observable
+    path: obs.biomass, obs.volume, fields.acetate, fields.glucose, obs.local_nutrient
+    expr: abs(drift) between coupling cadence 0.25 and 0.5 (finest two levels), per observable
+  pass_if:
+    kind: rigor_check
+    op: <
+    value: 0.10
+    provenance: 'MEASURED drift between the finest two cadences (0.25 vs 0.5), deterministic
+      fixed-seed run (tests/test_flagship_field.py::test_flagship_cadence_convergence).
+      CONVERGED within the 10% band — final biomass 1.6%, CPM volume 2.6%, net glucose
+      depleted 1.8%, field-wide acetate 1.7% (values — biomass 0.375 vs 0.381, volume 111 vs
+      114, net glucose 32.3 vs 32.9, acetate 48.1 vs 49.0). NOT CONVERGED — the instantaneous
+      local-footprint glucose (obs.local_nutrient) drifts 15.7% (0.864 vs 1.025), EXCEEDING
+      the band, because it is a single-tick snapshot over a stochastically-shifting CPM
+      footprint and the CPM''s fixed mcs_per_update is NOT interval-scaled (halving the
+      cadence doubles the total Monte-Carlo relaxation the lattice receives). Finding — the
+      integrated flagship claims (biomass/volume growth, acetate plume, net glucose sink)
+      are cadence-robust; the local-depletion pin (F-02''s 0.94 / ~18% peak-to-trough / ~6%
+      from initial) is cadence-sensitive and is re-levelled to an approximate, not
+      cadence-converged, reading.'
+  requires_simulation: single-cell-in-a-field
 runs:
 - name: single-cell-in-a-field
   composite: single-cell-in-a-field
@@ -490,6 +575,52 @@ runs:
       detail: 'HELD-OUT, MM params frozen — flat-3.0 glucose field within 11.9%, 40-tick run within
         12.5% (mechanism-independent in-regime); but a held-out O2 cap 2.5→5.0 diverges ~74% —
         the MM surrogate is blind to oxygen (the honest boundary of the swap)'
+- name: single-cell-in-a-field-steadystate
+  composite: single-cell-in-a-field-steadystate
+  emitter: RAMEmitter
+  id: single-cell-in-a-field-steadystate
+  status: completed
+  provenance: 'M7d steady-state variant (peer review):
+    meta_modelers_guide/composites/single-cell-in-a-field-steadystate.composite.json —
+    identical to the flagship except the CpmCellField adds a first-order glucose source
+    (rate 0.15 toward setpoint 1.5), a first-order acetate decay sink (rate 0.2), and a
+    logistic biomass carrying capacity (0.5) — run ~120 ticks to a verified flux steady
+    state through the process-bigraph engine
+    (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state).'
+  params:
+    glucose_source_rate: 0.15
+    glucose_source_target: 1.5
+    acetate_decay_rate: 0.2
+    biomass_capacity: 0.5
+  outcomes:
+    STEADYSTATE-FLUX-EQUILIBRIUM:
+      result: PASS
+      detail: 'verified steady state by ~t=100-120 — per-tick relative change biomass
+        0.0015%, glucose 0.0001%, acetate 0.014% (all < 0.1%); standing values biomass
+        ~0.500, volume ~147 px, local glucose ~1.356, field glucose ~5372, field acetate
+        ~31.5 (uptake balanced by source, secretion balanced by decay)'
+- name: single-cell-in-a-field-cadence
+  composite: single-cell-in-a-field
+  emitter: RAMEmitter
+  id: single-cell-in-a-field-cadence
+  status: completed
+  provenance: 'M7d cadence convergence (peer review): the flagship composite
+    (single-cell-in-a-field.composite.json) run over 20 ticks at coupling cadence 1, 0.5,
+    and 0.25 (CpmCellField + DiffusionAdvection sub-step interval), comparing the drift in
+    the four gated observables between the two finest levels
+    (tests/test_flagship_field.py::test_flagship_cadence_convergence).'
+  params:
+    cadences:
+    - 1.0
+    - 0.5
+    - 0.25
+  outcomes:
+    CADENCE-CONVERGENCE:
+      result: PASS
+      detail: 'integrated observables converge within the 10% band (biomass 1.6%, volume
+        2.6%, net glucose 1.8%, acetate 1.7% between cadence 0.25 and 0.5); but instantaneous
+        local-footprint glucose drifts 15.7% — NOT cadence-converged (F-02''s local-depletion
+        pin re-levelled to approximate)'
 findings:
 - id: F-01
   kind: biological
@@ -531,12 +662,32 @@ findings:
 
     ~32 of 5940 units — the depletion signature is sharply local to the cell''s own footprint and
 
-    its immediate diffusive neighborhood, not a field-wide event.'
+    its immediate diffusive neighborhood, not a field-wide event.
+
+
+    CADENCE CAVEAT (M7d re-level) — the QUALITATIVE finding (a sharply-local depletion halo,
+
+    net field-wide sink) is cadence-robust, and the field-wide net-consumption number (~32 units)
+
+    is cadence-converged (< 2% drift under cadence halving, see `cadence-convergence`). But the
+
+    INSTANTANEOUS local-footprint figures quoted here — the 0.94 endpoint, the ~18% peak-to-trough
+
+    and ~6%-from-initial depths — are NOT cadence-converged — the local footprint concentration is
+
+    a single-tick snapshot over a stochastically-shifting CPM footprint (whose fixed mcs_per_update
+
+    is not interval-scaled), and it drifts ~16% between coupling cadence 0.25 and 0.5. These local
+
+    depths are therefore APPROXIMATE, cadence-1 readings, not converged quantities; the load-bearing
+
+    claim (local depletion happens and is sharply local) stands.'
   evidence:
     from_test: net-glucose-consumed
     from_run: single-cell-in-a-field
-    observed: local footprint glucose 1.15 -> 0.94 (~18% peak-to-trough, ~6% from initial); field-wide glucose
-      5940.0 -> ~5908.4
+    observed: local footprint glucose 1.15 -> 0.94 (~18% peak-to-trough, ~6% from initial — approximate,
+      NOT cadence-converged — see cadence-convergence, ~16% drift under cadence halving); field-wide glucose
+      5940.0 -> ~5908.4 (net consumption cadence-converged < 2%)
   provenance:
     run_ids:
     - single-cell-in-a-field
@@ -665,6 +816,61 @@ findings:
     run_ids:
     - single-cell-in-a-field
     - single-cell-in-a-field-mm
+- id: F-06
+  kind: methodological
+  tier: mechanism
+  status: confirms
+  statement: 'STEADY-STATE REGIME (M7d, peer review) — the flagship is a pure transient (no
+    source terms), so every flagship number is a transient reading, never a source/sink
+    equilibrium, and the study itself flags this as a limitation. Adding three cell-independent
+    terms behind the same `CpmCellField` ports — a first-order glucose source (grid-wide
+    relaxation toward a setpoint), a first-order acetate decay sink, and a logistic biomass
+    carrying capacity — turns the composite into a chemostat-like regime that reaches a VERIFIED
+    flux steady state. Confirmed — over the final 10 of 120 ticks the per-tick relative change of
+    biomass (0.0015%), field glucose (0.0001%), and field acetate (0.014%) all fall below the
+    0.1% steady-state tolerance, with standing values biomass ~0.500, CPM volume ~147 px, local
+    glucose ~1.356, field glucose ~5372 (uptake balanced by source), field acetate ~31.5
+    (secretion balanced by decay); the cell is alive and metabolizing at the fixed point. Note —
+    a biomass dilution term alone gives NO interior fixed point in this coupling (per-pixel uptake
+    scales with biomass/footprint-area, so local glucose equilibrates biomass-independently and mu
+    never falls to a dilution rate); the logistic carrying capacity is what forces every flux to a
+    steady state. This demonstrates the source/sink-equilibrium regime the flagship deferred.'
+  evidence:
+    from_test: steadystate-flux-equilibrium
+    from_run: single-cell-in-a-field-steadystate
+    observed: 'per-tick relative flux < 0.1% over the final 10 of 120 ticks (biomass 0.0015%,
+      glucose 0.0001%, acetate 0.014%); standing values biomass ~0.500, volume ~147 px, local
+      glucose ~1.356, field glucose ~5372, field acetate ~31.5'
+  provenance:
+    run_ids:
+    - single-cell-in-a-field-steadystate
+- id: F-07
+  kind: methodological
+  tier: mechanism
+  status: partial
+  statement: 'CADENCE CONVERGENCE (M7d, peer review) — the flagship''s operator-split
+    CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are
+    CFL-guarded. Halving then quartering the coupling cadence and measuring the drift in the four
+    gated observables between the two finest levels gives an HONEST two-sided result. The three
+    TIME-INTEGRATED gated observables are cadence-robust — between cadence 0.25 and 0.5 final
+    biomass drifts 1.6%, CPM volume 2.6%, net glucose depleted 1.8%, and field-wide acetate 1.7%,
+    all inside the 10% convergence band. But the INSTANTANEOUS local-footprint glucose does NOT
+    converge — it drifts 15.7% (0.864 vs 1.025), exceeding the band, because it is a single-tick
+    snapshot over a stochastically-shifting CPM footprint and the CPM''s fixed mcs_per_update is
+    not interval-scaled (halving the cadence doubles the total Monte-Carlo relaxation the lattice
+    receives). Re-level — the integrated flagship claims (biomass/volume growth, acetate plume, net
+    glucose sink) are cadence-converged and stand as-is; F-02''s LOCAL-DEPLETION pin (the 0.94
+    endpoint, ~18% peak-to-trough, ~6%-from-initial depths) is cadence-sensitive and is re-levelled
+    to an approximate, cadence-1 reading — the one pinned trajectory the cadence check moves.'
+  evidence:
+    from_test: cadence-convergence
+    from_run: single-cell-in-a-field
+    observed: 'drift between finest two cadences (0.25 vs 0.5) — biomass 1.6%, volume 2.6%, net
+      glucose 1.8%, acetate 1.7% (all < 10% band); local-footprint glucose 15.7% (exceeds band —
+      NOT converged)'
+  provenance:
+    run_ids:
+    - single-cell-in-a-field
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -807,9 +1013,20 @@ limitations:
   secretion). A second, non-metabolic sense/act channel — mechanical stress / traction, where the
   cell pushes on its surroundings and reads the reaction force — is not modeled; it is a candidate
   future coupling process alongside chemotaxis.
-- The nutrient field has no continuous source or decay term — all dynamics are transient depletion
-  plus diffusion, not a source/sink equilibrium. A standing production/degradation field (a cell-
-  independent supply that reaches equilibrium) is a natural extension for steady-state regimes.
+- 'The FLAGSHIP nutrient field has no continuous source or decay term — its 20-tick dynamics are
+  transient depletion plus diffusion, not a source/sink equilibrium. M7d (peer review) now
+  ADDRESSES this — the `single-cell-in-a-field-steadystate` variant adds a first-order glucose
+  source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and reaches a
+  verified flux steady state by ~t=100-120 (finding F-06). The flagship itself remains a transient
+  by design; the steady-state regime is the standing-field extension.'
+- 'CADENCE (M7d, peer review) — the operator-split CPM<->dFBA<->diffusion loop runs at coupling
+  cadence 1 and only the PDE substeps are CFL-guarded. A cadence-halving/quartering convergence
+  check (finding F-07) shows the time-integrated gated observables (biomass/volume growth, acetate
+  plume, net glucose sink) are cadence-converged (< 3% drift between cadence 0.25 and 0.5), but the
+  INSTANTANEOUS local-footprint glucose is NOT (~16% drift) because the CPM''s fixed mcs_per_update
+  is not interval-scaled. F-02''s local-depletion depths (0.94 / ~18% / ~6%) are therefore
+  approximate cadence-1 readings, not converged quantities; a cadence-invariant local reading would
+  require interval-scaling the CPM Monte-Carlo sweeps, a follow-up.'
 falsifiability: Overturned if the cell's biomass or CPM lattice volume never rise over the run,
   if local footprint glucose never depletes despite ongoing consumption, if acetate never appears
   in the shared field (the O2 cap failing to force overflow, or the secretion write not reaching

@@ -87,7 +87,14 @@ biological_summary: 'This is the spatial realization of the paper''s §Cell–ce
 
   exclusion is out of reach here — spatial competition as a direct, unscripted consequence of two
 
-  independent dFBA solves reading the same depleting field.
+  independent dFBA solves reading the same depleting field. M7b (peer review) lifts exactly this to
+  DIVIDING founder lineages with a viability floor (`cellcell-compete-div`, CpmCompeteDivision) and
+  finds robust population-level competitive DOMINANCE — the fast lineage holds ~9x the slow lineage''s
+  biomass by t=40, and the slow lineage stays viable in monoculture (`cellcell-compete-div-slowmono`)
+  so its collapse is genuinely competition-driven (Tilman R*). Full competitive EXCLUSION (slow
+  lineage → 0) is only stochastic here — it lands at the headline seed and in 2/5 sweep seeds, while
+  elsewhere the suppressed slow lineage persists in spatial refugia — so even with dividing populations
+  the earned term is DOMINANCE, not deterministic exclusion.
 
 
   CROSS-FEEDING (`meta_modelers_guide.composites.cellcell-crossfeed`) is the biology that carries
@@ -171,9 +178,10 @@ claim: 'Composing N real CPM cells with one shared, real spatio-flux nutrient fi
 
   px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
 
-  bound; population-level competitive exclusion would need dividing populations, and the winner''s
-
-  ~97.5%-lattice swell without division is a saturation artifact), while a
+  bound; the dividing-population lift (M7b, `cellcell-compete-div`) turns this into robust competitive
+  DOMINANCE — fast lineage ~9x the slow''s biomass, monoculture-controlled — with full exclusion only
+  stochastic, so exclusion is earned only as a seed-dependent outcome, not deterministically, and the
+  winner''s ~97.5%-lattice swell without division is a saturation artifact), while a
 
   different composite over the same coupling process — a localized glucose depot, a fast-diffusing
 
@@ -227,6 +235,54 @@ variants:
     mechanism: mm
     mm_yield: 0.075
     mm_overflow: 0.034
+- name: cellcell-crossfeed-realistic
+  composite: meta_modelers_guide.composites.cellcell-crossfeed-realistic
+  description: 'M7a realistic-diffusivity control (peer review) — the cross-feeding baseline re-run
+    at the PHYSICAL 2:1 acetate/glucose aqueous diffusivity (0.8 vs 0.4) instead of the flagship''s
+    37.5x legibility ratio (15.0 vs 0.4), everything else byte-identical. MEASURED — at the physical
+    ratio the acetate handoff FAILS to complete within a legible horizon. The consumer''s own
+    footprint acetate peaks ~0.21 (versus 1.60 at 37.5x) and its biomass rises only ~2% (1.25 →
+    ~1.28, versus 1.25 → 3.79 at 37.5x) before it is competitively displaced off the lattice by the
+    growing secretor around t=20; extending the horizon does not rescue it. The secreted acetate does
+    physically diffuse into the consumer''s seed region, but at the physical diffusivity the plume is
+    too slow and too steeply-graded to raise the consumer''s own footprint concentration to a feeding
+    level before displacement. Consumer feeding scales monotonically with transport acceleration
+    (biomass gain +14%/+45%/+102%/+203% at 5x/10x/20x/37.5x), so the flagship cross-feed''s accelerated
+    transport is LOAD-BEARING for the legible handoff at this 6-cell-gap / 20-tick geometry, not merely
+    cosmetic (tests/test_cellcell_m7.py::test_crossfeed_realistic_diffusivity_handoff_fails).'
+  params:
+    diffusion_coeffs: {glucose: 0.4, acetate: 0.8}
+- name: cellcell-compete-div
+  composite: meta_modelers_guide.composites.cellcell-compete-div
+  description: 'M7b dividing-population competition (peer review) — the competition regime lifted from
+    two static, never-dividing cells to two DIVIDING founder LINEAGES (CpmCompeteDivision, a
+    CpmGrowthDivision subclass) racing for one boundary-supplied glucose pool (Dirichlet supply 8.0,
+    chemostat-like), each cell growing by per-cell dFBA and dividing at a volume threshold into a
+    lineage, with a maintenance cost (0.10/tick) and a viability floor (biomass < 1.25 → the cell is
+    removed from the lattice via the native remove_cells, a genuine death not just displacement).
+    Founder 1 is the FAST lineage (glucose_vmax 10), founder 2 the SLOW (glucose_vmax 4) — the same
+    10-vs-4 uptake asymmetry as cellcell-compete, now heritable through division. MEASURED — robust
+    population-level competitive DOMINANCE of the fast lineage (~9x the slow lineage''s biomass by
+    t=40, all seeds). Full competitive EXCLUSION (slow lineage → 0) occurs at the headline seed by
+    t~56 and in 2/5 seeds of a robustness sweep, but is NOT the robust outcome — in the other seeds
+    the suppressed slow lineage persists in spatial refugia near the supplied boundary. So the earned
+    term is competitive DOMINANCE, not deterministic exclusion
+    (tests/test_cellcell_m7.py::test_dividing_competition_fast_lineage_dominates).'
+  params:
+    maintenance: 0.10
+    viability_floor: 1.25
+- name: cellcell-compete-div-slowmono
+  composite: meta_modelers_guide.composites.cellcell-compete-div-slowmono
+  description: 'M7b competition necessity control (peer review) — the cellcell-compete-div SLOW
+    lineage (glucose_vmax 4) ALONE under the byte-identical boundary supply, maintenance and viability
+    floor, no fast competitor. MEASURED — the slow lineage is VIABLE on its own (grows, divides and
+    persists, ~22-33 cells by t=40). Because it thrives alone but is suppressed to a handful of cells
+    (and, at the headline seed, to extinction) when the fast lineage shares its glucose, the slow
+    lineage''s collapse in cellcell-compete-div is caused by COMPETITION (resource preemption below
+    its break-even, Tilman R*), not by intrinsic non-viability at this maintenance/floor. Without this
+    control a slow-lineage collapse could not be attributed to competition
+    (tests/test_cellcell_m7.py::test_slow_lineage_viable_in_monoculture_control).'
+  params: {}
 key_assumptions:
 - 'e_coli_core-derived constants (`glucose_vmax` 10.0/4.0 for the two competitors,
 
@@ -243,7 +299,12 @@ key_assumptions:
 
   so 37.5x is roughly 20x the physical ratio. The specific ratio was chosen to make the byproduct plume legibly reach the
 
-  consumer within a 20-tick run, not fitted to measured diffusion coefficients. Likewise the
+  consumer within a 20-tick run, not fitted to measured diffusion coefficients. M7a (peer review)
+  now MEASURES what that choice buys — re-run at the physical 2:1 ratio (`cellcell-crossfeed-realistic`),
+  the handoff FAILS (consumer local_acetate peaks ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then the
+  consumer is displaced), and consumer feeding scales monotonically with transport acceleration
+  (+14%/+45%/+102%/+203% at 5x/10x/20x/37.5x). So the accelerated transport is LOAD-BEARING for the
+  legible handoff at this 6-cell-gap / 20-tick geometry, not a cosmetic relabeling. Likewise the
 
   cross-feeding regime''s localized glucose depot (20 model units) (columns 0-18 only, with the consumer
 
@@ -283,15 +344,22 @@ key_assumptions:
   process emits no explicit viability flag, so viability is read off the per-cell biomass
   observable. The point it establishes is robust to the exact floor value: the
   competition loser ends at 64.5 (51.6x the floor), so it is displaced, not excluded.'
-- 'The competition regime is resource preemption between two single, never-dividing cells, NOT
-  population-level competitive exclusion (which would need dividing populations). It imposes no
+- 'The BASELINE competition regime (`cellcell-compete`) is resource preemption between two single,
+  never-dividing cells, NOT population-level competitive exclusion. It imposes no
   death and no viability constraint on a losing cell, so the loser (biomass 64.5, 81
   px) is spatially displaced, not eliminated. The winner''s 3511-px endpoint is ~97.5% of the
   3600-px lattice with the field nearly spent by t=20 — a single cell swelling to fill the lattice
   without dividing is a finite-size saturation artifact, not physiology; extending the run to t≈30
-  fills the lattice and crowds the still-viable loser off it (eviction, not starvation). Strict
-  exclusion would require coupling a viability constraint (and dividing populations), not only
-  shared state — the paper''s §Cell–cell coupling distinction.'
+  fills the lattice and crowds the still-viable loser off it (eviction, not starvation). M7b (peer
+  review) supplies the missing ingredients — DIVIDING founder lineages PLUS a viability floor that
+  removes a starved cell (`cellcell-compete-div`, CpmCompeteDivision) — and measures the real outcome —
+  robust population-level competitive DOMINANCE (fast lineage ~9x the slow''s biomass by t=40),
+  competition-driven (the slow lineage is viable in monoculture, `cellcell-compete-div-slowmono`), with
+  full competitive EXCLUSION only stochastic (headline seed and 2/5 sweep seeds; elsewhere the
+  suppressed slow lineage persists in spatial refugia). So even coupling a viability constraint AND
+  dividing populations, strict deterministic exclusion is NOT robustly reached at this geometry — the
+  earned vocabulary is competitive DOMINANCE, not exclusion — the paper''s §Cell–cell coupling
+  distinction that what is coupled is not only state but constraint.'
 - 'MULTI-SEED ROBUSTNESS (the headline is a range, not a single-seed point). The competition
   headline ratio (3.69x, id 1 / id 2 biomass) is a SINGLE-SEED reading of a stochastic CPM
   Metropolis trajectory. A 5-seed sweep (`tests/test_cellcell_multiseed.py`, seeds 1-5, CPM seed
@@ -486,6 +554,85 @@ behavior_tests:
       to grow, versus 1.25 -> 3.79 in the full cross-feed regime
       (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow)'
   requires_simulation: cellcell-crossfeed-knockout
+- name: crossfeed-handoff-requires-accelerated-transport
+  classification: diagnostic
+  control: negative
+  gate_class: acceptance_criterion
+  description: 'M7a realistic-diffusivity control (peer review) — re-run the cross-feed at the PHYSICAL
+    2:1 acetate/glucose diffusivity (0.8 vs 0.4) instead of the 37.5x legibility ratio. The handoff
+    FAILS to complete within a legible horizon — the consumer''s own footprint acetate stays low and
+    its biomass never meaningfully climbs off its 1.25 seed, versus local_acetate 1.60 / biomass 3.79
+    at 37.5x. Re-levels the finding — the flagship cross-feed''s accelerated acetate transport is
+    load-bearing for the legible handoff at this 6-cell-gap / 20-tick geometry, not cosmetic; at
+    physical diffusivity the plume is too slow and steeply-graded to feed the consumer before it is
+    competitively displaced.'
+  measure:
+    kind: observable
+    path: obs.biomass, obs.local_acetate
+    expr: peak consumer (id 2) biomass and peak consumer local_acetate over the 20-tick run
+  pass_if:
+    kind: acceptance_criterion
+    op: <
+    value: 1.4
+    provenance: 'prior — at the physical 2:1 diffusivity the acetate handoff should NOT feed the
+      consumer within a legible horizon (contrast the 37.5x legibility regime that lifts the same
+      consumer to biomass 3.79). Observed — peak consumer biomass ~1.28 (< 1.4 pin; essentially the
+      1.25 seed, versus 3.79 at 37.5x) and peak consumer local_acetate ~0.21 (< 0.5, versus 1.60 at
+      37.5x); the consumer is then displaced off the lattice by ~t=20. Feeding scales monotonically
+      with transport acceleration — consumer biomass gain +14%/+45%/+102%/+203% at 5x/10x/20x/37.5x
+      (tests/test_cellcell_m7.py::test_crossfeed_realistic_diffusivity_handoff_fails)'
+  requires_simulation: cellcell-crossfeed-realistic
+- name: dividing-competition-fast-lineage-dominates
+  classification: primary
+  gate_class: acceptance_criterion
+  description: 'M7b dividing-population competition (peer review) — lift the competition regime from
+    two static cells to two DIVIDING founder lineages (fast vmax 10 vs slow vmax 4) racing for one
+    boundary-supplied glucose pool, with a maintenance cost and a viability floor that removes a cell
+    whose biomass falls below 1.25. The robust outcome is population-level competitive DOMINANCE — the
+    fast lineage holds many-fold the slow lineage''s biomass and outnumbers it. Full competitive
+    EXCLUSION (slow lineage driven to zero) occurs at the deterministic headline seed (by t~56) and in
+    2/5 seeds of a robustness sweep, but is NOT the robust outcome — elsewhere the suppressed slow
+    lineage persists in spatial refugia near the supplied boundary. So the EARNED term for this study
+    is competitive DOMINANCE / suppression, not deterministic competitive exclusion.'
+  measure:
+    kind: observable
+    path: obs.biomass_fast, obs.biomass_slow
+    expr: 'last(obs.biomass_fast) / last(obs.biomass_slow)'
+  pass_if:
+    kind: acceptance_criterion
+    op: '>'
+    value: 3.0
+    provenance: 'prior — over dividing populations the faster-uptake lineage should dominate the
+      shared glucose. Observed — by t=40 the fast lineage holds ~9x the slow lineage''s biomass (seed
+      1 — fast 122 in 48 cells vs slow 13 in 5 cells; pin floor 3x), robust across seeds. Full
+      extinction of the slow lineage is seed-dependent (2/5 seeds by t~56), so the study leads with
+      dominance, not exclusion (tests/test_cellcell_m7.py::test_dividing_competition_fast_lineage_dominates)'
+  requires_simulation: cellcell-compete-div
+- name: dividing-competition-slow-lineage-viable-in-monoculture
+  classification: diagnostic
+  control: negative
+  gate_class: rigor_check
+  description: 'M7b competition necessity control (peer review) — the slow lineage ALONE under the
+    byte-identical boundary supply, maintenance and viability floor survives and grows. This earns the
+    competition attribution — because the slow lineage thrives in monoculture but is suppressed to a
+    few cells (and, at the headline seed, excluded) when the fast lineage shares its glucose, its
+    collapse in cellcell-compete-div is caused by COMPETITION (resource preemption below its
+    break-even, Tilman R*), not by intrinsic non-viability at this maintenance/floor. Rules out the
+    confound that the viability floor alone kills the slow lineage regardless of a competitor.'
+  measure:
+    kind: observable
+    path: obs.n_cells
+    expr: 'last(obs.n_cells)   # slow lineage standing population in monoculture'
+  pass_if:
+    kind: acceptance_criterion
+    op: '>'
+    value: 5.0
+    provenance: 'prior — remove the fast competitor and the slow lineage should be viable on its own,
+      proving the co-culture collapse is competition-driven. Observed — the slow lineage alone grows
+      and divides to ~22-33 cells by t=40 (> 5 pin; standing biomass well above zero), versus
+      suppression to ~5 cells (headline-seed extinction) with the fast lineage present
+      (tests/test_cellcell_m7.py::test_slow_lineage_viable_in_monoculture_control)'
+  requires_simulation: cellcell-compete-div-slowmono
 - name: colony-interface-observables-substitutable
   classification: primary
   description: 'Interface surrogate calibration at the CELL-CELL (colony) level: a tuned MM colony
@@ -928,12 +1075,19 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - "Competitive exclusion" is not literally reached over the run: the loser is displaced (81 px,
-    biomass 64.5) but stays viable -- this study couples shared state, not a viability constraint,
-    so no cell is driven below a viability bound (§Cell–cell coupling: what is coupled is not only
-    state, but constraint -- here, only state). The winner''s 3511-px (~97.5% of 3600) endpoint is
-    partly a finite-size lattice-saturation artifact; at t≈30 the winner fills the lattice and the
-    still-viable loser is crowded off it (eviction, not starvation).
+  - "Competitive exclusion" is not literally reached in the BASELINE regime: the loser is displaced
+    (81 px, biomass 64.5) but stays viable -- the baseline couples shared state, not a viability
+    constraint, so no cell is driven below a viability bound (§Cell–cell coupling: what is coupled is
+    not only state, but constraint -- here, only state). The winner''s 3511-px (~97.5% of 3600)
+    endpoint is partly a finite-size lattice-saturation artifact; at t≈30 the winner fills the lattice
+    and the still-viable loser is crowded off it (eviction, not starvation). M7b (peer review) lifts
+    this to dividing lineages with a viability floor (`cellcell-compete-div`) and finds robust
+    competitive DOMINANCE (fast ~9x slow, monoculture-controlled) with full exclusion only stochastic
+    -- so even there the earned term is dominance, not deterministic exclusion.
+
+  - The BASELINE cross-feed''s fast acetate transport (37.5x) is a legibility choice; M7a
+    (`cellcell-crossfeed-realistic`) shows it is load-bearing -- at the physical 2:1 diffusivity the
+    handoff FAILS (consumer biomass ~1.28 vs 3.79) before the consumer is competitively displaced.
 
   - e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are
     toy-real -- plausible, hand-tuned magnitudes, not fitted to any organism or medium.
@@ -990,17 +1144,21 @@ conclusion_logic:
     block_downstream: 'future N>2-cell population-scale spatial studies, all of which reuse
       CpmColonyField or its coupling pattern'
 limitations:
-- 'The regime is resource preemption between two single, never-dividing cells, NOT population-level
-  competitive exclusion (which would need dividing populations): the competition loser is spatially
+- 'The BASELINE regime (`cellcell-compete`) is resource preemption between two single, never-dividing
+  cells, NOT population-level competitive exclusion: the competition loser is spatially
   displaced (ends at 81 px, biomass 64.5 -- still 51.6x above its 1.25 seed / viable-biomass floor)
   but is never driven below a viability bound. This study couples shared STATE (one field) but no
-  viability CONSTRAINT (no death, no viability bound on a losing cell), so the phenomenon
+  viability CONSTRAINT (no death, no viability bound on a losing cell), so the baseline phenomenon
   is resource preemption, not exclusion. The winner''s 3511-px endpoint is ~97.5%
   of the 3600-px lattice with the field nearly exhausted by t=20 -- a single cell swelling to fill
-  the lattice without dividing is a finite-size saturation artifact, not physiology; extending the
-  run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation),
-  which a viability-constraint coupling and dividing populations would be needed to turn into genuine
-  exclusion.'
+  the lattice without dividing is a finite-size saturation artifact, not physiology. M7b (peer review,
+  `cellcell-compete-div`) adds exactly the missing ingredients -- DIVIDING founder lineages PLUS a
+  viability floor that removes a starved cell -- and finds robust population-level competitive
+  DOMINANCE (fast lineage ~9x the slow''s biomass by t=40, competition-driven per the monoculture
+  control) with full EXCLUSION only stochastic (headline seed and 2/5 sweep seeds; the suppressed slow
+  lineage otherwise persists in spatial refugia). So even with a viability constraint AND dividing
+  populations, strict deterministic exclusion is NOT robustly reached at this geometry -- the earned
+  term is competitive DOMINANCE, not exclusion.'
 - 'The competition headline is a multi-seed band, not a single-seed point: a 5-seed robustness
   sweep (tests/test_cellcell_multiseed.py) puts the biomass ratio at ~2.9x-3.7x (mean
   ~3.2x), with the single-seed flagship 3.69x at the TOP of the band, and the faster competitor winning
@@ -1015,7 +1173,11 @@ limitations:
   20x the physical ratio, chosen to make the plume legibly reach the consumer within
   20 ticks, not fitted to measured diffusion coefficients; the localized glucose depot (20 model units) is
   likewise a deliberately engineered spatial arrangement so the consumer genuinely sees zero
-  glucose, not a naturally arising gradient.'
+  glucose, not a naturally arising gradient. M7a (peer review, `cellcell-crossfeed-realistic`) MEASURES
+  the cost of that choice -- re-run at the physical 2:1 ratio the handoff FAILS (consumer local_acetate
+  peaks ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then the consumer is displaced), and feeding scales
+  monotonically with transport acceleration (+14%/+45%/+102%/+203% at 5x/10x/20x/37.5x) -- so the
+  accelerated transport is load-bearing for the legible handoff at this geometry, not cosmetic.'
 - The consumer's growth under cross-feeding is back-loaded to roughly the last 5 ticks of the
   20-tick run, once the secretor's acetate plume has had time to diffuse across the distance
   separating the two cells' footprints -- monotonic over the measured window, but not smoothly
@@ -1033,12 +1195,13 @@ limitations:
   the finer counterfactual of an in-place, same-growth secretor that merely stops secreting.'
 - CPM-native chemotaxis (directed motion up a sensed gradient) remains out of scope for both
   regimes here, matching the flagship's own deferral.
-- The shared nutrient field has no continuous supply term; the competition regime depletes a
+- 'The BASELINE shared nutrient field has no continuous supply term; the competition regime depletes a
   fixed initial mass, producing a finite-lattice-saturation artifact (the winner ends near
-  full-lattice while the field is nearly exhausted). A continuous nutrient-supply term (a
-  bounded first-order source) would remove this confound and let population-level competitive
-  exclusion (with dividing populations) or
-  a genuine steady state be tested rather than transient depletion.
+  full-lattice while the field is nearly exhausted). M7b (peer review, `cellcell-compete-div`) removes
+  this confound -- a chemostat-like boundary glucose supply (Dirichlet BC) plus dividing populations
+  and a viability floor -- and tests population-level competition at a sustained resource level rather
+  than transient depletion; the result is robust competitive DOMINANCE (full exclusion only stochastic),
+  reported above.'
 - The compete, crossfeed, and knockout composites are asserted in prose to share the same
   external colony interface, but this is not verified by a structural check; a diagnostic test
   asserting interface equality across the mechanism swaps would strengthen the
@@ -1127,16 +1290,24 @@ result: 'Over 20-tick runs, the competition regime drives a decisive spatial spl
   capacity asymmetry alone (biomass ratio 2.9-3.7x across 5 seeds, 3.69x on the flagship seed; 237.9
   vs 64.5; CPM volume 3511 vs 81 px) -- asymmetric
   growth via resource preemption between the two cells, not population-level competitive exclusion
-
-  (which would need dividing populations): the loser is displaced but
+  in this baseline: the loser is displaced but
   still viable (its biomass grew ~51.6x, far above the 1.25 seed floor), never driven below a
   viability bound, and the winner''s ~97.5%-lattice endpoint is partly a finite-size saturation
-  artifact -- this study couples shared state, not a viability constraint. The
+  artifact -- the baseline couples shared state, not a viability constraint. Peer-review M7b lifts
+  this to DIVIDING founder lineages with a viability floor (`cellcell-compete-div`) and measures the
+  real outcome -- robust competitive DOMINANCE (fast lineage ~9x the slow''s biomass by t=40,
+  competition-driven per the `cellcell-compete-div-slowmono` monoculture control) with full exclusion
+  only stochastic (headline seed and 2/5 sweep seeds; the suppressed slow lineage otherwise persists in
+  spatial refugia) -- so the earned term is dominance, not deterministic exclusion. The
   cross-feeding regime -- the same `CpmColonyField` process, a different composite -- sustains a
   consumer cell that never touches glucose (local glucose 0.0) purely via a diffusing acetate
   handoff (local acetate 1.30, biomass 1.25 -> 3.79, ending as a viable 65-pixel CPM cell), and a
   secretor-knockout control confirms that handoff is necessary (secretor removed, no acetate
-  produced, the consumer held at its 1.25 seed). The
+  produced, the consumer held at its 1.25 seed). Peer-review M7a re-runs that handoff at the physical
+  2:1 acetate/glucose diffusivity (`cellcell-crossfeed-realistic`) and finds it FAILS (consumer
+  local_acetate ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then displaced), with feeding scaling
+  monotonically with transport acceleration -- so the flagship''s accelerated transport is load-bearing
+  for the legible handoff at this geometry, not cosmetic. The
   paper''s §Cell–cell coupling viability-negotiation pattern (no dedicated figure) holds as
   genuine spatial multicellularity, composed from independent frameworks through one N-cell
   coupling process, one interface, two regimes. The cross-feeding regime also carries the paper''s

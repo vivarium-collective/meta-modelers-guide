@@ -267,3 +267,262 @@ class Protocell(Process):
             "persists": persists,
             "collapse_tick": float(self._collapse_tick),
         }
+
+
+# ============================================================================
+# v2 -- GENUINELY LOCAL-MECHANISM autopoiesis (peer-review M4 answer)
+# ============================================================================
+# The v1 `Protocell` above gates production on a GLOBAL `binary_fill_holes`
+# topological observer -- M4's objection is that this is an authored closure
+# test standing outside the physics, so "closure-dependence" is hand-coded, not
+# emergent. v2 removes that observer from the update entirely.
+#
+# v2 carries a SECOND field, an interior PRECURSOR `p`, and makes membrane
+# production depend on the LOCAL precursor concentration, never on any global
+# closure test:
+#
+#     dphi/dt = D*lap(phi) - k_decay*phi + k_prod * phi * p * (1 - phi/phi_max)
+#     dp/dt   = div( M(phi) grad p ) + s_p*phi - k_leak*p - k_cons*phi*p
+#     M(phi)  = Mp * (1 - alpha * clip(phi, 0, 1))          # membrane is a barrier
+#
+# Every term is a pointwise/nearest-neighbour operation. `binary_fill_holes`
+# appears ONLY in `enclosed_area_v2` / `collapse` bookkeeping, as a passive
+# DIAGNOSTIC readout of the emitted state -- it never feeds back into `phi` or
+# `p`. Grep the update: no closure operator is in the loop.
+#
+# Closure-dependence then EMERGES from geometry alone. The membrane secretes
+# precursor (`s_p*phi`) and is a barrier to it (`M(phi)` drops inside the
+# membrane). A CLOSED ring confines the precursor its own body secretes into the
+# small enclosed pocket, where it accumulates (measured: interior precursor
+# builds from ~0 to ~160) and sustains production `k_prod*phi*p` -- the membrane
+# is maintained against decay. An OPEN/punctured ring lets that pocket drain to
+# the effectively-infinite exterior through the gap: interior precursor bleeds
+# out, production `k_prod*phi*p` starves LOCALLY at the gap, and the boundary is
+# not rebuilt (measured: punctured-wedge membrane mass stays ~2, vs ~80 in the
+# intact ring at the same time). Production is a genuine phase-field
+# autocatalysis of membrane on precursor; the logistic cap `(1 - phi/phi_max)`
+# is the only self-limit and it is LOCAL (a saturating membrane), replacing v1's
+# global area throttle.
+#
+# MEASURED behaviour (canonical params below, deterministic, no RNG):
+#   * closed loop SUSTAINS topological closure for ~2451 internal steps before
+#     the interior slowly fills in and enclosed_area reaches 0 -- metastable, of
+#     the same order as v1's own ~2450-2650-step window, but with NO global
+#     observer in the loop. enclosed_area declines monotonically (465 -> 0) as
+#     the membrane thickens inward; this is a long metastable transient, not an
+#     eternal fixed point (honest: v1 was metastable too).
+#   * PRECURSOR knockout `s_p=0` (no local precursor produced) collapses at
+#     step ~95 -- ~26x faster than the closed loop. So is `k_prod=0`. The local
+#     precursor loop, not the seed geometry or diffusion, is what sustains
+#     closure.
+#   * PUNCTURE (zero a 60deg wedge of the steady ring) STARVES locally and does
+#     NOT self-heal: interior precursor bleeds out through the gap and the
+#     wedge membrane is not rebuilt. This is a real prediction of the local
+#     physics, not a restatement of a global gate.
+#
+# CFL: both diffusivities must satisfy the explicit 2D limit, so the guard uses
+# max(D, Mp)*dt*4 < 1. Canonical Mp=0.10, D=0.02, dt=1.0 -> 0.40, stable.
+
+
+# Canonical v2 params, pinned from the regime search
+# (scratchpad sweep, see module notes above). Kept as module constants so the
+# process, the composite, and the tests all reference one source of truth.
+V2_PARAMS = {
+    "D": 0.02,
+    "k_decay": 0.01,
+    "k_prod": 0.06,
+    "thr": 0.30,
+    "dt": 1.0,
+    "Mp": 0.10,
+    "alpha": 0.9,
+    "s_p": 0.03,
+    "k_leak": 0.03,
+    "k_cons": 0.03,
+    "phi_max": 1.2,
+}
+
+
+def enclosed_area_v2(phi, thr=0.30):
+    """DIAGNOSTIC-ONLY closure readout for v2 (identical to `enclosed_area`).
+
+    Named separately purely to make the audit trivial: every call site of this
+    function is a passive measurement of the emitted membrane field, never part
+    of the `phi`/`p` update. The v2 update (`rd_step_v2`) does not call it."""
+    membrane = phi > thr
+    return binary_fill_holes(membrane) & ~membrane
+
+
+def _variable_diffusion(p, M):
+    """`div( M grad p )` on a periodic grid, dx=1, with a spatially varying
+    mobility `M` -- a face-centred finite-volume flux (arithmetic-mean face
+    mobility). Purely nearest-neighbour: no global operator. `M` low inside the
+    membrane makes the membrane a barrier to precursor, so a closed ring
+    confines the precursor it secretes."""
+    m_xr = 0.5 * (M + np.roll(M, -1, axis=1))
+    m_xl = 0.5 * (M + np.roll(M, 1, axis=1))
+    m_yr = 0.5 * (M + np.roll(M, -1, axis=0))
+    m_yl = 0.5 * (M + np.roll(M, 1, axis=0))
+    flux = (
+        m_xr * (np.roll(p, -1, axis=1) - p) - m_xl * (p - np.roll(p, 1, axis=1))
+        + m_yr * (np.roll(p, -1, axis=0) - p) - m_yl * (p - np.roll(p, 1, axis=0))
+    )
+    return flux
+
+
+def rd_step_v2(phi, p, D, k_decay, k_prod, Mp, alpha, s_p, k_leak, k_cons,
+               phi_max, dt=1.0):
+    """One explicit v2 update of the (membrane `phi`, precursor `p`) pair.
+
+    LOCAL ONLY -- no `binary_fill_holes`, no global closure test anywhere:
+
+        M       = Mp * (1 - alpha*clip(phi,0,1))          # membrane barrier
+        prod    = k_prod * phi * p * clip(1 - phi/phi_max, 0, None)
+        phi_new = phi + dt*( D*lap(phi) - k_decay*phi + prod )
+        p_new   = p   + dt*( div(M grad p) + s_p*phi - k_leak*p - k_cons*phi*p )
+
+    Production requires LOCAL precursor `p` (autocatalysis of membrane on the
+    precursor it consumes), self-limited only by the LOCAL logistic membrane cap
+    `(1 - phi/phi_max)`. `s_p=0` (no precursor produced) or `k_prod=0` (no
+    consumption/production) each starve the membrane -- the negative controls.
+    `p` is clipped at 0 (a concentration)."""
+    M = Mp * (1.0 - alpha * np.clip(phi, 0.0, 1.0))
+    prod = k_prod * phi * p * np.clip(1.0 - phi / phi_max, 0.0, None)
+    phi_new = phi + dt * (D * laplacian(phi) - k_decay * phi + prod)
+    p_new = p + dt * (
+        _variable_diffusion(p, M) + s_p * phi - k_leak * p - k_cons * phi * p
+    )
+    return phi_new, np.clip(p_new, 0.0, None)
+
+
+class ProtocellV2(Process):
+    """Genuinely LOCAL-mechanism autopoietic protocell (peer-review M4 answer).
+
+    Carries two fields in the shared additive `fields` store -- membrane `phi`
+    and interior precursor `p` -- and advances them with `rd_step_v2`, whose
+    production term depends on LOCAL precursor, never on a global closure
+    observer. Closure-dependence EMERGES: a closed membrane confines the
+    precursor it secretes and sustains itself; a punctured one bleeds precursor
+    and starves locally. See the module-level v2 notes for the full derivation
+    and the measured outcomes.
+
+    Emits DELTAS for both `phi` and `p` (same additive-`map[array]` contract as
+    v1 `Protocell`), plus absolute `overwrite[...]` observables. `enclosed_area`
+    and `collapse_tick` are computed here purely to REPORT the emitted state;
+    they are not part of the update."""
+
+    config_schema = {
+        "grid": {"_type": "map[integer]"},
+        "D": _f(V2_PARAMS["D"]),
+        "k_decay": _f(V2_PARAMS["k_decay"]),
+        "k_prod": _f(V2_PARAMS["k_prod"]),
+        "thr": _f(V2_PARAMS["thr"]),
+        "dt": _f(V2_PARAMS["dt"]),
+        "Mp": _f(V2_PARAMS["Mp"]),
+        "alpha": _f(V2_PARAMS["alpha"]),
+        "s_p": _f(V2_PARAMS["s_p"]),
+        "k_leak": _f(V2_PARAMS["k_leak"]),
+        "k_cons": _f(V2_PARAMS["k_cons"]),
+        "phi_max": _f(V2_PARAMS["phi_max"]),
+        "steps_per_tick": {"_type": "integer", "_default": 50},
+        # Inert, as in v1 -- the v2 physics has no RNG (fully deterministic).
+        "seed": {"_type": "integer", "_default": 1},
+    }
+
+    def inputs(self):
+        return {"fields": "map[array]"}
+
+    def outputs(self):
+        return {
+            "fields": "map[array]",
+            "enclosed_area": "overwrite[float]",
+            "membrane_mass": "overwrite[float]",
+            "precursor_mass": "overwrite[float]",
+            "persists": "overwrite[float]",
+            "collapse_tick": "overwrite[float]",
+        }
+
+    def __init__(self, config=None, core=None):
+        raw_config = dict(config) if config else {}
+        super().__init__(config, core=core)
+        c = dict(self.config)
+        # Same core.fill zero-clobber guard as v1: restore any caller-passed
+        # scalar (a legitimate 0.0 -- e.g. the s_p=0 or k_prod=0 knockout --
+        # would otherwise be silently refilled to its non-zero default).
+        for key in ("D", "k_decay", "k_prod", "thr", "dt", "Mp", "alpha",
+                    "s_p", "k_leak", "k_cons", "phi_max", "steps_per_tick",
+                    "seed"):
+            if key in raw_config:
+                c[key] = raw_config[key]
+        self.config = c
+        self._D = float(c["D"])
+        self._k_decay = float(c["k_decay"])
+        self._k_prod = float(c["k_prod"])
+        self._thr = float(c["thr"])
+        self._dt = float(c["dt"])
+        self._Mp = float(c["Mp"])
+        self._alpha = float(c["alpha"])
+        self._s_p = float(c["s_p"])
+        self._k_leak = float(c["k_leak"])
+        self._k_cons = float(c["k_cons"])
+        self._phi_max = float(c["phi_max"])
+        self._steps = int(c["steps_per_tick"])
+        self._seed = int(c.get("seed", 1))
+
+        # CFL: BOTH diffusivities must satisfy the explicit 2D limit.
+        cfl = max(self._D, self._Mp) * self._dt * 4.0
+        if not (cfl < 1.0):
+            raise ValueError(
+                f"ProtocellV2: max(D, Mp)*dt*4 = {cfl:.4g} >= 1 violates the "
+                f"explicit 2D reaction-diffusion CFL stability limit "
+                f"(coeff*dt <= 0.25, dx=1). D={self._D}, Mp={self._Mp}, "
+                f"dt={self._dt}. Canonical D=0.02, Mp=0.10, dt=1.0 gives 0.40, "
+                f"comfortably stable -- a larger D/Mp/dt is the likely cause."
+            )
+
+        self._mass_floor = None
+        self._step_count = 0
+        self._collapse_tick = -1
+
+    def update(self, state, interval):
+        fields = state.get("fields", {}) or {}
+        phi0 = np.array(fields.get("phi"), dtype=float, copy=True)
+        p_field = fields.get("p")
+        if p_field is None:
+            p0 = np.zeros_like(phi0)
+        else:
+            p0 = np.array(p_field, dtype=float, copy=True)
+
+        if self._mass_floor is None:
+            self._mass_floor = MASS_FLOOR_FRAC * float(phi0.sum())
+
+        phi, p = phi0, p0
+        for _ in range(self._steps):
+            phi, p = rd_step_v2(
+                phi, p, self._D, self._k_decay, self._k_prod, self._Mp,
+                self._alpha, self._s_p, self._k_leak, self._k_cons,
+                self._phi_max, dt=self._dt,
+            )
+            self._step_count += 1
+            # DIAGNOSTIC readout only -- not fed back into the update.
+            if self._collapse_tick == -1 and int(enclosed_area_v2(phi, self._thr).sum()) == 0:
+                self._collapse_tick = self._step_count
+
+        if not np.all(np.isfinite(phi)) or not np.all(np.isfinite(p)):
+            raise FloatingPointError(
+                f"ProtocellV2: phi or p went non-finite after {self._steps} "
+                f"internal steps at D={self._D}, Mp={self._Mp}, dt={self._dt}. "
+                f"The CFL guard should prevent this for max(D,Mp)*dt*4 < 1."
+            )
+
+        area = int(enclosed_area_v2(phi, self._thr).sum())
+        mass = float(phi.sum())
+        persists = 1.0 if (area > 0 and mass > self._mass_floor) else 0.0
+
+        return {
+            "fields": {"phi": phi - phi0, "p": p - p0},
+            "enclosed_area": float(area),
+            "membrane_mass": mass,
+            "precursor_mass": float(p.sum()),
+            "persists": persists,
+            "collapse_tick": float(self._collapse_tick),
+        }
