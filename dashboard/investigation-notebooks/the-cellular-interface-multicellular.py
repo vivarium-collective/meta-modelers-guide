@@ -845,6 +845,109 @@ _save_viz('biomolecular-complementarity-spatial', 'condensate-metrics', _render_
 # | condensate-conserves-mass | kind=observable path=obs.phi_mean expr=abs(last(obs.phi_mean) - first(obs.phi_mean)) | op < value 0.001 provenance phi_mean drift ~4e-18 over 10000 steps (mass-conserving by construction: the update is a divergence of a flux) (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved, tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded) |
 # | condensate-stays-bounded | kind=observable path=obs.phi_min expr=last(obs.phi_min) | op > value -1.05 provenance phi bounded to [-0.989, 0.982] at run end (no NaN); the process raises loudly if dt exceeds the ~dx^4/(16*M*kappa) stability limit rather than emitting NaN (tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded, tests/test_cahn_hilliard.py::test_dt_above_stability_limit_raises_instead_of_nan) |
 
+# ## Study: Autopoiesis, Spatial (`autopoiesis-spatial`)
+#
+# **Question.** The paper's §Self-organized processes section states the autopoiesis criterion as a boundary problem, not a bookkeeping one: "A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible." This study puts that criterion on a 2D lattice and asks the discriminating question directly: does a membrane PERSIST because an internal production loop -- gated on the boundary itself staying topologically closed -- replenishes the membrane against decay, and does a mere vesicle with no such loop, from the identical seed, DISSIPATE? The two composites differ in exactly one variable (the production rate constant k_prod), so the contrast between persistence and collapse is the finding. beer2023's viability bounds -- constraints on a shared state that must be maintained for the composition to persist -- are the frame: closure here is that the membrane's own maintenance is conditioned on the boundary it maintains, so break the boundary and the maintenance cannot fire.
+#
+# **Claim.** The paper's §Self-organized processes autopoiesis criterion -- a membrane persists because the processes inside the boundary maintain the organization that keeps those processes possible -- holds as a 2D spatial mechanism. A scalar membrane field under reaction-diffusion, with production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -> 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so persistence is CAUSED by the internal loop -- confirmed independently by a fatal-puncture viability bound (beer2023): breaking the boundary so nothing is enclosed shuts off closure-gated production, and the ring cannot rebuild from nothing. The honest boundaries of the claim are stated as findings, not buried: the homeostatic plateau is metastable, not eternal (the physically-correct signature of a closed system with no external influx, not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal self-maintaining boundary demonstrating operational closure, NOT real membrane chemistry or metabolism.
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `protocell-autopoietic` | `meta_modelers_guide.composites.protocell-autopoietic` | 0 | — |
+# | `protocell-vesicle-control` | `meta_modelers_guide.composites.protocell-vesicle-control` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.protocell-autopoietic`** — `spec_meta_modelers_guide_composites_protocell_autopoietic` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_protocell_autopoietic = load_spec(REPO / 'meta_modelers_guide/composites/protocell-autopoietic.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_protocell_autopoietic)
+
+# === Edit parameters for composite 'protocell-autopoietic' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'protocell'  (local:Protocell)
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['grid']['nx'] = 64
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['grid']['ny'] = 64
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['D'] = 0.02
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['k_decay'] = 0.01
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['k_prod'] = 0.03
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['thr'] = 0.3
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['steps_per_tick'] = 50
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['seed'] = 1
+
+# **Composite `meta_modelers_guide.composites.protocell-vesicle-control`** — `spec_meta_modelers_guide_composites_protocell_vesicle_control` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_protocell_vesicle_control = load_spec(REPO / 'meta_modelers_guide/composites/protocell-vesicle-control.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_protocell_vesicle_control)
+
+# === Edit parameters for composite 'protocell-vesicle-control' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'protocell'  (local:Protocell)
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['grid']['nx'] = 64
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['grid']['ny'] = 64
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['D'] = 0.02
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['k_decay'] = 0.01
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['k_prod'] = 0.0
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['thr'] = 0.3
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['steps_per_tick'] = 50
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['seed'] = 1
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: autopoiesis-spatial ===
+STUDY = 'autopoiesis-spatial'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **protocell-autopoietic-movie**
+
+# protocell-autopoietic-movie
+_save_viz('autopoiesis-spatial', 'protocell-autopoietic-movie', _render_one('image:viz/protocell-autopoietic.gif', {'chart': 'image', 'caption': 'Autopoietic closed loop -- the membrane ring self-maintains: production gated on closure holds the enclosed interior at a homeostatic plateau (~149 px) rather than dissolving.'}, RUNS_DB, STUDY_YAML))
+
+# **protocell-vesicle-control-movie**
+
+# protocell-vesicle-control-movie
+_save_viz('autopoiesis-spatial', 'protocell-vesicle-control-movie', _render_one('image:viz/protocell-vesicle-control.gif', {'chart': 'image', 'caption': 'Vesicle control (k_prod=0) -- the single-variable knockout: with no production loop the membrane ring decays and its closure is lost, enclosed area -> 0 by step ~96.'}, RUNS_DB, STUDY_YAML))
+
+# **autopoiesis-metrics**
+
+# autopoiesis-metrics
+_save_viz('autopoiesis-spatial', 'autopoiesis-metrics', _render_one('html:viz/autopoiesis-metrics.html', {'chart': 'html', 'caption': 'Autopoiesis metrics -- the enclosed interior area plateaus (homeostasis, ~149 px) with membrane mass held above its floor: genuine self-maintenance, not a filled blob or a ghost ring.'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | closed-loop-persists | kind=observable path=obs.persists expr=last(obs.persists) | op == value 1.0 provenance persists == 1.0 with membrane_mass > 0 over a 1800-step (36-tick) run comfortably inside the ~2000-step homeostatic-plateau window (tests/test_protocell.py::test_closed_loop_persists_within_stable_window, tests/test_autopoiesis_regime.py::test_closed_loop_persists) |
+# | closed-loop-encloses-interior | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op > value 50.0 provenance enclosed_area plateaus at ~149 px (seed ~465 px), homeostasis not runaway growth; loose 50-px floor (not the exact 149) so the bound is not a golden-value pin (tests/test_protocell_physics.py::test_closed_loop_persists_with_area_homeostasis, tests/test_autopoiesis_regime.py::test_persistence_is_multiseed_robust) |
+# | closed-loop-never-collapses | kind=observable path=obs.collapse_tick expr=last(obs.collapse_tick) | op == value -1.0 provenance collapse_tick == -1.0 across the 1800-step window -- the closed loop never broke inside the plateau (tests/test_protocell.py::test_closed_loop_persists_within_stable_window, tests/test_autopoiesis_regime.py::test_closed_loop_persists) |
+# | vesicle-control-collapses | kind=observable path=obs.persists expr=last(obs.persists) | op == value 0.0 provenance k_prod=0 (the only differing variable): persists == 0.0, closure lost -- the knockout that flips persist -> collapse (tests/test_protocell.py::test_negative_control_k_prod_zero_collapses, tests/test_autopoiesis_regime.py::test_vesicle_control_collapses) |
+# | vesicle-control-loses-enclosure | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op == value 0.0 provenance enclosed_area -> 0 by step ~96 (collapse_tick ~96), the membrane ring decays and its closure is lost (tests/test_protocell_physics.py::test_negative_control_k_prod_zero_collapses, tests/test_autopoiesis_regime.py::test_vesicle_control_collapses) |
+# | puncture-is-fatal | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op == value 0.0 provenance after puncturing a 60-degree wedge, enclosed_area stays 0 for 1500 steps and phi.sum() -> ~0 even with k_prod at its canonical value -- closure-gated production cannot rebuild from nothing (tests/test_protocell_physics.py::test_puncture_is_fatal_no_recovery) |
+
 # ## Open decisions
 # - Four of the 9 planned spatial-counterpart studies are built and run so far — cell-environment-coupling-spatial (the flagship), cell-cell-coupling-spatial, disintegration-spatial, and growth-and-division-spatial. The remaining patterns — cellular-interface, molecular-interfaces, biomolecular-complementarity, autopoiesis, development-and-evolution — are named in the design spec's increment plan; some are planned, biomolecular-complementarity is in progress (code done, study.yaml held). Treat this investigation's verdict as scoped to the built studies only until the remaining increments land.
 # - Chemotaxis toward the sensed field (directed up-gradient motion) is explicitly deferred to a follow-up variant of the flagship composite; the current flagship cell does not chemotax, only senses, metabolizes, grows, and secretes.
