@@ -20,6 +20,9 @@ baseline:
 - name: cellular-interface-executable
   composite: meta_modelers_guide.composites.fig04b-executable
   params: {}
+- name: cellular-interface-spatial
+  composite: meta_modelers_guide.composites.cellular-interface-spatial
+  params: {}
 variants: []
 key_assumptions:
 - Law 1 (conformance) is demonstrated mechanically by `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, which lives in the disintegration/Fig 6 metabolism-signature code (`handlers_fig06_fba.py`'s `NonConformingMetabolism`), not by a cellular-interface-specific impostor — no such impostor exists in this codebase, and none is claimed. The compiler mechanism it exercises (reject a handler whose declared ports don't match the draft's signature) is the same mechanism that would reject a non-conforming handler installed behind this study's Fig 4 interface.
@@ -145,6 +148,19 @@ findings:
     summary: Law 1 conformance predicts any handler whose ports diverge from the declared signature is refused at compile time.
   provenance:
     run_ids: []
+- id: F-05
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The same `CellularInterfaceHandler` contract, unchanged, composed with a spatial diffusion field via a field↔point adapter — evidence the interface is substrate-independent. Only the chemical modality is spatialized here; mechanical, electrical, and thermal remain lumped. Taking the byte-identical fig04b handler and composing a spatio-flux `DiffusionAdvection` chemical field behind its chemical port (through the small `FieldPointCoupling` adapter that samples the field over the cell''s footprint and writes the handler''s uptake flux back as a spatial delta) yields a running 2D composite: the field depletes at the footprint (niche construction, footprint mean 1.68 → 1.43 over 20 steps) and the concentration the interface senses now varies with position on the gradient — a cell on the low side senses ≈0.74 and grows slower, one on the high side senses ≈2.1 and grows faster — rather than a fixed constant.'
+  evidence:
+    from_test: tests/test_cellular_interface_spatial.py
+    observed: 'footprint field mean 1.68 → 1.43 (net uptake depletes the field where the cell feeds); sensed chemical_ext ≈0.74 (low side) vs ≈2.1 (high side), growth_rate follows the local field'
+    discovered_during: authoring the spatial translation of this study — the unchanged handler composed over a spatio-flux field via a new field-point adapter
+  expected:
+    summary: If the interface is genuinely substrate-independent, the unchanged handler should run against a spatial field with the same ports, sensing a spatially-varying concentration and constructing a depletion niche.
+  provenance:
+    run_ids: []
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -203,6 +219,21 @@ limitations:
 - No impostor handler specific to the cellular interface exists in this codebase. Law 1 is demonstrated by citing `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, whose impostor (`NonConformingMetabolism`) actually breaks the metabolism signature used in the disintegration/Fig 6 study — the same compiler mechanism, cross-referenced honestly rather than claimed as native to this figure.
 falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 4 interface, if installing the handler leaves shape flat (no growth) or the objective unchanged, or if a non-conforming handler is found to compile without error against any declared interface (Law 1 not enforced).
 visualizations:
+- name: cellular-interface-spatial
+  address: image:viz/cellular-interface-spatial.gif
+  description: 'The same-interface, spatial composition: the UNCHANGED CellularInterfaceHandler
+    composed with a real 2D spatio-flux DiffusionAdvection chemical field via the
+    FieldPointCoupling field-point adapter. The chemical field heatmap (left-low
+    to right-high gradient) shows the cell''s fixed circular footprint; a running
+    mini-panel tracks the sensed chemical_ext (footprint-mean concentration, 1.68
+    -> 1.41) alongside the interface''s growth_rate (0 -> 0.44) over 24 ticks,
+    while the field depletes at the footprint (niche construction) as the interface''s
+    net uptake is written back into the field.'
+  config:
+    chart: image
+    caption: The unchanged Fig 4b handler composed over a real 2D chemical field
+      -- the adapter senses the local footprint concentration and deposits the
+      handler's uptake back into the field, depleting it where the cell feeds.
 - name: fig04b-executable-dynamics
   address: html:fig04b-executable.html
   description: 'Interactive Fig 4: the cellular interface, made to run. Viability

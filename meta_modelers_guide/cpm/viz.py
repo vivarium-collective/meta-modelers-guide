@@ -1564,6 +1564,196 @@ def run_gray_scott_frames(composite_state: dict, core, steps: int = 16, cadence:
 
 
 # --------------------------------------------------------------------------
+# Cellular interface — spatial translation (field↔point coupling) frame
+# capture
+# --------------------------------------------------------------------------
+
+_CI_SPATIAL_FOOTPRINT_COLOR = "white"
+_CI_SPATIAL_CHEM_COLOR = "#0d6e6b"
+_CI_SPATIAL_GROWTH_COLOR = "#a5620f"
+
+
+def _ci_spatial_footprint_mask(nx: int, ny: int, cx: int, cy: int, radius: float) -> np.ndarray:
+    """Circular footprint mask -- the SAME formula
+    :class:`~meta_modelers_guide.cellular_interface_spatial.FieldPointCoupling`
+    precomputes for its own sense/act footprint, so the GIF overlay marks
+    exactly the pixels the adapter samples and depletes, not an
+    approximation of them. Falls back to the single center pixel if the
+    radius is too small to cover any pixel, mirroring the adapter."""
+    yy, xx = np.mgrid[0:ny, 0:nx]
+    fp = ((xx - cx) ** 2 + (yy - cy) ** 2) <= radius * radius
+    if not fp.any():
+        fp[cy, cx] = True
+    return fp
+
+
+def _render_cellular_interface_spatial_frame(
+    field: np.ndarray, footprint: np.ndarray, time: float, field_vmax: float,
+    times: list[float], chem_so_far: list[float], growth_so_far: list[float],
+    t_max: float, chem_range: tuple[float, float], growth_range: tuple[float, float],
+) -> np.ndarray:
+    """Render one matplotlib (Agg) frame for a cellular-interface-spatial
+    tick: LEFT panel -- the chemical field heatmap (the left-low-to-right-
+    high gradient the field-point adapter samples) with the adapter's
+    circular footprint overlaid via the shared :func:`_footprint_fill`
+    (translucent fill + contour -- stays legible against the saturated
+    high-concentration side of the gradient, unlike a bare contour); RIGHT
+    panel -- a small running time-series of the SENSED local concentration
+    (``chemical_ext``, the byte-identical ``CellularInterfaceHandler``'s
+    actual scalar input) and the interface's ``growth_rate`` on a shared time
+    axis, growth_rate on its own secondary y-axis (different scale/units).
+    Both the field color scale and every axis limit are FIXED across the
+    whole run (computed once by the caller from every captured frame/metric,
+    the same fixed-scale reasoning every renderer in this module follows) so
+    the running line panel just fills in frame by frame instead of
+    rescaling. Returns an (H, W, 3) uint8 RGB array (the figure canvas
+    buffer).
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, (ax_field, ax_ts) = plt.subplots(
+        1, 2, figsize=(11.6, 4.6), dpi=100, gridspec_kw={"width_ratios": [1.15, 1]}
+    )
+
+    im = ax_field.imshow(field, origin="lower", cmap="viridis", vmin=0.0, vmax=field_vmax)
+    _footprint_fill(ax_field, footprint, _CI_SPATIAL_FOOTPRINT_COLOR, fill_alpha=0.35,
+                     contour_color=_CI_SPATIAL_FOOTPRINT_COLOR)
+    ax_field.set_title("chemical field + cell footprint", fontsize=10)
+    ax_field.set_xticks([]); ax_field.set_yticks([])
+    fig.colorbar(im, ax=ax_field, fraction=0.046, pad=0.04, label="chemical")
+
+    ax_ts.plot(times, chem_so_far, color=_CI_SPATIAL_CHEM_COLOR, marker="o", markersize=3,
+               linewidth=2.0, label="chemical_ext (sensed)")
+    ax_ts.set_xlim(0, max(t_max, 1e-9))
+    ax_ts.set_ylim(*chem_range)
+    ax_ts.set_xlabel("time")
+    ax_ts.set_ylabel("chemical_ext (sensed)", color=_CI_SPATIAL_CHEM_COLOR, fontsize=8.5)
+    ax_ts.tick_params(axis="y", labelcolor=_CI_SPATIAL_CHEM_COLOR, labelsize=7.5)
+    ax_ts.tick_params(axis="x", labelsize=7.5)
+    ax_ts.grid(alpha=0.2)
+
+    ax_growth = ax_ts.twinx()
+    ax_growth.plot(times, growth_so_far, color=_CI_SPATIAL_GROWTH_COLOR, marker="o",
+                    markersize=3, linewidth=2.0, label="growth_rate")
+    ax_growth.set_xlim(0, max(t_max, 1e-9))
+    ax_growth.set_ylim(*growth_range)
+    ax_growth.set_ylabel("growth_rate", color=_CI_SPATIAL_GROWTH_COLOR, fontsize=8.5)
+    ax_growth.tick_params(axis="y", labelcolor=_CI_SPATIAL_GROWTH_COLOR, labelsize=7.5)
+
+    lines = ax_ts.get_lines() + ax_growth.get_lines()
+    ax_ts.legend(lines, [ln.get_label() for ln in lines], loc="upper left", fontsize=6.5,
+                 framealpha=0.6)
+    ax_ts.set_title("sensed chemical_ext + growth_rate", fontsize=10)
+
+    _pattern_title(fig, "Cellular interface — spatial translation (field↔point coupling)", time)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_cellular_interface_spatial_frames(composite_state: dict, core, steps: int = 24,
+                                           cadence: int = 1
+                                           ) -> tuple[list[np.ndarray], dict[str, list[float]]]:
+    """Mirror :func:`run_gray_scott_frames`, but for the cellular-interface
+    spatial-translation composite (``cellular-interface-spatial``): builds a
+    fresh :class:`~process_bigraph.Composite` from ``composite_state`` and
+    runs it in a manual cadence loop, capturing one animation frame + one
+    metrics row per tick.
+
+    Unlike every CPM-lattice renderer in this module, there is no world-
+    owning process instance and no dynamic footprint to reach into -- the
+    cell's footprint is FIXED for the whole run (a single stationary
+    ``local:FieldPointCoupling`` adapter config), so it's computed ONCE from
+    the ``couple`` process's own ``nx``/``ny``/``cx``/``cy``/``radius``
+    config (the same values, and the same circular-mask formula, the adapter
+    itself uses -- see :func:`_ci_spatial_footprint_mask`) rather than
+    re-derived from a live world object every tick. The chemical field IS a
+    genuine process-bigraph ``fields`` store (mirrors
+    ``run_cahn_hilliard_frames``/``run_gray_scott_frames``), read straight
+    off ``comp.state["fields"]["chemical"]`` after each tick.
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
+    arrays; ``metrics`` is ``{"time": [...], "chemical_ext": [...],
+    "growth_rate": [...], "field_total": [...]}`` -- flat, equal-length lists
+    (one entry per frame, like the flagship/gray-scott shape). ``chemical_ext``
+    is read straight off ``comp.state["environment"]["chemical"]`` (the exact
+    scalar the UNCHANGED ``CellularInterfaceHandler`` reads as its
+    ``chemical_ext`` input -- the adapter's field-to-point sense output) and
+    ``growth_rate`` off ``comp.state["interface"]["growth_rate"]`` (the
+    handler's own output, unchanged from the lumped fig04 composites);
+    ``field_total`` is the whole field's summed mass, which falls over the
+    run as the adapter's point-to-field depletion writeback (niche
+    construction) removes real chemical faster than diffusion resupplies the
+    footprint from the gradient's high side. Plus the explicit panel-dispatch
+    marker ``metrics["_panel"] = "cellular_interface_spatial"`` (see
+    :func:`metrics_panel`).
+    """
+    from process_bigraph import Composite
+
+    couple_cfg = dict(composite_state["couple"]["config"])
+    nx, ny = int(couple_cfg.get("nx", 40)), int(couple_cfg.get("ny", 40))
+    cx, cy = int(couple_cfg.get("cx", nx // 2)), int(couple_cfg.get("cy", ny // 2))
+    radius = float(couple_cfg.get("radius", 4.0))
+    footprint = _ci_spatial_footprint_mask(nx, ny, cx, cy, radius)
+
+    comp = Composite({"state": composite_state}, core=core)
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    metrics: dict[str, list[float]] = {
+        "time": [], "chemical_ext": [], "growth_rate": [], "field_total": [],
+    }
+    raw: list[tuple[np.ndarray, float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        field = np.asarray(comp.state["fields"]["chemical"], dtype=float).copy()
+        chemical_ext = float(comp.state["environment"]["chemical"])
+        growth_rate = float(comp.state["interface"]["growth_rate"])
+
+        t = float((tick + 1) * cadence)
+        raw.append((field, t))
+
+        metrics["time"].append(t)
+        metrics["chemical_ext"].append(chemical_ext)
+        metrics["growth_rate"].append(growth_rate)
+        metrics["field_total"].append(float(field.sum()))
+
+    # Fixed color/axis scales across the whole run (see the render function's
+    # docstring): computed only after every tick has run, so a single pass
+    # over `raw`/`metrics`, same pattern as every other renderer's
+    # `*_vmax`/`vabs`/`trait_lo`/`trait_hi`.
+    field_vmax = max((float(f.max()) for f, _ in raw), default=1e-9) or 1e-9
+    t_max = metrics["time"][-1] if metrics["time"] else 1.0
+
+    def _padded_range(vals: list[float]) -> tuple[float, float]:
+        lo, hi = (min(vals), max(vals)) if vals else (0.0, 1.0)
+        pad = max((hi - lo) * 0.1, 1e-6)
+        return (lo - pad, hi + pad)
+
+    chem_range = _padded_range(metrics["chemical_ext"])
+    growth_range = _padded_range(metrics["growth_rate"])
+
+    frames = [
+        _render_cellular_interface_spatial_frame(
+            field, footprint, t, field_vmax,
+            metrics["time"][:i + 1], metrics["chemical_ext"][:i + 1], metrics["growth_rate"][:i + 1],
+            t_max, chem_range, growth_range,
+        )
+        for i, (field, t) in enumerate(raw)
+    ]
+
+    metrics["_panel"] = "cellular_interface_spatial"
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
 # GIF encoding
 # --------------------------------------------------------------------------
 
@@ -2253,6 +2443,79 @@ def _metrics_panel_evolution(metrics: dict[str, Any], out_path: Path,
     return "plotly"
 
 
+def _metrics_panel_cellular_interface_spatial(metrics: dict[str, list[float]], out_path: Path,
+                                               include_plotlyjs: str | bool) -> str:
+    """Cellular-interface-spatial counterpart of :func:`metrics_panel` for
+    ``run_cellular_interface_spatial_frames``' output shape (flat
+    equal-length lists). ``chemical_ext`` (the SENSED local concentration,
+    the handler's actual scalar input -- the spatial-determination signal)
+    gets the primary left-hand axis; ``growth_rate`` (the handler's own
+    output, unchanged from the lumped fig04 composites, and the direct
+    consequence of what was sensed) shares that axis's scale reasonably well
+    and gets a visually distinct dashed secondary trace on its own
+    right-hand axis. ``field_total`` (the whole field's summed mass, O(100s)
+    -- a very different scale, and the niche-construction signal: it falls
+    as the adapter's uptake writeback depletes the field) is normalized to
+    its own t=0 value (a fraction-remaining trace, comparable in range to
+    the other two) and drawn as a third, further-offset right-hand axis
+    rather than left to blow the other two traces flat. Falls back to a
+    small static HTML table (the three raw series) if Plotly is
+    unavailable.
+    """
+    times = metrics.get("time") or []
+    chemical_ext = metrics.get("chemical_ext") or []
+    growth_rate = metrics.get("growth_rate") or []
+    field_total = metrics.get("field_total") or []
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        header = "".join(f"<th>{c}</th>" for c in
+                          ("time", "chemical_ext", "growth_rate", "field_total"))
+        rows = "".join(
+            "<tr>" + "".join(f"<td>{v}</td>" for v in vals) + "</tr>"
+            for vals in zip(times, chemical_ext, growth_rate, field_total)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr>{header}</tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    field_total_frac = (
+        [v / field_total[0] if field_total[0] else float("nan") for v in field_total]
+        if field_total else []
+    )
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=chemical_ext, mode="lines+markers",
+                              name="chemical_ext (sensed)",
+                              line=dict(width=2.8, color=_PALETTE[0])))
+    fig.add_trace(go.Scatter(x=times, y=growth_rate, mode="lines+markers", name="growth_rate",
+                              line=dict(width=2.2, color=_PALETTE[1], dash="dot"), yaxis="y2"))
+    if field_total_frac:
+        fig.add_trace(go.Scatter(x=times, y=field_total_frac, mode="lines+markers",
+                                  name="field_total (fraction of t=0)",
+                                  line=dict(width=1.8, color=_PALETTE[3], dash="dashdot"),
+                                  yaxis="y3"))
+
+    fig.update_layout(
+        title=dict(text="<b>cellular interface — spatial translation — synced metrics</b>",
+                    x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)", domain=[0, 0.86]),
+        yaxis=dict(title="chemical_ext (sensed)", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis2=dict(title="growth_rate", overlaying="y", side="right", showgrid=False),
+        yaxis3=dict(title="field_total (frac of t=0)", overlaying="y", side="right",
+                    anchor="free", position=1.0, showgrid=False),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.26, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=90, t=54, b=54),
+    )
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
 # Explicit renderer→panel-kind dispatch table (see `metrics_panel`'s
 # docstring): every `run_*_frames` in this module stamps `metrics["_panel"]`
 # with its own kind name, looked up here instead of sniffed from which keys
@@ -2268,4 +2531,5 @@ _METRICS_PANEL_DISPATCH: dict[str, Any] = {
     "cahn_hilliard": _metrics_panel_cahn_hilliard,
     "protocell": _metrics_panel_protocell,
     "gray_scott": _metrics_panel_gray_scott,
+    "cellular_interface_spatial": _metrics_panel_cellular_interface_spatial,
 }
