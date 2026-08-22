@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="4 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="6 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -639,7 +639,12 @@ construction), and secretes a diffusing acetate plume.
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>single-cell-in-a-field</code></div>
         <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The cell runs dynamic-FBA at its own footprint and grows: biomass rises above its
-initial value and CPM volume exceeds 40 px by step 20.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The CPM cell&#39;s own target-volume-driven growth carries through to its actual lattice-pixel volume — the cell occupies more pixels by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell secretes acetate into the shared field as a genuine byproduct of the O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has diffused/spread) by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Net field-wide glucose falls over the run — the cell is a genuine sink on the shared field, not merely redistributing it.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational mechanism control (not this study&#39;s scientific claim): the acetate the flagship secretes is CAUSED BY the O2 cap, not an artifact of the coupling. This runs a second composite (`single-cell-in-a-field-o2uncapped`) identical to the flagship except the oxygen bound is lifted (`oxygen_vmax` 2.5 -&gt; 1000, EX_o2_e effectively unbounded). With respiration no longer capacity-limited, unconstrained e_coli_core takes pure aerobic respiration as growth-optimal and EX_ac_e sits at 0 — so the cell secretes ~0 acetate (and grows faster: biomass ~2.35 vs the capped ~0.37), while the capped flagship secretes a real plume. This turns the study&#39;s overflow claim (&#34;the O2 cap is what forces the optimizer into mixed-acid overflow&#34;) from a code assertion into a demonstrated experiment. The flagship was built first and, unlike the later studies, had no such foundational control until this pass; this is it.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational conservation control (not this study&#39;s scientific claim): the paper frames conservation laws (mass, energy balance) as interface constraints on any coupling. This runs the flagship composite through a closed per-species ledger — for glucose and acetate, initial_field_mass + Σ(every writer&#39;s own reported net exchange) == final_field_mass — where the writer&#39;s reported delta and what actually accumulates in the shared grid travel through two independent code paths (the process&#39;s per-tick arithmetic vs process-bigraph&#39;s additive `apply` for a `map[array]` port), so a clamp that manufactures mass, a double-write, or a schema `apply` that concatenates instead of sums surfaces as a nonzero residual. The ledger also shows the cell nets a glucose sink and an acetate source while DiffusionAdvection under Neumann BC nets ~0.</span></div>
+initial value and CPM volume exceeds 40 px by step 20.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The CPM cell&#39;s own target-volume-driven growth carries through to its actual lattice-pixel volume — the cell occupies more pixels by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell secretes acetate into the shared field as a genuine byproduct of the O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has diffused/spread) by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Net field-wide glucose falls over the run — the cell is a genuine sink on the shared field, not merely redistributing it.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational mechanism control (not this study&#39;s scientific claim): the acetate the flagship secretes is CAUSED BY the O2 cap, not an artifact of the coupling. This runs a second composite (`single-cell-in-a-field-o2uncapped`) identical to the flagship except the oxygen bound is lifted (`oxygen_vmax` 2.5 -&gt; 1000, EX_o2_e effectively unbounded). With respiration no longer capacity-limited, unconstrained e_coli_core takes pure aerobic respiration as growth-optimal and EX_ac_e sits at 0 — so the cell secretes ~0 acetate (and grows faster: biomass ~2.35 vs the capped ~0.37), while the capped flagship secretes a real plume. This turns the study&#39;s overflow claim (&#34;the O2 cap is what forces the optimizer into mixed-acid overflow&#34;) from a code assertion into a demonstrated experiment. The flagship was built first and, unlike the later studies, had no such foundational control until this pass; this is it.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational conservation control (not this study&#39;s scientific claim): the paper frames conservation laws (mass, energy balance) as interface constraints on any coupling. This runs the flagship composite through a closed per-species ledger — for glucose and acetate, initial_field_mass + Σ(every writer&#39;s own reported net exchange) == final_field_mass — where the writer&#39;s reported delta and what actually accumulates in the shared grid travel through two independent code paths (the process&#39;s per-tick arithmetic vs process-bigraph&#39;s additive `apply` for a `map[array]` port), so a clamp that manufactures mass, a double-write, or a schema `apply` that concatenates instead of sums surfaces as a nonzero residual. The ledger also shows the cell nets a glucose sink and an acetate source while DiffusionAdvection under Neumann BC nets ~0.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The paper&#39;s central thesis, run: two DIFFERENT internal metabolisms — constraint-based
+dynamic-FBA (cobra e_coli_core, O2-capped) and a lumped, cobra-free Michaelis–Menten / Monod
+metabolism (`single-cell-in-a-field-mm`) — realize the SAME coarse-grained cell↔field interface
+behind the byte-identical `CpmCellField` ports. Tuned to preserve the interaction variables, the
+MM twin&#39;s interface-level observables (final biomass, total acetate secreted, CPM volume, net
+glucose depletion) agree with the dFBA flagship within ~10% (all four within a 30% tolerance).</span></div>
       </div>
       
     </div>
@@ -868,6 +873,73 @@ capped 0 -&gt; ~47.0 vs uncapped 0 -&gt; 0.0 (exactly); uncapped biomass ~2.35 v
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: approx_equal 0.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-methodological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">INTERFACE SUBSTITUTABILITY — this investigation&#39;s demonstration of the paper&#39;s central
+claim. The paper (§2 / §Cellular interface) argues that &#34;this substitutability is not only a
+software convenience. It allows the interface itself to become the object of comparison:
+different mechanisms may realize the same externally observable relation&#34;, and that &#34;different
+internal organizations may sometimes be represented through the same coarse-grained interface
+when they preserve the interaction variables relevant to that description.&#34; Here that claim is
+run: the flagship cell&#39;s INTERNAL metabolism is swapped from constraint-based dynamic-FBA (cobra
+e_coli_core, O2-capped) to a lumped, cobra-free Michaelis–Menten / Monod metabolism
+(`single-cell-in-a-field-mm`, `mechanism: mm`) behind the BYTE-IDENTICAL `CpmCellField` ports,
+and the interface-level observables are compared head-to-head. Confirmed: over 20 ticks the two
+different internal organizations realize the same coarse-grained cell↔field interface — final
+biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 px (10%), total acetate secreted
+47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 units (6.2%); every interface observable
+agrees within ~10%. The MM twin additionally runs with NO cobra at all — the substitutability
+payoff, a mechanism that runs where the original could not. Stated honestly: the MM params
+(mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were TUNED to preserve the interaction
+variables — the claim is &#34;same coarse-grained relation&#34;, not identical internals, and not a
+derivation of MM from the dFBA solution.</span>
+            
+            <span class="finding-chip">via <code>interface-substitutable-across-mechanisms</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">methodological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> dFBA vs MM (20 ticks): biomass 0.370 vs 0.342 (7.5%), CPM volume 110 vs 99 (10%), acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%); MM runs cobra-free · 
+              
+              via test <a href="#bt-interface-substitutable-across-mechanisms" onclick="_gotoStudyTab('tests','bt-interface-substitutable-across-mechanisms');return false;"><code>interface-substitutable-across-mechanisms</code></a> · 
+              in run <a href="#run-single-cell-in-a-field-mm"><code>single-cell-in-a-field-mm</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-single-cell-in-a-field"><code>single-cell-in-a-field</code></a>, <a href="#run-single-cell-in-a-field-mm"><code>single-cell-in-a-field-mm</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 0.3</code></div>
             
             
             
@@ -1378,6 +1450,50 @@ pass_if: {"op": "\u003c", "provenance": "both glucose and acetate ledgers close 
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-interface-substitutable-across-mechanisms"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="interface-substitutable-across-mechanisms"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">interface-substitutable-across-mechanisms</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>single-cell-in-a-field-mm</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The paper&#39;s central thesis, run: two DIFFERENT internal metabolisms — constraint-based
+dynamic-FBA (cobra e_coli_core, O2-capped) and a lumped, cobra-free Michaelis–Menten / Monod
+metabolism (`single-cell-in-a-field-mm`) — realize the SAME coarse-grained cell↔field interface
+behind the byte-identical `CpmCellField` ports. Tuned to preserve the interaction variables, the
+MM twin&#39;s interface-level observables (final biomass, total acetate secreted, CPM volume, net
+glucose depletion) agree with the dFBA flagship within ~10% (all four within a 30% tolerance).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "per-observable abs(dFBA - MM) / dFBA over a 20-tick run", "kind": "observable", "path": "obs.biomass, obs.volume, fields.acetate, fields.glucose"}
+pass_if: {"op": "\u003c", "provenance": "over 20 ticks (tests/test_substitutability.py::test_interface_observables_substitutable): biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) \u2014 every interface observable within ~10%; the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the substitutability payoff. MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to match, not derived from the dFBA solution.", "value": 0.3}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1669,7 +1785,7 @@ separate machinery this composite does not use.</li><li style="margin:2px 0">Gro
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "7108dbd5fe39612859a6679fa1fb67ec719c13d2", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/7108dbd5fe39612859a6679fa1fb67ec719c13d2", "branch": "main", "lockfile": "uv.lock@b706f7b7d3b8", "generated_at": "2026-08-22 01:29 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "81cc84da16bdb7d0a6b19ee6daedffa7215f306a", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/81cc84da16bdb7d0a6b19ee6daedffa7215f306a", "branch": "main", "lockfile": "uv.lock@b706f7b7d3b8", "generated_at": "2026-08-22 02:01 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "cell-environment-coupling-spatial";

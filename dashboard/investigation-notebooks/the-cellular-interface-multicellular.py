@@ -212,6 +212,10 @@ def _render_one(address, config, runs_db, study_yaml):
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
 # | `single-cell-in-a-field` | `meta_modelers_guide.composites.single-cell-in-a-field` | 0 | — |
+#
+# Declared parameter sets (`study.yaml` variants):
+#
+# - **mm-mechanism** — `mechanism=mm`, `mm_vmax=4.0`, `mm_km=0.5`, `mm_yield=0.024`, `mm_overflow=1.4`
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
@@ -296,6 +300,7 @@ _save_viz('cell-environment-coupling-spatial', 'single-cell-in-a-field-metrics',
 # | net-glucose-consumed | kind=observable path=fields.glucose expr=sum(fields.glucose) | op < value 5940.0 provenance field-wide glucose total 5940.0 -> ~5908.4 over 20 ticks (~32 units net consumed); the local footprint drawdown is much sharper (up to ~18%) than the field-wide total because only the cell's footprint and its immediate diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop) |
 # | o2-cap-forces-acetate-overflow | kind=observable path=fields.acetate expr=sum(fields.acetate) with oxygen uncapped vs capped | op approx_equal value 0.0 provenance field-wide acetate over 20 ticks: capped flagship 0 -> ~47.0, O2-uncapped 0 -> 0.0 (exactly), a >100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow; composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json) |
 # | field-mass-balance-closes | kind=observable path=fields.glucose, fields.acetate expr=abs(final_mass - (initial_mass + Σ writer_net_exchange)) per species | op < value 1e-06 provenance both glucose and acetate ledgers close to < 1e-6 over 15 ticks; cell net glucose < 0 (sink) and net acetate > 0 (source), diff net ~0 for both (tests/test_mass_balance.py::test_flagship_field_mass_balance_closes; meta_modelers_guide/analysis/mass_balance.py) |
+# | interface-substitutable-across-mechanisms | kind=observable path=obs.biomass, obs.volume, fields.acetate, fields.glucose expr=per-observable abs(dFBA - MM) / dFBA over a 20-tick run | op < value 0.3 provenance over 20 ticks (tests/test_substitutability.py::test_interface_observables_substitutable): biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — every interface observable within ~10%; the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the substitutability payoff. MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to match, not derived from the dFBA solution. |
 
 # ## Study: Cell–Cell Coupling, Spatial (`cell-cell-coupling-spatial`)
 #
