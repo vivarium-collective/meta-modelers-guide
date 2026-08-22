@@ -254,6 +254,16 @@ key_assumptions:
   lattice-saturation artifact; extending the run to t≈30 fills the lattice and crowds the still-
   viable loser off it (eviction, not starvation). Strict exclusion would require coupling a
   viability constraint, not only shared state — the paper''s §Cell–cell coupling distinction.'
+- 'MULTI-SEED ROBUSTNESS (the headline is a range, not a single-seed point). The competition
+  headline ratio (3.69x, id 1 / id 2 biomass) is a SINGLE-SEED reading of a stochastic CPM
+  Metropolis trajectory. A 5-seed sweep (`tests/test_cellcell_multiseed.py`, seeds 1-5, CPM seed
+  varied via the now config-overridable `CpmColonyField` seed) gives the honest range: ratio
+  2.9x-3.7x, mean ~3.2x -- the hard-coded single-seed 3.69x is the TOP of the band, not its
+  middle. The qualitative claim is seed-robust: the faster competitor (id 1, glucose_vmax 10)
+  wins on both biomass and lattice volume at every seed, always by > 1.5x. This study establishes
+  the multi-seed convention for the investigation (process reads `seed` from config; deep-copy the
+  composite state, sweep the seed, assert the qualitative claim per seed and report the numeric
+  range); studies 5/7/9 copy the pattern rather than resting on a single hard-coded seed.'
 - 'The secretor-knockout necessity control (`cellcell-crossfeed-knockout`) removes the secretor
   cell entirely rather than only silencing its acetate secretion in place; this is the cleanest
   single-variable knockout (no acetate source anywhere) and avoids a confound of the alternative
@@ -719,6 +729,11 @@ limitations:
   finite-size lattice-saturation artifact; extending the run to t≈30 fills the lattice and crowds
   the still-viable loser off it (eviction, not starvation), which a viability-constraint coupling
   would be needed to turn into genuine exclusion.'
+- 'The competition headline ratio (3.69x biomass, id 1 / id 2) is a single-seed number; a 5-seed
+  robustness sweep (tests/test_cellcell_multiseed.py) puts the honest range at ~2.9x-3.7x (mean
+  ~3.2x), with the single-seed 3.69x at the top of the band and the faster competitor winning
+  every seed by > 1.5x. See key_assumptions for the convention this establishes for the
+  investigation.'
 - e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are
   toy-real, hand-tuned magnitudes chosen to make both regimes legible over a short run -- not
   fitted to any organism or medium.
