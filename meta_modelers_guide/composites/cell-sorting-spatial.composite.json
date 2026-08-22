@@ -1,0 +1,147 @@
+{
+  "name": "cell-sorting-spatial",
+  "description": "The sorting study flagship: a mixed 8x8 checkerboard of alternating-type 5x5-px CPM cells (64 cells total, 32 type-1 / 32 type-2, on a 70x70 lattice) demixes under differential-adhesion contact energetics alone (CpmSorting, the verified checkerboard config from tests/test_cpm_sorting.py) -- NO fields, NO metabolism/cobra path, this is the sorting *primitive* in isolation. Contact energies are tuned Steinberg-style: same-type contact is cheap (J(1,1)=J(2,2)=2.0), cross-type contact is expensive (J(1,2)=11.0), and contact with medium sits in between (J(0,1)=J(0,2)=8.0) -- so cells minimize free energy by clustering with their own type and pulling away from the other, at temperature=10.0 (Metropolis fluctuation scale). Each tick runs 10 Monte Carlo steps (mcs) of CPM copy attempts; hetero_frac (the fraction of intercell 4-neighbor lattice edges between two DIFFERENT live cells) collapses from its well-mixed checkerboard starting value toward a sorted low value while cell_pixels (the cohesion guard) and the per-type cell counts stay constant -- verified end-to-end in tests/test_cpm_sorting.py's Composite run.",
+  "requires": {},
+  "provenance": {
+    "kind": "composed",
+    "source": "task-4 sorting-study flagship build (verified checkerboard config from tests/test_cpm_sorting.py)"
+  },
+  "state": {
+    "cell": {
+      "_type": "process",
+      "address": "local:CpmSorting",
+      "config": {
+        "grid": {
+          "nx": 70,
+          "ny": 70
+        },
+        "checkerboard": {
+          "n": 8,
+          "size": 5,
+          "x0": 15,
+          "y0": 15
+        },
+        "contact": [
+          {
+            "a": 0,
+            "b": 1,
+            "j": 8.0
+          },
+          {
+            "a": 0,
+            "b": 2,
+            "j": 8.0
+          },
+          {
+            "a": 1,
+            "b": 1,
+            "j": 2.0
+          },
+          {
+            "a": 2,
+            "b": 2,
+            "j": 2.0
+          },
+          {
+            "a": 1,
+            "b": 2,
+            "j": 11.0
+          }
+        ],
+        "temperature": 10.0,
+        "target_volume": 25.0,
+        "lambda_volume": 2.0,
+        "mcs": 10
+      },
+      "inputs": {},
+      "outputs": {
+        "hetero_frac": [
+          "obs",
+          "hetero_frac"
+        ],
+        "cell_pixels": [
+          "obs",
+          "cell_pixels"
+        ],
+        "n_type1": [
+          "obs",
+          "n_type1"
+        ],
+        "n_type2": [
+          "obs",
+          "n_type2"
+        ],
+        "type": [
+          "obs",
+          "type"
+        ],
+        "position": [
+          "obs",
+          "position"
+        ],
+        "volume": [
+          "obs",
+          "volume"
+        ]
+      }
+    },
+    "obs": {
+      "hetero_frac": 0.0,
+      "cell_pixels": 0.0,
+      "n_type1": 0.0,
+      "n_type2": 0.0,
+      "type": {},
+      "position": {},
+      "volume": {}
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "hetero_frac": "float",
+          "cell_pixels": "float",
+          "n_type1": "float",
+          "n_type2": "float",
+          "type": "map[float]",
+          "position": "map[list]",
+          "volume": "map[float]",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "hetero_frac": [
+          "obs",
+          "hetero_frac"
+        ],
+        "cell_pixels": [
+          "obs",
+          "cell_pixels"
+        ],
+        "n_type1": [
+          "obs",
+          "n_type1"
+        ],
+        "n_type2": [
+          "obs",
+          "n_type2"
+        ],
+        "type": [
+          "obs",
+          "type"
+        ],
+        "position": [
+          "obs",
+          "position"
+        ],
+        "volume": [
+          "obs",
+          "volume"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    }
+  }
+}

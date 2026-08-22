@@ -14,5 +14,12 @@ from .cell_field import CpmCellField
 from .colony_field import CpmColonyField
 from .disintegration import CpmDisintegration
 from .growth_division import CpmGrowthDivision
+from .sorting import CpmSorting
 
-__all__ = ["CpmCellField", "CpmColonyField", "CpmDisintegration", "CpmGrowthDivision"]
+__all__ = [
+    "CpmCellField",
+    "CpmColonyField",
+    "CpmDisintegration",
+    "CpmGrowthDivision",
+    "CpmSorting",
+]
