@@ -396,13 +396,120 @@ def _inv_label(kind: str) -> str:
     return INV_LABEL.get(kind, (kind or "checked").replace("-", " ").title())
 
 
-def study_card(study: dict, order: int, inv_map: dict) -> str:
+# ─── model definition + interface contract (read from the composite JSON) ─────
+def _composite_file(ws: Path, dotted: str) -> Path | None:
+    """Resolve a study's ``meta_modelers_guide.composites.<name>`` to its
+    ``<name>.composite.json`` on disk."""
+    if not dotted:
+        return None
+    name = str(dotted).split(".")[-1]
+    for base in (ws / "meta_modelers_guide" / "composites",
+                 ws / "workspace" / "composites", ws / "composites"):
+        p = base / f"{name}.composite.json"
+        if p.is_file():
+            return p
+    return None
+
+
+def load_composite(ws: Path, dotted: str) -> dict:
+    p = _composite_file(ws, dotted)
+    if not p:
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8")) or {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _short_cls(address: str) -> str:
+    """``local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection`` →
+    ``DiffusionAdvection``; ``local:CpmCellField`` → ``CpmCellField``."""
+    a = str(address).split(":")[-1].lstrip("!")
+    return a.split(".")[-1] or a
+
+
+_EMITTERS = {"RAMEmitter", "ConsoleEmitter", "DatabaseEmitter"}
+
+
+def _fmt_params(config: dict, limit: int = 9) -> list[tuple[str, str]]:
+    """The model's scalar/short parameters as (key, value) pairs — the physically
+    meaningful knobs, skipping RNG seeds and long state arrays."""
+    out: list[tuple[str, str]] = []
+    for k, v in (config or {}).items():
+        if k in {"seed", "seed_block"}:
+            continue
+        if isinstance(v, bool):
+            out.append((k, "true" if v else "false"))
+        elif isinstance(v, (int, float)):
+            out.append((k, f"{v:g}"))
+        elif isinstance(v, str) and len(v) <= 24:
+            out.append((k, v))
+        elif isinstance(v, list) and 0 < len(v) <= 4 and all(isinstance(x, (int, float)) for x in v):
+            out.append((k, "[" + ", ".join(f"{x:g}" for x in v) + "]"))
+        elif isinstance(v, dict) and 0 < len(v) <= 3 and all(isinstance(x, (int, float)) for x in v.values()):
+            out.append((k, "{" + ", ".join(f"{kk} {vv:g}" for kk, vv in v.items()) + "}"))
+    return out[:limit]
+
+
+def _processes(comp: dict) -> list[dict]:
+    procs = []
+    for name, v in (comp.get("state") or {}).items():
+        if isinstance(v, dict) and v.get("_type") in ("process", "step"):
+            procs.append({"name": name, "cls": _short_cls(v.get("address", "")),
+                          "config": v.get("config") or {},
+                          "inputs": v.get("inputs") or {}, "outputs": v.get("outputs") or {}})
+    return procs
+
+
+def spec_block_html(study: dict, ws: Path) -> str:
+    """The interface contract (the coupling process's typed ports) and the model
+    definition (composite processes + their parameters) read straight from the
+    baseline composite — the model that produced this study's results."""
+    baselines = study.get("baseline") or []
+    if not baselines:
+        return ""
+    comp = load_composite(ws, baselines[0].get("composite", ""))
+    procs = [p for p in _processes(comp) if p["cls"] not in _EMITTERS]
+    if not procs:
+        return ""
+    prim = max(procs, key=lambda p: len(p["outputs"]))
+
+    reads = " · ".join(prim["inputs"].keys()) or "—"
+    exposes = " · ".join(prim["outputs"].keys()) or "—"
+    contract = (
+        '<div class="spec-panel contract">'
+        f'<div class="spec-h"><span class="spec-tag">interface contract</span>'
+        f'<code class="spec-cls">{esc(prim["cls"])}</code></div>'
+        f'<div class="port"><span class="port-k">reads</span><code>{esc(reads)}</code></div>'
+        f'<div class="port"><span class="port-k">exposes</span><code>{esc(exposes)}</code></div>'
+        '</div>')
+
+    rows = []
+    for p in procs:
+        params = _fmt_params(p["config"])
+        pstr = "".join(f'<span class="pm"><b>{esc(k)}</b> {esc(v)}</span>' for k, v in params)
+        rows.append(f'<div class="proc"><code class="proc-cls">{esc(p["cls"])}</code>'
+                    f'<span class="proc-params">{pstr or "—"}</span></div>')
+    variants = study.get("variants") or []
+    vstr = ""
+    if variants:
+        vs = " · ".join(f'<code>{esc(v.get("name",""))}</code>' for v in variants)
+        vstr = f'<div class="proc"><span class="port-k">variants</span><span class="proc-params">{vs}</span></div>'
+    model = (
+        '<div class="spec-panel modeldef">'
+        f'<div class="spec-h"><span class="spec-tag">model definition</span>'
+        f'<code class="spec-cls">{esc(comp.get("name",""))}</code></div>'
+        f'{"".join(rows)}{vstr}</div>')
+    return f'<div class="spec">{contract}{model}</div>'
+
+
+def study_card(study: dict, order: int, inv_map: dict, ws: Path) -> str:
     slug = study.get("name", "")
     title = study.get("title") or slug
     claim = study.get("claim") or ""
     oc = outcomes(study)
     figs = "".join(study_figures(study))
-    inv_html = ""
+    spec = spec_block_html(study, ws)
 
     # collapsible full detail — the parts a reader only wants on demand
     findings = study.get("findings", [])
@@ -428,7 +535,7 @@ def study_card(study: dict, order: int, inv_map: dict) -> str:
         </div>
       </div>
       {chips(oc)}
-      {inv_html}
+      {spec}
       <div class="figs">{figs}</div>
       {detail}
     </article>"""
@@ -504,7 +611,7 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
         </section>""")
 
     # ── studies
-    cards = "".join(study_card(by_slug[s], i + 1, inv_map)
+    cards = "".join(study_card(by_slug[s], i + 1, inv_map, ws)
                     for i, s in enumerate(sn for sn in order if sn in by_slug))
 
     # ── shared caveats (lifted from identical per-study boilerplate)
@@ -785,6 +892,29 @@ figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:1
 
 /* study figure images (simulation movies) */
 .fig-img{width:100%;height:auto;display:block;border-radius:8px}
+
+/* model definition + interface contract (datasheet read from the composite) */
+.spec{display:flex;flex-direction:column;gap:12px;margin:20px 0 0}
+.spec-panel{background:color-mix(in srgb,var(--teal) 4%,var(--surface));border:1px solid var(--line);
+  border-radius:11px;padding:13px 16px;min-width:0}
+.spec-panel.contract{border-left:3px solid var(--teal)}
+.spec-panel.modeldef{border-left:3px solid var(--ochre)}
+.spec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px;
+  padding-bottom:8px;border-bottom:1px solid var(--line)}
+.spec-tag{font:700 .62rem var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.contract .spec-tag{color:var(--teal)}
+.modeldef .spec-tag{color:var(--ochre)}
+.spec-cls{font-family:var(--mono);font-size:.82rem;color:var(--ink);background:none;padding:0}
+.port{display:flex;gap:10px;align-items:baseline;margin:5px 0;font-size:.82rem}
+.port-k{flex:none;width:60px;font:600 .64rem var(--sans);text-transform:uppercase;letter-spacing:.05em;
+  color:var(--muted)}
+.port code{font-family:var(--mono);font-size:.8rem;color:var(--ink-2);background:none;padding:0;word-break:break-word}
+.proc{display:flex;gap:12px;align-items:baseline;margin:7px 0;font-size:.8rem;flex-wrap:wrap}
+.proc-cls{flex:none;font-family:var(--mono);font-size:.8rem;font-weight:700;color:var(--ochre-2);
+  background:none;padding:0}
+.proc-params{color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;min-width:0}
+.pm{font-family:var(--mono);font-size:.73rem;white-space:nowrap}
+.pm b{color:var(--ink-2);font-weight:600}
 
 /* substitutability paired bars */
 .subst{width:100%;height:auto;display:block;overflow:visible;max-width:440px}
