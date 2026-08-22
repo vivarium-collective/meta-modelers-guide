@@ -30,8 +30,9 @@ def test_cell_holds_then_disintegrates_into_scattering_debris():
     assert comp.state["obs"]["area"] > 30
     assert comp.state["obs"]["released"] in (False, 0, 0.0)
     # late: released, dissolved (area == 0 by tick 16, well under the tick-24
-    # checkpoint), debris present (68 shed particles, observed deterministic
-    # across repeated runs) and spreading
+    # checkpoint), debris present (63 shed particles, observed deterministic
+    # across repeated runs; the CPM->particle mass ledger closes -- each shed
+    # particle is a distinct vacated pixel, no double-count) and spreading
     comp.run(18)
     assert comp.state["obs"]["released"] in (True, 1, 1.0)
     assert comp.state["obs"]["area"] < 10

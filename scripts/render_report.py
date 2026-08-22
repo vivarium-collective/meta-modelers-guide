@@ -321,13 +321,146 @@ def load_study(ws: Path, slug: str) -> dict:
     return {}
 
 
-def outcomes(study: dict) -> list[tuple[str, str]]:
+def outcomes(study: dict) -> list[tuple[str, str, str]]:
+    """(name, detail, result) for each outcome of the study's first run with
+    outcomes. ``result`` (PASS / POSITIVE / fail …) is carried through so an
+    expected-fail control can be rendered distinctly from a generic PASS."""
     for r in study.get("runs", []):
         oc = r.get("outcomes") or {}
         if oc:
-            return [(k, v.get("detail", "") if isinstance(v, dict) else str(v))
-                    for k, v in oc.items()]
+            out = []
+            for k, v in oc.items():
+                if isinstance(v, dict):
+                    out.append((k, v.get("detail", ""), str(v.get("result", ""))))
+                else:
+                    out.append((k, str(v), ""))
+            return out
     return []
+
+
+# ── Verdict-count split (peer-review M6d) ─────────────────────────────────────
+# A study's ``behavior_tests`` are not all the same kind of evidence, and the
+# report must not tally them as one undifferentiated pile of PASSes. Three
+# buckets, read off each test entry:
+#   * committed     — a rerunnable pytest backs it (its provenance / committed_test
+#                     cites a ``tests/test_*.py`` path);
+#   * narrated      — a documented / diagnostic check with no committed pytest
+#                     (evidence from a run readout or a documented regime sweep);
+#   * expected_fail — an expected-fail control (``expected_result: fail``, e.g.
+#                     draft-is-inert): passing means the draft correctly FAILED
+#                     by design, which is not a generic PASS.
+_TEST_PATH_RE = re.compile(r"tests/test_[\w/]+\.py")
+
+
+def _behavior_tests(study: dict) -> list:
+    return study.get("behavior_tests") or []
+
+
+def classify_behavior_tests(study: dict) -> dict:
+    counts = {"committed": 0, "narrated": 0, "expected_fail": 0}
+    for t in _behavior_tests(study):
+        if str(t.get("expected_result", "")).lower() == "fail":
+            counts["expected_fail"] += 1
+            continue
+        prov = (str((t.get("pass_if") or {}).get("provenance", ""))
+                + " " + str(t.get("committed_test", "")))
+        if _TEST_PATH_RE.search(prov):
+            counts["committed"] += 1
+        else:
+            counts["narrated"] += 1
+    return counts
+
+
+def report_test_ledger(studies: list[dict]) -> dict:
+    total = {"committed": 0, "narrated": 0, "expected_fail": 0}
+    for s in studies:
+        for k, v in classify_behavior_tests(s).items():
+            total[k] += v
+    return total
+
+
+# ── Provenance / environment block (peer-review minor 11) ─────────────────────
+# So a reader knows exactly what produced a report: the git commit, the host
+# platform, and the versions of the simulation stack that were importable when
+# it was rendered. Degrades gracefully — a missing package or absent git is
+# simply omitted, never a crash — and bakes NO absolute paths.
+_ENV_PACKAGES = [
+    ("process-bigraph", "process_bigraph"),
+    ("bigraph-schema", "bigraph_schema"),
+    ("spatio-flux", "spatio_flux"),
+    ("cobra", "cobra"),
+    ("viva-cpm", "viva_cpm"),
+    ("vivarium-cpm", "vivarium_cpm"),
+    ("cpm", "cpm"),
+]
+
+
+def _package_version(dist_label: str, module_name: str) -> str | None:
+    import importlib
+    try:
+        mod = importlib.import_module(module_name)
+    except Exception:
+        return None
+    ver = getattr(mod, "__version__", None)
+    if ver:
+        return str(ver)
+    try:
+        from importlib.metadata import version as _dist_version
+        return str(_dist_version(dist_label))
+    except Exception:
+        return "installed"
+
+
+def _git_commit(ws: Path) -> str | None:
+    import subprocess
+    try:
+        r = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                           cwd=str(ws), capture_output=True, text=True, timeout=5)
+    except Exception:
+        return None
+    out = (r.stdout or "").strip()
+    return out if r.returncode == 0 and out else None
+
+
+def environment_block(ws: Path) -> str:
+    import platform as _platform
+    items: list[tuple[str, str]] = []
+    commit = _git_commit(ws)
+    if commit:
+        items.append(("commit", commit))
+    items.append(("platform",
+                  f"{_platform.python_implementation()} {_platform.python_version()} · "
+                  f"{_platform.system()} {_platform.machine()}"))
+    for label, module_name in _ENV_PACKAGES:
+        ver = _package_version(label, module_name)
+        if ver is not None:
+            items.append((label, ver))
+    cells = "".join(
+        f'<div class="env-item"><span class="env-k">{esc(k)}</span>'
+        f'<span class="env-v">{esc(v)}</span></div>' for k, v in items)
+    return f"""
+    <section class="env" aria-label="provenance and environment">
+      <span class="kicker">Provenance &amp; environment</span>
+      <div class="env-grid">{cells}</div>
+    </section>"""
+
+
+# Outcome badge: an expected-fail control (draft-is-inert) is rendered as a
+# distinct "EXPECTED FAIL" chip, never a green PASS.
+_OUTCOME_BADGE = {
+    "xfail": ("warn", "expected fail"),
+    "positive": ("ok", "positive"),
+    "pass": ("ok", "pass"),
+}
+
+
+def _outcome_kind(detail: str, result: str) -> str:
+    d = (detail or "").lower()
+    if "expected-fail" in d or "expected fail" in d or str(result).lower() == "fail":
+        return "xfail"
+    if str(result).upper() == "POSITIVE":
+        return "positive"
+    return "pass"
 
 
 def study_exec_svgs(study: dict) -> list[Path]:
@@ -375,6 +508,20 @@ def chips(pairs: list[tuple[str, str]]) -> str:
     for k, v in pairs:
         out.append(f'<div class="chip"><span class="chip-k">{esc(k.replace("-"," "))}</span>'
                    f'<span class="chip-v">{md_inline(v)}</span></div>')
+    return f'<div class="chips">{"".join(out)}</div>' if out else ""
+
+
+def outcome_chips(triples: list[tuple[str, str, str]]) -> str:
+    """Render run outcomes as chips, badging each by kind so an expected-fail
+    control (draft-is-inert) reads as EXPECTED FAIL, not a generic PASS."""
+    out = []
+    for name, detail, result in triples:
+        kind = _outcome_kind(detail, result)
+        bcls, blabel = _OUTCOME_BADGE[kind]
+        out.append(
+            f'<div class="chip chip-{kind}"><span class="chip-k">{esc(name.replace("-"," "))} '
+            f'<span class="badge {bcls} chip-badge">{esc(blabel)}</span></span>'
+            f'<span class="chip-v">{md_inline(detail)}</span></div>')
     return f'<div class="chips">{"".join(out)}</div>' if out else ""
 
 
@@ -549,7 +696,7 @@ def study_card(study: dict, order: int, inv_map: dict, ws: Path) -> str:
           <p class="claim">{md_inline(claim)}</p>
         </div>
       </div>
-      {chips(oc)}
+      {outcome_chips(oc)}
       {spec}
       <div class="figs">{figs}</div>
       {detail}
@@ -588,11 +735,23 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
 
     # ── hero stats
     n_figs = sum(1 for s in studies if study_figures(s))
+    ledger = report_test_ledger(studies)
     stats = [("studies", str(len(studies))),
              ("composition patterns", str(len(studies))),
              ("with figures", str(n_figs)),
+             ("committed pytests", str(ledger["committed"])),
              ("modalities realized", "2 of 4")]
     stat_html = "".join(f'<div class="stat"><b>{v}</b><span>{esc(k)}</span></div>' for k, v in stats)
+
+    # ── verdict-count split (M6d): committed pytests counted apart from
+    # narrated/diagnostic checks and from expected-fail controls (which pass by
+    # failing, so are never tallied as generic PASSes).
+    ledger_html = f"""
+    <div class="ledger" aria-label="test ledger">
+      <span class="ledger-item"><b>{ledger['committed']}</b> committed rerunnable pytests</span>
+      <span class="ledger-item"><b>{ledger['narrated']}</b> narrated / diagnostic checks</span>
+      <span class="ledger-item ledger-xfail"><b>{ledger['expected_fail']}</b> expected-fail controls (draft-is-inert)</span>
+    </div>"""
 
     # ── the arc (an SVG through-line: the studies as an ordered path)
     arc_svg = arc_diagram_svg(studies)
@@ -671,6 +830,7 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
       <p class="thesis">{md_inline(inv.get('lead') or execu.get('what_is_this') or '')}</p>
       <div class="verdict"><span class="badge {vbadge_cls}">{esc(vbadge_label)}</span>
         <p>{md_inline(verdict)}</p></div>
+      {ledger_html}
       <div class="stats">{stat_html}</div>
     </header>
 
@@ -697,6 +857,8 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     </section>
 
     {shared_html}
+
+    {environment_block(ws)}
 
     <footer class="foot">
       <p>Generated from <code>investigation.yaml</code> + measured readouts ·
@@ -853,6 +1015,17 @@ figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:1
   max-width:100%}
 .chip-k{display:block;font-size:.66rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
 .chip-v{font-family:var(--mono);font-size:.82rem;color:var(--ink)}
+.chip-badge{font-size:.58rem;padding:1px 6px;vertical-align:middle}
+.chip-xfail{border-color:color-mix(in srgb,var(--ochre) 45%,var(--line))}
+.chip-xfail .chip-k{color:var(--ochre)}
+.ledger{display:flex;flex-wrap:wrap;gap:10px 20px;margin:16px 0 0;font-size:.82rem;color:var(--ink-2)}
+.ledger-item b{font-family:var(--serif);font-size:1.05rem;color:var(--teal);margin-right:5px}
+.ledger-xfail b{color:var(--ochre)}
+.env{margin:40px 0 0}
+.env-grid{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0}
+.env-item{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:7px 12px}
+.env-k{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+.env-v{font-family:var(--mono);font-size:.8rem;color:var(--ink)}
 .invariant{margin:14px 0 0;padding:10px 14px;border-radius:9px;font-size:.9rem;color:var(--ink-2);
   background:color-mix(in srgb,var(--teal) 8%,transparent);border-left:3px solid var(--teal)}
 .inv-k{font-family:var(--sans);font-size:.64rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;

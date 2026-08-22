@@ -111,11 +111,12 @@ executive:
     (CPM volume 32 -> 110 pixels, roughly 3.4x, against a 3600-pixel lattice it does not come close
     to filling), and secretes acetate that diffuses outward into a plume. This is niche construction
     as a real spatial and metabolic consequence of coupling two independently-built simulators, not
-    a scripted trajectory. Substitutability is shown as surrogate calibration, not yet as a held-out
-    finding: a tuned Michaelis-Menten twin (four free parameters) reproduces the interface
-    observables within ~10% on the condition it was tuned on, behind the same byte-identical ports —
-    calibrated agreement, with a held-out condition neither mechanism saw the named next step before
-    the word "substitutable" is earned. These are demonstrations with toy-real
+    a scripted trajectory. Substitutability is now measured against held-out conditions, and the
+    surrogate's boundary is pinned rather than assumed: a tuned Michaelis-Menten twin reproduces the
+    interface observables and generalizes within ~13% to conditions it was not tuned on WITHIN the
+    calibrated glucose-limited/fixed-O2 regime, but diverges ~74% on a held-out oxygen cap the lumped
+    box has no variable for — mechanism-independence inside the regime, surrogate calibration across
+    the O2 axis. These are demonstrations with toy-real
     constants, not calibrated models, and each study names its own honest gap — the whole is a
     proof that the paper's interfaces compose and behave as claimed, not a quantitatively validated
     cell.
@@ -219,16 +220,19 @@ scientific_argument:
     metabolism is swapped from dynamic-FBA to a lumped Michaelis-Menten kinetic (four free parameters
     — vmax, km, yield, overflow — tuned to match, not derived) behind the byte-identical CpmCellField
     ports, and the interface-level observables (growth, local depletion, secretion) agree within ~10%
-    on the tuned condition. Four knobs fit to roughly four observables is optimizer success; genuine
-    mechanism-independence requires agreement on a condition neither mechanism was tuned on (a
-    different field, O2 cap, or run length) — the named next step. At the multi-cell colony: the same
-    swap behind the byte-identical CpmColonyField ports preserves the colony observables (total
-    biomass 302.4 vs 287.6, competition ratio 3.69x vs 3.47x); the ~0.2% total-volume agreement,
-    however, is measured at ~97.5% lattice occupancy, a finite-lattice saturation ceiling both
-    mechanisms hit, so that number is guaranteed by the artifact, not the interface — a pre-saturation
-    comparison is the pending fix. The Michaelis-Menten arm does run with cobra absent entirely. Same
-    ports, different mechanism, calibrated agreement at two levels; held-out generalization and a
-    pre-saturation colony window are the named frontier, not a silent gap.
+    on the tuned condition. Four knobs fit to roughly four observables is optimizer success on that
+    one condition; held-out, the swap IS mechanism-independent WITHIN the calibrated
+    glucose-limited/fixed-O2 regime (agreement ~13% on a different glucose field and a 2x run), but on
+    a held-out O2 cap the lumped box has no oxygen variable for, dFBA nearly quadruples growth and
+    agreement diverges ~74% — the surrogate's structural boundary, measured. At the multi-cell colony:
+    the swap behind the byte-identical CpmColonyField ports preserves the growth/competition
+    observables pre-saturation (~9%; total biomass 302.4 vs 287.6, competition ratio 3.69x vs 3.47x);
+    the ~0.2% total-volume and acetate agreement was measured at ~97.5% lattice occupancy and is a
+    finite-lattice saturation artifact — pre-saturation the acetate plume diverges ~68% (dFBA saturates
+    early, the overflow surrogate only catches up at the endpoint it was tuned to). The Michaelis-Menten
+    arm does run with cobra absent entirely. Same ports, different mechanism: mechanism-independence
+    holds within each regime, and where it breaks (the O2 axis; the acetate trajectory) is now measured,
+    not a silent gap.
   evidence_against:
   - >-
     Each study realizes only part of its pattern's full claim: two of the four physical modalities
@@ -349,8 +353,9 @@ at_a_glance:
   role: >-
     [COMPOSE across timescales · capstone] A colony develops a rim/core organization (emergent from
     internal mass balance) and evolves a heritable uptake trait under selection-by-differential-
-    division — mean trait up in 4/5 seeds versus frozen no-mutation and undirected no-selection
-    controls. Composition organizing adaptation across timescales.
+    division — mean trait up significantly over a 30-seed ensemble (Mann-Whitney p = 5.3e-4,
+    drift-null p = 1.2e-5), gated on the ensemble statistic not a flagship seed, versus frozen
+    no-mutation and undirected no-selection controls. Composition organizing adaptation across timescales.
 how_to_read: >-
   Read the nine studies as three moves the paper makes with an interface, not only a linear arc.
   COMPOSE is the through-line — every study couples the interface to other entities and measures the
@@ -409,10 +414,13 @@ glossary:
     kinetic, four free parameters, behind byte-identical CpmCellField ports) and the cell-cell colony
     (the same tuned swap behind byte-identical CpmColonyField ports) — the interface observables agree
     within ~10% on the condition the surrogate was tuned on. Four knobs matching roughly four
-    observables demonstrates that a surrogate CAN be fit, not that the mechanisms are
-    interchangeable; the claim is earned only when the agreement holds on a HELD-OUT condition neither
-    mechanism was tuned on (and, for the colony, before lattice saturation). That held-out test is the
-    named frontier, together with broadening the swap to the other levels.
+    observables demonstrates that a surrogate CAN be fit; whether the mechanisms are interchangeable
+    is decided by held-out agreement, which is now measured. Held-out, the swap is
+    mechanism-independent WITHIN its calibrated regime (single cell ~13% on untuned glucose/time;
+    colony growth ~9% pre-saturation) and surrogate calibration only where the lumped box lacks a
+    variable the mechanism needs (the O2 axis, ~74%; the acetate trajectory, ~68% pre-saturation) —
+    the equivalence class holds inside the regime and its boundary is pinned, not assumed. Broadening
+    the swap to the other levels of composition remains the frontier.
 - term: The three moves (compose · swap · emerge)
   definition: >-
     The three things the paper does with an interface, and the spine of this investigation. COMPOSE
@@ -453,9 +461,12 @@ competing_frameworks:
     the multi-cell colony (CpmColonyField) — and the interface-level relation holds on the tuned
     condition each time. This is CONSISTENT WITH the interface-first prediction but does not yet
     discriminate against mechanism-first: a four-knob surrogate can be made to match roughly four
-    observables by construction. The test that would discriminate — agreement on a HELD-OUT condition
-    neither mechanism was tuned on — is not yet run; until it is, this is surrogate calibration, not
-    evidence that the pattern is a property of the interface rather than the mechanism.
+    observables by construction. The discriminating test — agreement on a HELD-OUT condition neither
+    mechanism was tuned on — has now been run: within the calibrated regime the interface relation
+    holds (single cell ~13%, colony growth ~9% pre-saturation), evidence that there the pattern is a
+    property of the interface, not the mechanism; where the lumped mechanism lacks a needed variable
+    (the O2 axis ~74%, the acetate trajectory ~68%) the relation breaks, and mechanism-first wins.
+    The equivalence-class claim is thus true but regime-bounded, with the boundary measured.
 studies:
 - cellular-interface
 - cell-environment-coupling
@@ -509,14 +520,24 @@ acceptance_criteria:
     faster than the identical membrane with production ON (knockout strictly below control). A
     directional prediction, independent of the exact persistence step counts.
   - >-
-    Selection prior — under selection-by-differential-division the population-mean uptake trait
-    drifts UP relative to a no-selection control; this is currently under-powered (n=5, 4/5 vs 2/5,
-    not significant) and is stated as consistent-with, pending a >=20-seed drift-null test.
+    Selection prior — MET. Under selection-by-differential-division the population-mean uptake trait
+    drifts UP relative to a no-selection control. Measured over a 30-seed ensemble per arm
+    (selection-ON mean delta +0.233 up in 22/30, no-selection -0.026 up in 13/30): Mann-Whitney
+    U p = 5.3e-4, rank-biserial r = +0.52, and a Wilcoxon drift-null gives p = 1.2e-5 — the shift is
+    distinguishable from neutral drift. The gate is on this ensemble statistic, not a flagship seed.
+    The effect is significant but medium — about a third of selection-ON seeds still drift down.
   - >-
-    Substitutability prior (NOT YET MET) — a tuned surrogate that matches on its calibration
-    condition is accepted as evidence of mechanism-independence ONLY once it also agrees, within
-    tolerance, on a HELD-OUT condition neither mechanism was tuned on. The current swaps match on the
-    tuned condition only; this criterion is explicitly open (the named SWAP frontier).
+    Substitutability prior — MEASURED, and the surrogate's boundary is now pinned, not assumed. A
+    tuned surrogate is accepted as mechanism-independence only where it agrees on a HELD-OUT condition
+    neither mechanism was tuned on. Single cell: the swap IS mechanism-independent WITHIN the
+    calibrated glucose-limited/fixed-O2 regime (held-out ~13% on a different glucose field and a 2x
+    run), but the lumped Michaelis-Menten box carries no oxygen variable, so on a held-out O2 cap it
+    diverges ~74% — surrogate calibration, not mechanism-independence, across the O2 axis. Colony: the
+    growth/competition observables are substitutable pre-saturation (~9%), but the ~0.2% acetate match
+    is a lattice-saturation artifact — pre-saturation the acetate diverges ~68%. Degrees of freedom:
+    single cell 4 params / 4 observables (exactly determined; the in-regime held-out agreement is the
+    real evidence), colony 2 free / 6 observables (over-constrained, and the one parameter the
+    surrogate controls is exactly the acetate that fails).
   external_anchors:
   - >-
     Acetate yield under overflow — order-of-magnitude anchor ~0.3-0.5 mol acetate / mol glucose

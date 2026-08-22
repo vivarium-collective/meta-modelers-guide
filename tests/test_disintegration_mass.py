@@ -1,29 +1,29 @@
-"""Mass accounting for CpmDisintegration's particle-shedding bridge: "shed material,
-not deleted mass" is closed at the per-tick level, not merely mostly-true in
-aggregate.
+"""Per-tick mass accounting for CpmDisintegration's particle-shedding bridge:
+"shed material, not deleted mass" is closed tick by tick, not merely
+mostly-true in aggregate. (The aggregate ledger + the double-count it fixes
+live in ``tests/test_disintegration_ledger.py``; this file pins the per-tick
+invariant.)
 
 Independently reproduces, from OUTSIDE the process (never reading its private
-``_prev_fp``/``_pid`` state), the footprint diff `CpmDisintegration.update` computes
-internally each tick: ``vacated = prev_footprint & ~curr_footprint``, snapshotted
-immediately before/after `Composite.run(1)`. That external per-tick ``vacated`` count
-is then compared against the ACTUAL per-tick growth of the shared `particles` store
-(which only ever grows via the `_add` sentinel, so ``len(particles)`` after minus
-before a tick IS that tick's shed count).
+``_prev_fp``/``_pid``/``_shed_pixels`` state), the footprint diff
+``CpmDisintegration.update`` computes internally each tick:
+``vacated = prev_footprint & ~curr_footprint``, snapshotted immediately
+before/after ``Composite.run(1)``. That external per-tick vacated set is then
+filtered to FRESH pixels (never shed on an earlier tick) and capped, and
+compared against the ACTUAL per-tick growth of the shared ``particles`` store
+(add-only, so ``len(particles)`` after minus before a tick IS that tick's shed
+count).
 
-Measured relationship (verified below, not assumed): on ticks where the vacated
-count is UNDER `max_particles_per_tick`, every vacated pixel becomes a particle
-(``shed_this_tick == vacated_this_tick``). On ticks where vacated pixels exceed the
-cap (the resorption ramp vacates faster than 8/tick during the steepest part of the
-collapse), the per-tick cap binds and only `max_particles_per_tick` of that tick's
-vacated pixels become particles -- the rest are vacated-but-unshed-this-tick, not
-lost mass, since the shed:vacated relationship is asserted exactly (not "close to")
-on every single tick: ``shed_this_tick == min(vacated_this_tick, max_particles_per_tick)``.
-Summed over the whole run this means total shed <= total vacated, with the gap
-explained entirely by the per-tick cap -- NOT exact equality of the two totals,
-which would be dishonest given the cap. A representative run: 75 pixels vacated
-across the release phase, 68 became particles (cap bound on the 6 steepest ticks:
-7, 9, 13, 14, 15 each over-cap by 2-3, tick 8 exactly at cap), matching
-`sum(min(vacated_t, cap))` exactly.
+The exact, honest per-tick invariant the fixed shedding logic implements is
+``shed_this_tick == min(n_fresh_vacated_this_tick, max_particles_per_tick)`` --
+NOT ``min(vacated, cap)``. The difference is the fix for peer-review issue M5:
+a pixel vacated, re-occupied by ordinary CPM (Metropolis) fluctuation as the
+footprint drifts while it resorbs, then vacated AGAIN is NOT shed a second time
+(that would emit a second particle at the same pixel center and manufacture
+mass). Measured on the flagship run: 75 pixel-vacation events over 69 unique
+pixels; 6 of those events are re-vacations, and the fixed logic sheds 63
+particles (each a distinct pixel), where the pre-fix ``min(vacated, cap)`` would
+have shed 68 -- 6 of them double-counted mass.
 """
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ pytest.importorskip("spatio_flux")
 COMPOSITES = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"
 
 
-def test_shed_particles_equal_vacated_pixels_within_per_tick_cap():
+def test_shed_particles_equal_fresh_vacated_pixels_within_per_tick_cap():
     core = build_core()
     doc = json.loads((COMPOSITES / "disintegration-spatial.composite.json").read_text())
     state = doc["state"]
@@ -66,54 +66,63 @@ def test_shed_particles_equal_vacated_pixels_within_per_tick_cap():
     prev_fp = footprint()
     prev_n_particles = len(comp.state.get("particles", {}) or {})
 
-    total_vacated_while_released = 0
+    # external mirror of the process's `_shed_pixels` guard -- pixels already
+    # turned into a particle on some earlier tick, which must never shed again.
+    already_shed: set[tuple[int, int]] = set()
+
+    total_fresh_vacated_while_released = 0
     total_shed_while_released = 0
     per_tick_cap_bound_count = 0
+    re_vacation_events = 0                 # a vacated pixel that was already shed
 
     for _ in range(24):
         comp.run(1)
 
         curr_fp = footprint()
-        vacated_this_tick = int((prev_fp & ~curr_fp).sum())
+        rows, cols = np.nonzero(prev_fp & ~curr_fp)
+        vac = [(int(r), int(c)) for r, c in zip(rows.tolist(), cols.tolist())]
 
         n_particles = len(comp.state.get("particles", {}) or {})
         shed_this_tick = n_particles - prev_n_particles
 
         if comp.state["obs"]["released"] in (True, 1, 1.0):
-            # The exact, honest per-tick invariant the process's shedding logic
-            # actually implements (disintegration.py `update`: `n_shed =
-            # min(len(rows), max_particles_per_tick)`) -- NOT a loose "roughly
-            # equal" check. This is the one place mass could silently go
-            # missing (a vacated pixel that never becomes a particle and isn't
-            # accounted for by the cap), and it does not.
-            assert shed_this_tick == min(vacated_this_tick, cap), (
-                f"shed {shed_this_tick} != min(vacated {vacated_this_tick}, cap {cap})"
+            fresh = [p for p in vac if p not in already_shed]
+            re_vacation_events += len(vac) - len(fresh)
+            expected_shed = min(len(fresh), cap)
+
+            # The exact, honest per-tick invariant the fixed shedding logic
+            # implements (disintegration.py `update`: skip `_shed_pixels`, cap on
+            # FRESH emissions). This is the one place mass could silently be
+            # manufactured (a re-vacated pixel shed a second time) -- and it is
+            # not: shed == fresh-capped, never == vacated-capped when they differ.
+            assert shed_this_tick == expected_shed, (
+                f"shed {shed_this_tick} != min(fresh {len(fresh)}, cap {cap}) "
+                f"(raw vacated {len(vac)})"
             )
-            if vacated_this_tick > cap:
+            if len(fresh) > cap:
                 per_tick_cap_bound_count += 1
 
-            total_vacated_while_released += vacated_this_tick
+            # advance the mirror by exactly the pixels the process shed (the
+            # first `expected_shed` fresh pixels, in np row-major order).
+            already_shed.update(fresh[:expected_shed])
+
+            total_fresh_vacated_while_released += len(fresh)
             total_shed_while_released += shed_this_tick
         else:
             # Pre-release: the settling CPM footprint wobbles from ordinary
             # Metropolis energetics (no resorption underway yet), so vacated
-            # pixels here are NOT shed -- confirm the process really does skip
-            # shedding on these ticks (the module docstring's stated reason a
-            # settling/live footprint wobble doesn't emit spurious debris).
+            # pixels here are NOT shed.
             assert shed_this_tick == 0
 
         prev_fp = curr_fp
         prev_n_particles = n_particles
 
-    # Sanity: the run actually released and shed a substantial debris cloud
-    # (otherwise the per-tick invariant above would be vacuously true over an
-    # all-False `released` run).
+    # Sanity: the run actually released and shed a substantial debris cloud.
     assert total_shed_while_released > 20
-    assert per_tick_cap_bound_count > 0  # the cap actually bound at least once
+    assert per_tick_cap_bound_count > 0    # the cap actually bound at least once
+    assert re_vacation_events > 0          # re-vacation really happens (the fix matters)
 
-    # The aggregate, honest relationship: total shed is bounded above by total
-    # vacated, with the entire gap explained by the per-tick cap (verified
-    # exactly, tick by tick, above) -- not silently-lost mass. Do NOT assert
-    # exact equality of the two totals: the cap makes that false by
-    # construction whenever a tick's vacated count exceeds it.
-    assert total_shed_while_released <= total_vacated_while_released
+    # Aggregate: every shed particle is a fresh pixel, so total shed is bounded
+    # above by total fresh vacated, the gap explained entirely by the per-tick
+    # cap (verified exactly, tick by tick, above) -- not silently-lost mass.
+    assert total_shed_while_released <= total_fresh_vacated_while_released
