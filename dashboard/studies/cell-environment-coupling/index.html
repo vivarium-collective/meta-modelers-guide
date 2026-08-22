@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="6 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="10 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -657,7 +657,7 @@ interface observable agrees within ~12%, and out to a 2x-longer run (40 ticks) w
 the MM box carries no oxygen variable — on a held-out O2 cap (dFBA 2.5→5.0, dFBA-only) agreement
 COLLAPSES to ~74% (dFBA nearly quadruples biomass/volume; the O2-blind MM twin cannot follow).
 Mechanism-independence holds within the calibrated regime; the O2 axis is the surrogate&#39;s blind
-spot and the honest boundary of the swap.</span></div>
+spot and the honest boundary of the swap.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a source/sink equilibrium. The `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and is run ~120 ticks to a VERIFIED flux steady state — d(biomass)/dt and both field fluxes fall below tolerance while the cell keeps metabolizing at maintenance. This answers the limitation the flagship itself flags (the field has no continuous source or decay term).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">M7d cadence rigor check (peer review) — the flagship&#39;s operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1, and only the PDE substeps are CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 -&gt; 0.5 -&gt; 0.25) and measuring the drift in the four gated observables between the two finest levels tests whether the pinned trajectories are cadence-converged. Convergence band is &lt;= 10%. HONEST two-sided result — the three TIME-INTEGRATED gated observables converge tightly, but the INSTANTANEOUS local-footprint glucose does NOT (it is the one pinned trajectory that moves under refinement, flagged on F-02 below).</span></div>
       </div>
       
     </div>
@@ -748,7 +748,17 @@ trajectory. Confirmed: local footprint glucose concentration peaks at 1.15 (t=2)
 0.94 by t=20 — ~18% peak-to-trough (the peak is created by diffusion inflow after t=0) and ~6%
 from the initial condition — while the field-wide glucose total falls by only
 ~32 of 5940 units — the depletion signature is sharply local to the cell&#39;s own footprint and
-its immediate diffusive neighborhood, not a field-wide event.</span>
+its immediate diffusive neighborhood, not a field-wide event.
+
+CADENCE CAVEAT (M7d re-level) — the QUALITATIVE finding (a sharply-local depletion halo,
+net field-wide sink) is cadence-robust, and the field-wide net-consumption number (~32 units)
+is cadence-converged (&lt; 2% drift under cadence halving, see `cadence-convergence`). But the
+INSTANTANEOUS local-footprint figures quoted here — the 0.94 endpoint, the ~18% peak-to-trough
+and ~6%-from-initial depths — are NOT cadence-converged — the local footprint concentration is
+a single-tick snapshot over a stochastically-shifting CPM footprint (whose fixed mcs_per_update
+is not interval-scaled), and it drifts ~16% between coupling cadence 0.25 and 0.5. These local
+depths are therefore APPROXIMATE, cadence-1 readings, not converged quantities; the load-bearing
+claim (local depletion happens and is sharply local) stands.</span>
             
             <span class="finding-chip">via <code>net-glucose-consumed</code></span>
             
@@ -762,7 +772,7 @@ its immediate diffusive neighborhood, not a field-wide event.</span>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> local footprint glucose 1.15 -&gt; 0.94 (~18% peak-to-trough, ~6% from initial); field-wide glucose 5940.0 -&gt; ~5908.4 · 
+              <strong>observed:</strong> local footprint glucose 1.15 -&gt; 0.94 (~18% peak-to-trough, ~6% from initial — approximate, NOT cadence-converged — see cadence-convergence, ~16% drift under cadence halving); field-wide glucose 5940.0 -&gt; ~5908.4 (net consumption cadence-converged &lt; 2%) · 
               
               via test <a href="#bt-net-glucose-consumed" onclick="_gotoStudyTab('tests','bt-net-glucose-consumed');return false;"><code>net-glucose-consumed</code></a> · 
               in run <a href="#run-single-cell-in-a-field"><code>single-cell-in-a-field</code></a>
@@ -973,6 +983,106 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 0.15</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-methodological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">STEADY-STATE REGIME (M7d, peer review) — the flagship is a pure transient (no source terms), so every flagship number is a transient reading, never a source/sink equilibrium, and the study itself flags this as a limitation. Adding three cell-independent terms behind the same `CpmCellField` ports — a first-order glucose source (grid-wide relaxation toward a setpoint), a first-order acetate decay sink, and a logistic biomass carrying capacity — turns the composite into a chemostat-like regime that reaches a VERIFIED flux steady state. Confirmed — over the final 10 of 120 ticks the per-tick relative change of biomass (0.0015%), field glucose (0.0001%), and field acetate (0.014%) all fall below the 0.1% steady-state tolerance, with standing values biomass ~0.500, CPM volume ~147 px, local glucose ~1.356, field glucose ~5372 (uptake balanced by source), field acetate ~31.5 (secretion balanced by decay); the cell is alive and metabolizing at the fixed point. Note — a biomass dilution term alone gives NO interior fixed point in this coupling (per-pixel uptake scales with biomass/footprint-area, so local glucose equilibrates biomass-independently and mu never falls to a dilution rate); the logistic carrying capacity is what forces every flux to a steady state. This demonstrates the source/sink-equilibrium regime the flagship deferred.</span>
+            
+            <span class="finding-chip">via <code>steadystate-flux-equilibrium</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-06</span>
+              <span class="finding-kind">methodological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> per-tick relative flux &lt; 0.1% over the final 10 of 120 ticks (biomass 0.0015%, glucose 0.0001%, acetate 0.014%); standing values biomass ~0.500, volume ~147 px, local glucose ~1.356, field glucose ~5372, field acetate ~31.5 · 
+              
+              via test <a href="#bt-steadystate-flux-equilibrium" onclick="_gotoStudyTab('tests','bt-steadystate-flux-equilibrium');return false;"><code>steadystate-flux-equilibrium</code></a> · 
+              in run <a href="#run-single-cell-in-a-field-steadystate"><code>single-cell-in-a-field-steadystate</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-single-cell-in-a-field-steadystate"><code>single-cell-in-a-field-steadystate</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 0.001</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-methodological finding-status-partial">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◐</span>
+            <span class="finding-claim finding-statement">CADENCE CONVERGENCE (M7d, peer review) — the flagship&#39;s operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1, and only the PDE substeps are CFL-guarded. Halving then quartering the coupling cadence and measuring the drift in the four gated observables between the two finest levels gives an HONEST two-sided result. The three TIME-INTEGRATED gated observables are cadence-robust — between cadence 0.25 and 0.5 final biomass drifts 1.6%, CPM volume 2.6%, net glucose depleted 1.8%, and field-wide acetate 1.7%, all inside the 10% convergence band. But the INSTANTANEOUS local-footprint glucose does NOT converge — it drifts 15.7% (0.864 vs 1.025), exceeding the band, because it is a single-tick snapshot over a stochastically-shifting CPM footprint and the CPM&#39;s fixed mcs_per_update is not interval-scaled (halving the cadence doubles the total Monte-Carlo relaxation the lattice receives). Re-level — the integrated flagship claims (biomass/volume growth, acetate plume, net glucose sink) are cadence-converged and stand as-is; F-02&#39;s LOCAL-DEPLETION pin (the 0.94 endpoint, ~18% peak-to-trough, ~6%-from-initial depths) is cadence-sensitive and is re-levelled to an approximate, cadence-1 reading — the one pinned trajectory the cadence check moves.</span>
+            
+            <span class="finding-chip">via <code>cadence-convergence</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-07</span>
+              <span class="finding-kind">methodological</span>
+              <span class="finding-status-text">partial literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> drift between finest two cadences (0.25 vs 0.5) — biomass 1.6%, volume 2.6%, net glucose 1.8%, acetate 1.7% (all &lt; 10% band); local-footprint glucose 15.7% (exceeds band — NOT converged) · 
+              
+              via test <a href="#bt-cadence-convergence" onclick="_gotoStudyTab('tests','bt-cadence-convergence');return false;"><code>cadence-convergence</code></a> · 
+              in run <a href="#run-single-cell-in-a-field"><code>single-cell-in-a-field</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-single-cell-in-a-field"><code>single-cell-in-a-field</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 0.1</code></div>
             
             
             
@@ -1577,6 +1687,84 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "HELD-OU
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-steadystate-flux-equilibrium"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="steadystate-flux-equilibrium"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">steadystate-flux-equilibrium</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>single-cell-in-a-field-steadystate</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a source/sink equilibrium. The `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and is run ~120 ticks to a VERIFIED flux steady state — d(biomass)/dt and both field fluxes fall below tolerance while the cell keeps metabolizing at maintenance. This answers the limitation the flagship itself flags (the field has no continuous source or decay term).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max per-tick relative change of biomass and of each field total over the final 10 of 120 ticks", "kind": "observable", "path": "obs.biomass, fields.glucose, fields.acetate"}
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "STEADY STATE REACHED. Criterion \u2014 over the final 10 of 120 ticks the max per-tick relative change of biomass and of both field totals is \u003c 0.1%. Measured (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state) \u2014 biomass 0.0015%/tick, field glucose 0.0001%/tick, field acetate 0.014%/tick, all three below the 0.1% tolerance. Standing steady-state values \u2014 biomass ~0.500 (the biomass_capacity ceiling), CPM volume ~147 px (stable to CPM thermal noise ~3 px), local footprint glucose ~1.356, field glucose total ~5372 (uptake balanced by source), field acetate total ~31.5 (secretion balanced by decay). The cell is alive and metabolizing at the fixed point, not a dead/zeroed field.", "value": 0.001}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-cadence-convergence"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="cadence-convergence"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">cadence-convergence</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>single-cell-in-a-field</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">M7d cadence rigor check (peer review) — the flagship&#39;s operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1, and only the PDE substeps are CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 -&gt; 0.5 -&gt; 0.25) and measuring the drift in the four gated observables between the two finest levels tests whether the pinned trajectories are cadence-converged. Convergence band is &lt;= 10%. HONEST two-sided result — the three TIME-INTEGRATED gated observables converge tightly, but the INSTANTANEOUS local-footprint glucose does NOT (it is the one pinned trajectory that moves under refinement, flagged on F-02 below).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "abs(drift) between coupling cadence 0.25 and 0.5 (finest two levels), per observable", "kind": "observable", "path": "obs.biomass, obs.volume, fields.acetate, fields.glucose, obs.local_nutrient"}
+pass_if: {"kind": "rigor_check", "op": "\u003c", "provenance": "MEASURED drift between the finest two cadences (0.25 vs 0.5), deterministic fixed-seed run (tests/test_flagship_field.py::test_flagship_cadence_convergence). CONVERGED within the 10% band \u2014 final biomass 1.6%, CPM volume 2.6%, net glucose depleted 1.8%, field-wide acetate 1.7% (values \u2014 biomass 0.375 vs 0.381, volume 111 vs 114, net glucose 32.3 vs 32.9, acetate 48.1 vs 49.0). NOT CONVERGED \u2014 the instantaneous local-footprint glucose (obs.local_nutrient) drifts 15.7% (0.864 vs 1.025), EXCEEDING the band, because it is a single-tick snapshot over a stochastically-shifting CPM footprint and the CPM\u0027s fixed mcs_per_update is NOT interval-scaled (halving the cadence doubles the total Monte-Carlo relaxation the lattice receives). Finding \u2014 the integrated flagship claims (biomass/volume growth, acetate plume, net glucose sink) are cadence-robust; the local-depletion pin (F-02\u0027s 0.94 / ~18% peak-to-trough / ~6% from initial) is cadence-sensitive and is re-levelled to an approximate, not cadence-converged, reading.", "value": 0.1}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1807,7 +1995,7 @@ separate machinery this composite does not use.</li><li style="margin:2px 0">Gro
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass) are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not fitted to any organism or medium.</li><li style="margin:2px 0">Chemotaxis toward the external field is deferred to a follow-up variant; the cell senses, metabolizes, grows, and secretes, but does not move directionally up-gradient. The minimal extension is well understood — bias the CPM target/footprint up the local gradient (a toy 1-D gradient-drift rule) — so directed action is a small increment, not a new mechanism.</li><li style="margin:2px 0">Growth is roughly exponential in this coupling, so the run is deliberately bounded to ~20-25 ticks to stay spatially legible.</li><li style="margin:2px 0">The metabolized nutrient field is exclusively the spatio-flux ``fields`` store; the CPM cell&#39;s own internal lattice/world lives inside viva-cpm&#39;s Rust engine as a private, write-protected object the coupling process owns, not a process-bigraph store — no other process in the composite reads or writes it, and viva-cpm&#39;s own internal field concept (field_at_cell/secretory_types) is separate machinery this composite does not use.</li><li style="margin:2px 0">The cell&#39;s only channel for acting back on its environment here is metabolic (uptake and secretion). A second, non-metabolic sense/act channel — mechanical stress / traction, where the cell pushes on its surroundings and reads the reaction force — is not modeled; it is a candidate future coupling process alongside chemotaxis.</li><li style="margin:2px 0">The nutrient field has no continuous source or decay term — all dynamics are transient depletion plus diffusion, not a source/sink equilibrium. A standing production/degradation field (a cell- independent supply that reaches equilibrium) is a natural extension for steady-state regimes.</li>
+        <li style="margin:2px 0">e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass) are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not fitted to any organism or medium.</li><li style="margin:2px 0">Chemotaxis toward the external field is deferred to a follow-up variant; the cell senses, metabolizes, grows, and secretes, but does not move directionally up-gradient. The minimal extension is well understood — bias the CPM target/footprint up the local gradient (a toy 1-D gradient-drift rule) — so directed action is a small increment, not a new mechanism.</li><li style="margin:2px 0">Growth is roughly exponential in this coupling, so the run is deliberately bounded to ~20-25 ticks to stay spatially legible.</li><li style="margin:2px 0">The metabolized nutrient field is exclusively the spatio-flux ``fields`` store; the CPM cell&#39;s own internal lattice/world lives inside viva-cpm&#39;s Rust engine as a private, write-protected object the coupling process owns, not a process-bigraph store — no other process in the composite reads or writes it, and viva-cpm&#39;s own internal field concept (field_at_cell/secretory_types) is separate machinery this composite does not use.</li><li style="margin:2px 0">The cell&#39;s only channel for acting back on its environment here is metabolic (uptake and secretion). A second, non-metabolic sense/act channel — mechanical stress / traction, where the cell pushes on its surroundings and reads the reaction force — is not modeled; it is a candidate future coupling process alongside chemotaxis.</li><li style="margin:2px 0">The FLAGSHIP nutrient field has no continuous source or decay term — its 20-tick dynamics are transient depletion plus diffusion, not a source/sink equilibrium. M7d (peer review) now ADDRESSES this — the `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and reaches a verified flux steady state by ~t=100-120 (finding F-06). The flagship itself remains a transient by design; the steady-state regime is the standing-field extension.</li><li style="margin:2px 0">CADENCE (M7d, peer review) — the operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1 and only the PDE substeps are CFL-guarded. A cadence-halving/quartering convergence check (finding F-07) shows the time-integrated gated observables (biomass/volume growth, acetate plume, net glucose sink) are cadence-converged (&lt; 3% drift between cadence 0.25 and 0.5), but the INSTANTANEOUS local-footprint glucose is NOT (~16% drift) because the CPM&#39;s fixed mcs_per_update is not interval-scaled. F-02&#39;s local-depletion depths (0.94 / ~18% / ~6%) are therefore approximate cadence-1 readings, not converged quantities; a cadence-invariant local reading would require interval-scaling the CPM Monte-Carlo sweeps, a follow-up.</li>
       </ul>
     </div>
     
@@ -1869,7 +2057,7 @@ separate machinery this composite does not use.</li><li style="margin:2px 0">Gro
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "ebf32cafa819670a0f9db3fad73cde92343bc5ae", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/ebf32cafa819670a0f9db3fad73cde92343bc5ae", "branch": "main", "lockfile": "uv.lock@f614867f376e", "generated_at": "2026-08-22 20:30 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "9d177802acdd8337bb3b69826842863d37975387", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/9d177802acdd8337bb3b69826842863d37975387", "branch": "main", "lockfile": "uv.lock@414137636794", "generated_at": "2026-08-22 21:22 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "cell-environment-coupling";
