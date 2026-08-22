@@ -379,7 +379,7 @@ nutrient field, each running its own dynamic-FBA step at its own footprint, prod
 competitive exclusion and cross-feeding — when the whole colony is composed from independent
 frameworks through one N-cell coupling process (<code>CpmColonyField</code>), rather than the lumped
 two-role, shared-scalar-pool stand-in <code>draft-to-living-cell</code>&#x27;s §Cell–cell coupling study used?</p>
-          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (<code>CpmColonyField</code>) reproduce the paper&#x27;s §Cell–cell coupling competitive-exclusion branch (no dedicated figure) as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run.</li><li><span class="tier tier-mechanism">mechanism</span> Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#x27;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</li><li><span class="tier tier-mechanism">mechanism</span> The additive two-writer assumption <code>CpmColonyField</code>&#x27;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</li></ul>
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (<code>CpmColonyField</code>) reproduce the paper&#x27;s §Cell–cell coupling competitive-exclusion branch (no dedicated figure) as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run.</li><li><span class="tier tier-mechanism">mechanism</span> Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#x27;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. This is the paper&#x27;s §Cell–cell coupling relational-molecule claim made concrete -- the same acetate is the secretor&#x27;s metabolic waste and the consumer&#x27;s sole carbon food, its meaning set by each cell&#x27;s interface (microbial cross-feeding, morris2013). Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</li><li><span class="tier tier-mechanism">mechanism</span> The additive two-writer assumption <code>CpmColonyField</code>&#x27;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</li></ul>
         </div>
       </details>
     </article>
@@ -388,12 +388,12 @@ two-role, shared-scalar-pool stand-in <code>draft-to-living-cell</code>&#x27;s �
         <span class="ord">03</span>
         <div>
           <h3>Disintegration, Spatial <span class="badge ok">Accepted</span></h3>
-          <p class="claim">Composing one real CPM cell with a real spatio-flux stressor field and a real spatio-flux
+          <p class="claim">Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux
 particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the
 viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter)
 reproduces the paper&#x27;s §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
 stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area &gt; 30) through
-tick 6, the footprint-local stressor mean crosses viability_threshold at released_tick = 7, the
+tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick = 7, the
 domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
 spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
 coupling process plus one stock movement process, mirroring <code>draft-to-living-cell/disintegration</code>&#x27;s
@@ -409,13 +409,14 @@ coupling process plus one stock movement process, mirroring <code>draft-to-livin
         <summary>Question &amp; findings</summary>
         <div class="more-body">
           <h4>Question</h4><p>Does the paper&#x27;s §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
-viability when a diffusing stressor field crosses its bound, its domain resorbing while its
-shed material becomes scattering physical particles -- composed from independent frameworks
+viability when a diffusing field of acetate (the SAME metabolic byproduct that is waste-and-food
+in <code>cell-cell-coupling-spatial</code>, here toxic at high local concentration) crosses its viability
+bound, its domain resorbing while its shed material becomes scattering physical particles -- composed from independent frameworks
 (viva-cpm + spatio-flux particles) through one coupling process (<code>CpmDisintegration</code> +
 <code>BrownianMovement</code>)?</p>
-          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A single real CPM cell coupled to a real spatio-flux stressor field through one
+          <h4>Findings</h4><ul class="findings"><li><span class="tier tier-mechanism">mechanism</span> A single real CPM cell coupled to a real spatio-flux acetate field through one
 coupling process (<code>CpmDisintegration</code>) reproduces the paper&#x27;s §Disintegration level-shift
-(Fig 6) as genuine spatial dissolution: the cell holds coherent while the diffusing stressor
+(Fig 6) as genuine spatial dissolution: the cell holds coherent while the diffusing acetate
 field is below its
 footprint-local viability bound, then latches a release once that bound is crossed at a
 specific, deterministic tick, and its domain resorbs to full dissolution over the following
