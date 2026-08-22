@@ -16,7 +16,7 @@
   <h1 class="study-title">
     <span class="study-name" id="study-name" data-slug="growth-and-division" title="growth-and-division">Growth and Division</span>
     
-    <span class="study-kind-tag study-kind-biological" data-study-kind="biological" title="Study kind">biological</span>
+    <span class="study-kind-tag study-kind-computational" data-study-kind="computational" title="Study kind">computational</span>
     
     <span class="phase-pill phase-decide" title="Lifecycle: Design → Build → Simulate → Evaluate → Decide">Decide</span>
     
@@ -146,7 +146,9 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Does growth — an autocatalytic, energy-coupled DNA-replication process that plays the role of environment-coupled uptake — drive the cell&#39;s own dna store across a threshold, and does crossing that threshold fire a genuine structural rewrite of the place graph (one cell node becoming two daughter nodes at runtime, mass conserved) rather than a pre-declared post-structure animated on a wall clock?</p>
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> A cell grows, crosses a threshold, and divides -- and its daughters do not necessarily divide together. This is the paper&#39;s §Growth and division growth-then-divide pattern (Fig 10a,b): metabolism drives a cell&#39;s own state across a threshold, crossing it fires division and partitions state across the two resulting daughters, and those daughters, &#34;remain[ing] coupled through shared environmental state,&#34; can either stay in step or diverge (§Growth and division).
+Does this hold spatially -- a single CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses `vol_threshold` and divides via the native CPM engine operation `divide_cells`, partitioning biomass mass-conserved across the two daughters, compounding into a small multi-generation lineage tree -- and do sibling cells sharing one glucose field begin growing at different local rates as the colony crowds, so their division timing desynchronizes rather than staying locked to clean powers of two? Composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`).
+</p>
 
 <nav class="study-tabs" aria-label="Study sections">
   
@@ -557,1231 +559,36 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Growth precedes and drives division: an autocatalytic, energy-coupled DNA-replication process grows the cell&#39;s own dna store until it crosses a threshold, and crossing that threshold triggers a change to the composition itself — one cell becomes two through a graph rewrite that creates new nodes at runtime and conserves mass (the parent is halved, not doubled), not a pre-drawn pair on a timer (Law 2′, rewrite conformance vs wiring; Law 2, interface preserved across the rewrite).</p>
+      <p class="ctr-text">Metabolism-driven growth crossing a threshold fires division, and division partitions state -- biomass, and lattice pixels -- across two daughters that resume growing themselves, compounding into a genuine multi-generation lineage tree whose siblings desynchronize as they compete for shared, local resources: this is the paper&#39;s §Growth and division growth-then-divide pattern (Fig 10a,b), including its &#34;coordination and divergence&#34; clause, realized spatially. One real CPM cell, growing via real per-footprint dFBA metabolism, divides via the native CPM engine operation `divide_cells` (biomass partitioned proportional to post-split daughter volume, not reset and discarded) through a single coupling process (`CpmGrowthDivision`). Over a 36-tick run sampled every 3 ticks: the founder compounds into an 18-cell lineage tree spanning 4 generations (`max_generation` = 4), the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18) that departs from clean powers of two from tick 21 onward as sibling cells&#39; division timing diverges, and every cell&#39;s CPM volume stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80. The staircase is bounded more by lattice crowding (the colony packs to roughly two-thirds occupancy within its own footprint) than by nutrient limitation (field-wide glucose depletes only ~3% over the run). This is direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. It mirrors a lumped, specification-stage realization&#39;s §Growth and division claim (Fig 10a,b) (growth drives the cell&#39;s own state across a threshold; crossing the threshold triggers division) but realizes division as the native spatial CPM operation `divide_cells` acting directly on lattice pixels, in contrast to that study&#39;s place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
+</p>
       
-      <div class="ctr-context">Fig 10 rewrites the cell across time in two coupled moves: growth first, then division. Growth is not free — it is driven by an autocatalytic DNA-replication process, d[dna]/dt = k·dna·energy, that plays the role of environment-coupled uptake feeding the cell&#39;s internal stores (the same &#34;sense energy from the environment, grow an internal store&#34; pattern as Fig 5&#39;s cell-environment coupling, here specialised to DNA). This growth process is what drives dna 1 → 3.06 over the run — it is the mechanism that reaches the division threshold, not a scripted ramp. Division is the sharpest structural consequence: it is not a process nudging numbers in a fixed structure — it is a change to the place graph itself, a reaction rule in Milner&#39;s sense whose reactum has more nodes than its redex. The trigger is the cell&#39;s own grown state, not a timer: when the replicated ``dna`` crosses ``dna_threshold`` = 2.0, the rewrite fires exactly once. There is no wall clock, no ``division_time``, no scheduled tick — the cell divides because ``dna &gt;= threshold``, and it only reaches that threshold because growth put it there. At the event the parent&#39;s biomass is partitioned, not duplicated: the parent node&#39;s biomass is driven to 0 and each of the two daughters receives M/2, so mass is conserved (one cell node → two daughter nodes). Measured on the compiled composite fig10-1-executable, the parent&#39;s ``dna`` climbs 1 → 3.06 (growth) and crosses the threshold; the rewrite fires; ``cell_count`` goes 1 → 2; each daughter inherits DNA (0 → 2.75) and half the parent&#39;s biomass (0 → 0.5) while the parent&#39;s biomass falls to 0. The daughters are structurally new — they do not exist in the initial state — which is exactly what makes this an event-driven rewrite rather than an animation of a pre-built pair.</div>
+      <div class="ctr-context">A cell metabolizes, grows, crosses a threshold, and divides -- passing its state on to two daughters that each resume growing themselves. This is the paper&#39;s §Growth and division growth-then-divide pattern (Fig 10a,b): growth drives a cell&#39;s own state across a threshold, crossing it fires division, and division &#34;partitions state variables such as DNA and biomass into two cells&#34; (§Growth and division, Fig 10b caption) rather than discarding them. Here one CPM cell seeded on a uniform, abundant 60x60 glucose field (`glucose_vmax` deliberately tuned down to 1.5, `vol_threshold` 80, `reset_target` 40) grows its volume from real per-footprint dFBA metabolism against `e_coli_core` (the same metabolism-drives-growth mechanism as the flagship, `cell-environment-coupling`), and once its CPM volume crosses `vol_threshold`, the native engine operation `divide_cells(vol_threshold, reset_target)` splits it into two mass-conserved daughters (parent keeps its id, one new id is minted), partitions the parent&#39;s tracked biomass across them proportional to their post-split lattice volumes -- not resetting both to a fixed value, which would destroy accumulated biomass -- and resets both to `reset_target` physical volume so growth resumes in each. Mechanistically this composes one CPM cell (viva-cpm), a shared spatio-flux glucose field, and cobra&#39;s `e_coli_core` FBA solver through a single coupling process, `CpmGrowthDivision`. The native division primitive this depends on is not an assumption -- it is runtime-verified directly (`tests/test_cpm_divide_spike.py`): a single grown cell split at threshold 80/reset 40 yields exactly one new daughter id, the parent id is kept, and the two daughters&#39; combined volume matches the pre-split volume within rounding; a cell below threshold is confirmed a no-op.
+
+Measured over a 36-tick run sampled every 3 ticks (`tests/test_growth_division_regime.py`, `tests/test_cpm_growth_division.py`, `tests/test_growth_division_viz.py`): the founder compounds into an 18-cell lineage tree spanning 4 full generations -- founder id 1 (generation 0) divides into ids 2, 3, 5, and 10 (generation 1: 4 cells), whose own descendants populate generation 2 (7 cells) and generation 3 (4 cells), reaching ids 16 and 17 at generation 4 (2 cells) by the end of the run (`max_generation` = 4). This is a genealogy, not a population count: every live cell carries its own `generation` and parent id (`lineage`), recorded from the engine&#39;s own `divide_cells` return value, not scripted. The population steps up 1 -&gt; 2 -&gt; 2 -&gt; 2 -&gt; 4 -&gt; 4 -&gt; 5 -&gt; 8 -&gt; 8 -&gt; 11 -&gt; 14 -&gt; 18, never losing a cell to a phantom or a runaway single cell absorbing the colony, and per-cell CPM volume sawtooths in a bounded band (roughly 31-79 px) throughout the run as each cell grows toward `vol_threshold`, is halved by division back down near `reset_target`, and immediately resumes growing.
+
+The lineage does not stay in lockstep. The staircase departs from clean powers of two starting at tick 21 (5 cells, not 4 or 8) and stays desynchronized for the rest of the run (11, 14, 18 -- none a power of two): sibling cells, coupled through the shared glucose field, grow at different local rates as the colony crowds -- a cell on the fed rim of the growing colony out-competes one boxed into a depleting interior -- so their division timing diverges even though they share a common parent. By the final sampled tick, cells spanning all five generations (0 through 4) coexist simultaneously in the same 18-cell colony -- founder id 1 (generation 0 by definition, since generation counts ancestry depth, not divisions performed) is still alive in the colony alongside some of its great-great-grandchildren, which have already reached generation 4. This is exactly the paper&#39;s own language for what happens right after division: &#34;these systems remain coupled through shared environmental state, so their interfaces are not independent ... enabling both coordination and divergence&#34; (§Growth and division) -- and it is the first emergent multicellular heterogeneity this investigation demonstrates: not a nuisance the staircase survives, but the phenomenon itself.
+
+HONEST caveat on what actually bounds the staircase: with `glucose_vmax` = 1.5 on an abundant uniform field, field-wide glucose barely dips -- roughly 3% over the full 36-tick run (43180 -&gt; 41826 arbitrary field units) -- so nutrient depletion is a weak brake, not the dominant one. What visibly slows and desynchronizes division is lattice crowding: by the end of the run the 18-cell colony packs to roughly two-thirds occupancy within its own bounding footprint (936 px of live cell volume in a ~1458 px colony bounding box), even though the full 60x60 lattice remains only ~26% occupied overall -- cells pushing against their immediate neighbors, not starving for glucose. The claim is therefore &#34;bounded by lattice crowding and, more weakly, shared-glucose depletion,&#34; not &#34;bounded by the shared glucose field&#34; as an earlier framing of this study put it.
+</div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Install a Milner reaction rule behind the Fig 10 division interface, let an autocatalytic, energy-coupled DNA-replication process grow the cell&#39;s dna to the threshold (the Fig 10 analogue of environment-coupled uptake growing an internal store), and observe the rewrite fire.</p>
+      <p class="ctr-text">Run the `growth-division-spatial` composite (`CpmGrowthDivision`, a single CPM cell seeded on a uniform abundant 60x60 glucose field, glucose_vmax=1.5, vol_threshold=80, reset_target=40) to completion over 36 ticks through the process-bigraph engine, and measure whether metabolism-driven volume growth crossing a threshold is enough to trigger the native CPM engine&#39;s divide_cells operation, partition biomass across daughters, and compound a single founder cell into a genuine multi-generation lineage tree -- and whether sibling cells sharing the field begin diverging in division timing rather than staying in lockstep.
+</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>division</code>, <code>division-rewrite</code>, <code>division-executable</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The autocatalytic, energy-coupled DNA-replication process (d[dna]/dt = k·dna·energy) grows the cell&#39;s own dna store from 1 → 3.06, crossing dna_threshold = 2.0 — growth, not a timer, is what puts the cell at the division trigger.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell&#39;s replicated DNA crosses ``dna_threshold`` = 2.0 (parent dna 1 → 3.06) and the rewrite fires once — cell_count goes 1 → 2. The trigger is DNA state grown by the cell itself, not a wall clock.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The rewrite spawns two structurally-new daughter nodes and conserves mass: each daughter inherits DNA (0 → 2.75) and half the parent&#39;s biomass (0 → 0.5) while the parent&#39;s biomass is driven to 0 (M → M/2 + M/2, not M → 2M).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">One-line sanity check (not the study&#39;s control): the inert draft has empty updates by construction, so it stays at seed cell_count 1 and fails this threshold by design. This confirms the framework&#39;s definition of a draft, not a scientific counterfactual.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>growth-division-spatial</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Over a 36-tick run sampled every 3 ticks, the CPM cell population steps up as cells&#39; metabolism-driven volume growth repeatedly crosses vol_threshold and native divide_cells splits them -- reaching at least 3 full generations from a single seed cell.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The n_cells trajectory is monotonic non-decreasing across the run -- division only adds cells; no cell is ever lost to a phantom or a scripted removal.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Starting from a single seed cell, the population grows via division over 30 ticks, and daughters resume growth after being split -- no runaway single cell absorbing the lattice, no zero-volume phantom daughters.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Per-cell CPM volume sawtooths in a bounded band throughout the run -- each cell grows toward vol_threshold, is halved by division back near reset_target, and immediately resumes growing -- rather than either exploding or collapsing to zero.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational control (not this study&#39;s scientific claim): the native CPM divide_cells operation this study&#39;s division depends on splits a grown cell into two mass-conserved daughters and is a correct no-op below threshold -- independent of the growth-division composite&#39;s own metabolism mechanism.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Per §Growth and division: daughters &#34;remain coupled through shared environmental state, so their interfaces are not independent ... enabling both coordination and divergence.&#34; Sibling cells sharing one glucose field grow at different local rates as the colony crowds -- a fed-rim cell out-competes one boxed into a depleting interior -- so their division timing diverges: the n_cells staircase departs from clean powers of two rather than staying in lockstep, and cells at several different generations coexist in the colony simultaneously. This is the first emergent multicellular heterogeneity in the investigation, not a nuisance the staircase survives.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The population count is a genealogy, not a tally -- every live cell&#39;s generation and parent id are tracked from the engine&#39;s own divide_cells return value (never scripted), and max_generation compounds several generations deep over the run, per §Growth and division&#39;s Fig 10a,b &#34;daughter systems ... inherit&#34; language.</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">The cell&#39;s replicated dna, driven by the growth process, climbs 1 → 3.06 and crosses the threshold (2.0); the single cell node is replaced by two structurally-new daughters, each inheriting dna → 2.75 and half the parent&#39;s biomass (→ 0.5) while the parent&#39;s biomass falls to 0 — a genuine, mass-conserving structural rewrite driven by the cell&#39;s own growth, not a timer.</p>
-      
-      <figure class="ctr-figure"><svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 388.8 252" xmlns="http://www.w3.org/2000/svg" version="1.1" style="max-width:100%;height:auto" preserveAspectRatio="xMidYMid meet">
- <metadata>
-  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-   <cc:Work>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-08-18T09:55:17.117090</dc:date>
-    <dc:format>image/svg+xml</dc:format>
-    <dc:creator>
-     <cc:Agent>
-      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
-     </cc:Agent>
-    </dc:creator>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <defs>
-  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
- </defs>
- <g id="figure_1">
-  <g id="patch_1">
-   <path d="M 0 252 
-L 388.8 252 
-L 388.8 0 
-L 0 0 
-z
-" style="fill: #ffffff"/>
-  </g>
-  <g id="axes_1">
-   <g id="patch_2">
-    <path d="M 33.64 212.2 
-L 378 212.2 
-L 378 46.52 
-L 33.64 46.52 
-z
-" style="fill: #ffffff"/>
-   </g>
-   <g id="matplotlib.axis_1">
-    <g id="xtick_1">
-     <g id="line2d_1">
-      <path d="M 49.292727 212.2 
-L 49.292727 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_2">
-      <defs>
-       <path id="ma1ba67a0db" d="M 0 0 
-L 0 3.5 
-" style="stroke: #000000; stroke-width: 0.8"/>
-      </defs>
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="49.292727" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_1">
-      <!-- 0 -->
-      <g transform="translate(46.111477 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-13" d="M 2034 4250 
-Q 1547 4250 1301 3770 
-Q 1056 3291 1056 2328 
-Q 1056 1369 1301 889 
-Q 1547 409 2034 409 
-Q 2525 409 2770 889 
-Q 3016 1369 3016 2328 
-Q 3016 3291 2770 3770 
-Q 2525 4250 2034 4250 
-z
-M 2034 4750 
-Q 2819 4750 3233 4129 
-Q 3647 3509 3647 2328 
-Q 3647 1150 3233 529 
-Q 2819 -91 2034 -91 
-Q 1250 -91 836 529 
-Q 422 1150 422 2328 
-Q 422 3509 836 4129 
-Q 1250 4750 2034 4750 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-13"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_2">
-     <g id="line2d_3">
-      <path d="M 88.424545 212.2 
-L 88.424545 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_4">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="88.424545" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_2">
-      <!-- 1 -->
-      <g transform="translate(85.243295 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-14" d="M 794 531 
-L 1825 531 
-L 1825 4091 
-L 703 3866 
-L 703 4441 
-L 1819 4666 
-L 2450 4666 
-L 2450 531 
-L 3481 531 
-L 3481 0 
-L 794 0 
-L 794 531 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-14"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_3">
-     <g id="line2d_5">
-      <path d="M 127.556364 212.2 
-L 127.556364 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_6">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="127.556364" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_3">
-      <!-- 2 -->
-      <g transform="translate(124.375114 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-15" d="M 1228 531 
-L 3431 531 
-L 3431 0 
-L 469 0 
-L 469 531 
-Q 828 903 1448 1529 
-Q 2069 2156 2228 2338 
-Q 2531 2678 2651 2914 
-Q 2772 3150 2772 3378 
-Q 2772 3750 2511 3984 
-Q 2250 4219 1831 4219 
-Q 1534 4219 1204 4116 
-Q 875 4013 500 3803 
-L 500 4441 
-Q 881 4594 1212 4672 
-Q 1544 4750 1819 4750 
-Q 2544 4750 2975 4387 
-Q 3406 4025 3406 3419 
-Q 3406 3131 3298 2873 
-Q 3191 2616 2906 2266 
-Q 2828 2175 2409 1742 
-Q 1991 1309 1228 531 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-15"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_4">
-     <g id="line2d_7">
-      <path d="M 166.688182 212.2 
-L 166.688182 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_8">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="166.688182" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_4">
-      <!-- 3 -->
-      <g transform="translate(163.506932 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-16" d="M 2597 2516 
-Q 3050 2419 3304 2112 
-Q 3559 1806 3559 1356 
-Q 3559 666 3084 287 
-Q 2609 -91 1734 -91 
-Q 1441 -91 1130 -33 
-Q 819 25 488 141 
-L 488 750 
-Q 750 597 1062 519 
-Q 1375 441 1716 441 
-Q 2309 441 2620 675 
-Q 2931 909 2931 1356 
-Q 2931 1769 2642 2001 
-Q 2353 2234 1838 2234 
-L 1294 2234 
-L 1294 2753 
-L 1863 2753 
-Q 2328 2753 2575 2939 
-Q 2822 3125 2822 3475 
-Q 2822 3834 2567 4026 
-Q 2313 4219 1838 4219 
-Q 1578 4219 1281 4162 
-Q 984 4106 628 3988 
-L 628 4550 
-Q 988 4650 1302 4700 
-Q 1616 4750 1894 4750 
-Q 2613 4750 3031 4423 
-Q 3450 4097 3450 3541 
-Q 3450 3153 3228 2886 
-Q 3006 2619 2597 2516 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-16"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_5">
-     <g id="line2d_9">
-      <path d="M 205.82 212.2 
-L 205.82 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_10">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="205.82" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_5">
-      <!-- 4 -->
-      <g transform="translate(202.63875 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-17" d="M 2419 4116 
-L 825 1625 
-L 2419 1625 
-L 2419 4116 
-z
-M 2253 4666 
-L 3047 4666 
-L 3047 1625 
-L 3713 1625 
-L 3713 1100 
-L 3047 1100 
-L 3047 0 
-L 2419 0 
-L 2419 1100 
-L 313 1100 
-L 313 1709 
-L 2253 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-17"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_6">
-     <g id="line2d_11">
-      <path d="M 244.951818 212.2 
-L 244.951818 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_12">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="244.951818" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_6">
-      <!-- 5 -->
-      <g transform="translate(241.770568 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-18" d="M 691 4666 
-L 3169 4666 
-L 3169 4134 
-L 1269 4134 
-L 1269 2991 
-Q 1406 3038 1543 3061 
-Q 1681 3084 1819 3084 
-Q 2600 3084 3056 2656 
-Q 3513 2228 3513 1497 
-Q 3513 744 3044 326 
-Q 2575 -91 1722 -91 
-Q 1428 -91 1123 -41 
-Q 819 9 494 109 
-L 494 744 
-Q 775 591 1075 516 
-Q 1375 441 1709 441 
-Q 2250 441 2565 725 
-Q 2881 1009 2881 1497 
-Q 2881 1984 2565 2268 
-Q 2250 2553 1709 2553 
-Q 1456 2553 1204 2497 
-Q 953 2441 691 2322 
-L 691 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-18"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_7">
-     <g id="line2d_13">
-      <path d="M 284.083636 212.2 
-L 284.083636 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_14">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="284.083636" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_7">
-      <!-- 6 -->
-      <g transform="translate(280.902386 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-19" d="M 2113 2584 
-Q 1688 2584 1439 2293 
-Q 1191 2003 1191 1497 
-Q 1191 994 1439 701 
-Q 1688 409 2113 409 
-Q 2538 409 2786 701 
-Q 3034 994 3034 1497 
-Q 3034 2003 2786 2293 
-Q 2538 2584 2113 2584 
-z
-M 3366 4563 
-L 3366 3988 
-Q 3128 4100 2886 4159 
-Q 2644 4219 2406 4219 
-Q 1781 4219 1451 3797 
-Q 1122 3375 1075 2522 
-Q 1259 2794 1537 2939 
-Q 1816 3084 2150 3084 
-Q 2853 3084 3261 2657 
-Q 3669 2231 3669 1497 
-Q 3669 778 3244 343 
-Q 2819 -91 2113 -91 
-Q 1303 -91 875 529 
-Q 447 1150 447 2328 
-Q 447 3434 972 4092 
-Q 1497 4750 2381 4750 
-Q 2619 4750 2861 4703 
-Q 3103 4656 3366 4563 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-19"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_8">
-     <g id="line2d_15">
-      <path d="M 323.215455 212.2 
-L 323.215455 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_16">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="323.215455" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_8">
-      <!-- 7 -->
-      <g transform="translate(320.034205 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-1a" d="M 525 4666 
-L 3525 4666 
-L 3525 4397 
-L 1831 0 
-L 1172 0 
-L 2766 4134 
-L 525 4134 
-L 525 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-1a"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_9">
-     <g id="line2d_17">
-      <path d="M 362.347273 212.2 
-L 362.347273 46.52 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_18">
-      <g>
-       <use xlink:href="#ma1ba67a0db" x="362.347273" y="212.2" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_9">
-      <!-- 8 -->
-      <g transform="translate(359.166023 226.797656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-1b" d="M 2034 2216 
-Q 1584 2216 1326 1975 
-Q 1069 1734 1069 1313 
-Q 1069 891 1326 650 
-Q 1584 409 2034 409 
-Q 2484 409 2743 651 
-Q 3003 894 3003 1313 
-Q 3003 1734 2745 1975 
-Q 2488 2216 2034 2216 
-z
-M 1403 2484 
-Q 997 2584 770 2862 
-Q 544 3141 544 3541 
-Q 544 4100 942 4425 
-Q 1341 4750 2034 4750 
-Q 2731 4750 3128 4425 
-Q 3525 4100 3525 3541 
-Q 3525 3141 3298 2862 
-Q 3072 2584 2669 2484 
-Q 3125 2378 3379 2068 
-Q 3634 1759 3634 1313 
-Q 3634 634 3220 271 
-Q 2806 -91 2034 -91 
-Q 1263 -91 848 271 
-Q 434 634 434 1313 
-Q 434 1759 690 2068 
-Q 947 2378 1403 2484 
-z
-M 1172 3481 
-Q 1172 3119 1398 2916 
-Q 1625 2713 2034 2713 
-Q 2441 2713 2670 2916 
-Q 2900 3119 2900 3481 
-Q 2900 3844 2670 4047 
-Q 2441 4250 2034 4250 
-Q 1625 4250 1398 4047 
-Q 1172 3844 1172 3481 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-1b"/>
-      </g>
-     </g>
-    </g>
-    <g id="text_10">
-     <!-- time -->
-     <g transform="translate(196.783125 239.27875) scale(0.08 -0.08)">
-      <defs>
-       <path id="DejaVuSans-57" d="M 1172 4494 
-L 1172 3500 
-L 2356 3500 
-L 2356 3053 
-L 1172 3053 
-L 1172 1153 
-Q 1172 725 1289 603 
-Q 1406 481 1766 481 
-L 2356 481 
-L 2356 0 
-L 1766 0 
-Q 1100 0 847 248 
-Q 594 497 594 1153 
-L 594 3053 
-L 172 3053 
-L 172 3500 
-L 594 3500 
-L 594 4494 
-L 1172 4494 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-4c" d="M 603 3500 
-L 1178 3500 
-L 1178 0 
-L 603 0 
-L 603 3500 
-z
-M 603 4863 
-L 1178 4863 
-L 1178 4134 
-L 603 4134 
-L 603 4863 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-50" d="M 3328 2828 
-Q 3544 3216 3844 3400 
-Q 4144 3584 4550 3584 
-Q 5097 3584 5394 3201 
-Q 5691 2819 5691 2113 
-L 5691 0 
-L 5113 0 
-L 5113 2094 
-Q 5113 2597 4934 2840 
-Q 4756 3084 4391 3084 
-Q 3944 3084 3684 2787 
-Q 3425 2491 3425 1978 
-L 3425 0 
-L 2847 0 
-L 2847 2094 
-Q 2847 2600 2669 2842 
-Q 2491 3084 2119 3084 
-Q 1678 3084 1418 2786 
-Q 1159 2488 1159 1978 
-L 1159 0 
-L 581 0 
-L 581 3500 
-L 1159 3500 
-L 1159 2956 
-Q 1356 3278 1631 3431 
-Q 1906 3584 2284 3584 
-Q 2666 3584 2933 3390 
-Q 3200 3197 3328 2828 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-48" d="M 3597 1894 
-L 3597 1613 
-L 953 1613 
-Q 991 1019 1311 708 
-Q 1631 397 2203 397 
-Q 2534 397 2845 478 
-Q 3156 559 3463 722 
-L 3463 178 
-Q 3153 47 2828 -22 
-Q 2503 -91 2169 -91 
-Q 1331 -91 842 396 
-Q 353 884 353 1716 
-Q 353 2575 817 3079 
-Q 1281 3584 2069 3584 
-Q 2775 3584 3186 3129 
-Q 3597 2675 3597 1894 
-z
-M 3022 2063 
-Q 3016 2534 2758 2815 
-Q 2500 3097 2075 3097 
-Q 1594 3097 1305 2825 
-Q 1016 2553 972 2059 
-L 3022 2063 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-57"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(39.203125 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(66.984375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(164.390625 0)"/>
-     </g>
-    </g>
-   </g>
-   <g id="matplotlib.axis_2">
-    <g id="ytick_1">
-     <g id="line2d_19">
-      <path d="M 33.64 204.669091 
-L 378 204.669091 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_20">
-      <defs>
-       <path id="m3b5607395f" d="M 0 0 
-L -3.5 0 
-" style="stroke: #000000; stroke-width: 0.8"/>
-      </defs>
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="204.669091" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_11">
-      <!-- 0.0 -->
-      <g transform="translate(10.736875 208.467919) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-11" d="M 684 794 
-L 1344 794 
-L 1344 0 
-L 684 0 
-L 684 794 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-13"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_2">
-     <g id="line2d_21">
-      <path d="M 33.64 180.050416 
-L 378 180.050416 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_22">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="180.050416" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_12">
-      <!-- 0.5 -->
-      <g transform="translate(10.736875 183.849244) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-13"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_3">
-     <g id="line2d_23">
-      <path d="M 33.64 155.43174 
-L 378 155.43174 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_24">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="155.43174" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_13">
-      <!-- 1.0 -->
-      <g transform="translate(10.736875 159.230568) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_4">
-     <g id="line2d_25">
-      <path d="M 33.64 130.813065 
-L 378 130.813065 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_26">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="130.813065" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_14">
-      <!-- 1.5 -->
-      <g transform="translate(10.736875 134.611893) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_5">
-     <g id="line2d_27">
-      <path d="M 33.64 106.194389 
-L 378 106.194389 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_28">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="106.194389" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_15">
-      <!-- 2.0 -->
-      <g transform="translate(10.736875 109.993217) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_6">
-     <g id="line2d_29">
-      <path d="M 33.64 81.575714 
-L 378 81.575714 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_30">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="81.575714" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_16">
-      <!-- 2.5 -->
-      <g transform="translate(10.736875 85.374542) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_7">
-     <g id="line2d_31">
-      <path d="M 33.64 56.957038 
-L 378 56.957038 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_32">
-      <g>
-       <use xlink:href="#m3b5607395f" x="33.64" y="56.957038" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_17">
-      <!-- 3.0 -->
-      <g transform="translate(10.736875 60.755867) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-16"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-   </g>
-   <g id="line2d_33">
-    <path d="M 49.292727 204.669091 
-L 88.424545 194.821621 
-L 127.556364 183.49703 
-L 166.688182 170.473751 
-L 205.82 155.49698 
-L 244.951818 138.273693 
-L 284.083636 118.466913 
-L 323.215455 95.689116 
-L 362.347273 69.49465 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_34">
-    <path d="M 49.292727 204.669091 
-L 88.424545 194.821621 
-L 127.556364 183.49703 
-L 166.688182 170.473751 
-L 205.82 155.49698 
-L 244.951818 138.273693 
-L 284.083636 118.466913 
-L 323.215455 95.689116 
-L 362.347273 69.49465 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_35">
-    <path d="M 49.292727 155.43174 
-L 88.424545 148.046137 
-L 127.556364 139.552694 
-L 166.688182 129.785235 
-L 205.82 118.552657 
-L 244.951818 105.635191 
-L 284.083636 90.780107 
-L 323.215455 73.696759 
-L 362.347273 54.050909 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_36">
-    <path d="M 49.292727 155.43174 
-L 88.424545 155.43174 
-L 127.556364 155.43174 
-L 166.688182 155.43174 
-L 205.82 155.43174 
-L 244.951818 155.43174 
-L 284.083636 204.669091 
-L 323.215455 204.669091 
-L 362.347273 204.669091 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_37">
-    <path d="M 49.292727 155.43174 
-L 88.424545 155.43174 
-L 127.556364 155.43174 
-L 166.688182 155.43174 
-L 205.82 155.43174 
-L 244.951818 155.43174 
-L 284.083636 106.194389 
-L 323.215455 106.194389 
-L 362.347273 106.194389 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_38">
-    <path d="M 49.292727 204.669091 
-L 88.424545 204.669091 
-L 127.556364 204.669091 
-L 166.688182 204.669091 
-L 205.82 204.669091 
-L 244.951818 204.669091 
-L 284.083636 180.050416 
-L 323.215455 180.050416 
-L 362.347273 180.050416 
-" clip-path="url(#p3b06cd484e)" style="fill: none; stroke: #1c7a77; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="patch_3">
-    <path d="M 33.64 212.2 
-L 33.64 46.52 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="patch_4">
-    <path d="M 33.64 212.2 
-L 378 212.2 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="text_18">
-    <!-- fig10 1 -->
-    <g style="fill: #16211f" transform="translate(188.36375 40.52) scale(0.1 -0.1)">
-     <defs>
-      <path id="DejaVuSans-13af" d="M 3431 3500 
-L 3431 0 
-L 2853 0 
-L 2853 3053 
-L 1275 3053 
-L 1275 0 
-L 697 0 
-L 697 3053 
-L 147 3053 
-L 147 3500 
-L 697 3500 
-L 697 3744 
-Q 697 4316 967 4589 
-Q 1238 4863 1797 4863 
-L 2375 4863 
-L 2375 4384 
-L 1825 4384 
-Q 1516 4384 1395 4259 
-Q 1275 4134 1275 3809 
-L 1275 3500 
-L 3431 3500 
-z
-M 2853 4856 
-L 3431 4856 
-L 3431 4128 
-L 2853 4128 
-L 2853 4856 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-4a" d="M 2906 1791 
-Q 2906 2416 2648 2759 
-Q 2391 3103 1925 3103 
-Q 1463 3103 1205 2759 
-Q 947 2416 947 1791 
-Q 947 1169 1205 825 
-Q 1463 481 1925 481 
-Q 2391 481 2648 825 
-Q 2906 1169 2906 1791 
-z
-M 3481 434 
-Q 3481 -459 3084 -895 
-Q 2688 -1331 1869 -1331 
-Q 1566 -1331 1297 -1286 
-Q 1028 -1241 775 -1147 
-L 775 -588 
-Q 1028 -725 1275 -790 
-Q 1522 -856 1778 -856 
-Q 2344 -856 2625 -561 
-Q 2906 -266 2906 331 
-L 2906 616 
-Q 2728 306 2450 153 
-Q 2172 0 1784 0 
-Q 1141 0 747 490 
-Q 353 981 353 1791 
-Q 353 2603 747 3093 
-Q 1141 3584 1784 3584 
-Q 2172 3584 2450 3431 
-Q 2728 3278 2906 2969 
-L 2906 3500 
-L 3481 3500 
-L 3481 434 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-3" transform="scale(0.015625)"/>
-     </defs>
-     <use xlink:href="#DejaVuSans-13af"/>
-     <use xlink:href="#DejaVuSans-4a" transform="translate(62.984375 0)"/>
-     <use xlink:href="#DejaVuSans-14" transform="translate(126.46875 0)"/>
-     <use xlink:href="#DejaVuSans-13" transform="translate(190.09375 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(253.71875 0)"/>
-     <use xlink:href="#DejaVuSans-14" transform="translate(285.5 0)"/>
-    </g>
-   </g>
-   <g id="legend_1">
-    <g id="line2d_39">
-     <path d="M 39.49 55.033984 
-L 45.99 55.033984 
-L 52.49 55.033984 
-" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_19">
-     <!-- dna -->
-     <g transform="translate(57.69 57.308984) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-47" d="M 2906 2969 
-L 2906 4863 
-L 3481 4863 
-L 3481 0 
-L 2906 0 
-L 2906 525 
-Q 2725 213 2448 61 
-Q 2172 -91 1784 -91 
-Q 1150 -91 751 415 
-Q 353 922 353 1747 
-Q 353 2572 751 3078 
-Q 1150 3584 1784 3584 
-Q 2172 3584 2448 3432 
-Q 2725 3281 2906 2969 
-z
-M 947 1747 
-Q 947 1113 1208 752 
-Q 1469 391 1925 391 
-Q 2381 391 2643 752 
-Q 2906 1113 2906 1747 
-Q 2906 2381 2643 2742 
-Q 2381 3103 1925 3103 
-Q 1469 3103 1208 2742 
-Q 947 2381 947 1747 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-51" d="M 3513 2113 
-L 3513 0 
-L 2938 0 
-L 2938 2094 
-Q 2938 2591 2744 2837 
-Q 2550 3084 2163 3084 
-Q 1697 3084 1428 2787 
-Q 1159 2491 1159 1978 
-L 1159 0 
-L 581 0 
-L 581 3500 
-L 1159 3500 
-L 1159 2956 
-Q 1366 3272 1645 3428 
-Q 1925 3584 2291 3584 
-Q 2894 3584 3203 3211 
-Q 3513 2838 3513 2113 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-44" d="M 2194 1759 
-Q 1497 1759 1228 1600 
-Q 959 1441 959 1056 
-Q 959 750 1161 570 
-Q 1363 391 1709 391 
-Q 2188 391 2477 730 
-Q 2766 1069 2766 1631 
-L 2766 1759 
-L 2194 1759 
-z
-M 3341 1997 
-L 3341 0 
-L 2766 0 
-L 2766 531 
-Q 2569 213 2275 61 
-Q 1981 -91 1556 -91 
-Q 1019 -91 701 211 
-Q 384 513 384 1019 
-Q 384 1609 779 1909 
-Q 1175 2209 1959 2209 
-L 2766 2209 
-L 2766 2266 
-Q 2766 2663 2505 2880 
-Q 2244 3097 1772 3097 
-Q 1472 3097 1187 3025 
-Q 903 2953 641 2809 
-L 641 3341 
-Q 956 3463 1253 3523 
-Q 1550 3584 1831 3584 
-Q 2591 3584 2966 3190 
-Q 3341 2797 3341 1997 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-47"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(126.859375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_40">
-     <path d="M 39.49 64.784492 
-L 45.99 64.784492 
-L 52.49 64.784492 
-" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_20">
-     <!-- dna -->
-     <g transform="translate(57.69 67.059492) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-47"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(126.859375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_41">
-     <path d="M 39.49 74.535 
-L 45.99 74.535 
-L 52.49 74.535 
-" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_21">
-     <!-- dna -->
-     <g transform="translate(57.69 76.81) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-47"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(126.859375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_42">
-     <path d="M 39.49 84.285508 
-L 45.99 84.285508 
-L 52.49 84.285508 
-" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_22">
-     <!-- biomass -->
-     <g transform="translate(57.69 86.560508) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-45" d="M 3116 1747 
-Q 3116 2381 2855 2742 
-Q 2594 3103 2138 3103 
-Q 1681 3103 1420 2742 
-Q 1159 2381 1159 1747 
-Q 1159 1113 1420 752 
-Q 1681 391 2138 391 
-Q 2594 391 2855 752 
-Q 3116 1113 3116 1747 
-z
-M 1159 2969 
-Q 1341 3281 1617 3432 
-Q 1894 3584 2278 3584 
-Q 2916 3584 3314 3078 
-Q 3713 2572 3713 1747 
-Q 3713 922 3314 415 
-Q 2916 -91 2278 -91 
-Q 1894 -91 1617 61 
-Q 1341 213 1159 525 
-L 1159 0 
-L 581 0 
-L 581 4863 
-L 1159 4863 
-L 1159 2969 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-52" d="M 1959 3097 
-Q 1497 3097 1228 2736 
-Q 959 2375 959 1747 
-Q 959 1119 1226 758 
-Q 1494 397 1959 397 
-Q 2419 397 2687 759 
-Q 2956 1122 2956 1747 
-Q 2956 2369 2687 2733 
-Q 2419 3097 1959 3097 
-z
-M 1959 3584 
-Q 2709 3584 3137 3096 
-Q 3566 2609 3566 1747 
-Q 3566 888 3137 398 
-Q 2709 -91 1959 -91 
-Q 1206 -91 779 398 
-Q 353 888 353 1747 
-Q 353 2609 779 3096 
-Q 1206 3584 1959 3584 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-56" d="M 2834 3397 
-L 2834 2853 
-Q 2591 2978 2328 3040 
-Q 2066 3103 1784 3103 
-Q 1356 3103 1142 2972 
-Q 928 2841 928 2578 
-Q 928 2378 1081 2264 
-Q 1234 2150 1697 2047 
-L 1894 2003 
-Q 2506 1872 2764 1633 
-Q 3022 1394 3022 966 
-Q 3022 478 2636 193 
-Q 2250 -91 1575 -91 
-Q 1294 -91 989 -36 
-Q 684 19 347 128 
-L 347 722 
-Q 666 556 975 473 
-Q 1284 391 1588 391 
-Q 1994 391 2212 530 
-Q 2431 669 2431 922 
-Q 2431 1156 2273 1281 
-Q 2116 1406 1581 1522 
-L 1381 1569 
-Q 847 1681 609 1914 
-Q 372 2147 372 2553 
-Q 372 3047 722 3315 
-Q 1072 3584 1716 3584 
-Q 2034 3584 2315 3537 
-Q 2597 3491 2834 3397 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-45"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(91.265625 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(152.453125 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(249.859375 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(311.140625 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(363.234375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_43">
-     <path d="M 39.49 94.036016 
-L 45.99 94.036016 
-L 52.49 94.036016 
-" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_23">
-     <!-- cell_count -->
-     <g transform="translate(57.69 96.311016) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-46" d="M 3122 3366 
-L 3122 2828 
-Q 2878 2963 2633 3030 
-Q 2388 3097 2138 3097 
-Q 1578 3097 1268 2742 
-Q 959 2388 959 1747 
-Q 959 1106 1268 751 
-Q 1578 397 2138 397 
-Q 2388 397 2633 464 
-Q 2878 531 3122 666 
-L 3122 134 
-Q 2881 22 2623 -34 
-Q 2366 -91 2075 -91 
-Q 1284 -91 818 406 
-Q 353 903 353 1747 
-Q 353 2603 823 3093 
-Q 1294 3584 2113 3584 
-Q 2378 3584 2631 3529 
-Q 2884 3475 3122 3366 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-4f" d="M 603 4863 
-L 1178 4863 
-L 1178 0 
-L 603 0 
-L 603 4863 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-42" d="M 3263 -1063 
-L 3263 -1509 
-L -63 -1509 
-L -63 -1063 
-L 3263 -1063 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-58" d="M 544 1381 
-L 544 3500 
-L 1119 3500 
-L 1119 1403 
-Q 1119 906 1312 657 
-Q 1506 409 1894 409 
-Q 2359 409 2629 706 
-Q 2900 1003 2900 1516 
-L 2900 3500 
-L 3475 3500 
-L 3475 0 
-L 2900 0 
-L 2900 538 
-Q 2691 219 2414 64 
-Q 2138 -91 1772 -91 
-Q 1169 -91 856 284 
-Q 544 659 544 1381 
-z
-M 1991 3584 
-L 1991 3584 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-46"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(54.984375 0)"/>
-      <use xlink:href="#DejaVuSans-4f" transform="translate(116.515625 0)"/>
-      <use xlink:href="#DejaVuSans-4f" transform="translate(144.296875 0)"/>
-      <use xlink:href="#DejaVuSans-42" transform="translate(172.078125 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(222.078125 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(277.0625 0)"/>
-      <use xlink:href="#DejaVuSans-58" transform="translate(338.25 0)"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(401.625 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(465 0)"/>
-     </g>
-    </g>
-    <g id="line2d_44">
-     <path d="M 39.49 103.786523 
-L 45.99 103.786523 
-L 52.49 103.786523 
-" style="fill: none; stroke: #1c7a77; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_24">
-     <!-- biomass -->
-     <g transform="translate(57.69 106.061523) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-45"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(91.265625 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(152.453125 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(249.859375 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(311.140625 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(363.234375 0)"/>
-     </g>
-    </g>
-   </g>
-  </g>
-  <g id="text_25">
-   <!-- divide -->
-   <g style="fill: #16211f" transform="translate(177.72125 10.878281) scale(0.11 -0.11)">
-    <defs>
-     <path id="DejaVuSans-59" d="M 191 3500 
-L 800 3500 
-L 1894 563 
-L 2988 3500 
-L 3597 3500 
-L 2284 0 
-L 1503 0 
-L 191 3500 
-z
-" transform="scale(0.015625)"/>
-    </defs>
-    <use xlink:href="#DejaVuSans-47"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-    <use xlink:href="#DejaVuSans-59" transform="translate(91.265625 0)"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(150.453125 0)"/>
-    <use xlink:href="#DejaVuSans-47" transform="translate(178.234375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(241.71875 0)"/>
-   </g>
-  </g>
- </g>
- <defs>
-  <clipPath id="p3b06cd484e">
-   <rect x="33.64" y="46.52" width="344.36" height="165.68"/>
-  </clipPath>
- </defs>
-</svg>
-</figure>
+      <p class="ctr-text">Over a 36-tick run sampled every 3 ticks, a single founder cell compounds into an 18-cell lineage tree spanning 4 generations (max_generation = 4), with every daughter&#39;s generation and parent id tracked from the engine&#39;s own divide_cells return value. The population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18) that departs from clean powers of two from tick 21 onward -- sibling cells, coupled through the shared glucose field, grow at different local rates as the colony crowds, so their division timing desynchronizes even though they share a common parent, exactly the paper&#39;s &#34;coordination and divergence&#34; (§Growth and division). Every cell&#39;s CPM volume stays bounded in a sawtooth between reset_target = 40 and vol_threshold = 80; the staircase is bounded more by lattice crowding (the colony packs to roughly two-thirds occupancy within its own footprint) than by nutrient limitation (field-wide glucose depletes only ~3% over the run). Growth, crossing, division with biomass partitioned across daughters, and resumed growth in each -- all direct simulation output composed from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) through one coupling process. The paper&#39;s §Growth and division growth-then-divide pattern (Fig 10a,b) holds as genuine spatial multicellular compounding, using the native spatial CPM division primitive in contrast to a lumped, specification-stage realization&#39;s place-graph rewrite.
+</p>
       
       
     <div class="overview-section findings-section">
@@ -1795,9 +602,9 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">An autocatalytic, energy-coupled DNA-replication process (d[dna]/dt = k·dna·energy) grows the cell&#39;s own dna store across the division threshold. Confirmed: parent dna climbs 1 → 3.06, crossing dna_threshold 2.0 — growth is the mechanism that reaches the trigger, not a scripted ramp.</span>
+            <span class="finding-claim finding-statement">A single real CPM cell whose volume growth is driven by real per-footprint dFBA metabolism, coupled to the native CPM engine operation divide_cells through one process (CpmGrowthDivision), reproduces the paper&#39;s §Growth and division growth-then-divide pattern (Fig 10a,b) as genuine spatial compounding: the population steps up in a monotonic non-decreasing staircase, reaching roughly 3-4 generations from a single seed cell, bounded more by lattice crowding than by nutrient limitation (field-wide glucose depletes only ~3% over the run). Confirmed: n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks.</span>
             
-            <span class="finding-chip">via <code>growth-crosses-threshold</code></span>
+            <span class="finding-chip">via <code>population-steps-up-by-division</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -1809,10 +616,10 @@ z
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> parent dna 1 → 3.06, driven by the k·dna·energy growth process, crossing threshold 2.0 · 
+              <strong>observed:</strong> n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks, monotonic non-decreasing · 
               
-              via test <a href="#bt-growth-crosses-threshold" onclick="_gotoStudyTab('tests','bt-growth-crosses-threshold');return false;"><code>growth-crosses-threshold</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              via test <a href="#bt-population-steps-up-by-division" onclick="_gotoStudyTab('tests','bt-population-steps-up-by-division');return false;"><code>population-steps-up-by-division</code></a> · 
+              in run <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
               
               
             </div>
@@ -1821,12 +628,12 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 2.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 8.0</code></div>
             
             
             
@@ -1845,9 +652,9 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Replicated DNA crossing a threshold fires a division event — no wall clock. Confirmed: parent dna 1 → 3.06 crosses dna_threshold 2.0, the rewrite fires once, cell_count 1 → 2.</span>
+            <span class="finding-claim finding-statement">Every cell in the lineage sawtooths in a bounded CPM volume band as it grows toward vol_threshold, is halved by division back near reset_target, and immediately resumes growing -- daughters are never zero-volume phantoms and no single cell runs away to absorb the lattice. Confirmed: per-cell volume stays roughly 31-79 px throughout the run, well within the hard test bounds of (8, 200).</span>
             
-            <span class="finding-chip">via <code>division-fires</code></span>
+            <span class="finding-chip">via <code>per-cell-volume-stays-bounded</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -1859,10 +666,10 @@ z
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> parent dna 1 → 3.06 crosses threshold 2.0; cell_count 1 → 2 (one division) · 
+              <strong>observed:</strong> per-cell CPM volume bounded roughly 31-79 px across the 36-tick run · 
               
-              via test <a href="#bt-division-fires" onclick="_gotoStudyTab('tests','bt-division-fires');return false;"><code>division-fires</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              via test <a href="#bt-per-cell-volume-stays-bounded" onclick="_gotoStudyTab('tests','bt-per-cell-volume-stays-bounded');return false;"><code>per-cell-volume-stays-bounded</code></a> · 
+              in run <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
               
               
             </div>
@@ -1871,12 +678,62 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 200.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The native CPM divide_cells operation this study&#39;s division mechanism depends on is runtime-verified directly and independently of the growth-division composite&#39;s own metabolism mechanism, retiring what was previously an untested primitive: a grown cell splits into two mass-conserved daughters (parent id kept, one new id minted) and a sub-threshold cell is a correct no-op.</span>
+            
+            <span class="finding-chip">via <code>native-division-conserves-mass</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-03</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> divide_cells(80.0, 40.0) yields one new daughter id, combined post-split volume within +-2 px of the pre-split volume; divide_cells(500.0, 40.0) on a sub-threshold cell returns [] · 
+              
+              via test <a href="#bt-native-division-conserves-mass" onclick="_gotoStudyTab('tests','bt-native-division-conserves-mass');return false;"><code>native-division-conserves-mass</code></a> · 
+              in run <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≤ 2.0</code></div>
             
             
             
@@ -1895,24 +752,24 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The division spawns two structurally-new daughter nodes and conserves mass. Confirmed: each daughter inherits dna 0 → 2.75 and biomass 0 → 0.5 while the parent biomass falls to 0 (the parent is halved, not doubled).</span>
+            <span class="finding-claim finding-statement">Sibling cells coupled through the shared glucose field grow at different local rates as the colony crowds -- a cell on the fed rim out-competes one boxed into a depleting interior -- so division timing desynchronizes rather than staying locked to clean powers of two. This is exactly the paper&#39;s own description of what happens right after division: &#34;these systems remain coupled through shared environmental state, so their interfaces are not independent ... enabling both coordination and divergence&#34; (§Growth and division). It is the first emergent multicellular heterogeneity this investigation demonstrates, not a nuisance the staircase merely survives. Confirmed: the n_cells staircase departs from powers of two from tick 21 onward (5, then 11, 14, 18), and by the final sampled tick, live cells span all 5 generations (0 through 4) simultaneously in the same 18-cell colony.</span>
             
-            <span class="finding-chip">via <code>daughters-spawn</code></span>
+            <span class="finding-chip">via <code>division-desynchronizes-from-lockstep</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
-              <span class="finding-id">F-03</span>
+              <span class="finding-id">F-04</span>
               <span class="finding-kind">biological</span>
               <span class="finding-status-text">confirms literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> each daughter dna 0 → 2.75, biomass 0 → 0.5; parent biomass → 0 (mass conserved) · 
+              <strong>observed:</strong> n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 -- 5,11,14,18 are not powers of two; 5 distinct generations coexist at the final tick · 
               
-              via test <a href="#bt-daughters-spawn" onclick="_gotoStudyTab('tests','bt-daughters-spawn');return false;"><code>daughters-spawn</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              via test <a href="#bt-division-desynchronizes-from-lockstep" onclick="_gotoStudyTab('tests','bt-division-desynchronizes-from-lockstep');return false;"><code>division-desynchronizes-from-lockstep</code></a> · 
+              in run <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
               
               
             </div>
@@ -1921,7 +778,7 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
             </div>
             
             
@@ -1945,24 +802,24 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Sanity check on the framework&#39;s definition: the inert draft, with no mechanism, has an empty update and stays at seed. Confirmed: inert draft cell_count stays 1 (it fails the division threshold by design — the definition of a draft, not a scientific control).</span>
+            <span class="finding-claim finding-statement">The population count is a genealogy, not a tally. Per §Growth and division&#39;s Fig 10a,b &#34;daughter systems ... inherit&#34; language, every live cell&#39;s generation and parent id are tracked directly from the engine&#39;s own divide_cells return value (Phase 1&#39;s lineage/generation bookkeeping, never scripted): founder id 1 stays generation 0 for the whole run; its descendants populate generations 1 through 4, and every daughter&#39;s generation equals its recorded parent&#39;s generation plus one. Confirmed: max_generation compounds from 0 to 4 over the 36-tick run, and the full 18-cell tree traces back to the single founder.</span>
             
-            <span class="finding-chip">via <code>draft-is-inert</code></span>
+            <span class="finding-chip">via <code>lineage-compounds-into-a-tree</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
-              <span class="finding-id">F-04</span>
+              <span class="finding-id">F-05</span>
               <span class="finding-kind">biological</span>
               <span class="finding-status-text">confirms literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> inert draft stays at cell_count 1 (empty update by construction) · 
+              <strong>observed:</strong> max_generation trajectory 0,1,1,1,2,2,2,3,3,3,3,4 over 36 ticks; every daughter&#39;s generation == parent&#39;s generation + 1 · 
               
-              via test <a href="#bt-draft-is-inert" onclick="_gotoStudyTab('tests','bt-draft-is-inert');return false;"><code>draft-is-inert</code></a> · 
-              in run <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              via test <a href="#bt-lineage-compounds-into-a-tree" onclick="_gotoStudyTab('tests','bt-lineage-compounds-into-a-tree');return false;"><code>lineage-compounds-into-a-tree</code></a> · 
+              in run <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
               
               
             </div>
@@ -1971,12 +828,12 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-growth-and-division"><code>growth-and-division</code></a>
+              runs: <a href="#run-growth-division-spatial"><code>growth-division-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 3.0</code></div>
             
             
             
@@ -2001,7 +858,7 @@ z
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Symmetric division with a fixed DNA threshold; asymmetric division, septum placement, and size control are not modelled.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Growth is genuinely metabolism-driven (real dFBA against e_coli_core at the cell&#39;s own CPM footprint each tick) but the constants (glucose_vmax = 1.5, glucose_km, box_volume_L, grow_per_biomass, oxygen_vmax) are toy-real, hand-tuned magnitudes chosen to make the growth-divide staircase legible over a 36-tick run -- not fitted to any organism or medium.</span></div>
         
       </div>
       
@@ -2040,94 +897,24 @@ z
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-1-division" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.growth-division-spatial" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>division</strong>
+        <strong>growth-division-spatial</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-1-division</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.growth-division-spatial</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-1-division')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.growth-division-spatial')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="division"
-               value="meta_modelers_guide.composites.fig10-1-division" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="growth-division-spatial"
+               value="meta_modelers_guide.composites.growth-division-spatial" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="division">Set composite</button>
+                data-baseline-name="growth-division-spatial">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="division" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-1-rewrite" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>division-rewrite</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-1-rewrite</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-1-rewrite')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="division-rewrite"
-               value="meta_modelers_guide.composites.fig10-1-rewrite" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="division-rewrite">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="division-rewrite" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-1-executable" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>division-executable</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-1-executable</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-1-executable')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="division-executable"
-               value="meta_modelers_guide.composites.fig10-1-executable" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="division-executable">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="division-executable" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="growth-division-spatial" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -2329,10 +1116,10 @@ z
     
     
     
-    <li class="expected-behavior-item" id="bt-growth-crosses-threshold"
+    <li class="expected-behavior-item" id="bt-population-steps-up-by-division"
         data-test-kind="behavioral"
         
-        data-pytest-node="growth-crosses-threshold"
+        data-pytest-node="population-steps-up-by-division"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -2341,19 +1128,19 @@ z
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">growth-crosses-threshold</strong>
+        <strong style="font-size: 0.9em;">population-steps-up-by-division</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>growth-division-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The autocatalytic, energy-coupled DNA-replication process (d[dna]/dt = k·dna·energy) grows the cell&#39;s own dna store from 1 → 3.06, crossing dna_threshold = 2.0 — growth, not a timer, is what puts the cell at the division trigger.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Over a 36-tick run sampled every 3 ticks, the CPM cell population steps up as cells&#39; metabolism-driven volume growth repeatedly crosses vol_threshold and native divide_cells splits them -- reaching at least 3 full generations from a single seed cell.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(dna)", "kind": "observable", "path": "dna"}
-pass_if: {"op": "\u003e=", "provenance": "growth process (k\u00b7dna\u00b7energy) drives parent dna 1 \u2192 3.06, crossing dna_threshold 2.0 (exec fig10-1-executable)", "value": 2.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(obs.n_cells) over the 36-tick run", "kind": "observable", "path": "obs.n_cells"}
+pass_if: {"op": "\u003e=", "provenance": "n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence 3) -- steps 1 -\u003e 2 -\u003e 4 -\u003e 8 -\u003e 18 (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics)", "value": 8.0}</pre>
       </details>
       
       
@@ -2368,10 +1155,10 @@ pass_if: {"op": "\u003e=", "provenance": "growth process (k\u00b7dna\u00b7energy
     
     
     
-    <li class="expected-behavior-item" id="bt-division-fires"
+    <li class="expected-behavior-item" id="bt-population-never-shrinks"
         data-test-kind="behavioral"
         
-        data-pytest-node="division-fires"
+        data-pytest-node="population-never-shrinks"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -2380,19 +1167,19 @@ pass_if: {"op": "\u003e=", "provenance": "growth process (k\u00b7dna\u00b7energy
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">division-fires</strong>
+        <strong style="font-size: 0.9em;">population-never-shrinks</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>growth-division-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s replicated DNA crosses ``dna_threshold`` = 2.0 (parent dna 1 → 3.06) and the rewrite fires once — cell_count goes 1 → 2. The trigger is DNA state grown by the cell itself, not a wall clock.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The n_cells trajectory is monotonic non-decreasing across the run -- division only adds cells; no cell is ever lost to a phantom or a scripted removal.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_count)", "kind": "observable", "path": "cell_count"}
-pass_if: {"op": "\u003e=", "provenance": "DNA crosses threshold 2.0 (parent dna 1\u21923.06) \u2192 rewrite fires once, cell_count 1\u21922 (exec fig10-1-executable, tests/test_compilation.py::test_fig10_division_is_event_driven)", "value": 1.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.n_cells == sorted(obs.n_cells) over the 36-tick run", "kind": "observable", "path": "obs.n_cells"}
+pass_if: {"op": "\u003e", "provenance": "n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns))", "value": 0.0}</pre>
       </details>
       
       
@@ -2407,10 +1194,10 @@ pass_if: {"op": "\u003e=", "provenance": "DNA crosses threshold 2.0 (parent dna 
     
     
     
-    <li class="expected-behavior-item" id="bt-daughters-spawn"
+    <li class="expected-behavior-item" id="bt-daughters-resume-growth-without-runaway"
         data-test-kind="behavioral"
         
-        data-pytest-node="daughters-spawn"
+        data-pytest-node="daughters-resume-growth-without-runaway"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -2419,19 +1206,19 @@ pass_if: {"op": "\u003e=", "provenance": "DNA crosses threshold 2.0 (parent dna 
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">daughters-spawn</strong>
+        <strong style="font-size: 0.9em;">daughters-resume-growth-without-runaway</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>growth-division-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The rewrite spawns two structurally-new daughter nodes and conserves mass: each daughter inherits DNA (0 → 2.75) and half the parent&#39;s biomass (0 → 0.5) while the parent&#39;s biomass is driven to 0 (M → M/2 + M/2, not M → 2M).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Starting from a single seed cell, the population grows via division over 30 ticks, and daughters resume growth after being split -- no runaway single cell absorbing the lattice, no zero-volume phantom daughters.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(dna)", "kind": "observable", "path": "dna"}
-pass_if: {"op": "\u003e=", "provenance": "division spawns two new daughters (exec daughter dna 0\u21922.75; each daughter biomass 0\u21920.5, parent biomass \u21920 \u2014 mass conserved; tests/test_compilation.py::test_rewrite_conformance_against_wiring, tests/test_fig10_rewrite.py::test_cell_divides_into_two_daughters)", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.n_cells after run(30) from a single seed cell (n0 = 1)", "kind": "observable", "path": "obs.n_cells"}
+pass_if: {"op": "\u003e=", "provenance": "starting from n0 = 1, n_cells \u003e= 3 after 30 ticks (at least 1 -\u003e 2 -\u003e ~4), with every per-cell volume bounded in (5, 200) -- no runaway single cell, no zero-volume phantom daughters (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)", "value": 3.0}</pre>
       </details>
       
       
@@ -2446,10 +1233,49 @@ pass_if: {"op": "\u003e=", "provenance": "division spawns two new daughters (exe
     
     
     
-    <li class="expected-behavior-item" id="bt-draft-is-inert"
+    <li class="expected-behavior-item" id="bt-per-cell-volume-stays-bounded"
         data-test-kind="behavioral"
         
-        data-pytest-node="draft-is-inert"
+        data-pytest-node="per-cell-volume-stays-bounded"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">per-cell-volume-stays-bounded</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>growth-division-spatial</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Per-cell CPM volume sawtooths in a bounded band throughout the run -- each cell grows toward vol_threshold, is halved by division back near reset_target, and immediately resumes growing -- rather than either exploding or collapsing to zero.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "range of per-cell CPM volume across all cells and all sampled ticks", "kind": "observable", "path": "obs.volume"}
+pass_if: {"op": "\u003c", "provenance": "per-cell volumes stay bounded roughly 31-79 px across the 36-tick run (division halves a cell once it crosses vol_threshold = 80, resetting toward reset_target = 40, then it regrows); the tests\u0027 hard bounds (8 \u003c v \u003c 200) hold at every sampled tick (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)", "value": 200.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-native-division-conserves-mass"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="native-division-conserves-mass"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -2458,19 +1284,97 @@ pass_if: {"op": "\u003e=", "provenance": "division spawns two new daughters (exe
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">draft-is-inert</strong>
+        <strong style="font-size: 0.9em;">native-division-conserves-mass</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>growth-and-division</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>none</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">One-line sanity check (not the study&#39;s control): the inert draft has empty updates by construction, so it stays at seed cell_count 1 and fails this threshold by design. This confirms the framework&#39;s definition of a draft, not a scientific counterfactual.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Foundational control (not this study&#39;s scientific claim): the native CPM divide_cells operation this study&#39;s division depends on splits a grown cell into two mass-conserved daughters and is a correct no-op below threshold -- independent of the growth-division composite&#39;s own metabolism mechanism.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_count)", "kind": "observable", "path": "cell_count"}
-pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_count 1 (empty update by construction) \u2192 fails by design (expected-fail control)", "value": 1.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "(vol_parent + vol_new_daughter) - vol_before_split, and divide_cells(500.0, 40.0) on a sub-threshold cell", "kind": "observable", "path": "cell_volumes"}
+pass_if: {"op": "\u003c=", "provenance": "divide_cells(80.0, 40.0) on a cell grown to ~150 splits it into two daughters (parent id kept + one new id) whose combined volume matches the pre-split volume within +-2 px (rounding); divide_cells(500.0, 40.0) on a cell at 60 (below threshold) returns [] -- a correct no-op (tests/test_cpm_divide_spike.py::test_divide_splits_one_into_two_mass_conserved, test_below_threshold_is_noop)", "value": 2.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-division-desynchronizes-from-lockstep"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="division-desynchronizes-from-lockstep"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">division-desynchronizes-from-lockstep</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>growth-division-spatial</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Per §Growth and division: daughters &#34;remain coupled through shared environmental state, so their interfaces are not independent ... enabling both coordination and divergence.&#34; Sibling cells sharing one glucose field grow at different local rates as the colony crowds -- a fed-rim cell out-competes one boxed into a depleting interior -- so their division timing diverges: the n_cells staircase departs from clean powers of two rather than staying in lockstep, and cells at several different generations coexist in the colony simultaneously. This is the first emergent multicellular heterogeneity in the investigation, not a nuisance the staircase survives.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "count of n_cells samples not in {1,2,4,8,16,32}, and number of distinct generation values present among live cells at the final sampled tick", "kind": "observable", "path": "obs.n_cells, obs.generation"}
+pass_if: {"op": "\u003e=", "provenance": "n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 departs from powers of two starting at tick 21 (5 cells) and stays desynchronized through 11, 14, 18; at the final tick, live cells span 5 distinct generations (0 through 4) simultaneously in the same 18-cell colony (tests/test_growth_division_regime.py::test_division_desynchronizes_from_lockstep_powers_of_two)", "value": 1.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-lineage-compounds-into-a-tree"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="lineage-compounds-into-a-tree"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">lineage-compounds-into-a-tree</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>growth-division-spatial</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The population count is a genealogy, not a tally -- every live cell&#39;s generation and parent id are tracked from the engine&#39;s own divide_cells return value (never scripted), and max_generation compounds several generations deep over the run, per §Growth and division&#39;s Fig 10a,b &#34;daughter systems ... inherit&#34; language.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(obs.max_generation) over the 36-tick run", "kind": "observable", "path": "obs.max_generation"}
+pass_if: {"op": "\u003e=", "provenance": "max_generation reaches 4 by the end of the 36-tick run (trajectory 0,1,1,1,2,2,2,3,3,3,3,4 across the 12 sampled ticks); founder id 1 stays generation 0 throughout; every daughter\u0027s generation == its recorded parent\u0027s generation + 1 (tests/test_growth_division_regime.py::test_lineage_compounds_into_a_multigeneration_tree)", "value": 3.0}</pre>
       </details>
       
       
@@ -2551,7 +1455,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All figure composites build and every executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16).</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">growth-division-spatial.composite.json builds and runs to completion through the process-bigraph engine (tests/test_growth_division_regime.py, tests/test_cpm_growth_division.py, tests/test_cpm_divide_spike.py, tests/test_growth_division_viz.py); guarded skip when the optional cpm/spatio_flux/cobra dependencies are absent, matching this investigation&#39;s flagship and companion studies&#39; convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -2564,7 +1468,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Growth-crosses-threshold, division-fires, and daughters-spawn all pass — the cell&#39;s own energy-coupled growth process drives dna across the threshold, the rewrite fires once, and mass is conserved across the partition; the inert draft stays at cell_count 1, so growth-and-division is a real runtime mechanism, not an animation. Confirmed by tests/test_compilation.py::test_fig10_division_is_event_driven (DNA-threshold trigger, not a wall clock), tests/test_compilation.py::test_rewrite_conformance_against_wiring (the rewrite&#39;s reactum conforms to the wiring it produces), and tests/test_fig10_rewrite.py (the rewrite mechanism itself — one cell/one chromosome → two daughters, each keeping DNA, topology growing monotonically).</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a real 36-tick run -- the population steps up in a monotonic non-decreasing staircase across roughly 3-4 generations, compounding into an 18-cell genealogy (max_generation = 4) rather than a bare count, per-cell volume stays bounded in a sawtooth between reset_target and vol_threshold, and daughters resume growth without runaway or phantoms. The staircase also demonstrably desynchronizes from clean powers of two as sibling division timing diverges under shared, local glucose competition -- the paper&#39;s own &#34;coordination and divergence.&#34; The foundational native-division mass-conservation control also passes, independent of the growth-division mechanism itself.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -2577,7 +1481,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Watching growth (an autocatalytic, energy-coupled DNA-replication process) drive one cell node to be replaced by two structurally-new daughters — fired by the cell&#39;s own state crossing a threshold, with mass conserved — makes growth-then-division-as-graph-rewrite concrete rather than animated on a clock.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Realizing the paper&#39;s §Growth and division growth-then-divide pattern (Fig 10a,b) with a real CPM cell&#39;s volume driven by real per-footprint dFBA metabolism and divided by the native spatial CPM engine operation -- rather than a lumped ODE growing a scalar dna store and firing a place-graph rewrite -- makes this investigation&#39;s growth-and-division claim (growth drives the cell&#39;s own state across a threshold; crossing the threshold changes the composition itself) concrete at real spatial, per-pixel resolution, and contrasts two structurally different ways of realizing &#34;the composition changes&#34;: a graph rewrite creating new nodes vs. a spatial engine operation splitting lattice pixels.</textarea>
         </label>
       </div>
     </div>
@@ -2592,15 +1496,11 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> The figure draft compiles to an executable that runs.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> growth-division-spatial.composite.json builds and runs to completion through the engine over a 36-tick run.</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s pattern is demonstrated at the toy-real (uncalibrated) level; growth drives the DNA-threshold trigger, the structural rewrite runs, and mass is conserved.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The spatial §Growth and division growth-then-divide pattern (Fig 10a,b) is demonstrated at the toy-real (uncalibrated) level, with genuine per-footprint dFBA metabolism driving growth, the native CPM divide_cells operation firing division at threshold and partitioning biomass across daughters, and a real tracked lineage (not a scripted one) whose siblings desynchronize under shared-field competition, per the paper&#39;s &#34;coordination and divergence.&#34;</div>
         
-        
-        <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>development-and-evolution</li></ul>
-        </div>
         
       </div>
       
@@ -2609,11 +1509,11 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>the DNA-replication (growth) process never drives dna across the threshold (the rewrite never fires)</li><li>the rewrite fails to spawn two structurally-new daughter nodes, or fails to conserve mass across the partition</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the population never steps up past 1 (glucose_vmax too low or vol_threshold never reached, or divide_cells is not being called)</li><li>n_cells ever decreases (a division is losing a cell, or a duplicate/phantom id is being dropped)</li><li>per-cell volume runs away past 200 or collapses toward 0 (glucose_vmax tuned too high, re-crossing vol_threshold almost every tick and crowding the lattice; or reset_target is being applied incorrectly)</li><li>the native divide_cells control fails to conserve mass or fails the no-op check (the engine primitive this study&#39;s division depends on is broken, independent of the composite)</li><li>the staircase stays a clean power of two the whole run (siblings would be growing in perfect lockstep, meaning the shared-field coupling is not actually creating local heterogeneity), or max_generation never compounds past 1-2 (the lineage bookkeeping is broken or division is not recursing into daughters)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> development-and-evolution (the paper&#39;s development/evolution figures build on this figure&#39;s growth-and-division rewrite)</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> any future spatial study reusing the CpmGrowthDivision pattern or the native divide_cells primitive (e.g. a spatial development-and-evolution study that needs a growing, dividing colony)</div>
         
       </div>
       
@@ -2626,22 +1526,30 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>An autocatalytic, energy-coupled DNA-replication process (growth) drives the cell's own dna store from 1 → 3.06, crossing dna_threshold = 2.0, which triggers a single division event: the cell node is replaced by two structurally-new daughter nodes and cell_count goes 1→2. The rewrite conserves mass — the parent's biomass fully partitions (parent→0, each daughter M/2=0.5), it is not duplicated. There is no wall clock: the trigger is <code>dna &gt;= threshold</code>, and dna only gets there because growth put it there.</li>
+<li>Metabolism-driven growth crossing a threshold fires division, and division partitions state across two daughters that resume growing themselves, compounding into a genuine multi-generation lineage tree whose siblings desynchronize as they compete for shared, local resources -- the paper's §Growth and division growth-then-divide pattern (Fig 10a,b), including its &quot;coordination and divergence&quot; clause, realized spatially by one real CPM cell, real per-footprint dFBA metabolism, and the native CPM engine operation divide_cells through a single coupling process (CpmGrowthDivision). Over a 36-tick run sampled every 3 ticks: the founder compounds into an 18-cell lineage tree spanning 4 generations (max_generation = 4), the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18) that departs from clean powers of two from tick 21 onward, and every cell's CPM volume stays bounded in a sawtooth between reset_target = 40 and vol_threshold = 80. The staircase is bounded more by lattice crowding than by nutrient limitation (field-wide glucose depletes only ~3% over the run).</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>GROWTH-CROSSES-THRESHOLD</strong> — the k·dna·energy growth process drives parent dna 1 → 3.06, crossing dna_threshold 2.0</li>
-<li><strong>DIVISION-FIRES</strong> — parent dna 1 → 3.06 crosses dna_threshold 2.0 → rewrite fires once, cell_count 1 → 2</li>
-<li><strong>DAUGHTERS-SPAWN</strong> — each daughter dna 0 → 2.75, biomass 0 → 0.5; parent biomass → 0 (mass conserved)</li>
-<li><strong>DRAFT-IS-INERT</strong> — sanity check: the inert draft (empty update) stays at cell_count 1 by construction</li>
+<li><strong>POPULATION-STEPS-UP-BY-DIVISION</strong> -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks</li>
+<li><strong>POPULATION-NEVER-SHRINKS</strong> -- n_cells trajectory is monotonic non-decreasing</li>
+<li><strong>DAUGHTERS-RESUME-GROWTH-WITHOUT-RUNAWAY</strong> -- n_cells &gt;= 3 after 30 ticks from a single seed cell, all volumes in (5, 200)</li>
+<li><strong>PER-CELL-VOLUME-STAYS-BOUNDED</strong> -- per-cell volume bounded roughly 31-79 px across the run</li>
+<li><strong>NATIVE-DIVISION-CONSERVES-MASS</strong> -- divide_cells splits one cell into two mass-conserved daughters; no-op below threshold, verified independently</li>
+<li><strong>DIVISION-DESYNCHRONIZES-FROM-LOCKSTEP</strong> -- n_cells departs from powers of two from tick 21 onward (5, 11, 14, 18); 5 distinct generations coexist in the colony at the final tick</li>
+<li><strong>LINEAGE-COMPOUNDS-INTO-A-TREE</strong> -- max_generation reaches 4; every daughter's generation traces its recorded parent's generation + 1</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Toy-real growth-and-division: the growth rate constant, DNA threshold, replication and segregation constants are illustrative; the rewrite fires once and division is symmetric.</li>
+<li>Growth is genuinely metabolism-driven (real dFBA against e_coli_core at the cell's own footprint) but the constants (glucose_vmax = 1.5, glucose_km, box_volume_L, grow_per_biomass, oxygen_vmax) are toy-real -- plausible, hand-tuned magnitudes, not fitted to any organism or medium.</li>
+<li>Division is the native CPM engine operation divide_cells -- a modeling primitive triggered by the volume threshold, splitting the cell (approximately across its long axis) and conserving lattice-pixel mass between daughters -- NOT emergent membrane constriction or cytokinesis mechanics. The trigger is genuine simulation state; the split itself is an engine-provided operation. The process's own tracked biomass is partitioned proportional to post-split daughter volume (not reset to a fixed value), per §Growth and division's Fig 10b &quot;partitions state variables such as DNA and biomass.&quot;</li>
+<li>The run spans roughly 3-4 generations (1 -&gt; 2 -&gt; 4 -&gt; 8 -&gt; 18 cells), not by a hard-coded generation limit. What actually bounds the staircase: field-wide glucose barely dips (~3% over 36 ticks), a weak brake; the dominant limit is lattice crowding -- the colony packs to roughly two-thirds occupancy within its own bounding footprint even though the full 60x60 lattice remains only ~26% occupied overall. &quot;Bounded by the shared glucose field&quot; overstated the nutrient contribution; &quot;bounded by lattice crowding and, more weakly, shared-glucose depletion&quot; is the honest claim.</li>
+<li>Each CPM cell gets its own independent cobra model copy, not one shared model instance across the lineage.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Add repeated, size-controlled, or asymmetric division rules to test the growth-and-rewrite mechanism under realistic division control.</li>
+<li>Extend the run length or lattice size to see whether the staircase continues past 18 cells or saturates as lattice crowding and glucose depletion dominate further.</li>
+<li>Measure per-cell local glucose alongside position to show the fed-rim-vs-depleting-interior mechanism directly (a center-vs-edge growth-rate readout), rather than inferring it from staircase desync alone.</li>
+<li>Fan out to the next spatial counterpart in the planned increments.</li>
 </ul>
 </div>
     </div>
@@ -2660,7 +1568,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
     <div class="overview-section">
       <h3 class="overview-label">Key assumptions</h3>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Growth is modelled by DNAReplicationODE: d[dna]/dt = k·dna·energy (k=0.15), an autocatalytic process driven by a free-energy input — the Fig 10 analogue of the environment-coupled uptake that grows internal stores elsewhere in the paper (cf. Fig 5&#39;s cell-environment coupling).</li><li style="margin:2px 0">The division rewrite fires exactly once per run (symmetric division, fixed dna_threshold = 2.0); asymmetric division, septum placement, repeated division cycles, and size control are not modelled.</li>
+        <li style="margin:2px 0">Growth is genuinely metabolism-driven -- a real dynamic-FBA solve against `e_coli_core` at the cell&#39;s own CPM footprint each tick, the same mechanism as the flagship&#39;s `CpmCellField` -- but the constants (`glucose_vmax` = 1.5, `glucose_km`, `box_volume_L`, `grow_per_biomass`, `oxygen_vmax`) are toy-real: plausible, hand-tuned magnitudes chosen to make the growth-divide staircase legible over a 36-tick run, not fitted to a named organism or medium.</li><li style="margin:2px 0">Division is the NATIVE CPM engine operation `divide_cells(vol_threshold, reset_target)` -- a modeling primitive triggered by the cell&#39;s own grown volume crossing `vol_threshold`, which splits the cell (approximately across its long axis) into two daughters, conserves lattice-pixel mass between them, and resets both daughters&#39; physical target volume to `reset_target` -- NOT emergent membrane constriction or cytokinesis mechanics. The trigger condition (crossing a volume threshold reached by real metabolism-driven growth) is genuine simulation state; the split operation itself is an engine-provided primitive, not a simulated physical process. The process&#39;s own tracked `biomass` -- which is what drives future growth via `set_target_volume` -- is handled separately from the engine&#39;s physical reset: per the paper (§Growth and division, Fig 10b caption, division &#34;partitions state variables such as DNA and biomass into two cells&#34;), the parent&#39;s pre-division biomass is split between the two daughters proportional to their post-division lattice volumes, mass-conserving, not reset to a fixed value that would discard it. This mirrors the honest framing `disintegration` gave its own resorption primitive: a chosen, code-verified engine operation standing in for a mechanism (cytokinesis) the underlying CPM engine does not itself simulate.</li><li style="margin:2px 0">The run spans roughly 3-4 generations (1 -&gt; 2 -&gt; 4 -&gt; 8 -&gt; 18 cells), not by any hard-coded generation limit. `glucose_vmax` is deliberately tuned down from the brief&#39;s literal reference value of 10.0 to 1.5: at 10.0 every live cell grows fast enough to re-cross `vol_threshold` almost every tick, and the population explodes past the lattice&#39;s pixel budget within ~20 ticks, crowding cells down toward near-zero-volume phantoms. At 1.5, growth is slow enough that the staircase stays legible and every cell settles in a bounded volume band between divisions. What actually bounds the staircase, measured: field-wide glucose barely dips (~3% over 36 ticks), so nutrient depletion is a weak brake; the dominant limit is lattice crowding -- the 18-cell colony packs to roughly two-thirds occupancy within its own bounding footprint even though the full 60x60 lattice remains only ~26% occupied overall. &#34;Bounded by the shared glucose field&#34; overstates the nutrient contribution; &#34;bounded by lattice crowding and, more weakly, shared-glucose depletion&#34; is the honest claim.</li><li style="margin:2px 0">Each CPM cell gets its own independent cobra model copy, not one shared model instance across the lineage -- the same convention as `cell-cell-coupling`&#39;s `CpmColonyField` -- keyed off the live cell ids read from the engine&#39;s own snapshot each tick, so newly divided daughters are picked up automatically without scripted lineage bookkeeping.</li><li style="margin:2px 0">The native `divide_cells` primitive this study&#39;s division depends on is no longer an assumption; it is runtime-verified directly (`tests/test_cpm_divide_spike.py`) against a synthetic single-cell world, independently of the growth-division composite&#39;s own metabolism mechanism: parent id kept, one new daughter id minted, combined post-split volume matches the pre-split volume within rounding, and a sub-threshold cell is confirmed a no-op.</li><li style="margin:2px 0">Read against a lumped, specification-stage realization of the same pattern: that kind of model drives an autocatalytic ODE (`d[dna]/dt = k*dna*energy`) to grow the cell&#39;s own dna store past `dna_threshold`, then fires division as a place-graph rewrite -- a structural change to the composition itself, one cell node becoming two structurally-new daughter nodes, with the parent&#39;s biomass halved rather than duplicated. This study drives growth with real per-footprint dFBA metabolism instead of a lumped ODE, and realizes division as the native spatial CPM operation `divide_cells` acting directly on lattice pixels instead of a graph rewrite. Compare the two for the same growth-then-divide claim at two very different mechanistic and compositional resolutions -- place-graph rewrite vs. spatial pixel-level engine operation.</li>
       </ul>
     </div>
     
@@ -2670,7 +1578,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Symmetric division with a fixed DNA threshold; asymmetric division, septum placement, and size control are not modelled.</li><li style="margin:2px 0">The rewrite fires once (cell_count 1→2); repeated division and spatial structure among daughters are not modelled.</li><li style="margin:2px 0">Growth is a single autocatalytic ODE (k·dna·energy); it is not coupled to a full metabolic or spatial nutrient field in this figure.</li>
+        <li style="margin:2px 0">Growth is genuinely metabolism-driven (real dFBA against e_coli_core at the cell&#39;s own CPM footprint each tick) but the constants (glucose_vmax = 1.5, glucose_km, box_volume_L, grow_per_biomass, oxygen_vmax) are toy-real, hand-tuned magnitudes chosen to make the growth-divide staircase legible over a 36-tick run -- not fitted to any organism or medium.</li><li style="margin:2px 0">Division is the NATIVE CPM engine operation divide_cells(vol_threshold, reset_target) -- a modeling primitive triggered by the cell&#39;s own grown volume crossing vol_threshold, splitting the cell (approximately across its long axis) and conserving lattice-pixel mass between the two daughters, then resetting both daughters&#39; physical target volume toward reset_target -- NOT emergent membrane constriction or cytokinesis mechanics. The trigger condition is genuine simulation state reached by real metabolism-driven growth; the split operation itself is an engine-provided primitive standing in for a mechanism (cytokinesis) the underlying CPM engine does not itself simulate. The process&#39;s own tracked biomass -- what drives future growth -- is partitioned proportional to post-split daughter volume (per §Growth and division&#39;s Fig 10b &#34;partitions state variables such as DNA and biomass&#34;), not reset to a fixed value that would discard it.</li><li style="margin:2px 0">The run spans roughly 3-4 generations (1 -&gt; 2 -&gt; 4 -&gt; 8 -&gt; 18 cells), not by a hard-coded generation limit. glucose_vmax is deliberately tuned down to 1.5 (from a brief reference value of 10.0) so the population steps up as a legible staircase rather than every live cell re-crossing threshold almost every tick and crowding the lattice down toward near-zero-volume phantoms. What actually bounds the staircase, measured: field-wide glucose barely dips (~3% over 36 ticks), so nutrient depletion is a weak brake; the dominant limit is lattice crowding -- the 18-cell colony packs to roughly two-thirds occupancy within its own bounding footprint even though the full 60x60 lattice remains only ~26% occupied overall. &#34;Bounded by the shared glucose field&#34; overstates the nutrient contribution; &#34;bounded by lattice crowding and, more weakly, shared-glucose depletion&#34; is the honest claim.</li><li style="margin:2px 0">Each CPM cell gets its own independent cobra model copy, not one shared model instance across the lineage -- the same convention as cell-cell-coupling&#39;s CpmColonyField -- keyed off the live cell ids read from the engine&#39;s own snapshot each tick.</li><li style="margin:2px 0">The native divide_cells primitive this study&#39;s division depends on is now runtime-verified directly (tests/test_cpm_divide_spike.py), independent of the growth-division composite&#39;s own metabolism mechanism -- previously an untested primitive.</li><li style="margin:2px 0">Read against a lumped, specification-stage realization of the same pattern: that kind of model drives an autocatalytic ODE to grow the cell&#39;s own dna store past a threshold, then fires division as a place-graph rewrite -- a structural change to the composition itself, one cell node becoming two structurally-new daughter nodes, at a lumped, non-spatial level. This study drives growth with real per-footprint dFBA metabolism and realizes division as the native spatial CPM operation divide_cells acting directly on lattice pixels. Compare the two for the same growth-then-divide claim at two very different mechanistic and compositional resolutions.</li><li style="margin:2px 0">Division here is an engine-provided physical operation (a pixel split), not a process-bigraph place-graph rewrite; there is no analogue to compile-time rewrite-conformance verification of the structural change against its wiring, unlike a reaction-rule formulation of division.</li>
       </ul>
     </div>
     
@@ -2697,8 +1605,8 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>4</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">4 PASS</span> ·
+        <strong>7</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">7 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -2732,7 +1640,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run stays at seed cell_cou
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "224c4cd4169ed24cc75ac2f2d6147de5854667ac", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/224c4cd4169ed24cc75ac2f2d6147de5854667ac", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 14:19 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "f9830302f3670bc67e5dae28f5cbba55e7675c5d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/f9830302f3670bc67e5dae28f5cbba55e7675c5d", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 15:14 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "growth-and-division";

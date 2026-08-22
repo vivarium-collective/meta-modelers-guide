@@ -21,22 +21,11 @@ if _os.environ.get("PYTHONUTF8") != "1":
 #
 # _Investigation `draft-to-living-cell` — coder reproduction notebook._
 #
-# **Question.** Is a cellular interface simultaneously a modeling choice — a decision about which
-# ports matter, what units they carry, how a process couples to the rest of the cell — and a
-# testable biological hypothesis about which interactions actually govern a cell's fate? And
-# does treating composition as an ongoing practice — connect two interfaces where their
-# assumptions hold, cut the model open at the interface when those assumptions fail, coarse-grain
-# a resolved network back into a lumped exchange when organization re-emerges — let the same
-# cellular specification hold together across environment coupling, cell-cell coupling,
-# molecular mechanism, nested complementarity, autopoietic closure, growth, division, and the
-# harder transitions of development and evolution, while tracking viability bounds as the
-# locus of minimal agency throughout?
+# **Question.** Does the paper's central claim hold in executable form — that a biological interface can be treated as a modeling choice and a testable hypothesis, so that composing heterogeneous, independently-built simulators through one typed interface per pattern reproduces the paper's cellular composition patterns? And does the same interface survive being realized by very different mechanisms behind it — a Cellular Potts cell versus a lumped-ODE cell, dynamic flux-balance analysis versus a lumped Michaelis-Menten kinetic — as the paper's substitutability claim predicts? The subject here is the interface; process bigraphs (Vivarium) are the example substrate we use to make it executable.
 #
-# This investigation turns *A meta-modeler's guide to the cellular interface* into an executable test of the paper's central claim: a cellular interface is simultaneously a modeling choice and a testable biological hypothesis about which interactions govern a cell's fate. Each study is written twice. First as a draft: a typed, unit-bearing interface — a structural contract of port names, types, and wiring, with no committed mechanism. It says what a process couples to, not how. Then it is compiled, which installs one or more conforming mechanisms — mechanistic, rule-based, data-driven, or otherwise — behind the identical ports, so the running simulation preserves the declared interface exactly. This operationalizes the paper's R_L (the process- implementation relation) and the Discussion's semantic-to-executable layer: a draft is the semantic layer, and compilation is the step that gives it an executable one. The compiler's conformance check is structural only: it verifies that a handler supplies every port with a compatible type and wiring, and refuses one that does not. It does not check units, dimensions, invariants, or runtime behavior.
+# "From Draft to Living Cell" is the executable companion to the meta-modeler's guide: the paper's nine cellular composition patterns, each realized as a runnable model behind one typed interface. The organizing idea is the paper's own — an interface is a modeling choice and a testable biological hypothesis at once, naming which interactions across a cell's boundary matter and which can be abstracted away. Every study makes one such interface explicit and puts it behind a behavior gate. The interface is the load-bearing artifact: it, not either framework alone, is what lets two simulators that were never designed with each other in mind compose. The flagship's coupling process, CpmCellField, is exactly this — the point where a CPM cell's footprint (a set of lattice pixels) becomes a spatio-flux field read, and a dynamic-FBA solution (mmol/gDW/hr fluxes) becomes a per-pixel field delta and a CPM target-volume update. Composition runs in two directions: outward, where a cell couples to its environment and to other cells; and inward, where internal processes compose to produce the interface and the viability constraints that hold it together. Process bigraphs and Vivarium are the example substrate that makes all of this executable — they are how the patterns are expressed, not the claim being tested.
 #
-# The point is not to assemble one monolithic cell model. It is to test whether composition is an ongoing practice rather than a final architecture: connect two interfaces where their assumptions hold (cell-environment and cell-cell coupling), cut the model open at the interface when those assumptions fail and the right level of description drops to molecules (disintegration — the paper's Fig 6, and this investigation's flagship), and coarse-grain a resolved molecular network back into a lumped exchange when organization re-emerges (the same pattern run in reverse, and again in autopoiesis). Underneath every study sits one throughline: viability bounds and minimal agency. A cellular description is valid only while its interface variables sit inside a viability bound; the interface is the locus where ordinary chemical dynamics becomes a self-maintaining, adaptive agent, and losing that boundary is exactly what disintegration demonstrates.
-#
-# The 9 studies below follow the paper's own order: the cellular interface itself, then where it couples to environment and to other cells, then where it breaks (disintegration) and what it is made of underneath (molecular interfaces, biomolecular complementarity, autopoiesis), then how it is rewritten across time (growth and division, development and evolution). A closing capstone carries the disintegration grain-swap up to one hand-assembled whole cell that grows, divides, and dies; a coverage note confirms that every figure draft in this investigation compiles to a running executable.
+# The paper's substitutability claim — that different mechanisms may realize the same externally observable relation, so interfaces provide a natural level at which heterogeneous mechanisms can be compared — is shown concretely rather than asserted: the flagship swaps its internal metabolism from dynamic-FBA to a lumped Michaelis-Menten kinetic behind the byte-identical CpmCellField ports, and the interface-level observables agree within ~10%. Same interface, different mechanism, preserved behavior.
 #
 # ---
 #
@@ -301,72 +290,76 @@ _save_viz('cellular-interface', 'fig04-illustration', _render_one('image:visuali
 # | objective-climbs | kind=observable path=objective expr=last(objective) | op >= value 1.0 provenance objective 0.0→1.6 as growth proceeds; exec last≈1.6 (fig04b-executable) |
 # | draft-is-inert | kind=observable path=shape expr=max(shape) | op >= value 2.0 provenance inert-draft run: shape stays 1.0 (empty update by construction) → fails by design (expected-fail control) |
 
-# ## Study: Cell–Environment Coupling (`cell-environment-coupling`)
+# ## Study: Cell–Environment Coupling (flagship) (`cell-environment-coupling`)
 #
-# **Question.** Does the cellular interface become a genuine sense/act loop when the environment is a real diffusing spatial field the cell reads and acts back on?
+# **Question.** When a single cell metabolizes at its own location, does it measurably reshape the very
+# nutrient gradient it depends on — niche construction (odling1996) — closing the paper's
+# §Cell–environment coupling sense → metabolize → secrete loop (Fig 5) as real spatial
+# metabolism: one cell sensing local glucose, running flux-balance analysis at its own footprint,
+# growing, and secreting a byproduct that diffuses back into the field it senses? The paper
+# frames this feedback loop as "the minimal structure required for control"; here the loop is
+# genuinely closed (a real depletion → uptake feedback), while directed control — chemotaxis up
+# the sensed gradient — is the deferred half. Mechanistically, the cell and its environment are
+# two real, independently-built simulators (viva-cpm's Cellular Potts engine, spatio-flux's
+# diffusion-advection and dynamic-FBA processes) composed through one typed coupling process
+# (`CpmCellField`), rather than a scripted or lumped stand-in for that coupling.
 #
-# **Claim.** Compiling the Fig 5 draft installs a real Laplacian-diffusion field and single-cell uptake; the cell depletes nutrient locally, diffusion refills it, and the cell reshapes the very gradient it depends on (niche construction) — interface preserved (Law 2).
+# **Claim.** Composing a real CPM cell with a real spatio-flux nutrient field through one typed
+# coupling process (`CpmCellField`) reproduces the paper's §Cell–environment coupling
+# sense → metabolize → secrete loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in
+# for it (the loop is closed; directed control/chemotaxis is deferred): over 20 ticks the
+# cell runs dynamic-FBA at its own
+# footprint (`e_coli_core`, O2-capped to force acetate overflow), grows ~3.4x in CPM volume (32
+# -> 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
+# up to ~18% before diffusion partially resupplies it (niche construction), and secretes a
+# diffusing acetate plume — two independently-built simulators talking through one typed port.
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `cell-environment` | `meta_modelers_guide.composites.fig05-cell-environment` | 0 | — |
-# | `cell-environment-executable` | `meta_modelers_guide.composites.fig05-executable` | 0 | — |
+# | `single-cell-in-a-field` | `meta_modelers_guide.composites.single-cell-in-a-field` | 0 | — |
+#
+# Declared parameter sets (`study.yaml` variants):
+#
+# - **mm-mechanism** — `mechanism=mm`, `mm_vmax=4.0`, `mm_km=0.5`, `mm_yield=0.024`, `mm_overflow=1.4`
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig05-cell-environment`** — `spec_meta_modelers_guide_composites_fig05_cell_environment` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.single-cell-in-a-field`** — `spec_meta_modelers_guide_composites_single_cell_in_a_field` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig05_cell_environment = load_spec(REPO / 'meta_modelers_guide/composites/fig05-cell-environment.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig05_cell_environment)
+spec_meta_modelers_guide_composites_single_cell_in_a_field = load_spec(REPO / 'meta_modelers_guide/composites/single-cell-in-a-field.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_single_cell_in_a_field)
 
-# === Edit parameters for composite 'Cell–Environment Coupling' ===
+# === Edit parameters for composite 'single-cell-in-a-field' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'reaction_diffusion'  (local:ReactionDiffusion)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['reaction_diffusion']['config']['interval'] = 1.0
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'production_degradation'  (local:ProductionDegradation)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['production_degradation']['config']['interval'] = 1.0
-
-# process 'mechanical_stress'  (local:MechanicalStress)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['mechanical_stress']['config']['interval'] = 1.0
-
-# process 'single_cell_processes'  (local:SingleCellProcesses)
-spec_meta_modelers_guide_composites_fig05_cell_environment['state']['single_cell_processes']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig05-executable`** — `spec_meta_modelers_guide_composites_fig05_executable` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig05_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig05-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig05_executable)
-
-# === Edit parameters for composite 'fig05-executable' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'reaction_diffusion'  (local:SpatialDiffusion)
-spec_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['diffusivity'] = 0.2
-spec_meta_modelers_guide_composites_fig05_executable['state']['reaction_diffusion']['config']['interval'] = 1.0
-
-# process 'production_degradation'  (local:ProductionDegradationField)
-spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_index'] = 0
-spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['source_rate'] = 0.05
-spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['decay_rate'] = 0.01
-spec_meta_modelers_guide_composites_fig05_executable['state']['production_degradation']['config']['interval'] = 1.0
-
-# process 'mechanical_stress'  (local:MechanicalRelax)
-spec_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['relax_rate'] = 0.3
-spec_meta_modelers_guide_composites_fig05_executable['state']['mechanical_stress']['config']['interval'] = 1.0
-
-# process 'single_cell_processes'  (local:SingleCellSpatial)
-spec_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['cell_index'] = 4
-spec_meta_modelers_guide_composites_fig05_executable['state']['single_cell_processes']['config']['interval'] = 1.0
+# process 'cell'  (local:CpmCellField)
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['nx'] = 60
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['ny'] = 60
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['seed_block'] = [15, 27, 0, 22, 34, 1]
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['mcs_per_update'] = 8
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['temperature'] = 10.0
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['contact_j'] = 14.0
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['biomass0'] = 0.1
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['grow_per_biomass'] = 300.0
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['glucose_vmax'] = 3.5
+spec_meta_modelers_guide_composites_single_cell_in_a_field['state']['cell']['config']['oxygen_vmax'] = 2.5
 
 # ### Run
 #
@@ -384,10 +377,15 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig05-executable-dynamics**
+# **single-cell-in-a-field-movie**
 
-# fig05-executable-dynamics
-_save_viz('cell-environment-coupling', 'fig05-executable-dynamics', _render_one('html:fig05-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 5: uptake_flux and mechanical_field climb together as the cell senses the local field and acts back on it — one coupling, not two separate subsystems.'}, RUNS_DB, STUDY_YAML))
+# single-cell-in-a-field-movie
+_save_viz('cell-environment-coupling', 'single-cell-in-a-field-movie', _render_one('image:viz/single-cell-in-a-field.gif', {'chart': 'image', 'caption': 'Glucose (with footprint + COM) | glucose depletion halo (Δ from t=0) | acetate\nplume, over the 20-tick flagship run. The middle panel is the direct niche-construction\nsignal: the cell measurably reshapes the very gradient it depends on.'}, RUNS_DB, STUDY_YAML))
+
+# **single-cell-in-a-field-metrics**
+
+# single-cell-in-a-field-metrics
+_save_viz('cell-environment-coupling', 'single-cell-in-a-field-metrics', _render_one('html:single-cell-in-a-field-metrics.html', {'chart': 'html', 'caption': 'Synced metrics for the flagship run — local_nutrient / biomass / acetate_secreted\n(left axis) against CPM volume (right axis) over 20 ticks.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -395,110 +393,173 @@ _save_viz('cell-environment-coupling', 'fig05-executable-dynamics', _render_one(
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | cell-draws-well | kind=observable path=uptake_flux expr=last(uptake_flux) | op >= value 0.2 provenance cell takes up from the field — uptake flux 0.0→0.34, bolus cell drawn down 1.0→0.2 (exec last≈0.34, fig05-executable) |
-# | cell-acts-back | kind=observable path=traction expr=last(traction) | op >= value 0.3 provenance cell acts back mechanically — traction 0.0→0.41 (exec last≈0.41, fig05-executable) |
-# | mechanical-response | kind=observable path=mechanical_field expr=last(mechanical_field) | op >= value 0.5 provenance mechanical field driven by the cell 0.0→0.94 (exec last≈0.94, fig05-executable) |
+# | cell-metabolizes-and-grows | kind=observable path=obs.biomass expr=last(obs.biomass) | op > value 0.1 provenance over 20 ticks, biomass 0.1 -> ~0.37 (tests/test_flagship_field.py::test_flagship_sense_act_loop; tests/test_cpm_cell_field.py::test_cell_metabolizes_grows_and_reshapes_field asserts the same pattern on a smaller 40x40 grid over 12 ticks) |
+# | cpm-volume-grows | kind=observable path=obs.volume expr=last(obs.volume) | op > value 40.0 provenance CPM volume 32 -> 110 px over 20 ticks (~3.4x), ~3% of the 60x60=3600px lattice (tests/test_flagship_field.py::test_flagship_sense_act_loop) |
+# | acetate-secreted-and-diffuses | kind=observable path=fields.acetate expr=sum(fields.acetate) | op > value 0.0 provenance field-wide acetate 0 -> ~47.0 over 20 ticks, spreading into a plume around the cell's footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the plume is the third panel of the baked GIF) |
+# | net-glucose-consumed | kind=observable path=fields.glucose expr=sum(fields.glucose) | op < value 5940.0 provenance field-wide glucose total 5940.0 -> ~5908.4 over 20 ticks (~32 units net consumed); the local footprint drawdown is much sharper (up to ~18%) than the field-wide total because only the cell's footprint and its immediate diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop) |
+# | o2-cap-forces-acetate-overflow | kind=observable path=fields.acetate expr=sum(fields.acetate) with oxygen uncapped vs capped | op approx_equal value 0.0 provenance field-wide acetate over 20 ticks: capped flagship 0 -> ~47.0, O2-uncapped 0 -> 0.0 (exactly), a >100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow; composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json) |
+# | field-mass-balance-closes | kind=observable path=fields.glucose, fields.acetate expr=abs(final_mass - (initial_mass + Σ writer_net_exchange)) per species | op < value 1e-06 provenance both glucose and acetate ledgers close to < 1e-6 over 15 ticks; cell net glucose < 0 (sink) and net acetate > 0 (source), diff net ~0 for both (tests/test_mass_balance.py::test_flagship_field_mass_balance_closes; meta_modelers_guide/analysis/mass_balance.py) |
+# | interface-substitutable-across-mechanisms | kind=observable path=obs.biomass, obs.volume, fields.acetate, fields.glucose expr=per-observable abs(dFBA - MM) / dFBA over a 20-tick run | op < value 0.3 provenance over 20 ticks (tests/test_substitutability.py::test_interface_observables_substitutable): biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — every interface observable within ~10%; the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the substitutability payoff. MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to match, not derived from the dFBA solution. |
 
 # ## Study: Cell–Cell Coupling (`cell-cell-coupling`)
 #
-# **Question.** When two cell interfaces are coupled through one shared environmental nutrient store, what is coupled is not only state but constraint — does one cell's uptake push the other outside its viable bounds (competition), and can a different handler over the same coupling interface stabilize both (cross-feeding)?
+# **Question.** Does the paper's §Cell–cell coupling viability-negotiation pattern (no dedicated
+# figure) hold as real spatial multicellularity — multiple CPM cells sharing one diffusing
+# nutrient field, each running its own dynamic-FBA step at its own footprint, producing both
+# competitive exclusion and cross-feeding — when the whole colony is composed from independent
+# frameworks through one N-cell coupling process (`CpmColonyField`), rather than the lumped
+# two-role, shared-scalar-pool stand-in a lumped, specification-stage realization used?
 #
-# **Claim.** Two cells over one shared-nutrient interface negotiate viability, not just state: under competition the weaker cell (lower uptake capacity) is driven below its viable band while the stronger persists (cell_a viability → 1.0, cell_b → ~0.0001); under cross-feeding, the same coupling interface with a different handler keeps both cells viable (cell_a and cell_b → 1.0) — two handler environments over one interface (Law 4), the draft itself unchanged (Law 2).
+# **Claim.** Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
+# single N-cell coupling process (`CpmColonyField`) reproduces the paper's §Cell–cell coupling
+# viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
+# scripted or lumped stand-in for it: over
+# 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric
+# growth toward competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81
+# px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
+# bound), while a
+# different composite over the same coupling process — a localized glucose depot, a fast-diffusing
+# acetate byproduct, and an acetate-consuming role — sustains a cell that never touches glucose
+# (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass
+# 1.25 -> 3.79). Both regimes run through the same process; only the composite's cell roles and
+# field constants differ, mirroring the lumped ODE predecessor's law-4 pattern
+# (two handler environments negotiate the shared-resource constraint differently over one
+# interface) at real spatial, per-footprint metabolic resolution.
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `coupling-draft` | `meta_modelers_guide.composites.cellcell-coupling` | 0 | — |
-# | `compete` | `meta_modelers_guide.composites.cellcell-executable-compete` | 0 | — |
-# | `crossfeed` | `meta_modelers_guide.composites.cellcell-executable-crossfeed` | 0 | — |
+# | `cellcell-compete` | `meta_modelers_guide.composites.cellcell-compete` | 0 | — |
+# | `cellcell-crossfeed` | `meta_modelers_guide.composites.cellcell-crossfeed` | 0 | — |
+# | `cellcell-crossfeed-knockout` | `meta_modelers_guide.composites.cellcell-crossfeed-knockout` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.cellcell-coupling`** — `spec_meta_modelers_guide_composites_cellcell_coupling` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.cellcell-compete`** — `spec_meta_modelers_guide_composites_cellcell_compete` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_cellcell_coupling = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-coupling.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_cellcell_coupling)
+spec_meta_modelers_guide_composites_cellcell_compete = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-compete.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_compete)
 
-# === Edit parameters for composite 'Cell–Cell Coupling' ===
+# === Edit parameters for composite 'cellcell-compete' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'shared_env'  (local:SharedNutrientEnv)
-spec_meta_modelers_guide_composites_cellcell_coupling['state']['shared_env']['config']['interval'] = 0.1
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_cellcell_compete['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'cell_a_proc'  (local:CellAgent)
-spec_meta_modelers_guide_composites_cellcell_coupling['state']['cell_a_proc']['config']['interval'] = 0.1
+# process 'colony'  (local:CpmColonyField)
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['role'] = 'competitor'
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['seed_block'] = [12, 26, 0, 20, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['glucose_vmax'] = 10.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][0]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['role'] = 'competitor'
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['seed_block'] = [40, 26, 0, 48, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['glucose_vmax'] = 4.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['cells'][1]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config']['contact'][1]['j'] = 14.0
 
-# process 'cell_b_proc'  (local:RivalCellAgent)
-spec_meta_modelers_guide_composites_cellcell_coupling['state']['cell_b_proc']['config']['interval'] = 0.1
-
-# **Composite `meta_modelers_guide.composites.cellcell-executable-compete`** — `spec_meta_modelers_guide_composites_cellcell_executable_compete` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.cellcell-crossfeed`** — `spec_meta_modelers_guide_composites_cellcell_crossfeed` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_cellcell_executable_compete = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-executable-compete.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_cellcell_executable_compete)
+spec_meta_modelers_guide_composites_cellcell_crossfeed = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-crossfeed.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed)
 
-# === Edit parameters for composite 'cellcell-executable-compete' ===
+# === Edit parameters for composite 'cellcell-crossfeed' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'shared_env'  (local:NutrientPool)
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['shared_env']['config']['supply'] = 0.5
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['shared_env']['config']['capacity'] = 1.0
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['shared_env']['config']['interval'] = 0.1
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['diffusion_coeffs']['acetate'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'cell_a_proc'  (local:CompetingCell)
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['vmax'] = 0.8
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['km'] = 0.3
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['yield_'] = 0.5
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['maintenance'] = 0.1
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['via_gain'] = 0.4
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_a_proc']['config']['interval'] = 0.1
+# process 'colony'  (local:CpmColonyField)
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['grow_per_biomass'] = 30.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['role'] = 'secretor'
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['seed_block'] = [8, 26, 0, 16, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['glucose_vmax'] = 10.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['oxygen_vmax'] = 5.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][0]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['role'] = 'consumer'
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['seed_block'] = [22, 26, 0, 30, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['acetate_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['oxygen_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['cells'][1]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['j'] = 14.0
 
-# process 'cell_b_proc'  (local:CompetingCell)
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['vmax'] = 0.2
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['km'] = 0.3
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['yield_'] = 0.5
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['maintenance'] = 0.1
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['via_gain'] = 0.4
-spec_meta_modelers_guide_composites_cellcell_executable_compete['state']['cell_b_proc']['config']['interval'] = 0.1
-
-# **Composite `meta_modelers_guide.composites.cellcell-executable-crossfeed`** — `spec_meta_modelers_guide_composites_cellcell_executable_crossfeed` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.cellcell-crossfeed-knockout`** — `spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-executable-crossfeed.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_cellcell_executable_crossfeed)
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-crossfeed-knockout.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout)
 
-# === Edit parameters for composite 'cellcell-executable-crossfeed' ===
+# === Edit parameters for composite 'cellcell-crossfeed-knockout' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'shared_env'  (local:NutrientPool)
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['shared_env']['config']['supply'] = 0.5
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['shared_env']['config']['capacity'] = 1.0
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['shared_env']['config']['interval'] = 0.1
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['diffusion_coeffs']['acetate'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'cell_a_proc'  (local:CrossFeedingCell)
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['vmax'] = 0.6
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['km'] = 0.3
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['yield_'] = 0.5
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['maintenance'] = 0.1
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['via_gain'] = 0.4
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['return_frac'] = 0.7
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_a_proc']['config']['interval'] = 0.1
-
-# process 'cell_b_proc'  (local:CrossFeedingCell)
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['vmax'] = 0.6
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['km'] = 0.3
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['yield_'] = 0.5
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['maintenance'] = 0.1
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['via_gain'] = 0.4
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['return_frac'] = 0.7
-spec_meta_modelers_guide_composites_cellcell_executable_crossfeed['state']['cell_b_proc']['config']['interval'] = 0.1
+# process 'colony'  (local:CpmColonyField)
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['grow_per_biomass'] = 30.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['role'] = 'consumer'
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['seed_block'] = [22, 26, 0, 30, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['acetate_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['oxygen_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][1]['j'] = 14.0
 
 # ### Run
 #
@@ -516,15 +577,25 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **cellcell-executable-compete-dynamics**
+# **cellcell-compete-movie**
 
-# cellcell-executable-compete-dynamics
-_save_viz('cell-cell-coupling', 'cellcell-executable-compete-dynamics', _render_one('html:cellcell-executable-compete.html', {'chart': 'html', 'caption': 'Interactive: cell_a and cell_b viability diverge fast under competition — the weaker cell is driven out of its viable band while the shared nutrient pool is measurably depleted.'}, RUNS_DB, STUDY_YAML))
+# cellcell-compete-movie
+_save_viz('cell-cell-coupling', 'cellcell-compete-movie', _render_one('image:viz/cellcell-compete.gif', {'chart': 'image', 'caption': 'Spatial competitive exclusion over 20 ticks -- the higher-vmax competitor (id 1) claims the shared lattice (filled, over the glucose depletion it drives); the lower-vmax competitor (id 2) is pushed to the margins.'}, RUNS_DB, STUDY_YAML))
 
-# **cellcell-executable-crossfeed-dynamics**
+# **cellcell-compete-metrics**
 
-# cellcell-executable-crossfeed-dynamics
-_save_viz('cell-cell-coupling', 'cellcell-executable-crossfeed-dynamics', _render_one('html:cellcell-executable-crossfeed.html', {'chart': 'html', 'caption': "Interactive: under cross-feeding, both cells' viability stays up and the shared pool settles higher than under competition — same interface, different handler."}, RUNS_DB, STUDY_YAML))
+# cellcell-compete-metrics
+_save_viz('cell-cell-coupling', 'cellcell-compete-metrics', _render_one('html:viz/cellcell-compete-metrics.html', {'chart': 'html', 'caption': "Biomass divergence for the competition run -- the id 1 / id 2 biomass ratio climbs to a 3.69x final margin over 20 ticks, the study's headline number made directly visible."}, RUNS_DB, STUDY_YAML))
+
+# **cellcell-crossfeed-movie**
+
+# cellcell-crossfeed-movie
+_save_viz('cell-cell-coupling', 'cellcell-crossfeed-movie', _render_one('image:viz/cellcell-crossfeed.gif', {'chart': 'image', 'caption': "Spatial cross-feeding over 20 ticks -- the secretor's (id 1) acetate plume reaches the consumer (id 2), which grows despite never touching glucose."}, RUNS_DB, STUDY_YAML))
+
+# **cellcell-crossfeed-metrics**
+
+# cellcell-crossfeed-metrics
+_save_viz('cell-cell-coupling', 'cellcell-crossfeed-metrics', _render_one('html:viz/cellcell-crossfeed-metrics.html', {'chart': 'html', 'caption': "Synced per-cell metrics for the cross-feeding run -- the consumer's local_glucose stays at 0.0 while local_acetate and biomass rise from the diffused plume, over 20 ticks."}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -532,149 +603,87 @@ _save_viz('cell-cell-coupling', 'cellcell-executable-crossfeed-dynamics', _rende
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | competition-starves-weaker-cell | kind=observable path=cell_b.viability expr=last(cell_b.viability) | op <= value 0.5 provenance cell_b (rival, vmax 0.2) viability collapses 1.0 → 0.0001 under competition (exec cellcell-executable-compete, tests/test_cellcell.py::test_competition_pushes_weaker_cell_out_of_viable_bounds) |
-# | competition-stronger-cell-persists | kind=observable path=cell_a.viability expr=last(cell_a.viability) | op >= value 0.5 provenance cell_a (vmax 0.8) viability stays at 1.0 under competition while cell_b collapses (exec cellcell-executable-compete) |
-# | crossfeeding-keeps-both-viable | kind=observable path=cell_b.viability expr=last(cell_b.viability) | op >= value 0.5 provenance both cells viability → 1.0 under cross-feeding (exec cellcell-executable-crossfeed, tests/test_cellcell.py::test_crossfeeding_keeps_both_cells_viable) |
-# | shared-pool-actually-depleted | kind=observable path=env.nutrient expr=last(env.nutrient) | op < value 1.0 provenance shared env.nutrient depleted 1.0 → 0.1999... under competition (test_cellcell.py asserts st["env"]["nutrient"] < 1.0) |
-# | draft-preserves-interface | kind=observable path=interface_match expr=last(interface_match) | op >= value 1.0 provenance tests/test_cellcell.py::test_handler_independence_same_interface — interface_of(compete) == interface_of(crossfeed) == interface_of(draft), asserted structurally |
+# | competition-excludes-the-slower-cell | kind=observable path=obs.biomass expr=last(obs.biomass["1"]) / last(obs.biomass["2"]) | op > value 1.5 provenance biomass 237.9 (id 1, vmax 10) vs 64.5 (id 2, vmax 4) -> 3.69x ratio over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly) |
+# | competition-volume-tracks-biomass | kind=observable path=obs.volume expr=last(obs.volume["1"]) > last(obs.volume["2"]) | op > value 0.0 provenance volume 3511 px (id 1) vs 81 px (id 2) over 20 ticks -- the faster competitor claims most of the shared lattice (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell) |
+# | competition-loser-displaced-not-excluded | kind=observable path=obs.biomass expr=last(obs.biomass["2"])   # loser final biomass, vs the 1.25 viable-biomass floor | op > value 1.25 provenance loser (id 2) ends at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits far above the viable-biomass floor, while holding only 81 px against the winner's 3511 px (~97.5% of the 3600-px lattice): spatially displaced, not excluded. Extending the run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation) (tests/test_cellcell_regimes.py::test_competition_loser_is_displaced_not_excluded) |
+# | crossfeeding-consumer-blind-to-glucose | kind=observable path=obs.local_glucose expr=last(obs.local_glucose["2"]) | op < value 0.5 provenance consumer (id 2) local_glucose == 0.0 over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
+# | crossfeeding-consumer-grows-on-acetate-alone | kind=observable path=obs.biomass expr=last(obs.biomass["2"]) | op > value 1.25 provenance consumer (id 2) biomass 1.25 -> 3.79 (roughly 3x, back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
+# | crossfeeding-acetate-plume-reaches-consumer | kind=observable path=obs.local_acetate expr=last(obs.local_acetate["2"]) | op > value 0.0 provenance consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose's 0.4) acetate plume reaches the consumer's footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
+# | two-writer-additivity-conserves-mass | kind=observable path=fields.glucose expr=net change in sum(fields.glucose) over 3 ticks (final minus initial) | op == value -6.0 provenance a synthetic structural-control process (not this study's composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve) |
+# | crossfeeding-secretor-knockout-consumer-fails-to-grow | kind=observable path=obs.biomass expr=last(obs.biomass["1"])   # consumer-alone final biomass; expected to stay at the seed | op <= value 1.2500001 provenance consumer (id 1) biomass stays at its 1.25 seed and local_acetate stays 0.0 over 20 ticks with the secretor removed -- it persists on the lattice (~35 px) but flatly fails to grow, versus 1.25 -> 3.79 in the full cross-feed regime (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow) |
 
 # ## Study: Disintegration (`disintegration`)
 #
-# **Question.** Fig 6 is disintegration — the change in level of description that fires when a cell crosses its viability bound. Two faces: (a) played through, does the disintegration composite actually show that shift — a thermal shock pushing viability past its bound, viability collapsing, viability-gated metabolism halting, and biomass turning into molecular debris? (b) Is the metabolic-exchange interface at the heart of that same shift realizable at a coarse cell-level grain, an intermediate kinetic grain, and a resolved molecular-network grain (real COBRApy flux-balance optimization) — three grains behind ports that never move?
+# **Question.** Does the paper's §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
+# viability when a diffusing field of acetate (the SAME metabolic byproduct that is waste-and-food
+# in `cell-cell-coupling`, here toxic at high local concentration) crosses its viability
+# bound, its domain resorbing while its shed material becomes scattering physical particles -- composed from independent frameworks
+# (viva-cpm + spatio-flux particles) through one coupling process (`CpmDisintegration` +
+# `BrownianMovement`)?
 #
-# **Claim.** Disintegration is a change in level of description made executable and watchable: playing `fig06-disintegration-dynamics`, a thermal shock pushes the cell past its viability bound, viability collapses, viability-gated metabolism halts, and biomass decays into molecular debris (Fig 6a). The same metabolic-exchange interface's cell↔molecular-network equivalence carries three grains behind ports that never move — a coarse lumped yield, a saturating kinetic law, and real COBRApy flux-balance on `e_coli_core` (Fig 6b, Law 4).
+# **Claim.** Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux
+# particle-movement process through two coupling processes (`CpmDisintegration` for the
+# viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
+# reproduces the paper's §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
+# stand-in for it: over a fixed-seed deterministic 20-tick CPM run, the cell holds coherent
+# (area > 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at
+# released_tick = 7, the domain resorbs to area 0 by tick 16, and its 68 shed pixels become a
+# debris cloud whose RMS spread strictly increases through tick 24 (the trajectory -- hold, cross,
+# resorb, particle count -- reproduces exactly; the scatter cloud moves under unseeded
+# `BrownianMovement`, so its exact RMS magnitudes are representative of one run, not
+# run-to-run-reproducible -- only the strict-increase direction is the robust claim) -- hold,
+# cross, resorb, scatter, end to end from one coupling process plus one stock movement process,
+# mirroring a lumped, specification-stage realization's §Disintegration level-shift pattern (Fig 6) at
+# real spatial, per-pixel resolution.
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `disintegration-dynamics` | `meta_modelers_guide.composites.fig06-disintegration-dynamics` | 0 | — |
-# | `disintegration-grain-swap` | `meta_modelers_guide.composites.fig06-disintegration` | 0 | — |
-# | `coarse-grain` | `meta_modelers_guide.composites.fig06-executable-coarse` | 0 | — |
-# | `kinetic-grain` | `meta_modelers_guide.composites.fig06-executable-kinetic` | 0 | — |
-# | `fba-grain` | `meta_modelers_guide.composites.fig06-executable-fba` | 0 | — |
+# | `disintegration-spatial` | `meta_modelers_guide.composites.disintegration-spatial` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig06-disintegration-dynamics`** — `spec_meta_modelers_guide_composites_fig06_disintegration_dynamics` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.disintegration-spatial`** — `spec_meta_modelers_guide_composites_disintegration_spatial` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics = load_spec(REPO / 'meta_modelers_guide/composites/fig06-disintegration-dynamics.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig06_disintegration_dynamics)
+spec_meta_modelers_guide_composites_disintegration_spatial = load_spec(REPO / 'meta_modelers_guide/composites/disintegration-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_disintegration_spatial)
 
-# === Edit parameters for composite 'Disintegration (playable)' ===
+# === Edit parameters for composite 'disintegration-spatial' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'thermal'  (local:ThermalEnvironment)
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['config']['temp_normal'] = 37.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['config']['temp_shock'] = 50.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['thermal']['config']['shock_time'] = 8.0
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['diffusion_coeffs']['acetate'] = 4.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'uptake'  (local:Uptake)
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['uptake']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['uptake']['config']['uptake_rate'] = 0.5
+# process 'cell'  (local:CpmDisintegration)
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['bounds']['x'] = 60.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['bounds']['y'] = 60.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['seed_block'] = [26, 26, 0, 34, 34, 1]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['target_volume'] = 64.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['viability_threshold'] = 0.5
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['resorb_per_tick'] = 6.0
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['max_particles_per_tick'] = 8
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['cell']['config']['stressor_field'] = 'acetate'
 
-# process 'metabolism'  (local:ViabilityGatedMetabolism)
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['config']['mode'] = 'coarse'
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['config']['k'] = 0.6
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['metabolism']['config']['energy_yield'] = 0.4
-
-# process 'monitor'  (local:ViabilityMonitor)
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['temp_opt'] = 37.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['temp_tol'] = 5.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['relax'] = 0.5
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['division_threshold'] = 1000000000.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['monitor']['config']['viability_floor'] = 0.5
-
-# process 'disintegration'  (local:DisintegrationEvent)
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['disintegration']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig06_disintegration_dynamics['state']['disintegration']['config']['decay_rate'] = 0.4
-
-# **Composite `meta_modelers_guide.composites.fig06-disintegration`** — `spec_meta_modelers_guide_composites_fig06_disintegration` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig06_disintegration = load_spec(REPO / 'meta_modelers_guide/composites/fig06-disintegration.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig06_disintegration)
-
-# === Edit parameters for composite 'Cell Disintegration' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'coarse_grained_metabolism'  (local:CoarseGrainedMetabolism)
-spec_meta_modelers_guide_composites_fig06_disintegration['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
-
-# process 'catalyzed_reaction_network'  (local:CatalyzedReactionNetwork)
-spec_meta_modelers_guide_composites_fig06_disintegration['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig06-executable-coarse`** — `spec_meta_modelers_guide_composites_fig06_executable_coarse` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig06_executable_coarse = load_spec(REPO / 'meta_modelers_guide/composites/fig06-executable-coarse.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig06_executable_coarse)
-
-# === Edit parameters for composite 'fig06-executable-coarse' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'coarse_grained_metabolism'  (local:CoarseMetabolism)
-spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
-spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
-spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
-spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
-spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
-
-# process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
-spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['k'] = 0.2
-spec_meta_modelers_guide_composites_fig06_executable_coarse['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig06-executable-kinetic`** — `spec_meta_modelers_guide_composites_fig06_executable_kinetic` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig06_executable_kinetic = load_spec(REPO / 'meta_modelers_guide/composites/fig06-executable-kinetic.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig06_executable_kinetic)
-
-# === Edit parameters for composite 'fig06-executable-kinetic' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'coarse_grained_metabolism'  (local:KineticMetabolism)
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['vmax'] = 1.0
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['km'] = 0.5
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['biomass_yield'] = 0.5
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['energy_yield'] = 0.3
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['entropy_rate'] = 0.1
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['secretion_frac'] = 0.2
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
-
-# process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['k'] = 0.2
-spec_meta_modelers_guide_composites_fig06_executable_kinetic['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig06-executable-fba`** — `spec_meta_modelers_guide_composites_fig06_executable_fba` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig06_executable_fba = load_spec(REPO / 'meta_modelers_guide/composites/fig06-executable-fba.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig06_executable_fba)
-
-# === Edit parameters for composite 'fig06-executable-fba' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'coarse_grained_metabolism'  (local:FBAMetabolism)
-spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['uptake_scale'] = 10.0
-spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['max_uptake'] = 20.0
-spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['o2_bound'] = 18.0
-spec_meta_modelers_guide_composites_fig06_executable_fba['state']['coarse_grained_metabolism']['config']['interval'] = 1.0
-
-# process 'catalyzed_reaction_network'  (local:KineticReactionNetwork)
-spec_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['k'] = 0.2
-spec_meta_modelers_guide_composites_fig06_executable_fba['state']['catalyzed_reaction_network']['config']['interval'] = 1.0
+# process 'move'  (local:!spatio_flux.processes.particles.BrownianMovement)
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['move']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['move']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_disintegration_spatial['state']['move']['config']['diffusion_rate'] = 1.0
 
 # ### Run
 #
@@ -692,25 +701,15 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig06-disintegration-dynamics**
+# **disintegration-spatial-movie**
 
-# fig06-disintegration-dynamics
-_save_viz('disintegration', 'fig06-disintegration-dynamics', _render_one('html:fig06-disintegration-dynamics.html', {'chart': 'html', 'caption': 'Interactive Fig 6 flagship: viability, biomass, and debris (left axis) against temperature (right axis). The shock at t≈8 (37→50 °C) pushes the cell past its viability bound; viability collapses, metabolism halts, and biomass decays into molecular debris.'}, RUNS_DB, STUDY_YAML))
+# disintegration-spatial-movie
+_save_viz('disintegration', 'disintegration-spatial-movie', _render_one('image:viz/disintegration-spatial.gif', {'chart': 'image', 'caption': 'Spatial disintegration -- the cell holds, then resorbs once the diffusing acetate field crosses its viability bound at tick 7, shedding a scattering debris cloud.'}, RUNS_DB, STUDY_YAML))
 
-# **fig06-three-metabolisms-dynamics**
+# **disintegration-metrics**
 
-# fig06-three-metabolisms-dynamics
-_save_viz('disintegration', 'fig06-three-metabolisms-dynamics', _render_one('image:visualizations/fig06-three-metabolisms-dynamics.svg', {'chart': 'image', 'caption': "The metabolic-exchange interface's three grains — three distinct trajectories (coarse 4.0 / kinetic 2.667 / FBA 6.29, acetate overflow 30.4), run to completion."}, RUNS_DB, STUDY_YAML))
-
-# **fig06-disintegration**
-
-# fig06-disintegration
-_save_viz('disintegration', 'fig06-disintegration', _render_one('image:visualizations/fig06-disintegration.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig06-illustration**
-
-# fig06-illustration
-_save_viz('disintegration', 'fig06-illustration', _render_one('image:visualizations/fig06-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# disintegration-metrics
+_save_viz('disintegration', 'disintegration-metrics', _render_one('html:viz/disintegration-metrics.html', {'chart': 'html', 'caption': 'Synced metrics for the disintegration run -- area collapses at released_tick == 7, particle count climbs to 68 and holds, over 20-24 ticks.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -718,62 +717,102 @@ _save_viz('disintegration', 'fig06-illustration', _render_one('image:visualizati
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | viability-collapse | kind=observable path=cell.viability expr=last(cell.viability) | op < value 0.3 provenance played to 20 steps: viability 1.0 → ~0, collapsing past the 0.3 floor (tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration) |
-# | biomass-to-debris | kind=observable path=cell.debris expr=last(cell.debris) | op > value 0.0 provenance played to 20 steps: debris 0 → ~4.6 as biomass disintegrates into molecular debris (tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration) |
-# | coarse-linear-growth | kind=observable path=biomass expr=last(biomass) | op >= value 3.5 provenance coarse (lumped linear yield) → biomass 4.0 (exec fig06-executable-coarse) |
-# | kinetic-saturating-growth | kind=observable path=biomass expr=last(biomass) | op >= value 2.0 provenance kinetic (saturating Michaelis–Menten uptake) → biomass 2.667 (exec fig06-executable-kinetic), distinct from the coarse 4.0 (tests/test_compilation.py::test_fig6_handler_independence) |
-# | fba-overflow-secretion | kind=observable path=secretions expr=last(secretions) | op >= value 10.0 provenance FBA overflow metabolism: acetate on the secretions port 0→30.4 (exec fig06-executable-fba); biomass reaches 6.29 (tests/test_fba.py) |
-# | impostor-rejected | kind=observable path=biomass expr=last(biomass) | op >= value 1.0 provenance Rejection control: NonConformingMetabolism is rejected by the compiler (CompileError names missing biomass/energy/entropy/secretions); it never runs, so no biomass observable exists — must fail (tests/test_fba.py::test_impostor_handler_rejected_by_compiler) |
+# | cell-holds-coherent-before-crossing | kind=observable path=obs.area expr=obs.area at tick 6 | op > value 30.0 provenance area 61-66 through tick 6, released stays False, n_particles == 0 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_holds_below_threshold) |
+# | stressor-crosses-viability-bound | kind=observable path=obs.released_tick expr=obs.released_tick once obs.released first reads True | op == value 7.0 provenance released latches True at released_tick == 7.0, deterministic across repeated runs of the same composite (tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles, tests/test_disintegration_regime.py) |
+# | domain-resorbs-to-zero | kind=observable path=obs.area expr=obs.area at tick 16 | op == value 0.0 provenance area falls monotonically from 56 (tick 7) to 0 by tick 16, and stays 0 through tick 20 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles) |
+# | shed-material-becomes-debris-particles | kind=observable path=particles expr=len(particles) once area reaches 0 | op >= value 20.0 provenance exactly 68 debris particles shed by tick 16 (8/tick capped, deterministic across repeated runs), staying at 68 for the remainder of the run (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris) |
+# | debris-cloud-keeps-scattering | kind=observable path=particles expr=RMS radius of particle positions, tick 22 vs tick 16 | op > value 0.0 provenance RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3 (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact magnitudes vary run-to-run (representative values shown); the strict INCREASE is the robust, test-asserted claim (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris) |
+# | particle-bridge-emits-then-scatters | kind=observable path=particles expr=len(particles) unchanged and >=2 positions moved, tick 1 vs tick 4 | op == value 3.0 provenance a synthetic emitter process (not this study's composite): 3 particles emitted on tick 1, still exactly 3 particles at tick 4, with at least 2 having moved (tests/test_particle_bridge_spike.py::test_emit_then_scatter) |
 
 # ## Study: Molecular Interfaces (`molecular-interfaces`)
 #
-# **Question.** At the molecular grain, can a single molecular mechanism (F1Fo ATP synthase) be compiled from its draft and run as a PMF-driven rotary catalyst honoring the four physical interface channels (chemical/electrical/mechanical/thermal) and the specialized substrate/cofactor/catalyst/product ports?
+# **Question.** The paper's §Molecular interface (Fig 7) frames a molecule not as a lump of state but as a typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal -- through which molecules bind, react, and transmit force and heat. It even names the public databases (PDB, Reactome, ChEBI, GO) as "partial specifications of molecular interfaces and their types". This study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY? Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized, i.e. Turing / reaction-diffusion patterning) turn a near-uniform seed into emergent spatial structure, and does a temperature field GRADE that structure (the THERMAL channel, an Arrhenius rate modulation) -- so that two of the interface's physical channels demonstrably COMPOSE over one shared spatial field? The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable and isolates the diffusion-driven instability as the cause of structure, so the contrast between pattern and uniformity is the finding.
 #
-# **Claim.** The molecular interface''s four typed channels compile to a running ATP-synthase mechanism, all four channels driven consistently from one coupled proton flux (chemical_out 0->100; electrical/mechanical/thermal channels move with it) — the molecular level the disintegration study drops into, made concrete. The specialized substrate/cofactor/catalyst/product ports are structurally preserved through compilation but are not driven by this handler (honestly noted, not claimed as dynamic).
+# **Claim.** The paper's §Molecular interface (Fig 7) holds spatially for two of its four physical channels. The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du), turns a near-uniform seed into an emergent Turing spot pattern: v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion-driven instability, not the chemistry alone. The THERMAL channel -- a raised temperature field scaling the reaction by the Arrhenius factor exp(-Ea*(1/T - 1/Tref)) -- GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -> ~2, v_var ~0.0119 -> ~0.0096) while staying patterned: a real second modality composing over the same field, not a collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The honest boundaries are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap; the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping; and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `molecular-mechanism` | `meta_modelers_guide.composites.fig07-molecular-mechanism` | 0 | — |
-# | `molecular-mechanism-executable` | `meta_modelers_guide.composites.fig07-executable` | 0 | — |
+# | `molecular-turing-pattern` | `meta_modelers_guide.composites.molecular-turing-pattern` | 0 | — |
+# | `molecular-equal-diffusion-control` | `meta_modelers_guide.composites.molecular-equal-diffusion-control` | 0 | — |
+# | `molecular-thermal-graded` | `meta_modelers_guide.composites.molecular-thermal-graded` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig07-molecular-mechanism`** — `spec_meta_modelers_guide_composites_fig07_molecular_mechanism` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.molecular-turing-pattern`** — `spec_meta_modelers_guide_composites_molecular_turing_pattern` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig07_molecular_mechanism = load_spec(REPO / 'meta_modelers_guide/composites/fig07-molecular-mechanism.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig07_molecular_mechanism)
+spec_meta_modelers_guide_composites_molecular_turing_pattern = load_spec(REPO / 'meta_modelers_guide/composites/molecular-turing-pattern.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_molecular_turing_pattern)
 
-# === Edit parameters for composite 'A Molecular Mechanism' ===
+# === Edit parameters for composite 'molecular-turing-pattern' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'molecular_mechanism'  (local:MolecularMechanism)
-spec_meta_modelers_guide_composites_fig07_molecular_mechanism['state']['molecular_mechanism']['config']['interval'] = 1.0
+# process 'gs'  (local:GrayScott)
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['grid']['nx'] = 128
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['grid']['ny'] = 128
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Du'] = 0.16
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Dv'] = 0.08
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['F'] = 0.037
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['k'] = 0.06
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['steps_per_tick'] = 500
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['thr'] = 0.2
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['seed'] = 1
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Ea'] = 0.0
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Tref'] = 1.0
 
-# **Composite `meta_modelers_guide.composites.fig07-executable`** — `spec_meta_modelers_guide_composites_fig07_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.molecular-equal-diffusion-control`** — `spec_meta_modelers_guide_composites_molecular_equal_diffusion_control` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig07_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig07-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig07_executable)
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control = load_spec(REPO / 'meta_modelers_guide/composites/molecular-equal-diffusion-control.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_molecular_equal_diffusion_control)
 
-# === Edit parameters for composite 'fig07-executable' ===
+# === Edit parameters for composite 'molecular-equal-diffusion-control' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'molecular_mechanism'  (local:MolecularMechanismHandler)
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['k_cat_atp'] = 100.0
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['n_protons_per_atp'] = 3.3
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['pmf_volts'] = 0.15
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['torque_pn_nm'] = 40.0
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['c_ring'] = 10.0
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['efficiency'] = 0.75
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['proton_charge'] = 1.602e-19
-spec_meta_modelers_guide_composites_fig07_executable['state']['molecular_mechanism']['config']['interval'] = 1.0
+# process 'gs'  (local:GrayScott)
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['grid']['nx'] = 128
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['grid']['ny'] = 128
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Du'] = 0.12
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Dv'] = 0.12
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['F'] = 0.037
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['k'] = 0.06
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['steps_per_tick'] = 500
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['thr'] = 0.2
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['seed'] = 1
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Ea'] = 0.0
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Tref'] = 1.0
+
+# **Composite `meta_modelers_guide.composites.molecular-thermal-graded`** — `spec_meta_modelers_guide_composites_molecular_thermal_graded` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_molecular_thermal_graded = load_spec(REPO / 'meta_modelers_guide/composites/molecular-thermal-graded.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_molecular_thermal_graded)
+
+# === Edit parameters for composite 'molecular-thermal-graded' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'gs'  (local:GrayScott)
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['grid']['nx'] = 128
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['grid']['ny'] = 128
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Du'] = 0.16
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Dv'] = 0.08
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['F'] = 0.037
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['k'] = 0.06
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['steps_per_tick'] = 500
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['thr'] = 0.2
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['seed'] = 1
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Ea'] = 0.15
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Tref'] = 1.0
 
 # ### Run
 #
@@ -791,15 +830,20 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig07-executable-dynamics**
+# **molecular-turing-pattern-movie**
 
-# fig07-executable-dynamics
-_save_viz('molecular-interfaces', 'fig07-executable-dynamics', _render_one('html:fig07-executable.html', {'chart': 'html', 'caption': "Interactive Fig 7: chemical_out (ATP) steps from 0 to 100 as the proton flux turns on; the three other channels are computed from the same flux but are ~1e-17–1e-18 in magnitude at these constants, effectively invisible next to ATP's O(100) scale."}, RUNS_DB, STUDY_YAML))
+# molecular-turing-pattern-movie
+_save_viz('molecular-interfaces', 'molecular-turing-pattern-movie', _render_one('image:viz/molecular-turing-pattern.gif', {'chart': 'image', 'caption': 'Chemical channel -- Turing pattern formation: a near-uniform Gray-Scott seed breaks into ~12 emergent spots (v_var ~0.0011 -> ~0.0119) under differential diffusion (Dv < Du).'}, RUNS_DB, STUDY_YAML))
 
-# **fig07-illustration**
+# **molecular-thermal-graded-movie**
 
-# fig07-illustration
-_save_viz('molecular-interfaces', 'fig07-illustration', _render_one('image:visualizations/fig07-illustration.png', {'chart': 'image', 'caption': 'Fig 7 — the molecular interface: a molecule as a process with typed physical channels (chemical, electrical, mechanical, thermal) plus a subports refinement (substrates, cofactors, catalysts, products). This study compiles it into a running F1Fo ATP synthase.'}, RUNS_DB, STUDY_YAML))
+# molecular-thermal-graded-movie
+_save_viz('molecular-interfaces', 'molecular-thermal-graded-movie', _render_one('image:viz/molecular-thermal-graded.gif', {'chart': 'image', 'caption': 'Thermal channel -- a raised temperature field grades the chemical pattern: Arrhenius-scaled reaction (Ea=0.15, T=1.2) coarsens ~12 domains to ~2, v_var ~0.0119 -> ~0.0096 (graded, not collapsed).'}, RUNS_DB, STUDY_YAML))
+
+# **molecular-metrics**
+
+# molecular-metrics
+_save_viz('molecular-interfaces', 'molecular-metrics', _render_one('html:viz/molecular-metrics.html', {'chart': 'html', 'caption': 'Molecular metrics -- v_var rises from ~0.0011 to the patterned plateau ~0.0119 while the field resolves into ~12 connected domains: the chemical channel genuinely patterns.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -807,100 +851,84 @@ _save_viz('molecular-interfaces', 'fig07-illustration', _render_one('image:visua
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | atp-synthesized | kind=observable path=chemical_out expr=last(chemical_out) | op >= value 50.0 provenance exec last=100.0 — F1Fo ATP synthase (chemical_out 0->100, PMF-driven rotary catalysis; fig07-executable, run(8) matching scripts/render_study_evidence.py TOTAL_TIME=8.0) |
-# | rotary-power-couples | kind=observable path=mechanical_out expr=last(mechanical_out) | op >= value 1e-19 provenance exec last~=8.29e-18 W (rotary mechanical power = torque*omega, both set by the H+ flux; fig07-executable, run(8)). Real single-molecule magnitude — small in absolute SI units, but nonzero and driven by the same coupled flux as chemical_out. |
-# | draft-is-inert | kind=observable path=chemical_out expr=last(chemical_out) | op >= value 50.0 provenance inert-draft run (fig07-molecular-mechanism) stays at chemical_out=0.0 (empty update by construction) -> fails by design (expected-fail control) |
+# | pattern-forms | kind=observable path=obs.patterned expr=last(obs.patterned) | op == value 1.0 provenance patterned == 1.0 with v_var rising ~0.0011 -> ~0.0119 over 8000 internal steps (16 ticks x steps_per_tick=500), canonical spot regime (tests/test_molecular_regime.py::test_turing_pattern_forms, tests/test_gray_scott.py, tests/test_gray_scott_physics.py) |
+# | pattern-has-multiple-domains | kind=observable path=obs.n_domains expr=last(obs.n_domains) | op > value 1.0 provenance n_domains ~= 12 at 8000 steps (loose > 1 floor, not the exact 12, so the bound is not a golden-value pin); multi-seed band n_domains in [8, 12] (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust) |
+# | equal-diffusion-control-uniform | kind=observable path=obs.patterned expr=last(obs.patterned) | op == value 0.0 provenance Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6) -- differential diffusion removed, no pattern (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform) |
+# | thermal-channel-still-patterns | kind=observable path=obs.patterned expr=last(obs.patterned) | op == value 1.0 provenance thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); a hotter Ea=1.0/T=1.5 setting was verified to OVERSHOOT into near-uniform collapse and retuned to this graded setting (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern) |
+# | thermal-channel-coarsens | kind=observable path=obs.n_domains expr=last(obs.n_domains) | op < value 8.0 provenance thermal n_domains ~= 2 versus the flagship''s ~12 at the same 8000 steps; loose < 8 bound (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate, not a golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern) |
+# | pattern-is-multiseed-robust | kind=observable path=obs.v_var expr=last(obs.v_var) | op > value 0.004 provenance v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12]; the gate is > 2*PATTERN_FLOOR = 0.004, the band floor with margin, not the observed edge (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust) |
 
 # ## Study: Biomolecular Complementarity (`biomolecular-complementarity`)
 #
-# **Question.** Do molecular mechanisms compose into nested hierarchical composites (proteins -> complexes -> organelles -> ECM) whose interfaces survive deep nesting, and does a gene-expression cascade wired to the deepest leaves preserve every interface across six levels (Law 2 at the deepest nesting)?
+# **Question.** The paper's §Molecular compositions section (Fig 8) frames its subject as a question about interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates? This study puts two spatial primitives of that question on the lattice. Differential-adhesion cell sorting -- Steinberg's Differential Adhesion Hypothesis -- is complementarity made spatial: a mixed population of two cell types, distinguished only by which contacts they find energetically favorable, demixes so that like sits with like and the heterotypic boundary between them collapses, a direct spatial reading of which interface variables must align for two cells to stay coupled. Biomolecular-condensate phase separation is the diffuse-interface counterpart: a scalar composition field, seeded near-critical, spontaneously separates into two phases divided by a sharp interface -- a boundary forming out of a well-mixed medium, the way a condensate droplet does. Each is a real 2D spatial mechanism run through the process-bigraph engine; the two are independent demonstrations, not one coupled model.
 #
-# **Claim.** The six-level nested place graph (membrane/cytoplasm/nucleus/chromosome/chromatin/nucleosome, plus a parallel organelles branch) compiles with a coupled transcription->translation->assembly cascade wired to its deepest stores; the interface is preserved through the deepest nesting (Law 2). Complementarity/selectivity is the paper''s organizing principle for why molecules assemble into this hierarchy, but the executable demonstrates hierarchical assembly, not fitted binding selectivity — no partner-choice or binding-affinity mechanism is built or claimed.
+# **Claim.** Differential-adhesion cell sorting reproduces the paper's §Molecular compositions complementarity (Fig 8) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard (heterotypic-interface fraction ~0.64 -> ~0.06 over ~600 Monte Carlo steps) while staying cohesive (live-cell pixels ~1530, <1% drift; per-type counts constant at 32/32) -- like sitting with like is the spatial reading of which interface variables must align for coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent interface (variance ~7e-5 -> ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it demonstrates a boundary forming, not yet the functional, regulatable boundary the paper's central question distinguishes from a transient aggregate. Neither regime computes a binding affinity; both are tuned demonstration primitives, not fitted to a measured tissue or condensate. The two run as independent processes through the process-bigraph engine, with no coupling between them.
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `nested-hierarchy` | `meta_modelers_guide.composites.fig08-nested-hierarchy` | 0 | — |
-# | `nested-hierarchy-executable` | `meta_modelers_guide.composites.fig08-executable` | 0 | — |
+# | `cell-sorting-spatial` | `meta_modelers_guide.composites.cell-sorting-spatial` | 0 | — |
+# | `condensate-cahn-hilliard` | `meta_modelers_guide.composites.condensate-cahn-hilliard` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig08-nested-hierarchy`** — `spec_meta_modelers_guide_composites_fig08_nested_hierarchy` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.cell-sorting-spatial`** — `spec_meta_modelers_guide_composites_cell_sorting_spatial` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy = load_spec(REPO / 'meta_modelers_guide/composites/fig08-nested-hierarchy.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig08_nested_hierarchy)
+spec_meta_modelers_guide_composites_cell_sorting_spatial = load_spec(REPO / 'meta_modelers_guide/composites/cell-sorting-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cell_sorting_spatial)
 
-# === Edit parameters for composite 'Nested Molecular Hierarchy' ===
+# === Edit parameters for composite 'cell-sorting-spatial' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'transmembrane_transport'  (local:TransmembraneTransport)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transmembrane_transport']['config']['interval'] = 1.0
+# process 'cell'  (local:CpmSorting)
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['grid']['nx'] = 70
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['grid']['ny'] = 70
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['checkerboard']['n'] = 8
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['checkerboard']['size'] = 5
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['checkerboard']['x0'] = 15
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['checkerboard']['y0'] = 15
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][0]['j'] = 8.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][1]['a'] = 0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][1]['b'] = 2
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][1]['j'] = 8.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][2]['a'] = 1
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][2]['b'] = 1
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][2]['j'] = 2.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][3]['a'] = 2
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][3]['b'] = 2
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][3]['j'] = 2.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][4]['a'] = 1
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][4]['b'] = 2
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['contact'][4]['j'] = 11.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['temperature'] = 10.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['target_volume'] = 25.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['config']['mcs'] = 10
 
-# process 'replication_and_repair'  (local:ReplicationAndRepair)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['replication_and_repair']['config']['interval'] = 1.0
-
-# process 'cell_metabolism'  (local:CellMetabolism)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['cell_metabolism']['config']['interval'] = 1.0
-
-# process 'transcription'  (local:Transcription)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['transcription']['config']['interval'] = 1.0
-
-# process 'translation'  (local:Translation)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['translation']['config']['interval'] = 1.0
-
-# process 'subunit_assembly'  (local:SubunitAssembly)
-spec_meta_modelers_guide_composites_fig08_nested_hierarchy['state']['subunit_assembly']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig08-executable`** — `spec_meta_modelers_guide_composites_fig08_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.condensate-cahn-hilliard`** — `spec_meta_modelers_guide_composites_condensate_cahn_hilliard` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig08_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig08-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig08_executable)
+spec_meta_modelers_guide_composites_condensate_cahn_hilliard = load_spec(REPO / 'meta_modelers_guide/composites/condensate-cahn-hilliard.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_condensate_cahn_hilliard)
 
-# === Edit parameters for composite 'fig08-executable' ===
+# === Edit parameters for composite 'condensate-cahn-hilliard' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'transmembrane_transport'  (local:TransmembraneTransportODE)
-spec_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['k'] = 0.3
-spec_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['metabolite_frac'] = 0.1
-spec_meta_modelers_guide_composites_fig08_executable['state']['transmembrane_transport']['config']['interval'] = 1.0
-
-# process 'replication_and_repair'  (local:ReplicationAndRepairODE)
-spec_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['doubling_time_s'] = 1800.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['dna_init'] = 1.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['replication_and_repair']['config']['interval'] = 1.0
-
-# process 'cell_metabolism'  (local:CellMetabolismODE)
-spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['k'] = 0.25
-spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['metabolite_yield'] = 0.6
-spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['energy_yield'] = 0.4
-spec_meta_modelers_guide_composites_fig08_executable['state']['cell_metabolism']['config']['interval'] = 1.0
-
-# process 'transcription'  (local:TranscriptionODE)
-spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['elong_nt_per_s'] = 45.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['gene_length_nt'] = 1000.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['mrna_halflife_s'] = 180.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['transcription']['config']['interval'] = 1.0
-
-# process 'translation'  (local:TranslationODE)
-spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['elong_aa_per_s'] = 15.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['protein_length_aa'] = 300.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['doubling_time_s'] = 1800.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['km_met'] = 0.5
-spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['km_rib'] = 0.5
-spec_meta_modelers_guide_composites_fig08_executable['state']['translation']['config']['interval'] = 1.0
-
-# process 'subunit_assembly'  (local:SubunitAssemblyODE)
-spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['k'] = 0.2
-spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['doubling_time_s'] = 1800.0
-spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['ribosome_init'] = 0.5
-spec_meta_modelers_guide_composites_fig08_executable['state']['subunit_assembly']['config']['interval'] = 1.0
+# process 'ch'  (local:CahnHilliard)
+spec_meta_modelers_guide_composites_condensate_cahn_hilliard['state']['ch']['config']['grid']['nx'] = 64
+spec_meta_modelers_guide_composites_condensate_cahn_hilliard['state']['ch']['config']['grid']['ny'] = 64
+spec_meta_modelers_guide_composites_condensate_cahn_hilliard['state']['ch']['config']['M'] = 1.0
+spec_meta_modelers_guide_composites_condensate_cahn_hilliard['state']['ch']['config']['kappa'] = 0.5
+spec_meta_modelers_guide_composites_condensate_cahn_hilliard['state']['ch']['config']['dt'] = 0.002
+spec_meta_modelers_guide_composites_condensate_cahn_hilliard['state']['ch']['config']['steps_per_tick'] = 200
 
 # ### Run
 #
@@ -918,25 +946,25 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig08-executable-dynamics**
+# **cell-sorting-spatial-movie**
 
-# fig08-executable-dynamics
-_save_viz('biomolecular-complementarity', 'fig08-executable-dynamics', _render_one('html:fig08-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 8: the transcription → translation → assembly cascade — mRNA 0→0.178, ribosome 0.5→0.501, protein 0→0.008 — over the six-level nested place graph.'}, RUNS_DB, STUDY_YAML))
+# cell-sorting-spatial-movie
+_save_viz('biomolecular-complementarity', 'cell-sorting-spatial-movie', _render_one('image:viz/cell-sorting-spatial.gif', {'chart': 'image', 'caption': 'Differential-adhesion cell sorting over ~600 MCS -- a mixed checkerboard demixes so like sits with like, the heterotypic interface collapsing while the clump stays cohesive.'}, RUNS_DB, STUDY_YAML))
 
-# **fig08-executable-movie**
+# **cell-sorting-metrics**
 
-# fig08-executable-movie
-_save_viz('biomolecular-complementarity', 'fig08-executable-movie', _render_one('html:fig08-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the same cascade (Play button sweeps a marker along each curve).'}, RUNS_DB, STUDY_YAML))
+# cell-sorting-metrics
+_save_viz('biomolecular-complementarity', 'cell-sorting-metrics', _render_one('html:viz/cell-sorting-metrics.html', {'chart': 'html', 'caption': 'Sorting metrics -- heterotypic-interface fraction collapses (~0.64 -> ~0.06) while the cohesion guard (cell pixels ~1530) holds, so the demixing is real sorting, not dissolution.'}, RUNS_DB, STUDY_YAML))
 
-# **fig08-nested-hierarchy**
+# **condensate-cahn-hilliard-movie**
 
-# fig08-nested-hierarchy
-_save_viz('biomolecular-complementarity', 'fig08-nested-hierarchy', _render_one('image:visualizations/fig08-nested-hierarchy.svg', {'chart': 'image', 'caption': 'The Fig 8 six-level nested place graph — extracellular matrix, membrane, cytoplasm, nucleus, chromosome, chromatin, nucleosome, plus a parallel organelles branch holding the ribosomal complex.'}, RUNS_DB, STUDY_YAML))
+# condensate-cahn-hilliard-movie
+_save_viz('biomolecular-complementarity', 'condensate-cahn-hilliard-movie', _render_one('image:viz/condensate-cahn-hilliard.gif', {'chart': 'image', 'caption': 'Cahn-Hilliard condensate phase separation over 10000 steps -- a near-critical field separates into two phases bounded by a sharp interface, with mass conserved.'}, RUNS_DB, STUDY_YAML))
 
-# **fig08-illustration**
+# **condensate-metrics**
 
-# fig08-illustration
-_save_viz('biomolecular-complementarity', 'fig08-illustration', _render_one('image:visualizations/fig08-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# condensate-metrics
+_save_viz('biomolecular-complementarity', 'condensate-metrics', _render_one('html:viz/condensate-metrics.html', {'chart': 'html', 'caption': 'Condensate phase-separation variance -- phi_var climbs from ~7e-5 to ~0.38 over 10000 steps as the field separates into two domains, mass conserved.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -944,178 +972,72 @@ _save_viz('biomolecular-complementarity', 'fig08-illustration', _render_one('ima
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | cascade-populates | kind=observable path=metabolites expr=last(metabolites) | op >= value 1.0 provenance exec last=1.5 — metabolism feeds the cascade (nutrients->2.4, metabolites->1.5, energy->0.84; fig08-executable, run(8) matching scripts/render_study_evidence.py TOTAL_TIME=8.0) |
-# | mrna-transcribed | kind=observable path=rna expr=last(rna) | op >= value 0.05 provenance exec last~=0.178 — gene transcribed to mRNA from the deepest-nested DNA store (fig08-executable, run(8)) |
-# | interface-preserved-to-deepest-leaf | kind=observable path=ribosome expr=last(ribosome) | op >= value 0.3 provenance exec last~=0.501 (seeded at 0.5, actively maintained by SubunitAssemblyODE against 30-min-doubling dilution) — the deepest-nested leaf this composite drives (fig08-executable, run(8)) |
-# | draft-is-inert | kind=observable path=metabolites expr=last(metabolites) | op >= value 1.0 provenance inert-draft run (fig08-nested-hierarchy) stays at metabolites=0.0 (empty update by construction) -> fails by design (expected-fail control) |
+# | sorting-heterotypic-interface-collapses | kind=observable path=obs.hetero_frac expr=last(obs.hetero_frac) | op < value 0.2 provenance hetero_frac ~0.64 at first observation -> ~0.06 by ~600 MCS (raw seeded checkerboard ~1.0 before relaxation), roughly an order-of-magnitude collapse (tests/test_sorting_regime.py::test_sorting_demixes_cohesively, tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite, tests/test_cpm_sorting_spike.py::test_checkerboard_demixes_and_stays_cohesive) |
+# | sorting-clump-stays-cohesive | kind=observable path=obs.cell_pixels expr=abs(last(obs.cell_pixels) - first(obs.cell_pixels)) / first(obs.cell_pixels) | op < value 0.1 provenance cell_pixels ~1530 held to <1% drift over ~600 MCS (well inside the 10% cohesion bound) while hetero_frac collapsed -- the clump sorted, it did not dissolve (tests/test_sorting_regime.py::test_sorting_demixes_cohesively, tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite) |
+# | sorting-conserves-cell-count | kind=observable path=obs.n_type1 expr=last(obs.n_type1) | op == value 32.0 provenance n_type1 == n_type2 == 32 for the full ~600 MCS run -- no cell created, destroyed, or merged, just moved (tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite) |
+# | sorting-neutral-J-does-not-sort | kind=observable path=obs.hetero_frac expr=last(obs.hetero_frac) | op > value 0.5 provenance a neutral-J composite re-run (all J=8): neutral J (all=8), T=10, same checkerboard stays mixed at hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime -- the causality control for J. Documented regime sweep, not a committed pytest in this build. |
+# | condensate-phase-separates | kind=observable path=obs.phi_var expr=last(obs.phi_var) | op > value 0.3 provenance phi_var ~7e-5 -> ~0.38 over 10000 steps (64x64 field, M=1, kappa=0.5, dt=0.002) -- two domains formed, bounded by a sharp emergent interface (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved, tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded) |
+# | condensate-conserves-mass | kind=observable path=obs.phi_mean expr=abs(last(obs.phi_mean) - first(obs.phi_mean)) | op < value 0.001 provenance phi_mean drift ~4e-18 over 10000 steps (mass-conserving by construction: the update is a divergence of a flux) (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved, tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded) |
+# | condensate-stays-bounded | kind=observable path=obs.phi_min expr=last(obs.phi_min) | op > value -1.05 provenance phi bounded to [-0.989, 0.982] at run end (no NaN); the process raises loudly if dt exceeds the ~dx^4/(16*M*kappa) stability limit rather than emitting NaN (tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded, tests/test_cahn_hilliard.py::test_dt_above_stability_limit_raises_instead_of_nan) |
 
-# ## Study: Autopoiesis — Composition of the Cellular Interface (`autopoiesis`)
+# ## Study: Autopoiesis (`autopoiesis`)
 #
-# **Question.** How does a maintained cellular interface arise from molecular processes? Do metabolism, containment, and replication, mutually wired so each maintains the others, compile into a self-sustaining minimal cell — and does each self-organized function run at coarse, self-organized, and molecular grains behind one interface (Law 4, its second home)?
+# **Question.** The paper's §Self-organized processes section states the autopoiesis criterion as a boundary problem, not a bookkeeping one: "A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible." This study puts that criterion on a 2D lattice and asks the discriminating question directly: does a membrane PERSIST because an internal production loop -- gated on the boundary itself staying topologically closed -- replenishes the membrane against decay, and does a mere vesicle with no such loop, from the identical seed, DISSIPATE? The two composites differ in exactly one variable (the production rate constant k_prod), so the contrast between persistence and collapse is the finding. beer2023's viability bounds -- constraints on a shared state that must be maintained for the composition to persist -- are the frame: closure here is that the membrane's own maintenance is conditioned on the boundary it maintains, so break the boundary and the maintenance cannot fire.
 #
-# **Claim.** The three closure processes (metabolism, containment, replication) compile into a minimal cell whose interface is produced by the coupling itself — enzymes and energy exist only because a coupled process made them, not because they were seeded — and each function is realized by conforming handlers at multiple grains (containment and replication at three, metabolism at two) behind one fixed interface, Law 4''s second worked example. This is the closure pattern demonstrated qualitatively, not a validated autopoietic system.
+# **Claim.** The paper's §Self-organized processes autopoiesis criterion -- a membrane persists because the processes inside the boundary maintain the organization that keeps those processes possible -- holds as a 2D spatial mechanism. A scalar membrane field under reaction-diffusion, with production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -> 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so persistence is CAUSED by the internal loop -- confirmed independently by a fatal-puncture viability bound (beer2023): breaking the boundary so nothing is enclosed shuts off closure-gated production, and the ring cannot rebuild from nothing. The honest boundaries of the claim are stated as findings, not buried: the homeostatic plateau is metastable, not eternal (the physically-correct signature of a closed system with no external influx, not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal self-maintaining boundary demonstrating operational closure, NOT real membrane chemistry or metabolism.
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `fig09a-coarse-graining` | `meta_modelers_guide.composites.fig09a-coarse-graining` | 0 | — |
-# | `fig09a-executable` | `meta_modelers_guide.composites.fig09a-executable` | 0 | — |
-# | `fig09b-minimal-cell` | `meta_modelers_guide.composites.fig09b-minimal-cell` | 0 | — |
-# | `fig09b-executable` | `meta_modelers_guide.composites.fig09b-executable` | 0 | — |
+# | `protocell-autopoietic` | `meta_modelers_guide.composites.protocell-autopoietic` | 0 | — |
+# | `protocell-vesicle-control` | `meta_modelers_guide.composites.protocell-vesicle-control` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig09a-coarse-graining`** — `spec_meta_modelers_guide_composites_fig09a_coarse_graining` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.protocell-autopoietic`** — `spec_meta_modelers_guide_composites_protocell_autopoietic` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig09a_coarse_graining = load_spec(REPO / 'meta_modelers_guide/composites/fig09a-coarse-graining.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig09a_coarse_graining)
+spec_meta_modelers_guide_composites_protocell_autopoietic = load_spec(REPO / 'meta_modelers_guide/composites/protocell-autopoietic.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_protocell_autopoietic)
 
-# === Edit parameters for composite 'Self-Organization & Coarse-Graining' ===
+# === Edit parameters for composite 'protocell-autopoietic' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'metabolism_closure'  (local:MetabolismClosure)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['metabolism_closure']['config']['interval'] = 1.0
+# process 'protocell'  (local:Protocell)
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['grid']['nx'] = 64
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['grid']['ny'] = 64
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['D'] = 0.02
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['k_decay'] = 0.01
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['k_prod'] = 0.03
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['thr'] = 0.3
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['steps_per_tick'] = 50
+spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell']['config']['seed'] = 1
 
-# process 'autocatalysis'  (local:Autocatalysis)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['autocatalysis']['config']['interval'] = 1.0
-
-# process 'containment_closure'  (local:ContainmentClosure)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['containment_closure']['config']['interval'] = 1.0
-
-# process 'membrane_self_assembly'  (local:MembraneSelfAssembly)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['membrane_self_assembly']['config']['interval'] = 1.0
-
-# process 'lipid_aggregation'  (local:LipidAggregation)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['lipid_aggregation']['config']['interval'] = 1.0
-
-# process 'replication_closure'  (local:ReplicationClosure)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['replication_closure']['config']['interval'] = 1.0
-
-# process 'template_replication'  (local:TemplateReplication)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_replication']['config']['interval'] = 1.0
-
-# process 'template_directed_synthesis'  (local:TemplateDirectedSynthesis)
-spec_meta_modelers_guide_composites_fig09a_coarse_graining['state']['template_directed_synthesis']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig09a-executable`** — `spec_meta_modelers_guide_composites_fig09a_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.protocell-vesicle-control`** — `spec_meta_modelers_guide_composites_protocell_vesicle_control` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig09a_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig09a-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig09a_executable)
+spec_meta_modelers_guide_composites_protocell_vesicle_control = load_spec(REPO / 'meta_modelers_guide/composites/protocell-vesicle-control.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_protocell_vesicle_control)
 
-# === Edit parameters for composite 'fig09a-executable' ===
+# === Edit parameters for composite 'protocell-vesicle-control' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'metabolism_closure'  (local:MetabolismClosureODE)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['metabolite_yield'] = 0.6
-spec_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['entropy_rate'] = 0.1
-spec_meta_modelers_guide_composites_fig09a_executable['state']['metabolism_closure']['config']['interval'] = 1.0
-
-# process 'autocatalysis'  (local:AutocatalysisODE)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['k'] = 0.3
-spec_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['k_cat'] = 0.15
-spec_meta_modelers_guide_composites_fig09a_executable['state']['autocatalysis']['config']['interval'] = 1.0
-
-# process 'containment_closure'  (local:ContainmentClosureODE)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['assembly_rate'] = 0.15
-spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['perm_max'] = 0.8
-spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['perm_km'] = 1.0
-spec_meta_modelers_guide_composites_fig09a_executable['state']['containment_closure']['config']['interval'] = 1.0
-
-# process 'membrane_self_assembly'  (local:MembraneSelfAssemblyODE)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['membrane_self_assembly']['config']['k'] = 0.2
-spec_meta_modelers_guide_composites_fig09a_executable['state']['membrane_self_assembly']['config']['interval'] = 1.0
-
-# process 'lipid_aggregation'  (local:LipidAggregationODE)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['lipid_aggregation']['config']['k'] = 0.1
-spec_meta_modelers_guide_composites_fig09a_executable['state']['lipid_aggregation']['config']['interval'] = 1.0
-
-# process 'replication_closure'  (local:ReplicationClosureODE)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['replication_closure']['config']['k'] = 0.2
-spec_meta_modelers_guide_composites_fig09a_executable['state']['replication_closure']['config']['interval'] = 1.0
-
-# process 'template_replication'  (local:TemplateReplicationODE)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['template_replication']['config']['k'] = 0.15
-spec_meta_modelers_guide_composites_fig09a_executable['state']['template_replication']['config']['interval'] = 1.0
-
-# process 'template_directed_synthesis'  (local:TemplateDirectedSynthesisProc)
-spec_meta_modelers_guide_composites_fig09a_executable['state']['template_directed_synthesis']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig09b-minimal-cell`** — `spec_meta_modelers_guide_composites_fig09b_minimal_cell` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig09b_minimal_cell = load_spec(REPO / 'meta_modelers_guide/composites/fig09b-minimal-cell.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig09b_minimal_cell)
-
-# === Edit parameters for composite 'The Minimal Cell' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'minimal_cell_containment'  (local:MinimalCellContainment)
-spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_containment']['config']['interval'] = 1.0
-
-# process 'minimal_cell_metabolism'  (local:MinimalCellMetabolism)
-spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
-
-# process 'gene_expression'  (local:GeneExpression)
-spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['gene_expression']['config']['interval'] = 1.0
-
-# process 'minimal_cell_replication'  (local:MinimalCellReplication)
-spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['minimal_cell_replication']['config']['interval'] = 1.0
-
-# process 'diffusion'  (local:Diffusion)
-spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['diffusion']['config']['interval'] = 1.0
-
-# process 'reactions'  (local:Reactions)
-spec_meta_modelers_guide_composites_fig09b_minimal_cell['state']['reactions']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig09b-executable`** — `spec_meta_modelers_guide_composites_fig09b_executable` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig09b_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig09b-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig09b_executable)
-
-# === Edit parameters for composite 'fig09b-executable' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'minimal_cell_containment'  (local:ContainmentODE)
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['assembly_rate'] = 0.15
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_containment']['config']['interval'] = 1.0
-
-# process 'minimal_cell_metabolism'  (local:MetabolismLinear)
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['k_cat'] = 0.2
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['metabolite_yield'] = 0.6
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['energy_yield'] = 0.4
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_metabolism']['config']['interval'] = 1.0
-
-# process 'gene_expression'  (local:GeneExpressionODE)
-spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['k_expr'] = 0.25
-spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['protein_yield'] = 0.5
-spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['enzyme_yield'] = 0.3
-spec_meta_modelers_guide_composites_fig09b_executable['state']['gene_expression']['config']['interval'] = 1.0
-
-# process 'minimal_cell_replication'  (local:ReplicationODE)
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['k_rep'] = 0.1
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['gene_yield'] = 0.5
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['nucleic_yield'] = 0.4
-spec_meta_modelers_guide_composites_fig09b_executable['state']['minimal_cell_replication']['config']['interval'] = 1.0
-
-# process 'diffusion'  (local:DiffusionRelax)
-spec_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['turnover_rate'] = 0.05
-spec_meta_modelers_guide_composites_fig09b_executable['state']['diffusion']['config']['interval'] = 1.0
-
-# process 'reactions'  (local:MassActionReactions)
-spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['k_react'] = 0.15
-spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['protein_yield'] = 0.4
-spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['nucleic_turnover'] = 0.2
-spec_meta_modelers_guide_composites_fig09b_executable['state']['reactions']['config']['interval'] = 1.0
+# process 'protocell'  (local:Protocell)
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['grid']['nx'] = 64
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['grid']['ny'] = 64
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['D'] = 0.02
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['k_decay'] = 0.01
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['k_prod'] = 0.0
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['thr'] = 0.3
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['steps_per_tick'] = 50
+spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocell']['config']['seed'] = 1
 
 # ### Run
 #
@@ -1133,35 +1055,20 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig09a-executable-dynamics**
+# **protocell-autopoietic-movie**
 
-# fig09a-executable-dynamics
-_save_viz('autopoiesis', 'fig09a-executable-dynamics', _render_one('html:fig09a-executable.html', {'chart': 'html', 'caption': "Interactive Fig 9a: containment's three grains (boundary, membrane, aggregate) plus metabolism's two (metabolites, products) and replication's two (copies) — one interface, several conforming handlers."}, RUNS_DB, STUDY_YAML))
+# protocell-autopoietic-movie
+_save_viz('autopoiesis', 'protocell-autopoietic-movie', _render_one('image:viz/protocell-autopoietic.gif', {'chart': 'image', 'caption': 'Autopoietic closed loop -- the membrane ring self-maintains: production gated on closure holds the enclosed interior at a homeostatic plateau (~149 px) rather than dissolving.'}, RUNS_DB, STUDY_YAML))
 
-# **fig09a-executable-movie**
+# **protocell-vesicle-control-movie**
 
-# fig09a-executable-movie
-_save_viz('autopoiesis', 'fig09a-executable-movie', _render_one('html:fig09a-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the fig09a grain trajectories.'}, RUNS_DB, STUDY_YAML))
+# protocell-vesicle-control-movie
+_save_viz('autopoiesis', 'protocell-vesicle-control-movie', _render_one('image:viz/protocell-vesicle-control.gif', {'chart': 'image', 'caption': 'Vesicle control (k_prod=0) -- the single-variable knockout: with no production loop the membrane ring decays and its closure is lost, enclosed area -> 0 by step ~96.'}, RUNS_DB, STUDY_YAML))
 
-# **fig09b-executable-dynamics**
+# **autopoiesis-metrics**
 
-# fig09b-executable-dynamics
-_save_viz('autopoiesis', 'fig09b-executable-dynamics', _render_one('html:fig09b-executable.html', {'chart': 'html', 'caption': "Interactive Fig 9b: the minimal cell's shared component pools all turning over together — enzymes, energy, genes, proteins, nucleic acids, metabolites, membrane area."}, RUNS_DB, STUDY_YAML))
-
-# **fig09b-executable-movie**
-
-# fig09b-executable-movie
-_save_viz('autopoiesis', 'fig09b-executable-movie', _render_one('html:fig09b-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the fig09b minimal-cell trajectories.'}, RUNS_DB, STUDY_YAML))
-
-# **fig09-illustration**
-
-# fig09-illustration
-_save_viz('autopoiesis', 'fig09-illustration', _render_one('image:visualizations/fig09-illustration.png', {'chart': 'image', 'caption': 'Fig 9a — self-organization, coarse-graining, and autopoiesis: metabolism, containment, and replication, each drawn at coarse/self-organized/molecular grains, compiled into the minimal cell of Fig 9b.'}, RUNS_DB, STUDY_YAML))
-
-# **fig09-illustration-2**
-
-# fig09-illustration-2
-_save_viz('autopoiesis', 'fig09-illustration-2', _render_one('image:visualizations/fig09-illustration-2.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# autopoiesis-metrics
+_save_viz('autopoiesis', 'autopoiesis-metrics', _render_one('html:viz/autopoiesis-metrics.html', {'chart': 'html', 'caption': 'Autopoiesis metrics -- the enclosed interior area plateaus (homeostasis, ~149 px) with membrane mass held above its floor: genuine self-maintenance, not a filled blob or a ghost ring.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -1169,86 +1076,70 @@ _save_viz('autopoiesis', 'fig09-illustration-2', _render_one('image:visualizatio
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | containment-three-grains | kind=observable path=containment_coarse.boundary expr=last(containment_coarse.boundary) | op >= value 1.0 provenance containment_coarse.boundary 0.0 → 1.5, containment_selforg.membrane 0.0 → 2.0, containment_molecular.aggregate 0.0 → 1.0 — three distinct grains of one function, each moving under its own handler (exec fig09a-executable, 10 engine steps) |
-# | closure-enzymes-from-zero | kind=observable path=enzymes.concentration expr=last(enzymes.concentration) | op >= value 0.5 provenance enzymes.concentration 0.0 → 0.95 over 10 engine steps — metabolism's catalyst pool exists only because gene expression made it (exec fig09b-executable) |
-# | metabolism-powers-replication | kind=observable path=genes.concentration expr=last(genes.concentration) | op >= value 1.3 provenance genes.concentration 1.0 → 1.69 as energy.energy climbs 1.0 → 1.31 and is spent by replication (exec fig09b-executable, 10 engine steps) |
-# | draft-is-inert | kind=observable path=enzymes.concentration expr=last(enzymes.concentration) | op >= value 0.5 provenance inert draft (fig09b-minimal-cell, empty update by construction) stays at enzymes.concentration 0.0 → fails the ≥0.5 threshold by design (expected-fail control) |
+# | closed-loop-persists | kind=observable path=obs.persists expr=last(obs.persists) | op == value 1.0 provenance persists == 1.0 with membrane_mass > 0 over a 1800-step (36-tick) run comfortably inside the ~2000-step homeostatic-plateau window (tests/test_protocell.py::test_closed_loop_persists_within_stable_window, tests/test_autopoiesis_regime.py::test_closed_loop_persists) |
+# | closed-loop-encloses-interior | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op > value 50.0 provenance enclosed_area plateaus at ~149 px (seed ~465 px), homeostasis not runaway growth; loose 50-px floor (not the exact 149) so the bound is not a golden-value pin (tests/test_protocell_physics.py::test_closed_loop_persists_with_area_homeostasis, tests/test_autopoiesis_regime.py::test_persistence_is_multiseed_robust) |
+# | closed-loop-never-collapses | kind=observable path=obs.collapse_tick expr=last(obs.collapse_tick) | op == value -1.0 provenance collapse_tick == -1.0 across the 1800-step window -- the closed loop never broke inside the plateau (tests/test_protocell.py::test_closed_loop_persists_within_stable_window, tests/test_autopoiesis_regime.py::test_closed_loop_persists) |
+# | vesicle-control-collapses | kind=observable path=obs.persists expr=last(obs.persists) | op == value 0.0 provenance k_prod=0 (the only differing variable): persists == 0.0, closure lost -- the knockout that flips persist -> collapse (tests/test_protocell.py::test_negative_control_k_prod_zero_collapses, tests/test_autopoiesis_regime.py::test_vesicle_control_collapses) |
+# | vesicle-control-loses-enclosure | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op == value 0.0 provenance enclosed_area -> 0 by step ~96 (collapse_tick ~96), the membrane ring decays and its closure is lost (tests/test_protocell_physics.py::test_negative_control_k_prod_zero_collapses, tests/test_autopoiesis_regime.py::test_vesicle_control_collapses) |
+# | puncture-is-fatal | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op == value 0.0 provenance after puncturing a 60-degree wedge, enclosed_area stays 0 for 1500 steps and phi.sum() -> ~0 even with k_prod at its canonical value -- closure-gated production cannot rebuild from nothing (tests/test_protocell_physics.py::test_puncture_is_fatal_no_recovery) |
 
 # ## Study: Growth and Division (`growth-and-division`)
 #
-# **Question.** Does growth — an autocatalytic, energy-coupled DNA-replication process that plays the role of environment-coupled uptake — drive the cell's own dna store across a threshold, and does crossing that threshold fire a genuine structural rewrite of the place graph (one cell node becoming two daughter nodes at runtime, mass conserved) rather than a pre-declared post-structure animated on a wall clock?
+# **Question.** A cell grows, crosses a threshold, and divides -- and its daughters do not necessarily divide together. This is the paper's §Growth and division growth-then-divide pattern (Fig 10a,b): metabolism drives a cell's own state across a threshold, crossing it fires division and partitions state across the two resulting daughters, and those daughters, "remain[ing] coupled through shared environmental state," can either stay in step or diverge (§Growth and division).
+# Does this hold spatially -- a single CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses `vol_threshold` and divides via the native CPM engine operation `divide_cells`, partitioning biomass mass-conserved across the two daughters, compounding into a small multi-generation lineage tree -- and do sibling cells sharing one glucose field begin growing at different local rates as the colony crowds, so their division timing desynchronizes rather than staying locked to clean powers of two? Composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`).
 #
-# **Claim.** Growth precedes and drives division: an autocatalytic, energy-coupled DNA-replication process grows the cell's own dna store until it crosses a threshold, and crossing that threshold triggers a change to the composition itself — one cell becomes two through a graph rewrite that creates new nodes at runtime and conserves mass (the parent is halved, not doubled), not a pre-drawn pair on a timer (Law 2′, rewrite conformance vs wiring; Law 2, interface preserved across the rewrite).
+# **Claim.** Metabolism-driven growth crossing a threshold fires division, and division partitions state -- biomass, and lattice pixels -- across two daughters that resume growing themselves, compounding into a genuine multi-generation lineage tree whose siblings desynchronize as they compete for shared, local resources: this is the paper's §Growth and division growth-then-divide pattern (Fig 10a,b), including its "coordination and divergence" clause, realized spatially. One real CPM cell, growing via real per-footprint dFBA metabolism, divides via the native CPM engine operation `divide_cells` (biomass partitioned proportional to post-split daughter volume, not reset and discarded) through a single coupling process (`CpmGrowthDivision`). Over a 36-tick run sampled every 3 ticks: the founder compounds into an 18-cell lineage tree spanning 4 generations (`max_generation` = 4), the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18) that departs from clean powers of two from tick 21 onward as sibling cells' division timing diverges, and every cell's CPM volume stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80. The staircase is bounded more by lattice crowding (the colony packs to roughly two-thirds occupancy within its own footprint) than by nutrient limitation (field-wide glucose depletes only ~3% over the run). This is direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. It mirrors a lumped, specification-stage realization's §Growth and division claim (Fig 10a,b) (growth drives the cell's own state across a threshold; crossing the threshold triggers division) but realizes division as the native spatial CPM operation `divide_cells` acting directly on lattice pixels, in contrast to that study's place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `division` | `meta_modelers_guide.composites.fig10-1-division` | 0 | — |
-# | `division-rewrite` | `meta_modelers_guide.composites.fig10-1-rewrite` | 0 | — |
-# | `division-executable` | `meta_modelers_guide.composites.fig10-1-executable` | 0 | — |
+# | `growth-division-spatial` | `meta_modelers_guide.composites.growth-division-spatial` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig10-1-division`** — `spec_meta_modelers_guide_composites_fig10_1_division` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.growth-division-spatial`** — `spec_meta_modelers_guide_composites_growth_division_spatial` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_1_division = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-division.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_1_division)
+spec_meta_modelers_guide_composites_growth_division_spatial = load_spec(REPO / 'meta_modelers_guide/composites/growth-division-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_growth_division_spatial)
 
-# === Edit parameters for composite 'Cell Division — Draft Interface' ===
+# === Edit parameters for composite 'growth-division-spatial' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'dna_replication'  (local:DNAReplication)
-spec_meta_modelers_guide_composites_fig10_1_division['state']['dna_replication']['config']['interval'] = 1.0
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'segregate_chromosome'  (local:SegregateChromosome)
-spec_meta_modelers_guide_composites_fig10_1_division['state']['segregate_chromosome']['config']['interval'] = 1.0
-
-# process 'divide'  (local:Divide)
-spec_meta_modelers_guide_composites_fig10_1_division['state']['divide']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig10-1-rewrite`** — `spec_meta_modelers_guide_composites_fig10_1_rewrite` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_1_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-rewrite.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_1_rewrite)
-
-# === Edit parameters for composite 'Cell Division — Live Topology' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# tunable parameters (filled into ${name} placeholders):
-spec_meta_modelers_guide_composites_fig10_1_rewrite['parameters']['cycle']['default'] = 3.0
-
-# process 'cell_cycle'  (local:CellCycleDivision)
-spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig10_1_rewrite['state']['cell_cycle']['config']['cycle'] = '${cycle}'
-
-# **Composite `meta_modelers_guide.composites.fig10-1-executable`** — `spec_meta_modelers_guide_composites_fig10_1_executable` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_1_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig10-1-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_1_executable)
-
-# === Edit parameters for composite 'fig10-1-executable' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'dna_replication'  (local:DNAReplicationODE)
-spec_meta_modelers_guide_composites_fig10_1_executable['state']['dna_replication']['config']['k'] = 0.15
-spec_meta_modelers_guide_composites_fig10_1_executable['state']['dna_replication']['config']['interval'] = 1.0
-
-# process 'segregate_chromosome'  (local:SegregateChromosomeProc)
-spec_meta_modelers_guide_composites_fig10_1_executable['state']['segregate_chromosome']['config']['seg_rate'] = 0.2
-spec_meta_modelers_guide_composites_fig10_1_executable['state']['segregate_chromosome']['config']['interval'] = 1.0
-
-# process 'divide'  (local:DivisionRewrite)
-spec_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['dna_threshold'] = 2.0
-spec_meta_modelers_guide_composites_fig10_1_executable['state']['divide']['config']['interval'] = 1.0
+# process 'cell'  (local:CpmGrowthDivision)
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['glucose_vmax'] = 1.5
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_growth_division_spatial['state']['cell']['config']['reset_target'] = 40.0
 
 # ### Run
 #
@@ -1266,30 +1157,15 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig10-1-executable-dynamics**
+# **growth-division-spatial-movie**
 
-# fig10-1-executable-dynamics
-_save_viz('growth-and-division', 'fig10-1-executable-dynamics', _render_one('html:fig10-1-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 10a,b: dna climbs past threshold, the dashed line marks the division rewrite firing, cell_count steps 1→2, and biomass is partitioned (not duplicated) between the two daughters.'}, RUNS_DB, STUDY_YAML))
+# growth-division-spatial-movie
+_save_viz('growth-and-division', 'growth-division-spatial-movie', _render_one('image:viz/growth-division-spatial.gif', {'chart': 'image', 'caption': 'Spatial growth-and-division over 36 ticks -- a single founder cell compounds into a lineage of distinguishably lineage/generation-colored daughters (18 cells by t=36 in the re-baked run) as metabolism-driven volume growth repeatedly crosses vol_threshold and native divide_cells splits each cell.'}, RUNS_DB, STUDY_YAML))
 
-# **fig10-1-executable-movie**
+# **growth-division-metrics**
 
-# fig10-1-executable-movie
-_save_viz('growth-and-division', 'fig10-1-executable-movie', _render_one('html:fig10-1-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of growth → division (a Play button sweeps a marker along each curve).'}, RUNS_DB, STUDY_YAML))
-
-# **growth-and-division-dynamics**
-
-# growth-and-division-dynamics
-_save_viz('growth-and-division', 'growth-and-division-dynamics', _render_one('image:visualizations/growth-and-division-dynamics.svg', {'chart': 'image', 'caption': "Growth-and-division dynamics — DNA grows via the autocatalytic, energy-coupled replication process and crosses threshold, the rewrite fires, and the parent's biomass partitions to two daughters (mass conserved), run to completion through the engine."}, RUNS_DB, STUDY_YAML))
-
-# **fig10-1-division**
-
-# fig10-1-division
-_save_viz('growth-and-division', 'fig10-1-division', _render_one('image:visualizations/fig10-1-division.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-illustration**
-
-# fig10-illustration
-_save_viz('growth-and-division', 'fig10-illustration', _render_one('image:visualizations/fig10-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# growth-division-metrics
+_save_viz('growth-and-division', 'growth-division-metrics', _render_one('html:viz/growth-division-metrics.html', {'chart': 'html', 'caption': 'Synced n_cells/total_volume metrics for the growth-division run -- a monotonic non-decreasing population staircase, division events marked, over 36 ticks.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -1297,157 +1173,172 @@ _save_viz('growth-and-division', 'fig10-illustration', _render_one('image:visual
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | growth-crosses-threshold | kind=observable path=dna expr=last(dna) | op >= value 2.0 provenance growth process (k·dna·energy) drives parent dna 1 → 3.06, crossing dna_threshold 2.0 (exec fig10-1-executable) |
-# | division-fires | kind=observable path=cell_count expr=last(cell_count) | op >= value 1.5 provenance DNA crosses threshold 2.0 (parent dna 1→3.06) → rewrite fires once, cell_count 1→2 (exec fig10-1-executable, tests/test_compilation.py::test_fig10_division_is_event_driven) |
-# | daughters-spawn | kind=observable path=dna expr=last(dna) | op >= value 1.0 provenance division spawns two new daughters (exec daughter dna 0→2.75; each daughter biomass 0→0.5, parent biomass →0 — mass conserved; tests/test_compilation.py::test_rewrite_conformance_against_wiring, tests/test_fig10_rewrite.py::test_cell_divides_into_two_daughters) |
-# | draft-is-inert | kind=observable path=cell_count expr=last(cell_count) | op >= value 1.5 provenance inert-draft run stays at seed cell_count 1 (empty update by construction) → fails by design (expected-fail control) |
+# | population-steps-up-by-division | kind=observable path=obs.n_cells expr=max(obs.n_cells) over the 36-tick run | op >= value 8.0 provenance n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence 3) -- steps 1 -> 2 -> 4 -> 8 -> 18 (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics) |
+# | population-never-shrinks | kind=observable path=obs.n_cells expr=obs.n_cells == sorted(obs.n_cells) over the 36-tick run | op > value 0.0 provenance n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns)) |
+# | daughters-resume-growth-without-runaway | kind=observable path=obs.n_cells expr=obs.n_cells after run(30) from a single seed cell (n0 = 1) | op >= value 3.0 provenance starting from n0 = 1, n_cells >= 3 after 30 ticks (at least 1 -> 2 -> ~4), with every per-cell volume bounded in (5, 200) -- no runaway single cell, no zero-volume phantom daughters (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
+# | per-cell-volume-stays-bounded | kind=observable path=obs.volume expr=range of per-cell CPM volume across all cells and all sampled ticks | op < value 200.0 provenance per-cell volumes stay bounded roughly 31-79 px across the 36-tick run (division halves a cell once it crosses vol_threshold = 80, resetting toward reset_target = 40, then it regrows); the tests' hard bounds (8 < v < 200) hold at every sampled tick (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
+# | native-division-conserves-mass | kind=observable path=cell_volumes expr=(vol_parent + vol_new_daughter) - vol_before_split, and divide_cells(500.0, 40.0) on a sub-threshold cell | op <= value 2.0 provenance divide_cells(80.0, 40.0) on a cell grown to ~150 splits it into two daughters (parent id kept + one new id) whose combined volume matches the pre-split volume within +-2 px (rounding); divide_cells(500.0, 40.0) on a cell at 60 (below threshold) returns [] -- a correct no-op (tests/test_cpm_divide_spike.py::test_divide_splits_one_into_two_mass_conserved, test_below_threshold_is_noop) |
+# | division-desynchronizes-from-lockstep | kind=observable path=obs.n_cells, obs.generation expr=count of n_cells samples not in {1,2,4,8,16,32}, and number of distinct generation values present among live cells at the final sampled tick | op >= value 1.0 provenance n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 departs from powers of two starting at tick 21 (5 cells) and stays desynchronized through 11, 14, 18; at the final tick, live cells span 5 distinct generations (0 through 4) simultaneously in the same 18-cell colony (tests/test_growth_division_regime.py::test_division_desynchronizes_from_lockstep_powers_of_two) |
+# | lineage-compounds-into-a-tree | kind=observable path=obs.max_generation expr=max(obs.max_generation) over the 36-tick run | op >= value 3.0 provenance max_generation reaches 4 by the end of the 36-tick run (trajectory 0,1,1,1,2,2,2,3,3,3,3,4 across the 12 sampled ticks); founder id 1 stays generation 0 throughout; every daughter's generation == its recorded parent's generation + 1 (tests/test_growth_division_regime.py::test_lineage_compounds_into_a_multigeneration_tree) |
 
 # ## Study: Development and Evolution (`development-and-evolution`)
 #
-# **Question.** Fig 10c–f asks whether two of biology's hardest structural transitions — development (individual cells nesting into a collective composite, a biofilm, with its own shared interface) and evolution (a new interface port switching on, selected by viability) — can be represented as event-driven, compositional rewrites (Law 2′) that preserve the interface underneath them (Law 2). Two composites answer the first half of that (do the drafts compile to executables that run, behind an unchanged interface?) faithfully. This study asks the harder, second half explicitly: how much of what runs is a genuine developmental/evolutionary mechanism, versus a scripted stand-in — and is honest that the paper itself calls this transition "an open and substantial challenge" (line 580).
+# **Question.** The paper's §Development and evolution section (Fig 10c-f) extends the interface idea across time: individual cellular interfaces become embedded in a COLLECTIVE interface defined by shared state -- a growing colony develops physiological heterogeneity (a depleted core against a fed rim) where each cell's own interface sits inside one collective interface -- and a heritable trait EVOLVES when variation is selected on that shared field. This study puts both halves on the real dividing CPM colony and asks the discriminating question directly: does a growing CPM colony on a shared depleting glucose field form emergent core-vs-rim heterogeneity (DEVELOPMENT), and does a heritable per-cell glucose-uptake trait (vmax) shift its population mean UP under shared-field selection (EVOLUTION) -- and, crucially, is that directional shift caused by SELECTION rather than mutation alone? The load-bearing design is a DUAL control: against the selection-ON colony, a no-mutation arm (the trait cannot vary) and a no-selection arm (the trait mutates but confers no fitness) isolate selection as the cause. This study REUSES study 8's dividing colony (`growth-and-division`, `CpmGrowthDivision`) unchanged and adds ONLY one heritable coupling parameter -- the paper's claim that the interfaces and couplings are themselves evolvable features of organization, made concrete by making one coupling parameter heritable and selectable on the colony that already grows and divides.
 #
-# **Claim.** Development nests individual cells into a biofilm collective behind a preserved, shared extracellular-matrix interface (Law 2), and evolution switches on a new chemical port under a viability-weighted growth term — both compile and run, and a separate "Live Topology" pair for each even performs genuine runtime place-graph node insertion/removal (in the spirit of Law 2′). But — the defining point of this study — none of this is a validated biological result: selection is a single ODE with fixed viability/fitness constants (not real fitness-based population dynamics), the "new port" is a first-order config-driven ramp (not an emergent evolutionary innovation), the continuous-path biofilm state is a pre-declared, non-inserted scalar store, and even the genuine node-inserting Live-Topology composites run on a fixed wall-clock schedule with a hardcoded mutant fitness advantage rather than an emergent, state-driven trigger. The paper itself calls development and evolution "an open and substantial challenge" (line 580); this study demonstrates the pattern, not the phenomenon.
+# **Claim.** The paper's §Development and evolution section (Fig 10c-f) holds as a spatial mechanism on the real dividing CPM colony, REUSING study 8's `CpmGrowthDivision` unchanged and adding only a heritable per-cell coupling parameter. DEVELOPMENT: a growing colony on a shared depleting glucose field forms emergent core-vs-rim physiological heterogeneity -- the radial rim-core glucose ratio grows from 1.0 to ~1.44 over 45 ticks (core more depleted than rim), a collective interface not imposed but emerging from shared-field competition. EVOLUTION: a heritable glucose-uptake trait (vmax) shifts its population mean UP under shared-field selection in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221; one seed reverses -- the honest multi-seed result). A DUAL control isolates the cause: the no-mutation control stays exactly at the founder value with zero variance (0/5 seeds, no raw material), and the no-selection control mutates (var > 0) but drifts undirected (2/5 up, mean -0.039). Only selection-ON shifts the mean directionally, so the trait shift is CAUSED by selection -- operating via differential division on the shared field (higher-vmax cells grow/divide more, so their trait proliferates), not by mutation alone. The honest boundaries are stated as findings: the development and evolution halves pull the same field-depletion knob and both saturate within the ~gen 4-6 crowding window; the scope is a toy evo-devo (development = shared-field core/rim heterogeneity, NOT morphogenesis; evolution = one scalar trait under resource selection, NOT genome evolution; facilitated variation -- evolving the ports/couplings themselves -- is a named deferral).
 
 # ### Parameters
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `development` | `meta_modelers_guide.composites.fig10-2-development` | 0 | — |
-# | `development-rewrite` | `meta_modelers_guide.composites.fig10-2-rewrite` | 0 | — |
-# | `development-executable` | `meta_modelers_guide.composites.fig10-2-executable` | 0 | — |
-# | `evolution` | `meta_modelers_guide.composites.fig10-3-evolution` | 0 | — |
-# | `evolution-rewrite` | `meta_modelers_guide.composites.fig10-3-rewrite` | 0 | — |
-# | `evolution-executable` | `meta_modelers_guide.composites.fig10-3-executable` | 0 | — |
+# | `development-evolution-spatial` | `meta_modelers_guide.composites.development-evolution-spatial` | 0 | — |
+# | `development-evolution-no-mutation` | `meta_modelers_guide.composites.development-evolution-no-mutation` | 0 | — |
+# | `development-evolution-no-selection` | `meta_modelers_guide.composites.development-evolution-no-selection` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig10-2-development`** — `spec_meta_modelers_guide_composites_fig10_2_development` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.development-evolution-spatial`** — `spec_meta_modelers_guide_composites_development_evolution_spatial` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_2_development = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-development.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_2_development)
+spec_meta_modelers_guide_composites_development_evolution_spatial = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_development_evolution_spatial)
 
-# === Edit parameters for composite 'Biofilm Development — Draft Interface' ===
+# === Edit parameters for composite 'development-evolution-spatial' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'surface_attachment'  (local:SurfaceAttachment)
-spec_meta_modelers_guide_composites_fig10_2_development['state']['surface_attachment']['config']['interval'] = 1.0
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'ecm_secretion'  (local:ECMSecretion)
-spec_meta_modelers_guide_composites_fig10_2_development['state']['ecm_secretion']['config']['interval'] = 1.0
+# process 'evo'  (local:CpmEvolution)
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['reset_target'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vmax0'] = 1.5
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['mut_sigma'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['mutate'] = True
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['selection'] = True
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vmax_min'] = 0.2
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vmax_max'] = 20.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['seed'] = 3
 
-# process 'biofilm_growth'  (local:BiofilmGrowth)
-spec_meta_modelers_guide_composites_fig10_2_development['state']['biofilm_growth']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig10-2-rewrite`** — `spec_meta_modelers_guide_composites_fig10_2_rewrite` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.development-evolution-no-mutation`** — `spec_meta_modelers_guide_composites_development_evolution_no_mutation` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_2_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-rewrite.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_2_rewrite)
+spec_meta_modelers_guide_composites_development_evolution_no_mutation = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-no-mutation.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_development_evolution_no_mutation)
 
-# === Edit parameters for composite 'Biofilm Development — Live Topology' ===
+# === Edit parameters for composite 'development-evolution-no-mutation' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# tunable parameters (filled into ${name} placeholders):
-spec_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['capacity']['default'] = 5
-spec_meta_modelers_guide_composites_fig10_2_rewrite['parameters']['grow_every']['default'] = 2.0
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'development'  (local:BiofilmDevelopment)
-spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['grow_every'] = '${grow_every}'
-spec_meta_modelers_guide_composites_fig10_2_rewrite['state']['development']['config']['capacity'] = '${capacity}'
+# process 'evo'  (local:CpmEvolution)
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['reset_target'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vmax0'] = 1.5
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['mut_sigma'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['mutate'] = False
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['selection'] = True
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vmax_min'] = 0.2
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vmax_max'] = 20.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['seed'] = 3
 
-# **Composite `meta_modelers_guide.composites.fig10-2-executable`** — `spec_meta_modelers_guide_composites_fig10_2_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.development-evolution-no-selection`** — `spec_meta_modelers_guide_composites_development_evolution_no_selection` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_2_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig10-2-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_2_executable)
+spec_meta_modelers_guide_composites_development_evolution_no_selection = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-no-selection.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_development_evolution_no_selection)
 
-# === Edit parameters for composite 'fig10-2-executable' ===
+# === Edit parameters for composite 'development-evolution-no-selection' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
-# process 'surface_attachment'  (local:SurfaceAttachmentProc)
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['attach_rate'] = 0.15
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['adhesion_coef'] = 0.5
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['surface_attachment']['config']['interval'] = 1.0
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
 
-# process 'ecm_secretion'  (local:ECMSecretionProc)
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['ecm_secretion']['config']['k'] = 0.2
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['ecm_secretion']['config']['interval'] = 1.0
-
-# process 'biofilm_growth'  (local:BiofilmGrowthProc)
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['mass_rate'] = 0.25
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['growth_rate'] = 0.08
-spec_meta_modelers_guide_composites_fig10_2_executable['state']['biofilm_growth']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig10-3-evolution`** — `spec_meta_modelers_guide_composites_fig10_3_evolution` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_3_evolution = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-evolution.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_3_evolution)
-
-# === Edit parameters for composite 'Evolution — Draft Interface' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'variation'  (local:Variation)
-spec_meta_modelers_guide_composites_fig10_3_evolution['state']['variation']['config']['interval'] = 1.0
-
-# process 'selection'  (local:Selection)
-spec_meta_modelers_guide_composites_fig10_3_evolution['state']['selection']['config']['interval'] = 1.0
-
-# process 'port_addition'  (local:PortAddition)
-spec_meta_modelers_guide_composites_fig10_3_evolution['state']['port_addition']['config']['interval'] = 1.0
-
-# **Composite `meta_modelers_guide.composites.fig10-3-rewrite`** — `spec_meta_modelers_guide_composites_fig10_3_rewrite` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_3_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-rewrite.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_3_rewrite)
-
-# === Edit parameters for composite 'Evolution — Live Topology' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# tunable parameters (filled into ${name} placeholders):
-spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['founders']['default'] = 3
-spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['capacity']['default'] = 6
-spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['generation']['default'] = 2.0
-spec_meta_modelers_guide_composites_fig10_3_rewrite['parameters']['mutate_at']['default'] = 4.0
-
-# process 'evolution'  (local:LineageEvolution)
-spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['generation'] = '${generation}'
-spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['mutate_at'] = '${mutate_at}'
-spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['founders'] = '${founders}'
-spec_meta_modelers_guide_composites_fig10_3_rewrite['state']['evolution']['config']['capacity'] = '${capacity}'
-
-# **Composite `meta_modelers_guide.composites.fig10-3-executable`** — `spec_meta_modelers_guide_composites_fig10_3_executable` (a plain, editable dict)
-
-from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig10_3_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig10-3-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig10_3_executable)
-
-# === Edit parameters for composite 'fig10-3-executable' ===
-# Each line is the spec's CURRENT value — change any, then run the Run cell
-# below. The spec is a plain dict, so you may also add or remove keys.
-
-# process 'variation'  (local:VariationProc)
-spec_meta_modelers_guide_composites_fig10_3_executable['state']['variation']['config']['interval'] = 1.0
-
-# process 'selection'  (local:SelectionProc)
-spec_meta_modelers_guide_composites_fig10_3_executable['state']['selection']['config']['k'] = 0.3
-spec_meta_modelers_guide_composites_fig10_3_executable['state']['selection']['config']['interval'] = 1.0
-
-# process 'port_addition'  (local:PortAdditionProc)
-spec_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['onset_rate'] = 0.1
-spec_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['capacity'] = 1.0
-spec_meta_modelers_guide_composites_fig10_3_executable['state']['port_addition']['config']['interval'] = 1.0
+# process 'evo'  (local:CpmEvolution)
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['reset_target'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vmax0'] = 1.5
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['mut_sigma'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['mutate'] = True
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['selection'] = False
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vmax_min'] = 0.2
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vmax_max'] = 20.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['seed'] = 3
 
 # ### Run
 #
@@ -1465,25 +1356,15 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig10-2-executable-dynamics**
+# **development-evolution-spatial-movie**
 
-# fig10-2-executable-dynamics
-_save_viz('development-and-evolution', 'fig10-2-executable-dynamics', _render_one('html:fig10-2-executable.html', {'chart': 'html', 'caption': 'Interactive: biofilm_mass, ecm, cells, and attached all climb together over the pre-declared biofilm store — the collective interface accumulating state, not a place-graph rewrite.'}, RUNS_DB, STUDY_YAML))
+# development-evolution-spatial-movie
+_save_viz('development-and-evolution', 'development-evolution-spatial-movie', _render_one('image:viz/development-evolution-spatial.gif', {'chart': 'image', 'caption': 'Development-evolution over 45 ticks -- a growing colony (development: emergent core-vs-rim structure) with each cell colored by its heritable vmax on a fixed scale (evolution: the trait distribution shifting up under shared-field selection).'}, RUNS_DB, STUDY_YAML))
 
-# **fig10-2-executable-movie**
+# **development-evolution-metrics**
 
-# fig10-2-executable-movie
-_save_viz('development-and-evolution', 'fig10-2-executable-movie', _render_one('html:fig10-2-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the biofilm assembling.'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-3-executable-dynamics**
-
-# fig10-3-executable-dynamics
-_save_viz('development-and-evolution', 'fig10-3-executable-dynamics', _render_one('html:fig10-3-executable.html', {'chart': 'html', 'caption': 'Interactive: new_port ramps on as a scripted config-driven onset while cell_count grows under a fixed-constant selection ODE — real dynamics, but not emergent selection.'}, RUNS_DB, STUDY_YAML))
-
-# **fig10-3-executable-movie**
-
-# fig10-3-executable-movie
-_save_viz('development-and-evolution', 'fig10-3-executable-movie', _render_one('html:fig10-3-executable-movie.html', {'chart': 'html', 'caption': 'Animated replay of the port-onset ramp and population growth.'}, RUNS_DB, STUDY_YAML))
+# development-evolution-metrics
+_save_viz('development-and-evolution', 'development-evolution-metrics', _render_one('html:viz/development-evolution-metrics.html', {'chart': 'html', 'caption': 'Development-evolution metrics -- mean_vmax rising (evolution) alongside rim_core_ratio climbing above 1.0 (development), with var_vmax and n_cells, over 45 ticks on one colony.'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -1491,10 +1372,13 @@ _save_viz('development-and-evolution', 'fig10-3-executable-movie', _render_one('
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | biofilm-interface-accumulates | kind=observable path=biofilm.biofilm_mass expr=last(biofilm.biofilm_mass) | op >= value 1.0 provenance fig10-2-executable run 10 steps: biofilm_mass 0 → 3.09, ecm 0 → 2.47, attached 0 → 1.85, adhesion 0 → 0.93, cells 1.00 → 2.09 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-2-executable]) |
-# | port-switches-on | kind=observable path=cell_O157.new_port expr=last(cell_O157.new_port) | op >= value 0.3 provenance fig10-3-executable run 10 steps: new_port 0 → 0.65 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable]) |
-# | selection-grows-population | kind=observable path=cell_ecoli.cell_count expr=last(cell_ecoli.cell_count) | op >= value 2.0 provenance fig10-3-executable run 10 steps: cell_ecoli.cell_count 1 → 4 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable]) |
-# | drafts-are-inert | kind=observable path=biofilm.biofilm_mass expr=last(biofilm.biofilm_mass) | op <= value 0.001 provenance fig10-2-development run 10 steps: biofilm.biofilm_mass stays 0.0 (empty update by construction); fig10-3-evolution run 10 steps: cell_ecoli.cell_count stays 0.0 (the uncompiled draft's _value seed is not honored outside compile_composite), new_port stays 0.0 — only global_time advances on both drafts |
+# | development-heterogeneity-emerges | kind=observable path=obs.rim_core_ratio expr=last(obs.rim_core_ratio) | op > value 1.2 provenance rim_core_ratio grows 1.0 (5 ticks) -> ~1.44 (45 ticks) on the flagship seed 3; loose 1.2 floor (not the exact 1.44) so the bound is not a golden-value pin (tests/test_dev_evo_regime.py::test_development_heterogeneity_emerges, tests/test_cpm_evolution.py::test_rim_core_ratio_shows_heterogeneity) |
+# | selection-shifts-mean-trait-up | kind=observable path=obs.mean_vmax expr=last(obs.mean_vmax) | op > value 1.6 provenance flagship seed 3: mean_vmax 1.500 -> 2.200 (+0.700); multi-seed (seeds 1-5) UP in 4/5, range [-0.116, +0.700], mean +0.221 -- asserted as a fraction, not per-seed (tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection, tests/test_cpm_evolution.py::test_selection_shifts_mean_vmax_up, tests/test_cpm_evolution_spike.py::test_selection_shifts_mean_trait_up) |
+# | trait-inheritance-within-3-sigma | kind=observable path=obs.var_vmax expr=last(obs.var_vmax) | op > value 0.0 provenance seed 3 spike: across 69 division events |child-parent| max ~0.997 (~3.3 sigma), mean ~0.252 (~0.85 sigma = E|N(0,0.3)|), 99% within 3 sigma; var_vmax builds > 0 only when mutation is on (tests/test_cpm_evolution_spike.py::test_trait_inheritance_within_3_sigma, tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection) |
+# | no-mutation-control-static | kind=observable path=obs.mean_vmax expr=last(obs.mean_vmax) | op == value 1.5 provenance mutate=false: mean_vmax == 1.500 exactly and var_vmax == 0.0 in every seed 1-5 (0/5 shift) -- the BOOLEAN-flag control that genuinely reaches the process (tests/test_dev_evo_regime.py::test_no_mutation_control_is_static, tests/test_cpm_evolution.py::test_no_mutation_control_is_static, tests/test_cpm_evolution_spike.py::test_no_mutation_control_is_static) |
+# | no-selection-control-mutates-undirected | kind=observable path=obs.var_vmax expr=last(obs.var_vmax) | op > value 0.0 provenance selection=false: var_vmax > 0 (still mutates) but the mean drifts undirected -- UP in 2/5 seeds, delta range [-0.270, +0.112], mean -0.039 (vs selection-ON 4/5, +0.221) (tests/test_dev_evo_regime.py::test_no_selection_control_does_not_directionally_shift) |
 
 # ## Open decisions
-# - development-and-evolution's own gate is needs_calibration: selection is a single fixed-constant ODE and the "new port" a scripted config ramp, not emergent population or fitness dynamics. Treat its results as pattern demonstrations only until replaced with genuine, state-driven selection and innovation mechanisms.
+# - All nine composition patterns now have a study: eight realized as real 2D spatial mechanisms (cell-environment-coupling, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution) plus the foundational cellular-interface contract. The honest frontier is not coverage but depth: each study realizes part of its pattern's full claim and names the rest as a gap.
+# - The arc's open next rung is learning — a cell whose history of interaction changes its future regulation in a way that measurably improves its capacity to stay viable, the executable bridge from a self-maintaining agent to an adaptive one. It is named here but not yet built.
+# - Two of the paper's four physical interface modalities remain unrealized across the whole investigation: mechanical forces and electrical currents. The chemical port is everywhere and the thermal port appears in molecular-interfaces; a mechanical/tension channel and an electrostatic channel are the standing gap.

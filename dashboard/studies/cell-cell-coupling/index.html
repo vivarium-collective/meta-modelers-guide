@@ -146,7 +146,13 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> When two cell interfaces are coupled through one shared environmental nutrient store, what is coupled is not only state but constraint — does one cell&#39;s uptake push the other outside its viable bounds (competition), and can a different handler over the same coupling interface stabilize both (cross-feeding)?</p>
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Does the paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated
+figure) hold as real spatial multicellularity — multiple CPM cells sharing one diffusing
+nutrient field, each running its own dynamic-FBA step at its own footprint, producing both
+competitive exclusion and cross-feeding — when the whole colony is composed from independent
+frameworks through one N-cell coupling process (`CpmColonyField`), rather than the lumped
+two-role, shared-scalar-pool stand-in a lumped, specification-stage realization used?
+</p>
 
 <nav class="study-tabs" aria-label="Study sections">
   
@@ -557,26 +563,109 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Two cells over one shared-nutrient interface negotiate viability, not just state: under competition the weaker cell (lower uptake capacity) is driven below its viable band while the stronger persists (cell_a viability → 1.0, cell_b → ~0.0001); under cross-feeding, the same coupling interface with a different handler keeps both cells viable (cell_a and cell_b → 1.0) — two handler environments over one interface (Law 4), the draft itself unchanged (Law 2).</p>
+      <p class="ctr-text">Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
+single N-cell coupling process (`CpmColonyField`) reproduces the paper&#39;s §Cell–cell coupling
+viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
+scripted or lumped stand-in for it: over
+20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric
+growth toward competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81
+px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
+bound), while a
+different composite over the same coupling process — a localized glucose depot, a fast-diffusing
+acetate byproduct, and an acetate-consuming role — sustains a cell that never touches glucose
+(local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass
+1.25 -&gt; 3.79). Both regimes run through the same process; only the composite&#39;s cell roles and
+field constants differ, mirroring the lumped ODE predecessor&#39;s law-4 pattern
+(two handler environments negotiate the shared-resource constraint differently over one
+interface) at real spatial, per-footprint metabolic resolution.
+</p>
       
-      <div class="ctr-context">The paper&#39;s Cell–cell coupling section asks what changes when a cell&#39;s environment is not empty space but another cell drawing on the same resource. This study wires two cell nodes — ``CellAgent`` (cell_a) and ``RivalCellAgent`` (cell_b), two draft roles with identical ports/contract — onto one shared ``SharedNutrientEnv`` store (a bounded first-order pool, replenished toward capacity). Both draft roles are mechanism-free; the coupling composite&#39;s node config carries only ``{interval: ...}``, exactly like every other draft composite in this workspace. The asymmetry lives entirely in the env/handler layer (law 4: two handler environments over one interface), not in the draft: the competition env (``cellcell-executable-compete``) assigns ``CompetingCell`` handlers with a higher ``vmax`` (0.8) to cell_a than to cell_b (0.2) — pure competitive strength, same kinetic form — while the cross-feeding env (``cellcell-executable-crossfeed``) assigns both roles the same symmetric ``CrossFeedingCell`` handler (vmax 0.6 each), which returns a byproduct to the shared pool (``return_frac`` 0.7) instead of exhausting it. Run to completion (20 steps) through the engine: under competition, cell_a&#39;s viability climbs to 1.0 while cell_b&#39;s collapses to ~0.0001 (effectively zero) — the weaker cell is driven out of its viable band while the stronger persists — and the shared nutrient store is measurably depleted (1.0 → 0.20), confirming the coupling is real, not two isolated cells. Under cross-feeding, over the same coupling interface, both cells&#39; viability reaches 1.0 and the shared store settles higher (1.0 → 0.54) because the byproduct return offsets combined uptake. What is coupled through one shared store is not just state (nutrient concentration) but constraint — whether each cell&#39;s own uptake keeps it inside its viable band depends on what the other cell is doing to the same pool, and swapping the handler alone (not the draft, not the interface) is what negotiates that constraint differently.</div>
+      <div class="ctr-context">This is the spatial realization of the paper&#39;s §Cell–cell coupling pattern
+(no dedicated figure), built on the flagship&#39;s `CpmCellField` process
+generalized to `CpmColonyField` — one process instance that owns N CPM cells sharing one
+spatio-flux field grid, running one dynamic-FBA step per cell at its own lattice footprint each
+tick, and writing all N cells&#39; uptake/secretion deltas back into the shared field as one summed
+update. The additive two-writer assumption this depends on (two cells&#39; disjoint footprint
+deltas summing correctly into one shared `map[array]` fields store, conserving mass) is no
+longer an assumption — it is runtime-verified directly (`tests/test_cpm_colony_two_writer.py`):
+two synthetic single-pixel writers on disjoint pixels are each applied independently and sum
+losslessly over repeated ticks.
+
+Two tuned regimes over the same `CpmColonyField` process demonstrate both branches of the
+paper&#39;s §Cell–cell coupling negotiation (no dedicated figure). COMPETITION (`meta_modelers_guide.composites.cellcell-compete`): two glucose
+competitors seeded on a uniform 3.0 mM glucose field, differing only in uptake capacity
+(`glucose_vmax` 10.0 vs 4.0). Measured over a 20-tick run
+(`tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell`,
+`tests/test_cpm_colony_field.py`): the faster competitor ends with biomass 237.9 against the
+slower competitor&#39;s 64.5 — a 3.69x margin — and CPM lattice volume 3511 px against 81 px, an
+even starker asymmetry, because CPM growth compounds superlinearly once one cell has
+out-competed the other for the shared glucose. The shared field is measurably drawn down by
+both cells drawing on the same pool, and the loser is displaced to a small fragment (81 px) of
+the lattice it started with parity on. This is asymmetric growth under shared-resource
+competition — a trend TOWARD competitive exclusion, not exclusion reached: the loser&#39;s biomass
+still GREW from its 1.25 seed to 64.5 (~51.6x) and stays far above any viable-biomass floor, so
+it is spatially DISPLACED, not driven below a viability bound (this study imposes no death and
+no viability constraint on a losing cell). And the winner&#39;s 3511 px is ~97.5% of the 3600-px
+lattice, with the field nearly exhausted by t=20 — the endpoint is as much a finite-size
+lattice-saturation artifact as a biological one (by t≈30 the winner fills the whole lattice and
+the still-viable loser is simply crowded off it, evicted rather than starved). This is exactly
+the paper&#39;s §Cell–cell coupling distinction that &#34;what is coupled is not only state, but
+constraint&#34;: these cells couple STATE (one shared field) but no viability CONSTRAINT, so strict
+exclusion is out of reach here — spatial competition as a direct, unscripted consequence of two
+independent dFBA solves reading the same depleting field.
+
+CROSS-FEEDING (`meta_modelers_guide.composites.cellcell-crossfeed`) is the biology that carries
+this investigation&#39;s deepest claim: the paper&#39;s §Cell–cell coupling closes on the idea that an
+environmental variable acquires its significance relationally — the same molecule counts as
+nutrient, signal, or toxin only through its consequences for a given cell&#39;s viability. Acetate
+embodies exactly that here. It is the glucose-fermenting secretor&#39;s metabolic WASTE — a
+byproduct it dumps into the shared field — and, at the very same instant, the consumer&#39;s sole
+carbon FOOD, the only thing keeping it alive. One molecule, two opposite meanings, each set
+relationally by the cell whose interface it meets. This is textbook microbial metabolic
+cooperation / cross-feeding (morris2013): a byproduct of one organism&#39;s metabolism becomes an
+obligate resource for another, and a spatial community is knit together by the exchange. The
+regime realizes it concretely: a glucose-to-acetate
+secretor (O2 cap 5, seeded at a localized 20 mM glucose depot in lattice columns 0-18) paired
+with an acetate-consuming cell (`acetate_vmax` 20) seeded well outside the glucose depot
+(columns 22-30), with acetate diffusing far faster than glucose in this regime (diffusion
+coefficient 15.0 vs 0.4) so the secreted byproduct plume can reach the consumer before the
+glucose gradient does. Measured over the same 20-tick run
+(`tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable`): the consumer&#39;s
+own local glucose reads 0.0 — it genuinely cannot touch glucose — while its local acetate reads
+1.30, and its biomass climbs from an initial 1.25 to 3.79 (roughly 3x) on that acetate alone,
+ending as a viable cell occupying 65 lattice pixels. The consumer&#39;s growth is back-loaded to
+the last several ticks of the run, once the secretor&#39;s plume has had time to diffuse the
+distance between the two cells&#39; footprints — growth is monotonic over the window measured, not
+smoothly exponential from tick 0. That the secretor&#39;s acetate is what CAUSES this growth — not
+anything intrinsic to the consumer or the field — is closed by a secretor-knockout necessity
+control (`meta_modelers_guide.composites.cellcell-crossfeed-knockout`): the same composite with
+the secretor cell removed so NO acetate is ever produced. Run 20 ticks, the otherwise-identical
+consumer (now the only cell) sits at local acetate 0.0 and its biomass never climbs off its
+1.25 seed — it persists on the lattice (~35 px) but flatly fails to grow, the genuine negative
+control for the handoff. This same acetate carries the arc across the investigation:
+waste-and-food here, it becomes a TOXIN in `disintegration`, where a high local acetate
+concentration crosses a cell&#39;s viability bound and triggers its collapse — one molecule, three
+relational meanings across the two studies.
+</div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Wire two draft cell roles (CellAgent, RivalCellAgent — identical ports, mechanism-free) onto one shared SharedNutrientEnv store, then compile the same draft through two different handler environments — a competition env (vmax 0.8 vs 0.2, no byproduct return) and a cross-feeding env (symmetric vmax 0.6/0.6, partial byproduct return) — and run each to completion through the engine.</p>
+      <p class="ctr-text">Run two `CpmColonyField` composites -- `cellcell-compete` (two glucose competitors, glucose_vmax 10.0 vs 4.0, one shared uniform glucose field) and `cellcell-crossfeed` (a glucose-to-acetate secretor plus an acetate-consuming cell, a localized glucose depot, and a fast-diffusing acetate byproduct) -- each to completion over 20 ticks through the process- bigraph engine, and measure whether uptake-capacity asymmetry alone drives spatial competitive exclusion, and whether a diffusing metabolic byproduct alone can sustain a cell that never touches its nominal nutrient.
+</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>coupling-draft</code>, <code>compete</code>, <code>crossfeed</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Under competition (cell_a vmax 0.8, cell_b vmax 0.2, same shared pool), the weaker cell&#39;s viability is driven below the viable band while the stronger cell&#39;s viability stays high.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The stronger competitor (cell_a, vmax 0.8) stays inside its viable band while cell_b starves — confirming the asymmetry is competitive, not a shared collapse.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Over the same coupling interface, swapping to a symmetric cross-feeding handler (byproduct returned to the shared pool) keeps both cells viable — law 4, handler independence.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Sanity check that the coupling is real (not two isolated cells drawing on independent pools) — the shared nutrient store is measurably depleted under competition.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Law 2 check (not the study&#39;s scientific control): the compete and cross-feed handler envs compile to the same external interface as the inert coupling draft and as each other — confirms env-layer swapping never touches the declared interface.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>cellcell-compete</code>, <code>cellcell-crossfeed</code>, <code>cellcell-crossfeed-knockout</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field), the faster competitor ends with materially more biomass and CPM lattice volume than the slower one — spatial competitive exclusion.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The faster competitor&#39;s CPM lattice volume ends larger than the slower competitor&#39;s, confirming the biomass asymmetry carries through to structural (pixel-level) dominance, not just the internal FBA state.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Honest boundary on the competition claim: the LOSER is out-competed spatially but stays FAR above the viable-biomass floor (its 1.25 seed biomass) -- so it is displaced, not driven below any viability bound. &#34;Competitive exclusion&#34; here is asymmetric growth toward a finite-size saturation endpoint, not death of the loser: this study couples state (a shared field) but no viability constraint (§Cell–cell coupling -- what is coupled is not only state but constraint; here, only state).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Under the cross-feeding regime, the consumer cell&#39;s own local glucose concentration is effectively zero -- it is seeded outside the localized glucose depot and genuinely cannot touch glucose.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Despite never touching glucose, the consumer&#39;s biomass grows over the run -- it is living entirely on the secretor&#39;s diffused acetate byproduct.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Positive structural verification (not a negative control): the cross-feeding coupling is real, not two isolated cells -- the secretor&#39;s acetate byproduct measurably reaches the consumer&#39;s own footprint (local_acetate &gt; 0). Something DOES happen; this confirms the plume arrives, so it is a positive check, not an expected-fail.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational structural verification (not a negative control, and not this study&#39;s scientific claim): the additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on -- disjoint per-cell footprint deltas summed into one shared field conserve mass -- holds structurally, independent of any dFBA mechanism. It confirms a property HOLDS (mass is conserved to the expected value), so it is a positive/structural check.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Genuine negative control (secretor-knockout necessity): with the acetate secretor removed from the cross-feed composite so NO acetate is produced anywhere, the otherwise- identical consumer (now the only cell, id 1) FAILS to grow -- its biomass stays at the 1.25 seed and its local acetate stays 0.0. Closes the handoff-necessity argument: the consumer&#39;s growth in the cross-feed regime is caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field.</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Under competition, the shared store is measurably depleted (nutrient 1.0 → 0.1999) and the weaker cell is driven out of its viable band (cell_b viability 1.0 → 0.0001) while the stronger cell persists (cell_a viability → 1.0). Under cross-feeding — the same coupling interface, only the handler swapped — both cells stay viable (viability → 1.0 each), because the returned byproduct offsets combined uptake. Two handler environments over one coupling interface negotiate constraint differently (Law 4), with the interface itself unchanged across both (Law 2).</p>
+      <p class="ctr-text">Over 20-tick runs, the competition regime drives a decisive spatial split from uptake- capacity asymmetry alone (biomass 237.9 vs 64.5, 3.69x; CPM volume 3511 vs 81 px) -- asymmetric growth TOWARD competitive exclusion, though not exclusion reached: the loser is displaced but still viable (its biomass grew ~51.6x, far above the 1.25 seed floor), never driven below a viability bound, and the winner&#39;s ~97.5%-lattice endpoint is partly a finite-size saturation artifact -- this study couples shared state, not a viability constraint. The cross-feeding regime -- the same `CpmColonyField` process, a different composite -- sustains a consumer cell that never touches glucose (local glucose 0.0) purely via a diffusing acetate handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell), and a secretor-knockout control confirms that handoff is necessary (secretor removed, no acetate produced, the consumer held at its 1.25 seed). The paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated figure) holds as genuine spatial multicellularity, composed from independent frameworks through one N-cell coupling process, one interface, two regimes. The cross-feeding regime also carries the paper&#39;s closing relational-molecule claim (§Cell–cell coupling): the same acetate is metabolic waste to the secretor and sole carbon food to the consumer -- and, in `disintegration`, a toxin whose accumulation crosses a cell&#39;s viability bound -- one molecule whose meaning is set relationally by each cell&#39;s interface.
+</p>
       
       
     <div class="overview-section findings-section">
@@ -590,9 +679,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Coupling two cells through one shared nutrient store couples constraint, not just state: under competition, the cell with lower uptake capacity (cell_b, vmax 0.2) is driven out of its viable band while the stronger cell (cell_a, vmax 0.8) persists. Confirmed: cell_a viability 1.0 → 1.0, cell_b viability 1.0 → 0.0001.</span>
+            <span class="finding-claim finding-statement">Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (`CpmColonyField`) reproduce the paper&#39;s §Cell–cell coupling shared-resource-competition branch (no dedicated figure) as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split -- asymmetric growth TOWARD competitive exclusion. Confirmed: biomass 237.9 vs 64.5 (3.69x), CPM volume 3511 vs 81 px, over a 20-tick run. (Strict exclusion is not reached -- the loser is displaced but stays viable; see F-04.)</span>
             
-            <span class="finding-chip">via <code>competition-starves-weaker-cell</code></span>
+            <span class="finding-chip">via <code>competition-excludes-the-slower-cell</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -604,10 +693,10 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_a viability stays 1.0; cell_b viability collapses to 0.0001; env.nutrient depleted 1.0 → 0.1999 · 
+              <strong>observed:</strong> biomass 237.9 (id 1) vs 64.5 (id 2); volume 3511 px (id 1) vs 81 px (id 2) · 
               
-              via test <a href="#bt-competition-starves-weaker-cell" onclick="_gotoStudyTab('tests','bt-competition-starves-weaker-cell');return false;"><code>competition-starves-weaker-cell</code></a> · 
-              in run <a href="#run-compete"><code>compete</code></a>
+              via test <a href="#bt-competition-excludes-the-slower-cell" onclick="_gotoStudyTab('tests','bt-competition-excludes-the-slower-cell');return false;"><code>competition-excludes-the-slower-cell</code></a> · 
+              in run <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
               
               
             </div>
@@ -616,12 +705,62 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-compete"><code>compete</code></a>
+              runs: <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≤ 0.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 1.5</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-partial">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◐</span>
+            <span class="finding-claim finding-statement">The competition regime reaches asymmetric growth, NOT true competitive exclusion, over the run measured. The loser&#39;s biomass GREW from its 1.25 seed to 64.5 (~51.6x) -- far above the viable-biomass floor -- while shrinking to an 81-px fragment against the winner&#39;s 3511 px: it is spatially DISPLACED, not driven below any viability bound. This study couples STATE (one shared field) but imposes no viability CONSTRAINT (no death, no viability bound), exactly the paper&#39;s §Cell–cell coupling distinction that &#34;what is coupled is not only state, but constraint&#34; -- here, only state. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20, so the endpoint is partly a finite-size lattice-saturation artifact; by t≈30 the winner fills the lattice and the still-viable loser is crowded off it (eviction, not starvation).</span>
+            
+            <span class="finding-chip">via <code>competition-loser-displaced-not-excluded</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">partial literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> loser (id 2) biomass 64.5 (51.6x the 1.25 floor), volume 81 px; winner 3511 px (~97.5% of the 3600-px lattice) · 
+              
+              via test <a href="#bt-competition-loser-displaced-not-excluded" onclick="_gotoStudyTab('tests','bt-competition-loser-displaced-not-excluded');return false;"><code>competition-loser-displaced-not-excluded</code></a> · 
+              in run <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 1.25</code></div>
             
             
             
@@ -640,9 +779,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A different handler over the same coupling interface (cross-feeding: symmetric vmax, partial byproduct return to the shared pool) sustains both cells — the constraint negotiated over one shared store is not fixed by the interface, it is set by which handler occupies it. Confirmed: both cell_a and cell_b viability 1.0 → 1.0 under cross-feeding.</span>
+            <span class="finding-claim finding-statement">Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#39;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. This is the paper&#39;s §Cell–cell coupling relational-molecule claim made concrete -- the same acetate is the secretor&#39;s metabolic waste and the consumer&#39;s sole carbon food, its meaning set by each cell&#39;s interface (microbial cross-feeding, morris2013). Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</span>
             
-            <span class="finding-chip">via <code>crossfeeding-keeps-both-viable</code></span>
+            <span class="finding-chip">via <code>crossfeeding-consumer-grows-on-acetate-alone</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -654,10 +793,10 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_a and cell_b viability both 1.0; env.nutrient settles at 0.538 (vs 0.1999 under competition) · 
+              <strong>observed:</strong> consumer local_glucose 0.0; local_acetate 1.30; biomass 1.25 -&gt; 3.79 · 
               
-              via test <a href="#bt-crossfeeding-keeps-both-viable" onclick="_gotoStudyTab('tests','bt-crossfeeding-keeps-both-viable');return false;"><code>crossfeeding-keeps-both-viable</code></a> · 
-              in run <a href="#run-crossfeed"><code>crossfeed</code></a>
+              via test <a href="#bt-crossfeeding-consumer-grows-on-acetate-alone" onclick="_gotoStudyTab('tests','bt-crossfeeding-consumer-grows-on-acetate-alone');return false;"><code>crossfeeding-consumer-grows-on-acetate-alone</code></a> · 
+              in run <a href="#run-cellcell-crossfeed"><code>cellcell-crossfeed</code></a>
               
               
             </div>
@@ -666,12 +805,62 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-crossfeed"><code>crossfeed</code></a>
+              runs: <a href="#run-cellcell-crossfeed"><code>cellcell-crossfeed</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 0.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 1.25</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The cross-feeding handoff is NECESSARY, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` -- the cross-feed composite with the acetate secretor cell removed so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 -&gt; 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 + observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field.</span>
+            
+            <span class="finding-chip">via <code>crossfeeding-secretor-knockout-consumer-fails-to-grow</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> consumer (id 1) local_acetate 0.0, biomass held at 1.25 seed over 20 ticks (vs 1.25 -&gt; 3.79 with the secretor present) · 
+              
+              via test <a href="#bt-crossfeeding-secretor-knockout-consumer-fails-to-grow" onclick="_gotoStudyTab('tests','bt-crossfeeding-secretor-knockout-consumer-fails-to-grow');return false;"><code>crossfeeding-secretor-knockout-consumer-fails-to-grow</code></a> · 
+              in run <a href="#run-cellcell-crossfeed-knockout"><code>cellcell-crossfeed-knockout</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-cellcell-crossfeed-knockout"><code>cellcell-crossfeed-knockout</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≤ 1.2500001</code></div>
             
             
             
@@ -690,9 +879,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The competitive asymmetry and the cross-feeding symmetry live entirely in the handler env layer, never in the draft or the interface — confirming law 4 (handler independence over one coupling interface) and law 2 (interface preserved) simultaneously. Confirmed structurally: interface_of(compete) == interface_of(crossfeed) == interface_of(draft).</span>
+            <span class="finding-claim finding-statement">The additive two-writer assumption `CpmColonyField`&#39;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</span>
             
-            <span class="finding-chip">via <code>draft-preserves-interface</code></span>
+            <span class="finding-chip">via <code>two-writer-additivity-conserves-mass</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -704,10 +893,10 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> identical compiled interface across both handler envs and the inert draft (tests/test_cellcell.py::test_handler_independence_same_interface) · 
+              <strong>observed:</strong> two disjoint single-pixel writers each removing 1.0/tick over 3 ticks sum to a net field-wide change of exactly -6.0, with both individual pixels independently correct · 
               
-              via test <a href="#bt-draft-preserves-interface" onclick="_gotoStudyTab('tests','bt-draft-preserves-interface');return false;"><code>draft-preserves-interface</code></a> · 
-              in run <a href="#run-coupling-draft"><code>coupling-draft</code></a>
+              via test <a href="#bt-two-writer-additivity-conserves-mass" onclick="_gotoStudyTab('tests','bt-two-writer-additivity-conserves-mass');return false;"><code>two-writer-additivity-conserves-mass</code></a> · 
+              in run <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
               
               
             </div>
@@ -716,12 +905,12 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-coupling-draft"><code>coupling-draft</code></a>
+              runs: <a href="#run-cellcell-compete"><code>cellcell-compete</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = -6.0</code></div>
             
             
             
@@ -746,7 +935,7 @@
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Pairwise only: two cells over one shared store, not population-scale negotiation among many cells (that is out of scope here — see the later development-and-evolution study for collective/biofilm nesting).</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">&#34;Competitive exclusion&#34; is not literally reached: the competition loser is spatially displaced (ends at 81 px, biomass 64.5 -- still 51.6x above its 1.25 seed / viable-biomass floor) but is never driven below a viability bound. This study couples shared STATE (one field) but no viability CONSTRAINT (no death, no viability bound on a losing cell), so the honest phenomenon is asymmetric growth TOWARD exclusion, not exclusion. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20, so that endpoint is partly a finite-size lattice-saturation artifact; extending the run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation), which a viability-constraint coupling would be needed to turn into genuine exclusion.</span></div>
         
       </div>
       
@@ -785,24 +974,24 @@
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-coupling" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-compete" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>coupling-draft</strong>
+        <strong>cellcell-compete</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-coupling</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-compete</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-coupling')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-compete')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="coupling-draft"
-               value="meta_modelers_guide.composites.cellcell-coupling" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="cellcell-compete"
+               value="meta_modelers_guide.composites.cellcell-compete" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="coupling-draft">Set composite</button>
+                data-baseline-name="cellcell-compete">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="coupling-draft" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="cellcell-compete" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -820,24 +1009,24 @@
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-executable-compete" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-crossfeed" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>compete</strong>
+        <strong>cellcell-crossfeed</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-executable-compete</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-crossfeed</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-executable-compete')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-crossfeed')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="compete"
-               value="meta_modelers_guide.composites.cellcell-executable-compete" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="cellcell-crossfeed"
+               value="meta_modelers_guide.composites.cellcell-crossfeed" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="compete">Set composite</button>
+                data-baseline-name="cellcell-crossfeed">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="compete" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="cellcell-crossfeed" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -855,24 +1044,24 @@
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-executable-crossfeed" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-crossfeed-knockout" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>crossfeed</strong>
+        <strong>cellcell-crossfeed-knockout</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-executable-crossfeed</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-crossfeed-knockout</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-executable-crossfeed')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-crossfeed-knockout')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="crossfeed"
-               value="meta_modelers_guide.composites.cellcell-executable-crossfeed" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="cellcell-crossfeed-knockout"
+               value="meta_modelers_guide.composites.cellcell-crossfeed-knockout" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="crossfeed">Set composite</button>
+                data-baseline-name="cellcell-crossfeed-knockout">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="crossfeed" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="cellcell-crossfeed-knockout" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -1074,10 +1263,10 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-competition-starves-weaker-cell"
+    <li class="expected-behavior-item" id="bt-competition-excludes-the-slower-cell"
         data-test-kind="behavioral"
         
-        data-pytest-node="competition-starves-weaker-cell"
+        data-pytest-node="competition-excludes-the-slower-cell"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1086,19 +1275,19 @@
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">competition-starves-weaker-cell</strong>
+        <strong style="font-size: 0.9em;">competition-excludes-the-slower-cell</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-compete</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Under competition (cell_a vmax 0.8, cell_b vmax 0.2, same shared pool), the weaker cell&#39;s viability is driven below the viable band while the stronger cell&#39;s viability stays high.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field), the faster competitor ends with materially more biomass and CPM lattice volume than the slower one — spatial competitive exclusion.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_b.viability)", "kind": "observable", "path": "cell_b.viability"}
-pass_if: {"op": "\u003c=", "provenance": "cell_b (rival, vmax 0.2) viability collapses 1.0 \u2192 0.0001 under competition (exec cellcell-executable-compete, tests/test_cellcell.py::test_competition_pushes_weaker_cell_out_of_viable_bounds)", "value": 0.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"1\"]) / last(obs.biomass[\"2\"])", "kind": "observable", "path": "obs.biomass"}
+pass_if: {"op": "\u003e", "provenance": "biomass 237.9 (id 1, vmax 10) vs 64.5 (id 2, vmax 4) -\u003e 3.69x ratio over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly)", "value": 1.5}</pre>
       </details>
       
       
@@ -1113,10 +1302,10 @@ pass_if: {"op": "\u003c=", "provenance": "cell_b (rival, vmax 0.2) viability col
     
     
     
-    <li class="expected-behavior-item" id="bt-competition-stronger-cell-persists"
+    <li class="expected-behavior-item" id="bt-competition-volume-tracks-biomass"
         data-test-kind="behavioral"
         
-        data-pytest-node="competition-stronger-cell-persists"
+        data-pytest-node="competition-volume-tracks-biomass"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1125,19 +1314,19 @@ pass_if: {"op": "\u003c=", "provenance": "cell_b (rival, vmax 0.2) viability col
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">competition-stronger-cell-persists</strong>
+        <strong style="font-size: 0.9em;">competition-volume-tracks-biomass</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-compete</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The stronger competitor (cell_a, vmax 0.8) stays inside its viable band while cell_b starves — confirming the asymmetry is competitive, not a shared collapse.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The faster competitor&#39;s CPM lattice volume ends larger than the slower competitor&#39;s, confirming the biomass asymmetry carries through to structural (pixel-level) dominance, not just the internal FBA state.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_a.viability)", "kind": "observable", "path": "cell_a.viability"}
-pass_if: {"op": "\u003e=", "provenance": "cell_a (vmax 0.8) viability stays at 1.0 under competition while cell_b collapses (exec cellcell-executable-compete)", "value": 0.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.volume[\"1\"]) \u003e last(obs.volume[\"2\"])", "kind": "observable", "path": "obs.volume"}
+pass_if: {"op": "\u003e", "provenance": "volume 3511 px (id 1) vs 81 px (id 2) over 20 ticks -- the faster competitor claims most of the shared lattice (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell)", "value": 0.0}</pre>
       </details>
       
       
@@ -1152,49 +1341,10 @@ pass_if: {"op": "\u003e=", "provenance": "cell_a (vmax 0.8) viability stays at 1
     
     
     
-    <li class="expected-behavior-item" id="bt-crossfeeding-keeps-both-viable"
+    <li class="expected-behavior-item" id="bt-competition-loser-displaced-not-excluded"
         data-test-kind="behavioral"
         
-        data-pytest-node="crossfeeding-keeps-both-viable"
-        data-classification="primary"
-        data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
-      
-        
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">crossfeeding-keeps-both-viable</strong>
-        
-        <span class="muted" style="font-size:0.78em">requires: <code>crossfeed</code></span>
-        
-      </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Over the same coupling interface, swapping to a symmetric cross-feeding handler (byproduct returned to the shared pool) keeps both cells viable — law 4, handler independence.</div>
-      
-      
-      <details style="margin-top: 6px; font-size: 0.82em;">
-        <summary class="muted" style="cursor: pointer;">Assertion</summary>
-        
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_b.viability)", "kind": "observable", "path": "cell_b.viability"}
-pass_if: {"op": "\u003e=", "provenance": "both cells viability \u2192 1.0 under cross-feeding (exec cellcell-executable-crossfeed, tests/test_cellcell.py::test_crossfeeding_keeps_both_cells_viable)", "value": 0.5}</pre>
-      </details>
-      
-      
-      
-      
-    </li>
-    
-    
-    
-    
-    
-    
-    
-    
-    <li class="expected-behavior-item" id="bt-shared-pool-actually-depleted"
-        data-test-kind="behavioral"
-        
-        data-pytest-node="shared-pool-actually-depleted"
+        data-pytest-node="competition-loser-displaced-not-excluded"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -1203,19 +1353,19 @@ pass_if: {"op": "\u003e=", "provenance": "both cells viability \u2192 1.0 under 
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">shared-pool-actually-depleted</strong>
+        <strong style="font-size: 0.9em;">competition-loser-displaced-not-excluded</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-compete</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Sanity check that the coupling is real (not two isolated cells drawing on independent pools) — the shared nutrient store is measurably depleted under competition.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Honest boundary on the competition claim: the LOSER is out-competed spatially but stays FAR above the viable-biomass floor (its 1.25 seed biomass) -- so it is displaced, not driven below any viability bound. &#34;Competitive exclusion&#34; here is asymmetric growth toward a finite-size saturation endpoint, not death of the loser: this study couples state (a shared field) but no viability constraint (§Cell–cell coupling -- what is coupled is not only state but constraint; here, only state).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(env.nutrient)", "kind": "observable", "path": "env.nutrient"}
-pass_if: {"op": "\u003c", "provenance": "shared env.nutrient depleted 1.0 \u2192 0.1999... under competition (test_cellcell.py asserts st[\"env\"][\"nutrient\"] \u003c 1.0)", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"2\"])   # loser final biomass, vs the 1.25 viable-biomass floor", "kind": "observable", "path": "obs.biomass"}
+pass_if: {"op": "\u003e", "provenance": "loser (id 2) ends at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits far above the viable-biomass floor, while holding only 81 px against the winner\u0027s 3511 px (~97.5% of the 3600-px lattice): spatially displaced, not excluded. Extending the run to t\u224830 fills the lattice and crowds the still-viable loser off it (eviction, not starvation) (tests/test_cellcell_regimes.py::test_competition_loser_is_displaced_not_excluded)", "value": 1.25}</pre>
       </details>
       
       
@@ -1230,10 +1380,88 @@ pass_if: {"op": "\u003c", "provenance": "shared env.nutrient depleted 1.0 \u2192
     
     
     
-    <li class="expected-behavior-item" id="bt-draft-preserves-interface"
+    <li class="expected-behavior-item" id="bt-crossfeeding-consumer-blind-to-glucose"
         data-test-kind="behavioral"
         
-        data-pytest-node="draft-preserves-interface"
+        data-pytest-node="crossfeeding-consumer-blind-to-glucose"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">crossfeeding-consumer-blind-to-glucose</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-crossfeed</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Under the cross-feeding regime, the consumer cell&#39;s own local glucose concentration is effectively zero -- it is seeded outside the localized glucose depot and genuinely cannot touch glucose.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.local_glucose[\"2\"])", "kind": "observable", "path": "obs.local_glucose"}
+pass_if: {"op": "\u003c", "provenance": "consumer (id 2) local_glucose == 0.0 over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 0.5}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-crossfeeding-consumer-grows-on-acetate-alone"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="crossfeeding-consumer-grows-on-acetate-alone"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">crossfeeding-consumer-grows-on-acetate-alone</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-crossfeed</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Despite never touching glucose, the consumer&#39;s biomass grows over the run -- it is living entirely on the secretor&#39;s diffused acetate byproduct.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"2\"])", "kind": "observable", "path": "obs.biomass"}
+pass_if: {"op": "\u003e", "provenance": "consumer (id 2) biomass 1.25 -\u003e 3.79 (roughly 3x, back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 1.25}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-crossfeeding-acetate-plume-reaches-consumer"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="crossfeeding-acetate-plume-reaches-consumer"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -1242,19 +1470,97 @@ pass_if: {"op": "\u003c", "provenance": "shared env.nutrient depleted 1.0 \u2192
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">draft-preserves-interface</strong>
+        <strong style="font-size: 0.9em;">crossfeeding-acetate-plume-reaches-consumer</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>coupling-draft</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-crossfeed</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Law 2 check (not the study&#39;s scientific control): the compete and cross-feed handler envs compile to the same external interface as the inert coupling draft and as each other — confirms env-layer swapping never touches the declared interface.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Positive structural verification (not a negative control): the cross-feeding coupling is real, not two isolated cells -- the secretor&#39;s acetate byproduct measurably reaches the consumer&#39;s own footprint (local_acetate &gt; 0). Something DOES happen; this confirms the plume arrives, so it is a positive check, not an expected-fail.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(interface_match)", "kind": "observable", "path": "interface_match"}
-pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_independence_same_interface \u2014 interface_of(compete) == interface_of(crossfeed) == interface_of(draft), asserted structurally", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.local_acetate[\"2\"])", "kind": "observable", "path": "obs.local_acetate"}
+pass_if: {"op": "\u003e", "provenance": "consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose\u0027s 0.4) acetate plume reaches the consumer\u0027s footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 0.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-two-writer-additivity-conserves-mass"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="two-writer-additivity-conserves-mass"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">two-writer-additivity-conserves-mass</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>none</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Foundational structural verification (not a negative control, and not this study&#39;s scientific claim): the additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on -- disjoint per-cell footprint deltas summed into one shared field conserve mass -- holds structurally, independent of any dFBA mechanism. It confirms a property HOLDS (mass is conserved to the expected value), so it is a positive/structural check.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "net change in sum(fields.glucose) over 3 ticks (final minus initial)", "kind": "observable", "path": "fields.glucose"}
+pass_if: {"op": "==", "provenance": "a synthetic structural-control process (not this study\u0027s composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve)", "value": -6.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-crossfeeding-secretor-knockout-consumer-fails-to-grow"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="crossfeeding-secretor-knockout-consumer-fails-to-grow"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">crossfeeding-secretor-knockout-consumer-fails-to-grow</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>cellcell-crossfeed-knockout</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Genuine negative control (secretor-knockout necessity): with the acetate secretor removed from the cross-feed composite so NO acetate is produced anywhere, the otherwise- identical consumer (now the only cell, id 1) FAILS to grow -- its biomass stays at the 1.25 seed and its local acetate stays 0.0. Closes the handoff-necessity argument: the consumer&#39;s growth in the cross-feed regime is caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"1\"])   # consumer-alone final biomass; expected to stay at the seed", "kind": "observable", "path": "obs.biomass"}
+pass_if: {"op": "\u003c=", "provenance": "consumer (id 1) biomass stays at its 1.25 seed and local_acetate stays 0.0 over 20 ticks with the secretor removed -- it persists on the lattice (~35 px) but flatly fails to grow, versus 1.25 -\u003e 3.79 in the full cross-feed regime (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow)", "value": 1.2500001}</pre>
       </details>
       
       
@@ -1335,7 +1641,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All three cellcell composites build and both executables run to completion (scripts/build_executables.py entries cellcell-compete / cellcell-crossfeed; tests/test_cellcell.py, 3 passed).</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All three composites -- cellcell-compete.composite.json, cellcell-crossfeed.composite.json, and the new cellcell-crossfeed-knockout.composite.json -- build and run to completion through the process-bigraph engine (tests/test_cellcell_regimes.py, tests/test_cpm_colony_field.py, tests/test_cpm_colony_viz.py, tests/test_composites_build.py); guarded skip when the optional cobra/cpm/spatio_flux dependencies are absent, matching this investigation&#39;s flagship and the lumped ODE predecessor&#39;s own FBA-grain convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -1348,7 +1654,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Competition drives the weaker cell (lower uptake capacity) below its viable band while the stronger persists, and the shared pool is measurably depleted (coupling is real); cross-feeding over the same interface keeps both cells viable. All three tests plus the interface-preservation control pass.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from real 20-tick runs -- the competition regime drives a decisive biomass/volume split between two otherwise-identical competitors differing only in uptake capacity (asymmetric growth TOWARD competitive exclusion; the loser is displaced but stays viable, 51.6x above the viable-biomass floor, not driven below any viability bound -- this study couples shared state, not a viability constraint), and the cross-feeding regime sustains a consumer cell that never touches glucose purely via a diffused acetate handoff. Two structural/foundational verifications (the two-writer additivity check and the acetate-plume positive check) and a genuine negative control (the secretor-knockout -- with no acetate produced, the consumer flatly fails to grow, biomass held at its 1.25 seed) all pass, pinning both the mechanism and its necessity.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1361,7 +1667,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Making the same two-draft-role composite negotiate two different viability outcomes purely by swapping the handler env (competition vs cross-feeding) makes &#34;coupling through a shared store couples constraint, not just state&#34; concrete, and demonstrates law 4 (handler independence) directly.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Generalizing the flagship&#39;s single-cell CpmCellField to an N-cell CpmColonyField and demonstrating both branches of the paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated figure) -- shared-resource competition (asymmetric growth toward exclusion) AND cross-feeding -- from the same coupling process, differing only in the composite&#39;s cell roles and field constants, makes this investigation&#39;s law-4 claim (different handlers over one interface negotiate a shared-resource constraint differently) concrete at real spatial, per-footprint dFBA resolution that its lumped two-role, shared- scalar-pool analogue could not reach. The secretor-knockout control further pins the cross-feeding handoff as necessary, not incidental.</textarea>
         </label>
       </div>
     </div>
@@ -1376,15 +1682,11 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> The cellcell-coupling draft compiles to two executables (compete, crossfeed) that both run to completion.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> Both cellcell-compete.composite.json and cellcell-crossfeed.composite.json build and run to completion through the engine over 20 ticks.</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s cell-cell coupling pattern is demonstrated at the toy-real (uncalibrated) level; competition negotiates viability against the stronger cell while cross-feeding, over the same interface, sustains both — law 4 (handler independence) and law 2 (interface preserved) both hold.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The spatial §Cell–cell coupling viability-negotiation pattern (no dedicated figure) is demonstrated at the toy-real (uncalibrated) level, with genuine per-cell CPM shape dynamics and independent dFBA solves behind both the shared-resource-competition (asymmetric growth toward exclusion; loser displaced, not excluded) and cross-feeding branches, rather than a scripted trajectory. The cross-feeding handoff is pinned as necessary by the secretor-knockout control (no acetate -&gt; no consumer growth).</div>
         
-        
-        <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>development-and-evolution</li></ul>
-        </div>
         
       </div>
       
@@ -1393,11 +1695,11 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>the compete env fails to drive cell_b&#39;s viability below the band (vmax asymmetry not taking effect, or maintenance/via_gain miscalibrated)</li><li>the crossfeed env fails to keep both cells viable (return_frac too low to offset combined uptake)</li><li>the shared pool is not actually depleted (the two cells are not really coupled — independent pools masquerading as one)</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the faster competitor&#39;s biomass/volume margin over the slower one collapses (uptake-capacity asymmetry not taking effect, or the shared field is not actually being depleted by both cells)</li><li>the consumer&#39;s local glucose is not near-zero (the localized glucose depot is leaking into the consumer&#39;s footprint, defeating the cross-feeding demonstration)</li><li>the consumer&#39;s biomass never rises despite zero local glucose (the acetate plume is not reaching it, or the consumer&#39;s acetate uptake/growth coupling is broken)</li><li>the secretor-knockout consumer DOES grow despite no acetate being produced (the observed cross-feeding growth was not actually caused by the secretor&#39;s acetate -- necessity broken)</li><li>the two-writer additivity control fails to conserve mass (the N-cell field-write assumption CpmColonyField depends on is broken)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> development-and-evolution (population-scale/collective coupling depends on this figure&#39;s pairwise negotiation holding)</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> future N&gt;2-cell population-scale spatial studies, all of which reuse CpmColonyField or its coupling pattern</div>
         
       </div>
       
@@ -1410,26 +1712,33 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Two cells coupled through one shared nutrient store negotiate viability, not just state. Under competition (cell_a vmax 0.8, cell_b vmax 0.2), cell_b is driven below its viable band (viability 1.0 → 0.0001) while cell_a persists (viability → 1.0), and the shared pool is measurably depleted (nutrient 1.0 → 0.1999), confirming the coupling is real. Under cross-feeding — the same coupling interface, a different handler (symmetric vmax 0.6/0.6, partial byproduct return) — both cells stay viable (viability → 1.0 each). This is Law 4: two handler environments negotiate the shared-store constraint differently, over an interface unchanged (Law 2).</li>
+<li>Composing N real CPM cells with one shared, real spatio-flux nutrient field through a single N-cell coupling process (<code>CpmColonyField</code>) reproduces the paper's §Cell–cell coupling viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity. Over 20-tick runs: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric growth TOWARD competitive exclusion (biomass 237.9 vs 64.5, 3.69x; volume 3511 vs 81 px) -- the loser is spatially displaced but stays viable (its biomass grew ~51.6x above the 1.25 seed floor), not driven below a viability bound, and the winner's ~97.5%-lattice endpoint is partly a finite-size saturation artifact, so strict exclusion is not reached; a different composite over the same process -- localized glucose depot, fast-diffusing acetate byproduct, acetate-consuming role -- sustains a cell that never touches glucose (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79), and a secretor-knockout control shows that handoff is necessary (no acetate -&gt; consumer held at its 1.25 seed).</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>COMPETITION-STARVES-WEAKER-CELL</strong> — cell_b viability 1.0 → 0.0001 under competition</li>
-<li><strong>COMPETITION-STRONGER-CELL-PERSISTS</strong> — cell_a viability stays at 1.0 under competition</li>
-<li><strong>SHARED-POOL-ACTUALLY-DEPLETED</strong> — env.nutrient 1.0 → 0.1999 under competition (real coupling, not two isolated cells)</li>
-<li><strong>CROSSFEEDING-KEEPS-BOTH-VIABLE</strong> — both cell_a and cell_b viability → 1.0 under cross-feeding</li>
-<li><strong>DRAFT-PRESERVES-INTERFACE</strong> — interface_of(compete) == interface_of(crossfeed) == interface_of(draft) (law 2 holds across both handler swaps)</li>
+<li><strong>COMPETITION-EXCLUDES-THE-SLOWER-CELL</strong> -- biomass 237.9 (id 1) vs 64.5 (id 2), 3.69x margin</li>
+<li><strong>COMPETITION-VOLUME-TRACKS-BIOMASS</strong> -- CPM volume 3511 px (id 1) vs 81 px (id 2)</li>
+<li><strong>COMPETITION-LOSER-DISPLACED-NOT-EXCLUDED</strong> -- loser biomass 64.5 (51.6x the 1.25 viable- biomass floor): displaced (81 px vs winner 3511 px ~97.5% of the lattice), not excluded</li>
+<li><strong>CROSSFEEDING-CONSUMER-BLIND-TO-GLUCOSE</strong> -- consumer local_glucose == 0.0</li>
+<li><strong>CROSSFEEDING-CONSUMER-GROWS-ON-ACETATE-ALONE</strong> -- consumer biomass 1.25 -&gt; 3.79 on acetate alone</li>
+<li><strong>CROSSFEEDING-ACETATE-PLUME-REACHES-CONSUMER</strong> (positive check) -- consumer local_acetate == 1.30 by t=20</li>
+<li><strong>CROSSFEEDING-SECRETOR-KNOCKOUT-CONSUMER-FAILS-TO-GROW</strong> (negative control) -- secretor removed, no acetate produced, consumer biomass held at its 1.25 seed (vs 1.25 -&gt; 3.79)</li>
+<li><strong>TWO-WRITER-ADDITIVITY-CONSERVES-MASS</strong> (structural check) -- disjoint per-cell field writes sum losslessly, runtime-verified</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Pairwise only: two cells over one shared store, not population-scale negotiation (many cells, spatial structure, or emergent niches).</li>
-<li>Toy-real constants: vmax, km, maintenance, via_gain, return_frac, supply, and capacity are illustrative, not fitted to a named organism or medium.</li>
-<li>Viability is a single scalar per cell driven by a fixed maintenance threshold; no explicit death/removal event when viability approaches zero (cell_b's node persists at ~0 viability rather than being removed from the composition).</li>
+<li>&quot;Competitive exclusion&quot; is not literally reached over the run: the loser is displaced (81 px, biomass 64.5) but stays viable -- this study couples shared state, not a viability constraint, so no cell is driven below a viability bound (§Cell–cell coupling: what is coupled is not only state, but constraint -- here, only state). The winner's 3511-px (~97.5% of 3600) endpoint is partly a finite-size lattice-saturation artifact; at t≈30 the winner fills the lattice and the still-viable loser is crowded off it (eviction, not starvation).</li>
+<li>e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real -- plausible, hand-tuned magnitudes, not fitted to any organism or medium.</li>
+<li>The cross-feeding regime's acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally defensible (acetate is a smaller molecule) but was chosen, not fitted; the localized glucose depot is a deliberately engineered spatial arrangement, not a naturally arising gradient.</li>
+<li>The consumer's growth under cross-feeding is back-loaded to roughly the last 5 ticks of the run, once the acetate plume has had time to diffuse across the distance between the two cells' footprints -- monotonic over the measured window, not smoothly exponential from tick 0.</li>
+<li>Each CPM cell gets its own independent cobra model copy, not one shared model instance across the colony.</li>
+<li>CPM-native chemotaxis (directed motion toward a sensed gradient) remains out of scope for both regimes here.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Extend to N &gt; 2 cells over one shared store to test whether the competitive/cross-feeding pattern generalizes or new attractors emerge (population-scale negotiation, biofilm/collective nesting — see the later development-and-evolution study).</li>
-<li>Add an explicit death/removal rewrite when a cell's viability crosses a lower threshold, turning &quot;starves&quot; into a structural change to the place graph (parallel to the division rewrite in the growth-and-division study).</li>
+<li>Extend <code>CpmColonyField</code> to N &gt; 2 cells to test whether the competitive/cross-feeding pattern generalizes to population-scale spatial negotiation.</li>
+<li>Add CPM-native chemotaxis so the consumer can move toward the sensed acetate plume rather than merely sitting in its path.</li>
+<li>Fan out to the next spatial counterpart in the planned increments.</li>
 </ul>
 </div>
     </div>
@@ -1448,7 +1757,26 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
     <div class="overview-section">
       <h3 class="overview-label">Key assumptions</h3>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">The competitive asymmetry (vmax 0.8 vs 0.2) and the cross-feeding symmetry (vmax 0.6/0.6, return_frac 0.7) live entirely in the handler env layer (handler_envs.py), never in the draft composite or its node config — per-node config would silently make an env&#39;s config dead and would defeat law 4&#39;s &#34;env swaps mechanism&#34; story (see the note in handler_envs.py above ENVS[&#34;cellcell-compete&#34;]).</li><li style="margin:2px 0">Two draft roles with identical ports (CellAgent, RivalCellAgent) stand in for &#34;two cells&#34; because the compiler keys handler lookup by the node&#39;s address-derived draft-class name, not by the node&#39;s own key in the composite state dict — there is no CellAgent#a/CellAgent#b convention to hook per-instance config into.</li>
+        <li style="margin:2px 0">e_coli_core-derived constants (`glucose_vmax` 10.0/4.0 for the two competitors,
+`acetate_vmax` 20 for the consumer, `grow_per_biomass` 30, the O2 cap of 5 on the secretor) are
+toy-real: plausible, hand-tuned magnitudes chosen to make competitive exclusion and cross-
+feeding both legible over a short (20-tick) run, not fitted to a named organism or medium.</li><li style="margin:2px 0">The cross-feeding regime&#39;s acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally
+defensible — acetate is a smaller molecule and diffuses faster than glucose in real aqueous
+media — but the specific ratio was chosen to make the byproduct plume legibly reach the
+consumer within a 20-tick run, not fitted to measured diffusion coefficients. Likewise the
+cross-feeding regime&#39;s localized 20 mM glucose depot (columns 0-18 only, with the consumer
+seeded outside it at columns 22-30) is a deliberately engineered spatial arrangement chosen so
+the consumer genuinely sees zero glucose (local_glucose == 0.0), not a naturally arising
+gradient.</li><li style="margin:2px 0">The consumer&#39;s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the
+20-tick run, once the secretor&#39;s acetate plume has had time to diffuse across the distance
+separating the two cells&#39; footprints — growth is monotonic over the measured window but is not
+a smooth exponential from tick 0, and a shorter run would show less of it.</li><li style="margin:2px 0">Each CPM cell in `CpmColonyField` gets its own independent cobra model copy, not one shared
+model instance across the colony — avoiding any risk of one cell&#39;s dFBA solve silently
+perturbing another&#39;s solver state, at the cost of N times the per-tick FBA solve cost.</li><li style="margin:2px 0">The additive two-writer assumption `CpmColonyField` depends on — that disjoint per-cell
+footprint deltas can be summed into one shared `map[array]` fields store and conserve mass — is
+no longer taken on faith; it is runtime-verified directly by
+`tests/test_cpm_colony_two_writer.py` against two synthetic single-pixel writers on disjoint
+pixels, independently of the colony process itself.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient, e.g. the consumer moving toward the secretor&#39;s acetate plume rather than merely sitting in its path) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li><li style="margin:2px 0">The &#34;viable-biomass floor&#34; this study measures the competition loser against is the 1.25 seed biomass every cell starts at: a cell above its seed biomass is metabolically viable (net- growing or holding), one that has fallen below it is in net mass-loss toward death. This is a deliberately minimal, toy-real viability notion, not a fitted maintenance/decay bound; the process emits no explicit viability flag, so viability is read off the per-cell biomass observable. The point it establishes is honest and robust to the exact floor value: the competition loser ends at 64.5 (51.6x the floor), so it is displaced, not excluded.</li><li style="margin:2px 0">The competition regime reaches NO true competitive exclusion over the run measured — it imposes no death and no viability constraint on a losing cell, so the loser (biomass 64.5, 81 px) is spatially displaced, not eliminated. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly spent by t=20, so that endpoint is partly a finite-size lattice-saturation artifact; extending the run to t≈30 fills the lattice and crowds the still- viable loser off it (eviction, not starvation). Strict exclusion would require coupling a viability constraint, not only shared state — the paper&#39;s §Cell–cell coupling distinction.</li><li style="margin:2px 0">MULTI-SEED ROBUSTNESS (the headline is a range, not a single-seed point). The competition headline ratio (3.69x, id 1 / id 2 biomass) is a SINGLE-SEED reading of a stochastic CPM Metropolis trajectory. A 5-seed sweep (`tests/test_cellcell_multiseed.py`, seeds 1-5, CPM seed varied via the now config-overridable `CpmColonyField` seed) gives the honest range: ratio 2.9x-3.7x, mean ~3.2x -- the hard-coded single-seed 3.69x is the TOP of the band, not its middle. The qualitative claim is seed-robust: the faster competitor (id 1, glucose_vmax 10) wins on both biomass and lattice volume at every seed, always by &gt; 1.5x. This study establishes the multi-seed convention for the investigation (process reads `seed` from config; deep-copy the composite state, sweep the seed, assert the qualitative claim per seed and report the numeric range); studies 5/7/9 copy the pattern rather than resting on a single hard-coded seed.</li><li style="margin:2px 0">The secretor-knockout necessity control (`cellcell-crossfeed-knockout`) removes the secretor cell entirely rather than only silencing its acetate secretion in place; this is the cleanest single-variable knockout (no acetate source anywhere) and avoids a confound of the alternative (raising the secretor&#39;s O2 cap so it stops overflowing also makes it grow far faster and crowd the consumer off the lattice). The consumer is therefore the only cell in the control (id 1), and its glucose exchange stays off by role, so the slowly-diffusing glucose depot it cannot eat is harmless to the control.</li>
       </ul>
     </div>
     
@@ -1458,7 +1786,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Pairwise only: two cells over one shared store, not population-scale negotiation among many cells (that is out of scope here — see the later development-and-evolution study for collective/biofilm nesting).</li><li style="margin:2px 0">Toy-real constants: vmax, km, maintenance, via_gain, return_frac, supply, and capacity are illustrative values chosen to demonstrate the qualitative pattern, not fitted to a named organism or medium.</li><li style="margin:2px 0">No explicit death/removal event: a cell driven near-zero viability (cell_b under competition) remains a live node in the composition rather than being structurally removed.</li>
+        <li style="margin:2px 0">&#34;Competitive exclusion&#34; is not literally reached: the competition loser is spatially displaced (ends at 81 px, biomass 64.5 -- still 51.6x above its 1.25 seed / viable-biomass floor) but is never driven below a viability bound. This study couples shared STATE (one field) but no viability CONSTRAINT (no death, no viability bound on a losing cell), so the honest phenomenon is asymmetric growth TOWARD exclusion, not exclusion. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20, so that endpoint is partly a finite-size lattice-saturation artifact; extending the run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation), which a viability-constraint coupling would be needed to turn into genuine exclusion.</li><li style="margin:2px 0">The competition headline ratio (3.69x biomass, id 1 / id 2) is a single-seed number; a 5-seed robustness sweep (tests/test_cellcell_multiseed.py) puts the honest range at ~2.9x-3.7x (mean ~3.2x), with the single-seed 3.69x at the top of the band and the faster competitor winning every seed by &gt; 1.5x. See key_assumptions for the convention this establishes for the investigation.</li><li style="margin:2px 0">e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real, hand-tuned magnitudes chosen to make both regimes legible over a short run -- not fitted to any organism or medium.</li><li style="margin:2px 0">The cross-feeding regime&#39;s acetate/glucose diffusion ratio (15.0 vs 0.4) is directionally defensible -- acetate is a smaller molecule and diffuses faster than glucose in real aqueous media -- but the specific ratio was chosen to make the plume legibly reach the consumer within 20 ticks, not fitted to measured diffusion coefficients; the localized 20 mM glucose depot is likewise a deliberately engineered spatial arrangement so the consumer genuinely sees zero glucose, not a naturally arising gradient.</li><li style="margin:2px 0">The consumer&#39;s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the 20-tick run, once the secretor&#39;s acetate plume has had time to diffuse across the distance separating the two cells&#39; footprints -- monotonic over the measured window, but not smoothly exponential from tick 0.</li><li style="margin:2px 0">Each CPM cell in CpmColonyField gets its own independent cobra model copy, not one shared model instance across the colony.</li><li style="margin:2px 0">The additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on is now runtime-verified directly (tests/test_cpm_colony_two_writer.py), independent of both regimes&#39; own dFBA mechanism -- previously an unverified assumption inherited from the flagship study.</li><li style="margin:2px 0">The secretor-knockout necessity control removes the secretor CELL entirely (cleanest single- variable knockout: no acetate source anywhere) rather than silencing acetate secretion in place; the alternative -- raising the secretor&#39;s O2 cap so it stops overflowing -- also makes it grow far faster and crowd the consumer off the lattice, a confound the cell-removal avoids. The control therefore establishes that acetate is necessary for the consumer&#39;s growth, but not the finer counterfactual of an in-place, same-growth secretor that merely stops secreting.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li><li style="margin:2px 0">The shared nutrient field has no continuous supply term; the competition regime depletes a fixed initial mass, producing a finite-lattice-saturation artifact (the winner ends near full-lattice while the field is nearly exhausted). A continuous nutrient-supply term (a bounded first-order source) would remove this confound and let true competitive exclusion or a genuine steady state be tested rather than transient depletion.</li><li style="margin:2px 0">The compete, crossfeed, and knockout composites are asserted in prose to share the same external colony interface, but this is not verified by a structural check; a diagnostic test asserting interface equality across the mechanism swaps would strengthen the substrate-independence claim from assertion to demonstration.</li>
       </ul>
     </div>
     
@@ -1485,8 +1813,8 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>3</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">3 PASS</span> ·
+        <strong>4</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">4 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -1520,7 +1848,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "224c4cd4169ed24cc75ac2f2d6147de5854667ac", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/224c4cd4169ed24cc75ac2f2d6147de5854667ac", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 14:19 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "f9830302f3670bc67e5dae28f5cbba55e7675c5d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/f9830302f3670bc67e5dae28f5cbba55e7675c5d", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 15:14 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "cell-cell-coupling";

@@ -16,7 +16,7 @@
   <h1 class="study-title">
     <span class="study-name" id="study-name" data-slug="disintegration" title="disintegration">Disintegration</span>
     
-    <span class="study-kind-tag study-kind-biological" data-study-kind="biological" title="Study kind">biological</span>
+    <span class="study-kind-tag study-kind-computational" data-study-kind="computational" title="Study kind">computational</span>
     
     <span class="phase-pill phase-decide" title="Lifecycle: Design → Build → Simulate → Evaluate → Decide">Decide</span>
     
@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="10 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -146,7 +146,13 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Fig 6 is disintegration — the change in level of description that fires when a cell crosses its viability bound. Two faces: (a) played through, does the disintegration composite actually show that shift — a thermal shock pushing viability past its bound, viability collapsing, viability-gated metabolism halting, and biomass turning into molecular debris? (b) Is the metabolic-exchange interface at the heart of that same shift realizable at a coarse cell-level grain, an intermediate kinetic grain, and a resolved molecular-network grain (real COBRApy flux-balance optimization) — three grains behind ports that never move?</p>
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Does the paper&#39;s §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
+viability when a diffusing field of acetate (the SAME metabolic byproduct that is waste-and-food
+in `cell-cell-coupling`, here toxic at high local concentration) crosses its viability
+bound, its domain resorbing while its shed material becomes scattering physical particles -- composed from independent frameworks
+(viva-cpm + spatio-flux particles) through one coupling process (`CpmDisintegration` +
+`BrownianMovement`)?
+</p>
 
 <nav class="study-tabs" aria-label="Study sections">
   
@@ -557,2278 +563,101 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Disintegration is a change in level of description made executable and watchable: playing `fig06-disintegration-dynamics`, a thermal shock pushes the cell past its viability bound, viability collapses, viability-gated metabolism halts, and biomass decays into molecular debris (Fig 6a). The same metabolic-exchange interface&#39;s cell↔molecular-network equivalence carries three grains behind ports that never move — a coarse lumped yield, a saturating kinetic law, and real COBRApy flux-balance on `e_coli_core` (Fig 6b, Law 4).</p>
+      <p class="ctr-text">Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux
+particle-movement process through two coupling processes (`CpmDisintegration` for the
+viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
+reproduces the paper&#39;s §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
+stand-in for it: over a fixed-seed deterministic 20-tick CPM run, the cell holds coherent
+(area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at
+released_tick = 7, the domain resorbs to area 0 by tick 16, and its 68 shed pixels become a
+debris cloud whose RMS spread strictly increases through tick 24 (the trajectory -- hold, cross,
+resorb, particle count -- reproduces exactly; the scatter cloud moves under unseeded
+`BrownianMovement`, so its exact RMS magnitudes are representative of one run, not
+run-to-run-reproducible -- only the strict-increase direction is the robust claim) -- hold,
+cross, resorb, scatter, end to end from one coupling process plus one stock movement process,
+mirroring a lumped, specification-stage realization&#39;s §Disintegration level-shift pattern (Fig 6) at
+real spatial, per-pixel resolution.
+</p>
       
-      <div class="ctr-context">Fig 6 is disintegration: the point where a cellular description stops being adequate and the right level of description drops to interacting molecular components. This study makes that shift both watchable and structural. (a) Playable: `fig06-disintegration-dynamics` scripts a thermal shock (temperature 37 → 50 at t≈8) against a cell with a fixed viability band. Play it in the Composite Explorer and the trajectory is legible without reading code — viability holds near 1.0, the shock lands, viability collapses toward 0, viability-gated metabolism halts, and biomass converts into molecular debris (biomass-conserving decay, not disappearance). Measured on `fig06-disintegration-dynamics` over 20 steps: viability 1.0 → ~0, debris 0 → ~4.6 (`tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration`). (b) Structural: the same metabolic-exchange interface (nutrients ⇒ biomass, energy, entropy, secretions) that disintegration eventually halts is realizable at three different grains without moving a port. The coarse handler applies a lumped yield (biomass → 4.0). The kinetic handler applies a saturating Michaelis–Menten-like rate on the identical nutrient supply, reaching a distinct endpoint (biomass → 2.667). The FBA handler calls real COBRApy to solve a flux-balance optimization over the `e_coli_core` network each step — the resolved molecular network — and under sustained uptake overflows surplus carbon to acetate (biomass → 6.29, secretions → 30.4). `test_fig6_handler_independence` compiles the coarse and kinetic handlers against the identical interface and asserts they diverge; `tests/test_fba.py` adds the real COBRApy grain and its acetate-overflow signature. Three grains, one interface, coarse-graining as the reverse move: that is Law 4 made concrete on the exact interface that disintegration, played through, shows failing.
-How to view: run `/viva-explore fig06-disintegration-dynamics` and step through it in the Composite Explorer to watch the viability curve collapse and debris rise in real time.</div>
+      <div class="ctr-context">This is the spatial realization of the paper&#39;s §Disintegration pattern
+(Fig 6), built on a new coupling process, `CpmDisintegration`, that
+owns a single CPM cell (no metabolism/cobra path -- this study is about the viability-collapse
+trigger, not nutrient uptake) sitting on a shared spatio-flux `acetate` field. The stressor
+species here is literally `acetate` (the process reads it via config `stressor_field: acetate`;
+the observable stays named `mean_stressor`) -- the SAME molecule that is the secretor&#39;s
+metabolic waste and the consumer&#39;s sole carbon food in `cell-cell-coupling`. This is
+the paper&#39;s closing §Disintegration/§Cell–cell coupling claim in action: an environmental
+variable acquires its significance relationally, a molecule counting as nutrient, signal, or
+toxin through its consequences for viability. The same acetate that keeps a cross-feeding
+consumer alive elsewhere becomes, at high local concentration, the toxin that pushes THIS cell
+across its viability bound. Each tick the
+process reads mean acetate over the cell&#39;s own CPM footprint; once that reading crosses
+`viability_threshold`, it LATCHES a `released` flag (never un-crosses) and ramps the cell&#39;s
+target volume toward zero, shedding each tick&#39;s vacated footprint pixels as debris particles
+into a shared `map[particle]` store that a stock spatio-flux `BrownianMovement` then scatters.
+The CPM-to-particle bridge this depends on -- a process emitting particles via the map `_add`
+sentinel that a separate stock movement process then moves -- is no longer an assumption; it is
+runtime-verified directly (`tests/test_particle_bridge_spike.py`): three synthetic particles
+emitted on one tick are still exactly three particles four ticks later, with at least two of
+them having moved.
+
+One tuned regime over `disintegration-spatial`
+(`meta_modelers_guide.composites.disintegration-spatial`) demonstrates the full arc:
+a single CPM cell centered on a 60x60 shared field grid inside a radial acetate gradient --
+low at the grid center where the cell is seeded, rising toward the periphery -- diffusing
+under spatio-flux `DiffusionAdvection`. The CPM trajectory -- hold, cross, resorb -- is
+fixed-seed deterministic and reproduces exactly run to run (measured over a 20-tick run,
+`tests/test_cpm_disintegration.py`, `tests/test_disintegration_regime.py`,
+`tests/test_disintegration_viz.py`, verified over repeated runs): the cell holds coherent
+(area &gt; 30 pixels) through tick 6 with zero debris, the footprint-local acetate mean (the
+observable `mean_stressor`) crosses
+`viability_threshold` at `released_tick = 7`, and from there the domain resorbs monotonically
+-- area 56 at tick 7 down to area 0 by tick 16 -- while shedding exactly 68 particles into the
+debris store (8/tick, capped, until the footprint is exhausted). Every one of those numbers --
+`released_tick`, the area trajectory, and the 68-particle shed count -- is reproducible exactly,
+because the CPM engine is fixed-seed and the shedding logic is a deterministic function of the
+footprint diff. The debris cloud&#39;s scatter MAGNITUDE is a different matter: it moves under stock
+spatio-flux `BrownianMovement`, which is UNSEEDED, so the RMS-spread values below are
+representative of one run, not exactly reproducible run to run -- only the qualitative claim
+(RMS spread strictly increases after dissolution completes) is the robust, test-asserted fact.
+A representative run: RMS spread keeps strictly increasing after dissolution completes (~5.3 at
+tick 16 to ~7.6 at tick 24, an 8-tick post-dissolution window) -- genuine scattering, not
+particles piling up against a wall or the field boundary. The whole arc -- hold, cross, resorb,
+scatter -- is direct, code-verified simulation output from one coupling process plus one stock
+movement process, not a scripted trajectory; only the scatter cloud&#39;s exact magnitudes vary
+run-to-run, its direction of change does not.
+
+This is precisely the failure cascade the paper&#39;s §Disintegration describes: once viability is
+lost, energy production can no longer sustain transport, membranes lose integrity, gradients
+collapse, and the system transitions from an actively maintained, far-from-equilibrium state to
+one dominated by diffusion, equilibration, and mechanical relaxation. The two phases of the run
+read directly as that transition: while the cell holds, an actively maintained CPM domain
+resists the rising acetate; once released, the shed material is handed to `BrownianMovement`,
+and the scattering debris cloud IS the diffusion-dominated, equilibrating regime -- the
+far-from-equilibrium cell relaxing toward equilibrium as literal drifting particles. As the
+paper notes, most models do not represent this transition explicitly: agent-based models remove
+cells mid-simulation, and whole-cell models assume viability -- so a spatial model that carries
+a coherent domain all the way through its own dissolution into diffusing debris is the point.
+</div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Two runs test the two faces of disintegration. (a) Play `fig06-disintegration-dynamics` (a scripted thermal shock against a viability-gated cell) to 20 steps and watch viability, then debris. (b) Install three different handlers — coarse lumped yield, saturating kinetic, real COBRApy FBA over e_coli_core — behind the identical nutrients ⇒ biomass interface and run each to completion; also compile an impostor handler to test that the port contract is enforced.</p>
+      <p class="ctr-text">Run the `disintegration-spatial` composite (`CpmDisintegration`, a single CPM cell on a shared 60x60 field grid inside a radial acetate gradient, coupled to a stock `BrownianMovement` particle-scatter process) to completion over 20-24 ticks through the process-bigraph engine, and measure whether a diffusing acetate field crossing a CPM cell&#39;s own viability bound is enough to trigger structural dissolution (domain resorption) and convert its shed material into a genuinely scattering debris cloud.
+</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>disintegration-dynamics</code>, <code>disintegration-grain-swap</code>, <code>coarse-grain</code>, <code>kinetic-grain</code>, <code>fba-grain</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Headline — played through, `fig06-disintegration-dynamics` shows the level shift: the cell starts viable (viability &gt; 0.9), the scripted thermal shock (t≈8) lands, and viability collapses past the floor (&lt; 0.3) by step 20. This is the composite&#39;s own dynamics, not a post-hoc annotation.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The same run shows biomass converting into molecular debris once viability-gated metabolism halts — the cell-level description literally decaying into molecular-level debris (debris &gt; 0 by step 20).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The linear coarse-grain handler drives biomass on the shared nutrients ⇒ biomass interface to its own endpoint (exec 4.0), also emitting energy 2.4, entropy 0.8, secretions 1.6.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The Michaelis–Menten handler, on the identical interface and wiring, reaches a distinct biomass endpoint (exec 2.667) — the same ports, a different mechanism, a different trajectory (handler independence, law 4). Directly asserted by test_fig6_handler_independence, which compiles the coarse and kinetic grains against the same interface and requires their dynamics to diverge.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The real COBRApy flux-balance handler (LP over e_coli_core, the resolved molecular network) reaches its own distinct biomass endpoint (exec 6.29) and routes surplus carbon to acetate overflow — secretions on the shared port rise to 30.4. Requires the optional `cobra` dependency; guarded skip when absent (tests/test_fba.py).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Headline control (must-fail) — the single most persuasive artifact for the interface being real. An impostor handler (NonConformingMetabolism) that renames the biomass output to ``growth`` with the wrong type (``growth_rate`` not ``mass``) and drops energy/entropy/secretions is rejected by the compiler at compile time with a CompileError that names the missing ports (biomass, energy, entropy, secretions) — tests/test_fba.py::test_impostor_handler_rejected_by_compiler. Because the impostor never runs, it produces no biomass observable, so this test&#39;s biomass threshold must fail by design — that expected failure is the interface being enforced. (Scope: structural — port names/types/wiring — not units, dimensions, invariants, or runtime behavior.)</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>disintegration-spatial</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Before the acetate crosses viability_threshold, the CPM cell stays coherent (substantial area, released flag unset, no debris) -- the hold phase of the §Disintegration level shift (Fig 6).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The footprint-local acetate mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Once released, the cell&#39;s target volume ramps toward zero and its CPM lattice footprint resorbs to full dissolution well within the run -- the domain genuinely disappearing, not merely shrinking.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell&#39;s vacated footprint pixels become debris particles in the shared map[particle] store as it resorbs -- shed material, not deleted mass.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The debris cloud&#39;s RMS spread strictly increases after dissolution completes -- genuine scattering under BrownianMovement, not particles piling up or stalling.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational control (not this study&#39;s scientific claim): the CPM-to-particle bridge this study depends on -- a process emitting particles via the map `_add` sentinel, moved by a separate stock BrownianMovement process -- works correctly, independent of any disintegration mechanism.</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Played through, the dynamics composite shows the level shift: viability collapses 1.0 → ~0 after a thermal shock, and biomass converts into molecular debris (0 → ~4.6). The three metabolism grains produce three distinct trajectories (biomass 4.0 / 2.667 / 6.29) behind the identical port set; the FBA grain shows acetate overflow (secretions 30.4), and an impostor that breaks the interface is rejected at compile time.</p>
-      
-      <figure class="ctr-figure"><svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 950.4 230.4" xmlns="http://www.w3.org/2000/svg" version="1.1" style="max-width:100%;height:auto" preserveAspectRatio="xMidYMid meet">
- <metadata>
-  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-   <cc:Work>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-08-18T09:55:17.066563</dc:date>
-    <dc:format>image/svg+xml</dc:format>
-    <dc:creator>
-     <cc:Agent>
-      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
-     </cc:Agent>
-    </dc:creator>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <defs>
-  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
- </defs>
- <g id="figure_1">
-  <g id="patch_1">
-   <path d="M 0 230.4 
-L 950.4 230.4 
-L 950.4 0 
-L 0 0 
-z
-" style="fill: #ffffff"/>
-  </g>
-  <g id="axes_1">
-   <g id="patch_2">
-    <path d="M 24.28 190.6 
-L 304.56 190.6 
-L 304.56 46.52 
-L 24.28 46.52 
-z
-" style="fill: #ffffff"/>
-   </g>
-   <g id="matplotlib.axis_1">
-    <g id="xtick_1">
-     <g id="line2d_1">
-      <path d="M 37.02 190.6 
-L 37.02 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_2">
-      <defs>
-       <path id="mfab20b750d" d="M 0 0 
-L 0 3.5 
-" style="stroke: #000000; stroke-width: 0.8"/>
-      </defs>
-      <g>
-       <use xlink:href="#mfab20b750d" x="37.02" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_1">
-      <!-- 0 -->
-      <g transform="translate(33.83875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-13" d="M 2034 4250 
-Q 1547 4250 1301 3770 
-Q 1056 3291 1056 2328 
-Q 1056 1369 1301 889 
-Q 1547 409 2034 409 
-Q 2525 409 2770 889 
-Q 3016 1369 3016 2328 
-Q 3016 3291 2770 3770 
-Q 2525 4250 2034 4250 
-z
-M 2034 4750 
-Q 2819 4750 3233 4129 
-Q 3647 3509 3647 2328 
-Q 3647 1150 3233 529 
-Q 2819 -91 2034 -91 
-Q 1250 -91 836 529 
-Q 422 1150 422 2328 
-Q 422 3509 836 4129 
-Q 1250 4750 2034 4750 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-13"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_2">
-     <g id="line2d_3">
-      <path d="M 68.87 190.6 
-L 68.87 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_4">
-      <g>
-       <use xlink:href="#mfab20b750d" x="68.87" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_2">
-      <!-- 1 -->
-      <g transform="translate(65.68875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-14" d="M 794 531 
-L 1825 531 
-L 1825 4091 
-L 703 3866 
-L 703 4441 
-L 1819 4666 
-L 2450 4666 
-L 2450 531 
-L 3481 531 
-L 3481 0 
-L 794 0 
-L 794 531 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-14"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_3">
-     <g id="line2d_5">
-      <path d="M 100.72 190.6 
-L 100.72 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_6">
-      <g>
-       <use xlink:href="#mfab20b750d" x="100.72" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_3">
-      <!-- 2 -->
-      <g transform="translate(97.53875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-15" d="M 1228 531 
-L 3431 531 
-L 3431 0 
-L 469 0 
-L 469 531 
-Q 828 903 1448 1529 
-Q 2069 2156 2228 2338 
-Q 2531 2678 2651 2914 
-Q 2772 3150 2772 3378 
-Q 2772 3750 2511 3984 
-Q 2250 4219 1831 4219 
-Q 1534 4219 1204 4116 
-Q 875 4013 500 3803 
-L 500 4441 
-Q 881 4594 1212 4672 
-Q 1544 4750 1819 4750 
-Q 2544 4750 2975 4387 
-Q 3406 4025 3406 3419 
-Q 3406 3131 3298 2873 
-Q 3191 2616 2906 2266 
-Q 2828 2175 2409 1742 
-Q 1991 1309 1228 531 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-15"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_4">
-     <g id="line2d_7">
-      <path d="M 132.57 190.6 
-L 132.57 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_8">
-      <g>
-       <use xlink:href="#mfab20b750d" x="132.57" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_4">
-      <!-- 3 -->
-      <g transform="translate(129.38875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-16" d="M 2597 2516 
-Q 3050 2419 3304 2112 
-Q 3559 1806 3559 1356 
-Q 3559 666 3084 287 
-Q 2609 -91 1734 -91 
-Q 1441 -91 1130 -33 
-Q 819 25 488 141 
-L 488 750 
-Q 750 597 1062 519 
-Q 1375 441 1716 441 
-Q 2309 441 2620 675 
-Q 2931 909 2931 1356 
-Q 2931 1769 2642 2001 
-Q 2353 2234 1838 2234 
-L 1294 2234 
-L 1294 2753 
-L 1863 2753 
-Q 2328 2753 2575 2939 
-Q 2822 3125 2822 3475 
-Q 2822 3834 2567 4026 
-Q 2313 4219 1838 4219 
-Q 1578 4219 1281 4162 
-Q 984 4106 628 3988 
-L 628 4550 
-Q 988 4650 1302 4700 
-Q 1616 4750 1894 4750 
-Q 2613 4750 3031 4423 
-Q 3450 4097 3450 3541 
-Q 3450 3153 3228 2886 
-Q 3006 2619 2597 2516 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-16"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_5">
-     <g id="line2d_9">
-      <path d="M 164.42 190.6 
-L 164.42 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_10">
-      <g>
-       <use xlink:href="#mfab20b750d" x="164.42" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_5">
-      <!-- 4 -->
-      <g transform="translate(161.23875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-17" d="M 2419 4116 
-L 825 1625 
-L 2419 1625 
-L 2419 4116 
-z
-M 2253 4666 
-L 3047 4666 
-L 3047 1625 
-L 3713 1625 
-L 3713 1100 
-L 3047 1100 
-L 3047 0 
-L 2419 0 
-L 2419 1100 
-L 313 1100 
-L 313 1709 
-L 2253 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-17"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_6">
-     <g id="line2d_11">
-      <path d="M 196.27 190.6 
-L 196.27 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_12">
-      <g>
-       <use xlink:href="#mfab20b750d" x="196.27" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_6">
-      <!-- 5 -->
-      <g transform="translate(193.08875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-18" d="M 691 4666 
-L 3169 4666 
-L 3169 4134 
-L 1269 4134 
-L 1269 2991 
-Q 1406 3038 1543 3061 
-Q 1681 3084 1819 3084 
-Q 2600 3084 3056 2656 
-Q 3513 2228 3513 1497 
-Q 3513 744 3044 326 
-Q 2575 -91 1722 -91 
-Q 1428 -91 1123 -41 
-Q 819 9 494 109 
-L 494 744 
-Q 775 591 1075 516 
-Q 1375 441 1709 441 
-Q 2250 441 2565 725 
-Q 2881 1009 2881 1497 
-Q 2881 1984 2565 2268 
-Q 2250 2553 1709 2553 
-Q 1456 2553 1204 2497 
-Q 953 2441 691 2322 
-L 691 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-18"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_7">
-     <g id="line2d_13">
-      <path d="M 228.12 190.6 
-L 228.12 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_14">
-      <g>
-       <use xlink:href="#mfab20b750d" x="228.12" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_7">
-      <!-- 6 -->
-      <g transform="translate(224.93875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-19" d="M 2113 2584 
-Q 1688 2584 1439 2293 
-Q 1191 2003 1191 1497 
-Q 1191 994 1439 701 
-Q 1688 409 2113 409 
-Q 2538 409 2786 701 
-Q 3034 994 3034 1497 
-Q 3034 2003 2786 2293 
-Q 2538 2584 2113 2584 
-z
-M 3366 4563 
-L 3366 3988 
-Q 3128 4100 2886 4159 
-Q 2644 4219 2406 4219 
-Q 1781 4219 1451 3797 
-Q 1122 3375 1075 2522 
-Q 1259 2794 1537 2939 
-Q 1816 3084 2150 3084 
-Q 2853 3084 3261 2657 
-Q 3669 2231 3669 1497 
-Q 3669 778 3244 343 
-Q 2819 -91 2113 -91 
-Q 1303 -91 875 529 
-Q 447 1150 447 2328 
-Q 447 3434 972 4092 
-Q 1497 4750 2381 4750 
-Q 2619 4750 2861 4703 
-Q 3103 4656 3366 4563 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-19"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_8">
-     <g id="line2d_15">
-      <path d="M 259.97 190.6 
-L 259.97 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_16">
-      <g>
-       <use xlink:href="#mfab20b750d" x="259.97" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_8">
-      <!-- 7 -->
-      <g transform="translate(256.78875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-1a" d="M 525 4666 
-L 3525 4666 
-L 3525 4397 
-L 1831 0 
-L 1172 0 
-L 2766 4134 
-L 525 4134 
-L 525 4666 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-1a"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_9">
-     <g id="line2d_17">
-      <path d="M 291.82 190.6 
-L 291.82 46.52 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_18">
-      <g>
-       <use xlink:href="#mfab20b750d" x="291.82" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_9">
-      <!-- 8 -->
-      <g transform="translate(288.63875 205.197656) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-1b" d="M 2034 2216 
-Q 1584 2216 1326 1975 
-Q 1069 1734 1069 1313 
-Q 1069 891 1326 650 
-Q 1584 409 2034 409 
-Q 2484 409 2743 651 
-Q 3003 894 3003 1313 
-Q 3003 1734 2745 1975 
-Q 2488 2216 2034 2216 
-z
-M 1403 2484 
-Q 997 2584 770 2862 
-Q 544 3141 544 3541 
-Q 544 4100 942 4425 
-Q 1341 4750 2034 4750 
-Q 2731 4750 3128 4425 
-Q 3525 4100 3525 3541 
-Q 3525 3141 3298 2862 
-Q 3072 2584 2669 2484 
-Q 3125 2378 3379 2068 
-Q 3634 1759 3634 1313 
-Q 3634 634 3220 271 
-Q 2806 -91 2034 -91 
-Q 1263 -91 848 271 
-Q 434 634 434 1313 
-Q 434 1759 690 2068 
-Q 947 2378 1403 2484 
-z
-M 1172 3481 
-Q 1172 3119 1398 2916 
-Q 1625 2713 2034 2713 
-Q 2441 2713 2670 2916 
-Q 2900 3119 2900 3481 
-Q 2900 3844 2670 4047 
-Q 2441 4250 2034 4250 
-Q 1625 4250 1398 4047 
-Q 1172 3844 1172 3481 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-1b"/>
-      </g>
-     </g>
-    </g>
-    <g id="text_10">
-     <!-- time -->
-     <g transform="translate(155.383125 217.67875) scale(0.08 -0.08)">
-      <defs>
-       <path id="DejaVuSans-57" d="M 1172 4494 
-L 1172 3500 
-L 2356 3500 
-L 2356 3053 
-L 1172 3053 
-L 1172 1153 
-Q 1172 725 1289 603 
-Q 1406 481 1766 481 
-L 2356 481 
-L 2356 0 
-L 1766 0 
-Q 1100 0 847 248 
-Q 594 497 594 1153 
-L 594 3053 
-L 172 3053 
-L 172 3500 
-L 594 3500 
-L 594 4494 
-L 1172 4494 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-4c" d="M 603 3500 
-L 1178 3500 
-L 1178 0 
-L 603 0 
-L 603 3500 
-z
-M 603 4863 
-L 1178 4863 
-L 1178 4134 
-L 603 4134 
-L 603 4863 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-50" d="M 3328 2828 
-Q 3544 3216 3844 3400 
-Q 4144 3584 4550 3584 
-Q 5097 3584 5394 3201 
-Q 5691 2819 5691 2113 
-L 5691 0 
-L 5113 0 
-L 5113 2094 
-Q 5113 2597 4934 2840 
-Q 4756 3084 4391 3084 
-Q 3944 3084 3684 2787 
-Q 3425 2491 3425 1978 
-L 3425 0 
-L 2847 0 
-L 2847 2094 
-Q 2847 2600 2669 2842 
-Q 2491 3084 2119 3084 
-Q 1678 3084 1418 2786 
-Q 1159 2488 1159 1978 
-L 1159 0 
-L 581 0 
-L 581 3500 
-L 1159 3500 
-L 1159 2956 
-Q 1356 3278 1631 3431 
-Q 1906 3584 2284 3584 
-Q 2666 3584 2933 3390 
-Q 3200 3197 3328 2828 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-48" d="M 3597 1894 
-L 3597 1613 
-L 953 1613 
-Q 991 1019 1311 708 
-Q 1631 397 2203 397 
-Q 2534 397 2845 478 
-Q 3156 559 3463 722 
-L 3463 178 
-Q 3153 47 2828 -22 
-Q 2503 -91 2169 -91 
-Q 1331 -91 842 396 
-Q 353 884 353 1716 
-Q 353 2575 817 3079 
-Q 1281 3584 2069 3584 
-Q 2775 3584 3186 3129 
-Q 3597 2675 3597 1894 
-z
-M 3022 2063 
-Q 3016 2534 2758 2815 
-Q 2500 3097 2075 3097 
-Q 1594 3097 1305 2825 
-Q 1016 2553 972 2059 
-L 3022 2063 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-57"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(39.203125 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(66.984375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(164.390625 0)"/>
-     </g>
-    </g>
-   </g>
-   <g id="matplotlib.axis_2">
-    <g id="ytick_1">
-     <g id="line2d_19">
-      <path d="M 24.28 184.050909 
-L 304.56 184.050909 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_20">
-      <defs>
-       <path id="mdee63cc459" d="M 0 0 
-L -3.5 0 
-" style="stroke: #000000; stroke-width: 0.8"/>
-      </defs>
-      <g>
-       <use xlink:href="#mdee63cc459" x="24.28" y="184.050909" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_11">
-      <!-- 0 -->
-      <g transform="translate(10.9175 187.849737) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-13"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_2">
-     <g id="line2d_21">
-      <path d="M 24.28 151.305455 
-L 304.56 151.305455 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_22">
-      <g>
-       <use xlink:href="#mdee63cc459" x="24.28" y="151.305455" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_12">
-      <!-- 1 -->
-      <g transform="translate(10.9175 155.104283) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_3">
-     <g id="line2d_23">
-      <path d="M 24.28 118.56 
-L 304.56 118.56 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_24">
-      <g>
-       <use xlink:href="#mdee63cc459" x="24.28" y="118.56" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_13">
-      <!-- 2 -->
-      <g transform="translate(10.9175 122.358828) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_4">
-     <g id="line2d_25">
-      <path d="M 24.28 85.814545 
-L 304.56 85.814545 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_26">
-      <g>
-       <use xlink:href="#mdee63cc459" x="24.28" y="85.814545" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_14">
-      <!-- 3 -->
-      <g transform="translate(10.9175 89.613374) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-16"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_5">
-     <g id="line2d_27">
-      <path d="M 24.28 53.069091 
-L 304.56 53.069091 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_28">
-      <g>
-       <use xlink:href="#mdee63cc459" x="24.28" y="53.069091" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_15">
-      <!-- 4 -->
-      <g transform="translate(10.9175 56.867919) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-17"/>
-      </g>
-     </g>
-    </g>
-   </g>
-   <g id="line2d_29">
-    <path d="M 37.02 184.050909 
-L 68.87 167.678182 
-L 100.72 151.305455 
-L 132.57 134.932727 
-L 164.42 118.56 
-L 196.27 102.187273 
-L 228.12 85.814545 
-L 259.97 69.441818 
-L 291.82 53.069091 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_30">
-    <path d="M 37.02 184.050909 
-L 68.87 174.227273 
-L 100.72 164.403636 
-L 132.57 154.58 
-L 164.42 144.756364 
-L 196.27 134.932727 
-L 228.12 125.109091 
-L 259.97 115.285455 
-L 291.82 105.461818 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_31">
-    <path d="M 37.02 184.050909 
-L 68.87 177.501818 
-L 100.72 170.952727 
-L 132.57 164.403636 
-L 164.42 157.854545 
-L 196.27 151.305455 
-L 228.12 144.756364 
-L 259.97 138.207273 
-L 291.82 131.658182 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_32">
-    <path d="M 37.02 184.050909 
-L 68.87 177.501818 
-L 100.72 170.952727 
-L 132.57 164.403636 
-L 164.42 157.854545 
-L 196.27 151.305455 
-L 228.12 144.756364 
-L 259.97 138.207273 
-L 291.82 131.658182 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_33">
-    <path d="M 37.02 184.050909 
-L 68.87 180.776364 
-L 100.72 177.501818 
-L 132.57 174.227273 
-L 164.42 170.952727 
-L 196.27 167.678182 
-L 228.12 164.403636 
-L 259.97 161.129091 
-L 291.82 157.854545 
-" clip-path="url(#p0f030e5f95)" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="patch_3">
-    <path d="M 24.28 190.6 
-L 24.28 46.52 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="patch_4">
-    <path d="M 24.28 190.6 
-L 304.56 190.6 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="text_16">
-    <!-- fig06 coarse -->
-    <g style="fill: #16211f" transform="translate(133.535625 40.52) scale(0.1 -0.1)">
-     <defs>
-      <path id="DejaVuSans-13af" d="M 3431 3500 
-L 3431 0 
-L 2853 0 
-L 2853 3053 
-L 1275 3053 
-L 1275 0 
-L 697 0 
-L 697 3053 
-L 147 3053 
-L 147 3500 
-L 697 3500 
-L 697 3744 
-Q 697 4316 967 4589 
-Q 1238 4863 1797 4863 
-L 2375 4863 
-L 2375 4384 
-L 1825 4384 
-Q 1516 4384 1395 4259 
-Q 1275 4134 1275 3809 
-L 1275 3500 
-L 3431 3500 
-z
-M 2853 4856 
-L 3431 4856 
-L 3431 4128 
-L 2853 4128 
-L 2853 4856 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-4a" d="M 2906 1791 
-Q 2906 2416 2648 2759 
-Q 2391 3103 1925 3103 
-Q 1463 3103 1205 2759 
-Q 947 2416 947 1791 
-Q 947 1169 1205 825 
-Q 1463 481 1925 481 
-Q 2391 481 2648 825 
-Q 2906 1169 2906 1791 
-z
-M 3481 434 
-Q 3481 -459 3084 -895 
-Q 2688 -1331 1869 -1331 
-Q 1566 -1331 1297 -1286 
-Q 1028 -1241 775 -1147 
-L 775 -588 
-Q 1028 -725 1275 -790 
-Q 1522 -856 1778 -856 
-Q 2344 -856 2625 -561 
-Q 2906 -266 2906 331 
-L 2906 616 
-Q 2728 306 2450 153 
-Q 2172 0 1784 0 
-Q 1141 0 747 490 
-Q 353 981 353 1791 
-Q 353 2603 747 3093 
-Q 1141 3584 1784 3584 
-Q 2172 3584 2450 3431 
-Q 2728 3278 2906 2969 
-L 2906 3500 
-L 3481 3500 
-L 3481 434 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-3" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-46" d="M 3122 3366 
-L 3122 2828 
-Q 2878 2963 2633 3030 
-Q 2388 3097 2138 3097 
-Q 1578 3097 1268 2742 
-Q 959 2388 959 1747 
-Q 959 1106 1268 751 
-Q 1578 397 2138 397 
-Q 2388 397 2633 464 
-Q 2878 531 3122 666 
-L 3122 134 
-Q 2881 22 2623 -34 
-Q 2366 -91 2075 -91 
-Q 1284 -91 818 406 
-Q 353 903 353 1747 
-Q 353 2603 823 3093 
-Q 1294 3584 2113 3584 
-Q 2378 3584 2631 3529 
-Q 2884 3475 3122 3366 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-52" d="M 1959 3097 
-Q 1497 3097 1228 2736 
-Q 959 2375 959 1747 
-Q 959 1119 1226 758 
-Q 1494 397 1959 397 
-Q 2419 397 2687 759 
-Q 2956 1122 2956 1747 
-Q 2956 2369 2687 2733 
-Q 2419 3097 1959 3097 
-z
-M 1959 3584 
-Q 2709 3584 3137 3096 
-Q 3566 2609 3566 1747 
-Q 3566 888 3137 398 
-Q 2709 -91 1959 -91 
-Q 1206 -91 779 398 
-Q 353 888 353 1747 
-Q 353 2609 779 3096 
-Q 1206 3584 1959 3584 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-44" d="M 2194 1759 
-Q 1497 1759 1228 1600 
-Q 959 1441 959 1056 
-Q 959 750 1161 570 
-Q 1363 391 1709 391 
-Q 2188 391 2477 730 
-Q 2766 1069 2766 1631 
-L 2766 1759 
-L 2194 1759 
-z
-M 3341 1997 
-L 3341 0 
-L 2766 0 
-L 2766 531 
-Q 2569 213 2275 61 
-Q 1981 -91 1556 -91 
-Q 1019 -91 701 211 
-Q 384 513 384 1019 
-Q 384 1609 779 1909 
-Q 1175 2209 1959 2209 
-L 2766 2209 
-L 2766 2266 
-Q 2766 2663 2505 2880 
-Q 2244 3097 1772 3097 
-Q 1472 3097 1187 3025 
-Q 903 2953 641 2809 
-L 641 3341 
-Q 956 3463 1253 3523 
-Q 1550 3584 1831 3584 
-Q 2591 3584 2966 3190 
-Q 3341 2797 3341 1997 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-55" d="M 2631 2963 
-Q 2534 3019 2420 3045 
-Q 2306 3072 2169 3072 
-Q 1681 3072 1420 2755 
-Q 1159 2438 1159 1844 
-L 1159 0 
-L 581 0 
-L 581 3500 
-L 1159 3500 
-L 1159 2956 
-Q 1341 3275 1631 3429 
-Q 1922 3584 2338 3584 
-Q 2397 3584 2469 3576 
-Q 2541 3569 2628 3553 
-L 2631 2963 
-z
-" transform="scale(0.015625)"/>
-      <path id="DejaVuSans-56" d="M 2834 3397 
-L 2834 2853 
-Q 2591 2978 2328 3040 
-Q 2066 3103 1784 3103 
-Q 1356 3103 1142 2972 
-Q 928 2841 928 2578 
-Q 928 2378 1081 2264 
-Q 1234 2150 1697 2047 
-L 1894 2003 
-Q 2506 1872 2764 1633 
-Q 3022 1394 3022 966 
-Q 3022 478 2636 193 
-Q 2250 -91 1575 -91 
-Q 1294 -91 989 -36 
-Q 684 19 347 128 
-L 347 722 
-Q 666 556 975 473 
-Q 1284 391 1588 391 
-Q 1994 391 2212 530 
-Q 2431 669 2431 922 
-Q 2431 1156 2273 1281 
-Q 2116 1406 1581 1522 
-L 1381 1569 
-Q 847 1681 609 1914 
-Q 372 2147 372 2553 
-Q 372 3047 722 3315 
-Q 1072 3584 1716 3584 
-Q 2034 3584 2315 3537 
-Q 2597 3491 2834 3397 
-z
-" transform="scale(0.015625)"/>
-     </defs>
-     <use xlink:href="#DejaVuSans-13af"/>
-     <use xlink:href="#DejaVuSans-4a" transform="translate(62.984375 0)"/>
-     <use xlink:href="#DejaVuSans-13" transform="translate(126.46875 0)"/>
-     <use xlink:href="#DejaVuSans-19" transform="translate(190.09375 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(253.71875 0)"/>
-     <use xlink:href="#DejaVuSans-46" transform="translate(285.5 0)"/>
-     <use xlink:href="#DejaVuSans-52" transform="translate(340.484375 0)"/>
-     <use xlink:href="#DejaVuSans-44" transform="translate(401.671875 0)"/>
-     <use xlink:href="#DejaVuSans-55" transform="translate(462.953125 0)"/>
-     <use xlink:href="#DejaVuSans-56" transform="translate(504.0625 0)"/>
-     <use xlink:href="#DejaVuSans-48" transform="translate(556.15625 0)"/>
-    </g>
-   </g>
-   <g id="legend_1">
-    <g id="line2d_34">
-     <path d="M 30.13 55.033984 
-L 36.63 55.033984 
-L 43.13 55.033984 
-" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_17">
-     <!-- biomass -->
-     <g transform="translate(48.33 57.308984) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-45" d="M 3116 1747 
-Q 3116 2381 2855 2742 
-Q 2594 3103 2138 3103 
-Q 1681 3103 1420 2742 
-Q 1159 2381 1159 1747 
-Q 1159 1113 1420 752 
-Q 1681 391 2138 391 
-Q 2594 391 2855 752 
-Q 3116 1113 3116 1747 
-z
-M 1159 2969 
-Q 1341 3281 1617 3432 
-Q 1894 3584 2278 3584 
-Q 2916 3584 3314 3078 
-Q 3713 2572 3713 1747 
-Q 3713 922 3314 415 
-Q 2916 -91 2278 -91 
-Q 1894 -91 1617 61 
-Q 1341 213 1159 525 
-L 1159 0 
-L 581 0 
-L 581 4863 
-L 1159 4863 
-L 1159 2969 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-45"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(91.265625 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(152.453125 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(249.859375 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(311.140625 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(363.234375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_35">
-     <path d="M 30.13 64.784492 
-L 36.63 64.784492 
-L 43.13 64.784492 
-" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_18">
-     <!-- energy -->
-     <g transform="translate(48.33 67.059492) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-51" d="M 3513 2113 
-L 3513 0 
-L 2938 0 
-L 2938 2094 
-Q 2938 2591 2744 2837 
-Q 2550 3084 2163 3084 
-Q 1697 3084 1428 2787 
-Q 1159 2491 1159 1978 
-L 1159 0 
-L 581 0 
-L 581 3500 
-L 1159 3500 
-L 1159 2956 
-Q 1366 3272 1645 3428 
-Q 1925 3584 2291 3584 
-Q 2894 3584 3203 3211 
-Q 3513 2838 3513 2113 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-5c" d="M 2059 -325 
-Q 1816 -950 1584 -1140 
-Q 1353 -1331 966 -1331 
-L 506 -1331 
-L 506 -850 
-L 844 -850 
-Q 1081 -850 1212 -737 
-Q 1344 -625 1503 -206 
-L 1606 56 
-L 191 3500 
-L 800 3500 
-L 1894 763 
-L 2988 3500 
-L 3597 3500 
-L 2059 -325 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-48"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(61.53125 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(124.90625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(186.4375 0)"/>
-      <use xlink:href="#DejaVuSans-4a" transform="translate(225.796875 0)"/>
-      <use xlink:href="#DejaVuSans-5c" transform="translate(289.28125 0)"/>
-     </g>
-    </g>
-    <g id="line2d_36">
-     <path d="M 30.13 74.535 
-L 36.63 74.535 
-L 43.13 74.535 
-" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_19">
-     <!-- secretions -->
-     <g transform="translate(48.33 76.81) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-56"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(52.09375 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(113.625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(168.609375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(207.515625 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(269.046875 0)"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(308.25 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(336.03125 0)"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(397.21875 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(460.59375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_37">
-     <path d="M 30.13 84.285508 
-L 36.63 84.285508 
-L 43.13 84.285508 
-" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_20">
-     <!-- products -->
-     <g transform="translate(48.33 86.560508) scale(0.065 -0.065)">
-      <defs>
-       <path id="DejaVuSans-53" d="M 1159 525 
-L 1159 -1331 
-L 581 -1331 
-L 581 3500 
-L 1159 3500 
-L 1159 2969 
-Q 1341 3281 1617 3432 
-Q 1894 3584 2278 3584 
-Q 2916 3584 3314 3078 
-Q 3713 2572 3713 1747 
-Q 3713 922 3314 415 
-Q 2916 -91 2278 -91 
-Q 1894 -91 1617 61 
-Q 1341 213 1159 525 
-z
-M 3116 1747 
-Q 3116 2381 2855 2742 
-Q 2594 3103 2138 3103 
-Q 1681 3103 1420 2742 
-Q 1159 2381 1159 1747 
-Q 1159 1113 1420 752 
-Q 1681 391 2138 391 
-Q 2594 391 2855 752 
-Q 3116 1113 3116 1747 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-47" d="M 2906 2969 
-L 2906 4863 
-L 3481 4863 
-L 3481 0 
-L 2906 0 
-L 2906 525 
-Q 2725 213 2448 61 
-Q 2172 -91 1784 -91 
-Q 1150 -91 751 415 
-Q 353 922 353 1747 
-Q 353 2572 751 3078 
-Q 1150 3584 1784 3584 
-Q 2172 3584 2448 3432 
-Q 2725 3281 2906 2969 
-z
-M 947 1747 
-Q 947 1113 1208 752 
-Q 1469 391 1925 391 
-Q 2381 391 2643 752 
-Q 2906 1113 2906 1747 
-Q 2906 2381 2643 2742 
-Q 2381 3103 1925 3103 
-Q 1469 3103 1208 2742 
-Q 947 2381 947 1747 
-z
-" transform="scale(0.015625)"/>
-       <path id="DejaVuSans-58" d="M 544 1381 
-L 544 3500 
-L 1119 3500 
-L 1119 1403 
-Q 1119 906 1312 657 
-Q 1506 409 1894 409 
-Q 2359 409 2629 706 
-Q 2900 1003 2900 1516 
-L 2900 3500 
-L 3475 3500 
-L 3475 0 
-L 2900 0 
-L 2900 538 
-Q 2691 219 2414 64 
-Q 2138 -91 1772 -91 
-Q 1169 -91 856 284 
-Q 544 659 544 1381 
-z
-M 1991 3584 
-L 1991 3584 
-z
-" transform="scale(0.015625)"/>
-      </defs>
-      <use xlink:href="#DejaVuSans-53"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(102.390625 0)"/>
-      <use xlink:href="#DejaVuSans-47" transform="translate(163.578125 0)"/>
-      <use xlink:href="#DejaVuSans-58" transform="translate(227.0625 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(290.4375 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(345.421875 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(384.625 0)"/>
-     </g>
-    </g>
-    <g id="line2d_38">
-     <path d="M 30.13 94.036016 
-L 36.63 94.036016 
-L 43.13 94.036016 
-" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_21">
-     <!-- entropy -->
-     <g transform="translate(48.33 96.311016) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-48"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(61.53125 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(124.90625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(164.109375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(203.015625 0)"/>
-      <use xlink:href="#DejaVuSans-53" transform="translate(264.203125 0)"/>
-      <use xlink:href="#DejaVuSans-5c" transform="translate(327.6875 0)"/>
-     </g>
-    </g>
-   </g>
-  </g>
-  <g id="axes_2">
-   <g id="patch_5">
-    <path d="M 341.8 190.6 
-L 622.08 190.6 
-L 622.08 46.52 
-L 341.8 46.52 
-z
-" style="fill: #ffffff"/>
-   </g>
-   <g id="matplotlib.axis_3">
-    <g id="xtick_10">
-     <g id="line2d_39">
-      <path d="M 354.54 190.6 
-L 354.54 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_40">
-      <g>
-       <use xlink:href="#mfab20b750d" x="354.54" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_22">
-      <!-- 0 -->
-      <g transform="translate(351.35875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-13"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_11">
-     <g id="line2d_41">
-      <path d="M 386.39 190.6 
-L 386.39 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_42">
-      <g>
-       <use xlink:href="#mfab20b750d" x="386.39" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_23">
-      <!-- 1 -->
-      <g transform="translate(383.20875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_12">
-     <g id="line2d_43">
-      <path d="M 418.24 190.6 
-L 418.24 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_44">
-      <g>
-       <use xlink:href="#mfab20b750d" x="418.24" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_24">
-      <!-- 2 -->
-      <g transform="translate(415.05875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_13">
-     <g id="line2d_45">
-      <path d="M 450.09 190.6 
-L 450.09 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_46">
-      <g>
-       <use xlink:href="#mfab20b750d" x="450.09" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_25">
-      <!-- 3 -->
-      <g transform="translate(446.90875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-16"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_14">
-     <g id="line2d_47">
-      <path d="M 481.94 190.6 
-L 481.94 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_48">
-      <g>
-       <use xlink:href="#mfab20b750d" x="481.94" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_26">
-      <!-- 4 -->
-      <g transform="translate(478.75875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-17"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_15">
-     <g id="line2d_49">
-      <path d="M 513.79 190.6 
-L 513.79 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_50">
-      <g>
-       <use xlink:href="#mfab20b750d" x="513.79" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_27">
-      <!-- 5 -->
-      <g transform="translate(510.60875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-18"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_16">
-     <g id="line2d_51">
-      <path d="M 545.64 190.6 
-L 545.64 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_52">
-      <g>
-       <use xlink:href="#mfab20b750d" x="545.64" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_28">
-      <!-- 6 -->
-      <g transform="translate(542.45875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-19"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_17">
-     <g id="line2d_53">
-      <path d="M 577.49 190.6 
-L 577.49 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_54">
-      <g>
-       <use xlink:href="#mfab20b750d" x="577.49" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_29">
-      <!-- 7 -->
-      <g transform="translate(574.30875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-1a"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_18">
-     <g id="line2d_55">
-      <path d="M 609.34 190.6 
-L 609.34 46.52 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_56">
-      <g>
-       <use xlink:href="#mfab20b750d" x="609.34" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_30">
-      <!-- 8 -->
-      <g transform="translate(606.15875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-1b"/>
-      </g>
-     </g>
-    </g>
-    <g id="text_31">
-     <!-- time -->
-     <g transform="translate(472.903125 217.67875) scale(0.08 -0.08)">
-      <use xlink:href="#DejaVuSans-57"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(39.203125 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(66.984375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(164.390625 0)"/>
-     </g>
-    </g>
-   </g>
-   <g id="matplotlib.axis_4">
-    <g id="ytick_6">
-     <g id="line2d_57">
-      <path d="M 341.8 184.050909 
-L 622.08 184.050909 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_58">
-      <g>
-       <use xlink:href="#mdee63cc459" x="341.8" y="184.050909" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_32">
-      <!-- 0.0 -->
-      <g transform="translate(318.896875 187.849737) scale(0.1 -0.1)">
-       <defs>
-        <path id="DejaVuSans-11" d="M 684 794 
-L 1344 794 
-L 1344 0 
-L 684 0 
-L 684 794 
-z
-" transform="scale(0.015625)"/>
-       </defs>
-       <use xlink:href="#DejaVuSans-13"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_7">
-     <g id="line2d_59">
-      <path d="M 341.8 159.491818 
-L 622.08 159.491818 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_60">
-      <g>
-       <use xlink:href="#mdee63cc459" x="341.8" y="159.491818" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_33">
-      <!-- 0.5 -->
-      <g transform="translate(318.896875 163.290646) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-13"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_8">
-     <g id="line2d_61">
-      <path d="M 341.8 134.932727 
-L 622.08 134.932727 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_62">
-      <g>
-       <use xlink:href="#mdee63cc459" x="341.8" y="134.932727" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_34">
-      <!-- 1.0 -->
-      <g transform="translate(318.896875 138.731555) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_9">
-     <g id="line2d_63">
-      <path d="M 341.8 110.373636 
-L 622.08 110.373636 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_64">
-      <g>
-       <use xlink:href="#mdee63cc459" x="341.8" y="110.373636" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_35">
-      <!-- 1.5 -->
-      <g transform="translate(318.896875 114.172464) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_10">
-     <g id="line2d_65">
-      <path d="M 341.8 85.814545 
-L 622.08 85.814545 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_66">
-      <g>
-       <use xlink:href="#mdee63cc459" x="341.8" y="85.814545" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_36">
-      <!-- 2.0 -->
-      <g transform="translate(318.896875 89.613374) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_11">
-     <g id="line2d_67">
-      <path d="M 341.8 61.255455 
-L 622.08 61.255455 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_68">
-      <g>
-       <use xlink:href="#mdee63cc459" x="341.8" y="61.255455" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_37">
-      <!-- 2.5 -->
-      <g transform="translate(318.896875 65.054283) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-       <use xlink:href="#DejaVuSans-11" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(95.40625 0)"/>
-      </g>
-     </g>
-    </g>
-   </g>
-   <g id="line2d_69">
-    <path d="M 354.54 184.050909 
-L 386.39 167.678182 
-L 418.24 151.305455 
-L 450.09 134.932727 
-L 481.94 118.56 
-L 513.79 102.187273 
-L 545.64 85.814545 
-L 577.49 69.441818 
-L 609.34 53.069091 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_70">
-    <path d="M 354.54 184.050909 
-L 386.39 174.227273 
-L 418.24 164.403636 
-L 450.09 154.58 
-L 481.94 144.756364 
-L 513.79 134.932727 
-L 545.64 125.109091 
-L 577.49 115.285455 
-L 609.34 105.461818 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_71">
-    <path d="M 354.54 184.050909 
-L 386.39 174.227273 
-L 418.24 164.403636 
-L 450.09 154.58 
-L 481.94 144.756364 
-L 513.79 134.932727 
-L 545.64 125.109091 
-L 577.49 115.285455 
-L 609.34 105.461818 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_72">
-    <path d="M 354.54 184.050909 
-L 386.39 177.501818 
-L 418.24 170.952727 
-L 450.09 164.403636 
-L 481.94 157.854545 
-L 513.79 151.305455 
-L 545.64 144.756364 
-L 577.49 138.207273 
-L 609.34 131.658182 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_73">
-    <path d="M 354.54 184.050909 
-L 386.39 180.776364 
-L 418.24 177.501818 
-L 450.09 174.227273 
-L 481.94 170.952727 
-L 513.79 167.678182 
-L 545.64 164.403636 
-L 577.49 161.129091 
-L 609.34 157.854545 
-" clip-path="url(#pac5ca32e92)" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="patch_6">
-    <path d="M 341.8 190.6 
-L 341.8 46.52 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="patch_7">
-    <path d="M 341.8 190.6 
-L 622.08 190.6 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="text_38">
-    <!-- fig06 kinetic -->
-    <g style="fill: #16211f" transform="translate(451.036875 40.52) scale(0.1 -0.1)">
-     <defs>
-      <path id="DejaVuSans-4e" d="M 581 4863 
-L 1159 4863 
-L 1159 1991 
-L 2875 3500 
-L 3609 3500 
-L 1753 1863 
-L 3688 0 
-L 2938 0 
-L 1159 1709 
-L 1159 0 
-L 581 0 
-L 581 4863 
-z
-" transform="scale(0.015625)"/>
-     </defs>
-     <use xlink:href="#DejaVuSans-13af"/>
-     <use xlink:href="#DejaVuSans-4a" transform="translate(62.984375 0)"/>
-     <use xlink:href="#DejaVuSans-13" transform="translate(126.46875 0)"/>
-     <use xlink:href="#DejaVuSans-19" transform="translate(190.09375 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(253.71875 0)"/>
-     <use xlink:href="#DejaVuSans-4e" transform="translate(285.5 0)"/>
-     <use xlink:href="#DejaVuSans-4c" transform="translate(343.40625 0)"/>
-     <use xlink:href="#DejaVuSans-51" transform="translate(371.1875 0)"/>
-     <use xlink:href="#DejaVuSans-48" transform="translate(434.5625 0)"/>
-     <use xlink:href="#DejaVuSans-57" transform="translate(496.09375 0)"/>
-     <use xlink:href="#DejaVuSans-4c" transform="translate(535.296875 0)"/>
-     <use xlink:href="#DejaVuSans-46" transform="translate(563.078125 0)"/>
-    </g>
-   </g>
-   <g id="legend_2">
-    <g id="line2d_74">
-     <path d="M 347.65 55.033984 
-L 354.15 55.033984 
-L 360.65 55.033984 
-" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_39">
-     <!-- biomass -->
-     <g transform="translate(365.85 57.308984) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-45"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(91.265625 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(152.453125 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(249.859375 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(311.140625 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(363.234375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_75">
-     <path d="M 347.65 64.784492 
-L 354.15 64.784492 
-L 360.65 64.784492 
-" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_40">
-     <!-- energy -->
-     <g transform="translate(365.85 67.059492) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-48"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(61.53125 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(124.90625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(186.4375 0)"/>
-      <use xlink:href="#DejaVuSans-4a" transform="translate(225.796875 0)"/>
-      <use xlink:href="#DejaVuSans-5c" transform="translate(289.28125 0)"/>
-     </g>
-    </g>
-    <g id="line2d_76">
-     <path d="M 347.65 74.535 
-L 354.15 74.535 
-L 360.65 74.535 
-" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_41">
-     <!-- products -->
-     <g transform="translate(365.85 76.81) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-53"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(102.390625 0)"/>
-      <use xlink:href="#DejaVuSans-47" transform="translate(163.578125 0)"/>
-      <use xlink:href="#DejaVuSans-58" transform="translate(227.0625 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(290.4375 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(345.421875 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(384.625 0)"/>
-     </g>
-    </g>
-    <g id="line2d_77">
-     <path d="M 347.65 84.285508 
-L 354.15 84.285508 
-L 360.65 84.285508 
-" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_42">
-     <!-- secretions -->
-     <g transform="translate(365.85 86.560508) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-56"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(52.09375 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(113.625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(168.609375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(207.515625 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(269.046875 0)"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(308.25 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(336.03125 0)"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(397.21875 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(460.59375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_78">
-     <path d="M 347.65 94.036016 
-L 354.15 94.036016 
-L 360.65 94.036016 
-" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_43">
-     <!-- entropy -->
-     <g transform="translate(365.85 96.311016) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-48"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(61.53125 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(124.90625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(164.109375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(203.015625 0)"/>
-      <use xlink:href="#DejaVuSans-53" transform="translate(264.203125 0)"/>
-      <use xlink:href="#DejaVuSans-5c" transform="translate(327.6875 0)"/>
-     </g>
-    </g>
-   </g>
-  </g>
-  <g id="axes_3">
-   <g id="patch_8">
-    <path d="M 659.32 190.6 
-L 939.6 190.6 
-L 939.6 46.52 
-L 659.32 46.52 
-z
-" style="fill: #ffffff"/>
-   </g>
-   <g id="matplotlib.axis_5">
-    <g id="xtick_19">
-     <g id="line2d_79">
-      <path d="M 672.06 190.6 
-L 672.06 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_80">
-      <g>
-       <use xlink:href="#mfab20b750d" x="672.06" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_44">
-      <!-- 0 -->
-      <g transform="translate(668.87875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-13"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_20">
-     <g id="line2d_81">
-      <path d="M 703.91 190.6 
-L 703.91 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_82">
-      <g>
-       <use xlink:href="#mfab20b750d" x="703.91" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_45">
-      <!-- 1 -->
-      <g transform="translate(700.72875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_21">
-     <g id="line2d_83">
-      <path d="M 735.76 190.6 
-L 735.76 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_84">
-      <g>
-       <use xlink:href="#mfab20b750d" x="735.76" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_46">
-      <!-- 2 -->
-      <g transform="translate(732.57875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_22">
-     <g id="line2d_85">
-      <path d="M 767.61 190.6 
-L 767.61 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_86">
-      <g>
-       <use xlink:href="#mfab20b750d" x="767.61" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_47">
-      <!-- 3 -->
-      <g transform="translate(764.42875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-16"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_23">
-     <g id="line2d_87">
-      <path d="M 799.46 190.6 
-L 799.46 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_88">
-      <g>
-       <use xlink:href="#mfab20b750d" x="799.46" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_48">
-      <!-- 4 -->
-      <g transform="translate(796.27875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-17"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_24">
-     <g id="line2d_89">
-      <path d="M 831.31 190.6 
-L 831.31 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_90">
-      <g>
-       <use xlink:href="#mfab20b750d" x="831.31" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_49">
-      <!-- 5 -->
-      <g transform="translate(828.12875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-18"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_25">
-     <g id="line2d_91">
-      <path d="M 863.16 190.6 
-L 863.16 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_92">
-      <g>
-       <use xlink:href="#mfab20b750d" x="863.16" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_50">
-      <!-- 6 -->
-      <g transform="translate(859.97875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-19"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_26">
-     <g id="line2d_93">
-      <path d="M 895.01 190.6 
-L 895.01 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_94">
-      <g>
-       <use xlink:href="#mfab20b750d" x="895.01" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_51">
-      <!-- 7 -->
-      <g transform="translate(891.82875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-1a"/>
-      </g>
-     </g>
-    </g>
-    <g id="xtick_27">
-     <g id="line2d_95">
-      <path d="M 926.86 190.6 
-L 926.86 46.52 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_96">
-      <g>
-       <use xlink:href="#mfab20b750d" x="926.86" y="190.6" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_52">
-      <!-- 8 -->
-      <g transform="translate(923.67875 205.197656) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-1b"/>
-      </g>
-     </g>
-    </g>
-    <g id="text_53">
-     <!-- time -->
-     <g transform="translate(790.423125 217.67875) scale(0.08 -0.08)">
-      <use xlink:href="#DejaVuSans-57"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(39.203125 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(66.984375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(164.390625 0)"/>
-     </g>
-    </g>
-   </g>
-   <g id="matplotlib.axis_6">
-    <g id="ytick_12">
-     <g id="line2d_97">
-      <path d="M 659.32 184.050909 
-L 939.6 184.050909 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_98">
-      <g>
-       <use xlink:href="#mdee63cc459" x="659.32" y="184.050909" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_54">
-      <!-- 0 -->
-      <g transform="translate(645.9575 187.849737) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-13"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_13">
-     <g id="line2d_99">
-      <path d="M 659.32 162.404751 
-L 939.6 162.404751 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_100">
-      <g>
-       <use xlink:href="#mdee63cc459" x="659.32" y="162.404751" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_55">
-      <!-- 25 -->
-      <g transform="translate(639.595 166.203579) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-15"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(63.625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_14">
-     <g id="line2d_101">
-      <path d="M 659.32 140.758593 
-L 939.6 140.758593 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_102">
-      <g>
-       <use xlink:href="#mdee63cc459" x="659.32" y="140.758593" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_56">
-      <!-- 50 -->
-      <g transform="translate(639.595 144.557422) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-18"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(63.625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_15">
-     <g id="line2d_103">
-      <path d="M 659.32 119.112436 
-L 939.6 119.112436 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_104">
-      <g>
-       <use xlink:href="#mdee63cc459" x="659.32" y="119.112436" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_57">
-      <!-- 75 -->
-      <g transform="translate(639.595 122.911264) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-1a"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(63.625 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_16">
-     <g id="line2d_105">
-      <path d="M 659.32 97.466278 
-L 939.6 97.466278 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_106">
-      <g>
-       <use xlink:href="#mdee63cc459" x="659.32" y="97.466278" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_58">
-      <!-- 100 -->
-      <g transform="translate(633.2325 101.265106) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(127.25 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_17">
-     <g id="line2d_107">
-      <path d="M 659.32 75.82012 
-L 939.6 75.82012 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_108">
-      <g>
-       <use xlink:href="#mdee63cc459" x="659.32" y="75.82012" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_59">
-      <!-- 125 -->
-      <g transform="translate(633.2325 79.618948) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-15" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(127.25 0)"/>
-      </g>
-     </g>
-    </g>
-    <g id="ytick_18">
-     <g id="line2d_109">
-      <path d="M 659.32 54.173962 
-L 939.6 54.173962 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #b0b0b0; stroke-opacity: 0.15; stroke-width: 0.8; stroke-linecap: square"/>
-     </g>
-     <g id="line2d_110">
-      <g>
-       <use xlink:href="#mdee63cc459" x="659.32" y="54.173962" style="stroke: #000000; stroke-width: 0.8"/>
-      </g>
-     </g>
-     <g id="text_60">
-      <!-- 150 -->
-      <g transform="translate(633.2325 57.97279) scale(0.1 -0.1)">
-       <use xlink:href="#DejaVuSans-14"/>
-       <use xlink:href="#DejaVuSans-18" transform="translate(63.625 0)"/>
-       <use xlink:href="#DejaVuSans-13" transform="translate(127.25 0)"/>
-      </g>
-     </g>
-    </g>
-   </g>
-   <g id="line2d_111">
-    <path d="M 672.06 184.050909 
-L 703.91 167.678182 
-L 735.76 151.305455 
-L 767.61 134.932727 
-L 799.46 118.56 
-L 831.31 102.187273 
-L 863.16 85.814545 
-L 895.01 69.441818 
-L 926.86 53.069091 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_112">
-    <path d="M 672.06 184.050909 
-L 703.91 168.465675 
-L 735.76 152.880442 
-L 767.61 137.295208 
-L 799.46 121.709975 
-L 831.31 106.124741 
-L 863.16 90.539507 
-L 895.01 74.954274 
-L 926.86 59.36904 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_113">
-    <path d="M 672.06 184.050909 
-L 703.91 180.75552 
-L 735.76 177.46013 
-L 767.61 174.164741 
-L 799.46 170.869352 
-L 831.31 167.573962 
-L 863.16 164.278573 
-L 895.01 160.983184 
-L 926.86 157.687794 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_114">
-    <path d="M 672.06 184.050909 
-L 703.91 183.369745 
-L 735.76 182.688581 
-L 767.61 182.007417 
-L 799.46 181.326253 
-L 831.31 180.645089 
-L 863.16 179.963925 
-L 895.01 179.282761 
-L 926.86 178.601597 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="line2d_115">
-    <path d="M 672.06 184.050909 
-L 703.91 183.87774 
-L 735.76 183.704571 
-L 767.61 183.531401 
-L 799.46 183.358232 
-L 831.31 183.185063 
-L 863.16 183.011894 
-L 895.01 182.838724 
-L 926.86 182.665555 
-" clip-path="url(#p65b8d6de07)" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-   </g>
-   <g id="patch_9">
-    <path d="M 659.32 190.6 
-L 659.32 46.52 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="patch_10">
-    <path d="M 659.32 190.6 
-L 939.6 190.6 
-" style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
-   </g>
-   <g id="text_61">
-    <!-- fig06 fba -->
-    <g style="fill: #16211f" transform="translate(777.186563 40.52) scale(0.1 -0.1)">
-     <defs>
-      <path id="DejaVuSans-49" d="M 2375 4863 
-L 2375 4384 
-L 1825 4384 
-Q 1516 4384 1395 4259 
-Q 1275 4134 1275 3809 
-L 1275 3500 
-L 2222 3500 
-L 2222 3053 
-L 1275 3053 
-L 1275 0 
-L 697 0 
-L 697 3053 
-L 147 3053 
-L 147 3500 
-L 697 3500 
-L 697 3744 
-Q 697 4328 969 4595 
-Q 1241 4863 1831 4863 
-L 2375 4863 
-z
-" transform="scale(0.015625)"/>
-     </defs>
-     <use xlink:href="#DejaVuSans-13af"/>
-     <use xlink:href="#DejaVuSans-4a" transform="translate(62.984375 0)"/>
-     <use xlink:href="#DejaVuSans-13" transform="translate(126.46875 0)"/>
-     <use xlink:href="#DejaVuSans-19" transform="translate(190.09375 0)"/>
-     <use xlink:href="#DejaVuSans-3" transform="translate(253.71875 0)"/>
-     <use xlink:href="#DejaVuSans-49" transform="translate(285.5 0)"/>
-     <use xlink:href="#DejaVuSans-45" transform="translate(320.703125 0)"/>
-     <use xlink:href="#DejaVuSans-44" transform="translate(384.1875 0)"/>
-    </g>
-   </g>
-   <g id="legend_3">
-    <g id="line2d_116">
-     <path d="M 665.17 55.033984 
-L 671.67 55.033984 
-L 678.17 55.033984 
-" style="fill: none; stroke: #0d6e6b; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_62">
-     <!-- entropy -->
-     <g transform="translate(683.37 57.308984) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-48"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(61.53125 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(124.90625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(164.109375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(203.015625 0)"/>
-      <use xlink:href="#DejaVuSans-53" transform="translate(264.203125 0)"/>
-      <use xlink:href="#DejaVuSans-5c" transform="translate(327.6875 0)"/>
-     </g>
-    </g>
-    <g id="line2d_117">
-     <path d="M 665.17 64.784492 
-L 671.67 64.784492 
-L 678.17 64.784492 
-" style="fill: none; stroke: #a5620f; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_63">
-     <!-- energy -->
-     <g transform="translate(683.37 67.059492) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-48"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(61.53125 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(124.90625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(186.4375 0)"/>
-      <use xlink:href="#DejaVuSans-4a" transform="translate(225.796875 0)"/>
-      <use xlink:href="#DejaVuSans-5c" transform="translate(289.28125 0)"/>
-     </g>
-    </g>
-    <g id="line2d_118">
-     <path d="M 665.17 74.535 
-L 671.67 74.535 
-L 678.17 74.535 
-" style="fill: none; stroke: #3f9e99; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_64">
-     <!-- secretions -->
-     <g transform="translate(683.37 76.81) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-56"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(52.09375 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(113.625 0)"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(168.609375 0)"/>
-      <use xlink:href="#DejaVuSans-48" transform="translate(207.515625 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(269.046875 0)"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(308.25 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(336.03125 0)"/>
-      <use xlink:href="#DejaVuSans-51" transform="translate(397.21875 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(460.59375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_119">
-     <path d="M 665.17 84.285508 
-L 671.67 84.285508 
-L 678.17 84.285508 
-" style="fill: none; stroke: #657572; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_65">
-     <!-- biomass -->
-     <g transform="translate(683.37 86.560508) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-45"/>
-      <use xlink:href="#DejaVuSans-4c" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(91.265625 0)"/>
-      <use xlink:href="#DejaVuSans-50" transform="translate(152.453125 0)"/>
-      <use xlink:href="#DejaVuSans-44" transform="translate(249.859375 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(311.140625 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(363.234375 0)"/>
-     </g>
-    </g>
-    <g id="line2d_120">
-     <path d="M 665.17 94.036016 
-L 671.67 94.036016 
-L 678.17 94.036016 
-" style="fill: none; stroke: #c98a3a; stroke-width: 2; stroke-linecap: square"/>
-    </g>
-    <g id="text_66">
-     <!-- products -->
-     <g transform="translate(683.37 96.311016) scale(0.065 -0.065)">
-      <use xlink:href="#DejaVuSans-53"/>
-      <use xlink:href="#DejaVuSans-55" transform="translate(63.484375 0)"/>
-      <use xlink:href="#DejaVuSans-52" transform="translate(102.390625 0)"/>
-      <use xlink:href="#DejaVuSans-47" transform="translate(163.578125 0)"/>
-      <use xlink:href="#DejaVuSans-58" transform="translate(227.0625 0)"/>
-      <use xlink:href="#DejaVuSans-46" transform="translate(290.4375 0)"/>
-      <use xlink:href="#DejaVuSans-57" transform="translate(345.421875 0)"/>
-      <use xlink:href="#DejaVuSans-56" transform="translate(384.625 0)"/>
-     </g>
-    </g>
-   </g>
-  </g>
-  <g id="text_67">
-   <!-- one interface three mechanisms -->
-   <g style="fill: #16211f" transform="translate(385.917813 10.662281) scale(0.11 -0.11)">
-    <defs>
-     <path id="DejaVuSans-4b" d="M 3513 2113 
-L 3513 0 
-L 2938 0 
-L 2938 2094 
-Q 2938 2591 2744 2837 
-Q 2550 3084 2163 3084 
-Q 1697 3084 1428 2787 
-Q 1159 2491 1159 1978 
-L 1159 0 
-L 581 0 
-L 581 4863 
-L 1159 4863 
-L 1159 2956 
-Q 1366 3272 1645 3428 
-Q 1925 3584 2291 3584 
-Q 2894 3584 3203 3211 
-Q 3513 2838 3513 2113 
-z
-" transform="scale(0.015625)"/>
-    </defs>
-    <use xlink:href="#DejaVuSans-52"/>
-    <use xlink:href="#DejaVuSans-51" transform="translate(61.1875 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(124.5625 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(186.09375 0)"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(217.875 0)"/>
-    <use xlink:href="#DejaVuSans-51" transform="translate(245.65625 0)"/>
-    <use xlink:href="#DejaVuSans-57" transform="translate(309.03125 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(348.234375 0)"/>
-    <use xlink:href="#DejaVuSans-55" transform="translate(409.765625 0)"/>
-    <use xlink:href="#DejaVuSans-49" transform="translate(450.875 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(486.078125 0)"/>
-    <use xlink:href="#DejaVuSans-46" transform="translate(547.359375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(602.34375 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(663.875 0)"/>
-    <use xlink:href="#DejaVuSans-57" transform="translate(695.65625 0)"/>
-    <use xlink:href="#DejaVuSans-4b" transform="translate(734.859375 0)"/>
-    <use xlink:href="#DejaVuSans-55" transform="translate(798.234375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(837.140625 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(898.671875 0)"/>
-    <use xlink:href="#DejaVuSans-3" transform="translate(960.203125 0)"/>
-    <use xlink:href="#DejaVuSans-50" transform="translate(991.984375 0)"/>
-    <use xlink:href="#DejaVuSans-48" transform="translate(1089.390625 0)"/>
-    <use xlink:href="#DejaVuSans-46" transform="translate(1150.921875 0)"/>
-    <use xlink:href="#DejaVuSans-4b" transform="translate(1205.90625 0)"/>
-    <use xlink:href="#DejaVuSans-44" transform="translate(1269.28125 0)"/>
-    <use xlink:href="#DejaVuSans-51" transform="translate(1330.5625 0)"/>
-    <use xlink:href="#DejaVuSans-4c" transform="translate(1393.9375 0)"/>
-    <use xlink:href="#DejaVuSans-56" transform="translate(1421.71875 0)"/>
-    <use xlink:href="#DejaVuSans-50" transform="translate(1473.8125 0)"/>
-    <use xlink:href="#DejaVuSans-56" transform="translate(1571.21875 0)"/>
-   </g>
-  </g>
- </g>
- <defs>
-  <clipPath id="p0f030e5f95">
-   <rect x="24.28" y="46.52" width="280.28" height="144.08"/>
-  </clipPath>
-  <clipPath id="pac5ca32e92">
-   <rect x="341.8" y="46.52" width="280.28" height="144.08"/>
-  </clipPath>
-  <clipPath id="p65b8d6de07">
-   <rect x="659.32" y="46.52" width="280.28" height="144.08"/>
-  </clipPath>
- </defs>
-</svg>
-</figure>
+      <p class="ctr-text">Over a 20-24 tick run, the CPM cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds exactly 68 particles into a shared debris store -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly run to run. That debris cloud&#39;s RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run) -- genuine scattering, not wall-saturation; BrownianMovement is unseeded, so the exact RMS magnitudes vary run-to-run and are representative rather than reproducible, but the strict increase is the robust, test-asserted claim. The paper&#39;s §Disintegration level-shift (Fig 6) holds as real spatial dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through one coupling process plus one stock movement process. The stressor here is literally `acetate`, the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling` -- one molecule whose meaning is set relationally by each cell&#39;s interface (§Cell–cell coupling): nutrient there, toxin here. And the scatter phase reads directly as §Disintegration&#39;s failure cascade -- the actively maintained, far-from-equilibrium cell relaxing, once viability is lost, into a diffusion-dominated debris cloud, the transition most models skip (agent-based models delete the cell, whole-cell models assume viability).
+</p>
       
       
     <div class="overview-section findings-section">
@@ -2842,9 +671,16 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Played through, `fig06-disintegration-dynamics` shows the cell→molecular level shift: a scripted thermal shock pushes the cell past its viability bound and viability collapses. Confirmed: viability 1.0 → ~0 over 20 steps.</span>
+            <span class="finding-claim finding-statement">A single real CPM cell coupled to a real spatio-flux acetate field through one
+coupling process (`CpmDisintegration`) reproduces the paper&#39;s §Disintegration level-shift
+(Fig 6) as genuine spatial dissolution: the cell holds coherent while the diffusing acetate
+field is below its
+footprint-local viability bound, then latches a release once that bound is crossed at a
+specific, deterministic tick, and its domain resorbs to full dissolution over the following
+ticks. Confirmed: area &gt; 30 through tick 6, released_tick == 7.0, area == 0 by tick 16, all
+deterministic across repeated runs.</span>
             
-            <span class="finding-chip">via <code>viability-collapse</code></span>
+            <span class="finding-chip">via <code>stressor-crosses-viability-bound</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -2856,10 +692,10 @@ z
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> viability starts &gt;0.9, collapses to ~0 by step 20 after the t≈8 thermal shock · 
+              <strong>observed:</strong> released_tick == 7.0; area 56 (tick 7) -&gt; 0 (tick 16) · 
               
-              via test <a href="#bt-viability-collapse" onclick="_gotoStudyTab('tests','bt-viability-collapse');return false;"><code>viability-collapse</code></a> · 
-              in run <a href="#run-disintegration-dynamics"><code>disintegration-dynamics</code></a>
+              via test <a href="#bt-stressor-crosses-viability-bound" onclick="_gotoStudyTab('tests','bt-stressor-crosses-viability-bound');return false;"><code>stressor-crosses-viability-bound</code></a> · 
+              in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
               
               
             </div>
@@ -2868,12 +704,12 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-disintegration-dynamics"><code>disintegration-dynamics</code></a>
+              runs: <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 0.3</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 7.0</code></div>
             
             
             
@@ -2892,9 +728,16 @@ z
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Once viability collapses, viability-gated metabolism halts and biomass converts into molecular debris — the level shift is not just a number crossing a threshold, it is mass moving from the cell-level state (biomass) to the molecular-level state (debris). Confirmed: debris 0 → ~4.6.</span>
+            <span class="finding-claim finding-statement">The cell&#39;s shed material does not vanish -- it becomes physical debris. As the
+domain resorbs, its vacated footprint pixels are converted into particles in a shared
+map[particle] store, and that debris cloud keeps scattering (RMS spread strictly increasing)
+well after the cell itself has fully dissolved, under a separate stock BrownianMovement
+process. Confirmed: 68 particles shed by tick 16 (deterministic, reproduces exactly); RMS
+spread ~5.3 -&gt; ~7.6 over an 8-tick post-dissolution window in a representative run --
+BrownianMovement is unseeded, so the exact magnitudes vary run-to-run, but the strict increase
+is the robust, test-asserted claim.</span>
             
-            <span class="finding-chip">via <code>biomass-to-debris</code></span>
+            <span class="finding-chip">via <code>debris-cloud-keeps-scattering</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -2906,10 +749,10 @@ z
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> debris rises 0 → ~4.6 as viability collapses · 
+              <strong>observed:</strong> 68 particles shed (deterministic); RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24) (representative -- BrownianMovement is unseeded, exact magnitudes vary run-to-run) · 
               
-              via test <a href="#bt-biomass-to-debris" onclick="_gotoStudyTab('tests','bt-biomass-to-debris');return false;"><code>biomass-to-debris</code></a> · 
-              in run <a href="#run-disintegration-dynamics"><code>disintegration-dynamics</code></a>
+              via test <a href="#bt-debris-cloud-keeps-scattering" onclick="_gotoStudyTab('tests','bt-debris-cloud-keeps-scattering');return false;"><code>debris-cloud-keeps-scattering</code></a> · 
+              in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
               
               
             </div>
@@ -2918,7 +761,7 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-disintegration-dynamics"><code>disintegration-dynamics</code></a>
+              runs: <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
             </div>
             
             
@@ -2938,28 +781,34 @@ z
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The linear coarse-grain handler drives the shared metabolic-exchange interface to biomass 4.0. Confirmed: coarse → biomass 4.0 (energy 2.4, entropy 0.8, secretions 1.6).</span>
+            <span class="finding-claim finding-statement">The CPM-to-particle bridge this study&#39;s disintegration mechanism depends on --
+that a process can emit particles via the map `_add` sentinel into a shared map[particle]
+store, and a separate stock movement process can then move them -- is runtime-verified
+directly and independently of the disintegration mechanism itself, retiring what was
+previously an untested primitive. Confirmed structurally: a synthetic emitter&#39;s 3 particles
+remain exactly 3 particles four ticks later, with at least 2 having moved under
+BrownianMovement.</span>
             
-            <span class="finding-chip">via <code>coarse-linear-growth</code></span>
+            <span class="finding-chip">via <code>particle-bridge-emits-then-scatters</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
               <span class="finding-id">F-03</span>
-              <span class="finding-kind">biological</span>
+              <span class="finding-kind">computational</span>
               <span class="finding-status-text">confirms literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> coarse (linear yield) → biomass 4.0 · 
+              <strong>observed:</strong> 3 particles emitted, unchanged count 4 ticks later, &gt;=2 moved · 
               
-              via test <a href="#bt-coarse-linear-growth" onclick="_gotoStudyTab('tests','bt-coarse-linear-growth');return false;"><code>coarse-linear-growth</code></a> · 
-              in run <a href="#run-coarse-grain"><code>coarse-grain</code></a>
+              via test <a href="#bt-particle-bridge-emits-then-scatters" onclick="_gotoStudyTab('tests','bt-particle-bridge-emits-then-scatters');return false;"><code>particle-bridge-emits-then-scatters</code></a> · 
+              in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
               
               
             </div>
@@ -2968,162 +817,12 @@ z
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-coarse-grain"><code>coarse-grain</code></a>
+              runs: <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 3.5</code></div>
-            
-            
-            
-            
-            
-            
-          </div>
-        </details>
-      </div>
-      
-      
-      
-      
-      
-      <div class="finding-card finding-kind-biological finding-status-confirms">
-        <details class="finding-details">
-          <summary class="finding-row">
-            <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The Michaelis–Menten handler reaches a distinct endpoint on the identical interface — same ports, different mechanism, different trajectory (law 4), directly asserted by test_fig6_handler_independence. Confirmed: kinetic → biomass 2.667.</span>
-            
-            <span class="finding-chip">via <code>kinetic-saturating-growth</code></span>
-            
-          </summary>
-          <div class="finding-drawer">
-            <div class="finding-header">
-              <span class="finding-id">F-04</span>
-              <span class="finding-kind">biological</span>
-              <span class="finding-status-text">confirms literature</span>
-            </div>
-            
-            
-            <div class="finding-evidence">
-              <strong>observed:</strong> kinetic (Michaelis–Menten) → biomass 2.667, distinct from coarse 4.0 · 
-              
-              via test <a href="#bt-kinetic-saturating-growth" onclick="_gotoStudyTab('tests','bt-kinetic-saturating-growth');return false;"><code>kinetic-saturating-growth</code></a> · 
-              in run <a href="#run-kinetic-grain"><code>kinetic-grain</code></a>
-              
-              
-            </div>
-            
-            
-            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
-              
-              
-              runs: <a href="#run-kinetic-grain"><code>kinetic-grain</code></a>
-            </div>
-            
-            
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 2.0</code></div>
-            
-            
-            
-            
-            
-            
-          </div>
-        </details>
-      </div>
-      
-      
-      
-      
-      
-      <div class="finding-card finding-kind-biological finding-status-confirms">
-        <details class="finding-details">
-          <summary class="finding-row">
-            <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The real COBRApy FBA handler — the resolved molecular network, e_coli_core — reaches its own distinct endpoint and shows overflow metabolism: surplus carbon leaves as acetate on the secretions port. This is the third grain of the cell↔molecular-network equivalence. Confirmed: biomass 6.29, secretions 30.4.</span>
-            
-            <span class="finding-chip">via <code>fba-overflow-secretion</code></span>
-            
-          </summary>
-          <div class="finding-drawer">
-            <div class="finding-header">
-              <span class="finding-id">F-05</span>
-              <span class="finding-kind">biological</span>
-              <span class="finding-status-text">confirms literature</span>
-            </div>
-            
-            
-            <div class="finding-evidence">
-              <strong>observed:</strong> FBA → biomass 6.29, acetate secretions 30.4 (overflow) · 
-              
-              via test <a href="#bt-fba-overflow-secretion" onclick="_gotoStudyTab('tests','bt-fba-overflow-secretion');return false;"><code>fba-overflow-secretion</code></a> · 
-              in run <a href="#run-fba-grain"><code>fba-grain</code></a>
-              
-              
-            </div>
-            
-            
-            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
-              
-              
-              runs: <a href="#run-fba-grain"><code>fba-grain</code></a>
-            </div>
-            
-            
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 10.0</code></div>
-            
-            
-            
-            
-            
-            
-          </div>
-        </details>
-      </div>
-      
-      
-      
-      
-      
-      <div class="finding-card finding-kind-biological finding-status-confirms">
-        <details class="finding-details">
-          <summary class="finding-row">
-            <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The interface is a real structural contract, not a convention: an impostor handler that breaks the port names/types is rejected at compile time (law 2), independent of which grain is behind the interface. Confirmed: NonConformingMetabolism raises a CompileError naming the missing biomass/energy/entropy/secretions ports.</span>
-            
-            <span class="finding-chip">via <code>impostor-rejected</code></span>
-            
-          </summary>
-          <div class="finding-drawer">
-            <div class="finding-header">
-              <span class="finding-id">F-06</span>
-              <span class="finding-kind">biological</span>
-              <span class="finding-status-text">confirms literature</span>
-            </div>
-            
-            
-            <div class="finding-evidence">
-              <strong>observed:</strong> compiler rejects impostor (CompileError names missing biomass/energy/entropy/secretions) · 
-              
-              via test <a href="#bt-impostor-rejected" onclick="_gotoStudyTab('tests','bt-impostor-rejected');return false;"><code>impostor-rejected</code></a> · 
-              in run <a href="#run-disintegration-grain-swap"><code>disintegration-grain-swap</code></a>
-              
-              
-            </div>
-            
-            
-            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
-              
-              
-              runs: <a href="#run-disintegration-grain-swap"><code>disintegration-grain-swap</code></a>
-            </div>
-            
-            
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 3.0</code></div>
             
             
             
@@ -3148,7 +847,7 @@ z
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">The playable dynamics composite (`fig06-disintegration-dynamics`) is assembled in the figures&#39; style (`wholecell.py` handlers), not compiler-emitted — same honesty convention as the capstone composite.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build (ON and OFF give statistically indistinguishable fragmentation, and toggling it mid-run changes nothing), and lambda_volume/temperature are init-only with no runtime setters. A settled CPM domain cannot be shattered into scattered pixels in-lattice in this build -- the code-verified route is to resorb the cell and convert its shed pixels into particles. This is framed as a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not as emergent lattice fragmentation -- a real, documented engine limitation.</span></div>
         
       </div>
       
@@ -3187,164 +886,24 @@ z
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig06-disintegration-dynamics" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.disintegration-spatial" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>disintegration-dynamics</strong>
+        <strong>disintegration-spatial</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig06-disintegration-dynamics</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.disintegration-spatial</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig06-disintegration-dynamics')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.disintegration-spatial')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="disintegration-dynamics"
-               value="meta_modelers_guide.composites.fig06-disintegration-dynamics" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="disintegration-spatial"
+               value="meta_modelers_guide.composites.disintegration-spatial" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="disintegration-dynamics">Set composite</button>
+                data-baseline-name="disintegration-spatial">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="disintegration-dynamics" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig06-disintegration" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>disintegration-grain-swap</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig06-disintegration</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig06-disintegration')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="disintegration-grain-swap"
-               value="meta_modelers_guide.composites.fig06-disintegration" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="disintegration-grain-swap">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="disintegration-grain-swap" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig06-executable-coarse" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>coarse-grain</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig06-executable-coarse</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig06-executable-coarse')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="coarse-grain"
-               value="meta_modelers_guide.composites.fig06-executable-coarse" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="coarse-grain">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="coarse-grain" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig06-executable-kinetic" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>kinetic-grain</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig06-executable-kinetic</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig06-executable-kinetic')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="kinetic-grain"
-               value="meta_modelers_guide.composites.fig06-executable-kinetic" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="kinetic-grain">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="kinetic-grain" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig06-executable-fba" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>fba-grain</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig06-executable-fba</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig06-executable-fba')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="fba-grain"
-               value="meta_modelers_guide.composites.fig06-executable-fba" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="fba-grain">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="fba-grain" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="disintegration-spatial" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -3546,10 +1105,10 @@ z
     
     
     
-    <li class="expected-behavior-item" id="bt-viability-collapse"
+    <li class="expected-behavior-item" id="bt-cell-holds-coherent-before-crossing"
         data-test-kind="behavioral"
         
-        data-pytest-node="viability-collapse"
+        data-pytest-node="cell-holds-coherent-before-crossing"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -3558,19 +1117,19 @@ z
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">viability-collapse</strong>
+        <strong style="font-size: 0.9em;">cell-holds-coherent-before-crossing</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-dynamics</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Headline — played through, `fig06-disintegration-dynamics` shows the level shift: the cell starts viable (viability &gt; 0.9), the scripted thermal shock (t≈8) lands, and viability collapses past the floor (&lt; 0.3) by step 20. This is the composite&#39;s own dynamics, not a post-hoc annotation.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Before the acetate crosses viability_threshold, the CPM cell stays coherent (substantial area, released flag unset, no debris) -- the hold phase of the §Disintegration level shift (Fig 6).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell.viability)", "kind": "observable", "path": "cell.viability"}
-pass_if: {"op": "\u003c", "provenance": "played to 20 steps: viability 1.0 \u2192 ~0, collapsing past the 0.3 floor (tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration)", "value": 0.3}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.area at tick 6", "kind": "observable", "path": "obs.area"}
+pass_if: {"op": "\u003e", "provenance": "area 61-66 through tick 6, released stays False, n_particles == 0 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_holds_below_threshold)", "value": 30.0}</pre>
       </details>
       
       
@@ -3585,10 +1144,10 @@ pass_if: {"op": "\u003c", "provenance": "played to 20 steps: viability 1.0 \u219
     
     
     
-    <li class="expected-behavior-item" id="bt-biomass-to-debris"
+    <li class="expected-behavior-item" id="bt-stressor-crosses-viability-bound"
         data-test-kind="behavioral"
         
-        data-pytest-node="biomass-to-debris"
+        data-pytest-node="stressor-crosses-viability-bound"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -3597,19 +1156,19 @@ pass_if: {"op": "\u003c", "provenance": "played to 20 steps: viability 1.0 \u219
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">biomass-to-debris</strong>
+        <strong style="font-size: 0.9em;">stressor-crosses-viability-bound</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-dynamics</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The same run shows biomass converting into molecular debris once viability-gated metabolism halts — the cell-level description literally decaying into molecular-level debris (debris &gt; 0 by step 20).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The footprint-local acetate mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell.debris)", "kind": "observable", "path": "cell.debris"}
-pass_if: {"op": "\u003e", "provenance": "played to 20 steps: debris 0 \u2192 ~4.6 as biomass disintegrates into molecular debris (tests/test_disintegration_dynamics.py::test_playing_the_composite_shows_disintegration)", "value": 0.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.released_tick once obs.released first reads True", "kind": "observable", "path": "obs.released_tick"}
+pass_if: {"op": "==", "provenance": "released latches True at released_tick == 7.0, deterministic across repeated runs of the same composite (tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles, tests/test_disintegration_regime.py)", "value": 7.0}</pre>
       </details>
       
       
@@ -3624,10 +1183,10 @@ pass_if: {"op": "\u003e", "provenance": "played to 20 steps: debris 0 \u2192 ~4.
     
     
     
-    <li class="expected-behavior-item" id="bt-coarse-linear-growth"
+    <li class="expected-behavior-item" id="bt-domain-resorbs-to-zero"
         data-test-kind="behavioral"
         
-        data-pytest-node="coarse-linear-growth"
+        data-pytest-node="domain-resorbs-to-zero"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -3636,19 +1195,19 @@ pass_if: {"op": "\u003e", "provenance": "played to 20 steps: debris 0 \u2192 ~4.
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">coarse-linear-growth</strong>
+        <strong style="font-size: 0.9em;">domain-resorbs-to-zero</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>coarse-grain</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The linear coarse-grain handler drives biomass on the shared nutrients ⇒ biomass interface to its own endpoint (exec 4.0), also emitting energy 2.4, entropy 0.8, secretions 1.6.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Once released, the cell&#39;s target volume ramps toward zero and its CPM lattice footprint resorbs to full dissolution well within the run -- the domain genuinely disappearing, not merely shrinking.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biomass)", "kind": "observable", "path": "biomass"}
-pass_if: {"op": "\u003e=", "provenance": "coarse (lumped linear yield) \u2192 biomass 4.0 (exec fig06-executable-coarse)", "value": 3.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.area at tick 16", "kind": "observable", "path": "obs.area"}
+pass_if: {"op": "==", "provenance": "area falls monotonically from 56 (tick 7) to 0 by tick 16, and stays 0 through tick 20 (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles)", "value": 0.0}</pre>
       </details>
       
       
@@ -3663,10 +1222,10 @@ pass_if: {"op": "\u003e=", "provenance": "coarse (lumped linear yield) \u2192 bi
     
     
     
-    <li class="expected-behavior-item" id="bt-kinetic-saturating-growth"
+    <li class="expected-behavior-item" id="bt-shed-material-becomes-debris-particles"
         data-test-kind="behavioral"
         
-        data-pytest-node="kinetic-saturating-growth"
+        data-pytest-node="shed-material-becomes-debris-particles"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -3675,19 +1234,19 @@ pass_if: {"op": "\u003e=", "provenance": "coarse (lumped linear yield) \u2192 bi
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">kinetic-saturating-growth</strong>
+        <strong style="font-size: 0.9em;">shed-material-becomes-debris-particles</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>kinetic-grain</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The Michaelis–Menten handler, on the identical interface and wiring, reaches a distinct biomass endpoint (exec 2.667) — the same ports, a different mechanism, a different trajectory (handler independence, law 4). Directly asserted by test_fig6_handler_independence, which compiles the coarse and kinetic grains against the same interface and requires their dynamics to diverge.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s vacated footprint pixels become debris particles in the shared map[particle] store as it resorbs -- shed material, not deleted mass.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biomass)", "kind": "observable", "path": "biomass"}
-pass_if: {"op": "\u003e=", "provenance": "kinetic (saturating Michaelis\u2013Menten uptake) \u2192 biomass 2.667 (exec fig06-executable-kinetic), distinct from the coarse 4.0 (tests/test_compilation.py::test_fig6_handler_independence)", "value": 2.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "len(particles) once area reaches 0", "kind": "observable", "path": "particles"}
+pass_if: {"op": "\u003e=", "provenance": "exactly 68 debris particles shed by tick 16 (8/tick capped, deterministic across repeated runs), staying at 68 for the remainder of the run (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 20.0}</pre>
       </details>
       
       
@@ -3702,10 +1261,10 @@ pass_if: {"op": "\u003e=", "provenance": "kinetic (saturating Michaelis\u2013Men
     
     
     
-    <li class="expected-behavior-item" id="bt-fba-overflow-secretion"
+    <li class="expected-behavior-item" id="bt-debris-cloud-keeps-scattering"
         data-test-kind="behavioral"
         
-        data-pytest-node="fba-overflow-secretion"
+        data-pytest-node="debris-cloud-keeps-scattering"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -3714,19 +1273,19 @@ pass_if: {"op": "\u003e=", "provenance": "kinetic (saturating Michaelis\u2013Men
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">fba-overflow-secretion</strong>
+        <strong style="font-size: 0.9em;">debris-cloud-keeps-scattering</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>fba-grain</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The real COBRApy flux-balance handler (LP over e_coli_core, the resolved molecular network) reaches its own distinct biomass endpoint (exec 6.29) and routes surplus carbon to acetate overflow — secretions on the shared port rise to 30.4. Requires the optional `cobra` dependency; guarded skip when absent (tests/test_fba.py).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The debris cloud&#39;s RMS spread strictly increases after dissolution completes -- genuine scattering under BrownianMovement, not particles piling up or stalling.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(secretions)", "kind": "observable", "path": "secretions"}
-pass_if: {"op": "\u003e=", "provenance": "FBA overflow metabolism: acetate on the secretions port 0\u219230.4 (exec fig06-executable-fba); biomass reaches 6.29 (tests/test_fba.py)", "value": 10.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "RMS radius of particle positions, tick 22 vs tick 16", "kind": "observable", "path": "particles"}
+pass_if: {"op": "\u003e", "provenance": "RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3 (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact magnitudes vary run-to-run (representative values shown); the strict INCREASE is the robust, test-asserted claim (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 0.0}</pre>
       </details>
       
       
@@ -3741,31 +1300,31 @@ pass_if: {"op": "\u003e=", "provenance": "FBA overflow metabolism: acetate on th
     
     
     
-    <li class="expected-behavior-item" id="bt-impostor-rejected"
+    <li class="expected-behavior-item" id="bt-particle-bridge-emits-then-scatters"
         data-test-kind="behavioral"
         
-        data-pytest-node="impostor-rejected"
-        data-classification="primary"
+        data-pytest-node="particle-bridge-emits-then-scatters"
+        data-classification="diagnostic"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">impostor-rejected</strong>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">particle-bridge-emits-then-scatters</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>disintegration-grain-swap</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>none</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Headline control (must-fail) — the single most persuasive artifact for the interface being real. An impostor handler (NonConformingMetabolism) that renames the biomass output to ``growth`` with the wrong type (``growth_rate`` not ``mass``) and drops energy/entropy/secretions is rejected by the compiler at compile time with a CompileError that names the missing ports (biomass, energy, entropy, secretions) — tests/test_fba.py::test_impostor_handler_rejected_by_compiler. Because the impostor never runs, it produces no biomass observable, so this test&#39;s biomass threshold must fail by design — that expected failure is the interface being enforced. (Scope: structural — port names/types/wiring — not units, dimensions, invariants, or runtime behavior.)</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Foundational control (not this study&#39;s scientific claim): the CPM-to-particle bridge this study depends on -- a process emitting particles via the map `_add` sentinel, moved by a separate stock BrownianMovement process -- works correctly, independent of any disintegration mechanism.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biomass)", "kind": "observable", "path": "biomass"}
-pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabolism is rejected by the compiler (CompileError names missing biomass/energy/entropy/secretions); it never runs, so no biomass observable exists \u2014 must fail (tests/test_fba.py::test_impostor_handler_rejected_by_compiler)", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "len(particles) unchanged and \u003e=2 positions moved, tick 1 vs tick 4", "kind": "observable", "path": "particles"}
+pass_if: {"op": "==", "provenance": "a synthetic emitter process (not this study\u0027s composite): 3 particles emitted on tick 1, still exactly 3 particles at tick 4, with at least 2 having moved (tests/test_particle_bridge_spike.py::test_emit_then_scatter)", "value": 3.0}</pre>
       </details>
       
       
@@ -3846,7 +1405,11 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All figure composites build and every executable runs to completion (scripts/build_executables.py + scripts/measure_all.py, 2026-08-16); fig06-disintegration-dynamics runs to completion through the engine (tests/test_disintegration_dynamics.py).</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">disintegration-spatial.composite.json builds and runs to completion through the
+process-bigraph engine (tests/test_cpm_disintegration.py, tests/test_disintegration_regime.py,
+tests/test_disintegration_viz.py, tests/test_particle_bridge_spike.py); guarded skip when
+the optional cpm/spatio_flux dependencies are absent, matching this investigation&#39;s
+flagship and companion studies&#39; convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -3859,7 +1422,7 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Played through, the dynamics composite shows the level shift (viability 1.0→~0, debris 0→~4.6). The three metabolism grains each drive the shared nutrients ⇒ biomass interface to a distinct endpoint (coarse 4.0, kinetic 2.667, FBA 6.29) with the FBA grain additionally showing acetate overflow (secretions 30.4); the impostor handler that breaks the interface is rejected at compile time (law 2).</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a real 20-24 tick run -- the cell holds coherent, crosses its viability bound at a specific tick, resorbs to full dissolution, and sheds debris that keeps scattering after dissolution completes. The CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly; the debris scatter&#39;s RMS-spread magnitude moves under unseeded BrownianMovement, so its exact values are representative of one run, not run-to-run-reproducible -- only the strict-increase direction is asserted as the robust claim. The foundational particle-bridge control also passes, independent of the disintegration mechanism.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -3872,7 +1435,13 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Watching the viability collapse and debris rise makes disintegration concrete rather than a definition; swapping lumped-yield, saturating-kinetic, and real-COBRApy handlers behind the same interface makes handler independence (law 4) measurable on the exact interface disintegration halts.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Realizing the paper&#39;s §Disintegration level-shift (Fig 6) with a real CPM cell&#39;s structural viability collapsing
+under a real diffusing acetate field -- rather than a scripted viability scalar decaying
+on a timer -- makes this investigation&#39;s disintegration claim (a cellular description
+stops being adequate and the right level of description drops to interacting molecular
+components) concrete at real spatial, per-pixel resolution: the shed &#34;molecular components&#34;
+are literal scattering particles in a shared field, not an abstract debris variable.
+</textarea>
         </label>
       </div>
     </div>
@@ -3887,15 +1456,12 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> The dynamics composite runs to completion through the engine; the figure draft compiles to three grain-swap executables that run.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> disintegration-spatial.composite.json builds and runs to completion
+through the engine over a deterministic 20-24 tick run.</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;&#39;s pattern is demonstrated at the toy-real (uncalibrated) level; played through, the level shift is visible (viability collapse, debris accumulation), and the three grains give three distinct trajectories over an unmoving interface.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The spatial §Disintegration level-shift pattern (Fig 6) is demonstrated at the toy-real (uncalibrated) level, with genuine per-pixel CPM shape dynamics, a real diffusing acetate field, and a verified particle bridge behind the hold-cross-resorb-scatter arc, rather than a scripted trajectory.</div>
         
-        
-        <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>growth-and-division</li></ul>
-        </div>
         
       </div>
       
@@ -3904,11 +1470,11 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>played through, viability never leaves the viable band or never collapses (no level shift)</li><li>biomass never converts to debris despite viability collapse</li><li>compiler dropped/renamed an interface port (law 2 violation)</li><li>a grain handler produced no non-trivial dynamics on the declared ports, or the three grains failed to share one interface</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the cell fails to hold coherent before crossing (the acetate gradient is too aggressive, or the cell&#39;s viability threshold is being crossed spuriously at the seed footprint)</li><li>released_tick drifts or the released flag never latches (the diffusion coefficient or gradient shape no longer brings the footprint-local mean above threshold within the run)</li><li>the domain fails to resorb to 0 (resorb_per_tick too small relative to the run length, or the target-volume ramp is not being applied after release)</li><li>shed particles are missing or the debris cloud stops scattering (the CPM-to-particle bridge is broken, or BrownianMovement is not wired to the particles store)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> molecular-interfaces (the molecular-network grain this figure establishes carries forward into the deeper molecular mechanisms studied next)</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> any future spatial study reusing the CpmDisintegration pattern or the CPM-to-particle bridge (e.g. a spatial growth-and-division study that needs to shed material on division)</div>
         
       </div>
       
@@ -3921,29 +1487,32 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Disintegration (Fig 6) is a change in level of description made executable and watchable. (a) Played through, <code>fig06-disintegration-dynamics</code> shows a thermal shock pushing the cell past its viability bound: viability collapses (1.0 → ~0), viability-gated metabolism halts, and biomass converts into molecular debris (0 → ~4.6). (b) The metabolic-exchange interface that disintegration eventually halts is realizable at three grains behind ports that never move — coarse lumped yield (biomass 4.0), saturating kinetics (biomass 2.667), and real COBRApy flux-balance over e_coli_core (biomass 6.29, acetate overflow 30.4) — Law 4, handler independence.</li>
+<li>Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter) reproduces the paper's §Disintegration level-shift (Fig 6) as genuine spatial dissolution. Over a 20-24 tick run: the cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds 68 particles -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly. The debris cloud's RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run); BrownianMovement is unseeded, so those exact magnitudes vary run-to-run -- only the strict increase is the robust, reproducible claim.</li>
+<li>The stressor is literally <code>acetate</code> -- the SAME molecule that is metabolic waste and cross-feeding food in <code>cell-cell-coupling</code>, here a toxin whose high local concentration crosses the cell's viability bound. This carries the paper's closing relational-molecule claim (§Cell–cell coupling): one molecule counting as nutrient, signal, or toxin through its consequences for viability -- nutrient/food there, toxin here.</li>
+<li>The two phases realize §Disintegration's failure cascade end to end: an actively maintained, far-from-equilibrium CPM domain, once viability is lost, relaxes into a diffusion-dominated, equilibrating debris cloud under <code>BrownianMovement</code>. Most models skip this transition explicitly -- agent-based models remove cells mid-simulation and whole-cell models assume viability -- so carrying a coherent domain through its own dissolution into diffusing debris is the explanatory gain.</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>VIABILITY-COLLAPSE</strong> — played to 20 steps: viability 1.0 → ~0 after the scripted thermal shock (t≈8)</li>
-<li><strong>BIOMASS-TO-DEBRIS</strong> — same run: debris 0 → ~4.6 as biomass disintegrates into molecular debris</li>
-<li><strong>COARSE-LINEAR-GROWTH</strong> — coarse (linear yield) → biomass 4.0, energy 2.4, entropy 0.8, secretions 1.6</li>
-<li><strong>KINETIC-SATURATING-GROWTH</strong> — Michaelis–Menten → biomass 2.667 (distinct endpoint), diverging from coarse per test_fig6_handler_independence</li>
-<li><strong>FBA-OVERFLOW-SECRETION</strong> — real cobra LP over e_coli_core → biomass 6.29, acetate secretions 30.4 (overflow)</li>
-<li><strong>IMPOSTOR-REJECTED</strong> — an impostor handler renaming biomass→growth (wrong type) is rejected by the compiler with a CompileError naming the missing ports (law 2)</li>
+<li><strong>CELL-HOLDS-COHERENT-BEFORE-CROSSING</strong> -- area 61-66 through tick 6, released False, 0 particles</li>
+<li><strong>STRESSOR-CROSSES-VIABILITY-BOUND</strong> -- released_tick == 7.0, deterministic</li>
+<li><strong>DOMAIN-RESORBS-TO-ZERO</strong> -- area falls from 56 (tick 7) to 0 (tick 16)</li>
+<li><strong>SHED-MATERIAL-BECOMES-DEBRIS-PARTICLES</strong> -- 68 debris particles by tick 16</li>
+<li><strong>DEBRIS-CLOUD-KEEPS-SCATTERING</strong> -- RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24), a representative run (BrownianMovement is unseeded; the strict increase is the robust claim)</li>
+<li><strong>PARTICLE-BRIDGE-EMITS-THEN-SCATTERS</strong> -- 3 synthetic particles emitted then scattered, bridge verified independently</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>The playable dynamics composite (<code>fig06-disintegration-dynamics</code>) is assembled in the figures' style (<code>meta_modelers_guide/wholecell.py</code> handlers), not compiler-emitted — same honesty as the capstone composite.</li>
-<li>Its thermal shock is scripted (hard-coded onset at t≈8), not an emergent consequence of the cell's own state.</li>
-<li>The FBA grain requires the optional <code>cobra</code> dependency; its tests are a guarded skip when <code>cobra</code> is absent, not a hard failure.</li>
-<li>Grain equivalence across coarse/kinetic/FBA is structural (same interface, same ports) — not a fitted or calibrated reduction between the grains. Endpoints (biomass 4.0 / 2.667 / 6.29, acetate 30.4) are illustrative magnitudes from one small toy setup (FBA uses e_coli_core, not a genome-scale reconstruction).</li>
-<li>Conformance checking is structural only (port names, types, wiring); it does not check units, dimensions, invariants, or runtime behavior.</li>
+<li>The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build, and lambda_volume/temperature are init-only with no runtime setters, so a settled domain cannot be shattered into scattered pixels in-lattice. This is a chosen, honest realization of &quot;the coherent domain dissolves,&quot; not emergent lattice fragmentation -- a real engine limitation, documented in the API map.</li>
+<li>Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body pymunk physics -- they drift and scatter, they do not collide or fall.</li>
+<li>The acetate gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and diffusion coefficients are toy-real -- plausible, hand-tuned magnitudes chosen to make the full arc legible within a 20-24 tick run, not fitted to a named stressor or material.</li>
+<li>Unlike studies 2-3 in this investigation, this study's CPM cell has no metabolism/cobra path at all -- CpmDisintegration is built around the viability-collapse trigger alone.</li>
+<li>The released flag latches permanently once crossed and never un-crosses, even once the footprint empties and would otherwise read a misleadingly low stressor mean.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Make the thermal-shock onset emergent (e.g. an environmental process with its own dynamics) rather than hard-coded, so the level shift is triggered rather than scripted.</li>
-<li>Replace the toy FBA network with a genome-scale reconstruction to test the same interface at realistic scale.</li>
+<li>Extend the debris-scatter mechanism with pymunk rigid-body physics so shed particles can collide and settle, rather than only diffusing.</li>
+<li>Investigate whether the connectivity/E1 no-op is a genuine viva-cpm upstream bug worth reporting, since a working structural-integrity lock would let a future study demonstrate in-lattice fragmentation directly.</li>
+<li>Fan out to the next spatial counterpart in the planned increments.</li>
 </ul>
 </div>
     </div>
@@ -3959,13 +1528,52 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
     
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Key assumptions</h3>
+      <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
+        <li style="margin:2px 0">The disintegration mechanism realized here is **resorption + particle-shedding**, not
+in-lattice fragmentation. In this `viva-cpm` build the connectivity/&#34;E1&#34; structural-integrity
+constraint is a verified no-op (ON and OFF give statistically indistinguishable fragmentation
+under fragmenting energetics, and toggling it mid-run changes nothing -- a verified engine
+limitation), and `lambda_volume` /
+`temperature` are init-only with no runtime setters, so a settled CPM domain cannot be
+shattered into scattered pixels in-lattice. The code-verified route taken here is to resorb the
+cell (`set_target_volume -&gt; 0`) and convert its shed pixels into particles via a separate,
+verified bridge. This is a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not
+emergent lattice fragmentation -- a real engine limitation, not a modeling shortcut taken for
+convenience.</li><li style="margin:2px 0">Debris particles move under spatio-flux `BrownianMovement` -- NumPy diffusion over a bounded
+grid -- not rigid-body pymunk physics. The shed particles drift and scatter; they do not
+collide with each other, with the dissolving cell, or fall under gravity.</li><li style="margin:2px 0">The acetate field&#39;s radial gradient (peak 1.5, ring onset at radius 5, saturating at radius
+18), `viability_threshold` (0.5), `resorb_per_tick` (6.0), `max_particles_per_tick` (8), and
+the diffusion coefficients (acetate D=4.0, debris diffusion_rate=1.0) are toy-real: plausible,
+hand-tuned magnitudes chosen to make hold -&gt; cross -&gt; resorb -&gt; scatter all legible within a
+20-tick run, not fitted to a named stressor, material, or literature target.</li><li style="margin:2px 0">Unlike studies 2-3 in this investigation (`cell-environment-coupling`,
+`cell-cell-coupling`), this study&#39;s CPM cell has NO metabolism/cobra path at all --
+`CpmDisintegration` is deliberately built around the viability-collapse trigger alone, not
+nutrient uptake or growth.</li><li style="margin:2px 0">The `released` flag LATCHES once the crossing happens and never un-crosses, even once the
+footprint empties and its mean-stressor reading would otherwise read 0.0 -- a deliberate design
+choice so an emptied, dissolved cell cannot spuriously &#34;recover&#34; viability.</li><li style="margin:2px 0">The CPM-to-particle bridge (a process emitting particles via the map `_add` sentinel into a
+shared `map[particle]` store, moved by a separate stock `BrownianMovement` process) is no
+longer an assumption; it is runtime-verified directly
+(`tests/test_particle_bridge_spike.py`) against a synthetic emitter, independently of the
+disintegration mechanism itself.</li>
+      </ul>
+    </div>
+    
 
     
     <div class="overview-section">
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">The playable dynamics composite (`fig06-disintegration-dynamics`) is assembled in the figures&#39; style (`wholecell.py` handlers), not compiler-emitted — same honesty convention as the capstone composite.</li><li style="margin:2px 0">The thermal shock is scripted (hard-coded onset at t≈8), not an emergent consequence of the cell&#39;s own dynamics.</li><li style="margin:2px 0">FBA requires the optional `cobra` dependency; its tests are a guarded skip when absent, not a hard failure.</li><li style="margin:2px 0">Grain equivalence (coarse/kinetic/FBA) is structural — one shared interface — not a fitted or calibrated reduction; the FBA grain uses the small e_coli_core network, not a genome-scale reconstruction.</li><li style="margin:2px 0">Conformance is structural only: the compiler checks port names, types, and wiring, not units, dimensions, invariants, or runtime behavior.</li>
+        <li style="margin:2px 0">The disintegration mechanism realized here is resorption + particle-shedding, not in-lattice fragmentation -- the connectivity/E1 structural-integrity constraint is a verified no-op in this viva-cpm build (ON and OFF give statistically indistinguishable fragmentation, and toggling it mid-run changes nothing), and lambda_volume/temperature are init-only with no runtime setters. A settled CPM domain cannot be shattered into scattered pixels in-lattice in this build -- the code-verified route is to resorb the cell and convert its shed pixels into particles. This is framed as a chosen, honest realization of &#34;the coherent domain dissolves,&#34; not as emergent lattice fragmentation -- a real, documented engine limitation.</li><li style="margin:2px 0">Debris particles move under spatio-flux BrownianMovement (NumPy diffusion), not rigid-body pymunk physics -- the particles drift and scatter, they do not collide with each other or with the dissolving cell, and do not fall under gravity.</li><li style="margin:2px 0">The acetate field&#39;s radial gradient, viability_threshold, resorb_per_tick, max_particles_per_tick, and the diffusion coefficients (acetate D=4.0, debris diffusion_rate=1.0) are toy-real, hand-tuned magnitudes chosen to make hold-cross-resorb-scatter all legible within a 20-24 tick run -- not fitted to a named stressor, material, or literature target.</li><li style="margin:2px 0">Unlike studies 2-3 in this investigation (cell-environment-coupling, cell-cell-coupling), this study&#39;s CPM cell has no metabolism/cobra path at all -- CpmDisintegration is deliberately built around the viability-collapse trigger alone, not nutrient uptake or growth.</li><li style="margin:2px 0">The released flag latches once the crossing happens and never un-crosses, even once the footprint empties and its mean-stressor reading would otherwise read misleadingly low -- a deliberate design choice so a dissolved cell cannot spuriously &#34;recover&#34; viability.</li><li style="margin:2px 0">The CPM-to-particle bridge (a process emitting particles via the map `_add` sentinel into a shared map[particle] store, moved by a separate stock BrownianMovement process) is now runtime-verified directly (tests/test_particle_bridge_spike.py), independent of the disintegration mechanism itself -- previously an unverified primitive.</li><li style="margin:2px 0">Read against a lumped, specification-stage realization of the same pattern: that
+kind of model closes the paper&#39;s §Disintegration level-shift (Fig 6) with a scripted viability scalar
+decaying on a thermal-shock
+timer, over a lumped cell-state composite. This study closes the same level-shift with a real
+CPM cell&#39;s structural viability collapsing under a real diffusing acetate field, its domain
+genuinely resorbing in lattice pixels rather than a scalar dropping toward zero, and its shed
+material becoming literal scattering particles rather than an abstract debris variable. Compare
+the two for the same disintegration claim at two very different mechanistic resolutions.</li>
       </ul>
     </div>
     
@@ -3992,8 +1600,8 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>2</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">2 PASS</span> ·
+        <strong>6</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">6 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -4027,7 +1635,7 @@ pass_if: {"op": "\u003e=", "provenance": "Rejection control: NonConformingMetabo
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "224c4cd4169ed24cc75ac2f2d6147de5854667ac", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/224c4cd4169ed24cc75ac2f2d6147de5854667ac", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 14:19 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "f9830302f3670bc67e5dae28f5cbba55e7675c5d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/f9830302f3670bc67e5dae28f5cbba55e7675c5d", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 15:14 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "disintegration";

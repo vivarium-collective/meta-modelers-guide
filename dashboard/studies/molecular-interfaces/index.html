@@ -16,7 +16,7 @@
   <h1 class="study-title">
     <span class="study-name" id="study-name" data-slug="molecular-interfaces" title="molecular-interfaces">Molecular Interfaces</span>
     
-    <span class="study-kind-tag study-kind-computational" data-study-kind="computational" title="Study kind">computational</span>
+    <span class="study-kind-tag study-kind-biological" data-study-kind="biological" title="Study kind">biological</span>
     
     <span class="phase-pill phase-decide" title="Lifecycle: Design → Build → Simulate → Evaluate → Decide">Decide</span>
     
@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="8 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -146,7 +146,7 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> At the molecular grain, can a single molecular mechanism (F1Fo ATP synthase) be compiled from its draft and run as a PMF-driven rotary catalyst honoring the four physical interface channels (chemical/electrical/mechanical/thermal) and the specialized substrate/cofactor/catalyst/product ports?</p>
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> The paper&#39;s §Molecular interface (Fig 7) frames a molecule not as a lump of state but as a typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal -- through which molecules bind, react, and transmit force and heat. It even names the public databases (PDB, Reactome, ChEBI, GO) as &#34;partial specifications of molecular interfaces and their types&#34;. This study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY? Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized, i.e. Turing / reaction-diffusion patterning) turn a near-uniform seed into emergent spatial structure, and does a temperature field GRADE that structure (the THERMAL channel, an Arrhenius rate modulation) -- so that two of the interface&#39;s physical channels demonstrably COMPOSE over one shared spatial field? The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable and isolates the diffusion-driven instability as the cause of structure, so the contrast between pattern and uniformity is the finding.</p>
 
 <nav class="study-tabs" aria-label="Study sections">
   
@@ -557,26 +557,34 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">The molecular interface&#39;&#39;s four typed channels compile to a running ATP-synthase mechanism, all four channels driven consistently from one coupled proton flux (chemical_out 0-&gt;100; electrical/mechanical/thermal channels move with it) — the molecular level the disintegration study drops into, made concrete. The specialized substrate/cofactor/catalyst/product ports are structurally preserved through compilation but are not driven by this handler (honestly noted, not claimed as dynamic).</p>
+      <p class="ctr-text">The paper&#39;s §Molecular interface (Fig 7) holds spatially for two of its four physical channels. The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -&gt; 3V plus differential diffusion Dv &lt; Du), turns a near-uniform seed into an emergent Turing spot pattern: v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion-driven instability, not the chemistry alone. The THERMAL channel -- a raised temperature field scaling the reaction by the Arrhenius factor exp(-Ea*(1/T - 1/Tref)) -- GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -&gt; ~2, v_var ~0.0119 -&gt; ~0.0096) while staying patterned: a real second modality composing over the same field, not a collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The honest boundaries are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap; the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping; and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.</p>
       
-      <div class="ctr-context">Fig 7 drops one level below the cellular boundary, to the molecular grain: a single molecule as a process with typed physical channels, no cell-level boundary at all. Fig 7b declares the interface — a molecule exchanges matter (chemical, mol·s⁻¹), charge (electrical, C·s⁻¹), momentum (mechanical, N) and energy (thermal, J·s⁻¹) with its surroundings, and carries a structural identifier (PDB/SMILES). Fig 7c refines the chemical channel into the vocabulary of enzymology — substrates, cofactors, catalysts, products — as a `subports` store nested alongside the four physical channels. As drafted, both stores are inert: unit-bearing ports and wiring, no update dynamics. This study names the transducer and compiles it: the **F1Fo ATP synthase**, the rotary motor that couples the proton-motive force (PMF) across a membrane to phosphorylation. `MolecularMechanismHandler` drives all four physical channels from one coupled quantity — the proton flux set by the chemical (substrate/turnover) input — so the channels stay physically consistent with each other: chemical is the ATP synthesis flux (`J_ATP = k_cat * activity`), electrical is the proton current carried by that same flux (`I = J_H * e`), mechanical is the rotary power of the Fo motor (`torque * omega`, `omega` set by the H+ flux through the c-ring), and thermal is the non-conserved remainder dissipated as heat (`(1-eta) * PMF work`, eta ~= 75%). Measured on the compiled fig07-executable, run 8 seconds through the engine (literature constants: k_cat ~= 100 ATP*s^-1, H+/ATP ~= 3.3, PMF ~= 150 mV, torque ~= 40 pN*nm; Milo &amp; Phillips; Junge &amp; Nelson 2015): chemical_out (ATP synthesized) rises 0 -&gt; 100, and the other three channels move together from the same proton flux — electrical_out ~= 5.29e-17 A, mechanical_out ~= 8.29e-18 W, thermal_out ~= 1.98e-18 W (all real SI magnitudes for a single-molecule rotary motor, hence tiny). The four-channel interface is preserved unchanged by compilation (Law 2): `interface_of(draft) == interface_of(executable)`. Honesty point: the Fig 7c `subports` refinement (substrates, cofactors, catalysts, products) is present in both the draft and the compiled executable — the store is wired and read by the dynamics visualization — but `MolecularMechanismHandler` does not write to it; those four ports stay at their 0.0 seed for the whole run. The specialized enzymatic vocabulary is structurally honored (declared, typed, preserved through compilation) but not driven by this handler&#39;s dynamics, and the study says so rather than claiming substrate/cofactor/catalyst/product turnover that was not built. This is an example of the kind of molecular grain the disintegration study (Fig 6) drops into when a cell&#39;s viability collapses: one mechanism, made concrete and executable.</div>
+      <div class="ctr-context">The paper&#39;s §Molecular interface (Fig 7) makes a molecule a typed interface: it exposes physical channels -- chemical fluxes, electrostatic fields, mechanical forces, thermal transfer -- and its identity is the shape of those channels, not a scalar concentration. A coarser, specification-stage, point-scale lumped realization made ONE molecule&#39;s four channels executable at a POINT (an F1Fo ATP synthase whose chemical/electrostatic/mechanical/thermal ports were wired as a typed draft and compiled). This study takes the CHEMICAL channel off the point and onto a 2D lattice, and adds the THERMAL channel on top of it, to ask whether a molecular interface&#39;s channels compose spatially.
+
+The chemical channel is realized as a Gray-Scott reaction-diffusion system on a 128x128 periodic grid: a local autocatalytic chemistry (U + 2V -&gt; 3V, V -&gt; P) coupled to DIFFERENTIAL diffusion (Dv &lt; Du), the textbook route by which a near-uniform state becomes Turing-unstable and breaks into spots (turing1952). The update is explicit-Euler du/dt = Du*lap(u) - U*V^2 + F*(1-U), dv/dt = Dv*lap(v) + U*V^2 - (F+k)*V on the periodic 5-point Laplacian, canonical spot regime Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0 (CFL max(Du,Dv)*dt*4 = 0.64 &lt; 1, guarded at construction). The thermal channel is a second, orthogonal port: when a temperature field is present the reaction term is scaled elementwise by the Arrhenius factor rate = exp(-Ea*(1/T - 1/Tref)) -- T above Tref speeds the chemistry, below slows it, and rate == 1 with no field, so the thermal channel is genuinely additive to the chemical one rather than replacing it.
+
+Realizing the paper&#39;s databases claim, honestly. The paper calls PDB/Reactome/ChEBI/GO &#34;partial specifications of molecular interfaces and their types&#34;; this study makes that concrete not as a resolved database lookup but as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species and reactions. Read U as a ChEBI-style substrate type, V as an activator/inhibitor species, P as the product sink, and U + 2V -&gt; 3V as a Reactome-style autocatalytic reaction record (placeholder identifiers, e.g. CHEBI:&lt;U&gt;/CHEBI:&lt;V&gt;/CHEBI:&lt;P&gt; and REACT:&lt;autocatalysis&gt;) -- a concrete gesture at what it would mean for a database entry to TYPE a molecular interface, not a claim that these toy species resolve to real PDB structures or Reactome pathway fragments. A genuine Reactome-fragment mapping, or a live database fetch that types the ports against real entries, is a named deferral, not a result here.
+
+Measured this build. The CHEMICAL channel patterns: from the near-uniform seed the inhibitor field&#39;s spatial variance v_var rises from ~0.0011 toward ~0.0119 by 8000 internal steps and the field resolves into ~12 connected v-domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry identical) stays UNIFORM -- v_var ~= 0 (patterned == 0.0) -- so the structure is caused by the diffusion asymmetry (the Turing instability), not by the chemistry alone: removing only the differential diffusion removes the pattern. The THERMAL channel GRADES that pattern rather than destroying it: a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) coarsens the flagship from ~12 domains to ~2 and lowers v_var from ~0.0119 to ~0.0096 while staying comfortably patterned -- a real second modality modulating the first, not a chemistry collapse. (An earlier, hotter setting Ea=1.0/T=1.5 was found to OVERSHOOT -- the reaction runs away and collapses the pattern to near-uniform -- and was retuned to the milder graded setting; the overshoot is pinned as a direct-physics assertion so &#34;graded, not collapsed&#34; is tested against its own failure mode.) Because the physics has no RNG, the multi-seed check re-draws the near-uniform seed for seeds 1-5 and reports a RANGE: v_var in [0.01157, 0.01193], n_domains in [8, 12] -- the pattern forms for every seed, stated as a band rather than a single golden value.
+
+Honest scope -- the four-modality finding, stated plainly. This study realizes TWO of the molecular interface&#39;s four physical channels spatially: the CHEMICAL channel (reaction-diffusion / Turing patterning) and the THERMAL channel (Arrhenius rate modulation grading it). The ELECTROSTATIC and MECHANICAL channels are the named gap -- no charge field, no force or tension, is exposed or measured here (owned in investigation.yaml&#39;s what_this_does_not_demonstrate, as a named deferral). And this is a TOY reaction-diffusion demonstration: emergent spatial structure from a minimal autocatalytic chemistry with tuned, uncalibrated constants, NOT real molecular structure or conformation (nothing at PDB resolution), NOT a fitted reaction network, NOT a resolved database mapping. What is demonstrated is that a molecular interface&#39;s chemical and thermal channels COMPOSE spatially over one shared field; what is not is the other two channels, real molecular structure, and a live database type system.</div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Compile the Fig 7 F1Fo ATP-synthase draft to an executable and run it 8 seconds through the engine, reading all four physical channel ports plus the subports refinement.</p>
+      <p class="ctr-text">Run three Gray-Scott reaction-diffusion composites to completion through the process-bigraph engine directly from their JSON specs: molecular-turing-pattern (GrayScott, a 128x128 near-uniform seed under the canonical differential-diffusion spot regime Du=0.16/Dv=0.08, 8000 internal steps), molecular-equal-diffusion-control (the single-variable causal control, Du=Dv=0.12, identical chemistry and seed), and molecular-thermal-graded (identical chemistry/diffusion/seed plus a raised uniform temperature field T=1.2 Arrhenius-scaling the reaction, Ea=0.15). Measure whether the flagship patterns (v_var above the floor, patterned == 1.0, more than one domain) while the equal-diffusion control stays uniform (v_var ~= 0), and whether the thermal channel grades the pattern (coarser -- fewer domains, lower but still-patterned v_var) rather than collapsing it; re-draw the initial field for seeds 1-5 and report v_var / n_domains as a range.</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>molecular-mechanism</code>, <code>molecular-mechanism-executable</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The F1Fo ATP synthase mechanism drives its chemical output port — ATP synthesized rises from 0 to 100 over the run (exec fig07-executable, ports.chemical_out).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The mechanical channel (Fo rotary power) moves off its zero seed, driven by the same proton flux that drives ATP synthesis — the four channels are physically coupled, not independently parameterized.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">One-line sanity check (not the study&#39;s control): the inert Fig 7 draft (address local:MolecularMechanism, not the compiled Handler) has an empty update by construction, so chemical_out stays at its 0.0 seed and fails this threshold by design — confirming the framework&#39;s definition of a draft, not a scientific counterfactual.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>molecular-turing-pattern</code>, <code>molecular-equal-diffusion-control</code>, <code>molecular-thermal-graded</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16, Dv=0.08) destabilizes the near-uniform seed into an emergent Turing spot pattern -- v_var rises above the pattern floor and the gated patterned flag reads 1.0.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The pattern is genuine spatial structure, not a single blob: the field resolves into more than one connected v-concentration domain (~12 spots at the canonical regime), the Turing spot signature.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Single-variable causal control, the load-bearing one: identical chemistry and seed, but equal diffusion (Du = Dv = 0.12) -- the differential-diffusion asymmetry removed. The Turing instability never triggers, so the field stays uniform (patterned == 0.0). This is what proves the pattern is CAUSED by the diffusion asymmetry, not the chemistry alone.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The thermal channel GRADES rather than destroys: with a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction, the field is still comfortably patterned (patterned == 1.0, v_var above the floor) -- a real second modality modulating the pattern, not a chemistry collapse.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The mechanism of the thermal grading, made explicit: the raised temperature field coarsens the pattern to markedly fewer, larger domains than the no-temperature flagship at the same step count (~12 -&gt; ~2), the direct signature of the thermal channel acting on the chemical one.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The Turing pattern forms across seeds 1-5, not just the seed=1 draw baked into the composite. Because the physics is deterministic (no RNG), the seed is re-drawn into the INITIAL near-uniform field; v_var stays above the floor for every seed and is reported as a range, with n_domains reported as a range too (seed-sensitive by nucleation-patch placement).</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">The compiled mechanism synthesizes ATP — chemical_out rises 0-&gt;100 — while the electrical, mechanical, and thermal channels move together from the same coupled proton flux (electrical_out ~5.29e-17 A, mechanical_out ~8.29e-18 W, thermal_out ~1.98e-18 W). The specialized substrate/cofactor/catalyst/product ports remain structurally preserved but undriven — honestly reported. The inert draft, with no mechanism, stays at seed.</p>
+      <p class="ctr-text">The chemical channel patterns -- the near-uniform Gray-Scott seed destabilizes under differential diffusion into an emergent Turing spot pattern (v_var ~0.0011 -&gt; ~0.0119, ~12 domains, patterned == 1.0) -- while the single-variable equal-diffusion causal control (Du=Dv=0.12) stays uniform (v_var ~= 0, patterned == 0.0), realizing the paper&#39;s §Molecular interface (Fig 7) chemical channel as a spatial mechanism and isolating differential diffusion as the cause. The thermal channel composes over the same field -- a raised temperature field (Ea=0.15, T=1.2) grades the pattern (~12 -&gt; ~2 domains, v_var ~0.0119 -&gt; ~0.0096) while staying patterned, a real second modality, not a collapse. The honest boundaries are reported as findings -- the electrostatic and mechanical channels are the named four-modality gap, this is a toy reaction-diffusion demonstration and not real molecular structure, and the databases claim is realized as illustrative typed-port annotation over the Gray-Scott species rather than a resolved mapping. Multi-seed: v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5, reported as a range.</p>
       
       
     <div class="overview-section findings-section">
@@ -590,9 +598,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The F1Fo ATP synthase mechanism — compiled from the Fig 7 draft and run through the engine — synthesizes ATP on its chemical output port. Confirmed: chemical_out (ATP synthesized) 0 -&gt; 100 via PMF-driven rotary catalysis.</span>
+            <span class="finding-claim finding-statement">The paper&#39;s §Molecular interface (Fig 7) CHEMICAL channel holds spatially: a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -&gt; 3V plus differential diffusion Dv &lt; Du) turns a near-uniform seed into an emergent Turing spot pattern -- v_var rises ~0.0011 -&gt; ~0.0119 and the field resolves into ~12 connected domains (patterned == 1.0). Local molecular reactions plus differential diffusion produce emergent spatial structure, the molecular interface&#39;s chemical channel made spatial.</span>
             
-            <span class="finding-chip">via <code>atp-synthesized</code></span>
+            <span class="finding-chip">via <code>pattern-forms</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -604,10 +612,10 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> chemical_out (ATP synthesized) 0 -&gt; 100 · 
+              <strong>observed:</strong> patterned == 1.0; v_var ~0.0011 -&gt; ~0.0119; n_domains ~= 12 (multi-seed band [8, 12]) · 
               
-              via test <a href="#bt-atp-synthesized" onclick="_gotoStudyTab('tests','bt-atp-synthesized');return false;"><code>atp-synthesized</code></a> · 
-              in run <a href="#run-molecular-interfaces"><code>molecular-interfaces</code></a>
+              via test <a href="#bt-pattern-forms" onclick="_gotoStudyTab('tests','bt-pattern-forms');return false;"><code>pattern-forms</code></a> · 
+              in run <a href="#run-molecular-turing-pattern"><code>molecular-turing-pattern</code></a>
               
               
             </div>
@@ -616,12 +624,12 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-molecular-interfaces"><code>molecular-interfaces</code></a>
+              runs: <a href="#run-molecular-turing-pattern"><code>molecular-turing-pattern</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 50.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 1.0</code></div>
             
             
             
@@ -640,9 +648,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">All four physical interface channels move together, driven from the one proton flux the chemical channel sets: chemical (ATP synthesis), electrical (proton current), mechanical (Fo rotary power) and thermal (dissipated remainder) are physically consistent with each other, not four independently fitted outputs. Confirmed: mechanical_out 0 -&gt; ~8.29e-18 W, electrical_out -&gt; ~5.29e-17 A, thermal_out -&gt; ~1.98e-18 W, alongside chemical_out -&gt; 100.</span>
+            <span class="finding-claim finding-statement">The pattern is CAUSED by the diffusion-driven (Turing) instability, proven by a single-variable causal control. The equal-diffusion control (Du = Dv = 0.12 -- identical chemistry, seed, and wiring, the only difference the removal of the differential-diffusion asymmetry) stays UNIFORM: v_var ~= 0 (exactly 0.0), patterned == 0.0. Removing only the diffusion asymmetry removes the structure, isolating differential diffusion -- not the chemistry alone -- as its cause.</span>
             
-            <span class="finding-chip">via <code>rotary-power-couples</code></span>
+            <span class="finding-chip">via <code>equal-diffusion-control-uniform</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -654,58 +662,10 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> mechanical_out ~8.29e-18 W; electrical_out ~5.29e-17 A; thermal_out ~1.98e-18 W · 
+              <strong>observed:</strong> control (Du=Dv=0.12): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6) · 
               
-              via test <a href="#bt-rotary-power-couples" onclick="_gotoStudyTab('tests','bt-rotary-power-couples');return false;"><code>rotary-power-couples</code></a> · 
-              in run <a href="#run-molecular-interfaces"><code>molecular-interfaces</code></a>
-              
-              
-            </div>
-            
-            
-            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
-              
-              
-              runs: <a href="#run-molecular-interfaces"><code>molecular-interfaces</code></a>
-            </div>
-            
-            
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1e-19</code></div>
-            
-            
-            
-            
-            
-            
-          </div>
-        </details>
-      </div>
-      
-      
-      
-      
-      
-      <div class="finding-card finding-kind-computational finding-status-confirms">
-        <details class="finding-details">
-          <summary class="finding-row">
-            <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Honesty point: the Fig 7c specialized enzymatic ports (substrates, cofactors, catalysts, products) are structurally preserved through compilation — declared, typed, and wired into the dynamics visualization — but are not driven by `MolecularMechanismHandler`. They stay at their 0.0 seed for the whole run. The study claims structural preservation of these ports, not simulated substrate-binding, cofactor, catalytic-turnover, or product-release dynamics.</span>
-            
-          </summary>
-          <div class="finding-drawer">
-            <div class="finding-header">
-              <span class="finding-id">F-03</span>
-              <span class="finding-kind">computational</span>
-              <span class="finding-status-text">confirms literature</span>
-            </div>
-            
-            
-            <div class="finding-evidence">
-              <strong>observed:</strong> substrates, cofactors, catalysts, products all remain 0.0 over the full run (fig07-executable, run(8)); no handler writes to `subports` · 
-              
-              
-              
+              via test <a href="#bt-equal-diffusion-control-uniform" onclick="_gotoStudyTab('tests','bt-equal-diffusion-control-uniform');return false;"><code>equal-diffusion-control-uniform</code></a> · 
+              in run <a href="#run-molecular-equal-diffusion-control"><code>molecular-equal-diffusion-control</code></a>
               
               
             </div>
@@ -714,10 +674,12 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-molecular-interfaces"><code>molecular-interfaces</code></a>
+              runs: <a href="#run-molecular-equal-diffusion-control"><code>molecular-equal-diffusion-control</code></a>
             </div>
             
             
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 0.0</code></div>
             
             
             
@@ -736,24 +698,24 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Sanity check on the framework&#39;s definition: the inert draft, with no mechanism, has an empty update and stays at seed. Confirmed: chemical_out stays 0.0 (the definition of a draft, not a scientific control). The real evidence is that the compiled mechanism drives all four physical channels with the interface structurally preserved (Law 2).</span>
+            <span class="finding-claim finding-statement">The THERMAL channel composes with the chemical one over the same field: a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction GRADES the pattern rather than destroying it -- coarsening it from ~12 domains to ~2 and lowering v_var ~0.0119 -&gt; ~0.0096 while staying comfortably patterned (patterned == 1.0). A real second physical modality modulating the first. (A hotter Ea=1.0/T=1.5 setting overshoots into near-uniform collapse and was retuned; the overshoot is pinned as a direct-physics assertion, so &#34;graded, not collapsed&#34; is tested against its own failure mode.) Two of the molecular interface&#39;s four channels demonstrably compose spatially.</span>
             
-            <span class="finding-chip">via <code>draft-is-inert</code></span>
+            <span class="finding-chip">via <code>thermal-channel-coarsens</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
-              <span class="finding-id">F-04</span>
+              <span class="finding-id">F-03</span>
               <span class="finding-kind">biological</span>
               <span class="finding-status-text">confirms literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> inert draft stays at chemical_out=0.0 (empty update by construction) · 
+              <strong>observed:</strong> thermal patterned == 1.0; n_domains ~12 -&gt; ~2; v_var ~0.0119 -&gt; ~0.0096 (graded, not collapsed) · 
               
-              via test <a href="#bt-draft-is-inert" onclick="_gotoStudyTab('tests','bt-draft-is-inert');return false;"><code>draft-is-inert</code></a> · 
-              in run <a href="#run-molecular-interfaces"><code>molecular-interfaces</code></a>
+              via test <a href="#bt-thermal-channel-coarsens" onclick="_gotoStudyTab('tests','bt-thermal-channel-coarsens');return false;"><code>thermal-channel-coarsens</code></a> · 
+              in run <a href="#run-molecular-thermal-graded"><code>molecular-thermal-graded</code></a>
               
               
             </div>
@@ -762,12 +724,108 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-molecular-interfaces"><code>molecular-interfaces</code></a>
+              runs: <a href="#run-molecular-thermal-graded"><code>molecular-thermal-graded</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 50.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 8.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-partial">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◐</span>
+            <span class="finding-claim finding-statement">The honest scope, load-bearing not buried -- the FOUR-MODALITY finding. This study realizes TWO of the paper&#39;s four molecular-interface channels spatially (CHEMICAL: reaction-diffusion / Turing; THERMAL: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named gap -- no charge field, no force or tension, is exposed or measured (owned in investigation.yaml as a named deferral). Further: this is a TOY reaction-diffusion demonstration with tuned, uncalibrated constants -- emergent structure from a minimal autocatalytic chemistry, NOT real molecular structure or conformation (nothing at PDB resolution). And the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, NOT a resolved database mapping; a real Reactome-fragment mapping / live database fetch is a deferral.</span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">partial literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> two channels realized (chemical + thermal); electrostatic + mechanical are the named gap; toy reaction-diffusion, not PDB-level structure; database typing illustrative, not resolved · 
+              
+              
+              
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-molecular-turing-pattern"><code>molecular-turing-pattern</code></a>
+            </div>
+            
+            
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-partial">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◐</span>
+            <span class="finding-claim finding-statement">DETERMINISM, stated plainly. The Gray-Scott physics has NO RNG -- the GrayScott seed config key is accepted but currently inert -- so the multi-seed check re-draws the INITIAL near-uniform field with seed_uv(seed=s) for s in 1-5 (everything else fixed) rather than varying a per-tick stochastic process. The pattern forms for every seed; v_var in [0.01157, 0.01193] and n_domains in [8, 12] are reported as a RANGE reflecting genuine sensitivity of the emergent pattern to nucleation-patch placement, not dressed as a single golden value.</span>
+            
+            <span class="finding-chip">via <code>pattern-is-multiseed-robust</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">partial literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5 (seed lives in the initial field) · 
+              
+              via test <a href="#bt-pattern-is-multiseed-robust" onclick="_gotoStudyTab('tests','bt-pattern-is-multiseed-robust');return false;"><code>pattern-is-multiseed-robust</code></a> · 
+              in run <a href="#run-molecular-turing-pattern-multiseed"><code>molecular-turing-pattern-multiseed</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-molecular-turing-pattern-multiseed"><code>molecular-turing-pattern-multiseed</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.004</code></div>
             
             
             
@@ -792,7 +850,7 @@
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">The compiled ATP-synthase executable drives all four physical channels (chemical/electrical/mechanical/thermal) from one coupled proton flux; the magnitude is illustrative and not fitted to a specific measured turnover rate under physiological load.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Two of the molecular interface&#39;s four physical channels are realized spatially (chemical: reaction-diffusion / Turing; thermal: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or tension, is exposed or measured here. This is owned in investigation.yaml&#39;s what_this_does_not_demonstrate, as a named deferral.</span></div>
         
       </div>
       
@@ -831,24 +889,24 @@
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig07-molecular-mechanism" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.molecular-turing-pattern" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>molecular-mechanism</strong>
+        <strong>molecular-turing-pattern</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig07-molecular-mechanism</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.molecular-turing-pattern</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig07-molecular-mechanism')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.molecular-turing-pattern')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-mechanism"
-               value="meta_modelers_guide.composites.fig07-molecular-mechanism" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-turing-pattern"
+               value="meta_modelers_guide.composites.molecular-turing-pattern" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="molecular-mechanism">Set composite</button>
+                data-baseline-name="molecular-turing-pattern">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="molecular-mechanism" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="molecular-turing-pattern" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -866,24 +924,59 @@
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig07-executable" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.molecular-equal-diffusion-control" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>molecular-mechanism-executable</strong>
+        <strong>molecular-equal-diffusion-control</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig07-executable</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.molecular-equal-diffusion-control</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig07-executable')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.molecular-equal-diffusion-control')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-mechanism-executable"
-               value="meta_modelers_guide.composites.fig07-executable" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-equal-diffusion-control"
+               value="meta_modelers_guide.composites.molecular-equal-diffusion-control" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="molecular-mechanism-executable">Set composite</button>
+                data-baseline-name="molecular-equal-diffusion-control">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="molecular-mechanism-executable" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="molecular-equal-diffusion-control" style="font-size:0.8em;margin-top:2px"></div>
+      
+      
+      
+      <div class="model-config-mount" style="margin-top:8px">
+        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
+      
+      
+      
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
+        
+        
+        
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
+      </div>
+      
+    </div>
+    
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.molecular-thermal-graded" data-model-overrides='{}'>
+      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <strong>molecular-thermal-graded</strong>
+        
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.molecular-thermal-graded</code>
+        <button type="button" class="action-btn" style="font-size:0.8em"
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.molecular-thermal-graded')">🧬 explore &amp; run ↗</button>
+        
+      </div>
+      
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-thermal-graded"
+               value="meta_modelers_guide.composites.molecular-thermal-graded" placeholder="pkg.composites.name"
+               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
+        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
+                data-baseline-name="molecular-thermal-graded">Set composite</button>
+      </div>
+      <div class="baseline-composite-status muted" data-baseline-name="molecular-thermal-graded" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -1085,10 +1178,10 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-atp-synthesized"
+    <li class="expected-behavior-item" id="bt-pattern-forms"
         data-test-kind="behavioral"
         
-        data-pytest-node="atp-synthesized"
+        data-pytest-node="pattern-forms"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1097,19 +1190,19 @@
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">atp-synthesized</strong>
+        <strong style="font-size: 0.9em;">pattern-forms</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>molecular-interfaces</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-turing-pattern</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The F1Fo ATP synthase mechanism drives its chemical output port — ATP synthesized rises from 0 to 100 over the run (exec fig07-executable, ports.chemical_out).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16, Dv=0.08) destabilizes the near-uniform seed into an emergent Turing spot pattern -- v_var rises above the pattern floor and the gated patterned flag reads 1.0.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(chemical_out)", "kind": "observable", "path": "chemical_out"}
-pass_if: {"op": "\u003e=", "provenance": "exec last=100.0 \u2014 F1Fo ATP synthase (chemical_out 0-\u003e100, PMF-driven rotary catalysis; fig07-executable, run(8) matching scripts/render_study_evidence.py TOTAL_TIME=8.0)", "value": 50.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
+pass_if: {"op": "==", "provenance": "patterned == 1.0 with v_var rising ~0.0011 -\u003e ~0.0119 over 8000 internal steps (16 ticks x steps_per_tick=500), canonical spot regime (tests/test_molecular_regime.py::test_turing_pattern_forms, tests/test_gray_scott.py, tests/test_gray_scott_physics.py)", "value": 1.0}</pre>
       </details>
       
       
@@ -1124,10 +1217,10 @@ pass_if: {"op": "\u003e=", "provenance": "exec last=100.0 \u2014 F1Fo ATP syntha
     
     
     
-    <li class="expected-behavior-item" id="bt-rotary-power-couples"
+    <li class="expected-behavior-item" id="bt-pattern-has-multiple-domains"
         data-test-kind="behavioral"
         
-        data-pytest-node="rotary-power-couples"
+        data-pytest-node="pattern-has-multiple-domains"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1136,19 +1229,19 @@ pass_if: {"op": "\u003e=", "provenance": "exec last=100.0 \u2014 F1Fo ATP syntha
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">rotary-power-couples</strong>
+        <strong style="font-size: 0.9em;">pattern-has-multiple-domains</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>molecular-interfaces</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-turing-pattern</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The mechanical channel (Fo rotary power) moves off its zero seed, driven by the same proton flux that drives ATP synthesis — the four channels are physically coupled, not independently parameterized.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The pattern is genuine spatial structure, not a single blob: the field resolves into more than one connected v-concentration domain (~12 spots at the canonical regime), the Turing spot signature.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(mechanical_out)", "kind": "observable", "path": "mechanical_out"}
-pass_if: {"op": "\u003e=", "provenance": "exec last~=8.29e-18 W (rotary mechanical power = torque*omega, both set by the H+ flux; fig07-executable, run(8)). Real single-molecule magnitude \u2014 small in absolute SI units, but nonzero and driven by the same coupled flux as chemical_out.", "value": 1e-19}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "observable", "path": "obs.n_domains"}
+pass_if: {"op": "\u003e", "provenance": "n_domains ~= 12 at 8000 steps (loose \u003e 1 floor, not the exact 12, so the bound is not a golden-value pin); multi-seed band n_domains in [8, 12] (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)", "value": 1.0}</pre>
       </details>
       
       
@@ -1163,10 +1256,127 @@ pass_if: {"op": "\u003e=", "provenance": "exec last~=8.29e-18 W (rotary mechanic
     
     
     
-    <li class="expected-behavior-item" id="bt-draft-is-inert"
+    <li class="expected-behavior-item" id="bt-equal-diffusion-control-uniform"
         data-test-kind="behavioral"
         
-        data-pytest-node="draft-is-inert"
+        data-pytest-node="equal-diffusion-control-uniform"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">equal-diffusion-control-uniform</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-equal-diffusion-control</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Single-variable causal control, the load-bearing one: identical chemistry and seed, but equal diffusion (Du = Dv = 0.12) -- the differential-diffusion asymmetry removed. The Turing instability never triggers, so the field stays uniform (patterned == 0.0). This is what proves the pattern is CAUSED by the diffusion asymmetry, not the chemistry alone.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
+pass_if: {"op": "==", "provenance": "Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6) -- differential diffusion removed, no pattern (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform)", "value": 0.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-thermal-channel-still-patterns"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="thermal-channel-still-patterns"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">thermal-channel-still-patterns</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-thermal-graded</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The thermal channel GRADES rather than destroys: with a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction, the field is still comfortably patterned (patterned == 1.0, v_var above the floor) -- a real second modality modulating the pattern, not a chemistry collapse.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
+pass_if: {"op": "==", "provenance": "thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); a hotter Ea=1.0/T=1.5 setting was verified to OVERSHOOT into near-uniform collapse and retuned to this graded setting (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)", "value": 1.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-thermal-channel-coarsens"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="thermal-channel-coarsens"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">thermal-channel-coarsens</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-thermal-graded</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The mechanism of the thermal grading, made explicit: the raised temperature field coarsens the pattern to markedly fewer, larger domains than the no-temperature flagship at the same step count (~12 -&gt; ~2), the direct signature of the thermal channel acting on the chemical one.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "observable", "path": "obs.n_domains"}
+pass_if: {"op": "\u003c", "provenance": "thermal n_domains ~= 2 versus the flagship\u0027\u0027s ~12 at the same 8000 steps; loose \u003c 8 bound (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate, not a golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)", "value": 8.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-pattern-is-multiseed-robust"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="pattern-is-multiseed-robust"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -1175,19 +1385,19 @@ pass_if: {"op": "\u003e=", "provenance": "exec last~=8.29e-18 W (rotary mechanic
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">draft-is-inert</strong>
+        <strong style="font-size: 0.9em;">pattern-is-multiseed-robust</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>molecular-interfaces</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-turing-pattern</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">One-line sanity check (not the study&#39;s control): the inert Fig 7 draft (address local:MolecularMechanism, not the compiled Handler) has an empty update by construction, so chemical_out stays at its 0.0 seed and fails this threshold by design — confirming the framework&#39;s definition of a draft, not a scientific counterfactual.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The Turing pattern forms across seeds 1-5, not just the seed=1 draw baked into the composite. Because the physics is deterministic (no RNG), the seed is re-drawn into the INITIAL near-uniform field; v_var stays above the floor for every seed and is reported as a range, with n_domains reported as a range too (seed-sensitive by nucleation-patch placement).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(chemical_out)", "kind": "observable", "path": "chemical_out"}
-pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mechanism) stays at chemical_out=0.0 (empty update by construction) -\u003e fails by design (expected-fail control)", "value": 50.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.v_var)", "kind": "observable", "path": "obs.v_var"}
+pass_if: {"op": "\u003e", "provenance": "v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12]; the gate is \u003e 2*PATTERN_FLOOR = 0.004, the band floor with margin, not the observed edge (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust)", "value": 0.004}</pre>
       </details>
       
       
@@ -1268,7 +1478,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">Both fig07 composites build and fig07-executable runs to completion (tests/test_composites_build.py::test_composite_builds[fig07-molecular-mechanism], [fig07-executable]; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig07-executable]).</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All three molecular-* composites (molecular-turing-pattern, molecular-equal-diffusion-control, molecular-thermal-graded) build and run to completion through the process-bigraph engine directly from their JSON specs (tests/test_molecular_regime.py, tests/test_gray_scott.py, tests/test_gray_scott_physics.py, tests/test_gray_scott_viz.py); guarded skip when the optional process_bigraph dependency is absent, matching this investigation&#39;s convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -1281,7 +1491,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">The compiled ATP-synthase mechanism drives its chemical output port (chemical_out 0-&gt;100) and the other three physical channels move together from the same coupled proton flux; the inert draft stays at seed, isolating the compiled handler as the cause. The specialized subports are honestly reported as structurally present but undriven.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts. The chemical channel patterns (v_var ~0.0011 -&gt; ~0.0119, ~12 domains, patterned == 1.0) while the single-variable equal-diffusion causal control stays uniform (v_var ~= 0, patterned == 0.0), and the thermal channel grades the pattern (~12 -&gt; ~2 domains, v_var ~0.0119 -&gt; ~0.0096) while staying patterned. The four-modality gap (electrostatic + mechanical), the toy-scope boundary, and the illustrative (not resolved) database typing are reported as findings, not claimed away.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1294,7 +1504,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Naming and compiling one concrete molecular machine (ATP synthase) behind the Fig 7 four-channel interface makes a molecular grain — of the kind the disintegration study (Fig 6) drops into — executable and observable, not merely illustrated.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Putting the paper&#39;s §Molecular interface (Fig 7) on the lattice turns &#34;a molecule is a typed interface exposing physical channels&#34; into a spatial mechanism where two of those channels demonstrably compose -- the chemical channel (reaction-diffusion patterning, causally isolated by the equal-diffusion control) and the thermal channel (Arrhenius grading) over one shared field. It takes a coarser, point-scale lumped realization, which made one molecule&#39;s four channels executable at a POINT (F1Fo ATP synthase), and makes the chemical channel SPATIAL, adding a composing thermal channel.</textarea>
         </label>
       </div>
     </div>
@@ -1309,15 +1519,11 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> The Fig 7 draft compiles to an executable that runs.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> All three molecular-* composites (molecular-turing-pattern, molecular-equal-diffusion-control, molecular-thermal-graded) build and run to completion through the engine (8000 internal steps each), directly from their JSON specs.</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s molecular-interface pattern is demonstrated at the toy-real (uncalibrated) level; the ATP-synthase mechanism drives its chemical output and the other three physical channels move together from the same coupled flux.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s §Molecular interface (Fig 7) is demonstrated spatially at the toy-real (tuned, uncalibrated) level for two of its four channels -- the chemical channel (reaction-diffusion patterning, causally isolated by the equal-diffusion control) and the thermal channel (Arrhenius grading) composing over one shared field -- with the four-modality gap, the toy-scope boundary, and the illustrative database typing reported as findings rather than claimed away.</div>
         
-        
-        <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>biomolecular-complementarity</li></ul>
-        </div>
         
       </div>
       
@@ -1326,11 +1532,11 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>compiler dropped/renamed an interface port (law 2 violation)</li><li>handler produced no non-trivial dynamics on the declared physical channels</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the flagship fails to pattern (v_var stays near 0 or patterned != 1.0 within 8000 steps -- the differential diffusion is not destabilizing the seed, or the nucleation patches are missing)</li><li>the equal-diffusion control DOES pattern (v_var rises with Du=Dv -- the pattern is not actually caused by the diffusion asymmetry, or Du/Dv were not held equal)</li><li>the thermal run collapses instead of grading (v_var falls below the floor -- the Arrhenius rate is overshooting, as the retired Ea=1.0/T=1.5 setting did) or fails to coarsen (n_domains not below the flagship -- the temperature field is not reaching the reaction term)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> biomolecular-complementarity (the nested-hierarchy study needs a molecular mechanism at its deepest grain to be meaningful)</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> none -- no study in this workspace is gated on this molecular-channel demonstration.</div>
         
       </div>
       
@@ -1343,24 +1549,57 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>A single molecular mechanism (F1Fo ATP synthase) compiles from its Fig 7 draft and, run to completion, drives all four physical interface channels from one coupled proton flux: chemical (ATP synthesized, 0-&gt;100), electrical (proton current, ~5.29e-17 A), mechanical (Fo rotary power, ~8.29e-18 W) and thermal (dissipated remainder, ~1.98e-18 W). The interface is preserved unchanged by compilation (Law 2). The Fig 7c specialized ports (substrates, cofactors, catalysts, products) are structurally preserved but not driven by this handler — honestly reported, not claimed as dynamic.</li>
+<li>
+<p>The paper's §Molecular interface (Fig 7) chemical channel holds as a 2D spatial mechanism: a Gray-Scott reaction-diffusion system (autocatalysis U + 2V -&gt; 3V plus differential diffusion Dv &lt; Du) turns a near-uniform seed into an emergent Turing spot pattern (v_var ~0.0011 -&gt; ~0.0119, ~12 domains, patterned == 1.0), while the single-variable equal-diffusion causal control (Du = Dv = 0.12) stays UNIFORM (v_var ~= 0, patterned == 0.0). Removing only the diffusion asymmetry removes the pattern.</p>
+</li>
+<li>
+<p>The thermal channel composes with the chemical one: a raised temperature field Arrhenius-scaling the reaction (Ea=0.15, T=1.2) GRADES the pattern (~12 -&gt; ~2 domains, v_var ~0.0119 -&gt; ~0.0096) while staying patterned -- a real second modality, not a collapse. Two of the molecular interface's four channels demonstrably compose spatially.</p>
+</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>ATP-SYNTHESIZED</strong> — chemical_out (ATP synthesized) 0 -&gt; 100 (F1Fo ATP synthase, PMF-driven rotary catalysis)</li>
-<li><strong>ROTARY-POWER-COUPLES</strong> — mechanical_out, electrical_out, thermal_out all move off zero, driven by the same proton flux as chemical_out</li>
-<li><strong>Subports undriven (honesty)</strong> — substrates/cofactors/catalysts/products stay at 0.0 for the full run; present structurally, not simulated</li>
+<li>
+<p><strong>PATTERN-FORMS</strong> -- patterned == 1.0, v_var ~0.0011 -&gt; ~0.0119 over 8000 steps</p>
+</li>
+<li>
+<p><strong>PATTERN-HAS-MULTIPLE-DOMAINS</strong> -- n_domains ~= 12 (multi-seed band [8, 12])</p>
+</li>
+<li>
+<p><strong>EQUAL-DIFFUSION-CONTROL-UNIFORM</strong> -- Du=Dv=0.12: patterned == 0.0, v_var ~= 0 (single-variable causal control)</p>
+</li>
+<li>
+<p><strong>THERMAL-CHANNEL-STILL-PATTERNS</strong> -- thermal patterned == 1.0, v_var ~= 0.0096 (graded, not collapsed)</p>
+</li>
+<li>
+<p><strong>THERMAL-CHANNEL-COARSENS</strong> -- n_domains ~12 -&gt; ~2 under the raised temperature field</p>
+</li>
+<li>
+<p><strong>PATTERN-IS-MULTISEED-ROBUST</strong> -- v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5</p>
+</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>One mechanism (F1Fo ATP synthase) realizes the Fig 7 interface; the four-channel transduction is real in shape (all channels derive from one proton flux with literature-grounded constants) but the magnitudes are illustrative, not fitted to a measured turnover rate under load.</li>
-<li>The Fig 7c enzymatic subports (substrate/cofactor/catalyst/product) are declared and preserved through compilation but carry no dynamics in this handler — no substrate-binding, cofactor, or product-release kinetics are modeled.</li>
-<li>Toy-real kinetics: no explicit c-ring stepping, discrete catalytic sites, or load-dependent torque; the coupling is a single algebraic transduction from one flux, not a mechanistic simulation of rotary catalysis.</li>
+<li>
+<p>Two of the molecular interface's four physical channels are realized spatially (chemical + thermal); the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or tension, is exposed or measured. Owned in investigation.yaml as a named deferral.</p>
+</li>
+<li>
+<p>This is a toy reaction-diffusion demonstration with tuned, uncalibrated constants -- emergent spatial structure from a minimal autocatalytic chemistry, NOT real molecular structure or conformation (nothing at PDB resolution), not a fitted reaction network.</p>
+</li>
+<li>
+<p>The databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species (U/V/P and the autocatalytic reaction given placeholder database-style identifiers), NOT a resolved mapping. A real Reactome-fragment mapping / live database fetch is deferred.</p>
+</li>
+<li>
+<p>The physics is deterministic (no RNG); the multi-seed range reflects sensitivity of the emergent pattern to the initial nucleation-patch placement, re-drawn into the initial field, not a per-tick stochastic process.</p>
+</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Install a second handler behind the same Fig 7c <code>subports</code> refinement that actually drives substrate uptake, cofactor binding, and product release, so the enzymatic vocabulary becomes dynamic rather than structural-only.</li>
-<li>Wire the compiled chemical_out (ATP synthesized) into a downstream energy pool (e.g. the biomolecular-complementarity cascade) so the molecular mechanism drives a cellular-scale observable quantitatively, not just locally.</li>
+<li>
+<p>The electrostatic and mechanical channels made spatial (a charge field driving electromigration; a mechanical force/tension coupling), so more than two of the molecular interface's four channels compose on one field.</p>
+</li>
+<li>
+<p>A real Reactome-fragment mapping / live database fetch that TYPES the Gray-Scott ports against actual ChEBI/Reactome entries, upgrading the illustrative typed-port annotation to a resolved database mapping.</p>
+</li>
 </ul>
 </div>
     </div>
@@ -1379,7 +1618,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
     <div class="overview-section">
       <h3 class="overview-label">Key assumptions</h3>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">All four physical channels (chemical/electrical/mechanical/thermal) are derived from one coupled quantity (the proton flux set by the chemical input), so they are not four independent free parameters — they move together by construction, which is what &#34;physically consistent&#34; means here, not four separately fitted rate laws.</li><li style="margin:2px 0">The Fig 7c `subports` refinement (substrates, cofactors, catalysts, products) is a structural port declaration, not a modeled reaction mechanism. `MolecularMechanismHandler` conforms to the Fig 7b physical-channel signature only; it does not read or write `subports`, so those four leaves stay at their 0.0 seed for the entire run. No substrate-binding, cofactor, catalytic-turnover, or product-release dynamics are claimed.</li><li style="margin:2px 0">Constants (k_cat, H+/ATP stoichiometry, PMF, torque, efficiency) are literature-grounded (Milo &amp; Phillips, *Cell Biology by the Numbers*; Junge &amp; Nelson 2015; Stock et al. 1999) but the model is a single coupled-flux transducer, not a mechanistic rotary-catalysis simulation (no explicit c-ring stepping, no discrete catalytic sites, no load dependence).</li>
+        <li style="margin:2px 0">The interface tested here is the paper&#39;s §Molecular interface (Fig 7): a molecule as a typed interface exposing physical channels (chemical, electrostatic, mechanical, thermal). This study realizes the CHEMICAL channel spatially as Gray-Scott reaction-diffusion (local autocatalysis U + 2V -&gt; 3V, V -&gt; P plus differential diffusion Dv &lt; Du -- Turing patterning; turing1952) and the THERMAL channel as an Arrhenius elementwise rate modulation exp(-Ea*(1/T - 1/Tref)) on the reaction term. The ELECTROSTATIC and MECHANICAL channels are NOT realized -- they are the named four-modality gap, not demonstrated here.</li><li style="margin:2px 0">The databases hook is ILLUSTRATIVE typed-port annotation, not a resolved mapping. The paper names PDB/Reactome/ChEBI/GO as &#34;partial specifications of molecular interfaces and their types&#34;; here that is gestured at by TYPING the Gray-Scott species and reaction with placeholder database-style identifiers (U/V/P as ChEBI-style substrate/activator/product types, U + 2V -&gt; 3V as a Reactome-style autocatalytic reaction record). This is a concrete gesture at what typing a molecular interface against a database would mean -- NOT a claim that these toy species resolve to real PDB structures, Reactome pathway fragments, or ChEBI/GO entries. A real Reactome-fragment mapping / live database fetch is a deferral.</li><li style="margin:2px 0">The pattern is CAUSED by the diffusion-driven (Turing) instability, and this is proven by a single-variable causal control, not assumed. The flagship (Du=0.16, Dv=0.08) and the equal-diffusion control (Du=Dv=0.12) share identical chemistry (F, k), identical seed, identical wiring and step count; the ONLY difference is whether diffusion is differential. Removing the asymmetry removes the pattern (v_var ~= 0, exactly 0.0 in the control), isolating differential diffusion -- not the reaction alone -- as the cause of spatial structure.</li><li style="margin:2px 0">The thermal channel is genuinely ADDITIVE, not a re-parameterization of the chemical one. The reaction term is scaled by rate = exp(-Ea*(1/T - 1/Tref)); with NO temperature field present rate == 1 everywhere and the process is pure chemistry, byte-identical to the chemical-only flagship. The thermal composite differs from the flagship in exactly the Arrhenius parameters and the presence of a raised temperature field -- Du/Dv/F/k/dt/steps_per_tick are held equal (asserted in tests/test_molecular_regime.py), so the coarsening is attributable to temperature, not to a changed chemistry or diffusion regime.</li><li style="margin:2px 0">The parameters are tuned demonstration values, not fitted. The canonical spot regime (Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0) sits in the classic Gray-Scott spot window and comfortably inside the explicit reaction-diffusion CFL limit (max(Du,Dv)*dt*4 = 0.64 &lt; 1; the process raises on an unstable config rather than drifting silently to NaN). The thermal setting (Ea=0.15, T=1.2) was chosen to GRADE rather than collapse: a hotter Ea=1.0/T=1.5 was found to overshoot into near-uniform collapse and was retuned. No literature acceptance band is claimed -- this is a demonstration primitive of the molecular interface&#39;s chemical and thermal channels made spatial, not a model of a specific molecule or medium.</li><li style="margin:2px 0">The physics is DETERMINISTIC -- it has no RNG. The GrayScott process accepts a seed config key but it is currently inert (documented in meta_modelers_guide/molecular/gray_scott.py), so the composites bake a static seed_uv(seed=1) draw into fields.u/fields.v at build time. The multi-seed test therefore re-draws the INITIAL near-uniform field with seed_uv(seed=s) for s in 1-5 (everything else held fixed) and reports the resulting band -- v_var in [0.01157, 0.01193], n_domains in [8, 12] -- as genuine sensitivity of the emergent pattern to the nucleation-patch placement, not as a per-tick stochastic process.</li>
       </ul>
     </div>
     
@@ -1389,7 +1628,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">The compiled ATP-synthase executable drives all four physical channels (chemical/electrical/mechanical/thermal) from one coupled proton flux; the magnitude is illustrative and not fitted to a specific measured turnover rate under physiological load.</li><li style="margin:2px 0">The Fig 7c specialized enzymatic ports (substrates, cofactors, catalysts, products) are structurally present and preserved through compilation but are not driven by this handler — they stay at their 0.0 seed. No substrate-binding, cofactor, catalytic-turnover, or product-release dynamics are modeled or claimed.</li><li style="margin:2px 0">One mechanism (F1Fo ATP synthase) realizes the Fig 7 interface; the port set admits other molecular mechanisms but only this one is installed and measured.</li>
+        <li style="margin:2px 0">Two of the molecular interface&#39;s four physical channels are realized spatially (chemical: reaction-diffusion / Turing; thermal: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or tension, is exposed or measured here. This is owned in investigation.yaml&#39;s what_this_does_not_demonstrate, as a named deferral.</li><li style="margin:2px 0">This is a toy reaction-diffusion demonstration, NOT real molecular structure or conformation. What is demonstrated is emergent spatial structure from a minimal autocatalytic chemistry with tuned, uncalibrated constants -- nothing at PDB resolution, no fitted reaction network, no calibrated molecule.</li><li style="margin:2px 0">The databases claim -- PDB/Reactome/ChEBI/GO as &#34;partial specifications of molecular interfaces and their types&#34; -- is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species (U/V/P and the autocatalytic reaction annotated with placeholder database-style identifiers), a concrete gesture at typing a molecular interface, NOT a resolved mapping. A real Reactome-fragment mapping / live database fetch is a named deferral.</li><li style="margin:2px 0">The parameters (Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0; thermal Ea=0.15, T=1.2) are tuned demonstration values, not fitted, and no literature acceptance band is claimed. The canonical regime sits inside the explicit reaction-diffusion CFL limit (max(Du,Dv)*dt*4 = 0.64 &lt; 1; the process raises on an unstable config). The thermal setting was retuned from a hotter one (Ea=1.0/T=1.5) that overshoots into near-uniform collapse -- pinned as a direct-physics assertion so grading is tested against collapse.</li><li style="margin:2px 0">The physics is deterministic -- no RNG. The GrayScott seed config is accepted but currently inert, so the multi-seed range (v_var in [0.01157, 0.01193], n_domains in [8, 12]) is produced by re-drawing the initial near-uniform field for seeds 1-5, reflecting sensitivity to nucleation-patch placement, not a per-tick stochastic process.</li><li style="margin:2px 0">Only two of the four physical channels (chemical and thermal) are realized; a point-scale predecessor drove all four channels (chemical, electrical, mechanical, thermal) from one coupled proton flux via a concrete rotary-ATP-synthase mechanism. Spatializing the electrical and mechanical channels, and realizing a named molecular machine rather than a generic reaction-diffusion chemistry, remain open.</li><li style="margin:2px 0">The specialized enzymatic subports (substrate, cofactor, catalyst, product) are not addressed; only the top-level chemical and thermal physical channels are realized spatially.</li>
       </ul>
     </div>
     
@@ -1416,8 +1655,8 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>3</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">3 PASS</span> ·
+        <strong>2</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">2 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -1451,7 +1690,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run (fig07-molecular-mecha
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "224c4cd4169ed24cc75ac2f2d6147de5854667ac", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/224c4cd4169ed24cc75ac2f2d6147de5854667ac", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 14:19 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "f9830302f3670bc67e5dae28f5cbba55e7675c5d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/f9830302f3670bc67e5dae28f5cbba55e7675c5d", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 15:14 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "molecular-interfaces";
