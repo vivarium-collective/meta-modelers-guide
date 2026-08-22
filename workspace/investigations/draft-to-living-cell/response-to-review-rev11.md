@@ -38,16 +38,25 @@ equivalence-class claim made executable." The colony-level ~0.2% volume agreemen
 a **finite-lattice saturation artifact** (~97.5% occupancy — both mechanisms hit the same ceiling),
 not interface agreement. The finished 3rd swap (interface-realization) already sweeps the operating
 range chem∈[0.2, 2.5] rather than a single point (max ~10.5% across the range, byte-identical ports).
-**Next step.** A held-out test — tune on one condition, test on a condition neither mechanism saw
-(different field, O₂ cap, run length; a held-out sub-range for the realization swap) — and a
-pre-saturation colony comparison. These are named as the frontier before "substitutable" is earned.
+**Done (rev-12b, measured).** The held-out battery is run with the MM params frozen. Single cell:
+mechanism-independent WITHIN the calibrated glucose-limited/fixed-O₂ regime (held-out ~13% on a
+different glucose field and a 2× run), but ~74% divergence on a held-out O₂ cap the lumped box has no
+oxygen variable for — surrogate calibration across the O₂ axis, mechanism-independence within it.
+Colony pre-saturation: growth/competition observables agree ~9%, but the ~0.2% acetate match was a
+lattice-saturation artifact — pre-saturation the acetate diverges ~68%. DoF reported (single cell
+4/4 exactly determined; colony 2 free/6 over-constrained, and the one parameter controls exactly the
+acetate that fails). `tests/test_substitutability_heldout.py`, `tests/test_cellcell_presaturation.py`.
 
 ### M3 — Evolution "CAUSED by selection" not supported at n=5
 **Now.** Softened to **"consistent with selection"** everywhere; the dev-evo study records that n=5
 (4/5 vs 2/5, Fisher p ≈ 0.5) is under-powered, that most selection-ON deltas fall within a plausible
 drift envelope, and that the committed gate currently evaluates flagship seed 3.
-**Next step.** 20–50 seeds/arm, a rank test (selection-ON vs no-selection deltas) against a drift
-null, and re-gating on the ensemble statistic rather than seed 3.
+**Done (rev-12b, measured — claim upgraded).** A 30-seed ensemble per arm: selection-ON mean delta
++0.233 (up 22/30) vs no-selection −0.026 (up 13/30); Mann–Whitney U p = 5.3e-4, rank-biserial
+r = +0.52, and a Wilcoxon drift-null p = 1.2e-5 (the shift is distinguishable from neutral drift).
+The gate is re-based on the ensemble statistic (`gate_class: acceptance_criterion`), seed 3 kept only
+as a regression pin. The effect is significant but medium — about a third of selection-ON seeds still
+drift down, stated as such. `scripts/run_dev_evo_ensemble.py`, `tests/test_dev_evo_ensemble.py`.
 
 ### M4 — EMERGE/autopoiesis causally circular
 **Now.** Reframed as **"authored operational closure, consequence-tested."** We state plainly that
@@ -63,8 +72,13 @@ simulation-derived, but the resorption ramp (`resorb_per_tick = 6.0`) is **scrip
 records the unresolved discrepancy — 68 shed particles exceed the 56-px area at release — and puts
 the "shed material, not deleted mass" claim **on hold** until a ledger closes it. BrownianMovement is
 now seeded (see M6).
-**Next step.** A CPM→particle mass ledger asserting `n_particles ≤ unique vacated pixels` across the
-conversion, reusing the flagship's per-species ledger machinery.
+**Done (rev-12b, measured — real bug found and fixed).** The CPM→particle mass ledger exposed a
+genuine double-count: 6 pixels were shed twice (vacated, re-occupied by CPM Metropolis fluctuation as
+the footprint drifts, then vacated again). The weak bound `shed ≤ unique_vacated` (68 ≤ 69) *masked*
+it — only `shed == distinct_pixels` caught it. Fixed with an already-shed guard: now 63 particles at
+63 distinct pixels ≤ 69 unique vacated. The ledger closes and "shed material, not deleted mass" is
+restored *with* the honest explanation — the cell traverses 69 distinct pixels over its released
+lifetime (drift), not the 56 it holds at the release instant. `tests/test_disintegration_ledger.py`.
 
 ### M6 — Reproducibility / hygiene
 **Now.** (a) **BrownianMovement is seeded** (`seed: 1`) — the debris scatter is now deterministic.
@@ -145,5 +159,45 @@ source/sink steady-state regime, and a cadence-halving convergence check for the
 
 ---
 
-*This revision does the re-leveling and the cheap real fixes in full; the scheduled experiments are
-tracked as the investigation's named frontier, each attached to the claim it would raise.*
+---
+
+## Revised claims register (rev.11 → rev.12b)
+
+Every headline claim, before and after — the after column is the *measured* result, not a promise.
+
+| Claim | BEFORE (rev.11) | AFTER (rev.12b) |
+|---|---|---|
+| **SWAP / substitutability** | "Substitutability is demonstrated (dFBA vs lumped MM behind the same interface, observables within ~10%) at two levels." | Mechanism-independence **measured against held-out conditions**: holds within the calibrated glucose-limited/fixed-O₂ regime (single cell ~13%, colony growth ~9% pre-saturation); breaks where the lumped box lacks a needed variable (O₂ axis ~74%, acetate trajectory ~68%). Regime-bounded, boundary pinned. DoF reported. |
+| **Selection causality** | "Only selection-ON shifts the mean directionally, so the trait shift is CAUSED by selection." (n=5, gate on seed 3) | **Selection drives the shift — measured**: 30-seed ensemble, Mann–Whitney p=5.3e-4, drift-null p=1.2e-5, r=+0.52; gated on the ensemble statistic. Significant but medium (a third of seeds still drift down). |
+| **Autopoiesis / EMERGE** | "The membrane is produced AND maintained from the inside — the paper's individual criterion." | **Authored operational closure, consequence-tested**: closure-dependence is a hand-coded global `binary_fill_holes` observer, not emergent-from-local-physics; knockout/puncture follow from that construction. Local-mechanism version (Protocell v2) is a named next build. |
+| **Disintegration mass** | "Genuine spatial dissolution, shed material not deleted mass" (68 shed). | **Ledger closes after fixing a real double-count**: 6 pixels were shed twice; corrected to 63 at 63 distinct pixels ≤ 69 unique vacated. Claim restored *with* the drift explanation. |
+| **Competitive exclusion** | "Drives asymmetric growth toward competitive exclusion (3.69× margin)." | "**Resource preemption** between two non-dividing cells (2.9–3.7× across seeds); population-level exclusion needs dividing populations. The ~97.5%-lattice swell is an artifact." |
+| **Cross-feed geometry** | "37.5× acetate/glucose diffusion ratio is directionally defensible." | "A **legibility choice** (~20× the physical ~1.5–2× ratio), stated as such; a 2:1 realistic-diffusivity run is queued." |
+| **Flagship niche** | "Depletes footprint glucose up to ~18% — niche construction." | "**Environmental modification** (both numbers: ~18% peak-to-trough, ~6% from the initial condition); 'niche construction' reserved for dev-evo where a selection feedback exists." |
+| **Validation gates** | "57/57 pass; confidence Accepted." | "Gates split **regression_pin vs acceptance_criterion**; investigation `acceptance_criteria` populated with pre-stated priors + external anchors; studies `Provisional`; counts split committed/narrated/expected-fail; config-consumption audit clean across 52 composites." |
+| **Verdict line** | "The pattern set is complete and the central claim holds in executable form." | "The patterns compose and run with single-variable controls; SWAP holds **within its regime** (boundary measured), selection is **significant** (p=5.3e-4), EMERGE is authored-closure. A well-engineered draft, demonstrably; a validated cell, not yet." |
+
+## Prioritized checklist — could it change the headline verdict?
+
+| Item | Status | Could change the verdict? |
+|---|---|---|
+| M1 gate-class split + pre-stated ACs + anchors | ✅ done | Changes what "passed" means everywhere |
+| M6 config-consumption audit | ✅ done — **clean** (0 dropped keys / 52 composites, check proven sensitive) | Yes — a dropped load-bearing key would have forced re-runs; none found |
+| M3 30-seed selection + rank test + drift-null | ✅ done — **significant** | Yes — and it *upgraded* the claim |
+| M2 held-out SWAP + pre-saturation colony | ✅ done — **regime-bounded** | Yes — re-leveled SWAP to condition-local, boundary measured |
+| M5 CPM→particle ledger | ✅ done — **bug found + fixed** | Study-level: identity claim now rests on a closed ledger |
+| M4 autopoiesis reframe | ✅ done (reframe) | EMERGE weakest of three verbs, stated |
+| M7/M8 units, band, niche, thermal, dev band | ✅ done (re-level) | Study-level |
+
+## Named next builds (concrete, not vaporware)
+- **Protocell v2** — emergent closure via an interior precursor `p` (production `k_prod·φ·p`, `p` lost by leakage where the membrane is open), making the puncture a real self-heal prediction rather than a restatement. Ship v1-relabeled + the v2 result whichever way it falls.
+- **M7 remainder** — cross-feed at a 2:1 realistic diffusivity (longer horizon), dividing-population competition (`cellcell-compete-div` + viability floor, to earn or drop "competitive exclusion"), one source/sink steady-state regime + a cadence-halving convergence check.
+
+---
+
+*The reviewer's test of success — that the revision contain at least one gate that could have failed and
+is reported honestly whichever way it fell — is met several times over, not as a promise but as run
+results: the SWAP held-out battery divulged a ~74% O₂-axis divergence and a ~68% pre-saturation acetate
+divergence; the selection ensemble could have come back null and instead cleared p=5.3e-4; and the mass
+ledger found and fixed a real double-count the weaker bound had masked. Naming a weakness is not
+neutralizing it — so we ran the experiments and let them speak.*
