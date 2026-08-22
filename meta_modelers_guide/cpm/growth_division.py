@@ -159,6 +159,21 @@ class CpmGrowthDivision(Process):
         self._models[cid] = model
         self.biomass[cid] = biomass0
 
+    def _cell_glucose_vmax(self, cid):
+        """Glucose-uptake vmax used in cell `cid`'s dFBA. DEFAULT: the global
+        config `glucose_vmax` (current behavior, identical for every cell).
+        Hook for subclasses (e.g. study 9's `CpmEvolution`) that carry a
+        per-cell heritable trait instead of a population-wide constant."""
+        return float(self.config["glucose_vmax"])
+
+    def _on_division(self, parent_id, daughter_id):
+        """Hook called once per (parent, daughter) pair inside the division
+        loop below, after biomass/lineage bookkeeping for that pair. DEFAULT:
+        no-op (current behavior). Subclasses override this to carry
+        additional per-cell state (e.g. a mutated heritable trait) through
+        the same creation-order `zip(dividing, new_ids)` pairing."""
+        return None
+
     def _fba(self, cid, local_glc, interval):
         """One dFBA step for cell `cid`: MM-limit glucose uptake on the
         footprint's mean local concentration, solve, and return the idealized
@@ -167,7 +182,7 @@ class CpmGrowthDivision(Process):
         c = self.config
         m = self._models[cid]
         km = float(c["glucose_km"])
-        vmax = float(c["glucose_vmax"])
+        vmax = float(self._cell_glucose_vmax(cid))
         v = vmax * local_glc / (km + local_glc) if local_glc > 0 else 0.0
         m.reactions.EX_glc__D_e.lower_bound = -float(v)
 
@@ -294,6 +309,8 @@ class CpmGrowthDivision(Process):
                 gen = self.generation.get(parent_id, 0) + 1
                 self.generation[daughter_id] = gen
                 self.max_generation = max(self.max_generation, gen)
+
+                self._on_division(parent_id, daughter_id)
 
         # re-derive live ids again post-division (new daughters + any phantom
         # zero-volume id from a too-small split, which we skip via `fp.any()`
