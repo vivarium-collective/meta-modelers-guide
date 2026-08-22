@@ -579,20 +579,36 @@ def run_colony_frames(composite_state: dict, core, steps: int = 20, cadence: int
 # Disintegration (single dissolving cell + scattering particles) frame capture
 # --------------------------------------------------------------------------
 
+_VIABILITY_ISOLINE_COLOR = "#39ff14"  # bright neon green -- reads over inferno's
+# black/purple/orange/yellow range AND over the translucent deepskyblue cell
+# fill alike, distinct from both the white footprint contour and the white
+# particle markers.
+
+
 def _render_disintegration_frame(stressor: np.ndarray, footprint: np.ndarray,
                                   particle_px: list[tuple[float, float]], time: float,
                                   stressor_vmax: float, *, event_label: str | None = None,
-                                  field_label: str = "stressor"
+                                  field_label: str = "stressor",
+                                  viability_threshold: float | None = None
                                   ) -> np.ndarray:
     """Render one matplotlib (Agg) frame: the ``stressor`` field as a heatmap
     background, the CPM cell's footprint drawn via the shared
     :func:`_footprint_fill` (translucent fill + contour — stays legible down
     to a handful of pixels right before full dissolution, unlike a bare
-    contour), and every live particle's mapped pixel position overplotted as
-    a small scattering debris marker. Returns an (H, W, 3) uint8 RGB array
-    (the figure canvas buffer). ``event_label`` (from
-    :func:`_event_label_for_tick`) is stamped into the shared title the
-    moment the cell's release fires.
+    contour), the ``stressor == viability_threshold`` ISOLINE (a single-level
+    matplotlib ``contour``, when ``viability_threshold`` is given), and every
+    live particle's mapped pixel position overplotted as a small scattering
+    debris marker. Returns an (H, W, 3) uint8 RGB array (the figure canvas
+    buffer). ``event_label`` (from :func:`_event_label_for_tick`) is stamped
+    into the shared title the moment the cell's release fires.
+
+    The isoline is the paper's Fig 6 level-shift boundary made literal: a
+    moving front the audience watches close in on the cell frame by frame and
+    visibly touch its footprint right at release (``released_tick``), instead
+    of release only being legible from the metrics panel's vertical line.
+    Drawn AFTER the footprint fill (not before) so it stays visible even
+    where the front has advanced onto/past the cell's own translucent region,
+    rather than being painted over by it.
     """
     import matplotlib
     matplotlib.use("Agg")
@@ -604,6 +620,15 @@ def _render_disintegration_frame(stressor: np.ndarray, footprint: np.ndarray,
     fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label=field_label)
 
     _footprint_fill(ax, footprint, "deepskyblue", fill_alpha=0.5, contour_color="white")
+
+    if (viability_threshold is not None
+            and stressor.min() <= viability_threshold <= stressor.max()):
+        ax.contour(stressor, levels=[viability_threshold], colors=[_VIABILITY_ISOLINE_COLOR],
+                   linewidths=2.2, linestyles="dashed", zorder=6)
+        handles = [plt.Line2D([0], [0], color=_VIABILITY_ISOLINE_COLOR, lw=2.2,
+                              linestyle="dashed",
+                              label=f"viability isoline ({field_label} = {viability_threshold:g})")]
+        ax.legend(handles=handles, loc="lower right", fontsize=7, framealpha=0.6)
 
     if particle_px:
         cols, rows = zip(*particle_px)
@@ -641,6 +666,13 @@ def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cade
     for y/row), so the forward pixel mapping used here for plotting is
     ``col = x / bounds_x * nx``, ``row = y / bounds_y * ny``.
 
+    Every frame also overlays the ``stressor == viability_threshold`` isoline
+    (:func:`_render_disintegration_frame`'s single-level ``contour``), read
+    from the SAME ``viability_threshold`` process config the release trigger
+    itself gates on -- the paper's Fig 6 level-shift boundary made literal as
+    a moving front the audience watches close in on the cell and visibly
+    touch its footprint right at ``released_tick``.
+
     Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
     arrays; ``metrics`` is a dict of equal-length lists -- ``time``, ``area``,
     ``mean_stressor``, ``n_particles``, ``n_components``, ``released_tick``
@@ -672,6 +704,11 @@ def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cade
     bx = float(bounds.get("x", nx))
     by = float(bounds.get("y", ny))
     n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    # The Fig-6 isoline overlay (see `_render_disintegration_frame`) needs the
+    # SAME viability_threshold the process itself gates release on, read
+    # straight from the process config rather than duplicated/hardcoded here.
+    viability_threshold = float(composite_state[proc_key]["config"].get("viability_threshold", 0.5))
 
     metrics: dict[str, list[float]] = {
         "time": [], "area": [], "mean_stressor": [], "n_particles": [],
@@ -717,7 +754,8 @@ def run_disintegration_frames(composite_state: dict, core, steps: int = 20, cade
     frames = [
         _render_disintegration_frame(s, fp, ppx, t, stressor_vmax,
                                       event_label=_event_label_for_tick(events, t),
-                                      field_label=field_name)
+                                      field_label=field_name,
+                                      viability_threshold=viability_threshold)
         for s, fp, ppx, t in raw
     ]
 
