@@ -47,6 +47,9 @@ def test_composite_builds(spec_path):
     if "CpmGrowthDivision" in raw:
         pytest.importorskip("cpm")
         pytest.importorskip("cobra")  # dFBA-driven growth
+    if "CpmEvolution" in raw:
+        pytest.importorskip("cpm")
+        pytest.importorskip("cobra")  # dFBA-driven growth
     if "CpmSorting" in raw:
         pytest.importorskip("cpm")           # no cobra — sorting is metabolism-free too
     spec = json.loads(raw)
