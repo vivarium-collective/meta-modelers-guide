@@ -1,622 +1,375 @@
 schema_version: 2
 name: draft-to-living-cell
 title: From Draft to Living Cell
-created: '2026-08-15'
-status: complete
+created: '2026-08-21'
+status: running
 object_of_evaluation: composition-protocol
 runtime:
   default_emitter: sqlite
-question: 'Is a cellular interface simultaneously a modeling choice — a decision about which
-
-  ports matter, what units they carry, how a process couples to the rest of the cell — and a
-
-  testable biological hypothesis about which interactions actually govern a cell''s fate? And
-
-  does treating composition as an ongoing practice — connect two interfaces where their
-
-  assumptions hold, cut the model open at the interface when those assumptions fail, coarse-grain
-
-  a resolved network back into a lumped exchange when organization re-emerges — let the same
-
-  cellular specification hold together across environment coupling, cell-cell coupling,
-
-  molecular mechanism, nested complementarity, autopoietic closure, growth, division, and the
-
-  harder transitions of development and evolution, while tracking viability bounds as the
-
-  locus of minimal agency throughout?
-
-  '
-hypothesis: 'Every recurring composition pattern in the cellular-interface paper — the typed
-
-  contract, environment coupling, cell-cell coupling, the disintegration/grain-swap that cuts
-
-  the model open at the interface, the molecular mechanism, nested complementarity, autopoietic
-
-  closure, growth-driven division, and the developmental/evolutionary rewrite — can be authored
-
-  as an inert draft (typed, unit-bearing ports + a structural contract, with no dynamics) and
-
-  then *compiled* — by installing one conforming mechanism per draft — into an executable that
-
-  preserves the paper''s interface exactly and produces genuine dynamics. Across the 9 studies,
-
-  the interface is the site where ordinary chemical dynamics becomes a self-maintaining,
-
-  viability-bounded agent, and composition — connecting, cutting open, coarse-graining — is how
-
-  that boundary is built, tested, and maintained.
-
-  '
-lead: 'A cellular interface is not just a modeler''s simplification — it is a testable hypothesis about
-  which interactions matter, and staying alive is what makes the boundary real. A cell is a
-  self-maintaining, adaptive agent exactly to the extent that it holds its exchange variables
-  inside a viability bound; crossing that bound is what forces a model — and the biology it
-  represents — to be cut open and re-described at another grain. This investigation follows the
-  paper''s own arc across 9 studies, each written first as an inert typed draft and then compiled
-  into a running executable that preserves the interface exactly, from the interface itself
-  through where it holds, where it fails, and how it is rebuilt at another level. The flagship
-  exhibit is Disintegration (Fig 6) — a viability collapse that can be played step by step, plus
-  the same metabolic interface realized at three grains — coarse, kinetic, and real COBRApy
-  flux-balance — behind ports that never move.'
+question: >-
+  Does the paper's central claim hold in executable form — that a biological interface can be
+  treated as a modeling choice and a testable hypothesis, so that composing heterogeneous,
+  independently-built simulators through one typed interface per pattern reproduces the paper's
+  cellular composition patterns? And does the same interface survive being realized by very
+  different mechanisms behind it — a Cellular Potts cell versus a lumped-ODE cell, dynamic
+  flux-balance analysis versus a lumped Michaelis-Menten kinetic — as the paper's substitutability
+  claim predicts? The subject here is the interface; process bigraphs (Vivarium) are the example
+  substrate we use to make it executable.
+hypothesis: >-
+  The paper's composition patterns are properties of the interfaces, not of any particular
+  mechanism behind them. One typed coupling process per pattern is enough to compose
+  independently-built frameworks (viva-cpm, spatio-flux) without either one knowing about the
+  other; each study is a behavior-gated test of an interface hypothesis, passing or failing on
+  genuine simulation output rather than a scripted trajectory; and where the same interface is
+  realized by two different mechanisms the externally observable relation is preserved — an
+  executable instance of the paper's equivalence-class claim.
+lead: >-
+  This investigation turns the cellular-interface paper's nine composition patterns into
+  executable, behavior-gated interface tests. Each pattern is a hypothesis about which
+  interactions matter, expressed as one typed coupling process; running the composite either
+  reproduces the pattern's characteristic behavior or it does not. Read in order, the nine studies
+  trace an arc — interface, individuality, viability, self-maintenance, agency, adaptation — from
+  the bare interface contract to a growing, competing, self-maintaining, evolving agent. These are
+  demonstrations, not fitted models: every constant is toy-real, chosen for legible dynamics over a
+  short run, and every study states its honest gap. Process bigraphs and Vivarium are the example
+  substrate, not the thesis — the thesis is that interfaces are a natural level at which
+  heterogeneous mechanisms compose and can be compared. The flagship, cell-environment-coupling,
+  makes the outward sense/act loop concrete: one coupling process reads a spatio-flux nutrient grid
+  at a real CPM cell's own footprint, runs one dynamic-FBA step there (e_coli_core, oxygen-capped
+  to force acetate overflow), grows the cell's CPM target volume from the biomass produced, and
+  writes the uptake and secretion back into the shared field as a spatial delta that spatio-flux's
+  DiffusionAdvection then spreads. Over 20 ticks the cell grows roughly 3.4x (32 to 110 CPM lattice
+  pixels on a 60x60 field), depletes the glucose at its own footprint by up to ~18% before
+  diffusion partially resupplies it, and leaves a spreading acetate plume — niche construction made
+  spatial and metabolic, not scripted. All nine patterns now have a study: eight realized as real
+  2D spatial mechanisms — most as compositions of two independently-built simulators, a few as a
+  single spatial reaction-diffusion or phase-field mechanism — plus the foundational
+  cellular-interface contract itself. Learning — a cell whose history of interaction changes its
+  future regulation to keep itself viable — is the arc's open next rung, named but not yet built.
 executive:
-  what_is_this: 'This investigation turns *A meta-modeler''s guide to the cellular interface* into an
-    executable test of the paper''s central claim: a cellular interface is simultaneously a modeling
-    choice and a testable biological hypothesis about which interactions govern a cell''s fate. Each
-    study is written twice. First as a draft: a typed, unit-bearing interface — a structural contract
-    of port names, types, and wiring, with no committed mechanism. It says what a process couples to,
-    not how. Then it is compiled, which installs one or more conforming mechanisms — mechanistic,
-    rule-based, data-driven, or otherwise — behind the identical ports, so the running simulation
-    preserves the declared interface exactly. This operationalizes the paper''s R_L (the process-
-    implementation relation) and the Discussion''s semantic-to-executable layer: a draft is the
-    semantic layer, and compilation is the step that gives it an executable one. The compiler''s
-    conformance check is structural only: it verifies that a handler supplies every port with a
-    compatible type and wiring, and refuses one that does not. It does not check units, dimensions,
-    invariants, or runtime behavior.
+  what_is_this: >-
+    "From Draft to Living Cell" is the executable companion to the meta-modeler's guide: the
+    paper's nine cellular composition patterns, each realized as a runnable model behind one typed
+    interface. The organizing idea is the paper's own — an interface is a modeling choice and a
+    testable biological hypothesis at once, naming which interactions across a cell's boundary
+    matter and which can be abstracted away. Every study makes one such interface explicit and puts
+    it behind a behavior gate. The interface is the load-bearing artifact: it, not either framework
+    alone, is what lets two simulators that were never designed with each other in mind compose.
+    The flagship's coupling process, CpmCellField, is exactly this — the point where a CPM cell's
+    footprint (a set of lattice pixels) becomes a spatio-flux field read, and a dynamic-FBA solution
+    (mmol/gDW/hr fluxes) becomes a per-pixel field delta and a CPM target-volume update. Composition
+    runs in two directions: outward, where a cell couples to its environment and to other cells; and
+    inward, where internal processes compose to produce the interface and the viability constraints
+    that hold it together. Process bigraphs and Vivarium are the example substrate that makes all of
+    this executable — they are how the patterns are expressed, not the claim being tested.
 
 
-    The point is not to assemble one monolithic cell model. It is to test whether composition is an
-    ongoing practice rather than a final architecture: connect two interfaces where their assumptions
-    hold (cell-environment and cell-cell coupling), cut the model open at the interface when those
-    assumptions fail and the right level of description drops to molecules (disintegration — the
-    paper''s Fig 6, and this investigation''s flagship), and coarse-grain a resolved molecular network
-    back into a lumped exchange when organization re-emerges (the same pattern run in reverse, and
-    again in autopoiesis). Underneath every study sits one throughline: viability bounds and minimal
-    agency. A cellular description is valid only while its interface variables sit inside a viability
-    bound; the interface is the locus where ordinary chemical dynamics becomes a self-maintaining,
-    adaptive agent, and losing that boundary is exactly what disintegration demonstrates.
-
-
-    The 9 studies below follow the paper''s own order: the cellular interface itself, then where it
-    couples to environment and to other cells, then where it breaks (disintegration) and what it is
-    made of underneath (molecular interfaces, biomolecular complementarity, autopoiesis), then how it
-    is rewritten across time (growth and division, development and evolution). A closing capstone
-    carries the disintegration grain-swap up to one hand-assembled whole cell that grows, divides, and
-    dies; a coverage note confirms that every figure draft in this investigation compiles to a running
-    executable.'
-  verdict: 'The reading holds, and it runs, across all 9 studies in the paper''s order. The interface
-
-    is a testable hypothesis, not just a convenience: cellular-interface (Fig 4) compiles a typed
-
-    contract into a bounded, goal-directed cell, and home to law 1 conformance — the one concrete
-
-    impostor handler in this codebase (a non-conforming metabolism that renames/drops ports) is
-
-    rejected by the compiler at compile time with a CompileError naming the missing ports; that
-
-    impostor itself lives in the metabolism/Fig 6 code, cross-referenced here from disintegration.
-
-    Cell-environment coupling (Fig 5) closes a genuine sense/act loop over a real diffusing spatial
-
-    field — niche construction, not scripted (law 2). Cell-cell coupling (no figure of its own) shows
-
-    that composing two cell interfaces over one shared nutrient store couples constraint, not just
-
-    state: competition starves the weaker cell while the stronger persists; a different handler over
-
-    the same interface (cross-feeding) keeps both alive (law 4).
-
-
-    The flagship is Disintegration (Fig 6): playable — a scripted thermal shock collapses viability,
-
-    halts viability-gated metabolism, and turns biomass into molecular debris, watchable step by step
-
-    in the Composite Explorer — and structural: the same metabolic-exchange interface is realized at
-
-    three grains (a coarse lumped yield, a saturating Michaelis-Menten kinetic, and real COBRApy
-
-    flux-balance optimization over e_coli_core) behind ports that never move — the cell-to-molecular-
-
-    network grain-swap that carries coarse, kinetic, and real-FBA behavior behind one interface
-
-    (law 4).
-
-
-    Molecular interfaces (Fig 7) drops one level further: an F1Fo ATP-synthase mechanism drives all
-
-    four physical channels — chemical, electrical, mechanical, thermal — from one coupled proton
-
-    flux, honoring the four-channel contract — an example of the kind of molecular grain
-
-    disintegration drops into.
-
-    Biomolecular complementarity (Fig 8) nests six place-graph levels deep with a coupled gene-
-
-    expression cascade wired to the deepest leaf, and the interface survives that nesting — law 2''s
-
-    deepest test in this codebase; complementarity/selectivity is narrated as the paper''s organizing
-
-    idea, but hierarchical assembly is what the executable demonstrates, not a binding-affinity
-
-    mechanism. Autopoiesis (Fig 9) compiles metabolism, containment, and replication into mutual
-
-    closure toward a minimal cell — law 4''s second grain-swap home — but this is the closure pattern
-
-    demonstrated qualitatively, not a validated autopoietic system.
-
-
-    Growth and division (Fig 10a,b) is the sharpest structural result: an autocatalytic, energy-
-
-    coupled growth process drives the cell''s own DNA past a threshold, and crossing it fires a
-
-    genuine place-graph rewrite — one cell node becomes two, mass conserved (the parent is halved,
-
-    not duplicated) — law 2'' (rewrite conformance) alongside law 2 (interface preserved across the
-
-    rewrite). Development and evolution (Fig 10c-f) is explicitly caveated: biofilm nesting and
-
-    port-addition/selection compile and run as event-driven rewrites, and a "Live Topology" pair for
-
-    each genuinely inserts and removes place-graph nodes, but selection is a single ODE with fixed
-
-    constants and the "new port" a scripted config ramp — this study''s own gate is needs_calibration,
-
-    and the paper itself calls this transition "an open and substantial challenge."
-
-
-    Finally, a capstone assembled by hand (not compiler-emitted) carries the disintegration grain-swap
-
-    up to a whole cell — coarse, kinetic, and real-FBA metabolism behind one interface give three
-
-    distinct life histories, and each cell grows, divides once (mass-conserved), and dies on a
-
-    scripted thermal shock. Same law, one level up.
-
-    '
-  verdict_status: passed
+    The paper's substitutability claim — that different mechanisms may realize the same externally
+    observable relation, so interfaces provide a natural level at which heterogeneous mechanisms can
+    be compared — is shown concretely rather than asserted: the flagship swaps its internal
+    metabolism from dynamic-FBA to a lumped Michaelis-Menten kinetic behind the byte-identical
+    CpmCellField ports, and the interface-level observables agree within ~10%. Same interface,
+    different mechanism, preserved behavior.
+  verdict: >-
+    The pattern set is complete and the central claim holds in executable form. All nine of the
+    paper's composition patterns have a study; eight are realized as real 2D spatial compositions
+    (a Cellular Potts cell coupled through one typed process to spatio-flux diffusion and
+    dynamic-FBA, or to a pure reaction-diffusion or phase-field mechanism), and the ninth is the
+    foundational cellular-interface contract itself. The flagship, cell-environment-coupling, closes
+    the outward sense/act loop with genuine simulation output — over 20 ticks the agent depletes
+    local glucose (up to ~18% at its own footprint before diffusion partially resupplies it), grows
+    (CPM volume 32 -> 110 pixels, roughly 3.4x, against a 3600-pixel lattice it does not come close
+    to filling), and secretes acetate that diffuses outward into a plume. This is niche construction
+    as a real spatial and metabolic consequence of coupling two independently-built simulators, not
+    a scripted trajectory. Substitutability is demonstrated (dynamic-FBA vs lumped Michaelis-Menten
+    behind the same interface, observables within ~10%). These are demonstrations with toy-real
+    constants, not calibrated models, and each study names its own honest gap — the whole is a
+    proof that the paper's interfaces compose and behave as claimed, not a quantitatively validated
+    cell.
+  verdict_status: needs_calibration
   key_figures:
-  - cellular-interface
-  - disintegration
-  - growth-and-division
+  - cell-environment-coupling
   decisions_needed:
-  - "development-and-evolution's own gate is needs_calibration: selection is a single fixed-constant
-    ODE and the \"new port\" a scripted config ramp, not emergent population or fitness dynamics.
-    Treat its results as pattern demonstrations only until replaced with genuine, state-driven
-    selection and innovation mechanisms."
+  - >-
+    All nine composition patterns now have a study: eight realized as real 2D spatial mechanisms
+    (cell-environment-coupling, cell-cell-coupling, disintegration, molecular-interfaces,
+    biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution) plus
+    the foundational cellular-interface contract. The honest frontier is not coverage but depth:
+    each study realizes part of its pattern's full claim and names the rest as a gap.
+  - >-
+    The arc's open next rung is learning — a cell whose history of interaction changes its future
+    regulation in a way that measurably improves its capacity to stay viable, the executable bridge
+    from a self-maintaining agent to an adaptive one. It is named here but not yet built.
+  - >-
+    Two of the paper's four physical interface modalities remain unrealized across the whole
+    investigation: mechanical forces and electrical currents. The chemical port is everywhere and
+    the thermal port appears in molecular-interfaces; a mechanical/tension channel and an
+    electrostatic channel are the standing gap.
+what_this_does_not_demonstrate: >-
+  A reader who has read the paper will raise two divergences before any other; this investigation
+  owns both here, in the paper's own vocabulary, rather than leaving the cross-study coherence to
+  be maintained in a reviewer's head.
+
+
+  TWO OF FOUR INTERFACE MODALITIES, and the gap is named. The paper (Section on the cellular
+  interface) names four physical ports through which a cell exchanges matter and energy: chemical
+  fluxes, mechanical forces, electrical currents, and heat transfer. Most studies realize ONLY the
+  chemical port — glucose/acetate fluxes, or a scalar membrane/condensate field, through a shared
+  spatio-flux grid. molecular-interfaces goes one modality further: its Gray-Scott reaction-diffusion
+  study additionally realizes the THERMAL port — a temperature field Arrhenius-scaling the reaction
+  rate, a genuine heat-transfer channel that grades the chemical pattern rather than merely
+  re-parameterizing it. So across the investigation TWO of the four ports are realized — chemical
+  everywhere, thermal in the molecular study — and ELECTRICAL currents and MECHANICAL forces remain
+  the named four-modality gap: not one electrical or mechanical interface variable is exposed or
+  measured in any study. This is a pointed omission, not an incidental one: the CPM is natively a
+  MECHANICAL model (adhesion energies, a volume constraint, contact energies, surface tension), so
+  every CPM study runs a mechanical engine and reports zero mechanical-interface observables. A
+  viva-cpm force/tension/pressure interface, and an electrostatic channel, are planned and do not
+  yet exist.
+
+
+  THE COMPOSITION IS FRAMEWORK-LEVEL, NOT PER-CELL. The paper puts EACH CELL behind its own
+  interface ports, cells nested in hierarchies, with rewrites mutating the composition graph itself.
+  Here the entire cellular world lives inside ONE monolithic coupling process — CpmCellField /
+  CpmColonyField / CpmGrowthDivision / CpmDisintegration / CpmSorting — that owns a private viva-cpm
+  world object. Cells are NOT processes; they have no ports; division mints a new id INSIDE a Rust
+  object without changing the composition graph — the opposite of the paper's structural-rewrite
+  claim the growth-and-division study itself cites. The composition realized is between the two
+  FRAMEWORKS, not between cells.
+
+
+  WHAT IS DEMONSTRATED: framework-level composition through one typed interface (two
+  independently-built simulators — viva-cpm and spatio-flux/cobra — meeting at one typed process,
+  neither built with the other in mind); real spatial mechanisms behind that coupling (genuine CPM
+  shape dynamics, dynamic-FBA optimization, PDE diffusion, Metropolis differential-adhesion sorting,
+  Cahn-Hilliard phase separation), not scripted trajectories; and the paper's substitutability
+  thesis, run concretely (the flagship swaps its internal metabolism from dynamic-FBA to a lumped
+  Michaelis-Menten mechanism behind the byte-identical CpmCellField ports, and the interface-level
+  observables agree within ~10%).
+
+
+  WHAT IS NOT: per-cell interfaces (each cell a process with its own ports); hierarchical nesting of
+  cellular interfaces into a collective interface; structural rewrites that mutate the composition
+  graph at division or disintegration; the two non-chemical modalities still unrealized (mechanical
+  forces and electrical currents) after the molecular study added the thermal port; and learning,
+  the arc's next rung. These are the honest boundary of the claim, not hidden caveats.
 scientific_argument:
-  main_claim: 'A cellular interface is simultaneously a modeling choice and a testable biological
-
-  hypothesis about which interactions govern a cell''s fate: each of the paper''s compositional
-
-  patterns can be authored as an inert typed draft (an interface with no committed mechanism) and
-
-  then compiled — by installing a conforming mechanism — into a running model whose *external
-
-  interface is preserved unchanged*. Composition is not a fixed final architecture but an ongoing
-
-  practice — connect where assumptions hold, cut the model open at the interface when they fail,
-
-  coarse-grain when organization re-emerges — and the interface itself is the locus where chemical
-
-  dynamics becomes a self-maintaining, viability-bounded agent.
-
-  '
+  main_claim: >-
+    A biological interface is simultaneously a modeling choice and a testable hypothesis about which
+    interactions matter, and the paper's composition patterns are properties of those interfaces
+    rather than of the mechanisms behind them. Composing independently-built simulators through one
+    typed process per pattern reproduces each pattern's characteristic behavior as genuine
+    simulation output, and the same interface, realized by a different mechanism, preserves the
+    externally observable relation. The interface — for the flagship, CpmCellField — is the
+    load-bearing artifact: it, not either framework alone, is what makes the composition possible.
   evidence_for:
-  - 'cellular-interface (Fig 4) — the cell''s typed, unit-bearing exchange ports (chemical, mechanical,
-    electrical, thermal) plus growth, shape, objective, and viability compile into a bounded,
-    goal-directed cell. Home of law 1 conformance: the one impostor handler in this codebase (a
-    non-conforming metabolism) is rejected at compile time with a CompileError naming the missing
-    ports; the impostor itself lives in the metabolism/disintegration code, cross-referenced here.'
-  - cell-environment-coupling (Fig 5) — the interface closes into a genuine sense/act loop over a
-    real diffusing spatial field; the cell measurably reshapes the gradient it depends on (niche
-    construction), interface preserved unchanged (law 2).
-  - 'cell-cell-coupling (no figure of its own) — two cells coupled over one shared nutrient interface
-    negotiate viability, not just state: competition starves the weaker cell while the stronger
-    persists; cross-feeding, a different handler over the same interface, keeps both alive (law 4).'
-  - 'disintegration (Fig 6, the flagship) — playable: a scripted thermal shock collapses viability,
-    halts viability-gated metabolism, and turns biomass into molecular debris, watchable step by
-    step. Structural: the same metabolic-exchange interface is realized at three grains (coarse
-    lumped yield, saturating kinetic, real COBRApy flux-balance over e_coli_core) behind ports that
-    never move — the cell-to-molecular-network grain-swap (law 4).'
-  - molecular-interfaces (Fig 7) — an F1Fo ATP-synthase mechanism drives all four physical channels
-    (chemical, electrical, mechanical, thermal) from one coupled proton flux, honoring the interface
-    at a molecular grain of the kind disintegration drops into.
-  - biomolecular-complementarity (Fig 8) — a six-level nested place graph (membrane, cytoplasm,
-    nucleus, chromosome, chromatin, nucleosome) with a coupled gene-expression cascade wired to the
-    deepest leaf; the interface is preserved through the deepest nesting in this codebase (law 2).
-    Complementarity/selectivity is narrated, not built — hierarchical assembly is demonstrated,
-    binding selectivity is not.
-  - autopoiesis (Fig 9) — metabolism, containment, and replication compile into mutual closure toward
-    a minimal cell, a second worked example of law 4''s grain-swap; demonstrates the closure pattern
-    qualitatively, not a validated autopoietic system.
-  - 'growth-and-division (Fig 10a,b) — growth (an autocatalytic, energy-coupled process) drives the
-    cell''s own DNA past a threshold; crossing it fires a genuine place-graph rewrite, one cell node
-    becoming two, mass conserved (the parent is halved, not duplicated) — law 2'' (rewrite
-    conformance) alongside law 2 (interface preserved across the rewrite).'
-  - 'development-and-evolution (Fig 10c-f) — biofilm nesting and port-addition/selection compile and
-    run as event-driven rewrites, including a genuine node-inserting "Live Topology" pair for each;
-    explicitly caveated (gate: needs_calibration) — selection is a single fixed-constant ODE and the
-    new port a scripted ramp, per the paper''s own "open and substantial challenge."'
+  - >-
+    cell-environment-coupling (the outward sense/act flagship) — a real CPM cell reads a spatio-flux
+    glucose field at its own footprint, runs one dynamic-FBA step (e_coli_core, oxygen-capped to
+    force acetate overflow), grows its CPM target volume from the biomass produced, and writes
+    uptake/secretion back into the field as a spatial delta that DiffusionAdvection then spreads.
+    Over 20 ticks: CPM volume grows ~3.4x (32 -> 110 px, ~3% of the 60x60 lattice — the cell does
+    not fill it), local footprint glucose depletes up to ~18% before diffusion partially resupplies
+    it, and the field-wide acetate total rises from 0 to ~47 field units as the secreted plume
+    diffuses outward. Net field-wide glucose falls (~32 of 5940 total field mass consumed) even
+    though the depletion signal is much sharper locally at the cell's own footprint than in the
+    field-wide total — the direct niche-construction signature.
+  - >-
+    Substitutability, run concretely — the flagship's internal metabolism is swapped from dynamic-FBA
+    to a lumped Michaelis-Menten kinetic behind the byte-identical CpmCellField ports, and the
+    interface-level observables (growth, local depletion, secretion) agree within ~10%. Same
+    interface, different mechanism, preserved behavior: the paper's equivalence-class claim made
+    executable.
   evidence_against:
-  - The handlers are toy-real, not calibrated — plausible constants, not fitted ones — so the
-    dynamics demonstrate the *pattern* (niche construction, viability collapse, closure, genuine
-    rewrite) rather than a quantitatively validated cell.
-  - Conformance is structural only (port names, types, wiring) — the compiler does not check units,
-    dimensions, invariants, or runtime behavior, so a handler can conform structurally while still
-    getting the biology wrong.
-  - The capstone whole cell is assembled by hand in the figures' style (wholecell.py), not emitted by
-    the compiler from the studies' own drafts.
-  - 'development-and-evolution''s own gate is needs_calibration: its selection and port-addition
-    dynamics are honestly labeled scripted stand-ins, not emergent population or fitness mechanisms.'
+  - >-
+    Each study realizes only part of its pattern's full claim: two of the four physical modalities
+    (mechanical, electrical) are unrealized investigation-wide; the composition is framework-level,
+    not per-cell; and learning, the arc's next rung, is not yet built.
+  - >-
+    Chemotaxis (directed up-gradient motion) is deferred; the flagship agent senses and acts on the
+    field locally but does not move toward higher concentration.
+  - >-
+    The e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass)
+    are toy-real — plausible, hand-tuned magnitudes chosen to produce gradual, spatially-legible
+    dynamics over a short run, not fitted to any organism or medium.
+  - >-
+    The CPM lattice itself (the cell's shape, occupied pixels, footprint) lives inside viva-cpm's
+    Rust engine as a private, write-protected world object, not a process-bigraph store — only the
+    coupling process reads and writes it. The environment the interface exposes to the rest of the
+    composite is exclusively the spatio-flux fields store (glucose, acetate).
   key_figures:
-  - cellular-interface
-  - disintegration
-  - growth-and-division
+  - cell-environment-coupling
   caveats:
-  - 'Two layers, read deliberately: the draft composites are inert (ports + contract, no dynamics)
-    and are rendered in loom; the executable composites run and are shown as dynamics figures. A
-    study''s draft render and its executable dynamics are the same interface at two stages, not two
-    different models.'
-  - The compiler is the binding stage only — it installs a conforming mechanism per draft; it does
-    not fit parameters or invent mechanisms. Conformance is structural (port names, types, wiring),
-    not behavioral — it does not check units, dimensions, invariants, or runtime behavior.
-  - The capstone whole cell (see below) is assembled by hand in the figures' style, not emitted by the
-    compiler from any study's drafts. Its division conserves mass (the mother is halved, not
-    doubled) and its death is a scripted thermal shock, not an emergent failure.
-  - 'development-and-evolution is deliberately the most caveated study in the investigation (gate:
-    needs_calibration) — read its own study.yaml before citing its results as more than a pattern
-    demonstration.'
-  interpretation_ref: docs/concepts/semantic-to-executable-compilation.md
-biological_story: 'A cell is two things at once. From the outside it is a bounded, goal-directed agent
-
-  that exchanges matter, energy, and information with its environment and with other cells across
-
-  a small set of interface variables, and stays alive only while those variables sit inside its
-
-  viability bounds. From the inside it is a dense web of coupled molecular processes that build
-
-  and maintain the very interface the outside view depends on. Neither view is complete alone,
-
-  and the paper''s central claim is that the interface connecting them is not merely a modeling
-
-  convenience — it is a testable hypothesis about which interactions actually matter to the cell''s
-
-  fate.
+  - >-
+    All nine composition patterns have a study, but the investigation demonstrates the patterns, not
+    a calibrated cell: every mechanism is toy-real (plausible constants, not calibrated to a named
+    organism, medium, or literature target), and each study names its own honest gap.
+  - >-
+    The whole reads as an arc — interface, individuality, viability, self-maintenance, agency,
+    adaptation — with learning as the open next rung. Read the studies in that order for the
+    through-line rather than as nine independent demonstrations.
+biological_story: >-
+  A cell in a real 2D environment is not a point that reads and writes scalars — it is a shape,
+  occupying a footprint of lattice pixels that grows, moves, and metabolizes at whatever
+  concentration happens to sit under it right now. The paper's thesis is that we can reason about
+  such a cell by naming its interface: the small set of variables across its boundary that carry the
+  interactions that matter. This investigation makes that thesis executable, one pattern at a time,
+  and lets the studies build on each other into an arc — from the bare interface contract, through a
+  cell that senses and acts on its environment, competes with neighbors, and dissolves when its
+  viability fails, to one that maintains itself, grows, divides, and evolves.
 
 
-  This investigation walks the paper''s own arc, and at every step the same discipline applies:
-
-  first draw the *interface* (the ports through which a process couples to the rest of the cell),
-
-  commit to no mechanism yet, and only then install one. We begin at the cellular interface itself
-
-  (cellular-interface, Fig 4) — chemical, mechanical, electrical, and thermal exchange ports plus
-
-  higher-level cellular variables like growth rate, shape, objective, and viability, and the first
-
-  home of law 1: a non-conforming handler is rejected at compile time. We make the interface
-
-  operational by closing the loop with the environment (cell-environment-coupling, Fig 5) — the
-
-  cell senses a real diffusing field and acts back on it, reshaping the gradient it depends on —
-
-  and then by coupling it to another cell over one shared resource (cell-cell-coupling): the same
-
-  interface, wired twice, negotiates viability between two agents, not just state.
+  The flagship study, cell-environment-coupling, answers yes for the outward sense/act pattern. One
+  coupling process, CpmCellField, is the entire interface: it reads the spatio-flux glucose field at
+  the CPM cell's current footprint, solves one dynamic-FBA step against e_coli_core (oxygen-capped so
+  the optimizer is pushed into mixed-acid acetate overflow, the way a real glycolysis-outpacing-
+  respiration cell would be), grows the CPM cell's target volume from the biomass that solution
+  produces, and writes the resulting uptake and secretion back into the shared field as a spatial
+  delta that spatio-flux's own diffusion process then spreads outward. Over a 20-tick run the cell
+  grows about 3.4-fold in CPM pixel volume, draws its own local glucose down by close to a fifth
+  before diffusion partially refills it, and leaves a spreading acetate plume behind it — niche
+  construction as a direct, unscripted consequence of two independently-built simulators talking
+  through one typed port.
 
 
-  Composition is not only about connecting. It is equally about knowing when to cut the model open.
-
-  When a cell''s viability bound is crossed, the cellular description stops being valid and the
-
-  right level of description drops to molecules — disintegration (Fig 6), the investigation''s
-
-  flagship, plays that collapse step by step and shows the same metabolic interface surviving three
-
-  grains of resolution: a coarse lumped yield, a saturating kinetic law, and a real COBRApy
-
-  flux-balance optimization. We then follow that molecular level down further — a single ATP-
-
-  synthase mechanism honoring all four physical channels (molecular-interfaces, Fig 7) — and back
-
-  up into architecture — molecules nested six levels into complexes, organelles, and a bounded cell
-
-  (biomolecular-complementarity, Fig 8). We ask how a maintained interface arises from molecular
-
-  processes in the first place: metabolism, containment, and replication mutually closing into a
-
-  minimal cell (autopoiesis, Fig 9) — the closure that Maturana and Varela called autopoiesis,
-
-  demonstrated here as a pattern, not a validated result.
-
-
-  Finally, that organization is rewritten across time. Growth drives a cell''s own DNA past a
-
-  threshold and division fires as a genuine, mass-conserving structural rewrite — one cell node
-
-  becoming two (growth-and-division, Fig 10a,b). Cells then nest into a biofilm and lineages
-
-  acquire new interface capabilities (development-and-evolution, Fig 10c-f) — the paper''s own
-
-  "open and substantial challenge," honestly caveated here rather than overclaimed.
-
-
-  Underneath every study is the same throughline: viability bounds and minimal agency. An interface
-
-  is what turns ordinary chemical dynamics into a self-maintaining, adaptive agent, and every study
-
-  in this investigation either builds that boundary, tests it, breaks it, or rebuilds it at another
-
-  grain. A closing capstone carries the disintegration grain-swap up to one hand-assembled whole
-
-  cell — coarse, kinetic, and real-FBA metabolism behind one interface give three distinct life
-
-  histories, and each cell grows, divides once (mass conserved), and dies when a scripted thermal
-
-  shock pushes it outside its viable band. A cell that lives and dies, with the mechanism of its
-
-  life swappable behind a fixed boundary — and the boundary itself is what the paper asks us to take
-
-  seriously as biology, not just as software.
-
-  '
+  The other eight patterns fill out the arc: the cellular-interface contract itself; multi-cell
+  competition over a shared field; a structural-integrity collapse in which the cell ceases to be
+  the appropriate unit of description and molecular processes take its place; molecular-scale
+  reaction-diffusion with a thermal channel; differential-adhesion sorting and phase separation for
+  complementarity; a self-maintained protocell whose viability bound is produced from the inside;
+  CPM growth and division; and colony development-and-evolution under selection. Learning — a cell
+  whose past changes its future regulation to stay viable — is named as the next rung and not yet
+  built. Every study is toy-real and honest about its gap; together they are an executable path from
+  a draft interface to a living, adapting cell.
 at_a_glance:
 - study: cellular-interface
-  role: 'Fig 4''s typed cell contract compiled to a bounded, goal-directed cell — chemical,
-    mechanical, electrical, and thermal exchange ports plus growth, shape, objective, and
-    viability. Home of law 1 conformance: the one impostor handler in this codebase is rejected
-    at compile time with a CompileError naming the missing ports; that impostor lives in the
-    metabolism code, cross-referenced from disintegration.'
+  role: >-
+    The contract itself (inward and outward meet) — a cell's exposed variables (footprint, fluxes,
+    shape, viability) ARE its interface; the study makes the inside/outside boundary and the two
+    directions of composition explicit. The foundation the other eight patterns build on.
 - study: cell-environment-coupling
-  role: 'Fig 5''s sense/act loop closed over a real diffusing spatial field — the cell depletes
-    and reshapes the very chemical gradient it depends on (niche construction), interface
-    preserved unchanged (law 2).'
+  role: >-
+    Outward, reciprocal (sense -> act). The flagship: a real CPM agent coupled to a real spatio-flux
+    nutrient field through one typed process (CpmCellField) — senses local glucose, runs dynamic-FBA
+    (e_coli_core, O2-capped to force acetate overflow), grows (~3.4x CPM volume), and secretes a
+    diffusing acetate plume. Also carries the substitutability demonstration (dynamic-FBA vs lumped
+    Michaelis-Menten behind the same interface). Niche construction as genuine spatial-metabolic
+    output, not a scripted trajectory.
 - study: cell-cell-coupling
-  role: 'No figure of its own — two cells wired over one shared nutrient store negotiate
-    viability: competition starves the weaker cell while the stronger persists; a different
-    handler over the identical interface (cross-feeding) keeps both alive (law 4).'
+  role: >-
+    Outward (cell <-> cell). Multi-cell competition and cross-feeding over a shared field: agents
+    reshape the resource each other depends on, driving competitive exclusion or metabolic
+    interdependence through the same field interface.
 - study: disintegration
-  role: 'The flagship (Fig 6) — playable: a level-shift you can step through — thermal shock,
-    viability collapse, biomass turning to debris. Structural: the cell-to-molecular-network
-    grain-swap, carrying coarse, kinetic, and real COBRApy FBA metabolism behind one interface
-    that never moves (law 4).'
+  role: >-
+    Inward, undone. Viability collapse: as the maintaining processes fail, the cell ceases to be the
+    appropriate unit of description and molecular processes (resorption, shedding) take its place —
+    death as a change in the level of description, not a scripted event.
 - study: molecular-interfaces
-  role: 'Fig 7''s F1Fo ATP-synthase mechanism drives all four physical channels — chemical,
-    electrical, mechanical, thermal — from one coupled proton flux; a molecular grain of the
-    kind disintegration drops into, made concrete.'
+  role: >-
+    Inward (molecular channels compose the interface's physical ports). Reaction-diffusion patterning
+    realizing two of the four physical modalities — a chemical channel and a genuine thermal channel
+    (a temperature field Arrhenius-scaling the reaction rate).
 - study: biomolecular-complementarity
-  role: 'Fig 8''s six-level nested place graph (membrane, cytoplasm, nucleus, chromosome,
-    chromatin, nucleosome) with a coupled gene-expression cascade wired to the deepest leaf;
-    interface preserved at the deepest nesting (law 2). Selectivity is narrated, assembly is
-    demonstrated.'
+  role: >-
+    Inward (molecular complementarity composes selective boundaries). Differential-adhesion sorting
+    and Cahn-Hilliard phase separation as two mechanistic resolutions of the same complementarity
+    interface.
 - study: autopoiesis
-  role: 'Fig 9''s metabolism, containment, and replication compile into mutual closure toward a
-    minimal cell — law 4''s second grain-swap home. The closure pattern, demonstrated
-    qualitatively, not validated autopoiesis.'
+  role: >-
+    Inward — internal processes composing to PRODUCE the interface and its viability bound. A
+    self-maintaining membrane against a decaying vesicle control; connects directly to the paper's
+    individual criterion (a boundary alone is not enough).
 - study: growth-and-division
-  role: 'Fig 10a,b — growth (autocatalytic, energy-coupled) drives the cell''s own DNA past a
-    threshold; crossing it fires a genuine place-graph rewrite, one cell node becoming two, mass
-    conserved (parent halved, not duplicated) — law 2''.'
+  role: >-
+    Outward, replicated. CPM growth driven by real per-footprint dFBA metabolism, then division that
+    partitions daughter biomass — the interface reproducing itself, with multi-generation lineage
+    compounding and sibling divergence.
 - study: development-and-evolution
-  role: 'Fig 10c-f — biofilm nesting and port-addition/selection as event-driven rewrites,
-    including genuine node-inserting "Live Topology" pairs. Explicitly caveated pattern demos
-    (gate: needs_calibration) — the paper itself calls this transition "an open and substantial
-    challenge."'
-how_to_read: 'Read the 9 studies in the paper''s own order — cellular-interface, cell-environment-
-
-  coupling, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity,
-
-  autopoiesis, growth-and-division, development-and-evolution — the arc runs from the interface
-
-  itself, through where it couples and where it breaks, down to the molecular mechanisms that
-
-  maintain it, and back up through growth, division, and the harder, honestly-caveated
-
-  transitions of development and evolution.
-
-
-  In each study, look at two things side by side: the draft render (the loom figure — the
-
-  structural interface, no dynamics) and the executable dynamics (the same interface, now
-
-  running). The investigation''s sharpest control is the compiler''s impostor-rejection, exercised
-
-  in the cellular-interface/disintegration metabolism code: a handler that breaks the port
-
-  contract is refused at compile time with a CompileError naming the missing ports — that is the
-
-  interface being enforced, not merely described.
-
-
-  Short on time? Read cellular-interface (the contract and law 1''s impostor rejection),
-
-  disintegration (the flagship — playable viability collapse plus the three-grain metabolism
-
-  swap), and growth-and-division (a genuine structural rewrite). Then skim the capstone below for
-
-  the same grain-swap carried up to a whole cell. Throughout, hold the compiler''s law 2: did the
-
-  mechanism change while the structural interface — port names, types, wiring — stayed the same?
-
-  And hold the throughline: did the study build, test, break, or rebuild a viability boundary?
-
-  '
-capstone:
-  title: The capstone — a whole cell, hand-assembled (not compiler-emitted)
-  summary: 'The investigation''s thesis is proven study by study; the capstone asks whether it also
-
-    holds at the level of a whole cell. A cell is assembled by hand in the studies'' own style
-
-    (`meta_modelers_guide/wholecell.py`) — it is not emitted by the compiler from any study''s
-
-    drafts. What it demonstrates is the disintegration grain-swap (law 4) carried up to whole-cell
-
-    scale: behind one unchanged metabolism interface (nutrients to biomass), the disintegration
-
-    mechanism is selectable — coarse, saturating-kinetic, or real COBRApy FBA — and the same
-
-    assembled cell lives three distinct life histories (coarse peaks at biomass 5.78 and divides at
-
-    t≈3.0; saturating-kinetic peaks at 6.43 and divides at t≈2.1; real COBRApy FBA peaks at 6.05 and
-
-    divides at t≈2.7). In every case the cell first grows on the environmental nutrient as
-
-    viability-gated metabolism converts uptake to biomass; once biomass crosses the division
-
-    threshold the rewrite fires once, partitioning the mother''s biomass — division conserves mass
-
-    (the mother is halved, not doubled), cell_count going 1 to 2. Then a scripted thermal shock
-
-    (temperature driven 37 to 50 degC at a hard-coded t=12) pushes the cell out of its tolerance
-
-    band; a viability monitor collapses viability 1.0 to 0.018, which gates metabolism off and
-
-    triggers the disintegration rewrite — the maintained boundary fails and biomass decays into
-
-    molecular debris (accumulating to roughly 5.5-6.1, depending on the metabolism). Grow, divide
-
-    once, die — but the "grow" and "divide" are mechanism-driven and mechanism-dependent, while the
-
-    "die" is a scripted shock.'
-  limitations:
-  - The whole cell is assembled by hand in the studies' style (`wholecell.py`), not emitted by the
-    compiler from any study's drafts. It demonstrates that the disintegration-style mechanism-swap
-    holds at whole-cell scale, not a calibrated whole-cell model.
-  - The "grow" and "divide" behaviors are mechanism-driven and mechanism-dependent, but the "die" is
-    a scripted thermal shock (hard-coded t=12), not an emergent failure. One deterministic run per
-    metabolism.
-  - Division conserves mass (the mother is halved) but is symmetric and fires once; next steps would
-    replace the scripted shock with an emergent viability failure (e.g. nutrient exhaustion) and run
-    replicate seeds and thermal schedules.
-coverage_note: 'Every figure draft across all 9 studies in this investigation compiles to a running
-
-  executable — the machinery is not cherry-picked to a few figures. This now includes the two
-
-  cell-cell-coupling executables (competition and cross-feeding, both wired over one shared
-
-  nutrient interface with no figure number of their own in the paper), disintegration''s playable
-
-  composite (`fig06-disintegration-dynamics`, watchable step by step in the Composite Explorer) in
-
-  addition to its three metabolism-grain executables, and development-and-evolution''s genuine
-
-  node-inserting "Live Topology" rewrite pairs alongside their continuous-path counterparts. This
-
-  is a coverage result about the draft-to-executable machinery, not a scientific claim about any
-
-  single figure — see each study''s own caveats for what its executable does and does not
-
-  demonstrate.
-
-  '
+  role: >-
+    Both directions, across timescales. A colony develops a rim/core organization and evolves a
+    heritable uptake trait under selection via differential division — the same viability criterion
+    organizing adaptation across timescales. The capstone.
+how_to_read: >-
+  Read the nine studies as an arc — cellular-interface (the contract), then cell-environment-coupling
+  (the outward sense/act flagship), cell-cell-coupling, disintegration, molecular-interfaces,
+  biomolecular-complementarity, autopoiesis, growth-and-division, and development-and-evolution (the
+  capstone). Each is a behavior-gated test of one interface hypothesis: the composite either
+  reproduces the pattern's characteristic behavior on genuine simulation output or it does not. Each
+  study is labeled by its direction of composition — outward (cell to environment or to other cells)
+  or inward (internal processes composing to produce the interface) — and states, in the paper's own
+  vocabulary, exactly what it does and does not demonstrate.
+capstone: development-and-evolution
+coverage_note: >-
+  All nine of the paper's composition patterns now have a study: eight realized as real 2D spatial
+  mechanisms (most compositions of two independently-built simulators, some a single reaction-diffusion
+  or phase-field mechanism), plus the foundational cellular-interface contract.
+  This is a note about depth, not coverage — the pattern set is complete, but each study realizes
+  part of its pattern's full claim (two of four physical modalities are unrealized investigation-wide,
+  the composition is framework-level rather than per-cell, and learning is named but not built). The
+  honest per-study gaps are stated in each study, not hidden here.
 glossary:
-- term: Cellular interface
-  definition: The set of typed, unit-bearing variables through which a cellular description couples
-    to its environment and to other cells (fluxes, forces, currents, heat, plus growth, shape,
-    objective, viability) — simultaneously a modeling choice and a testable hypothesis about which
-    interactions matter.
-- term: Draft process
-  definition: An interface with a structural contract but no dynamics — typed ports + wiring + intent, an
-    inert (empty) update; it builds and renders but does nothing if run.
-- term: Handler
-  definition: An executable Process that implements a draft's interface with real dynamics; the compiler
-    installs one per draft.
-- term: Conformance (H ⊢ S)
-  definition: Structural conformance — a handler conforms to a signature when it supplies every interface
-    port with a compatible type and wiring; the compiler refuses to install a non-conforming handler. It
-    checks port names, types, and wiring — not units, dimensions, invariants, or runtime behavior.
-- term: Interface preservation (law 2)
-  definition: Compilation changes a study's internal mechanism but leaves its external interface — port
-    names and wired store paths — identical.
-- term: Grain swap
-  definition: Realizing one interface at a different level of description (a lumped process vs. a resolved
-    network) without changing the interface — disintegration's Fig 6, and autopoiesis's second home.
-- term: Autopoiesis
-  definition: A composition whose processes collectively produce and sustain the very organization that
-    enables them — autopoiesis (Fig 9)'s mutual closure of metabolism, containment, and replication.
-- term: Viability bounds
-  definition: The region of state space within which a cellular description stays valid; crossing them
-    (e.g. a thermal shock) breaks the interface and forces a shift to a molecular description.
-- term: Minimal agency
-  definition: The property an interface confers on what would otherwise be ordinary chemical dynamics —
-    the capacity to sense, act, and maintain a boundary against dissolution — for as long as its
-    variables stay inside the viability bound. The investigation's throughline.
-- term: Event-driven rewrite
-  definition: A discrete change to the place graph itself — division, engulfment, bursting, biofilm
-    colonization — that adds or removes nodes at runtime (growth-and-division, Fig 10a,b;
-    development-and-evolution's "Live Topology" pairs, Fig 10c-f).
-- term: Place graph
-  definition: The nesting of stores in the state tree; the bigraph structure that represents compartments
-    and containment.
+- term: Cellular Potts Model (CPM)
+  definition: A lattice-based cell-shape simulation framework (here, viva-cpm, a Rust-backed
+    engine) in which cells occupy sets of pixels and evolve their shape, adhesion, and volume
+    by energy-minimizing Monte Carlo pixel copies, rather than being represented as a scalar
+    state bundle.
+- term: Spatio-flux
+  definition: A process-bigraph-native package providing spatial reaction-diffusion-advection
+    PDE processes (DiffusionAdvection) and spatial dynamic flux-balance analysis
+    (DynamicFBA) over a 2D field grid.
+- term: CpmCellField
+  definition: >-
+    The coupling process the flagship builds: a process-bigraph Process that owns a viva-cpm world
+    object, reads a shared spatio-flux fields grid at the CPM cell's current footprint, runs one
+    dynamic-FBA step there, grows the CPM cell's target volume from the resulting biomass, and writes
+    the uptake/secretion back into the field as a spatial delta. The typed interface the paper's
+    composition claim is made concrete through.
+- term: Interface (as scientific object)
+  definition: >-
+    The small set of variables across a cell's boundary that carry the interactions that matter — at
+    once a modeling choice (what to expose, what to abstract) and a testable hypothesis (each study
+    passes or fails a behavior gate on its chosen interface). The subject of this investigation;
+    process bigraphs are the substrate used to express it.
+- term: Substitutability
+  definition: >-
+    The paper's equivalence-class claim: different mechanisms may realize the same externally
+    observable relation, so an interface is a natural level at which heterogeneous mechanisms can be
+    compared. Shown here by swapping the flagship's dynamic-FBA metabolism for a lumped
+    Michaelis-Menten kinetic behind the same CpmCellField ports, with the observables preserved.
+- term: Composition direction
+  definition: >-
+    Outward composition couples a cell to its environment and to other cells; inward composition is
+    internal processes composing to produce the interface and its viability constraints. Every study
+    is labeled by direction.
+- term: Toy-real
+  definition: Plausible, hand-tuned constants (e.g. glucose_km, glucose_vmax, oxygen_vmax,
+    box_volume_L, grow_per_biomass) chosen to produce legible, gradual dynamics over a short
+    run — not fitted to a named organism, medium, or literature target.
 guidelines:
   literature_anchors:
-  - Agmon — A meta-modeler's guide to the cellular interface and its composition patterns (the source
-    paper).
-  - Agmon & Spangler — Process Bigraphs and the Architecture of Compositional Systems Biology (arXiv:2512.23754).
-  - Maturana & Varela — Autopoiesis and Cognition (autopoiesis study's closure).
-  - Milner — bigraphical reactive systems (the reaction rules behind growth-and-division and
-    development-and-evolution's event-driven rewrites).
-  naming_conventions: 'Studies are named after the paper''s own section headings (cellular-interface,
-
-    cell-environment-coupling, cell-cell-coupling, disintegration, molecular-interfaces,
-
-    biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution), not
-
-    after figure numbers alone, though each study''s composites carry the paper''s figure numbers where
-
-    one exists. Composites are <package>.composites.fig<n>-<slug> where a figure number exists
-
-    (cell-cell-coupling has none); each study''s figures have a semantic (draft) composite and, where
-
-    compiled, one or more executable composites — disintegration''s single metabolism interface
-
-    carries three (coarse/kinetic/FBA), and cell-cell-coupling''s single coupling interface carries
-
-    two (competition/cross-feeding).
-
-    '
+  - Agmon — A meta-modeler's guide to the cellular interface and its composition patterns (the
+    source paper; the nine composition patterns realized here).
+  - Agmon & Spangler — Process Bigraphs and the Architecture of Compositional Systems Biology
+    (arXiv:2512.23754 — the spatio-flux worked example the flagship draws its field-coupling pattern
+    from).
+  naming_conventions: >-
+    Studies are named after their composition pattern (cell-environment-coupling, cell-cell-coupling,
+    disintegration, and so on). The flagship composite is
+    meta_modelers_guide.composites.single-cell-in-a-field, discovered by the workbench at that dotted
+    stem; the dash in the final segment produces a known composite-name-regex lint WARN, an accepted,
+    pre-existing convention rather than a new error class.
 competing_frameworks:
-- name: Kappa / BNGL (rule-based modeling)
-  prediction: Biology is best written as rule-based, structure-changing rewrites over site graphs — agents,
-    bonds, and complexes created and destroyed by rules.
-  discriminated_by: 'This work shares first-class structural rewrites (growth-and-division''s division is
-    exactly such a rule — one cell node becomes two; development-and-evolution''s "Live Topology" pairs
-    do the same for biofilm colonization and lineage turnover), but adds an inert, type-checked
-    specification stage upstream of any mechanism — the interface is authored and structurally checked
-    before a rule or rate law is chosen, and mechanisms of any grain (ODE, rule-based, or FBA) install
-    behind the same checked interface.'
-- name: PySB / BioCRNpyler (programmatic composition)
-  prediction: Models are assembled programmatically from reusable components or motifs in a host language,
-    then exported to a simulator.
-  discriminated_by: Same programmatic-composition spirit, but composition here is over typed interfaces
-    with a compile step that machine-checks interface preservation (law 2). A component is a draft first
-    (ports and wiring, no mechanism); swapping mechanisms behind it — as disintegration and cell-cell-
-    coupling both do — is a checked operation, not a re-code.
-- name: ML-family algebraic-effect handlers / functors (the PL lineage)
-  prediction: Effects are declared as an interface (an algebraic-effect signature, or a functor's required
-    structure) and later given a handler/implementation the type system checks against the signature.
-  discriminated_by: This is the direct programming-languages lineage — a draft is the effect signature /
-    functor input, compilation is handler installation, and law 2 is signature preservation. The
-    contribution is to instantiate that discipline for biological models — unit-labeled cellular interfaces,
-    a place-graph substrate, and structural rewrites as first-class citizens, anchored to viability bounds
-    as the criterion for whether the interface still describes a living agent.
-- name: Vivarium's own mechanism-swapping behind interfaces
-  prediction: Vivarium already composes processes over shared stores and lets one process be replaced by
-    another that reads and writes the same ports.
-  discriminated_by: 'This work turns that swap into a checked, staged discipline — the interface is authored
-    as an inert draft, and a mechanism is installed only if it structurally conforms — a non-conforming
-    impostor is rejected at compile time with a CompileError naming the missing ports — rather than relying
-    on the convention that two processes happen to share ports.'
+- name: Mechanism-first modeling (the alternative the substitutability test discriminates against)
+  prediction: >-
+    The behavior of a composition pattern is a property of the specific mechanism used to realize it,
+    so changing the mechanism behind a cell (dynamic-FBA to a lumped kinetic, a CPM cell to a lumped
+    ODE cell) would change the externally observable relation.
+  discriminated_by: >-
+    The flagship realizes the same cell-environment interface with two different internal mechanisms
+    (dynamic-FBA and a lumped Michaelis-Menten kinetic) behind byte-identical CpmCellField ports and
+    finds the interface-level observables agree within ~10% — evidence that the pattern is a property
+    of the interface, not the mechanism, as the paper's equivalence-class claim predicts.
 studies:
 - cellular-interface
 - cell-environment-coupling
@@ -628,24 +381,23 @@ studies:
 - growth-and-division
 - development-and-evolution
 limitations:
-- Interfaces are checked at the port/type level — port names and compatible types must match for a handler
-  to install — not by runtime invariant. The compiler enforces that the ports line up and carry compatible
-  types, not that the mechanism honors the contract's intended behavior once it runs.
-- Units are currently name-only on ports (a port is labeled mol·s⁻¹, N, W, hr⁻¹, …); they document the
-  intended dimension but are not machine-enforced, so dimensional consistency across a wiring is a
-  convention, not a guarantee.
-- Handlers are toy-real, not calibrated — plausible constants, not fitted parameters. The dynamics
-  demonstrate the pattern (niche construction, viability collapse, closure, genuine rewrite), not a
-  quantitatively validated cell.
-- The capstone whole cell is assembled by hand in the studies' style (`wholecell.py`), not emitted by the
-  compiler from any study's drafts. It demonstrates the disintegration mechanism-swap at whole-cell scale
-  (coarse / kinetic / real-FBA metabolism behind one interface), not a calibrated organism. Its division
-  conserves mass (the mother is halved) and its death is a scripted thermal shock (hard-coded t=12), not an
-  emergent failure.
-- 'development-and-evolution is the investigation''s most caveated study (gate: needs_calibration) — selection
-  is a single fixed-constant ODE and the "new port" a scripted config ramp, honestly labeled as pattern
-  demonstrations of an "open and substantial challenge" the paper itself names, not validated results.'
-- The compiler is the binding stage only. It installs one conforming mechanism per draft; it does not
-  fit parameters, discover mechanisms, or reconcile mechanisms that disagree.
+- >-
+  All nine patterns have a study, but the investigation demonstrates the patterns, not a calibrated
+  cell: every mechanism is toy-real, and each study realizes only part of its pattern's full claim.
+- >-
+  Two of the four physical interface modalities — mechanical forces and electrical currents — are
+  unrealized across every study; the chemical port is everywhere and the thermal port appears in the
+  molecular study. A viva-cpm force/tension/pressure interface and an electrostatic channel are
+  planned and do not yet exist.
+- >-
+  The composition is framework-level, not per-cell: the cellular world lives inside one monolithic
+  coupling process that owns a private viva-cpm world object; cells are not processes and have no
+  ports of their own.
+- >-
+  Chemotaxis (directed motion up the sensed gradient) is deferred to a follow-up variant of the
+  flagship; the agent senses, metabolizes, grows, and secretes, but does not move up-gradient.
+- >-
+  Learning — a cell whose history of interaction changes its future regulation to keep itself viable
+  — is the arc's next rung, named but not yet built.
 expert_docs: []
 acceptance_criteria: []

@@ -2,209 +2,613 @@ schema_version: 4
 name: molecular-interfaces
 investigation: draft-to-living-cell
 title: Molecular Interfaces
-created: '2026-08-20'
+created: '2026-08-22'
 status: complete
 phase: Decide
 gate_status: passed
 confidence: Accepted
-question: At the molecular grain, can a single molecular mechanism (F1Fo ATP synthase) be compiled from its draft and run as a PMF-driven rotary catalyst honoring the four physical interface channels (chemical/electrical/mechanical/thermal) and the specialized substrate/cofactor/catalyst/product ports?
-biological_summary: 'Fig 7 drops one level below the cellular boundary, to the molecular grain: a single molecule as a process with typed physical channels, no cell-level boundary at all. Fig 7b declares the interface — a molecule exchanges matter (chemical, mol·s⁻¹), charge (electrical, C·s⁻¹), momentum (mechanical, N) and energy (thermal, J·s⁻¹) with its surroundings, and carries a structural identifier (PDB/SMILES). Fig 7c refines the chemical channel into the vocabulary of enzymology — substrates, cofactors, catalysts, products — as a `subports` store nested alongside the four physical channels. As drafted, both stores are inert: unit-bearing ports and wiring, no update dynamics. This study names the transducer and compiles it: the **F1Fo ATP synthase**, the rotary motor that couples the proton-motive force (PMF) across a membrane to phosphorylation. `MolecularMechanismHandler` drives all four physical channels from one coupled quantity — the proton flux set by the chemical (substrate/turnover) input — so the channels stay physically consistent with each other: chemical is the ATP synthesis flux (`J_ATP = k_cat * activity`), electrical is the proton current carried by that same flux (`I = J_H * e`), mechanical is the rotary power of the Fo motor (`torque * omega`, `omega` set by the H+ flux through the c-ring), and thermal is the non-conserved remainder dissipated as heat (`(1-eta) * PMF work`, eta ~= 75%). Measured on the compiled fig07-executable, run 8 seconds through the engine (literature constants: k_cat ~= 100 ATP*s^-1, H+/ATP ~= 3.3, PMF ~= 150 mV, torque ~= 40 pN*nm; Milo & Phillips; Junge & Nelson 2015): chemical_out (ATP synthesized) rises 0 -> 100, and the other three channels move together from the same proton flux — electrical_out ~= 5.29e-17 A, mechanical_out ~= 8.29e-18 W, thermal_out ~= 1.98e-18 W (all real SI magnitudes for a single-molecule rotary motor, hence tiny). The four-channel interface is preserved unchanged by compilation (Law 2): `interface_of(draft) == interface_of(executable)`. Honesty point: the Fig 7c `subports` refinement (substrates, cofactors, catalysts, products) is present in both the draft and the compiled executable — the store is wired and read by the dynamics visualization — but `MolecularMechanismHandler` does not write to it; those four ports stay at their 0.0 seed for the whole run. The specialized enzymatic vocabulary is structurally honored (declared, typed, preserved through compilation) but not driven by this handler''s dynamics, and the study says so rather than claiming substrate/cofactor/catalyst/product turnover that was not built. This is an example of the kind of molecular grain the disintegration study (Fig 6) drops into when a cell''s viability collapses: one mechanism, made concrete and executable.'
-claim: The molecular interface''s four typed channels compile to a running ATP-synthase mechanism, all four channels driven consistently from one coupled proton flux (chemical_out 0->100; electrical/mechanical/thermal channels move with it) — the molecular level the disintegration study drops into, made concrete. The specialized substrate/cofactor/catalyst/product ports are structurally preserved through compilation but are not driven by this handler (honestly noted, not claimed as dynamic).
+question: 'The paper''s §Molecular interface (Fig 7) frames a molecule not as a lump of state but as a
+  typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal --
+  through which molecules bind, react, and transmit force and heat. It even names the public databases
+  (PDB, Reactome, ChEBI, GO) as "partial specifications of molecular interfaces and their types". This
+  study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY?
+  Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized,
+  i.e. Turing / reaction-diffusion patterning) turn a near-uniform seed into emergent spatial structure,
+  and does a temperature field GRADE that structure (the THERMAL channel, an Arrhenius rate modulation)
+  -- so that two of the interface''s physical channels demonstrably COMPOSE over one shared spatial field?
+  The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable
+  and isolates the diffusion-driven instability as the cause of structure, so the contrast between pattern
+  and uniformity is the finding.'
+biological_summary: 'The paper''s §Molecular interface (Fig 7) makes a molecule a typed interface: it
+  exposes physical channels -- chemical fluxes, electrostatic fields, mechanical forces, thermal transfer
+  -- and its identity is the shape of those channels, not a scalar concentration. A coarser,
+  specification-stage, point-scale lumped realization made ONE molecule''s four channels executable at a
+  POINT (an F1Fo ATP synthase whose chemical/electrostatic/mechanical/thermal ports were wired as a typed
+  draft and compiled). This study takes the CHEMICAL channel off the point and onto a 2D lattice, and adds
+  the THERMAL channel on top of it, to ask whether a molecular interface''s channels compose spatially.
+
+
+  The chemical channel is realized as a Gray-Scott reaction-diffusion system on a 128x128 periodic grid:
+  a local autocatalytic chemistry (U + 2V -> 3V, V -> P) coupled to DIFFERENTIAL diffusion (Dv < Du), the
+  textbook route by which a near-uniform state becomes Turing-unstable and breaks into spots (turing1952).
+  The update is explicit-Euler du/dt = Du*lap(u) - U*V^2 + F*(1-U), dv/dt = Dv*lap(v) + U*V^2 - (F+k)*V on
+  the periodic 5-point Laplacian, canonical spot regime Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0 (CFL
+  max(Du,Dv)*dt*4 = 0.64 < 1, guarded at construction). The thermal channel is a second, orthogonal port:
+  when a temperature field is present the reaction term is scaled elementwise by the Arrhenius factor
+  rate = exp(-Ea*(1/T - 1/Tref)) -- T above Tref speeds the chemistry, below slows it, and rate == 1 with
+  no field, so the thermal channel is genuinely additive to the chemical one rather than replacing it.
+
+
+  Realizing the paper''s databases claim, honestly. The paper calls PDB/Reactome/ChEBI/GO "partial
+  specifications of molecular interfaces and their types"; this study makes that concrete not as a resolved
+  database lookup but as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species and reactions.
+  Read U as a ChEBI-style substrate type, V as an activator/inhibitor species, P as the product sink, and
+  U + 2V -> 3V as a Reactome-style autocatalytic reaction record (placeholder identifiers, e.g.
+  CHEBI:<U>/CHEBI:<V>/CHEBI:<P> and REACT:<autocatalysis>) -- a concrete gesture at what it would mean for
+  a database entry to TYPE a molecular interface, not a claim that these toy species resolve to real PDB
+  structures or Reactome pathway fragments. A genuine Reactome-fragment mapping, or a live database fetch
+  that types the ports against real entries, is a named deferral, not a
+  result here.
+
+
+  Measured this build. The CHEMICAL channel patterns: from the near-uniform seed the inhibitor field''s
+  spatial variance v_var rises from ~0.0011 toward ~0.0119 by 8000 internal steps and the field resolves
+  into ~12 connected v-domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12,
+  chemistry identical) stays UNIFORM -- v_var ~= 0 (patterned == 0.0) -- so the structure is caused by the
+  diffusion asymmetry (the Turing instability), not by the chemistry alone: removing only the differential
+  diffusion removes the pattern. The THERMAL channel GRADES that pattern rather than destroying it: a
+  raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) coarsens the flagship from ~12 domains to ~2
+  and lowers v_var from ~0.0119 to ~0.0096 while staying comfortably patterned -- a real second modality
+  modulating the first, not a chemistry collapse. (An earlier, hotter setting Ea=1.0/T=1.5 was found to
+  OVERSHOOT -- the reaction runs away and collapses the pattern to near-uniform -- and was retuned to the
+  milder graded setting; the overshoot is pinned as a direct-physics assertion so "graded, not collapsed"
+  is tested against its own failure mode.) Because the physics has no RNG, the multi-seed check re-draws
+  the near-uniform seed for seeds 1-5 and reports a RANGE: v_var in [0.01157, 0.01193], n_domains in
+  [8, 12] -- the pattern forms for every seed, stated as a band rather than a single golden value.
+
+
+  Honest scope -- the four-modality finding, stated plainly. This study realizes TWO of the molecular
+  interface''s four physical channels spatially: the CHEMICAL channel (reaction-diffusion / Turing
+  patterning) and the THERMAL channel (Arrhenius rate modulation grading it). The ELECTROSTATIC and
+  MECHANICAL channels are the named gap -- no charge field, no force or tension, is exposed or measured
+  here (owned in investigation.yaml''s what_this_does_not_demonstrate, as a named deferral).
+  And this is a TOY reaction-diffusion demonstration: emergent spatial structure from a minimal
+  autocatalytic chemistry with tuned, uncalibrated constants, NOT real molecular structure or conformation
+  (nothing at PDB resolution), NOT a fitted reaction network, NOT a resolved database mapping. What is
+  demonstrated is that a molecular interface''s chemical and thermal channels COMPOSE spatially over one
+  shared field; what is not is the other two channels, real molecular structure, and a live database type
+  system.'
+claim: 'The paper''s §Molecular interface (Fig 7) holds spatially for two of its four physical channels.
+  The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V ->
+  3V plus differential diffusion Dv < Du), turns a near-uniform seed into an emergent Turing spot pattern:
+  v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion
+  causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM
+  (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion-driven instability, not the
+  chemistry alone. The THERMAL channel -- a raised temperature field scaling the reaction by the Arrhenius
+  factor exp(-Ea*(1/T - 1/Tref)) -- GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -> ~2, v_var ~0.0119
+  -> ~0.0096) while staying patterned: a real second modality composing over the same field, not a
+  collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial
+  field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The honest boundaries
+  are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap;
+  the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is
+  realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping;
+  and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.'
 baseline:
-- name: molecular-mechanism
-  composite: meta_modelers_guide.composites.fig07-molecular-mechanism
+- name: molecular-turing-pattern
+  composite: meta_modelers_guide.composites.molecular-turing-pattern
   params: {}
-- name: molecular-mechanism-executable
-  composite: meta_modelers_guide.composites.fig07-executable
+- name: molecular-equal-diffusion-control
+  composite: meta_modelers_guide.composites.molecular-equal-diffusion-control
+  params: {}
+- name: molecular-thermal-graded
+  composite: meta_modelers_guide.composites.molecular-thermal-graded
   params: {}
 variants: []
 key_assumptions:
-- All four physical channels (chemical/electrical/mechanical/thermal) are derived from one coupled quantity (the proton flux set by the chemical input), so they are not four independent free parameters — they move together by construction, which is what "physically consistent" means here, not four separately fitted rate laws.
-- The Fig 7c `subports` refinement (substrates, cofactors, catalysts, products) is a structural port declaration, not a modeled reaction mechanism. `MolecularMechanismHandler` conforms to the Fig 7b physical-channel signature only; it does not read or write `subports`, so those four leaves stay at their 0.0 seed for the entire run. No substrate-binding, cofactor, catalytic-turnover, or product-release dynamics are claimed.
-- Constants (k_cat, H+/ATP stoichiometry, PMF, torque, efficiency) are literature-grounded (Milo & Phillips, *Cell Biology by the Numbers*; Junge & Nelson 2015; Stock et al. 1999) but the model is a single coupled-flux transducer, not a mechanistic rotary-catalysis simulation (no explicit c-ring stepping, no discrete catalytic sites, no load dependence).
+- 'The interface tested here is the paper''s §Molecular interface (Fig 7): a molecule as a typed interface
+  exposing physical channels (chemical, electrostatic, mechanical, thermal). This study realizes the
+  CHEMICAL channel spatially as Gray-Scott reaction-diffusion (local autocatalysis U + 2V -> 3V, V -> P
+  plus differential diffusion Dv < Du -- Turing patterning; turing1952) and the THERMAL channel as an
+  Arrhenius elementwise rate modulation exp(-Ea*(1/T - 1/Tref)) on the reaction term. The ELECTROSTATIC
+  and MECHANICAL channels are NOT realized -- they are the named four-modality gap, not demonstrated here.'
+- 'The databases hook is ILLUSTRATIVE typed-port annotation, not a resolved mapping. The paper names
+  PDB/Reactome/ChEBI/GO as "partial specifications of molecular interfaces and their types"; here that is
+  gestured at by TYPING the Gray-Scott species and reaction with placeholder database-style identifiers
+  (U/V/P as ChEBI-style substrate/activator/product types, U + 2V -> 3V as a Reactome-style autocatalytic
+  reaction record). This is a concrete gesture at what typing a molecular interface against a database
+  would mean -- NOT a claim that these toy species resolve to real PDB structures, Reactome pathway
+  fragments, or ChEBI/GO entries. A real Reactome-fragment mapping / live database fetch is a deferral.'
+- 'The pattern is CAUSED by the diffusion-driven (Turing) instability, and this is proven by a
+  single-variable causal control, not assumed. The flagship (Du=0.16, Dv=0.08) and the equal-diffusion
+  control (Du=Dv=0.12) share identical chemistry (F, k), identical seed, identical wiring and step count;
+  the ONLY difference is whether diffusion is differential. Removing the asymmetry removes the pattern
+  (v_var ~= 0, exactly 0.0 in the control), isolating differential diffusion -- not the reaction alone --
+  as the cause of spatial structure.'
+- 'The thermal channel is genuinely ADDITIVE, not a re-parameterization of the chemical one. The reaction
+  term is scaled by rate = exp(-Ea*(1/T - 1/Tref)); with NO temperature field present rate == 1 everywhere
+  and the process is pure chemistry, byte-identical to the chemical-only flagship. The thermal composite
+  differs from the flagship in exactly the Arrhenius parameters and the presence of a raised temperature
+  field -- Du/Dv/F/k/dt/steps_per_tick are held equal (asserted in tests/test_molecular_regime.py), so the
+  coarsening is attributable to temperature, not to a changed chemistry or diffusion regime.'
+- 'The parameters are tuned demonstration values, not fitted. The canonical spot regime (Du=0.16, Dv=0.08,
+  F=0.037, k=0.06, dt=1.0) sits in the classic Gray-Scott spot window and comfortably inside the explicit
+  reaction-diffusion CFL limit (max(Du,Dv)*dt*4 = 0.64 < 1; the process raises on an unstable config
+  rather than drifting silently to NaN). The thermal setting (Ea=0.15, T=1.2) was chosen to GRADE rather
+  than collapse: a hotter Ea=1.0/T=1.5 was found to overshoot into near-uniform collapse and was retuned.
+  No literature acceptance band is claimed -- this is a demonstration primitive of the molecular
+  interface''s chemical and thermal channels made spatial, not a model of a specific molecule or medium.'
+- 'The physics is DETERMINISTIC -- it has no RNG. The GrayScott process accepts a seed config key but it
+  is currently inert (documented in meta_modelers_guide/molecular/gray_scott.py), so the composites bake a
+  static seed_uv(seed=1) draw into fields.u/fields.v at build time. The multi-seed test therefore re-draws
+  the INITIAL near-uniform field with seed_uv(seed=s) for s in 1-5 (everything else held fixed) and reports
+  the resulting band -- v_var in [0.01157, 0.01193], n_domains in [8, 12] -- as genuine sensitivity of the
+  emergent pattern to the nucleation-patch placement, not as a per-tick stochastic process.'
 behavior_tests:
-- name: atp-synthesized
+- name: pattern-forms
   classification: primary
-  description: The F1Fo ATP synthase mechanism drives its chemical output port — ATP synthesized rises from 0 to 100 over the run (exec fig07-executable, ports.chemical_out).
+  description: 'The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16,
+    Dv=0.08) destabilizes the near-uniform seed into an emergent Turing spot pattern -- v_var rises above
+    the pattern floor and the gated patterned flag reads 1.0.'
   measure:
     kind: observable
-    path: chemical_out
-    expr: last(chemical_out)
+    path: obs.patterned
+    expr: last(obs.patterned)
   pass_if:
-    op: '>='
-    value: 50.0
-    provenance: exec last=100.0 — F1Fo ATP synthase (chemical_out 0->100, PMF-driven rotary catalysis; fig07-executable, run(8) matching scripts/render_study_evidence.py TOTAL_TIME=8.0)
-  requires_simulation: molecular-interfaces
-- name: rotary-power-couples
+    op: ==
+    value: 1.0
+    provenance: 'patterned == 1.0 with v_var rising ~0.0011 -> ~0.0119 over 8000 internal steps (16 ticks x
+      steps_per_tick=500), canonical spot regime (tests/test_molecular_regime.py::test_turing_pattern_forms,
+      tests/test_gray_scott.py, tests/test_gray_scott_physics.py)'
+  requires_simulation: molecular-turing-pattern
+- name: pattern-has-multiple-domains
   classification: primary
-  description: The mechanical channel (Fo rotary power) moves off its zero seed, driven by the same proton flux that drives ATP synthesis — the four channels are physically coupled, not independently parameterized.
+  description: 'The pattern is genuine spatial structure, not a single blob: the field resolves into more
+    than one connected v-concentration domain (~12 spots at the canonical regime), the Turing spot
+    signature.'
   measure:
     kind: observable
-    path: mechanical_out
-    expr: last(mechanical_out)
+    path: obs.n_domains
+    expr: last(obs.n_domains)
   pass_if:
-    op: '>='
-    value: 1.0e-19
-    provenance: exec last~=8.29e-18 W (rotary mechanical power = torque*omega, both set by the H+ flux; fig07-executable, run(8)). Real single-molecule magnitude — small in absolute SI units, but nonzero and driven by the same coupled flux as chemical_out.
-  requires_simulation: molecular-interfaces
-- name: draft-is-inert
-  classification: diagnostic
+    op: '>'
+    value: 1.0
+    provenance: n_domains ~= 12 at 8000 steps (loose > 1 floor, not the exact 12, so the bound is not a
+      golden-value pin); multi-seed band n_domains in [8, 12]
+      (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)
+  requires_simulation: molecular-turing-pattern
+- name: equal-diffusion-control-uniform
+  classification: primary
   control: negative
-  description: 'One-line sanity check (not the study''s control): the inert Fig 7 draft (address local:MolecularMechanism, not the compiled Handler) has an empty update by construction, so chemical_out stays at its 0.0 seed and fails this threshold by design — confirming the framework''s definition of a draft, not a scientific counterfactual.'
+  description: 'Single-variable causal control, the load-bearing one: identical chemistry and seed, but
+    equal diffusion (Du = Dv = 0.12) -- the differential-diffusion asymmetry removed. The Turing
+    instability never triggers, so the field stays uniform (patterned == 0.0). This is what proves the
+    pattern is CAUSED by the diffusion asymmetry, not the chemistry alone.'
   measure:
     kind: observable
-    path: chemical_out
-    expr: last(chemical_out)
+    path: obs.patterned
+    expr: last(obs.patterned)
   pass_if:
-    op: '>='
-    value: 50.0
-    provenance: inert-draft run (fig07-molecular-mechanism) stays at chemical_out=0.0 (empty update by construction) -> fails by design (expected-fail control)
-  requires_simulation: molecular-interfaces
+    op: ==
+    value: 0.0
+    provenance: 'Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to
+      1e-6) -- differential diffusion removed, no pattern
+      (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform)'
+  requires_simulation: molecular-equal-diffusion-control
+- name: thermal-channel-still-patterns
+  classification: primary
+  description: 'The thermal channel GRADES rather than destroys: with a raised uniform temperature field
+    (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction, the field is still comfortably patterned
+    (patterned == 1.0, v_var above the floor) -- a real second modality modulating the pattern, not a
+    chemistry collapse.'
+  measure:
+    kind: observable
+    path: obs.patterned
+    expr: last(obs.patterned)
+  pass_if:
+    op: ==
+    value: 1.0
+    provenance: thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); a hotter
+      Ea=1.0/T=1.5 setting was verified to OVERSHOOT into near-uniform collapse and retuned to this graded
+      setting (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)
+  requires_simulation: molecular-thermal-graded
+- name: thermal-channel-coarsens
+  classification: primary
+  description: 'The mechanism of the thermal grading, made explicit: the raised temperature field coarsens
+    the pattern to markedly fewer, larger domains than the no-temperature flagship at the same step count
+    (~12 -> ~2), the direct signature of the thermal channel acting on the chemical one.'
+  measure:
+    kind: observable
+    path: obs.n_domains
+    expr: last(obs.n_domains)
+  pass_if:
+    op: <
+    value: 8.0
+    provenance: thermal n_domains ~= 2 versus the flagship''s ~12 at the same 8000 steps; loose < 8 bound
+      (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate, not a
+      golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)
+  requires_simulation: molecular-thermal-graded
+- name: pattern-is-multiseed-robust
+  classification: diagnostic
+  description: 'The Turing pattern forms across seeds 1-5, not just the seed=1 draw baked into the
+    composite. Because the physics is deterministic (no RNG), the seed is re-drawn into the INITIAL
+    near-uniform field; v_var stays above the floor for every seed and is reported as a range, with
+    n_domains reported as a range too (seed-sensitive by nucleation-patch placement).'
+  measure:
+    kind: observable
+    path: obs.v_var
+    expr: last(obs.v_var)
+  pass_if:
+    op: '>'
+    value: 0.004
+    provenance: 'v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12];
+      the gate is > 2*PATTERN_FLOOR = 0.004, the band floor with margin, not the observed edge
+      (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust)'
+  requires_simulation: molecular-turing-pattern
 runs:
-- name: molecular-interfaces
-  composite: molecular-interfaces
+- name: molecular-turing-pattern
+  composite: molecular-turing-pattern
   emitter: RAMEmitter
-  id: molecular-interfaces
+  id: molecular-turing-pattern
   status: completed
-  provenance: scripts/render_study_evidence.py — fig07-executable compiled from the Fig 7 draft (fig07-molecular-mechanism), run 8 seconds through the engine; fig07-molecular-mechanism itself run uncompiled as the draft-is-inert control.
+  provenance: meta_modelers_guide/composites/molecular-turing-pattern.composite.json (GrayScott, 128x128
+    periodic u/v fields, static seed_uv(n=128, seed=1) draw baked in, canonical spot regime Du=0.16/Dv=0.08/F=0.037/k=0.06/dt=1.0,
+    steps_per_tick=500) run 16 ticks (8000 internal steps) to completion through the process-bigraph engine
+    directly from its JSON spec (tests/test_molecular_regime.py, tests/test_gray_scott.py); the baked GIF +
+    synced metrics panel in viz/ were re-rendered over the same run for this study
+    (tests/test_gray_scott_viz.py).
   params: {}
   outcomes:
-    ATP-SYNTHESIZED:
+    PATTERN-FORMS:
       result: PASS
-      detail: chemical_out (ATP synthesized) 0 -> 100 — F1Fo ATP synthase, PMF-driven rotary catalysis
-    ROTARY-POWER-COUPLES:
+      detail: patterned == 1.0; v_var ~0.0011 -> ~0.0119 over 8000 steps -- emergent Turing spot pattern
+    PATTERN-HAS-MULTIPLE-DOMAINS:
       result: PASS
-      detail: mechanical_out 0 -> ~8.29e-18 W, alongside electrical_out ~5.29e-17 A and thermal_out ~1.98e-18 W — all four channels driven from the one coupled proton flux
-    DRAFT-IS-INERT:
+      detail: n_domains ~= 12 connected v-domains (multi-seed band [8, 12]) -- genuine spatial structure
+- name: molecular-equal-diffusion-control
+  composite: molecular-equal-diffusion-control
+  emitter: RAMEmitter
+  id: molecular-equal-diffusion-control
+  status: completed
+  provenance: meta_modelers_guide/composites/molecular-equal-diffusion-control.composite.json (identical
+    chemistry, seed, wiring and step count to molecular-turing-pattern, Du=Dv=0.12 -- the single-variable
+    differential-diffusion knockout) run 16 ticks (8000 internal steps) through the process-bigraph engine
+    (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform).
+  params: {}
+  outcomes:
+    EQUAL-DIFFUSION-CONTROL-UNIFORM:
       result: PASS
-      detail: 'expected-fail control: the inert draft (empty update) stays at chemical_out=0.0 — it fails the >=50.0 threshold by design, confirming a draft is inert'
+      detail: 'Du=Dv=0.12 (only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0) -- no
+        Turing instability, the causal control'
+- name: molecular-thermal-graded
+  composite: molecular-thermal-graded
+  emitter: RAMEmitter
+  id: molecular-thermal-graded
+  status: completed
+  provenance: meta_modelers_guide/composites/molecular-thermal-graded.composite.json (identical chemistry,
+    diffusion, seed and step count to molecular-turing-pattern, plus a raised uniform temperature field
+    T=1.2 and Arrhenius Ea=0.15/Tref=1.0 scaling the reaction) run 16 ticks (8000 internal steps) through
+    the process-bigraph engine (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern);
+    the baked GIF in viz/ shows the thermal contrast against the flagship.
+  params: {}
+  outcomes:
+    THERMAL-CHANNEL-STILL-PATTERNS:
+      result: PASS
+      detail: patterned == 1.0, v_var ~= 0.0096 (still above the floor) -- graded, not collapsed
+    THERMAL-CHANNEL-COARSENS:
+      result: PASS
+      detail: n_domains ~12 -> ~2, v_var ~0.0119 -> ~0.0096 -- the thermal channel coarsens the chemical pattern
+- name: molecular-turing-pattern-multiseed
+  composite: molecular-turing-pattern
+  emitter: RAMEmitter
+  id: molecular-turing-pattern-multiseed
+  status: completed
+  provenance: molecular-turing-pattern re-run with the initial near-uniform field re-drawn by seed_uv(seed=s)
+    for s in 1-5 (everything else held fixed; the physics has no RNG so the seed lives in the initial
+    condition), each 16 ticks through the engine (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust).
+  params: {}
+  outcomes:
+    PATTERN-IS-MULTISEED-ROBUST:
+      result: PASS
+      detail: v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5 -- patterns for every seed, reported as a range
 findings:
 - id: F-01
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'The F1Fo ATP synthase mechanism — compiled from the Fig 7 draft and run through the engine — synthesizes ATP on its chemical output port. Confirmed: chemical_out (ATP synthesized) 0 -> 100 via PMF-driven rotary catalysis.'
+  statement: 'The paper''s §Molecular interface (Fig 7) CHEMICAL channel holds spatially: a Gray-Scott
+    reaction-diffusion system (local autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du) turns
+    a near-uniform seed into an emergent Turing spot pattern -- v_var rises ~0.0011 -> ~0.0119 and the
+    field resolves into ~12 connected domains (patterned == 1.0). Local molecular reactions plus
+    differential diffusion produce emergent spatial structure, the molecular interface''s chemical channel
+    made spatial.'
   evidence:
-    from_test: atp-synthesized
-    from_run: molecular-interfaces
-    observed: chemical_out (ATP synthesized) 0 -> 100
+    from_test: pattern-forms
+    from_run: molecular-turing-pattern
+    observed: patterned == 1.0; v_var ~0.0011 -> ~0.0119; n_domains ~= 12 (multi-seed band [8, 12])
   provenance:
     run_ids:
-    - molecular-interfaces
+    - molecular-turing-pattern
 - id: F-02
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'All four physical interface channels move together, driven from the one proton flux the chemical channel sets: chemical (ATP synthesis), electrical (proton current), mechanical (Fo rotary power) and thermal (dissipated remainder) are physically consistent with each other, not four independently fitted outputs. Confirmed: mechanical_out 0 -> ~8.29e-18 W, electrical_out -> ~5.29e-17 A, thermal_out -> ~1.98e-18 W, alongside chemical_out -> 100.'
+  statement: 'The pattern is CAUSED by the diffusion-driven (Turing) instability, proven by a
+    single-variable causal control. The equal-diffusion control (Du = Dv = 0.12 -- identical chemistry,
+    seed, and wiring, the only difference the removal of the differential-diffusion asymmetry) stays
+    UNIFORM: v_var ~= 0 (exactly 0.0), patterned == 0.0. Removing only the diffusion asymmetry removes the
+    structure, isolating differential diffusion -- not the chemistry alone -- as its cause.'
   evidence:
-    from_test: rotary-power-couples
-    from_run: molecular-interfaces
-    observed: mechanical_out ~8.29e-18 W; electrical_out ~5.29e-17 A; thermal_out ~1.98e-18 W
+    from_test: equal-diffusion-control-uniform
+    from_run: molecular-equal-diffusion-control
+    observed: 'control (Du=Dv=0.12): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6)'
   provenance:
     run_ids:
-    - molecular-interfaces
+    - molecular-equal-diffusion-control
 - id: F-03
-  kind: computational
-  tier: observation
+  kind: biological
+  tier: mechanism
   status: confirms
-  statement: 'Honesty point: the Fig 7c specialized enzymatic ports (substrates, cofactors, catalysts, products) are structurally preserved through compilation — declared, typed, and wired into the dynamics visualization — but are not driven by `MolecularMechanismHandler`. They stay at their 0.0 seed for the whole run. The study claims structural preservation of these ports, not simulated substrate-binding, cofactor, catalytic-turnover, or product-release dynamics.'
+  statement: 'The THERMAL channel composes with the chemical one over the same field: a raised uniform
+    temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction GRADES the pattern rather
+    than destroying it -- coarsening it from ~12 domains to ~2 and lowering v_var ~0.0119 -> ~0.0096 while
+    staying comfortably patterned (patterned == 1.0). A real second physical modality modulating the
+    first. (A hotter Ea=1.0/T=1.5 setting overshoots into near-uniform collapse and was retuned; the
+    overshoot is pinned as a direct-physics assertion, so "graded, not collapsed" is tested against its
+    own failure mode.) Two of the molecular interface''s four channels demonstrably compose spatially.'
   evidence:
-    observed: substrates, cofactors, catalysts, products all remain 0.0 over the full run (fig07-executable, run(8)); no handler writes to `subports`
-    discovered_during: authoring this study — verified directly against the compiled composite state, not asserted from the draft alone
+    from_test: thermal-channel-coarsens
+    from_run: molecular-thermal-graded
+    observed: thermal patterned == 1.0; n_domains ~12 -> ~2; v_var ~0.0119 -> ~0.0096 (graded, not collapsed)
   provenance:
     run_ids:
-    - molecular-interfaces
+    - molecular-thermal-graded
 - id: F-04
   kind: biological
   tier: observation
-  status: confirms
-  statement: 'Sanity check on the framework''s definition: the inert draft, with no mechanism, has an empty update and stays at seed. Confirmed: chemical_out stays 0.0 (the definition of a draft, not a scientific control). The real evidence is that the compiled mechanism drives all four physical channels with the interface structurally preserved (Law 2).'
+  status: partial
+  statement: 'The honest scope, load-bearing not buried -- the FOUR-MODALITY finding. This study realizes
+    TWO of the paper''s four molecular-interface channels spatially (CHEMICAL: reaction-diffusion / Turing;
+    THERMAL: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named gap -- no
+    charge field, no force or tension, is exposed or measured (owned in investigation.yaml as a
+    named deferral). Further: this is a TOY reaction-diffusion demonstration with tuned,
+    uncalibrated constants -- emergent structure from a minimal autocatalytic chemistry, NOT real
+    molecular structure or conformation (nothing at PDB resolution). And the databases claim
+    (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an
+    ILLUSTRATIVE typed-port annotation over the Gray-Scott species, NOT a resolved database mapping; a real
+    Reactome-fragment mapping / live database fetch is a deferral.'
   evidence:
-    from_test: draft-is-inert
-    from_run: molecular-interfaces
-    observed: inert draft stays at chemical_out=0.0 (empty update by construction)
+    observed: two channels realized (chemical + thermal); electrostatic + mechanical are the named gap;
+      toy reaction-diffusion, not PDB-level structure; database typing illustrative, not resolved
+    discovered_during: authoring this study on the biology-first bar
   provenance:
     run_ids:
-    - molecular-interfaces
+    - molecular-turing-pattern
+- id: F-05
+  kind: biological
+  tier: observation
+  status: partial
+  statement: 'DETERMINISM, stated plainly. The Gray-Scott physics has NO RNG -- the GrayScott seed config
+    key is accepted but currently inert -- so the multi-seed check re-draws the INITIAL near-uniform field
+    with seed_uv(seed=s) for s in 1-5 (everything else fixed) rather than varying a per-tick stochastic
+    process. The pattern forms for every seed; v_var in [0.01157, 0.01193] and n_domains in [8, 12] are
+    reported as a RANGE reflecting genuine sensitivity of the emergent pattern to nucleation-patch
+    placement, not dressed as a single golden value.'
+  evidence:
+    from_test: pattern-is-multiseed-robust
+    from_run: molecular-turing-pattern-multiseed
+    observed: v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5 (seed lives in the initial field)
+  provenance:
+    run_ids:
+    - molecular-turing-pattern-multiseed
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: Both fig07 composites build and fig07-executable runs to completion (tests/test_composites_build.py::test_composite_builds[fig07-molecular-mechanism], [fig07-executable]; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig07-executable]).
+    basis: All three molecular-* composites (molecular-turing-pattern, molecular-equal-diffusion-control,
+      molecular-thermal-graded) build and run to completion through the process-bigraph engine directly
+      from their JSON specs (tests/test_molecular_regime.py, tests/test_gray_scott.py,
+      tests/test_gray_scott_physics.py, tests/test_gray_scott_viz.py); guarded skip when the optional
+      process_bigraph dependency is absent, matching this investigation's convention.
   biological_validation:
     result: PASS
-    basis: The compiled ATP-synthase mechanism drives its chemical output port (chemical_out 0->100) and the other three physical channels move together from the same coupled proton flux; the inert draft stays at seed, isolating the compiled handler as the cause. The specialized subports are honestly reported as structurally present but undriven.
+    basis: All primary behavior tests pass on measured readouts. The chemical channel patterns (v_var
+      ~0.0011 -> ~0.0119, ~12 domains, patterned == 1.0) while the single-variable equal-diffusion causal
+      control stays uniform (v_var ~= 0, patterned == 0.0), and the thermal channel grades the pattern
+      (~12 -> ~2 domains, v_var ~0.0119 -> ~0.0096) while staying patterned. The four-modality gap
+      (electrostatic + mechanical), the toy-scope boundary, and the illustrative (not resolved) database
+      typing are reported as findings, not claimed away.
   explanatory_gain:
     result: POSITIVE
-    basis: Naming and compiling one concrete molecular machine (ATP synthase) behind the Fig 7 four-channel interface makes a molecular grain — of the kind the disintegration study (Fig 6) drops into — executable and observable, not merely illustrated.
+    basis: Putting the paper's §Molecular interface (Fig 7) on the lattice turns "a molecule is a typed
+      interface exposing physical channels" into a spatial mechanism where two of those channels
+      demonstrably compose -- the chemical channel (reaction-diffusion patterning, causally isolated by
+      the equal-diffusion control) and the thermal channel (Arrhenius grading) over one shared field. It
+      takes a coarser, point-scale lumped realization, which made one
+      molecule's four channels executable at a POINT (F1Fo ATP synthase), and makes the chemical channel
+      SPATIAL, adding a composing thermal channel.
 conclusion: '## Claims
 
-  - A single molecular mechanism (F1Fo ATP synthase) compiles from its Fig 7 draft and, run to completion, drives all four physical interface channels from one coupled proton flux: chemical (ATP synthesized, 0->100), electrical (proton current, ~5.29e-17 A), mechanical (Fo rotary power, ~8.29e-18 W) and thermal (dissipated remainder, ~1.98e-18 W). The interface is preserved unchanged by compilation (Law 2). The Fig 7c specialized ports (substrates, cofactors, catalysts, products) are structurally preserved but not driven by this handler — honestly reported, not claimed as dynamic.
+
+  - The paper''s §Molecular interface (Fig 7) chemical channel holds as a 2D spatial mechanism: a
+  Gray-Scott reaction-diffusion system (autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du)
+  turns a near-uniform seed into an emergent Turing spot pattern (v_var ~0.0011 -> ~0.0119, ~12 domains,
+  patterned == 1.0), while the single-variable equal-diffusion causal control (Du = Dv = 0.12) stays
+  UNIFORM (v_var ~= 0, patterned == 0.0). Removing only the diffusion asymmetry removes the pattern.
+
+
+  - The thermal channel composes with the chemical one: a raised temperature field Arrhenius-scaling the
+  reaction (Ea=0.15, T=1.2) GRADES the pattern (~12 -> ~2 domains, v_var ~0.0119 -> ~0.0096) while staying
+  patterned -- a real second modality, not a collapse. Two of the molecular interface''s four channels
+  demonstrably compose spatially.
 
 
   ## Evidence
 
-  - **ATP-SYNTHESIZED** — chemical_out (ATP synthesized) 0 -> 100 (F1Fo ATP synthase, PMF-driven rotary catalysis)
 
-  - **ROTARY-POWER-COUPLES** — mechanical_out, electrical_out, thermal_out all move off zero, driven by the same proton flux as chemical_out
+  - **PATTERN-FORMS** -- patterned == 1.0, v_var ~0.0011 -> ~0.0119 over 8000 steps
 
-  - **Subports undriven (honesty)** — substrates/cofactors/catalysts/products stay at 0.0 for the full run; present structurally, not simulated
+
+  - **PATTERN-HAS-MULTIPLE-DOMAINS** -- n_domains ~= 12 (multi-seed band [8, 12])
+
+
+  - **EQUAL-DIFFUSION-CONTROL-UNIFORM** -- Du=Dv=0.12: patterned == 0.0, v_var ~= 0 (single-variable causal control)
+
+
+  - **THERMAL-CHANNEL-STILL-PATTERNS** -- thermal patterned == 1.0, v_var ~= 0.0096 (graded, not collapsed)
+
+
+  - **THERMAL-CHANNEL-COARSENS** -- n_domains ~12 -> ~2 under the raised temperature field
+
+
+  - **PATTERN-IS-MULTISEED-ROBUST** -- v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5
 
 
   ## Limitations
 
-  - One mechanism (F1Fo ATP synthase) realizes the Fig 7 interface; the four-channel transduction is real in shape (all channels derive from one proton flux with literature-grounded constants) but the magnitudes are illustrative, not fitted to a measured turnover rate under load.
 
-  - The Fig 7c enzymatic subports (substrate/cofactor/catalyst/product) are declared and preserved through compilation but carry no dynamics in this handler — no substrate-binding, cofactor, or product-release kinetics are modeled.
+  - Two of the molecular interface''s four physical channels are realized spatially (chemical + thermal);
+  the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or
+  tension, is exposed or measured. Owned in investigation.yaml as a named deferral.
 
-  - Toy-real kinetics: no explicit c-ring stepping, discrete catalytic sites, or load-dependent torque; the coupling is a single algebraic transduction from one flux, not a mechanistic simulation of rotary catalysis.
+
+  - This is a toy reaction-diffusion demonstration with tuned, uncalibrated constants -- emergent spatial
+  structure from a minimal autocatalytic chemistry, NOT real molecular structure or conformation (nothing
+  at PDB resolution), not a fitted reaction network.
+
+
+  - The databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is
+  realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species (U/V/P and the
+  autocatalytic reaction given placeholder database-style identifiers), NOT a resolved mapping. A real
+  Reactome-fragment mapping / live database fetch is deferred.
+
+
+  - The physics is deterministic (no RNG); the multi-seed range reflects sensitivity of the emergent
+  pattern to the initial nucleation-patch placement, re-drawn into the initial field, not a per-tick
+  stochastic process.
 
 
   ## Next steps
 
-  - Install a second handler behind the same Fig 7c `subports` refinement that actually drives substrate uptake, cofactor binding, and product release, so the enzymatic vocabulary becomes dynamic rather than structural-only.
 
-  - Wire the compiled chemical_out (ATP synthesized) into a downstream energy pool (e.g. the biomolecular-complementarity cascade) so the molecular mechanism drives a cellular-scale observable quantitatively, not just locally.'
+  - The electrostatic and mechanical channels made spatial (a charge field driving electromigration; a
+  mechanical force/tension coupling), so more than two of the molecular interface''s four channels compose
+  on one field.
+
+
+  - A real Reactome-fragment mapping / live database fetch that TYPES the Gray-Scott ports against actual
+  ChEBI/Reactome entries, upgrading the illustrative typed-port annotation to a resolved database mapping.'
 conclusion_logic:
   if_primary_tests_pass:
-    implementation_status: The Fig 7 draft compiles to an executable that runs.
-    biological_validation: The paper's molecular-interface pattern is demonstrated at the toy-real (uncalibrated) level; the ATP-synthase mechanism drives its chemical output and the other three physical channels move together from the same coupled flux.
-    pipeline_unblocks:
-    - biomolecular-complementarity
+    implementation_status: All three molecular-* composites (molecular-turing-pattern,
+      molecular-equal-diffusion-control, molecular-thermal-graded) build and run to completion through the
+      engine (8000 internal steps each), directly from their JSON specs.
+    biological_validation: The paper's §Molecular interface (Fig 7) is demonstrated spatially at the
+      toy-real (tuned, uncalibrated) level for two of its four channels -- the chemical channel
+      (reaction-diffusion patterning, causally isolated by the equal-diffusion control) and the thermal
+      channel (Arrhenius grading) composing over one shared field -- with the four-modality gap, the
+      toy-scope boundary, and the illustrative database typing reported as findings rather than claimed away.
+    pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
-    - compiler dropped/renamed an interface port (law 2 violation)
-    - handler produced no non-trivial dynamics on the declared physical channels
-    block_downstream: biomolecular-complementarity (the nested-hierarchy study needs a molecular mechanism at its deepest grain to be meaningful)
+    - the flagship fails to pattern (v_var stays near 0 or patterned != 1.0 within 8000 steps -- the
+      differential diffusion is not destabilizing the seed, or the nucleation patches are missing)
+    - the equal-diffusion control DOES pattern (v_var rises with Du=Dv -- the pattern is not actually caused
+      by the diffusion asymmetry, or Du/Dv were not held equal)
+    - the thermal run collapses instead of grading (v_var falls below the floor -- the Arrhenius rate is
+      overshooting, as the retired Ea=1.0/T=1.5 setting did) or fails to coarsen (n_domains not below the
+      flagship -- the temperature field is not reaching the reaction term)
+    block_downstream: none -- no study in this workspace is gated on this molecular-channel demonstration.
 limitations:
-- The compiled ATP-synthase executable drives all four physical channels (chemical/electrical/mechanical/thermal) from one coupled proton flux; the magnitude is illustrative and not fitted to a specific measured turnover rate under physiological load.
-- The Fig 7c specialized enzymatic ports (substrates, cofactors, catalysts, products) are structurally present and preserved through compilation but are not driven by this handler — they stay at their 0.0 seed. No substrate-binding, cofactor, catalytic-turnover, or product-release dynamics are modeled or claimed.
-- One mechanism (F1Fo ATP synthase) realizes the Fig 7 interface; the port set admits other molecular mechanisms but only this one is installed and measured.
-falsifiability: Overturned if the compiled ATP-synthase executable fails to synthesize ATP on its chemical output port (chemical_out stays at seed), if compilation drops or renames a physical-channel port (Law 2 violated), or if the other three channels fail to move together with the chemical channel (revealing the "one coupled flux" claim is false and the channels are actually independent).
+- 'Two of the molecular interface''s four physical channels are realized spatially (chemical:
+  reaction-diffusion / Turing; thermal: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels
+  are the named four-modality gap -- no charge field, no force or tension, is exposed or measured here.
+  This is owned in investigation.yaml''s what_this_does_not_demonstrate, as a named deferral.'
+- 'This is a toy reaction-diffusion demonstration, NOT real molecular structure or conformation. What is
+  demonstrated is emergent spatial structure from a minimal autocatalytic chemistry with tuned,
+  uncalibrated constants -- nothing at PDB resolution, no fitted reaction network, no calibrated molecule.'
+- 'The databases claim -- PDB/Reactome/ChEBI/GO as "partial specifications of molecular interfaces and
+  their types" -- is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species (U/V/P
+  and the autocatalytic reaction annotated with placeholder database-style identifiers), a concrete gesture
+  at typing a molecular interface, NOT a resolved mapping. A real Reactome-fragment mapping / live database
+  fetch is a named deferral.'
+- 'The parameters (Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0; thermal Ea=0.15, T=1.2) are tuned
+  demonstration values, not fitted, and no literature acceptance band is claimed. The canonical regime
+  sits inside the explicit reaction-diffusion CFL limit (max(Du,Dv)*dt*4 = 0.64 < 1; the process raises on
+  an unstable config). The thermal setting was retuned from a hotter one (Ea=1.0/T=1.5) that overshoots
+  into near-uniform collapse -- pinned as a direct-physics assertion so grading is tested against collapse.'
+- 'The physics is deterministic -- no RNG. The GrayScott seed config is accepted but currently inert, so
+  the multi-seed range (v_var in [0.01157, 0.01193], n_domains in [8, 12]) is produced by re-drawing the
+  initial near-uniform field for seeds 1-5, reflecting sensitivity to nucleation-patch placement, not a
+  per-tick stochastic process.'
+- Only two of the four physical channels (chemical and thermal) are realized; a point-scale
+  predecessor drove all four channels (chemical, electrical, mechanical, thermal) from one
+  coupled proton flux via a concrete rotary-ATP-synthase mechanism. Spatializing the electrical
+  and mechanical channels, and realizing a named molecular machine rather than a generic
+  reaction-diffusion chemistry, remain open.
+- The specialized enzymatic subports (substrate, cofactor, catalyst, product) are not
+  addressed; only the top-level chemical and thermal physical channels are realized spatially.
+falsifiability: Overturned if the flagship fails to pattern within the 8000-step window (v_var stays near
+  0 or patterned != 1.0 -- differential diffusion not destabilizing the seed), if the equal-diffusion
+  control DOES pattern (v_var rising with Du = Dv -- the structure not actually caused by the diffusion
+  asymmetry), or if the thermal run collapses instead of grading (v_var below the pattern floor -- the
+  Arrhenius rate overshooting, as the retired Ea=1.0/T=1.5 setting did) or fails to coarsen the pattern.
 visualizations:
-- name: fig07-executable-dynamics
-  address: html:fig07-executable.html
-  description: 'Interactive Fig 7: the F1Fo ATP synthase as a four-channel transducer.
-    One shared proton flux drives all four outputs at once — chemical_out (ATP
-    synthesis flux) steps 0 → 100 at t=1 and holds; electrical_out, mechanical_out,
-    and thermal_out are computed from the same flux (proton current, rotary power,
-    waste heat) but, at these literature rate constants, land near machine-precision
-    zero (~1e-17 to 1e-18) and are too small to render as visible traces at this
-    scale — present in the state, invisible on the chart. PMF drives ATP synthesis;
-    the four-channel interface is preserved even though only the chemical channel
-    is visually distinguishable here.'
-  config:
-    chart: html
-    caption: 'Interactive Fig 7: chemical_out (ATP) steps from 0 to 100 as the proton
-      flux turns on; the three other channels are computed from the same flux but
-      are ~1e-17–1e-18 in magnitude at these constants, effectively invisible next
-      to ATP''s O(100) scale.'
-- name: fig07-illustration
-  address: image:visualizations/fig07-illustration.png
+- name: molecular-turing-pattern-movie
+  address: image:viz/molecular-turing-pattern.gif
+  description: 'Animated GIF of the flagship chemical-channel run: a near-uniform Gray-Scott seed on a
+    128x128 periodic field (u~=1, v~=0 plus small noise and a few nucleation patches) destabilizes under
+    the canonical differential-diffusion regime (Du=0.16, Dv=0.08) into an emergent Turing spot pattern --
+    the molecular interface''s chemical channel (§Molecular interface, Fig 7) made spatial: local
+    autocatalytic reactions plus differential diffusion producing emergent spatial structure. Re-baked over
+    the same run cited in this study''s behavior tests, for provenance.'
   config:
     chart: image
-    caption: 'Fig 7 — the molecular interface: a molecule as a process with typed physical channels (chemical, electrical, mechanical, thermal) plus a subports refinement (substrates, cofactors, catalysts, products). This study compiles it into a running F1Fo ATP synthase.'
+    caption: 'Chemical channel -- Turing pattern formation: a near-uniform Gray-Scott seed breaks into ~12
+      emergent spots (v_var ~0.0011 -> ~0.0119) under differential diffusion (Dv < Du).'
+- name: molecular-thermal-graded-movie
+  address: image:viz/molecular-thermal-graded.gif
+  description: 'Animated GIF of the thermal-channel run: the IDENTICAL chemistry, diffusion, and seed as
+    the flagship, plus a raised uniform temperature field (T=1.2) Arrhenius-scaling the reaction (Ea=0.15).
+    The pattern GRADES -- coarsening to fewer, larger domains (~12 -> ~2) while staying patterned rather
+    than collapsing. Watch it beside the flagship GIF: the temperature field is a real second physical
+    channel modulating the chemical one, not a chemistry collapse. Re-baked over the run cited in this
+    study''s behavior tests.'
+  config:
+    chart: image
+    caption: 'Thermal channel -- a raised temperature field grades the chemical pattern: Arrhenius-scaled
+      reaction (Ea=0.15, T=1.2) coarsens ~12 domains to ~2, v_var ~0.0119 -> ~0.0096 (graded, not collapsed).'
+- name: molecular-metrics
+  address: html:viz/molecular-metrics.html
+  description: 'Interactive Plotly panel of the flagship run, synced to the GIF''s time axis: the
+    inhibitor-field spatial variance v_var (the primary pattern-formation metric, rising from ~0.0011
+    toward the patterned plateau ~0.0119) plotted with the connected-domain count n_domains (~12 spots).
+    Together the two traces are the load-bearing evidence that the chemical channel genuinely patterns --
+    emergent variance and discrete domains, not a uniform relaxation. Interactive: hover for exact per-tick
+    values.'
+  config:
+    chart: html
+    caption: 'Molecular metrics -- v_var rises from ~0.0011 to the patterned plateau ~0.0119 while the
+      field resolves into ~12 connected domains: the chemical channel genuinely patterns.'
 parent_studies:
-- study: disintegration
+- study: biomolecular-complementarity
   condition: tests-passed
-experiment: Compile the Fig 7 F1Fo ATP-synthase draft to an executable and run it 8 seconds through the engine, reading all four physical channel ports plus the subports refinement.
-result: The compiled mechanism synthesizes ATP — chemical_out rises 0->100 — while the electrical, mechanical, and thermal channels move together from the same coupled proton flux (electrical_out ~5.29e-17 A, mechanical_out ~8.29e-18 W, thermal_out ~1.98e-18 W). The specialized substrate/cofactor/catalyst/product ports remain structurally preserved but undriven — honestly reported. The inert draft, with no mechanism, stays at seed.
+experiment: 'Run three Gray-Scott reaction-diffusion composites to completion through the process-bigraph
+  engine directly from their JSON specs: molecular-turing-pattern (GrayScott, a 128x128 near-uniform seed
+  under the canonical differential-diffusion spot regime Du=0.16/Dv=0.08, 8000 internal steps),
+  molecular-equal-diffusion-control (the single-variable causal control, Du=Dv=0.12, identical chemistry
+  and seed), and molecular-thermal-graded (identical chemistry/diffusion/seed plus a raised uniform
+  temperature field T=1.2 Arrhenius-scaling the reaction, Ea=0.15). Measure whether the flagship patterns
+  (v_var above the floor, patterned == 1.0, more than one domain) while the equal-diffusion control stays
+  uniform (v_var ~= 0), and whether the thermal channel grades the pattern (coarser -- fewer domains, lower
+  but still-patterned v_var) rather than collapsing it; re-draw the initial field for seeds 1-5 and report
+  v_var / n_domains as a range.'
+result: 'The chemical channel patterns -- the near-uniform Gray-Scott seed destabilizes under differential
+  diffusion into an emergent Turing spot pattern (v_var ~0.0011 -> ~0.0119, ~12 domains, patterned == 1.0)
+  -- while the single-variable equal-diffusion causal control (Du=Dv=0.12) stays uniform (v_var ~= 0,
+  patterned == 0.0), realizing the paper''s §Molecular interface (Fig 7) chemical channel as a spatial
+  mechanism and isolating differential diffusion as the cause. The thermal channel composes over the same
+  field -- a raised temperature field (Ea=0.15, T=1.2) grades the pattern (~12 -> ~2 domains, v_var ~0.0119
+  -> ~0.0096) while staying patterned, a real second modality, not a collapse. The honest boundaries are
+  reported as findings -- the electrostatic and mechanical channels are the named four-modality gap, this
+  is a toy reaction-diffusion demonstration and not real molecular structure, and the databases claim is
+  realized as illustrative typed-port annotation over the Gray-Scott species rather than a resolved mapping.
+  Multi-seed: v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5, reported as a range.'
