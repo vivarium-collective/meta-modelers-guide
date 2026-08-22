@@ -1153,6 +1153,138 @@ def run_cahn_hilliard_frames(composite_state: dict, core, steps: int = 35, caden
 
 
 # --------------------------------------------------------------------------
+# Protocell / autopoiesis (self-maintaining vs. dissolving membrane) frame
+# capture
+# --------------------------------------------------------------------------
+
+_INTERIOR_FILL = "#f2b705"
+_INTERIOR_CONTOUR = "#c98a00"
+
+
+def _render_protocell_frame(phi: np.ndarray, interior: np.ndarray, time: float,
+                             phi_vmax: float) -> np.ndarray:
+    """Render one matplotlib (Agg) frame for a protocell tick: the membrane
+    density ``phi`` as a sequential heatmap fixed at ``0..phi_vmax`` (``vmax``
+    is the SEED's own peak density, computed once by the caller before the
+    run starts, not a per-frame min/max or the run's empirical max -- see
+    :func:`run_protocell_frames` for why the transient production overshoot
+    would otherwise wash out the homeostatic plateau; color must stay
+    comparable frame-to-frame, the same fixed-scale reasoning every other
+    renderer in this module follows),
+    with the enclosed-interior region overlaid via the shared
+    :func:`_footprint_fill` translucent-fill-plus-contour primitive so the
+    audience watches the SAME topological quantity the process itself gates
+    production on (``interior`` is
+    :func:`~meta_modelers_guide.protocell.autopoiesis.enclosed_area`'s
+    boolean mask) persist for the closed loop or shrink to nothing for the
+    control. Returns an (H, W, 3) uint8 RGB array (the figure canvas
+    buffer)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(1, 1, figsize=(6.2, 5.6), dpi=100)
+
+    im = ax.imshow(phi, origin="lower", cmap="PuBuGn", vmin=0.0, vmax=phi_vmax)
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="phi (membrane density)")
+    _footprint_fill(ax, interior, _INTERIOR_FILL, fill_alpha=0.30,
+                     contour_color=_INTERIOR_CONTOUR)
+
+    ax.set_xticks([]); ax.set_yticks([])
+    _pattern_title(fig, "Autopoiesis — a self-maintaining membrane", time)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_protocell_frames(composite_state: dict, core, steps: int = 36, cadence: int = 6
+                          ) -> tuple[list[np.ndarray], dict[str, list[float]]]:
+    """Mirror :func:`run_cahn_hilliard_frames`, but for the autopoiesis study
+    (``Protocell``): builds a fresh :class:`Composite` from
+    ``composite_state`` and runs it in a manual cadence loop, capturing one
+    animation frame + one metrics row per tick.
+
+    Like ``CahnHilliard``, there is no world-owning process instance to reach
+    into -- ``phi`` IS a genuine process-bigraph ``fields`` store (see
+    ``protocell/autopoiesis.py``'s module docstring), so it's read straight
+    off ``comp.state["fields"]["phi"]`` after each tick. The enclosed-interior
+    overlay uses the SAME closure detector the process itself gates
+    production on (:func:`~meta_modelers_guide.protocell.autopoiesis.enclosed_area`),
+    with ``thr`` read from the live ``Protocell`` process config (found
+    generically by ``address``, like ``run_disintegration_frames`` finds
+    ``CpmDisintegration``) rather than duplicated/hardcoded here.
+
+    Default ``steps=36, cadence=6`` matches
+    ``tests/test_autopoiesis_regime.py``'s already-validated closed-loop
+    margin (36 ticks * steps_per_tick=50 = 1800 internal RD steps,
+    comfortably inside the ~2000-step homeostatic-plateau window -- the ring
+    eventually breaks down past ~2450-2650 steps even with production on, so
+    callers must NOT push ``steps`` past that margin for the closed-loop
+    composite) and yields exactly 6 frames.
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
+    arrays; ``metrics`` is ``{"time": [...], "enclosed_area": [...],
+    "membrane_mass": [...]}`` -- flat, equal-length lists (one entry per
+    frame), drawn straight from the composite's ``obs`` store after each
+    tick, plus the explicit panel-dispatch marker ``metrics["_panel"] =
+    "protocell"`` (see :func:`metrics_panel`). ``enclosed_area`` plateaus at
+    a positive value for the closed autopoietic loop and drops to 0 once the
+    control's membrane ring stops topologically enclosing an interior.
+    """
+    from process_bigraph import Composite
+
+    from meta_modelers_guide.protocell.autopoiesis import enclosed_area
+
+    proc_key = next(
+        k for k, v in composite_state.items()
+        if isinstance(v, dict) and v.get("_type") == "process"
+        and "Protocell" in v.get("address", "")
+    )
+    thr = float(composite_state[proc_key]["config"].get("thr", 0.30))
+
+    # Fixed physical color scale: the SEED's own peak density (read before
+    # the run starts), not the run's empirical max. The self-limiting
+    # production loop transiently OVERSHOOTS well above the seed amplitude
+    # before relaxing into its homeostatic plateau (observed: seed peak 1.0,
+    # transient peak ~3.3 within the first few ticks, plateau ~0.3-0.4) --
+    # scaling to that transient's max would wash the sustained plateau state
+    # out to near-white for the rest of the GIF, exactly the frames that
+    # matter most for "holds". Same fixed-scale-not-per-run-max reasoning as
+    # every renderer here, just anchored to the seed instead of the run.
+    phi_vmax = float(np.asarray(composite_state["fields"]["phi"], dtype=float).max()) or 1e-9
+
+    comp = Composite({"state": composite_state}, core=core)
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    metrics: dict[str, list[float]] = {"time": [], "enclosed_area": [], "membrane_mass": []}
+    raw: list[tuple[np.ndarray, np.ndarray, float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        phi = np.asarray(comp.state["fields"]["phi"]).copy()
+        interior = enclosed_area(phi, thr)
+        obs = comp.state["obs"]
+
+        t = float((tick + 1) * cadence)
+        raw.append((phi, interior, t))
+
+        metrics["time"].append(t)
+        metrics["enclosed_area"].append(float(obs.get("enclosed_area", 0.0)))
+        metrics["membrane_mass"].append(float(obs.get("membrane_mass", 0.0)))
+
+    frames = [_render_protocell_frame(phi, interior, t, phi_vmax)
+              for phi, interior, t in raw]
+
+    metrics["_panel"] = "protocell"
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
 # GIF encoding
 # --------------------------------------------------------------------------
 
@@ -1680,6 +1812,57 @@ def _metrics_panel_cahn_hilliard(metrics: dict[str, list[float]], out_path: Path
     return "plotly"
 
 
+def _metrics_panel_protocell(metrics: dict[str, list[float]], out_path: Path,
+                              include_plotlyjs: str | bool) -> str:
+    """Protocell/autopoiesis counterpart of :func:`metrics_panel` for
+    ``run_protocell_frames``' output shape (flat equal-length lists).
+    ``enclosed_area`` is the study's headline number -- the persist-vs-decay
+    contrast IS this trace plateauing (closed loop) vs. dropping to 0
+    (control) -- so it gets the primary left-hand axis; ``membrane_mass``
+    (a different, roughly seed-mass-order scale) goes on a secondary
+    right-hand axis, same reasoning as ``_metrics_panel_flat``'s
+    ``volume``/biomass split. Falls back to a small static HTML table if
+    Plotly is unavailable.
+    """
+    times = metrics.get("time") or []
+    area = metrics.get("enclosed_area") or []
+    mass = metrics.get("membrane_mass") or []
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        rows = "".join(
+            f"<tr><td>{t}</td><td>{a}</td><td>{m}</td></tr>"
+            for t, a, m in zip(times, area, mass)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr><th>time</th><th>enclosed_area</th>"
+            f"<th>membrane_mass</th></tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=area, mode="lines+markers", name="enclosed_area",
+                              line=dict(width=2.8, color=_PALETTE[0])))
+    fig.add_trace(go.Scatter(x=times, y=mass, mode="lines+markers", name="membrane_mass",
+                              line=dict(width=2.2, color=_PALETTE[1], dash="dot"),
+                              yaxis="y2"))
+
+    fig.update_layout(
+        title=dict(text="<b>protocell — boundary integrity over time</b>", x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis=dict(title="enclosed_area", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis2=dict(title="membrane_mass", overlaying="y", side="right", showgrid=False),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
+    )
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
 # Explicit renderer→panel-kind dispatch table (see `metrics_panel`'s
 # docstring): every `run_*_frames` in this module stamps `metrics["_panel"]`
 # with its own kind name, looked up here instead of sniffed from which keys
@@ -1692,4 +1875,5 @@ _METRICS_PANEL_DISPATCH: dict[str, Any] = {
     "growth_division": _metrics_panel_growth_division,
     "sorting": _metrics_panel_sorting,
     "cahn_hilliard": _metrics_panel_cahn_hilliard,
+    "protocell": _metrics_panel_protocell,
 }
