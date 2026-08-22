@@ -12,7 +12,14 @@ division-pairing step instead of copy-pasting the growth/division loop again.
 
 - ``_cell_glucose_vmax(cid)`` overrides the base's population-wide constant
   with this cell's own heritable trait (``self.vmax[cid]``, falling back to
-  ``vmax0`` for any id not yet tracked).
+  ``vmax0`` for any id not yet tracked) -- UNLESS `selection` (a BOOLEAN
+  config flag, default True, byte-identical to the pre-flag behavior) is
+  False, in which case it returns the FIXED founder `vmax0` for every cell
+  regardless of `self.vmax`. The trait still mutates and is recorded either
+  way (`_on_division` doesn't consult `selection`); with `selection: false`
+  it just confers no fitness, so any drift is undirected -- the no-selection
+  control (study 9's dual control, alongside `mutate: false`'s no-mutation
+  control).
 - ``_on_division(parent_id, daughter_id)`` overrides the base's no-op hook:
   the daughter's trait is drawn from the parent's trait +/- Gaussian
   mutation (seeded RNG), clamped to ``[vmax_min, vmax_max]``; the parent
@@ -49,6 +56,7 @@ class CpmEvolution(CpmGrowthDivision):
     config_schema = {
         **CpmGrowthDivision.config_schema,
         "mutate": {"_type": "boolean", "_default": True},
+        "selection": {"_type": "boolean", "_default": True},
         "mut_sigma": _f(0.3),
         "vmax0": _f(1.5),
         "vmax_min": _f(0.2),
@@ -121,8 +129,16 @@ class CpmEvolution(CpmGrowthDivision):
         self._new_model(1, float(c["init_biomass"]))
 
     def _cell_glucose_vmax(self, cid):
-        """Per-cell heritable trait, not the population-wide constant."""
-        return float(self.vmax.get(cid, self.config["vmax0"]))
+        """Per-cell heritable trait, not the population-wide constant --
+        UNLESS `selection` is False, in which case the trait still mutates
+        and is recorded (`self.vmax`), but confers NO fitness: every cell's
+        dFBA uses the fixed founder `vmax0`, so any drift in the trait is
+        undirected (the no-selection control). `selection` defaults True,
+        keeping this path byte-identical to the pre-flag behavior."""
+        vmax0 = float(self.config["vmax0"])
+        if not bool(self.config.get("selection", True)):
+            return vmax0
+        return float(self.vmax.get(cid, vmax0))
 
     def _on_division(self, parent_id, daughter_id):
         """Daughter inherits the parent's trait +/- Gaussian mutation
