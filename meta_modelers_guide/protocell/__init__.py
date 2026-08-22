@@ -17,6 +17,6 @@ interior precursor field, no global closure observer in the update); see
 """
 from __future__ import annotations
 
-from .autopoiesis import Protocell, ProtocellV2
+from .autopoiesis import Protocell, ProtocellV2, ProtocellV2Open
 
-__all__ = ["Protocell", "ProtocellV2"]
+__all__ = ["Protocell", "ProtocellV2", "ProtocellV2Open"]

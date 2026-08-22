@@ -526,3 +526,239 @@ class ProtocellV2(Process):
             "persists": persists,
             "collapse_tick": float(self._collapse_tick),
         }
+
+
+# ============================================================================
+# v2-OPEN -- the EXTERNALLY-DRIVEN (open-system) variant, and its MEASURED verdict
+# ============================================================================
+# v2 (`ProtocellV2`) sustains emergent closure only METASTABLY (~2451 internal
+# steps) and then the interior fills in. The diagnosis (scratchpad sweep): the
+# collapse is NOT a finite-budget exhaustion but a GEOMETRIC positive feedback --
+# the precursor the membrane secretes concentrates in the enclosed pocket
+# (interior precursor mass climbs monotonically ~40 -> ~158 while total precursor
+# stays ~350), and because production `k_prod*phi*p*(1-phi/phi_max)` is autocatalytic
+# in phi and STRONGEST where phi is small (the logistic cap), that pooled precursor
+# slowly thickens the membrane INWARD until the centre crosses `thr` and closure is
+# lost. The ring is metastable BY NATURE, poised between dissolution and runaway
+# inward filling.
+#
+# The open-system question (the explicitly-named remaining EMERGE step): does an
+# EXTERNAL DRIVE -- a genuine open dissipative boundary that no longer leaves the
+# system on a closed budget -- turn that metastable plateau into an INDEFINITE
+# steady self-maintenance? `ProtocellV2Open` adds a canonical open-system
+# throughflow, every term LOCAL/pointwise (no global closure observer -- the same
+# emergence guarantee as v2, asserted structurally on `rd_step_v2_open`):
+#
+#     dphi/dt = D*lap(phi) - (k_decay + k_turn)*phi + prod        # + membrane turnover
+#     dp/dt   = div(M grad p) + s_p*phi - k_leak*p - k_cons*phi*p
+#                                          + f_in - k_wash*p       # + precursor throughflow
+#
+# `f_in` is a uniform external precursor influx (an external nutrient bath), `k_wash`
+# a first-order washout to an external reservoir (together a chemostat throughflow
+# with exterior steady concentration f_in/k_wash), and `k_turn` an optional membrane
+# turnover to an external sink. `f_in=k_wash=k_turn=0` reduces EXACTLY to `ProtocellV2`.
+#
+# MEASURED VERDICT (canonical drive f_in=0.01, k_wash=0.02, k_turn=0; deterministic,
+# no RNG) -- the HONEST result is that external drive does NOT sustain closure
+# indefinitely; it DESTABILISES the ring:
+#   * the driven closed loop loses closure at ~step 591 -- ~4x FASTER than the
+#     undriven ~2451 -- via RUNAWAY autocatalytic filling: membrane mass runs away
+#     ~624 -> ~3092 (the whole 64x64 domain fills with membrane), enclosed_area -> 0.
+#     No bounded steady enclosed_area > 0 is reached.
+#   * this is not a tuning artefact of one drive: an ~80-point scratchpad sweep over
+#     precursor feed, washout, feed+washout+turnover, saturable export, and
+#     substrate-feed found NO local drive that yields a bounded non-zero steady
+#     enclosed_area -- every drive either STARVES the ring (membrane -> 0) or triggers
+#     runaway FILLING, and none even prolongs the undriven 2451-step window. A
+#     UNIFORM local drive cannot tell interior from exterior, so any feed strong
+#     enough to counter decay over-drives the pooled-precursor inward filling, and any
+#     washout strong enough to prevent pooling starves the membrane.
+#   * CONTROLS remain load-bearing (drive does NOT rescue closure): the precursor
+#     knockout s_p=0 still loses closure fast (~step 188; the external feed sustains a
+#     little diffuse membrane mass ~500 but NEVER re-closes it), and a 60deg puncture
+#     is NOT healed -- enclosed_area stays 0 even as membrane mass runs away, so the
+#     drive never restores the punctured topology.
+#
+# So the open-system step is BUILT AND MEASURED, and the honest finding is that
+# steady emergent closure is HARD: a naive external drive shifts the metastable ring
+# into faster runaway collapse rather than into an indefinite non-equilibrium steady
+# state. The EMERGE claim therefore stays at genuinely-emergent-but-metastable
+# closure; it is NOT upgraded to steady self-maintenance.
+#
+# CFL: unchanged from v2 -- max(D, Mp)*dt*4 < 1 (the drive terms are non-diffusive).
+
+V2_OPEN_PARAMS = {
+    **V2_PARAMS,
+    # Canonical open drive -- a chemostat throughflow (exterior steady precursor
+    # f_in/k_wash = 0.5), no membrane turnover. See the module verdict above.
+    "f_in": 0.01,
+    "k_wash": 0.02,
+    "k_turn": 0.0,
+}
+
+
+def rd_step_v2_open(phi, p, D, k_decay, k_prod, Mp, alpha, s_p, k_leak, k_cons,
+                    phi_max, f_in, k_wash, k_turn, dt=1.0):
+    """One explicit v2-OPEN update -- `rd_step_v2` plus a LOCAL open-system
+    throughflow. NO `binary_fill_holes`, no global closure test anywhere (the
+    same emergence guarantee as `rd_step_v2`, asserted structurally):
+
+        M       = Mp * (1 - alpha*clip(phi,0,1))
+        prod    = k_prod * phi * p * clip(1 - phi/phi_max, 0, None)
+        phi_new = phi + dt*( D*lap(phi) - (k_decay+k_turn)*phi + prod )
+        p_new   = p   + dt*( div(M grad p) + s_p*phi - k_leak*p - k_cons*phi*p
+                              + f_in - k_wash*p )
+
+    `f_in` is a uniform external precursor influx, `k_wash` a first-order washout to
+    an external reservoir, `k_turn` an optional membrane turnover to an external sink
+    -- every added term pointwise. With `f_in=k_wash=k_turn=0` this is EXACTLY
+    `rd_step_v2`. `p` is clipped at 0 (a concentration)."""
+    M = Mp * (1.0 - alpha * np.clip(phi, 0.0, 1.0))
+    prod = k_prod * phi * p * np.clip(1.0 - phi / phi_max, 0.0, None)
+    phi_new = phi + dt * (D * laplacian(phi) - (k_decay + k_turn) * phi + prod)
+    p_new = p + dt * (
+        _variable_diffusion(p, M) + s_p * phi - k_leak * p - k_cons * phi * p
+        + f_in - k_wash * p
+    )
+    return phi_new, np.clip(p_new, 0.0, None)
+
+
+class ProtocellV2Open(Process):
+    """Externally-driven (OPEN-SYSTEM) variant of `ProtocellV2` -- the explicitly
+    named remaining EMERGE step, built and MEASURED.
+
+    Same two local fields (membrane `phi`, interior precursor `p`) and the same
+    genuinely-local update, PLUS a local open-system throughflow (uniform precursor
+    feed `f_in`, first-order washout `k_wash`, optional membrane turnover `k_turn`).
+    The question it answers: does external drive convert v2's metastable closure into
+    an INDEFINITE steady self-maintenance? MEASURED answer -- NO: the drive
+    destabilises the ring into faster runaway filling (closure lost ~step 591 at the
+    canonical drive vs ~2451 undriven), and no local drive in an ~80-point sweep
+    reaches a bounded steady enclosed_area > 0. See the module-level v2-OPEN verdict
+    for the full result and the controls. `f_in=k_wash=k_turn=0` reduces exactly to
+    `ProtocellV2`.
+
+    Emits the same observables as `ProtocellV2`. `enclosed_area`/`collapse_tick` are
+    passive readouts of the emitted state, never part of the update."""
+
+    config_schema = {
+        "grid": {"_type": "map[integer]"},
+        "D": _f(V2_OPEN_PARAMS["D"]),
+        "k_decay": _f(V2_OPEN_PARAMS["k_decay"]),
+        "k_prod": _f(V2_OPEN_PARAMS["k_prod"]),
+        "thr": _f(V2_OPEN_PARAMS["thr"]),
+        "dt": _f(V2_OPEN_PARAMS["dt"]),
+        "Mp": _f(V2_OPEN_PARAMS["Mp"]),
+        "alpha": _f(V2_OPEN_PARAMS["alpha"]),
+        "s_p": _f(V2_OPEN_PARAMS["s_p"]),
+        "k_leak": _f(V2_OPEN_PARAMS["k_leak"]),
+        "k_cons": _f(V2_OPEN_PARAMS["k_cons"]),
+        "phi_max": _f(V2_OPEN_PARAMS["phi_max"]),
+        # Open-system drive knobs.
+        "f_in": _f(V2_OPEN_PARAMS["f_in"]),
+        "k_wash": _f(V2_OPEN_PARAMS["k_wash"]),
+        "k_turn": _f(V2_OPEN_PARAMS["k_turn"]),
+        "steps_per_tick": {"_type": "integer", "_default": 50},
+        "seed": {"_type": "integer", "_default": 1},
+    }
+
+    def inputs(self):
+        return {"fields": "map[array]"}
+
+    def outputs(self):
+        return {
+            "fields": "map[array]",
+            "enclosed_area": "overwrite[float]",
+            "membrane_mass": "overwrite[float]",
+            "precursor_mass": "overwrite[float]",
+            "persists": "overwrite[float]",
+            "collapse_tick": "overwrite[float]",
+        }
+
+    def __init__(self, config=None, core=None):
+        raw_config = dict(config) if config else {}
+        super().__init__(config, core=core)
+        c = dict(self.config)
+        # Same core.fill zero-clobber guard as v1/v2: restore any caller-passed
+        # scalar (a legitimate 0.0 -- e.g. the s_p=0 knockout, or f_in=0/k_wash=0
+        # to recover the closed v2 -- would otherwise be silently refilled).
+        for key in ("D", "k_decay", "k_prod", "thr", "dt", "Mp", "alpha",
+                    "s_p", "k_leak", "k_cons", "phi_max", "f_in", "k_wash",
+                    "k_turn", "steps_per_tick", "seed"):
+            if key in raw_config:
+                c[key] = raw_config[key]
+        self.config = c
+        self._D = float(c["D"])
+        self._k_decay = float(c["k_decay"])
+        self._k_prod = float(c["k_prod"])
+        self._thr = float(c["thr"])
+        self._dt = float(c["dt"])
+        self._Mp = float(c["Mp"])
+        self._alpha = float(c["alpha"])
+        self._s_p = float(c["s_p"])
+        self._k_leak = float(c["k_leak"])
+        self._k_cons = float(c["k_cons"])
+        self._phi_max = float(c["phi_max"])
+        self._f_in = float(c["f_in"])
+        self._k_wash = float(c["k_wash"])
+        self._k_turn = float(c["k_turn"])
+        self._steps = int(c["steps_per_tick"])
+        self._seed = int(c.get("seed", 1))
+
+        cfl = max(self._D, self._Mp) * self._dt * 4.0
+        if not (cfl < 1.0):
+            raise ValueError(
+                f"ProtocellV2Open: max(D, Mp)*dt*4 = {cfl:.4g} >= 1 violates the "
+                f"explicit 2D reaction-diffusion CFL stability limit "
+                f"(coeff*dt <= 0.25, dx=1). D={self._D}, Mp={self._Mp}, "
+                f"dt={self._dt}. Canonical D=0.02, Mp=0.10, dt=1.0 gives 0.40."
+            )
+
+        self._mass_floor = None
+        self._step_count = 0
+        self._collapse_tick = -1
+
+    def update(self, state, interval):
+        fields = state.get("fields", {}) or {}
+        phi0 = np.array(fields.get("phi"), dtype=float, copy=True)
+        p_field = fields.get("p")
+        if p_field is None:
+            p0 = np.zeros_like(phi0)
+        else:
+            p0 = np.array(p_field, dtype=float, copy=True)
+
+        if self._mass_floor is None:
+            self._mass_floor = MASS_FLOOR_FRAC * float(phi0.sum())
+
+        phi, p = phi0, p0
+        for _ in range(self._steps):
+            phi, p = rd_step_v2_open(
+                phi, p, self._D, self._k_decay, self._k_prod, self._Mp,
+                self._alpha, self._s_p, self._k_leak, self._k_cons,
+                self._phi_max, self._f_in, self._k_wash, self._k_turn,
+                dt=self._dt,
+            )
+            self._step_count += 1
+            # DIAGNOSTIC readout only -- not fed back into the update.
+            if self._collapse_tick == -1 and int(enclosed_area_v2(phi, self._thr).sum()) == 0:
+                self._collapse_tick = self._step_count
+
+        if not np.all(np.isfinite(phi)) or not np.all(np.isfinite(p)):
+            raise FloatingPointError(
+                f"ProtocellV2Open: phi or p went non-finite after {self._steps} "
+                f"internal steps at D={self._D}, Mp={self._Mp}, dt={self._dt}. "
+                f"The CFL guard should prevent this for max(D,Mp)*dt*4 < 1."
+            )
+
+        area = int(enclosed_area_v2(phi, self._thr).sum())
+        mass = float(phi.sum())
+        persists = 1.0 if (area > 0 and mass > self._mass_floor) else 0.0
+
+        return {
+            "fields": {"phi": phi - phi0, "p": p - p0},
+            "enclosed_area": float(area),
+            "membrane_mass": mass,
+            "precursor_mass": float(p.sum()),
+            "persists": persists,
+            "collapse_tick": float(self._collapse_tick),
+        }
