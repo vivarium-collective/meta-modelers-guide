@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="4 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -146,12 +146,17 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Does the paper&#39;s §Cell–environment coupling sense/act loop (Fig 5) hold as real spatial metabolism — one CPM cell sensing
-a diffusing nutrient field, running flux-balance analysis at its own footprint, growing, and
-secreting a byproduct back into the field — when the cell and its environment are each real,
-independently-built simulators (viva-cpm&#39;s Cellular Potts engine, spatio-flux&#39;s
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> When a single cell metabolizes at its own location, does it measurably reshape the very
+nutrient gradient it depends on — niche construction (odling1996) — closing the paper&#39;s
+§Cell–environment coupling sense → metabolize → secrete loop (Fig 5) as real spatial
+metabolism: one cell sensing local glucose, running flux-balance analysis at its own footprint,
+growing, and secreting a byproduct that diffuses back into the field it senses? The paper
+frames this feedback loop as &#34;the minimal structure required for control&#34;; here the loop is
+genuinely closed (a real depletion → uptake feedback), while directed control — chemotaxis up
+the sensed gradient — is the deferred half. Mechanistically, the cell and its environment are
+two real, independently-built simulators (viva-cpm&#39;s Cellular Potts engine, spatio-flux&#39;s
 diffusion-advection and dynamic-FBA processes) composed through one typed coupling process
-(`CpmCellField`), rather than a scripted or lumped stand-in for that coupling?
+(`CpmCellField`), rather than a scripted or lumped stand-in for that coupling.
 </p>
 
 <nav class="study-tabs" aria-label="Study sections">
@@ -564,8 +569,9 @@ diffusion-advection and dynamic-FBA processes) composed through one typed coupli
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
       <p class="ctr-text">Composing a real CPM cell with a real spatio-flux nutrient field through one typed
-coupling process (`CpmCellField`) reproduces the paper&#39;s §Cell–environment coupling sense/act
-loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in for it: over 20 ticks the
+coupling process (`CpmCellField`) reproduces the paper&#39;s §Cell–environment coupling
+sense → metabolize → secrete loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in
+for it (the loop is closed; directed control/chemotaxis is deferred): over 20 ticks the
 cell runs dynamic-FBA at its own
 footprint (`e_coli_core`, O2-capped to force acetate overflow), grows ~3.4x in CPM volume (32
 -&gt; 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
@@ -573,17 +579,29 @@ up to ~18% before diffusion partially resupplies it (niche construction), and se
 diffusing acetate plume — two independently-built simulators talking through one typed port.
 </p>
       
-      <div class="ctr-context">This is the spatial realization of the paper&#39;s §Cell–environment coupling
-sense/act loop (Fig 5), and this investigation&#39;s flagship. `single-cell-in-a-field` composes one CPM cell — a real Cellular
-Potts Model agent from viva-cpm, with genuine pixel-level shape, adhesion, and volume dynamics
-on a 60x60 lattice — with a shared spatio-flux `fields` grid (glucose, acetate) running
-`DiffusionAdvection`. The coupling process, `CpmCellField`, is the entire interface between
+      <div class="ctr-context">A cell does not merely inhabit its environment — it remakes it. Here one
+cell sits in a nutrient gradient, eats at its own location, and secretes a byproduct back into
+the field, measurably reshaping the very gradient it depends on: niche construction (odling1996),
+realized spatially. This is the paper&#39;s §Cell–environment coupling sense → metabolize → secrete
+loop (Fig 5), and this investigation&#39;s flagship. The paper frames this feedback loop as &#34;the
+minimal structure required for control&#34;: here the loop is genuinely closed (a real
+depletion → uptake feedback), while directed control — chemotaxis up the sensed gradient — is a
+tracked, deferred half (see key_assumptions/limitations), so this cell senses, metabolizes,
+grows, and secretes, but does not yet act on what it senses. Mechanically it composes two real,
+independently-built simulators through one typed coupling process (`CpmCellField`): one CPM cell
+— a real Cellular Potts Model agent from viva-cpm, with genuine pixel-level shape, adhesion, and
+volume dynamics on a 60x60 lattice — with a shared spatio-flux `fields` grid (glucose, acetate)
+running `DiffusionAdvection`. `CpmCellField` is the entire interface between
 them: each tick it reads the mean glucose concentration at the cell&#39;s current footprint (the
 set of lattice pixels the CPM cell occupies), solves one dynamic-FBA step against `e_coli_core`
 with Michaelis–Menten-limited glucose uptake (`glucose_km`, `glucose_vmax`) and a fixed
 oxygen cap (`oxygen_vmax`) — the O2 cap is what forces the optimizer into mixed-acid acetate
 overflow rather than pure aerobic respiration, matching the biological mechanism this coupling
-is meant to demonstrate — then mass-balances the FBA solution against how much glucose the
+is meant to demonstrate. That causal claim is not left to the code: the O2-uncapped mechanism
+control (`o2-cap-forces-acetate-overflow` below) lifts the oxygen bound and shows acetate
+secretion collapses to ~0 while the capped flagship secretes a real plume, so the overflow is a
+demonstrated experiment rather than an assertion. The coupling then mass-balances the FBA
+solution against how much glucose the
 footprint actually holds (so the cell can never manufacture biomass or acetate from glucose it
 did not actually remove), grows the CPM cell&#39;s target volume in proportion to the resulting
 biomass, and writes the clamped glucose uptake and acetate secretion back into the field as a
@@ -621,7 +639,7 @@ construction), and secretes a diffusing acetate plume.
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>single-cell-in-a-field</code></div>
         <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The cell runs dynamic-FBA at its own footprint and grows: biomass rises above its
-initial value and CPM volume exceeds 40 px by step 20.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The CPM cell&#39;s own target-volume-driven growth carries through to its actual lattice-pixel volume — the cell occupies more pixels by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell secretes acetate into the shared field as a genuine byproduct of the O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has diffused/spread) by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Net field-wide glucose falls over the run — the cell is a genuine sink on the shared field, not merely redistributing it.</span></div>
+initial value and CPM volume exceeds 40 px by step 20.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The CPM cell&#39;s own target-volume-driven growth carries through to its actual lattice-pixel volume — the cell occupies more pixels by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell secretes acetate into the shared field as a genuine byproduct of the O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has diffused/spread) by the end of the run.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Net field-wide glucose falls over the run — the cell is a genuine sink on the shared field, not merely redistributing it.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational mechanism control (not this study&#39;s scientific claim): the acetate the flagship secretes is CAUSED BY the O2 cap, not an artifact of the coupling. This runs a second composite (`single-cell-in-a-field-o2uncapped`) identical to the flagship except the oxygen bound is lifted (`oxygen_vmax` 2.5 -&gt; 1000, EX_o2_e effectively unbounded). With respiration no longer capacity-limited, unconstrained e_coli_core takes pure aerobic respiration as growth-optimal and EX_ac_e sits at 0 — so the cell secretes ~0 acetate (and grows faster: biomass ~2.35 vs the capped ~0.37), while the capped flagship secretes a real plume. This turns the study&#39;s overflow claim (&#34;the O2 cap is what forces the optimizer into mixed-acid overflow&#34;) from a code assertion into a demonstrated experiment. The flagship was built first and, unlike the later studies, had no such foundational control until this pass; this is it.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Foundational conservation control (not this study&#39;s scientific claim): the paper frames conservation laws (mass, energy balance) as interface constraints on any coupling. This runs the flagship composite through a closed per-species ledger — for glucose and acetate, initial_field_mass + Σ(every writer&#39;s own reported net exchange) == final_field_mass — where the writer&#39;s reported delta and what actually accumulates in the shared grid travel through two independent code paths (the process&#39;s per-tick arithmetic vs process-bigraph&#39;s additive `apply` for a `map[array]` port), so a clamp that manufactures mass, a double-write, or a schema `apply` that concatenates instead of sums surfaces as a nonzero residual. The ledger also shows the cell nets a glucose sink and an acetate source while DiffusionAdvection under Neumann BC nets ~0.</span></div>
       </div>
       
     </div>
@@ -631,9 +649,10 @@ initial value and CPM volume exceeds 40 px by step 20.</span><span class="ctr-do
       <p class="ctr-text">Over 20 ticks the cell grows ~3.4x in CPM volume (32 -&gt; 110 px, ~3% of a 60x60 lattice it
 does not fill), depletes its own local glucose by up to ~18% before diffusion partially
 resupplies it, and secretes a diffusing acetate plume (field-wide acetate 0 -&gt; ~47.0) from an
-O2-capped dynamic-FBA overflow mechanism — the paper&#39;s §Cell–environment coupling sense/act
-loop (Fig 5) closed as genuine spatial metabolism, composed from two independently-built
-simulators through one typed process.
+O2-capped dynamic-FBA overflow mechanism — demonstrated to be O2-cap-caused by an uncapped
+control (uncapped acetate ~0). The paper&#39;s §Cell–environment coupling sense → metabolize →
+secrete loop (Fig 5) closed as genuine spatial metabolism (directed control/chemotaxis deferred),
+composed from two independently-built simulators through one typed process.
 </p>
       
       
@@ -649,8 +668,9 @@ simulators through one typed process.
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
             <span class="finding-claim finding-statement">A real CPM cell coupled to a real spatio-flux nutrient field through one typed
-process (`CpmCellField`) closes the paper&#39;s §Cell–environment coupling sense/act loop (Fig 5)
-as genuine spatial metabolism: it
+process (`CpmCellField`) closes the paper&#39;s §Cell–environment coupling
+sense → metabolize → secrete loop (Fig 5) as genuine spatial metabolism (the loop is closed;
+directed control/chemotaxis is deferred): it
 runs dynamic-FBA at its own footprint and grows both biologically (biomass) and structurally
 (CPM lattice volume). Confirmed: biomass 0.1 -&gt; ~0.37, CPM volume 32 -&gt; 110 px (~3.4x) over
 20 ticks, on a 3600-pixel lattice the cell occupies only ~3% of by the end.</span>
@@ -794,6 +814,60 @@ secretion side of the coupling is as real as the uptake side. Confirmed: field-w
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-methodological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The acetate overflow is CAUSED BY the O2 cap, shown by experiment rather than
+asserted from code: lifting the oxygen bound (O2-uncapped control, oxygen_vmax 2.5 -&gt; 1000)
+collapses acetate secretion to ~0 while the capped flagship secretes a real plume — the cell
+respires fully instead of overflowing (and grows faster for it). Confirmed: field-wide acetate
+capped 0 -&gt; ~47.0 vs uncapped 0 -&gt; 0.0 (exactly); uncapped biomass ~2.35 vs capped ~0.37.</span>
+            
+            <span class="finding-chip">via <code>o2-cap-forces-acetate-overflow</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">methodological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> acetate capped ~47.0 vs uncapped 0.0; biomass uncapped ~2.35 vs capped ~0.37 · 
+              
+              via test <a href="#bt-o2-cap-forces-acetate-overflow" onclick="_gotoStudyTab('tests','bt-o2-cap-forces-acetate-overflow');return false;"><code>o2-cap-forces-acetate-overflow</code></a> · 
+              in run <a href="#run-single-cell-in-a-field-o2uncapped"><code>single-cell-in-a-field-o2uncapped</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-single-cell-in-a-field"><code>single-cell-in-a-field</code></a>, <a href="#run-single-cell-in-a-field-o2uncapped"><code>single-cell-in-a-field-o2uncapped</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: approx_equal 0.0</code></div>
             
             
             
@@ -1226,6 +1300,84 @@ pass_if: {"op": "\u003c", "provenance": "field-wide glucose total 5940.0 -\u003e
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-o2-cap-forces-acetate-overflow"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="o2-cap-forces-acetate-overflow"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">o2-cap-forces-acetate-overflow</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>single-cell-in-a-field-o2uncapped</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Foundational mechanism control (not this study&#39;s scientific claim): the acetate the flagship secretes is CAUSED BY the O2 cap, not an artifact of the coupling. This runs a second composite (`single-cell-in-a-field-o2uncapped`) identical to the flagship except the oxygen bound is lifted (`oxygen_vmax` 2.5 -&gt; 1000, EX_o2_e effectively unbounded). With respiration no longer capacity-limited, unconstrained e_coli_core takes pure aerobic respiration as growth-optimal and EX_ac_e sits at 0 — so the cell secretes ~0 acetate (and grows faster: biomass ~2.35 vs the capped ~0.37), while the capped flagship secretes a real plume. This turns the study&#39;s overflow claim (&#34;the O2 cap is what forces the optimizer into mixed-acid overflow&#34;) from a code assertion into a demonstrated experiment. The flagship was built first and, unlike the later studies, had no such foundational control until this pass; this is it.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sum(fields.acetate) with oxygen uncapped vs capped", "kind": "observable", "path": "fields.acetate"}
+pass_if: {"op": "approx_equal", "provenance": "field-wide acetate over 20 ticks: capped flagship 0 -\u003e ~47.0, O2-uncapped 0 -\u003e 0.0 (exactly), a \u003e100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow; composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json)", "value": 0.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-field-mass-balance-closes"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="field-mass-balance-closes"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">field-mass-balance-closes</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>single-cell-in-a-field</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Foundational conservation control (not this study&#39;s scientific claim): the paper frames conservation laws (mass, energy balance) as interface constraints on any coupling. This runs the flagship composite through a closed per-species ledger — for glucose and acetate, initial_field_mass + Σ(every writer&#39;s own reported net exchange) == final_field_mass — where the writer&#39;s reported delta and what actually accumulates in the shared grid travel through two independent code paths (the process&#39;s per-tick arithmetic vs process-bigraph&#39;s additive `apply` for a `map[array]` port), so a clamp that manufactures mass, a double-write, or a schema `apply` that concatenates instead of sums surfaces as a nonzero residual. The ledger also shows the cell nets a glucose sink and an acetate source while DiffusionAdvection under Neumann BC nets ~0.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "abs(final_mass - (initial_mass + \u03a3 writer_net_exchange)) per species", "kind": "observable", "path": "fields.glucose, fields.acetate"}
+pass_if: {"op": "\u003c", "provenance": "both glucose and acetate ledgers close to \u003c 1e-6 over 15 ticks; cell net glucose \u003c 0 (sink) and net acetate \u003e 0 (source), diff net ~0 for both (tests/test_mass_balance.py::test_flagship_field_mass_balance_closes; meta_modelers_guide/analysis/mass_balance.py)", "value": 1e-06}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1299,7 +1451,7 @@ pass_if: {"op": "\u003c", "provenance": "field-wide glucose total 5940.0 -\u003e
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">single-cell-in-a-field.composite.json builds and runs to completion through the process-bigraph engine (tests/test_flagship_field.py, tests/test_cpm_cell_field.py, tests/test_cpm_viz.py); guarded skip when the optional cobra dependency is absent, matching draft-to-living-cell&#39;s FBA-grain convention.</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">single-cell-in-a-field.composite.json (and its O2-uncapped control sibling single-cell-in-a-field-o2uncapped.composite.json) build and run to completion through the process-bigraph engine (tests/test_flagship_field.py, tests/test_cpm_cell_field.py, tests/test_cpm_viz.py, tests/test_mass_balance.py, tests/test_composites_build.py); guarded skip when the optional cobra dependency is absent, matching draft-to-living-cell&#39;s FBA-grain convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -1312,7 +1464,7 @@ pass_if: {"op": "\u003c", "provenance": "field-wide glucose total 5940.0 -\u003e
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All four primary behavior tests pass on measured readouts from a real 20-tick run — the cell metabolizes and grows (biomass, CPM volume), depletes its own local nutrient before diffusion resupplies it (niche construction), and secretes a diffusing acetate plume.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All four primary behavior tests pass on measured readouts from a real 20-tick run — the cell metabolizes and grows (biomass, CPM volume), depletes its own local nutrient before diffusion resupplies it (niche construction), and secretes a diffusing acetate plume — and the two foundational controls hold. The O2-uncapped control demonstrates the overflow is caused by the O2 cap (uncapped acetate ~0), and the closed field mass-balance ledger closes to &lt; 1e-6 for glucose and acetate.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1325,7 +1477,7 @@ pass_if: {"op": "\u003c", "provenance": "field-wide glucose total 5940.0 -\u003e
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Composing a real Cellular Potts cell with a real spatial dFBA+diffusion simulator through one typed process makes the paper&#39;s sense/act-coupling claim concrete at a level of mechanistic resolution draft-to-living-cell&#39;s lumped 9-cell grid could not reach — genuine cell shape, genuine flux-balance optimization, genuine PDE diffusion, all talking through one interface neither framework was built with the other in mind for.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Composing a real Cellular Potts cell with a real spatial dFBA+diffusion simulator through one typed process makes the paper&#39;s cell-environment coupling claim concrete at a level of mechanistic resolution draft-to-living-cell&#39;s lumped 9-cell grid could not reach — genuine cell shape, genuine flux-balance optimization, genuine PDE diffusion, all talking through one interface neither framework was built with the other in mind for.</textarea>
         </label>
       </div>
     </div>
@@ -1344,7 +1496,7 @@ pass_if: {"op": "\u003c", "provenance": "field-wide glucose total 5940.0 -\u003e
 through the engine over 20 ticks.</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The spatial §Cell–environment coupling sense/act pattern (Fig 5) is demonstrated at the toy-real (uncalibrated) level, with genuine CPM shape dynamics and dynamic-FBA optimization behind the coupling rather than a scripted trajectory.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The spatial §Cell–environment coupling sense → metabolize → secrete pattern (Fig 5) is demonstrated at the toy-real (uncalibrated) level, with genuine CPM shape dynamics and dynamic-FBA optimization behind the coupling rather than a scripted trajectory (directed control/chemotaxis remains the deferred half of the paper&#39;s loop).</div>
         
         
         <div style="margin-top:4px"><em>Pipeline unblocks:</em>
@@ -1375,9 +1527,12 @@ through the engine over 20 ticks.</div>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Composing a real CPM cell with a real spatio-flux nutrient field through one typed coupling
-process (<code>CpmCellField</code>) reproduces the paper's §Cell–environment coupling sense/act loop
-(Fig 5) as genuine spatial metabolism.
+<li>A single cell reshapes the very nutrient gradient it depends on — niche construction
+(odling1996), realized spatially. Composing a real CPM cell with a real spatio-flux nutrient
+field through one typed coupling process (<code>CpmCellField</code>) reproduces the paper's
+§Cell–environment coupling sense → metabolize → secrete loop (Fig 5) as genuine spatial
+metabolism — the loop closed (depletion → uptake feedback), with directed control (chemotaxis)
+the deferred half.
 Over 20 ticks the cell grows ~3.4x in CPM volume (32 -&gt; 110 px, ~3% of a 60x60 lattice it does
 not come close to filling), depletes its own local glucose by up to ~18% before diffusion
 partially resupplies it (niche construction), and secretes a diffusing acetate plume from an
@@ -1391,6 +1546,10 @@ footprint</li>
 <li><strong>ACETATE-SECRETED-AND-DIFFUSES</strong> — field-wide acetate 0 -&gt; ~47.0 as the plume spreads</li>
 <li><strong>NET-GLUCOSE-CONSUMED</strong> — field-wide glucose 5940.0 -&gt; ~5908.4; local footprint drawdown up
 to ~18%</li>
+<li><strong>O2-CAP-FORCES-ACETATE-OVERFLOW</strong> (foundational control) — O2-uncapped acetate 0 -&gt; 0.0
+(exactly) vs capped 0 -&gt; ~47.0: the overflow is caused by the O2 cap, shown by experiment</li>
+<li><strong>FIELD-MASS-BALANCE-CLOSES</strong> (foundational control) — glucose and acetate ledgers close to
+&lt; 1e-6 (cell nets a glucose sink + acetate source; diffusion nets ~0)</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
@@ -1411,8 +1570,6 @@ not a process-bigraph store, and no other process reads or writes it.</li>
 <li>Add directed chemotaxis (motion up the sensed gradient) as a variant of this composite.</li>
 <li>Fan out to the next spatial counterpart, multi-cell competition over one shared field
 (<code>cell-cell-coupling</code>'s spatial analogue), reusing <code>CpmCellField</code> for each competing cell.</li>
-<li>Track field-wide mass (source + diffusion + uptake + secretion) as an explicit closed balance
-rather than reporting depletion/secretion as separate totals.</li>
 </ul>
 </div>
     </div>
@@ -1512,7 +1669,7 @@ separate machinery this composite does not use.</li><li style="margin:2px 0">Gro
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "95762b50e23fd1e211dd3080bab490adfa230dc8", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/95762b50e23fd1e211dd3080bab490adfa230dc8", "branch": "main", "lockfile": "uv.lock@b706f7b7d3b8", "generated_at": "2026-08-22 00:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "7108dbd5fe39612859a6679fa1fb67ec719c13d2", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/7108dbd5fe39612859a6679fa1fb67ec719c13d2", "branch": "main", "lockfile": "uv.lock@b706f7b7d3b8", "generated_at": "2026-08-22 01:29 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "cell-environment-coupling-spatial";

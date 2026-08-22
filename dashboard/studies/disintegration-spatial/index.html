@@ -567,12 +567,16 @@ bound, its domain resorbing while its shed material becomes scattering physical 
 particle-movement process through two coupling processes (`CpmDisintegration` for the
 viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
 reproduces the paper&#39;s §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
-stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area &gt; 30) through
-tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick = 7, the
-domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
-spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
-coupling process plus one stock movement process, mirroring `draft-to-living-cell/disintegration`&#39;s
-§Disintegration level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
+stand-in for it: over a fixed-seed deterministic 20-tick CPM run, the cell holds coherent
+(area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at
+released_tick = 7, the domain resorbs to area 0 by tick 16, and its 68 shed pixels become a
+debris cloud whose RMS spread strictly increases through tick 24 (the trajectory -- hold, cross,
+resorb, particle count -- reproduces exactly; the scatter cloud moves under unseeded
+`BrownianMovement`, so its exact RMS magnitudes are representative of one run, not
+run-to-run-reproducible -- only the strict-increase direction is the robust claim) -- hold,
+cross, resorb, scatter, end to end from one coupling process plus one stock movement process,
+mirroring `draft-to-living-cell/disintegration`&#39;s §Disintegration level-shift pattern (Fig 6) at
+real spatial, per-pixel resolution.
 </p>
       
       <div class="ctr-context">This is the spatial realization of the paper&#39;s §Disintegration pattern
@@ -601,19 +605,27 @@ One tuned regime over `disintegration-spatial`
 (`meta_modelers_guide.composites.disintegration-spatial`) demonstrates the full arc:
 a single CPM cell centered on a 60x60 shared field grid inside a radial acetate gradient --
 low at the grid center where the cell is seeded, rising toward the periphery -- diffusing
-under spatio-flux `DiffusionAdvection`. Measured over a deterministic 20-tick run
-(`tests/test_cpm_disintegration.py`, `tests/test_disintegration_regime.py`,
+under spatio-flux `DiffusionAdvection`. The CPM trajectory -- hold, cross, resorb -- is
+fixed-seed deterministic and reproduces exactly run to run (measured over a 20-tick run,
+`tests/test_cpm_disintegration.py`, `tests/test_disintegration_regime.py`,
 `tests/test_disintegration_viz.py`, verified over repeated runs): the cell holds coherent
 (area &gt; 30 pixels) through tick 6 with zero debris, the footprint-local acetate mean (the
 observable `mean_stressor`) crosses
 `viability_threshold` at `released_tick = 7`, and from there the domain resorbs monotonically
 -- area 56 at tick 7 down to area 0 by tick 16 -- while shedding exactly 68 particles into the
-debris store (8/tick, capped, until the footprint is exhausted). The debris cloud&#39;s RMS spread
-keeps strictly increasing after dissolution completes (~5.3 at tick 16 to ~7.6 at tick 24, an
-8-tick post-dissolution window) -- genuine scattering, not particles piling up against a wall
-or the field boundary. The whole arc -- hold, cross, resorb, scatter -- is direct,
-code-verified simulation output from one coupling process plus one stock movement process, not
-a scripted trajectory.
+debris store (8/tick, capped, until the footprint is exhausted). Every one of those numbers --
+`released_tick`, the area trajectory, and the 68-particle shed count -- is reproducible exactly,
+because the CPM engine is fixed-seed and the shedding logic is a deterministic function of the
+footprint diff. The debris cloud&#39;s scatter MAGNITUDE is a different matter: it moves under stock
+spatio-flux `BrownianMovement`, which is UNSEEDED, so the RMS-spread values below are
+representative of one run, not exactly reproducible run to run -- only the qualitative claim
+(RMS spread strictly increases after dissolution completes) is the robust, test-asserted fact.
+A representative run: RMS spread keeps strictly increasing after dissolution completes (~5.3 at
+tick 16 to ~7.6 at tick 24, an 8-tick post-dissolution window) -- genuine scattering, not
+particles piling up against a wall or the field boundary. The whole arc -- hold, cross, resorb,
+scatter -- is direct, code-verified simulation output from one coupling process plus one stock
+movement process, not a scripted trajectory; only the scatter cloud&#39;s exact magnitudes vary
+run-to-run, its direction of change does not.
 
 This is precisely the failure cascade the paper&#39;s §Disintegration describes: once viability is
 lost, energy production can no longer sustain transport, membranes lose integrity, gradients
@@ -644,7 +656,7 @@ a coherent domain all the way through its own dissolution into diffusing debris 
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a deterministic 20-24 tick run, the CPM cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, sheds exactly 68 particles into a shared debris store, and that debris cloud&#39;s RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6) -- genuine scattering, not wall-saturation. The paper&#39;s §Disintegration level-shift (Fig 6) holds as real spatial dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through one coupling process plus one stock movement process. The stressor here is literally `acetate`, the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling-spatial` -- one molecule whose meaning is set relationally by each cell&#39;s interface (§Cell–cell coupling): nutrient there, toxin here. And the scatter phase reads directly as §Disintegration&#39;s failure cascade -- the actively maintained, far-from-equilibrium cell relaxing, once viability is lost, into a diffusion-dominated debris cloud, the transition most models skip (agent-based models delete the cell, whole-cell models assume viability).
+      <p class="ctr-text">Over a 20-24 tick run, the CPM cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds exactly 68 particles into a shared debris store -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly run to run. That debris cloud&#39;s RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run) -- genuine scattering, not wall-saturation; BrownianMovement is unseeded, so the exact RMS magnitudes vary run-to-run and are representative rather than reproducible, but the strict increase is the robust, test-asserted claim. The paper&#39;s §Disintegration level-shift (Fig 6) holds as real spatial dissolution, composed from independent frameworks (viva-cpm + spatio-flux particles) through one coupling process plus one stock movement process. The stressor here is literally `acetate`, the SAME molecule that is metabolic waste and cross-feeding food in `cell-cell-coupling-spatial` -- one molecule whose meaning is set relationally by each cell&#39;s interface (§Cell–cell coupling): nutrient there, toxin here. And the scatter phase reads directly as §Disintegration&#39;s failure cascade -- the actively maintained, far-from-equilibrium cell relaxing, once viability is lost, into a diffusion-dominated debris cloud, the transition most models skip (agent-based models delete the cell, whole-cell models assume viability).
 </p>
       
       
@@ -720,8 +732,10 @@ deterministic across repeated runs.</span>
 domain resorbs, its vacated footprint pixels are converted into particles in a shared
 map[particle] store, and that debris cloud keeps scattering (RMS spread strictly increasing)
 well after the cell itself has fully dissolved, under a separate stock BrownianMovement
-process. Confirmed: 68 particles shed by tick 16, RMS spread ~5.3 -&gt; ~7.6 over an 8-tick
-post-dissolution window.</span>
+process. Confirmed: 68 particles shed by tick 16 (deterministic, reproduces exactly); RMS
+spread ~5.3 -&gt; ~7.6 over an 8-tick post-dissolution window in a representative run --
+BrownianMovement is unseeded, so the exact magnitudes vary run-to-run, but the strict increase
+is the robust, test-asserted claim.</span>
             
             <span class="finding-chip">via <code>debris-cloud-keeps-scattering</code></span>
             
@@ -735,7 +749,7 @@ post-dissolution window.</span>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> 68 particles shed; RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24) · 
+              <strong>observed:</strong> 68 particles shed (deterministic); RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24) (representative -- BrownianMovement is unseeded, exact magnitudes vary run-to-run) · 
               
               via test <a href="#bt-debris-cloud-keeps-scattering" onclick="_gotoStudyTab('tests','bt-debris-cloud-keeps-scattering');return false;"><code>debris-cloud-keeps-scattering</code></a> · 
               in run <a href="#run-disintegration-spatial"><code>disintegration-spatial</code></a>
@@ -1408,7 +1422,7 @@ flagship and companion studies&#39; convention.</textarea>
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a real, deterministic 20-24 tick run -- the cell holds coherent, crosses its viability bound at a specific tick, resorbs to full dissolution, and sheds debris that keeps scattering after dissolution completes. The foundational particle-bridge control also passes, independent of the disintegration mechanism.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a real 20-24 tick run -- the cell holds coherent, crosses its viability bound at a specific tick, resorbs to full dissolution, and sheds debris that keeps scattering after dissolution completes. The CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly; the debris scatter&#39;s RMS-spread magnitude moves under unseeded BrownianMovement, so its exact values are representative of one run, not run-to-run-reproducible -- only the strict-increase direction is asserted as the robust claim. The foundational particle-bridge control also passes, independent of the disintegration mechanism.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1473,7 +1487,7 @@ through the engine over a deterministic 20-24 tick run.</div>
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter) reproduces the paper's §Disintegration level-shift (Fig 6) as genuine spatial dissolution. Over a deterministic 20-24 tick run: the cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, sheds 68 particles, and the debris cloud's RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6).</li>
+<li>Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux particle-movement process through two coupling processes (<code>CpmDisintegration</code> for the viability-collapse trigger and resorption, stock <code>BrownianMovement</code> for the debris scatter) reproduces the paper's §Disintegration level-shift (Fig 6) as genuine spatial dissolution. Over a 20-24 tick run: the cell holds coherent (area &gt; 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick == 7, the domain resorbs to area 0 by tick 16, and sheds 68 particles -- the CPM trajectory (hold/cross/resorb, released_tick, area, shed particle count) is fixed-seed deterministic and reproduces exactly. The debris cloud's RMS spread keeps strictly increasing through tick 24 (~5.3 -&gt; ~7.6 in a representative run); BrownianMovement is unseeded, so those exact magnitudes vary run-to-run -- only the strict increase is the robust, reproducible claim.</li>
 <li>The stressor is literally <code>acetate</code> -- the SAME molecule that is metabolic waste and cross-feeding food in <code>cell-cell-coupling-spatial</code>, here a toxin whose high local concentration crosses the cell's viability bound. This carries the paper's closing relational-molecule claim (§Cell–cell coupling): one molecule counting as nutrient, signal, or toxin through its consequences for viability -- nutrient/food there, toxin here.</li>
 <li>The two phases realize §Disintegration's failure cascade end to end: an actively maintained, far-from-equilibrium CPM domain, once viability is lost, relaxes into a diffusion-dominated, equilibrating debris cloud under <code>BrownianMovement</code>. Most models skip this transition explicitly -- agent-based models remove cells mid-simulation and whole-cell models assume viability -- so carrying a coherent domain through its own dissolution into diffusing debris is the explanatory gain.</li>
 </ul>
@@ -1483,7 +1497,7 @@ through the engine over a deterministic 20-24 tick run.</div>
 <li><strong>STRESSOR-CROSSES-VIABILITY-BOUND</strong> -- released_tick == 7.0, deterministic</li>
 <li><strong>DOMAIN-RESORBS-TO-ZERO</strong> -- area falls from 56 (tick 7) to 0 (tick 16)</li>
 <li><strong>SHED-MATERIAL-BECOMES-DEBRIS-PARTICLES</strong> -- 68 debris particles by tick 16</li>
-<li><strong>DEBRIS-CLOUD-KEEPS-SCATTERING</strong> -- RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24)</li>
+<li><strong>DEBRIS-CLOUD-KEEPS-SCATTERING</strong> -- RMS spread ~5.3 (tick 16) -&gt; ~7.6 (tick 24), a representative run (BrownianMovement is unseeded; the strict increase is the robust claim)</li>
 <li><strong>PARTICLE-BRIDGE-EMITS-THEN-SCATTERS</strong> -- 3 synthetic particles emitted then scattered, bridge verified independently</li>
 </ul>
 <h2>Limitations</h2>
@@ -1621,7 +1635,7 @@ the two for the same disintegration claim at two very different mechanistic reso
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "95762b50e23fd1e211dd3080bab490adfa230dc8", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/95762b50e23fd1e211dd3080bab490adfa230dc8", "branch": "main", "lockfile": "uv.lock@b706f7b7d3b8", "generated_at": "2026-08-22 00:37 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "7108dbd5fe39612859a6679fa1fb67ec719c13d2", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/7108dbd5fe39612859a6679fa1fb67ec719c13d2", "branch": "main", "lockfile": "uv.lock@b706f7b7d3b8", "generated_at": "2026-08-22 01:29 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "disintegration-spatial";

@@ -185,16 +185,22 @@ def _render_one(address, config, runs_db, study_yaml):
 
 # ## Study: Cell–Environment Coupling, Spatial (flagship) (`cell-environment-coupling-spatial`)
 #
-# **Question.** Does the paper's §Cell–environment coupling sense/act loop (Fig 5) hold as real spatial metabolism — one CPM cell sensing
-# a diffusing nutrient field, running flux-balance analysis at its own footprint, growing, and
-# secreting a byproduct back into the field — when the cell and its environment are each real,
-# independently-built simulators (viva-cpm's Cellular Potts engine, spatio-flux's
+# **Question.** When a single cell metabolizes at its own location, does it measurably reshape the very
+# nutrient gradient it depends on — niche construction (odling1996) — closing the paper's
+# §Cell–environment coupling sense → metabolize → secrete loop (Fig 5) as real spatial
+# metabolism: one cell sensing local glucose, running flux-balance analysis at its own footprint,
+# growing, and secreting a byproduct that diffuses back into the field it senses? The paper
+# frames this feedback loop as "the minimal structure required for control"; here the loop is
+# genuinely closed (a real depletion → uptake feedback), while directed control — chemotaxis up
+# the sensed gradient — is the deferred half. Mechanistically, the cell and its environment are
+# two real, independently-built simulators (viva-cpm's Cellular Potts engine, spatio-flux's
 # diffusion-advection and dynamic-FBA processes) composed through one typed coupling process
-# (`CpmCellField`), rather than a scripted or lumped stand-in for that coupling?
+# (`CpmCellField`), rather than a scripted or lumped stand-in for that coupling.
 #
 # **Claim.** Composing a real CPM cell with a real spatio-flux nutrient field through one typed
-# coupling process (`CpmCellField`) reproduces the paper's §Cell–environment coupling sense/act
-# loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in for it: over 20 ticks the
+# coupling process (`CpmCellField`) reproduces the paper's §Cell–environment coupling
+# sense → metabolize → secrete loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in
+# for it (the loop is closed; directed control/chemotaxis is deferred): over 20 ticks the
 # cell runs dynamic-FBA at its own
 # footprint (`e_coli_core`, O2-capped to force acetate overflow), grows ~3.4x in CPM volume (32
 # -> 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
@@ -288,6 +294,8 @@ _save_viz('cell-environment-coupling-spatial', 'single-cell-in-a-field-metrics',
 # | cpm-volume-grows | kind=observable path=obs.volume expr=last(obs.volume) | op > value 40.0 provenance CPM volume 32 -> 110 px over 20 ticks (~3.4x), ~3% of the 60x60=3600px lattice (tests/test_flagship_field.py::test_flagship_sense_act_loop) |
 # | acetate-secreted-and-diffuses | kind=observable path=fields.acetate expr=sum(fields.acetate) | op > value 0.0 provenance field-wide acetate 0 -> ~47.0 over 20 ticks, spreading into a plume around the cell's footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the plume is the third panel of the baked GIF) |
 # | net-glucose-consumed | kind=observable path=fields.glucose expr=sum(fields.glucose) | op < value 5940.0 provenance field-wide glucose total 5940.0 -> ~5908.4 over 20 ticks (~32 units net consumed); the local footprint drawdown is much sharper (up to ~18%) than the field-wide total because only the cell's footprint and its immediate diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop) |
+# | o2-cap-forces-acetate-overflow | kind=observable path=fields.acetate expr=sum(fields.acetate) with oxygen uncapped vs capped | op approx_equal value 0.0 provenance field-wide acetate over 20 ticks: capped flagship 0 -> ~47.0, O2-uncapped 0 -> 0.0 (exactly), a >100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow; composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json) |
+# | field-mass-balance-closes | kind=observable path=fields.glucose, fields.acetate expr=abs(final_mass - (initial_mass + Σ writer_net_exchange)) per species | op < value 1e-06 provenance both glucose and acetate ledgers close to < 1e-6 over 15 ticks; cell net glucose < 0 (sink) and net acetate > 0 (source), diff net ~0 for both (tests/test_mass_balance.py::test_flagship_field_mass_balance_closes; meta_modelers_guide/analysis/mass_balance.py) |
 
 # ## Study: Cell–Cell Coupling, Spatial (`cell-cell-coupling-spatial`)
 #
@@ -302,8 +310,10 @@ _save_viz('cell-environment-coupling-spatial', 'single-cell-in-a-field-metrics',
 # single N-cell coupling process (`CpmColonyField`) reproduces the paper's §Cell–cell coupling
 # viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
 # scripted or lumped stand-in for it: over
-# 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives spatial
-# competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81 px), while a
+# 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric
+# growth toward competitive exclusion (biomass 237.9 vs 64.5, a 3.69x margin; volume 3511 vs 81
+# px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
+# bound), while a
 # different composite over the same coupling process — a localized glucose depot, a fast-diffusing
 # acetate byproduct, and an acetate-consuming role — sustains a cell that never touches glucose
 # (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass
@@ -318,6 +328,7 @@ _save_viz('cell-environment-coupling-spatial', 'single-cell-in-a-field-metrics',
 # | --- | --- | --- | --- |
 # | `cellcell-compete` | `meta_modelers_guide.composites.cellcell-compete` | 0 | — |
 # | `cellcell-crossfeed` | `meta_modelers_guide.composites.cellcell-crossfeed` | 0 | — |
+# | `cellcell-crossfeed-knockout` | `meta_modelers_guide.composites.cellcell-crossfeed-knockout` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
@@ -409,6 +420,43 @@ spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['confi
 spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['b'] = 1
 spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['config']['contact'][1]['j'] = 14.0
 
+# **Composite `meta_modelers_guide.composites.cellcell-crossfeed-knockout`** — `spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-crossfeed-knockout.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout)
+
+# === Edit parameters for composite 'cellcell-crossfeed-knockout' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['diffusion_coeffs']['acetate'] = 15.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
+
+# process 'colony'  (local:CpmColonyField)
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['grow_per_biomass'] = 30.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['role'] = 'consumer'
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['seed_block'] = [22, 26, 0, 30, 34, 1]
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['acetate_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['oxygen_vmax'] = 20.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['target_volume'] = 50.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['cells'][0]['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout['state']['colony']['config']['contact'][1]['j'] = 14.0
+
 # ### Run
 #
 # _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
@@ -453,10 +501,12 @@ _save_viz('cell-cell-coupling-spatial', 'cellcell-crossfeed-metrics', _render_on
 # | --- | --- | --- |
 # | competition-excludes-the-slower-cell | kind=observable path=obs.biomass expr=last(obs.biomass["1"]) / last(obs.biomass["2"]) | op > value 1.5 provenance biomass 237.9 (id 1, vmax 10) vs 64.5 (id 2, vmax 4) -> 3.69x ratio over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly) |
 # | competition-volume-tracks-biomass | kind=observable path=obs.volume expr=last(obs.volume["1"]) > last(obs.volume["2"]) | op > value 0.0 provenance volume 3511 px (id 1) vs 81 px (id 2) over 20 ticks -- the faster competitor claims most of the shared lattice (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell) |
+# | competition-loser-displaced-not-excluded | kind=observable path=obs.biomass expr=last(obs.biomass["2"])   # loser final biomass, vs the 1.25 viable-biomass floor | op > value 1.25 provenance loser (id 2) ends at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits far above the viable-biomass floor, while holding only 81 px against the winner's 3511 px (~97.5% of the 3600-px lattice): spatially displaced, not excluded. Extending the run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation) (tests/test_cellcell_regimes.py::test_competition_loser_is_displaced_not_excluded) |
 # | crossfeeding-consumer-blind-to-glucose | kind=observable path=obs.local_glucose expr=last(obs.local_glucose["2"]) | op < value 0.5 provenance consumer (id 2) local_glucose == 0.0 over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
 # | crossfeeding-consumer-grows-on-acetate-alone | kind=observable path=obs.biomass expr=last(obs.biomass["2"]) | op > value 1.25 provenance consumer (id 2) biomass 1.25 -> 3.79 (roughly 3x, back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
 # | crossfeeding-acetate-plume-reaches-consumer | kind=observable path=obs.local_acetate expr=last(obs.local_acetate["2"]) | op > value 0.0 provenance consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose's 0.4) acetate plume reaches the consumer's footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
-# | two-writer-additivity-conserves-mass | kind=observable path=fields.glucose expr=net change in sum(fields.glucose) over 3 ticks (final minus initial) | op == value -6.0 provenance a synthetic negative-control process (not this study's composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve) |
+# | two-writer-additivity-conserves-mass | kind=observable path=fields.glucose expr=net change in sum(fields.glucose) over 3 ticks (final minus initial) | op == value -6.0 provenance a synthetic structural-control process (not this study's composites): two single-pixel writers on disjoint pixels, each removing 1.0/tick over 3 ticks, sum to a net field-wide change of exactly -6.0 with both pixels independently correct (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve) |
+# | crossfeeding-secretor-knockout-consumer-fails-to-grow | kind=observable path=obs.biomass expr=last(obs.biomass["1"])   # consumer-alone final biomass; expected to stay at the seed | op <= value 1.2500001 provenance consumer (id 1) biomass stays at its 1.25 seed and local_acetate stays 0.0 over 20 ticks with the secretor removed -- it persists on the lattice (~35 px) but flatly fails to grow, versus 1.25 -> 3.79 in the full cross-feed regime (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow) |
 
 # ## Study: Disintegration, Spatial (`disintegration-spatial`)
 #
@@ -471,12 +521,16 @@ _save_viz('cell-cell-coupling-spatial', 'cellcell-crossfeed-metrics', _render_on
 # particle-movement process through two coupling processes (`CpmDisintegration` for the
 # viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
 # reproduces the paper's §Disintegration level-shift (Fig 6) as genuine spatial dissolution, not a scripted or lumped
-# stand-in for it: over a deterministic 20-tick run, the cell holds coherent (area > 30) through
-# tick 6, the footprint-local acetate mean crosses viability_threshold at released_tick = 7, the
-# domain resorbs to area 0 by tick 16, and its 68 shed pixels become a debris cloud whose RMS
-# spread strictly increases through tick 24 -- hold, cross, resorb, scatter, end to end from one
-# coupling process plus one stock movement process, mirroring `draft-to-living-cell/disintegration`'s
-# §Disintegration level-shift pattern (Fig 6) at real spatial, per-pixel resolution.
+# stand-in for it: over a fixed-seed deterministic 20-tick CPM run, the cell holds coherent
+# (area > 30) through tick 6, the footprint-local acetate mean crosses viability_threshold at
+# released_tick = 7, the domain resorbs to area 0 by tick 16, and its 68 shed pixels become a
+# debris cloud whose RMS spread strictly increases through tick 24 (the trajectory -- hold, cross,
+# resorb, particle count -- reproduces exactly; the scatter cloud moves under unseeded
+# `BrownianMovement`, so its exact RMS magnitudes are representative of one run, not
+# run-to-run-reproducible -- only the strict-increase direction is the robust claim) -- hold,
+# cross, resorb, scatter, end to end from one coupling process plus one stock movement process,
+# mirroring `draft-to-living-cell/disintegration`'s §Disintegration level-shift pattern (Fig 6) at
+# real spatial, per-pixel resolution.
 
 # ### Parameters
 #
@@ -568,9 +622,10 @@ _save_viz('disintegration-spatial', 'disintegration-metrics', _render_one('html:
 
 # ## Study: Growth and Division, Spatial (`growth-and-division-spatial`)
 #
-# **Question.** Does the paper's §Growth and division growth-then-divide pattern (Fig 10a,b) hold spatially -- a CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses a threshold and divides via the native CPM engine operation `divide_cells` (mass-conserved), compounding into a small lineage over the run -- composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`)?
+# **Question.** A cell grows, crosses a threshold, and divides -- and its daughters do not necessarily divide together. This is the paper's §Growth and division growth-then-divide pattern (Fig 10a,b): metabolism drives a cell's own state across a threshold, crossing it fires division and partitions state across the two resulting daughters, and those daughters, "remain[ing] coupled through shared environmental state," can either stay in step or diverge (§Growth and division).
+# Does this hold spatially -- a single CPM cell whose metabolism (dFBA solved at its own lattice footprint) grows its volume until it crosses `vol_threshold` and divides via the native CPM engine operation `divide_cells`, partitioning biomass mass-conserved across the two daughters, compounding into a small multi-generation lineage tree -- and do sibling cells sharing one glucose field begin growing at different local rates as the colony crowds, so their division timing desynchronizes rather than staying locked to clean powers of two? Composed from independent frameworks (viva-cpm + spatio-flux + cobra) through one coupling process (`CpmGrowthDivision`).
 #
-# **Claim.** Composing one real CPM cell, growing via real per-footprint dFBA metabolism, with the native CPM engine operation `divide_cells` through a single coupling process (`CpmGrowthDivision`) reproduces the paper's §Growth and division growth-then-divide pattern (Fig 10a,b) as genuine spatial multicellular compounding, not a scripted lineage or a lumped stand-in for it: over a 36-tick run sampled every 3 ticks, the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18), spanning roughly 3-4 generations, while every cell's CPM volume stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80 -- growth, crossing, division, and resumed growth in the daughters, all as direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. This mirrors `draft-to-living-cell/growth-and-division`'s §Growth and division claim (Fig 10a,b) (growth drives the cell's own state across a threshold; crossing the threshold triggers division) but realizes the division event itself as the native spatial CPM operation `divide_cells` acting directly on lattice pixels, in contrast to that study's place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
+# **Claim.** Metabolism-driven growth crossing a threshold fires division, and division partitions state -- biomass, and lattice pixels -- across two daughters that resume growing themselves, compounding into a genuine multi-generation lineage tree whose siblings desynchronize as they compete for shared, local resources: this is the paper's §Growth and division growth-then-divide pattern (Fig 10a,b), including its "coordination and divergence" clause, realized spatially. One real CPM cell, growing via real per-footprint dFBA metabolism, divides via the native CPM engine operation `divide_cells` (biomass partitioned proportional to post-split daughter volume, not reset and discarded) through a single coupling process (`CpmGrowthDivision`). Over a 36-tick run sampled every 3 ticks: the founder compounds into an 18-cell lineage tree spanning 4 generations (`max_generation` = 4), the population steps up in a monotonic non-decreasing staircase (1,2,2,2,4,4,5,8,8,11,14,18) that departs from clean powers of two from tick 21 onward as sibling cells' division timing diverges, and every cell's CPM volume stays bounded in a sawtooth between `reset_target` = 40 and `vol_threshold` = 80. The staircase is bounded more by lattice crowding (the colony packs to roughly two-thirds occupancy within its own footprint) than by nutrient limitation (field-wide glucose depletes only ~3% over the run). This is direct simulation output from three independently-developed frameworks (viva-cpm + spatio-flux + cobra) meeting at one typed interface. It mirrors `draft-to-living-cell/growth-and-division`'s §Growth and division claim (Fig 10a,b) (growth drives the cell's own state across a threshold; crossing the threshold triggers division) but realizes division as the native spatial CPM operation `divide_cells` acting directly on lattice pixels, in contrast to that study's place-graph rewrite (one node becoming two structurally-new nodes at a lumped, non-spatial level of composition).
 
 # ### Parameters
 #
@@ -660,6 +715,8 @@ _save_viz('growth-and-division-spatial', 'growth-division-metrics', _render_one(
 # | daughters-resume-growth-without-runaway | kind=observable path=obs.n_cells expr=obs.n_cells after run(30) from a single seed cell (n0 = 1) | op >= value 3.0 provenance starting from n0 = 1, n_cells >= 3 after 30 ticks (at least 1 -> 2 -> ~4), with every per-cell volume bounded in (5, 200) -- no runaway single cell, no zero-volume phantom daughters (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
 # | per-cell-volume-stays-bounded | kind=observable path=obs.volume expr=range of per-cell CPM volume across all cells and all sampled ticks | op < value 200.0 provenance per-cell volumes stay bounded roughly 31-79 px across the 36-tick run (division halves a cell once it crosses vol_threshold = 80, resetting toward reset_target = 40, then it regrows); the tests' hard bounds (8 < v < 200) hold at every sampled tick (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population) |
 # | native-division-conserves-mass | kind=observable path=cell_volumes expr=(vol_parent + vol_new_daughter) - vol_before_split, and divide_cells(500.0, 40.0) on a sub-threshold cell | op <= value 2.0 provenance divide_cells(80.0, 40.0) on a cell grown to ~150 splits it into two daughters (parent id kept + one new id) whose combined volume matches the pre-split volume within +-2 px (rounding); divide_cells(500.0, 40.0) on a cell at 60 (below threshold) returns [] -- a correct no-op (tests/test_cpm_divide_spike.py::test_divide_splits_one_into_two_mass_conserved, test_below_threshold_is_noop) |
+# | division-desynchronizes-from-lockstep | kind=observable path=obs.n_cells, obs.generation expr=count of n_cells samples not in {1,2,4,8,16,32}, and number of distinct generation values present among live cells at the final sampled tick | op >= value 1.0 provenance n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 departs from powers of two starting at tick 21 (5 cells) and stays desynchronized through 11, 14, 18; at the final tick, live cells span 5 distinct generations (0 through 4) simultaneously in the same 18-cell colony (tests/test_growth_division_regime.py::test_division_desynchronizes_from_lockstep_powers_of_two) |
+# | lineage-compounds-into-a-tree | kind=observable path=obs.max_generation expr=max(obs.max_generation) over the 36-tick run | op >= value 3.0 provenance max_generation reaches 4 by the end of the 36-tick run (trajectory 0,1,1,1,2,2,2,3,3,3,3,4 across the 12 sampled ticks); founder id 1 stays generation 0 throughout; every daughter's generation == its recorded parent's generation + 1 (tests/test_growth_division_regime.py::test_lineage_compounds_into_a_multigeneration_tree) |
 
 # ## Study: Biomolecular Complementarity, Spatial (`biomolecular-complementarity-spatial`)
 #
