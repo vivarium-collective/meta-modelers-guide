@@ -219,6 +219,21 @@ limitations:
 - No impostor handler specific to the cellular interface exists in this codebase. Law 1 is demonstrated by citing `tests/test_fba.py::test_impostor_handler_rejected_by_compiler`, whose impostor (`NonConformingMetabolism`) actually breaks the metabolism signature used in the disintegration/Fig 6 study — the same compiler mechanism, cross-referenced honestly rather than claimed as native to this figure.
 falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 4 interface, if installing the handler leaves shape flat (no growth) or the objective unchanged, or if a non-conforming handler is found to compile without error against any declared interface (Law 1 not enforced).
 visualizations:
+- name: cellular-interface-spatial
+  address: image:viz/cellular-interface-spatial.gif
+  description: 'The same-interface, spatial composition: the UNCHANGED CellularInterfaceHandler
+    composed with a real 2D spatio-flux DiffusionAdvection chemical field via the
+    FieldPointCoupling field-point adapter. The chemical field heatmap (left-low
+    to right-high gradient) shows the cell''s fixed circular footprint; a running
+    mini-panel tracks the sensed chemical_ext (footprint-mean concentration, 1.68
+    -> 1.41) alongside the interface''s growth_rate (0 -> 0.44) over 24 ticks,
+    while the field depletes at the footprint (niche construction) as the interface''s
+    net uptake is written back into the field.'
+  config:
+    chart: image
+    caption: The unchanged Fig 4b handler composed over a real 2D chemical field
+      -- the adapter senses the local footprint concentration and deposits the
+      handler's uptake back into the field, depleting it where the cell feeds.
 - name: fig04b-executable-dynamics
   address: html:fig04b-executable.html
   description: 'Interactive Fig 4: the cellular interface, made to run. Viability
