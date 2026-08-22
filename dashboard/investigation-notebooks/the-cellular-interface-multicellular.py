@@ -948,6 +948,140 @@ _save_viz('autopoiesis-spatial', 'autopoiesis-metrics', _render_one('html:viz/au
 # | vesicle-control-loses-enclosure | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op == value 0.0 provenance enclosed_area -> 0 by step ~96 (collapse_tick ~96), the membrane ring decays and its closure is lost (tests/test_protocell_physics.py::test_negative_control_k_prod_zero_collapses, tests/test_autopoiesis_regime.py::test_vesicle_control_collapses) |
 # | puncture-is-fatal | kind=observable path=obs.enclosed_area expr=last(obs.enclosed_area) | op == value 0.0 provenance after puncturing a 60-degree wedge, enclosed_area stays 0 for 1500 steps and phi.sum() -> ~0 even with k_prod at its canonical value -- closure-gated production cannot rebuild from nothing (tests/test_protocell_physics.py::test_puncture_is_fatal_no_recovery) |
 
+# ## Study: Molecular Interfaces, Spatial (`molecular-interfaces-spatial`)
+#
+# **Question.** The paper's §Molecular interface (Fig 7) frames a molecule not as a lump of state but as a typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal -- through which molecules bind, react, and transmit force and heat. It even names the public databases (PDB, Reactome, ChEBI, GO) as "partial specifications of molecular interfaces and their types". This study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY? Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized, i.e. Turing / reaction-diffusion patterning) turn a near-uniform seed into emergent spatial structure, and does a temperature field GRADE that structure (the THERMAL channel, an Arrhenius rate modulation) -- so that two of the interface's physical channels demonstrably COMPOSE over one shared spatial field? The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable and isolates the diffusion-driven instability as the cause of structure, so the contrast between pattern and uniformity is the finding.
+#
+# **Claim.** The paper's §Molecular interface (Fig 7) holds spatially for two of its four physical channels. The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du), turns a near-uniform seed into an emergent Turing spot pattern: v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion-driven instability, not the chemistry alone. The THERMAL channel -- a raised temperature field scaling the reaction by the Arrhenius factor exp(-Ea*(1/T - 1/Tref)) -- GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -> ~2, v_var ~0.0119 -> ~0.0096) while staying patterned: a real second modality composing over the same field, not a collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The honest boundaries are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap; the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping; and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `molecular-turing-pattern` | `meta_modelers_guide.composites.molecular-turing-pattern` | 0 | — |
+# | `molecular-equal-diffusion-control` | `meta_modelers_guide.composites.molecular-equal-diffusion-control` | 0 | — |
+# | `molecular-thermal-graded` | `meta_modelers_guide.composites.molecular-thermal-graded` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.molecular-turing-pattern`** — `spec_meta_modelers_guide_composites_molecular_turing_pattern` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_molecular_turing_pattern = load_spec(REPO / 'meta_modelers_guide/composites/molecular-turing-pattern.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_molecular_turing_pattern)
+
+# === Edit parameters for composite 'molecular-turing-pattern' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'gs'  (local:GrayScott)
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['grid']['nx'] = 128
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['grid']['ny'] = 128
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Du'] = 0.16
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Dv'] = 0.08
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['F'] = 0.037
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['k'] = 0.06
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['steps_per_tick'] = 500
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['thr'] = 0.2
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['seed'] = 1
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Ea'] = 0.0
+spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['config']['Tref'] = 1.0
+
+# **Composite `meta_modelers_guide.composites.molecular-equal-diffusion-control`** — `spec_meta_modelers_guide_composites_molecular_equal_diffusion_control` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control = load_spec(REPO / 'meta_modelers_guide/composites/molecular-equal-diffusion-control.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_molecular_equal_diffusion_control)
+
+# === Edit parameters for composite 'molecular-equal-diffusion-control' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'gs'  (local:GrayScott)
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['grid']['nx'] = 128
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['grid']['ny'] = 128
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Du'] = 0.12
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Dv'] = 0.12
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['F'] = 0.037
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['k'] = 0.06
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['steps_per_tick'] = 500
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['thr'] = 0.2
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['seed'] = 1
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Ea'] = 0.0
+spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['gs']['config']['Tref'] = 1.0
+
+# **Composite `meta_modelers_guide.composites.molecular-thermal-graded`** — `spec_meta_modelers_guide_composites_molecular_thermal_graded` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_molecular_thermal_graded = load_spec(REPO / 'meta_modelers_guide/composites/molecular-thermal-graded.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_molecular_thermal_graded)
+
+# === Edit parameters for composite 'molecular-thermal-graded' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'gs'  (local:GrayScott)
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['grid']['nx'] = 128
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['grid']['ny'] = 128
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Du'] = 0.16
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Dv'] = 0.08
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['F'] = 0.037
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['k'] = 0.06
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['dt'] = 1.0
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['steps_per_tick'] = 500
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['thr'] = 0.2
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['seed'] = 1
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Ea'] = 0.15
+spec_meta_modelers_guide_composites_molecular_thermal_graded['state']['gs']['config']['Tref'] = 1.0
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: molecular-interfaces-spatial ===
+STUDY = 'molecular-interfaces-spatial'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **molecular-turing-pattern-movie**
+
+# molecular-turing-pattern-movie
+_save_viz('molecular-interfaces-spatial', 'molecular-turing-pattern-movie', _render_one('image:viz/molecular-turing-pattern.gif', {'chart': 'image', 'caption': 'Chemical channel -- Turing pattern formation: a near-uniform Gray-Scott seed breaks into ~12 emergent spots (v_var ~0.0011 -> ~0.0119) under differential diffusion (Dv < Du).'}, RUNS_DB, STUDY_YAML))
+
+# **molecular-thermal-graded-movie**
+
+# molecular-thermal-graded-movie
+_save_viz('molecular-interfaces-spatial', 'molecular-thermal-graded-movie', _render_one('image:viz/molecular-thermal-graded.gif', {'chart': 'image', 'caption': 'Thermal channel -- a raised temperature field grades the chemical pattern: Arrhenius-scaled reaction (Ea=0.15, T=1.2) coarsens ~12 domains to ~2, v_var ~0.0119 -> ~0.0096 (graded, not collapsed).'}, RUNS_DB, STUDY_YAML))
+
+# **molecular-metrics**
+
+# molecular-metrics
+_save_viz('molecular-interfaces-spatial', 'molecular-metrics', _render_one('html:viz/molecular-metrics.html', {'chart': 'html', 'caption': 'Molecular metrics -- v_var rises from ~0.0011 to the patterned plateau ~0.0119 while the field resolves into ~12 connected domains: the chemical channel genuinely patterns.'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | pattern-forms | kind=observable path=obs.patterned expr=last(obs.patterned) | op == value 1.0 provenance patterned == 1.0 with v_var rising ~0.0011 -> ~0.0119 over 8000 internal steps (16 ticks x steps_per_tick=500), canonical spot regime (tests/test_molecular_regime.py::test_turing_pattern_forms, tests/test_gray_scott.py, tests/test_gray_scott_physics.py) |
+# | pattern-has-multiple-domains | kind=observable path=obs.n_domains expr=last(obs.n_domains) | op > value 1.0 provenance n_domains ~= 12 at 8000 steps (loose > 1 floor, not the exact 12, so the bound is not a golden-value pin); multi-seed band n_domains in [8, 12] (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust) |
+# | equal-diffusion-control-uniform | kind=observable path=obs.patterned expr=last(obs.patterned) | op == value 0.0 provenance Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6) -- differential diffusion removed, no pattern (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform) |
+# | thermal-channel-still-patterns | kind=observable path=obs.patterned expr=last(obs.patterned) | op == value 1.0 provenance thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); a hotter Ea=1.0/T=1.5 setting was verified to OVERSHOOT into near-uniform collapse and retuned to this graded setting (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern) |
+# | thermal-channel-coarsens | kind=observable path=obs.n_domains expr=last(obs.n_domains) | op < value 8.0 provenance thermal n_domains ~= 2 versus the flagship''s ~12 at the same 8000 steps; loose < 8 bound (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate, not a golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern) |
+# | pattern-is-multiseed-robust | kind=observable path=obs.v_var expr=last(obs.v_var) | op > value 0.004 provenance v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12]; the gate is > 2*PATTERN_FLOOR = 0.004, the band floor with margin, not the observed edge (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust) |
+
 # ## Open decisions
 # - Four of the 9 planned spatial-counterpart studies are built and run so far — cell-environment-coupling-spatial (the flagship), cell-cell-coupling-spatial, disintegration-spatial, and growth-and-division-spatial. The remaining patterns — cellular-interface, molecular-interfaces, biomolecular-complementarity, autopoiesis, development-and-evolution — are named in the design spec's increment plan; some are planned, biomolecular-complementarity is in progress (code done, study.yaml held). Treat this investigation's verdict as scoped to the built studies only until the remaining increments land.
 # - Chemotaxis toward the sensed field (directed up-gradient motion) is explicitly deferred to a follow-up variant of the flagship composite; the current flagship cell does not chemotax, only senses, metabolizes, grows, and secretes.

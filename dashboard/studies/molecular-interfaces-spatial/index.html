@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Study: development-and-evolution</title>
+<title>Study: molecular-interfaces-spatial</title>
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/style.css">
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/progress-track.css">
 <!-- Inherit the workbench light/dark theme (this page loads in an iframe;
@@ -14,7 +14,7 @@
 <header class="study-header">
   <div style="display:flex; align-items:baseline; gap:12px; justify-content:space-between;">
   <h1 class="study-title">
-    <span class="study-name" id="study-name" data-slug="development-and-evolution" title="development-and-evolution">Development and Evolution</span>
+    <span class="study-name" id="study-name" data-slug="molecular-interfaces-spatial" title="molecular-interfaces-spatial">Molecular Interfaces, Spatial</span>
     
     <span class="study-kind-tag study-kind-biological" data-study-kind="biological" title="Study kind">biological</span>
     
@@ -30,11 +30,11 @@
   <div class="study-status-row" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
     
     
-    <span class="status-pill gate-status gate-status-needs_calibration" title="Pipeline gate verdict (Pass A multi-axis status). Drives downstream unblocking.">gate: needs_calibration</span>
+    <span class="status-pill gate-status gate-status-passed" title="Pipeline gate verdict (Pass A multi-axis status). Drives downstream unblocking.">gate: passed</span>
     
 
     
-    <div id="readiness-panel" data-slug="development-and-evolution"></div>
+    <div id="readiness-panel" data-slug="molecular-interfaces-spatial"></div>
 
     
     
@@ -65,7 +65,7 @@
           </span>
           
           <span class="status-step gate-step axis-gate_status gate-state-blocked set" title="Gate 5 · Decision">
-            <span class="dot"></span>5&nbsp;·&nbsp;Decision<span class="step-val">needs_calibration</span>
+            <span class="dot"></span>5&nbsp;·&nbsp;Decision<span class="step-val">passed</span>
           </span>
           
           <span class="status-step gate-step axis-expert_review_status gate-state-not-assessed" title="Gate 6 · Release">
@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="2 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="8 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -116,7 +116,7 @@
         
         <div class="status-detail-row gate-row gate-state-blocked">
           <span class="status-detail-axis">5 · Decision</span>
-          <span class="status-chip gate-state-passed-with-conditions">needs_calibration</span>
+          <span class="status-chip gate-state-passed">passed</span>
           
           <span class="gate-computed-chip gate-state-blocked" title="spine gate evaluator (study_verdict.roll_up_verdict / pipeline_gate.gate_evaluator)">◆ computed: blocked</span>
           
@@ -146,7 +146,7 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> Fig 10c–f asks whether two of biology&#39;s hardest structural transitions — development (individual cells nesting into a collective composite, a biofilm, with its own shared interface) and evolution (a new interface port switching on, selected by viability) — can be represented as event-driven, compositional rewrites (Law 2′) that preserve the interface underneath them (Law 2). Two composites answer the first half of that (do the drafts compile to executables that run, behind an unchanged interface?) faithfully. This study asks the harder, second half explicitly: how much of what runs is a genuine developmental/evolutionary mechanism, versus a scripted stand-in — and is honest that the paper itself calls this transition &#34;an open and substantial challenge&#34; (line 580).</p>
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> The paper&#39;s §Molecular interface (Fig 7) frames a molecule not as a lump of state but as a typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal -- through which molecules bind, react, and transmit force and heat. It even names the public databases (PDB, Reactome, ChEBI, GO) as &#34;partial specifications of molecular interfaces and their types&#34;. This study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY? Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized, i.e. Turing / reaction-diffusion patterning) turn a near-uniform seed into emergent spatial structure, and does a temperature field GRADE that structure (the THERMAL channel, an Arrhenius rate modulation) -- so that two of the interface&#39;s physical channels demonstrably COMPOSE over one shared spatial field? The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable and isolates the diffusion-driven instability as the cause of structure, so the contrast between pattern and uniformity is the finding.</p>
 
 <nav class="study-tabs" aria-label="Study sections">
   
@@ -557,36 +557,34 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Development nests individual cells into a biofilm collective behind a preserved, shared extracellular-matrix interface (Law 2), and evolution switches on a new chemical port under a viability-weighted growth term — both compile and run, and a separate &#34;Live Topology&#34; pair for each even performs genuine runtime place-graph node insertion/removal (in the spirit of Law 2′). But — the defining point of this study — none of this is a validated biological result: selection is a single ODE with fixed viability/fitness constants (not real fitness-based population dynamics), the &#34;new port&#34; is a first-order config-driven ramp (not an emergent evolutionary innovation), the continuous-path biofilm state is a pre-declared, non-inserted scalar store, and even the genuine node-inserting Live-Topology composites run on a fixed wall-clock schedule with a hardcoded mutant fitness advantage rather than an emergent, state-driven trigger. The paper itself calls development and evolution &#34;an open and substantial challenge&#34; (line 580); this study demonstrates the pattern, not the phenomenon.</p>
+      <p class="ctr-text">The paper&#39;s §Molecular interface (Fig 7) holds spatially for two of its four physical channels. The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -&gt; 3V plus differential diffusion Dv &lt; Du), turns a near-uniform seed into an emergent Turing spot pattern: v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion-driven instability, not the chemistry alone. The THERMAL channel -- a raised temperature field scaling the reaction by the Arrhenius factor exp(-Ea*(1/T - 1/Tref)) -- GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -&gt; ~2, v_var ~0.0119 -&gt; ~0.0096) while staying patterned: a real second modality composing over the same field, not a collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The honest boundaries are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap; the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping; and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.</p>
       
-      <div class="ctr-context">Fig 10c–f is the paper&#39;s hardest pair of figures, and this study&#39;s entire point is to show exactly where the model is real and where it is a placeholder — not to claim more than the paper itself claims. There are, in fact, two different idioms represented across the six baseline composites, and they should not be blurred together.
+      <div class="ctr-context">The paper&#39;s §Molecular interface (Fig 7) makes a molecule a typed interface: it exposes physical channels -- chemical fluxes, electrostatic fields, mechanical forces, thermal transfer -- and its identity is the shape of those channels, not a scalar concentration. The specification-stage analogue draft-to-living-cell/molecular-interfaces made ONE molecule&#39;s four channels executable at a POINT (an F1Fo ATP synthase whose chemical/electrostatic/mechanical/thermal ports were wired as a typed draft and compiled). This study takes the CHEMICAL channel off the point and onto a 2D lattice, and adds the THERMAL channel on top of it, to ask whether a molecular interface&#39;s channels compose spatially.
 
-Development, continuous path (fig10-2-development → fig10-2-executable): the draft wires three handlers — SurfaceAttachment, ECMSecretion, BiofilmGrowth — into a single, pre-declared `biofilm` store nested in the environment (present from step 0; nothing is inserted into the place graph on this path). Compiled to fig10-2-executable and run 10 steps through the engine: biofilm_mass climbs 0 → 3.09, ecm 0 → 2.47, attached 0 → 1.85, adhesion 0 → 0.93, and the `cells` leaf — a continuous scalar count, not discrete cell nodes — grows 1.00 → 2.09 via BiofilmGrowthProc&#39;s d[cells]/dt = g·cells·ecm. The interface is preserved exactly (`interface_of(draft) == interface_of(executable)`, Law 2): the individual cellular interfaces genuinely become part of a collective (biofilm) interface that couples to the environment as one composite. But the handlers here (SurfaceAttachmentProc, ECMSecretionProc, BiofilmGrowthProc) are ordinary Process handlers, not the RewriteHandler idiom Fig 10-1&#39;s division uses — no place-graph rewrite occurs on this path at all.
+The chemical channel is realized as a Gray-Scott reaction-diffusion system on a 128x128 periodic grid: a local autocatalytic chemistry (U + 2V -&gt; 3V, V -&gt; P) coupled to DIFFERENTIAL diffusion (Dv &lt; Du), the textbook route by which a near-uniform state becomes Turing-unstable and breaks into spots (turing1952). The update is explicit-Euler du/dt = Du*lap(u) - U*V^2 + F*(1-U), dv/dt = Dv*lap(v) + U*V^2 - (F+k)*V on the periodic 5-point Laplacian, canonical spot regime Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0 (CFL max(Du,Dv)*dt*4 = 0.64 &lt; 1, guarded at construction). The thermal channel is a second, orthogonal port: when a temperature field is present the reaction term is scaled elementwise by the Arrhenius factor rate = exp(-Ea*(1/T - 1/Tref)) -- T above Tref speeds the chemistry, below slows it, and rate == 1 with no field, so the thermal channel is genuinely additive to the chemical one rather than replacing it.
 
-Development, topology path (fig10-2-rewrite, &#34;Biofilm Development — Live Topology&#34;): a separate composite, outside the compile.py/handler-env pipeline, that genuinely inserts new place-graph nodes at runtime via an `overwrite[tree[node]]` output — a founder cell colonizes sibling cell nodes one at a time up to a capacity, then the mature community secretes one ECM node per cell (confirmed by tests/test_fig10_topology.py::test_biofilm_colonizes_to_capacity — cell count climbs monotonically 1 → 5 — and ::test_biofilm_secretes_ecm_after_maturing — ECM nodes appear only once the community is full). This is a genuine structural rewrite, closer in spirit to Fig 10-1&#39;s division. But the trigger is a fixed wall-clock timer (`grow_every` = 2.0 time units, capacity = 5) — not the community&#39;s own nutrient, energy, or adhesion state crossing a threshold, the way Fig 10-1&#39;s division is gated by DNA replication. It is a scripted colonization schedule, not an emergent developmental mechanism.
+Realizing the paper&#39;s databases claim, honestly. The paper calls PDB/Reactome/ChEBI/GO &#34;partial specifications of molecular interfaces and their types&#34;; this study makes that concrete not as a resolved database lookup but as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species and reactions. Read U as a ChEBI-style substrate type, V as an activator/inhibitor species, P as the product sink, and U + 2V -&gt; 3V as a Reactome-style autocatalytic reaction record (placeholder identifiers, e.g. CHEBI:&lt;U&gt;/CHEBI:&lt;V&gt;/CHEBI:&lt;P&gt; and REACT:&lt;autocatalysis&gt;) -- a concrete gesture at what it would mean for a database entry to TYPE a molecular interface, not a claim that these toy species resolve to real PDB structures or Reactome pathway fragments. A genuine Reactome-fragment mapping, or a live database fetch that types the ports against real entries, is a named deferral (docs/superpowers/deferrals.md), not a result here.
 
-Evolution, continuous path (fig10-3-evolution → fig10-3-executable): the draft wires Variation, Selection, and PortAddition across two cell variants — an ancestral `cell_ecoli` and a derived `cell_O157` that carries an extra `new_port` + `identity` leaf its ancestor lacks. Compiled and run 10 steps: `cell_ecoli.cell_count` climbs 1.00 → 4.00 via SelectionProc&#39;s ODE d[cell_count]/dt = k·viability·fitness (k=0.3, viability and fitness both held at the fixed constant 1.0) — a single bulk growth term, not genotype-driven differential fitness, competition between variants, or drift; and `cell_O157.new_port` ramps 0 → 0.65 toward capacity 1.0 via PortAdditionProc&#39;s first-order onset (onset_rate=0.1) — a scripted config ramp that always switches on identically once wired, not an emergent consequence of variation or selection. VariationProc itself has an empty `update()`: genomic variation is represented only as a static identity/genome string, with no generative or heritable dynamics behind it.
+Measured this build. The CHEMICAL channel patterns: from the near-uniform seed the inhibitor field&#39;s spatial variance v_var rises from ~0.0011 toward ~0.0119 by 8000 internal steps and the field resolves into ~12 connected v-domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry identical) stays UNIFORM -- v_var ~= 0 (patterned == 0.0) -- so the structure is caused by the diffusion asymmetry (the Turing instability), not by the chemistry alone: removing only the differential diffusion removes the pattern. The THERMAL channel GRADES that pattern rather than destroying it: a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) coarsens the flagship from ~12 domains to ~2 and lowers v_var from ~0.0119 to ~0.0096 while staying comfortably patterned -- a real second modality modulating the first, not a chemistry collapse. (An earlier, hotter setting Ea=1.0/T=1.5 was found to OVERSHOOT -- the reaction runs away and collapses the pattern to near-uniform -- and was retuned to the milder graded setting; the overshoot is pinned as a direct-physics assertion so &#34;graded, not collapsed&#34; is tested against its own failure mode.) Because the physics has no RNG, the multi-seed check re-draws the near-uniform seed for seeds 1-5 and reports a RANGE: v_var in [0.01157, 0.01193], n_domains in [8, 12] -- the pattern forms for every seed, stated as a band rather than a single golden value.
 
-Evolution, topology path (fig10-3-rewrite, &#34;Evolution — Live Topology&#34;): again a separate `overwrite[tree[node]]` composite that genuinely adds and removes organism nodes — three wildtype founders establish, then a hardcoded fitter mutant (fitness = 1.6, a fixed constant, not derived from any selection gradient) appears at a scripted time (`mutate_at` = 4.0), and a fixed sweep rule adds one mutant and prunes one wildtype every `generation` = 2.0 time units until the wildtype lineage is pruned to zero (confirmed by tests/test_fig10_topology.py::test_evolution_mutant_arises_then_sweeps — final mutant count ≥ 2, organism count = 0 — and ::test_evolution_total_population_bounded — total population never exceeds the capacity of 6). Real node insertion and removal, but the mutant&#39;s fitness advantage and the sweep schedule are both hardcoded, not the outcome of a fitness landscape or population dynamics.
-
-Bottom line: this study demonstrates that both idioms — continuous ODEs behind a preserved interface (Law 2), and genuine runtime place-graph rewriting via `overwrite[tree[node]]` (in the spirit of Law 2′, though via a different mechanism than Fig 10-1&#39;s RewriteHandler conformance-vs-wiring check) — compile and run for development and evolution. Neither is a validated biological result. The paper itself (line 580) calls development and evolution &#34;an open and substantial challenge,&#34; and this study is deliberately, explicitly caveated rather than overclaiming a demonstrated developmental or evolutionary mechanism.</div>
+Honest scope -- the four-modality finding, stated plainly. This study realizes TWO of the molecular interface&#39;s four physical channels spatially: the CHEMICAL channel (reaction-diffusion / Turing patterning) and the THERMAL channel (Arrhenius rate modulation grading it). The ELECTROSTATIC and MECHANICAL channels are the named gap -- no charge field, no force or tension, is exposed or measured here (owned in investigation.yaml&#39;s what_this_does_not_demonstrate and docs/superpowers/deferrals.md). And this is a TOY reaction-diffusion demonstration: emergent spatial structure from a minimal autocatalytic chemistry with tuned, uncalibrated constants, NOT real molecular structure or conformation (nothing at PDB resolution), NOT a fitted reaction network, NOT a resolved database mapping. What is demonstrated is that a molecular interface&#39;s chemical and thermal channels COMPOSE spatially over one shared field; what is not is the other two channels, real molecular structure, and a live database type system.</div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Compile the Fig 10c–f development and evolution drafts to executables and run each to completion through the engine (fig10-2-development → fig10-2-executable; fig10-3-evolution → fig10-3-executable), and separately exercise the Live-Topology composites (fig10-2-rewrite, fig10-3-rewrite) that genuinely insert/remove place-graph nodes at runtime — reporting exactly which parts of each mechanism are real dynamics and which are scripted stand-ins.</p>
+      <p class="ctr-text">Run three Gray-Scott reaction-diffusion composites to completion through the process-bigraph engine directly from their JSON specs: molecular-turing-pattern (GrayScott, a 128x128 near-uniform seed under the canonical differential-diffusion spot regime Du=0.16/Dv=0.08, 8000 internal steps), molecular-equal-diffusion-control (the single-variable causal control, Du=Dv=0.12, identical chemistry and seed), and molecular-thermal-graded (identical chemistry/diffusion/seed plus a raised uniform temperature field T=1.2 Arrhenius-scaling the reaction, Ea=0.15). Measure whether the flagship patterns (v_var above the floor, patterned == 1.0, more than one domain) while the equal-diffusion control stays uniform (v_var ~= 0), and whether the thermal channel grades the pattern (coarser -- fewer domains, lower but still-patterned v_var) rather than collapsing it; re-draw the initial field for seeds 1-5 and report v_var / n_domains as a range.</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>development</code>, <code>development-rewrite</code>, <code>development-executable</code>, <code>evolution</code>, <code>evolution-rewrite</code>, <code>evolution-executable</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The biofilm&#39;s shared interface (surface attachment, ECM secretion, biofilm growth) accumulates state under its own handlers: biofilm_mass climbs 0 → 3.09 over 10 steps. This is a continuous, pre-declared store — not new cell nodes — and the interface is preserved exactly across compilation (Law 2).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">PortAdditionProc ramps a previously-silent chemical exchange port on: cell_O157.new_port climbs 0 → 0.65 over 10 steps toward capacity 1.0. Explicitly a config-driven first-order ramp (onset_rate=0.1) — not an emergent evolutionary innovation arising from variation or selection.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">SelectionProc&#39;s ODE (k·viability·fitness, k=0.3) grows cell_ecoli.cell_count 1 → 4 over 10 steps. Explicitly caveated: viability and fitness are held at fixed constants (1.0), not products of a real fitness landscape, genotype-driven differential fitness, or population dynamics.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Sanity check (not the study&#39;s control): the draft composites (fig10-2-development, fig10-3-evolution) have empty updates by construction — only the compiled executables produce dynamics. Confirms the framework&#39;s definition of a draft, not a scientific counterfactual.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>molecular-turing-pattern</code>, <code>molecular-equal-diffusion-control</code>, <code>molecular-thermal-graded</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16, Dv=0.08) destabilizes the near-uniform seed into an emergent Turing spot pattern -- v_var rises above the pattern floor and the gated patterned flag reads 1.0.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The pattern is genuine spatial structure, not a single blob: the field resolves into more than one connected v-concentration domain (~12 spots at the canonical regime), the Turing spot signature.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Single-variable causal control, the load-bearing one: identical chemistry and seed, but equal diffusion (Du = Dv = 0.12) -- the differential-diffusion asymmetry removed. The Turing instability never triggers, so the field stays uniform (patterned == 0.0). This is what proves the pattern is CAUSED by the diffusion asymmetry, not the chemistry alone.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The thermal channel GRADES rather than destroys: with a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction, the field is still comfortably patterned (patterned == 1.0, v_var above the floor) -- a real second modality modulating the pattern, not a chemistry collapse.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The mechanism of the thermal grading, made explicit: the raised temperature field coarsens the pattern to markedly fewer, larger domains than the no-temperature flagship at the same step count (~12 -&gt; ~2), the direct signature of the thermal channel acting on the chemical one.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The Turing pattern forms across seeds 1-5, not just the seed=1 draw baked into the composite. Because the physics is deterministic (no RNG), the seed is re-drawn into the INITIAL near-uniform field; v_var stays above the floor for every seed and is reported as a range, with n_domains reported as a range too (seed-sensitive by nucleation-patch placement).</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Both continuous-path executables run to completion behind an interface preserved exactly against their drafts: the biofilm interface accumulates state (biofilm_mass 0 → 3.09) and evolution switches on a new port (0 → 0.65) while growing the ancestral population under a selection ODE (cell_count 1 → 4). The Live-Topology composites genuinely insert and remove place-graph nodes (biofilm colonizes to capacity, then secretes ECM; the mutant lineage sweeps the wildtype to zero) but on a fixed wall-clock schedule with a hardcoded mutant fitness advantage. Every mechanism compiles and runs; none is a validated biological result — selection is an ODE, the new port is a config ramp, and node insertion (where it happens at all) is scripted, not state-gated.</p>
+      <p class="ctr-text">The chemical channel patterns -- the near-uniform Gray-Scott seed destabilizes under differential diffusion into an emergent Turing spot pattern (v_var ~0.0011 -&gt; ~0.0119, ~12 domains, patterned == 1.0) -- while the single-variable equal-diffusion causal control (Du=Dv=0.12) stays uniform (v_var ~= 0, patterned == 0.0), realizing the paper&#39;s §Molecular interface (Fig 7) chemical channel as a spatial mechanism and isolating differential diffusion as the cause. The thermal channel composes over the same field -- a raised temperature field (Ea=0.15, T=1.2) grades the pattern (~12 -&gt; ~2 domains, v_var ~0.0119 -&gt; ~0.0096) while staying patterned, a real second modality, not a collapse. The honest boundaries are reported as findings -- the electrostatic and mechanical channels are the named four-modality gap, this is a toy reaction-diffusion demonstration and not real molecular structure, and the databases claim is realized as illustrative typed-port annotation over the Gray-Scott species rather than a resolved mapping. Multi-seed: v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5, reported as a range.</p>
       
       
     <div class="overview-section findings-section">
@@ -596,28 +594,28 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-partial">
+      <div class="finding-card finding-kind-biological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
-            <span class="finding-status-glyph">◐</span>
-            <span class="finding-claim finding-statement">Development&#39;s continuous path compiles to an executable that grows a shared, collective biofilm interface (biofilm_mass 0 → 3.09) behind an interface preserved exactly across compilation. Partial: this demonstrates the compositional pattern of individual cells folding into a collective interface, but the growth is a continuous scalar (ODE-updated population/mass), not discrete cell-node insertion, and no biological calibration is claimed.</span>
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The paper&#39;s §Molecular interface (Fig 7) CHEMICAL channel holds spatially: a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -&gt; 3V plus differential diffusion Dv &lt; Du) turns a near-uniform seed into an emergent Turing spot pattern -- v_var rises ~0.0011 -&gt; ~0.0119 and the field resolves into ~12 connected domains (patterned == 1.0). Local molecular reactions plus differential diffusion produce emergent spatial structure, the molecular interface&#39;s chemical channel made spatial.</span>
             
-            <span class="finding-chip">via <code>biofilm-interface-accumulates</code></span>
+            <span class="finding-chip">via <code>pattern-forms</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
               <span class="finding-id">F-01</span>
               <span class="finding-kind">biological</span>
-              <span class="finding-status-text">partial literature</span>
+              <span class="finding-status-text">confirms literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> biofilm_mass 0 → 3.09; ecm 0 → 2.47; attached 0 → 1.85; adhesion 0 → 0.93; cells 1.00 → 2.09 (10 steps) · 
+              <strong>observed:</strong> patterned == 1.0; v_var ~0.0011 -&gt; ~0.0119; n_domains ~= 12 (multi-seed band [8, 12]) · 
               
-              via test <a href="#bt-biofilm-interface-accumulates" onclick="_gotoStudyTab('tests','bt-biofilm-interface-accumulates');return false;"><code>biofilm-interface-accumulates</code></a> · 
-              in run <a href="#run-development-and-evolution"><code>development-and-evolution</code></a>
+              via test <a href="#bt-pattern-forms" onclick="_gotoStudyTab('tests','bt-pattern-forms');return false;"><code>pattern-forms</code></a> · 
+              in run <a href="#run-molecular-turing-pattern"><code>molecular-turing-pattern</code></a>
               
               
             </div>
@@ -626,12 +624,12 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-development-and-evolution"><code>development-and-evolution</code></a>
+              runs: <a href="#run-molecular-turing-pattern"><code>molecular-turing-pattern</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 1.0</code></div>
             
             
             
@@ -646,28 +644,28 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-partial">
+      <div class="finding-card finding-kind-biological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
-            <span class="finding-status-glyph">◐</span>
-            <span class="finding-claim finding-statement">Evolution&#39;s continuous path switches on a previously-silent chemical exchange port (new_port 0 → 0.65) that the ancestral cell lacks. Partial: the mechanics of &#34;a new interface capability arises&#34; are represented, but the switch-on is an unconditional, config-driven first-order ramp — not an emergent consequence of variation or selection acting on a population.</span>
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The pattern is CAUSED by the diffusion-driven (Turing) instability, proven by a single-variable causal control. The equal-diffusion control (Du = Dv = 0.12 -- identical chemistry, seed, and wiring, the only difference the removal of the differential-diffusion asymmetry) stays UNIFORM: v_var ~= 0 (exactly 0.0), patterned == 0.0. Removing only the diffusion asymmetry removes the structure, isolating differential diffusion -- not the chemistry alone -- as its cause.</span>
             
-            <span class="finding-chip">via <code>port-switches-on</code></span>
+            <span class="finding-chip">via <code>equal-diffusion-control-uniform</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
               <span class="finding-id">F-02</span>
               <span class="finding-kind">biological</span>
-              <span class="finding-status-text">partial literature</span>
+              <span class="finding-status-text">confirms literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_O157.new_port 0 → 0.65 (10 steps), onset_rate=0.1 toward capacity=1.0 · 
+              <strong>observed:</strong> control (Du=Dv=0.12): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6) · 
               
-              via test <a href="#bt-port-switches-on" onclick="_gotoStudyTab('tests','bt-port-switches-on');return false;"><code>port-switches-on</code></a> · 
-              in run <a href="#run-development-and-evolution"><code>development-and-evolution</code></a>
+              via test <a href="#bt-equal-diffusion-control-uniform" onclick="_gotoStudyTab('tests','bt-equal-diffusion-control-uniform');return false;"><code>equal-diffusion-control-uniform</code></a> · 
+              in run <a href="#run-molecular-equal-diffusion-control"><code>molecular-equal-diffusion-control</code></a>
               
               
             </div>
@@ -676,12 +674,62 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-development-and-evolution"><code>development-and-evolution</code></a>
+              runs: <a href="#run-molecular-equal-diffusion-control"><code>molecular-equal-diffusion-control</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 0.3</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 0.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The THERMAL channel composes with the chemical one over the same field: a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction GRADES the pattern rather than destroying it -- coarsening it from ~12 domains to ~2 and lowering v_var ~0.0119 -&gt; ~0.0096 while staying comfortably patterned (patterned == 1.0). A real second physical modality modulating the first. (A hotter Ea=1.0/T=1.5 setting overshoots into near-uniform collapse and was retuned; the overshoot is pinned as a direct-physics assertion, so &#34;graded, not collapsed&#34; is tested against its own failure mode.) Two of the molecular interface&#39;s four channels demonstrably compose spatially.</span>
+            
+            <span class="finding-chip">via <code>thermal-channel-coarsens</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-03</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> thermal patterned == 1.0; n_domains ~12 -&gt; ~2; v_var ~0.0119 -&gt; ~0.0096 (graded, not collapsed) · 
+              
+              via test <a href="#bt-thermal-channel-coarsens" onclick="_gotoStudyTab('tests','bt-thermal-channel-coarsens');return false;"><code>thermal-channel-coarsens</code></a> · 
+              in run <a href="#run-molecular-thermal-graded"><code>molecular-thermal-graded</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-molecular-thermal-graded"><code>molecular-thermal-graded</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 8.0</code></div>
             
             
             
@@ -700,24 +748,22 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◐</span>
-            <span class="finding-claim finding-statement">Evolution&#39;s continuous path grows the ancestral population (cell_ecoli.cell_count 1 → 4) under a viability-weighted selection term. Partial: this is a single ODE with viability and fitness held at fixed constants — not real fitness-based population dynamics, competition between variants, or drift.</span>
-            
-            <span class="finding-chip">via <code>selection-grows-population</code></span>
+            <span class="finding-claim finding-statement">The honest scope, load-bearing not buried -- the FOUR-MODALITY finding. This study realizes TWO of the paper&#39;s four molecular-interface channels spatially (CHEMICAL: reaction-diffusion / Turing; THERMAL: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named gap -- no charge field, no force or tension, is exposed or measured (owned in investigation.yaml and docs/superpowers/deferrals.md). Further: this is a TOY reaction-diffusion demonstration with tuned, uncalibrated constants -- emergent structure from a minimal autocatalytic chemistry, NOT real molecular structure or conformation (nothing at PDB resolution). And the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, NOT a resolved database mapping; a real Reactome-fragment mapping / live database fetch is a deferral.</span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
-              <span class="finding-id">F-03</span>
+              <span class="finding-id">F-04</span>
               <span class="finding-kind">biological</span>
               <span class="finding-status-text">partial literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_ecoli.cell_count 1 → 4 (10 steps), k=0.3, viability=fitness=1.0 (fixed) · 
+              <strong>observed:</strong> two channels realized (chemical + thermal); electrostatic + mechanical are the named gap; toy reaction-diffusion, not PDB-level structure; database typing illustrative, not resolved · 
               
-              via test <a href="#bt-selection-grows-population" onclick="_gotoStudyTab('tests','bt-selection-grows-population');return false;"><code>selection-grows-population</code></a> · 
-              in run <a href="#run-development-and-evolution"><code>development-and-evolution</code></a>
+              
+              
               
               
             </div>
@@ -726,50 +772,8 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-development-and-evolution"><code>development-and-evolution</code></a>
+              runs: <a href="#run-molecular-turing-pattern"><code>molecular-turing-pattern</code></a>
             </div>
-            
-            
-            
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 2.0</code></div>
-            
-            
-            
-            
-            
-            
-          </div>
-        </details>
-      </div>
-      
-      
-      
-      
-      
-      <div class="finding-card finding-kind-methodological finding-status-novel">
-        <details class="finding-details">
-          <summary class="finding-row">
-            <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">Two distinct idioms answer &#34;can development/evolution be a compositional rewrite?&#34; differently, and they should not be conflated. The compiled/executable path (fig10-2-executable, fig10-3-executable) uses ordinary Process handlers behind a preserved interface — no place-graph rewrite occurs there. A separate Live-Topology pair (fig10-2-rewrite, fig10-3-rewrite) genuinely inserts and removes place-graph nodes at runtime via an `overwrite[tree[node]]` output (biofilm colonization to capacity 5 then ECM secretion per cell; a mutant lineage sweep that prunes the wildtype to zero) — closer in spirit to Fig 10-1&#39;s division rewrite, but driven by a fixed wall-clock schedule and a hardcoded mutant fitness advantage (1.6), not by the community&#39;s own state.</span>
-            
-          </summary>
-          <div class="finding-drawer">
-            <div class="finding-header">
-              <span class="finding-id">F-04</span>
-              <span class="finding-kind">methodological</span>
-              <span class="finding-status-text">novel literature</span>
-            </div>
-            
-            
-            <div class="finding-evidence">
-              <strong>observed:</strong> fig10-2-rewrite: cell count climbs monotonically 1 → 5, then ECM nodes appear only once the community is full; fig10-3-rewrite: mutant count ≥ 2 and organism count = 0 by the final frame, total population bounded ≤ 6 · 
-              
-              
-              
-              
-              <details style="display:inline-block;margin-left:4px"><summary>smoking gun</summary><pre style="white-space:pre-wrap;margin:4px 0 0 0;padding:6px 8px;background:#fff;border-radius:3px;font-size:0.85em;font-family:inherit">meta_modelers_guide/fig10_topology.py (BiofilmDevelopment, LineageEvolution) vs meta_modelers_guide/handlers_fig10.py (SurfaceAttachmentProc et al., ordinary Process subclasses, no RewriteHandler)</pre></details>
-            </div>
-            
             
             
             
@@ -786,32 +790,42 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
       
       
       
-      <div class="finding-card finding-kind-methodological finding-status-partial">
+      <div class="finding-card finding-kind-biological finding-status-partial">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◐</span>
-            <span class="finding-claim finding-statement">Even the genuinely node-inserting Live-Topology composites are scripted, not emergent: the biofilm colonizes on a fixed timer (grow_every=2.0) up to a fixed capacity (5), and the evolution mutant appears at a hardcoded time (mutate_at=4.0) with a hardcoded fitness advantage (1.6) rather than one derived from a fitness landscape. Neither trigger is gated by the composite&#39;s own internal state, unlike Fig 10-1&#39;s division (gated by DNA crossing a threshold).</span>
+            <span class="finding-claim finding-statement">DETERMINISM, stated plainly. The Gray-Scott physics has NO RNG -- the GrayScott seed config key is accepted but currently inert -- so the multi-seed check re-draws the INITIAL near-uniform field with seed_uv(seed=s) for s in 1-5 (everything else fixed) rather than varying a per-tick stochastic process. The pattern forms for every seed; v_var in [0.01157, 0.01193] and n_domains in [8, 12] are reported as a RANGE reflecting genuine sensitivity of the emergent pattern to nucleation-patch placement, not dressed as a single golden value.</span>
+            
+            <span class="finding-chip">via <code>pattern-is-multiseed-robust</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
               <span class="finding-id">F-05</span>
-              <span class="finding-kind">methodological</span>
+              <span class="finding-kind">biological</span>
               <span class="finding-status-text">partial literature</span>
             </div>
             
             
             <div class="finding-evidence">
+              <strong>observed:</strong> v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5 (seed lives in the initial field) · 
               
-              
-              
-              
+              via test <a href="#bt-pattern-is-multiseed-robust" onclick="_gotoStudyTab('tests','bt-pattern-is-multiseed-robust');return false;"><code>pattern-is-multiseed-robust</code></a> · 
+              in run <a href="#run-molecular-turing-pattern-multiseed"><code>molecular-turing-pattern-multiseed</code></a>
               
               
             </div>
             
             
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-molecular-turing-pattern-multiseed"><code>molecular-turing-pattern-multiseed</code></a>
+            </div>
             
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.004</code></div>
             
             
             
@@ -830,13 +844,13 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
       <div class="ctr-meta ctr-assess">
         
         <div class="ctr-meta-row"><span class="ctr-meta-k">Confidence</span>
-          <span class="ctr-badge ctr-badge-provisional">Provisional</span>
-          <span class="ctr-vch">biology&nbsp;MIXED</span>
+          <span class="ctr-badge ctr-badge-accepted">Accepted</span>
+          <span class="ctr-vch">biology&nbsp;PASS</span>
           <span class="ctr-vch">insight&nbsp;POSITIVE</span>
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Pattern demonstration, not validated biology. The paper itself calls development and evolution &#34;an open and substantial challenge&#34; (line 580); this study makes no claim beyond compiling and running the pattern.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Two of the molecular interface&#39;s four physical channels are realized spatially (chemical: reaction-diffusion / Turing; thermal: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or tension, is exposed or measured here. This is owned in investigation.yaml&#39;s what_this_does_not_demonstrate and docs/superpowers/deferrals.md.</span></div>
         
       </div>
       
@@ -853,11 +867,11 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
   <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
     <h2 class="overview-label" style="margin:0">Model composition</h2>
     
-    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'development-and-evolution', 'draft-to-living-cell')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
+    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'molecular-interfaces-spatial', 'the-cellular-interface-multicellular')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
   </div>
 
   
-  <div id="model-composite-cards" class="model-composite-cards" data-study="development-and-evolution">
+  <div id="model-composite-cards" class="model-composite-cards" data-study="molecular-interfaces-spatial">
     <p class="muted" style="font-size:0.85em;margin:0">Loading composite card(s)…</p>
   </div>
 
@@ -875,24 +889,24 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-2-development" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.molecular-turing-pattern" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>development</strong>
+        <strong>molecular-turing-pattern</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-2-development</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.molecular-turing-pattern</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-2-development')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.molecular-turing-pattern')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="development"
-               value="meta_modelers_guide.composites.fig10-2-development" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-turing-pattern"
+               value="meta_modelers_guide.composites.molecular-turing-pattern" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="development">Set composite</button>
+                data-baseline-name="molecular-turing-pattern">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="development" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="molecular-turing-pattern" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -910,24 +924,24 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-2-rewrite" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.molecular-equal-diffusion-control" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>development-rewrite</strong>
+        <strong>molecular-equal-diffusion-control</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-2-rewrite</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.molecular-equal-diffusion-control</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-2-rewrite')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.molecular-equal-diffusion-control')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="development-rewrite"
-               value="meta_modelers_guide.composites.fig10-2-rewrite" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-equal-diffusion-control"
+               value="meta_modelers_guide.composites.molecular-equal-diffusion-control" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="development-rewrite">Set composite</button>
+                data-baseline-name="molecular-equal-diffusion-control">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="development-rewrite" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="molecular-equal-diffusion-control" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -945,129 +959,24 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-2-executable" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.molecular-thermal-graded" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>development-executable</strong>
+        <strong>molecular-thermal-graded</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-2-executable</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.molecular-thermal-graded</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-2-executable')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.molecular-thermal-graded')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="development-executable"
-               value="meta_modelers_guide.composites.fig10-2-executable" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="molecular-thermal-graded"
+               value="meta_modelers_guide.composites.molecular-thermal-graded" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="development-executable">Set composite</button>
+                data-baseline-name="molecular-thermal-graded">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="development-executable" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-3-evolution" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>evolution</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-3-evolution</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-3-evolution')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="evolution"
-               value="meta_modelers_guide.composites.fig10-3-evolution" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="evolution">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="evolution" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-3-rewrite" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>evolution-rewrite</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-3-rewrite</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-3-rewrite')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="evolution-rewrite"
-               value="meta_modelers_guide.composites.fig10-3-rewrite" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="evolution-rewrite">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="evolution-rewrite" style="font-size:0.8em;margin-top:2px"></div>
-      
-      
-      
-      <div class="model-config-mount" style="margin-top:8px">
-        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
-      
-      
-      
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
-        
-        
-        
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
-      </div>
-      
-    </div>
-    
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.fig10-3-executable" data-model-overrides='{}'>
-      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>evolution-executable</strong>
-        
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.fig10-3-executable</code>
-        <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.fig10-3-executable')">🧬 explore &amp; run ↗</button>
-        
-      </div>
-      
-      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="evolution-executable"
-               value="meta_modelers_guide.composites.fig10-3-executable" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
-        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="evolution-executable">Set composite</button>
-      </div>
-      <div class="baseline-composite-status muted" data-baseline-name="evolution-executable" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="molecular-thermal-graded" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -1123,7 +1032,7 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
 
   <h4>Latest run preview</h4>
   <p class="muted" style="font-size:0.9em">Per-store sparkline + first/last/min/max from the most recent run's emitted trajectory. This is a downsampled PREVIEW, not the full data — use the per-store or Download-all links for the complete arrays.</p>
-  <div id="results-preview" data-study="development-and-evolution">
+  <div id="results-preview" data-study="molecular-interfaces-spatial">
     <p class="empty-message">Loading results preview…</p>
   </div>
 
@@ -1147,9 +1056,9 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
   <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
     <span class="muted" style="margin-right:auto;font-weight:600">Analysis result files</span>
     <a id="data-download-all" class="btn-mini" style="display:none"
-       href="/api/study-analysis-zip?study=development-and-evolution">Download all (.zip)</a>
+       href="/api/study-analysis-zip?study=molecular-interfaces-spatial">Download all (.zip)</a>
   </div>
-  <div id="data-files" data-study="development-and-evolution">
+  <div id="data-files" data-study="molecular-interfaces-spatial">
     <p class="empty-message">Loading result files…</p>
   </div>
 </div>
@@ -1170,7 +1079,7 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
     interval/buffer, output location, and emit scope — from
     <code>lib/emitters.py</code> and this study's (or the workspace's)
     <code>runtime.default_emitter</code>.</p>
-    <div id="readouts-emitter" data-study="development-and-evolution">
+    <div id="readouts-emitter" data-study="molecular-interfaces-spatial">
       <p class="empty-message">Loading emitter configuration…</p>
     </div>
 
@@ -1182,7 +1091,7 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
     
     <div id="readouts-download" style="margin:0 0 16px 0"></div>
 
-    <div id="readouts-table" data-study="development-and-evolution">
+    <div id="readouts-table" data-study="molecular-interfaces-spatial">
       <p class="empty-message">Loading readouts from the composite emit plan…</p>
     </div>
 
@@ -1190,7 +1099,7 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
     <p class="muted" style="font-size:0.9em">Store path, dtype, shape
     <code>(n_steps, …)</code>, units, and a best-effort byte estimate for each emitted
     leaf.</p>
-    <div id="readouts-shapes" data-study="development-and-evolution">
+    <div id="readouts-shapes" data-study="molecular-interfaces-spatial">
       <p class="empty-message">Loading output shapes…</p>
     </div>
 
@@ -1205,7 +1114,7 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
     
     
     <div class="viz-actions-row" style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'development-and-evolution')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
+      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'molecular-interfaces-spatial')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
     </div>
     
 
@@ -1269,10 +1178,10 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
     
     
     
-    <li class="expected-behavior-item" id="bt-biofilm-interface-accumulates"
+    <li class="expected-behavior-item" id="bt-pattern-forms"
         data-test-kind="behavioral"
         
-        data-pytest-node="biofilm-interface-accumulates"
+        data-pytest-node="pattern-forms"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1281,19 +1190,19 @@ Bottom line: this study demonstrates that both idioms — continuous ODEs behind
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">biofilm-interface-accumulates</strong>
+        <strong style="font-size: 0.9em;">pattern-forms</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>development-and-evolution</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-turing-pattern</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The biofilm&#39;s shared interface (surface attachment, ECM secretion, biofilm growth) accumulates state under its own handlers: biofilm_mass climbs 0 → 3.09 over 10 steps. This is a continuous, pre-declared store — not new cell nodes — and the interface is preserved exactly across compilation (Law 2).</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16, Dv=0.08) destabilizes the near-uniform seed into an emergent Turing spot pattern -- v_var rises above the pattern floor and the gated patterned flag reads 1.0.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biofilm.biofilm_mass)", "kind": "observable", "path": "biofilm.biofilm_mass"}
-pass_if: {"op": "\u003e=", "provenance": "fig10-2-executable run 10 steps: biofilm_mass 0 \u2192 3.09, ecm 0 \u2192 2.47, attached 0 \u2192 1.85, adhesion 0 \u2192 0.93, cells 1.00 \u2192 2.09 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-2-executable])", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
+pass_if: {"op": "==", "provenance": "patterned == 1.0 with v_var rising ~0.0011 -\u003e ~0.0119 over 8000 internal steps (16 ticks x steps_per_tick=500), canonical spot regime (tests/test_molecular_regime.py::test_turing_pattern_forms, tests/test_gray_scott.py, tests/test_gray_scott_physics.py)", "value": 1.0}</pre>
       </details>
       
       
@@ -1308,10 +1217,10 @@ pass_if: {"op": "\u003e=", "provenance": "fig10-2-executable run 10 steps: biofi
     
     
     
-    <li class="expected-behavior-item" id="bt-port-switches-on"
+    <li class="expected-behavior-item" id="bt-pattern-has-multiple-domains"
         data-test-kind="behavioral"
         
-        data-pytest-node="port-switches-on"
+        data-pytest-node="pattern-has-multiple-domains"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1320,19 +1229,19 @@ pass_if: {"op": "\u003e=", "provenance": "fig10-2-executable run 10 steps: biofi
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">port-switches-on</strong>
+        <strong style="font-size: 0.9em;">pattern-has-multiple-domains</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>development-and-evolution</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-turing-pattern</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">PortAdditionProc ramps a previously-silent chemical exchange port on: cell_O157.new_port climbs 0 → 0.65 over 10 steps toward capacity 1.0. Explicitly a config-driven first-order ramp (onset_rate=0.1) — not an emergent evolutionary innovation arising from variation or selection.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The pattern is genuine spatial structure, not a single blob: the field resolves into more than one connected v-concentration domain (~12 spots at the canonical regime), the Turing spot signature.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_O157.new_port)", "kind": "observable", "path": "cell_O157.new_port"}
-pass_if: {"op": "\u003e=", "provenance": "fig10-3-executable run 10 steps: new_port 0 \u2192 0.65 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable])", "value": 0.3}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "observable", "path": "obs.n_domains"}
+pass_if: {"op": "\u003e", "provenance": "n_domains ~= 12 at 8000 steps (loose \u003e 1 floor, not the exact 12, so the bound is not a golden-value pin); multi-seed band n_domains in [8, 12] (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)", "value": 1.0}</pre>
       </details>
       
       
@@ -1347,10 +1256,10 @@ pass_if: {"op": "\u003e=", "provenance": "fig10-3-executable run 10 steps: new_p
     
     
     
-    <li class="expected-behavior-item" id="bt-selection-grows-population"
+    <li class="expected-behavior-item" id="bt-equal-diffusion-control-uniform"
         data-test-kind="behavioral"
         
-        data-pytest-node="selection-grows-population"
+        data-pytest-node="equal-diffusion-control-uniform"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1359,19 +1268,19 @@ pass_if: {"op": "\u003e=", "provenance": "fig10-3-executable run 10 steps: new_p
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">selection-grows-population</strong>
+        <strong style="font-size: 0.9em;">equal-diffusion-control-uniform</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>development-and-evolution</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-equal-diffusion-control</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">SelectionProc&#39;s ODE (k·viability·fitness, k=0.3) grows cell_ecoli.cell_count 1 → 4 over 10 steps. Explicitly caveated: viability and fitness are held at fixed constants (1.0), not products of a real fitness landscape, genotype-driven differential fitness, or population dynamics.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Single-variable causal control, the load-bearing one: identical chemistry and seed, but equal diffusion (Du = Dv = 0.12) -- the differential-diffusion asymmetry removed. The Turing instability never triggers, so the field stays uniform (patterned == 0.0). This is what proves the pattern is CAUSED by the diffusion asymmetry, not the chemistry alone.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_ecoli.cell_count)", "kind": "observable", "path": "cell_ecoli.cell_count"}
-pass_if: {"op": "\u003e=", "provenance": "fig10-3-executable run 10 steps: cell_ecoli.cell_count 1 \u2192 4 (engine run; tests/test_compilation.py::test_env_conforms_compiles_and_runs[fig10-3-executable])", "value": 2.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
+pass_if: {"op": "==", "provenance": "Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6) -- differential diffusion removed, no pattern (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform)", "value": 0.0}</pre>
       </details>
       
       
@@ -1386,10 +1295,88 @@ pass_if: {"op": "\u003e=", "provenance": "fig10-3-executable run 10 steps: cell_
     
     
     
-    <li class="expected-behavior-item" id="bt-drafts-are-inert"
+    <li class="expected-behavior-item" id="bt-thermal-channel-still-patterns"
         data-test-kind="behavioral"
         
-        data-pytest-node="drafts-are-inert"
+        data-pytest-node="thermal-channel-still-patterns"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">thermal-channel-still-patterns</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-thermal-graded</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The thermal channel GRADES rather than destroys: with a raised uniform temperature field (Ea=0.15, Tref=1.0, T=1.2) Arrhenius-scaling the reaction, the field is still comfortably patterned (patterned == 1.0, v_var above the floor) -- a real second modality modulating the pattern, not a chemistry collapse.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
+pass_if: {"op": "==", "provenance": "thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); a hotter Ea=1.0/T=1.5 setting was verified to OVERSHOOT into near-uniform collapse and retuned to this graded setting (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)", "value": 1.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-thermal-channel-coarsens"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="thermal-channel-coarsens"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">thermal-channel-coarsens</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-thermal-graded</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The mechanism of the thermal grading, made explicit: the raised temperature field coarsens the pattern to markedly fewer, larger domains than the no-temperature flagship at the same step count (~12 -&gt; ~2), the direct signature of the thermal channel acting on the chemical one.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "observable", "path": "obs.n_domains"}
+pass_if: {"op": "\u003c", "provenance": "thermal n_domains ~= 2 versus the flagship\u0027\u0027s ~12 at the same 8000 steps; loose \u003c 8 bound (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate, not a golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)", "value": 8.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-pattern-is-multiseed-robust"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="pattern-is-multiseed-robust"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -1398,19 +1385,19 @@ pass_if: {"op": "\u003e=", "provenance": "fig10-3-executable run 10 steps: cell_
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">drafts-are-inert</strong>
+        <strong style="font-size: 0.9em;">pattern-is-multiseed-robust</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>development-and-evolution</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>molecular-turing-pattern</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Sanity check (not the study&#39;s control): the draft composites (fig10-2-development, fig10-3-evolution) have empty updates by construction — only the compiled executables produce dynamics. Confirms the framework&#39;s definition of a draft, not a scientific counterfactual.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The Turing pattern forms across seeds 1-5, not just the seed=1 draw baked into the composite. Because the physics is deterministic (no RNG), the seed is re-drawn into the INITIAL near-uniform field; v_var stays above the floor for every seed and is reported as a range, with n_domains reported as a range too (seed-sensitive by nucleation-patch placement).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(biofilm.biofilm_mass)", "kind": "observable", "path": "biofilm.biofilm_mass"}
-pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biofilm.biofilm_mass stays 0.0 (empty update by construction); fig10-3-evolution run 10 steps: cell_ecoli.cell_count stays 0.0 (the uncompiled draft\u0027s _value seed is not honored outside compile_composite), new_port stays 0.0 \u2014 only global_time advances on both drafts", "value": 0.001}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.v_var)", "kind": "observable", "path": "obs.v_var"}
+pass_if: {"op": "\u003e", "provenance": "v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12]; the gate is \u003e 2*PATTERN_FLOOR = 0.004, the band floor with margin, not the observed edge (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust)", "value": 0.004}</pre>
       </details>
       
       
@@ -1491,20 +1478,20 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All 6 baseline composites build (tests/test_composites_build.py::test_composite_builds) and fig10-2-executable / fig10-3-executable run to completion with the interface preserved exactly against their drafts (tests/test_compilation.py::test_env_conforms_compiles_and_runs).</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All three molecular-* composites (molecular-turing-pattern, molecular-equal-diffusion-control, molecular-thermal-graded) build and run to completion through the process-bigraph engine directly from their JSON specs (tests/test_molecular_regime.py, tests/test_gray_scott.py, tests/test_gray_scott_physics.py, tests/test_gray_scott_viz.py); guarded skip when the optional process_bigraph dependency is absent, matching this investigation&#39;s convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
           <span class="narrative-input verdict-badge-computed" data-verdict-track="biological_validation"
                 title="Computed from the gate evaluator (read-only)"
-                style="display:inline-block;padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em;background:#f1f5f9;color:#475569">MIXED</span>
+                style="display:inline-block;padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em;background:#f1f5f9;color:#475569">PASS</span>
           <span class="muted small" style="margin-left:6px">computed from gate evaluator</span>
         </label>
         <label class="narrative-row narrative-row-wide">
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">The paper itself calls development and evolution &#34;an open and substantial challenge&#34; (line 580); this study does not attempt to close that gap. Selection is a single ODE with fixed viability/fitness constants, the new port is a config-driven ramp, the continuous biofilm state is a pre-declared scalar store, and even the genuinely node-inserting Live-Topology composites run on a hardcoded schedule with a hardcoded mutant fitness advantage. Every primary behavior_test passes as a pattern demonstration; none is a validated biological result.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts. The chemical channel patterns (v_var ~0.0011 -&gt; ~0.0119, ~12 domains, patterned == 1.0) while the single-variable equal-diffusion causal control stays uniform (v_var ~= 0, patterned == 0.0), and the thermal channel grades the pattern (~12 -&gt; ~2 domains, v_var ~0.0119 -&gt; ~0.0096) while staying patterned. The four-modality gap (electrostatic + mechanical), the toy-scope boundary, and the illustrative (not resolved) database typing are reported as findings, not claimed away.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1517,7 +1504,7 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Separating the &#34;compiles and runs behind a preserved interface&#34; claim from the &#34;genuinely rewrites the place graph&#34; claim — and showing that Fig 10c–f actually contains both idioms, neither one biologically calibrated — is itself the useful result: it locates exactly where this framework&#39;s toy stand-ins for development and evolution sit, and what would need to change (state-gated triggers, a real fitness landscape, heritable variation) to make them more than a pattern demonstration.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Putting the paper&#39;s §Molecular interface (Fig 7) on the lattice turns &#34;a molecule is a typed interface exposing physical channels&#34; into a spatial mechanism where two of those channels demonstrably compose -- the chemical channel (reaction-diffusion patterning, causally isolated by the equal-diffusion control) and the thermal channel (Arrhenius grading) over one shared field. It takes the specification-stage analogue draft-to-living-cell/molecular-interfaces, which made one molecule&#39;s four channels executable at a POINT (F1Fo ATP synthase), and makes the chemical channel SPATIAL, adding a composing thermal channel.</textarea>
         </label>
       </div>
     </div>
@@ -1532,10 +1519,10 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> All 6 figure drafts compile to executables (or, for the Live-Topology pair, to their standalone runtime-rewrite composites) that run to completion, interface preserved exactly on the compiled path.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> All three molecular-* composites (molecular-turing-pattern, molecular-equal-diffusion-control, molecular-thermal-graded) build and run to completion through the engine (8000 internal steps each), directly from their JSON specs.</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s pattern is demonstrated at the toy, explicitly-uncalibrated level. No claim is made that development or evolution themselves have been validated — the paper (line 580) calls this an open and substantial challenge.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s §Molecular interface (Fig 7) is demonstrated spatially at the toy-real (tuned, uncalibrated) level for two of its four channels -- the chemical channel (reaction-diffusion patterning, causally isolated by the equal-diffusion control) and the thermal channel (Arrhenius grading) composing over one shared field -- with the four-modality gap, the toy-scope boundary, and the illustrative database typing reported as findings rather than claimed away.</div>
         
         
       </div>
@@ -1545,11 +1532,11 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>the biofilm&#39;&#39;s shared interface never accumulates state (SurfaceAttachment/ECMSecretion/BiofilmGrowth handlers not wired or not firing)</li><li>the evolution port never switches on, or the ancestral population never grows under selection</li><li>the drafts are not actually inert (a handler leaked into the semantic/draft composite)</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the flagship fails to pattern (v_var stays near 0 or patterned != 1.0 within 8000 steps -- the differential diffusion is not destabilizing the seed, or the nucleation patches are missing)</li><li>the equal-diffusion control DOES pattern (v_var rises with Du=Dv -- the pattern is not actually caused by the diffusion asymmetry, or Du/Dv were not held equal)</li><li>the thermal run collapses instead of grading (v_var falls below the floor -- the Arrhenius rate is overshooting, as the retired Ea=1.0/T=1.5 setting did) or fails to coarsen (n_domains not below the flagship -- the temperature field is not reaching the reaction term)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> none — this is a terminal, explicitly-caveated pattern-demonstration study; no downstream study depends on it.</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> none -- no study in this workspace is gated on this molecular-channel demonstration.</div>
         
       </div>
       
@@ -1562,25 +1549,57 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Development's continuous path (fig10-2-executable) grows a shared biofilm interface (biofilm_mass 0 → 3.09) behind an interface preserved exactly across compilation. Evolution's continuous path (fig10-3-executable) switches on a new chemical port (0 → 0.65) and grows the ancestral population under a selection ODE (cell_count 1 → 4). A separate Live-Topology pair (fig10-2-rewrite, fig10-3-rewrite) genuinely inserts and removes place-graph nodes at runtime — biofilm colonization + ECM secretion; a mutant lineage sweep that prunes the wildtype to zero.</li>
+<li>
+<p>The paper's §Molecular interface (Fig 7) chemical channel holds as a 2D spatial mechanism: a Gray-Scott reaction-diffusion system (autocatalysis U + 2V -&gt; 3V plus differential diffusion Dv &lt; Du) turns a near-uniform seed into an emergent Turing spot pattern (v_var ~0.0011 -&gt; ~0.0119, ~12 domains, patterned == 1.0), while the single-variable equal-diffusion causal control (Du = Dv = 0.12) stays UNIFORM (v_var ~= 0, patterned == 0.0). Removing only the diffusion asymmetry removes the pattern.</p>
+</li>
+<li>
+<p>The thermal channel composes with the chemical one: a raised temperature field Arrhenius-scaling the reaction (Ea=0.15, T=1.2) GRADES the pattern (~12 -&gt; ~2 domains, v_var ~0.0119 -&gt; ~0.0096) while staying patterned -- a real second modality, not a collapse. Two of the molecular interface's four channels demonstrably compose spatially.</p>
+</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>BIOFILM-INTERFACE-ACCUMULATES</strong> — biofilm_mass 0 → 3.09 (10 steps), interface preserved exactly (Law 2)</li>
-<li><strong>PORT-SWITCHES-ON</strong> — cell_O157.new_port 0 → 0.65 (10 steps), config-driven ramp</li>
-<li><strong>SELECTION-GROWS-POPULATION</strong> — cell_ecoli.cell_count 1 → 4 (10 steps), fixed-constant ODE</li>
-<li><strong>DRAFTS-ARE-INERT</strong> — sanity check: both drafts stay at seed values by construction</li>
+<li>
+<p><strong>PATTERN-FORMS</strong> -- patterned == 1.0, v_var ~0.0011 -&gt; ~0.0119 over 8000 steps</p>
+</li>
+<li>
+<p><strong>PATTERN-HAS-MULTIPLE-DOMAINS</strong> -- n_domains ~= 12 (multi-seed band [8, 12])</p>
+</li>
+<li>
+<p><strong>EQUAL-DIFFUSION-CONTROL-UNIFORM</strong> -- Du=Dv=0.12: patterned == 0.0, v_var ~= 0 (single-variable causal control)</p>
+</li>
+<li>
+<p><strong>THERMAL-CHANNEL-STILL-PATTERNS</strong> -- thermal patterned == 1.0, v_var ~= 0.0096 (graded, not collapsed)</p>
+</li>
+<li>
+<p><strong>THERMAL-CHANNEL-COARSENS</strong> -- n_domains ~12 -&gt; ~2 under the raised temperature field</p>
+</li>
+<li>
+<p><strong>PATTERN-IS-MULTISEED-ROBUST</strong> -- v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5</p>
+</li>
 </ul>
-<h2>Limitations — the defining point of this study</h2>
+<h2>Limitations</h2>
 <ul>
-<li>This is a pattern demonstration, not a validated result. The paper itself (line 580) calls development and evolution &quot;an open and substantial challenge.&quot;</li>
-<li>Selection is a single ODE (k·viability·fitness) with viability and fitness held at fixed constants — not real fitness-based population dynamics, competition, or drift.</li>
-<li>The &quot;new port&quot; is a first-order, config-driven ramp (PortAdditionProc) — not an emergent evolutionary innovation. VariationProc's update() is empty; variation is a static identity string with no generative or heritable process behind it.</li>
-<li>On the compiled/executable path, the biofilm's cell/ECM state is a continuous, pre-declared scalar store present from step 0 — not runtime node insertion. Runtime node insertion/removal does happen, but only in the separate Live-Topology composites (fig10-2-rewrite, fig10-3-rewrite), and there it runs on a fixed wall-clock schedule with a hardcoded mutant fitness advantage (1.6) — not gated by the community's own state, unlike Fig 10-1's DNA-threshold-gated division.</li>
+<li>
+<p>Two of the molecular interface's four physical channels are realized spatially (chemical + thermal); the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or tension, is exposed or measured. Owned in investigation.yaml and docs/superpowers/deferrals.md.</p>
+</li>
+<li>
+<p>This is a toy reaction-diffusion demonstration with tuned, uncalibrated constants -- emergent spatial structure from a minimal autocatalytic chemistry, NOT real molecular structure or conformation (nothing at PDB resolution), not a fitted reaction network.</p>
+</li>
+<li>
+<p>The databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species (U/V/P and the autocatalytic reaction given placeholder database-style identifiers), NOT a resolved mapping. A real Reactome-fragment mapping / live database fetch is deferred.</p>
+</li>
+<li>
+<p>The physics is deterministic (no RNG); the multi-seed range reflects sensitivity of the emergent pattern to the initial nucleation-patch placement, re-drawn into the initial field, not a per-tick stochastic process.</p>
+</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Gate the Live-Topology colonization/mutation events on the composite's own state (nutrient/energy for biofilm growth; a real fitness function for the mutant) rather than a wall-clock timer, before any claim of demonstrated development or evolution would be warranted.</li>
+<li>
+<p>The electrostatic and mechanical channels made spatial (a charge field driving electromigration; a mechanical force/tension coupling), so more than two of the molecular interface's four channels compose on one field.</p>
+</li>
+<li>
+<p>A real Reactome-fragment mapping / live database fetch that TYPES the Gray-Scott ports against actual ChEBI/Reactome entries, upgrading the illustrative typed-port annotation to a resolved database mapping.</p>
+</li>
 </ul>
 </div>
     </div>
@@ -1599,7 +1618,7 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
     <div class="overview-section">
       <h3 class="overview-label">Key assumptions</h3>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">SelectionProc&#39;s population growth is a single ODE (k·viability·fitness, k=0.3) with viability and fitness held at fixed constants (1.0) in the baseline env — there is no genetic variation feeding back into fitness, no competition between variants, and no drift. This is not real fitness-based population dynamics.</li><li style="margin:2px 0">PortAdditionProc&#39;s &#34;new port&#34; is a first-order ramp toward a fixed capacity (onset_rate=0.1, capacity=1.0) — it always switches on identically once wired; it is not an emergent consequence of variation or selection. VariationProc&#39;s update() is empty by construction — variation is a static identity string, not a generative process.</li><li style="margin:2px 0">On the fig10-2-development/-executable path, `biofilm.cells` and `biofilm.biofilm_mass` are continuous scalar stores inside a single, pre-declared `biofilm` node present from step 0 — growth is a population/mass variable, not discrete cell nodes inserted into the place graph at runtime.</li><li style="margin:2px 0">A separate, more literal pair of composites (fig10-2-rewrite / fig10-3-rewrite, &#34;Live Topology&#34;) does insert/remove real place-graph nodes at runtime — biofilm colonization + ECM secretion; a mutant lineage sweep — but on a fixed wall-clock schedule (grow_every / generation / mutate_at) with a hardcoded mutant fitness advantage (1.6), not driven by the community&#39;s own state or an evolving fitness landscape.</li><li style="margin:2px 0">The fig10-2/fig10-3 executable handlers (SurfaceAttachmentProc, ECMSecretionProc, BiofilmGrowthProc, VariationProc, SelectionProc, PortAdditionProc) are ordinary Process handlers, not the RewriteHandler idiom Fig 10-1&#39;s division uses — no place-graph rewrite occurs on the compiled/executable path; only the separate Live-Topology composites perform genuine node insertion/removal.</li>
+        <li style="margin:2px 0">The interface tested here is the paper&#39;s §Molecular interface (Fig 7): a molecule as a typed interface exposing physical channels (chemical, electrostatic, mechanical, thermal). This study realizes the CHEMICAL channel spatially as Gray-Scott reaction-diffusion (local autocatalysis U + 2V -&gt; 3V, V -&gt; P plus differential diffusion Dv &lt; Du -- Turing patterning; turing1952) and the THERMAL channel as an Arrhenius elementwise rate modulation exp(-Ea*(1/T - 1/Tref)) on the reaction term. The ELECTROSTATIC and MECHANICAL channels are NOT realized -- they are the named four-modality gap, not demonstrated here.</li><li style="margin:2px 0">The databases hook is ILLUSTRATIVE typed-port annotation, not a resolved mapping. The paper names PDB/Reactome/ChEBI/GO as &#34;partial specifications of molecular interfaces and their types&#34;; here that is gestured at by TYPING the Gray-Scott species and reaction with placeholder database-style identifiers (U/V/P as ChEBI-style substrate/activator/product types, U + 2V -&gt; 3V as a Reactome-style autocatalytic reaction record). This is a concrete gesture at what typing a molecular interface against a database would mean -- NOT a claim that these toy species resolve to real PDB structures, Reactome pathway fragments, or ChEBI/GO entries. A real Reactome-fragment mapping / live database fetch is a deferral.</li><li style="margin:2px 0">The pattern is CAUSED by the diffusion-driven (Turing) instability, and this is proven by a single-variable causal control, not assumed. The flagship (Du=0.16, Dv=0.08) and the equal-diffusion control (Du=Dv=0.12) share identical chemistry (F, k), identical seed, identical wiring and step count; the ONLY difference is whether diffusion is differential. Removing the asymmetry removes the pattern (v_var ~= 0, exactly 0.0 in the control), isolating differential diffusion -- not the reaction alone -- as the cause of spatial structure.</li><li style="margin:2px 0">The thermal channel is genuinely ADDITIVE, not a re-parameterization of the chemical one. The reaction term is scaled by rate = exp(-Ea*(1/T - 1/Tref)); with NO temperature field present rate == 1 everywhere and the process is pure chemistry, byte-identical to the chemical-only flagship. The thermal composite differs from the flagship in exactly the Arrhenius parameters and the presence of a raised temperature field -- Du/Dv/F/k/dt/steps_per_tick are held equal (asserted in tests/test_molecular_regime.py), so the coarsening is attributable to temperature, not to a changed chemistry or diffusion regime.</li><li style="margin:2px 0">The parameters are tuned demonstration values, not fitted. The canonical spot regime (Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0) sits in the classic Gray-Scott spot window and comfortably inside the explicit reaction-diffusion CFL limit (max(Du,Dv)*dt*4 = 0.64 &lt; 1; the process raises on an unstable config rather than drifting silently to NaN). The thermal setting (Ea=0.15, T=1.2) was chosen to GRADE rather than collapse: a hotter Ea=1.0/T=1.5 was found to overshoot into near-uniform collapse and was retuned. No literature acceptance band is claimed -- this is a demonstration primitive of the molecular interface&#39;s chemical and thermal channels made spatial, not a model of a specific molecule or medium.</li><li style="margin:2px 0">The physics is DETERMINISTIC -- it has no RNG. The GrayScott process accepts a seed config key but it is currently inert (documented in meta_modelers_guide/molecular/gray_scott.py), so the composites bake a static seed_uv(seed=1) draw into fields.u/fields.v at build time. The multi-seed test therefore re-draws the INITIAL near-uniform field with seed_uv(seed=s) for s in 1-5 (everything else held fixed) and reports the resulting band -- v_var in [0.01157, 0.01193], n_domains in [8, 12] -- as genuine sensitivity of the emergent pattern to the nucleation-patch placement, not as a per-tick stochastic process.</li>
       </ul>
     </div>
     
@@ -1609,7 +1628,7 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Pattern demonstration, not validated biology. The paper itself calls development and evolution &#34;an open and substantial challenge&#34; (line 580); this study makes no claim beyond compiling and running the pattern.</li><li style="margin:2px 0">Selection is a single ODE (k·viability·fitness) with viability and fitness held at fixed constants (1.0) — not real fitness-based population dynamics, inter-variant competition, or drift.</li><li style="margin:2px 0">&#34;Acquiring a new port&#34; is a config-driven first-order ramp (PortAdditionProc, onset_rate/capacity), not an emergent evolutionary innovation. Genomic variation (VariationProc) has an empty update — no generative or heritable process is modelled.</li><li style="margin:2px 0">On the compiled/executable path, the biofilm&#39;s cell and ECM state are continuous, pre-declared scalar stores present from step 0 — no place-graph node insertion occurs there. Genuine runtime node insertion/removal exists only in the separate Live-Topology composites (fig10-2-rewrite, fig10-3-rewrite), and even there the colonization/mutation schedule is a fixed wall-clock timer with a hardcoded mutant fitness advantage — not gated by the community&#39;s own internal state.</li><li style="margin:2px 0">One deterministic run per composite (10 steps for the continuous-path executables); no replicate seeds, no parameter sweep over onset_rate/capacity/grow_every/mutate_at.</li>
+        <li style="margin:2px 0">Two of the molecular interface&#39;s four physical channels are realized spatially (chemical: reaction-diffusion / Turing; thermal: Arrhenius rate grading). The ELECTROSTATIC and MECHANICAL channels are the named four-modality gap -- no charge field, no force or tension, is exposed or measured here. This is owned in investigation.yaml&#39;s what_this_does_not_demonstrate and docs/superpowers/deferrals.md.</li><li style="margin:2px 0">This is a toy reaction-diffusion demonstration, NOT real molecular structure or conformation. What is demonstrated is emergent spatial structure from a minimal autocatalytic chemistry with tuned, uncalibrated constants -- nothing at PDB resolution, no fitted reaction network, no calibrated molecule.</li><li style="margin:2px 0">The databases claim -- PDB/Reactome/ChEBI/GO as &#34;partial specifications of molecular interfaces and their types&#34; -- is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species (U/V/P and the autocatalytic reaction annotated with placeholder database-style identifiers), a concrete gesture at typing a molecular interface, NOT a resolved mapping. A real Reactome-fragment mapping / live database fetch is a named deferral.</li><li style="margin:2px 0">The parameters (Du=0.16, Dv=0.08, F=0.037, k=0.06, dt=1.0; thermal Ea=0.15, T=1.2) are tuned demonstration values, not fitted, and no literature acceptance band is claimed. The canonical regime sits inside the explicit reaction-diffusion CFL limit (max(Du,Dv)*dt*4 = 0.64 &lt; 1; the process raises on an unstable config). The thermal setting was retuned from a hotter one (Ea=1.0/T=1.5) that overshoots into near-uniform collapse -- pinned as a direct-physics assertion so grading is tested against collapse.</li><li style="margin:2px 0">The physics is deterministic -- no RNG. The GrayScott seed config is accepted but currently inert, so the multi-seed range (v_var in [0.01157, 0.01193], n_domains in [8, 12]) is produced by re-drawing the initial near-uniform field for seeds 1-5, reflecting sensitivity to nucleation-patch placement, not a per-tick stochastic process.</li>
       </ul>
     </div>
     
@@ -1636,8 +1655,8 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>4</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">4 PASS</span> ·
+        <strong>2</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">2 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('tests')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests tab →</a>.
@@ -1674,7 +1693,7 @@ pass_if: {"op": "\u003c=", "provenance": "fig10-2-development run 10 steps: biof
 <script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "6ad004c2ecd9de8c232a6a406312eaab0b6e1cf8", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/6ad004c2ecd9de8c232a6a406312eaab0b6e1cf8", "branch": "main", "lockfile": "uv.lock@3747414a956b", "generated_at": "2026-08-22 12:49 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
-window._studyName = "development-and-evolution";
+window._studyName = "molecular-interfaces-spatial";
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
