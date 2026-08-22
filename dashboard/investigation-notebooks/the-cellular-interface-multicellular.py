@@ -1082,6 +1082,203 @@ _save_viz('molecular-interfaces-spatial', 'molecular-metrics', _render_one('html
 # | thermal-channel-coarsens | kind=observable path=obs.n_domains expr=last(obs.n_domains) | op < value 8.0 provenance thermal n_domains ~= 2 versus the flagship''s ~12 at the same 8000 steps; loose < 8 bound (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate, not a golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern) |
 # | pattern-is-multiseed-robust | kind=observable path=obs.v_var expr=last(obs.v_var) | op > value 0.004 provenance v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12]; the gate is > 2*PATTERN_FLOOR = 0.004, the band floor with margin, not the observed edge (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust) |
 
+# ## Study: Development and Evolution, Spatial (`development-and-evolution-spatial`)
+#
+# **Question.** The paper's §Development and evolution section (Fig 10c-f) extends the interface idea across time: individual cellular interfaces become embedded in a COLLECTIVE interface defined by shared state -- a growing colony develops physiological heterogeneity (a depleted core against a fed rim) where each cell's own interface sits inside one collective interface -- and a heritable trait EVOLVES when variation is selected on that shared field. This study puts both halves on the real dividing CPM colony and asks the discriminating question directly: does a growing CPM colony on a shared depleting glucose field form emergent core-vs-rim heterogeneity (DEVELOPMENT), and does a heritable per-cell glucose-uptake trait (vmax) shift its population mean UP under shared-field selection (EVOLUTION) -- and, crucially, is that directional shift caused by SELECTION rather than mutation alone? The load-bearing design is a DUAL control: against the selection-ON colony, a no-mutation arm (the trait cannot vary) and a no-selection arm (the trait mutates but confers no fitness) isolate selection as the cause. This study REUSES study 8's dividing colony (`growth-and-division-spatial`, `CpmGrowthDivision`) unchanged and adds ONLY one heritable coupling parameter -- the paper's claim that the interfaces and couplings are themselves evolvable features of organization, made concrete by making one coupling parameter heritable and selectable on the colony that already grows and divides.
+#
+# **Claim.** The paper's §Development and evolution section (Fig 10c-f) holds as a spatial mechanism on the real dividing CPM colony, REUSING study 8's `CpmGrowthDivision` unchanged and adding only a heritable per-cell coupling parameter. DEVELOPMENT: a growing colony on a shared depleting glucose field forms emergent core-vs-rim physiological heterogeneity -- the radial rim-core glucose ratio grows from 1.0 to ~1.44 over 45 ticks (core more depleted than rim), a collective interface not imposed but emerging from shared-field competition. EVOLUTION: a heritable glucose-uptake trait (vmax) shifts its population mean UP under shared-field selection in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221; one seed reverses -- the honest multi-seed result). A DUAL control isolates the cause: the no-mutation control stays exactly at the founder value with zero variance (0/5 seeds, no raw material), and the no-selection control mutates (var > 0) but drifts undirected (2/5 up, mean -0.039). Only selection-ON shifts the mean directionally, so the trait shift is CAUSED by selection -- operating via differential division on the shared field (higher-vmax cells grow/divide more, so their trait proliferates), not by mutation alone. The honest boundaries are stated as findings: the development and evolution halves pull the same field-depletion knob and both saturate within the ~gen 4-6 crowding window; the scope is a toy evo-devo (development = shared-field core/rim heterogeneity, NOT morphogenesis; evolution = one scalar trait under resource selection, NOT genome evolution; facilitated variation -- evolving the ports/couplings themselves -- is a named deferral).
+
+# ### Parameters
+#
+# | simulation | composite | steps | params |
+# | --- | --- | --- | --- |
+# | `development-evolution-spatial` | `meta_modelers_guide.composites.development-evolution-spatial` | 0 | — |
+# | `development-evolution-no-mutation` | `meta_modelers_guide.composites.development-evolution-no-mutation` | 0 | — |
+# | `development-evolution-no-selection` | `meta_modelers_guide.composites.development-evolution-no-selection` | 0 | — |
+
+# ### Specification (process-bigraph) — load, inspect, edit
+#
+# Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
+
+# **Composite `meta_modelers_guide.composites.development-evolution-spatial`** — `spec_meta_modelers_guide_composites_development_evolution_spatial` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_development_evolution_spatial = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_development_evolution_spatial)
+
+# === Edit parameters for composite 'development-evolution-spatial' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
+
+# process 'evo'  (local:CpmEvolution)
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['reset_target'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vmax0'] = 1.5
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['mut_sigma'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['mutate'] = True
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['selection'] = True
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vmax_min'] = 0.2
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['vmax_max'] = 20.0
+spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo']['config']['seed'] = 3
+
+# **Composite `meta_modelers_guide.composites.development-evolution-no-mutation`** — `spec_meta_modelers_guide_composites_development_evolution_no_mutation` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_development_evolution_no_mutation = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-no-mutation.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_development_evolution_no_mutation)
+
+# === Edit parameters for composite 'development-evolution-no-mutation' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
+
+# process 'evo'  (local:CpmEvolution)
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['reset_target'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vmax0'] = 1.5
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['mut_sigma'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['mutate'] = False
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['selection'] = True
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vmax_min'] = 0.2
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['vmax_max'] = 20.0
+spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['evo']['config']['seed'] = 3
+
+# **Composite `meta_modelers_guide.composites.development-evolution-no-selection`** — `spec_meta_modelers_guide_composites_development_evolution_no_selection` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_development_evolution_no_selection = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-no-selection.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_development_evolution_no_selection)
+
+# === Edit parameters for composite 'development-evolution-no-selection' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'diff'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['n_bins'] = [60, 60]
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['bounds'] = [60.0, 60.0]
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['diffusion_coeffs']['glucose'] = 0.4
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['diffusion_coeffs']['acetate'] = 0.6
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['boundary_conditions']['glucose']['default']['type'] = 'neumann'
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['diff']['config']['boundary_conditions']['acetate']['default']['type'] = 'neumann'
+
+# process 'evo'  (local:CpmEvolution)
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['grid']['nx'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['grid']['ny'] = 60
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['seed_block'] = [27, 27, 0, 33, 33, 1]
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['target_volume'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['lambda_volume'] = 2.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['cell']['temperature'] = 11.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][0]['a'] = 0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][0]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][0]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][1]['a'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][1]['b'] = 1
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['contact'][1]['j'] = 14.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['mcs'] = 3
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['init_biomass'] = 1.25
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['grow_per_biomass'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['box_volume_L'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['glucose_km'] = 0.5
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['oxygen_vmax'] = 15.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vol_threshold'] = 80.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['reset_target'] = 40.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vmax0'] = 1.5
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['mut_sigma'] = 0.3
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['mutate'] = True
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['selection'] = False
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vmax_min'] = 0.2
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['vmax_max'] = 20.0
+spec_meta_modelers_guide_composites_development_evolution_no_selection['state']['evo']['config']['seed'] = 3
+
+# ### Run
+#
+# _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
+
+# === Study: development-and-evolution-spatial ===
+STUDY = 'development-and-evolution-spatial'
+STUDY_DIR = REPO / 'workspace/studies' / STUDY
+STUDY_YAML = str(STUDY_DIR / "study.yaml")
+RUNS_DB = str(STUDY_DIR / "runs.db")
+
+print("No recorded runs for this study; nothing to reproduce.")
+
+# ### Visualizations
+#
+# _Results are shown by the figures below, produced by the run above._
+
+# **development-evolution-spatial-movie**
+
+# development-evolution-spatial-movie
+_save_viz('development-and-evolution-spatial', 'development-evolution-spatial-movie', _render_one('image:viz/development-evolution-spatial.gif', {'chart': 'image', 'caption': 'Development-evolution over 45 ticks -- a growing colony (development: emergent core-vs-rim structure) with each cell colored by its heritable vmax on a fixed scale (evolution: the trait distribution shifting up under shared-field selection).'}, RUNS_DB, STUDY_YAML))
+
+# **development-evolution-metrics**
+
+# development-evolution-metrics
+_save_viz('development-and-evolution-spatial', 'development-evolution-metrics', _render_one('html:viz/development-evolution-metrics.html', {'chart': 'html', 'caption': 'Development-evolution metrics -- mean_vmax rising (evolution) alongside rim_core_ratio climbing above 1.0 (development), with var_vmax and n_cells, over 45 ticks on one colony.'}, RUNS_DB, STUDY_YAML))
+
+# ### Acceptance criteria
+#
+# _Pre-registered checks (criteria/thresholds only — run the cells above to evaluate them)._
+#
+# | test | measures | passes if |
+# | --- | --- | --- |
+# | development-heterogeneity-emerges | kind=observable path=obs.rim_core_ratio expr=last(obs.rim_core_ratio) | op > value 1.2 provenance rim_core_ratio grows 1.0 (5 ticks) -> ~1.44 (45 ticks) on the flagship seed 3; loose 1.2 floor (not the exact 1.44) so the bound is not a golden-value pin (tests/test_dev_evo_regime.py::test_development_heterogeneity_emerges, tests/test_cpm_evolution.py::test_rim_core_ratio_shows_heterogeneity) |
+# | selection-shifts-mean-trait-up | kind=observable path=obs.mean_vmax expr=last(obs.mean_vmax) | op > value 1.6 provenance flagship seed 3: mean_vmax 1.500 -> 2.200 (+0.700); multi-seed (seeds 1-5) UP in 4/5, range [-0.116, +0.700], mean +0.221 -- asserted as a fraction, not per-seed (tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection, tests/test_cpm_evolution.py::test_selection_shifts_mean_vmax_up, tests/test_cpm_evolution_spike.py::test_selection_shifts_mean_trait_up) |
+# | trait-inheritance-within-3-sigma | kind=observable path=obs.var_vmax expr=last(obs.var_vmax) | op > value 0.0 provenance seed 3 spike: across 69 division events |child-parent| max ~0.997 (~3.3 sigma), mean ~0.252 (~0.85 sigma = E|N(0,0.3)|), 99% within 3 sigma; var_vmax builds > 0 only when mutation is on (tests/test_cpm_evolution_spike.py::test_trait_inheritance_within_3_sigma, tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection) |
+# | no-mutation-control-static | kind=observable path=obs.mean_vmax expr=last(obs.mean_vmax) | op == value 1.5 provenance mutate=false: mean_vmax == 1.500 exactly and var_vmax == 0.0 in every seed 1-5 (0/5 shift) -- the BOOLEAN-flag control that genuinely reaches the process (tests/test_dev_evo_regime.py::test_no_mutation_control_is_static, tests/test_cpm_evolution.py::test_no_mutation_control_is_static, tests/test_cpm_evolution_spike.py::test_no_mutation_control_is_static) |
+# | no-selection-control-mutates-undirected | kind=observable path=obs.var_vmax expr=last(obs.var_vmax) | op > value 0.0 provenance selection=false: var_vmax > 0 (still mutates) but the mean drifts undirected -- UP in 2/5 seeds, delta range [-0.270, +0.112], mean -0.039 (vs selection-ON 4/5, +0.221) (tests/test_dev_evo_regime.py::test_no_selection_control_does_not_directionally_shift) |
+
 # ## Open decisions
 # - Four of the 9 planned spatial-counterpart studies are built and run so far — cell-environment-coupling-spatial (the flagship), cell-cell-coupling-spatial, disintegration-spatial, and growth-and-division-spatial. The remaining patterns — cellular-interface, molecular-interfaces, biomolecular-complementarity, autopoiesis, development-and-evolution — are named in the design spec's increment plan; some are planned, biomolecular-complementarity is in progress (code done, study.yaml held). Treat this investigation's verdict as scoped to the built studies only until the remaining increments land.
 # - Chemotaxis toward the sensed field (directed up-gradient motion) is explicitly deferred to a follow-up variant of the flagship composite; the current flagship cell does not chemotax, only senses, metabolizes, grows, and secretes.

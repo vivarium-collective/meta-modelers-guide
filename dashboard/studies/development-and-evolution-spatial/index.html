@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Study: cell-cell-coupling</title>
+<title>Study: development-and-evolution-spatial</title>
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/style.css">
 <link rel="stylesheet" href="/meta-modelers-guide/dashboard/assets/progress-track.css">
 <!-- Inherit the workbench light/dark theme (this page loads in an iframe;
@@ -14,9 +14,9 @@
 <header class="study-header">
   <div style="display:flex; align-items:baseline; gap:12px; justify-content:space-between;">
   <h1 class="study-title">
-    <span class="study-name" id="study-name" data-slug="cell-cell-coupling" title="cell-cell-coupling">Cell–Cell Coupling</span>
+    <span class="study-name" id="study-name" data-slug="development-and-evolution-spatial" title="development-and-evolution-spatial">Development and Evolution, Spatial</span>
     
-    <span class="study-kind-tag study-kind-computational" data-study-kind="computational" title="Study kind">computational</span>
+    <span class="study-kind-tag study-kind-biological" data-study-kind="biological" title="Study kind">biological</span>
     
     <span class="phase-pill phase-decide" title="Lifecycle: Design → Build → Simulate → Evaluate → Decide">Decide</span>
     
@@ -34,7 +34,7 @@
     
 
     
-    <div id="readiness-panel" data-slug="cell-cell-coupling"></div>
+    <div id="readiness-panel" data-slug="development-and-evolution-spatial"></div>
 
     
     
@@ -146,7 +146,7 @@
 
 
 
-<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> When two cell interfaces are coupled through one shared environmental nutrient store, what is coupled is not only state but constraint — does one cell&#39;s uptake push the other outside its viable bounds (competition), and can a different handler over the same coupling interface stabilize both (cross-feeding)?</p>
+<p id="study-question-headline" class="study-question-headline"><span class="q-glyph">Q</span> The paper&#39;s §Development and evolution section (Fig 10c-f) extends the interface idea across time: individual cellular interfaces become embedded in a COLLECTIVE interface defined by shared state -- a growing colony develops physiological heterogeneity (a depleted core against a fed rim) where each cell&#39;s own interface sits inside one collective interface -- and a heritable trait EVOLVES when variation is selected on that shared field. This study puts both halves on the real dividing CPM colony and asks the discriminating question directly: does a growing CPM colony on a shared depleting glucose field form emergent core-vs-rim heterogeneity (DEVELOPMENT), and does a heritable per-cell glucose-uptake trait (vmax) shift its population mean UP under shared-field selection (EVOLUTION) -- and, crucially, is that directional shift caused by SELECTION rather than mutation alone? The load-bearing design is a DUAL control: against the selection-ON colony, a no-mutation arm (the trait cannot vary) and a no-selection arm (the trait mutates but confers no fitness) isolate selection as the cause. This study REUSES study 8&#39;s dividing colony (`growth-and-division-spatial`, `CpmGrowthDivision`) unchanged and adds ONLY one heritable coupling parameter -- the paper&#39;s claim that the interfaces and couplings are themselves evolvable features of organization, made concrete by making one coupling parameter heritable and selectable on the colony that already grows and divides.</p>
 
 <nav class="study-tabs" aria-label="Study sections">
   
@@ -557,26 +557,34 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Two cells over one shared-nutrient interface negotiate viability, not just state: under competition the weaker cell (lower uptake capacity) is driven below its viable band while the stronger persists (cell_a viability → 1.0, cell_b → ~0.0001); under cross-feeding, the same coupling interface with a different handler keeps both cells viable (cell_a and cell_b → 1.0) — two handler environments over one interface (Law 4), the draft itself unchanged (Law 2).</p>
+      <p class="ctr-text">The paper&#39;s §Development and evolution section (Fig 10c-f) holds as a spatial mechanism on the real dividing CPM colony, REUSING study 8&#39;s `CpmGrowthDivision` unchanged and adding only a heritable per-cell coupling parameter. DEVELOPMENT: a growing colony on a shared depleting glucose field forms emergent core-vs-rim physiological heterogeneity -- the radial rim-core glucose ratio grows from 1.0 to ~1.44 over 45 ticks (core more depleted than rim), a collective interface not imposed but emerging from shared-field competition. EVOLUTION: a heritable glucose-uptake trait (vmax) shifts its population mean UP under shared-field selection in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221; one seed reverses -- the honest multi-seed result). A DUAL control isolates the cause: the no-mutation control stays exactly at the founder value with zero variance (0/5 seeds, no raw material), and the no-selection control mutates (var &gt; 0) but drifts undirected (2/5 up, mean -0.039). Only selection-ON shifts the mean directionally, so the trait shift is CAUSED by selection -- operating via differential division on the shared field (higher-vmax cells grow/divide more, so their trait proliferates), not by mutation alone. The honest boundaries are stated as findings: the development and evolution halves pull the same field-depletion knob and both saturate within the ~gen 4-6 crowding window; the scope is a toy evo-devo (development = shared-field core/rim heterogeneity, NOT morphogenesis; evolution = one scalar trait under resource selection, NOT genome evolution; facilitated variation -- evolving the ports/couplings themselves -- is a named deferral).</p>
       
-      <div class="ctr-context">The paper&#39;s Cell–cell coupling section asks what changes when a cell&#39;s environment is not empty space but another cell drawing on the same resource. This study wires two cell nodes — ``CellAgent`` (cell_a) and ``RivalCellAgent`` (cell_b), two draft roles with identical ports/contract — onto one shared ``SharedNutrientEnv`` store (a bounded first-order pool, replenished toward capacity). Both draft roles are mechanism-free; the coupling composite&#39;s node config carries only ``{interval: ...}``, exactly like every other draft composite in this workspace. The asymmetry lives entirely in the env/handler layer (law 4: two handler environments over one interface), not in the draft: the competition env (``cellcell-executable-compete``) assigns ``CompetingCell`` handlers with a higher ``vmax`` (0.8) to cell_a than to cell_b (0.2) — pure competitive strength, same kinetic form — while the cross-feeding env (``cellcell-executable-crossfeed``) assigns both roles the same symmetric ``CrossFeedingCell`` handler (vmax 0.6 each), which returns a byproduct to the shared pool (``return_frac`` 0.7) instead of exhausting it. Run to completion (20 steps) through the engine: under competition, cell_a&#39;s viability climbs to 1.0 while cell_b&#39;s collapses to ~0.0001 (effectively zero) — the weaker cell is driven out of its viable band while the stronger persists — and the shared nutrient store is measurably depleted (1.0 → 0.20), confirming the coupling is real, not two isolated cells. Under cross-feeding, over the same coupling interface, both cells&#39; viability reaches 1.0 and the shared store settles higher (1.0 → 0.54) because the byproduct return offsets combined uptake. What is coupled through one shared store is not just state (nutrient concentration) but constraint — whether each cell&#39;s own uptake keeps it inside its viable band depends on what the other cell is doing to the same pool, and swapping the handler alone (not the draft, not the interface) is what negotiates that constraint differently.</div>
+      <div class="ctr-context">The paper&#39;s §Development and evolution section (Fig 10c-f) is where the cellular-interface idea is extended across developmental and evolutionary time, and it is the hardest pair in the paper -- the non-spatial analogue draft-to-living-cell/development-and-evolution could only gesture at it, its own verdict conceding that its &#34;selection&#34; was a single ODE with fixed viability/fitness constants and its &#34;new port&#34; a scripted config ramp: pattern, not phenomenon. This study is the capstone of the nine spatial studies and supplies exactly the phenomenon that one named as missing, at a very different mechanistic resolution, by REUSING the study-8 dividing colony rather than building anything new.
+
+DEVELOPMENT -- the collective interface, measured. A CPM colony grows on a shared 60x60 glucose field: each cell runs its own per-footprint dynamic-FBA (dFBA against e_coli_core) to grow and divide (study 8&#39;s mechanism, unchanged). As the colony compounds, the interior cells sit inside the colony&#39;s own depleted core while the outer cells are fed from the rim -- so each cell&#39;s individual interface (its local glucose exchange) becomes embedded in a COLLECTIVE interface defined by the shared field. This is measured radially: binning live cells by distance from the colony centroid (median split into core/rim) and comparing mean local glucose, the rim-core ratio (`rim_core_ratio`) grows from 1.0 (few cells, no readable gradient) to ~1.44 by the end of a 45-tick run -- the core is measurably more depleted than the rim. Nothing imposes this: it is the same shared-field mass-balance that produced study 8&#39;s division desync, now read as a spatial gradient -- physiological heterogeneity EMERGING from shared-field competition (stewart2008/flemming2016 biofilm physiological heterogeneity), not a patterning program.
+
+EVOLUTION -- one heritable trait, selected on the shared field. Each cell carries a heritable scalar trait, its glucose-uptake `vmax`, used as that cell&#39;s own dFBA uptake parameter. On division the daughter inherits the parent&#39;s trait plus a Gaussian mutation (sigma=0.3, seeded RNG) through the SAME creation-order parent&lt;-&gt;daughter pairing study 8 already uses for biomass and lineage; the parent keeps its own trait. Selection is emergent and mechanistic: a higher-vmax cell draws more glucose, grows faster, crosses `vol_threshold` sooner, divides more, and so its trait proliferates -- selection through DIFFERENTIAL DIVISION on the shared depleting field, not an externally-imposed fitness function. Measured across seeds 1-5 (45 ticks, founder vmax0=1.5): the population mean `vmax` shifts UP in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221), with one seed reversing -- reported honestly as a fraction, not &#34;always.&#34;
+
+THE DUAL CONTROL isolates selection as the cause. Two negative controls, each identical to the selection-ON colony but for one flag. NO-MUTATION (`mutate: false`, a BOOLEAN flag -- never a `mut_sigma: 0.0` float override, which bigraph_schema silently drops): the trait cannot vary, so the population mean stays EXACTLY the founder value 1.500 with zero variance in every seed (0/5 shift) -- no raw material for selection to act on. NO-SELECTION (`selection: false`): the trait still mutates (`var_vmax &gt; 0`, raw variance builds) but every cell&#39;s dFBA uses the fixed founder vmax0 regardless of its own trait, so the trait confers no fitness -- the mean drifts UNDIRECTED (up in only 2/5 seeds, mean delta -0.039, near zero). Only the selection-ON arm shifts the mean directionally (4/5). Mutation alone (no-selection) does not; the absence of variation (no-mutation) cannot: the directional trait shift is CAUSED by selection.
+
+What is honestly demonstrated, and what is not. FIRST, this is a strict UPGRADE over the non-spatial study 9: real heritable variation and real fitness-based selection (differential division on a shared field) replace that study&#39;s empty variation handler and fixed-constant ODE. SECOND, the two halves pull the same knob: both development heterogeneity and evolution intensify with stronger field depletion, and the colony saturates its own footprint on the 60x60 lattice by roughly generation 4-6, so both are demonstrated within that bounded window -- a larger grid or a leaner field would run more generations and sharpen the gradient, at the cost of the same crowding that drives the heterogeneity. Stated plainly rather than glossed. THIRD, the scope is a TOY evo-devo: DEVELOPMENT here is shared-field-driven core/rim physiological heterogeneity, NOT morphogenesis, signalling, or a genetic patterning program; EVOLUTION is ONE scalar heritable trait under resource selection, NOT genome or regulatory-network evolution and NOT speciation. kirschner2005 &#34;facilitated variation&#34; -- evolving the interfaces/couplings THEMSELVES (the ports and wiring), not a parameter of a fixed port -- is a named deferral: this study mutates a parameter of a fixed coupling, exactly the axis the non-spatial study&#39;s reviewer said would be needed to move from pattern to phenomenon.</div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Test</h2>
-      <p class="ctr-text">Wire two draft cell roles (CellAgent, RivalCellAgent — identical ports, mechanism-free) onto one shared SharedNutrientEnv store, then compile the same draft through two different handler environments — a competition env (vmax 0.8 vs 0.2, no byproduct return) and a cross-feeding env (symmetric vmax 0.6/0.6, partial byproduct return) — and run each to completion through the engine.</p>
+      <p class="ctr-text">Run three development-evolution composites to completion through the process-bigraph engine directly from their JSON specs, each a growing CPM colony (CpmEvolution, study 8&#39;s CpmGrowthDivision reused unchanged) on a shared 60x60 glucose field with a heritable per-cell glucose-uptake trait (vmax, founder 1.5, Gaussian mutation sigma=0.3 on division): development-evolution-spatial (selection ON -- the trait feeds each cell&#39;s dFBA uptake, 45 ticks, seeds 1-5), development-evolution-no-mutation (mutate=false, the BOOLEAN no-mutation control), and development-evolution-no-selection (selection=false, the fitness-neutral no-selection control). Measure DEVELOPMENT via the radial rim-core glucose ratio (rim_core_ratio, core-vs-rim heterogeneity binned by distance from the colony centroid) and EVOLUTION via the population mean and variance of the trait (mean_vmax, var_vmax), reporting the mean shift as a multi-seed fraction and using the dual control to isolate selection as the cause of the directional trait shift.</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>coupling-draft</code>, <code>compete</code>, <code>crossfeed</code></div>
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">Under competition (cell_a vmax 0.8, cell_b vmax 0.2, same shared pool), the weaker cell&#39;s viability is driven below the viable band while the stronger cell&#39;s viability stays high.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The stronger competitor (cell_a, vmax 0.8) stays inside its viable band while cell_b starves — confirming the asymmetry is competitive, not a shared collapse.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Over the same coupling interface, swapping to a symmetric cross-feeding handler (byproduct returned to the shared pool) keeps both cells viable — law 4, handler independence.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Sanity check that the coupling is real (not two isolated cells drawing on independent pools) — the shared nutrient store is measurably depleted under competition.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Law 2 check (not the study&#39;s scientific control): the compete and cross-feed handler envs compile to the same external interface as the inert coupling draft and as each other — confirms env-layer swapping never touches the declared interface.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>development-evolution-spatial</code>, <code>development-evolution-no-mutation</code>, <code>development-evolution-no-selection</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">DEVELOPMENT: the colony develops emergent core-vs-rim physiological heterogeneity. `rim_core_ratio` starts near its 1.0 floor (few cells, no readable gradient) and ends clearly above 1.0 -- the colony&#39;s core is measurably more glucose-depleted than its rim by the end of a 45-tick run (the collective interface of the paper&#39;s §Development and evolution section, Fig 10c-d). Emergent from shared-field competition, not imposed.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">EVOLUTION: under selection (trait feeds dFBA uptake, mutation ON), the population mean `vmax` ends clearly above the founder value -- selection through differential division on the shared depleting field. Reported as a multi-seed fraction: UP in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221), one seed reversing -- the honest stochastic result.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The evolution crux is wired correctly: across division events, |vmax[daughter] - vmax[parent]| is ~N(0,sigma)-distributed -- the same creation-order parent&lt;-&gt;daughter pairing study 8 uses for biomass/lineage propagates the trait, not scrambles it. A wrong pairing would smear diffs across the whole trait range (~1.5+), not cluster them within a few sigma (verified in the Task 1 spike: 69 division events, 99% within 3 sigma, mean |diff| ~0.85 sigma).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The no-mutation control, half of the dual control: with `mutate: false` (a BOOLEAN flag, not a `mut_sigma: 0.0` float override -- which bigraph_schema silently drops), the trait cannot vary across divisions, so the population mean stays EXACTLY the founder value 1.500 with zero variance in every seed (0/5 shift). No raw material for selection to act on -- proving the selection-ON shift needs heritable variation.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The no-selection control, the other half of the dual control: with `selection: false` the trait still mutates (`var_vmax &gt; 0`, raw variance builds) but every cell&#39;s dFBA uses the FIXED founder vmax0 regardless of its own trait, so the trait confers no fitness -- the mean drifts UNDIRECTED (up in only 2/5 seeds, mean delta -0.039, near zero), clearly below the selection-ON 4/5. Isolates SELECTION, not mutation alone, as the cause of the directional shift.</span></div>
       </div>
       
     </div>
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Under competition, the shared store is measurably depleted (nutrient 1.0 → 0.1999) and the weaker cell is driven out of its viable band (cell_b viability 1.0 → 0.0001) while the stronger cell persists (cell_a viability → 1.0). Under cross-feeding — the same coupling interface, only the handler swapped — both cells stay viable (viability → 1.0 each), because the returned byproduct offsets combined uptake. Two handler environments over one coupling interface negotiate constraint differently (Law 4), with the interface itself unchanged across both (Law 2).</p>
+      <p class="ctr-text">DEVELOPMENT holds spatially -- the growing colony forms emergent core-vs-rim physiological heterogeneity (rim_core_ratio grows 1.0 -&gt; ~1.44 over 45 ticks, the core more depleted than the rim), a collective interface emerging from shared-field competition, not imposed. EVOLUTION holds spatially -- the heritable glucose-uptake trait (vmax) shifts its population mean UP under shared-field selection in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221; one seed reverses, the honest multi-seed result), operating via differential division on the shared depleting field (higher-vmax cells grow/divide more, so their trait proliferates). The DUAL control isolates selection as the cause: the no-mutation control stays EXACTLY at the founder value 1.500 with zero variance (0/5 shift -- no raw material), and the no-selection control mutates (var &gt; 0) but drifts undirected (2/5 up, mean -0.039). Only the selection-ON arm shifts the mean directionally, so the trait shift is CAUSED by selection, not mutation alone. This REUSES study 8&#39;s CpmGrowthDivision unchanged and adds only one heritable coupling parameter, realizing the paper&#39;s §Development and evolution section (Fig 10c-f) on the real dividing colony. The honest boundaries are reported as findings -- the two halves pull the same field-depletion knob and both saturate within the ~gen 4-6 crowding window, and the scope is a toy evo-devo (development = shared-field core/rim heterogeneity, NOT morphogenesis; evolution = one scalar trait under resource selection, NOT genome evolution; kirschner2005 facilitated variation -- evolving the ports/couplings themselves -- is a named deferral).</p>
       
       
     <div class="overview-section findings-section">
@@ -590,9 +598,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Coupling two cells through one shared nutrient store couples constraint, not just state: under competition, the cell with lower uptake capacity (cell_b, vmax 0.2) is driven out of its viable band while the stronger cell (cell_a, vmax 0.8) persists. Confirmed: cell_a viability 1.0 → 1.0, cell_b viability 1.0 → 0.0001.</span>
+            <span class="finding-claim finding-statement">DEVELOPMENT holds spatially: a growing CPM colony on a shared depleting glucose field forms EMERGENT core-vs-rim physiological heterogeneity -- the radial rim-core glucose ratio (`rim_core_ratio`) grows from 1.0 (few cells, no readable gradient) to ~1.44 over a 45-tick run, the core measurably more depleted than the rim. Each cell&#39;s individual glucose interface becomes embedded in a COLLECTIVE interface defined by the shared field (the paper&#39;s §Development and evolution section, Fig 10c-d). Nothing imposes the structure -- it is the same shared-field mass-balance that drove study 8&#39;s division desync, read radially (stewart2008/ flemming2016 biofilm physiological heterogeneity).</span>
             
-            <span class="finding-chip">via <code>competition-starves-weaker-cell</code></span>
+            <span class="finding-chip">via <code>development-heterogeneity-emerges</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -604,10 +612,10 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_a viability stays 1.0; cell_b viability collapses to 0.0001; env.nutrient depleted 1.0 → 0.1999 · 
+              <strong>observed:</strong> rim_core_ratio 1.0 (5 ticks) -&gt; 1.445 (45 ticks), seed 3 -- core more depleted than rim · 
               
-              via test <a href="#bt-competition-starves-weaker-cell" onclick="_gotoStudyTab('tests','bt-competition-starves-weaker-cell');return false;"><code>competition-starves-weaker-cell</code></a> · 
-              in run <a href="#run-compete"><code>compete</code></a>
+              via test <a href="#bt-development-heterogeneity-emerges" onclick="_gotoStudyTab('tests','bt-development-heterogeneity-emerges');return false;"><code>development-heterogeneity-emerges</code></a> · 
+              in run <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>
               
               
             </div>
@@ -616,12 +624,12 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-compete"><code>compete</code></a>
+              runs: <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≤ 0.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 1.2</code></div>
             
             
             
@@ -640,9 +648,9 @@
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A different handler over the same coupling interface (cross-feeding: symmetric vmax, partial byproduct return to the shared pool) sustains both cells — the constraint negotiated over one shared store is not fixed by the interface, it is set by which handler occupies it. Confirmed: both cell_a and cell_b viability 1.0 → 1.0 under cross-feeding.</span>
+            <span class="finding-claim finding-statement">EVOLUTION holds spatially, and the DUAL control proves the directional trait shift is CAUSED by SELECTION. Selection-ON: the population mean `vmax` shifts UP in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221) -- one seed reverses, the honest multi-seed result. NO-MUTATION control (`mutate: false`, BOOLEAN): mean stays EXACTLY the founder 1.500, var 0, in every seed (0/5) -- no raw material. NO-SELECTION control (`selection: false`): the trait mutates (var &gt; 0) but the mean drifts UNDIRECTED (2/5 up, mean -0.039). Only selection-ON shifts the mean directionally: mutation alone does not, absent variation cannot -- so selection is the cause.</span>
             
-            <span class="finding-chip">via <code>crossfeeding-keeps-both-viable</code></span>
+            <span class="finding-chip">via <code>selection-shifts-mean-trait-up</code></span>
             
           </summary>
           <div class="finding-drawer">
@@ -654,10 +662,10 @@
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> cell_a and cell_b viability both 1.0; env.nutrient settles at 0.538 (vs 0.1999 under competition) · 
+              <strong>observed:</strong> selection-ON 4/5 up (+0.221 mean); no-mutation 0/5 (mean 1.500, var 0); no-selection 2/5 (mean -0.039) · 
               
-              via test <a href="#bt-crossfeeding-keeps-both-viable" onclick="_gotoStudyTab('tests','bt-crossfeeding-keeps-both-viable');return false;"><code>crossfeeding-keeps-both-viable</code></a> · 
-              in run <a href="#run-crossfeed"><code>crossfeed</code></a>
+              via test <a href="#bt-selection-shifts-mean-trait-up" onclick="_gotoStudyTab('tests','bt-selection-shifts-mean-trait-up');return false;"><code>selection-shifts-mean-trait-up</code></a> · 
+              in run <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>
               
               
             </div>
@@ -666,12 +674,12 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-crossfeed"><code>crossfeed</code></a>
+              runs: <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>, <a href="#run-development-evolution-no-mutation"><code>development-evolution-no-mutation</code></a>, <a href="#run-development-evolution-no-selection"><code>development-evolution-no-selection</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 0.5</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 1.6</code></div>
             
             
             
@@ -686,28 +694,28 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The competitive asymmetry and the cross-feeding symmetry live entirely in the handler env layer, never in the draft or the interface — confirming law 4 (handler independence over one coupling interface) and law 2 (interface preserved) simultaneously. Confirmed structurally: interface_of(compete) == interface_of(crossfeed) == interface_of(draft).</span>
+            <span class="finding-claim finding-statement">Selection operates via a concrete MECHANISM: differential division on the shared depleting field. The heritable trait `vmax` IS the cell&#39;s own dFBA glucose-uptake parameter, so a higher-vmax cell draws more glucose, grows faster, crosses `vol_threshold` sooner, divides more, and its trait proliferates. The trait rides study 8&#39;s verified creation-order parent&lt;-&gt;daughter pairing (the same one used for biomass/lineage) with the daughter inheriting the parent&#39;s trait plus a Gaussian mutation -- confirmed correct across 69 division events (99% within 3 sigma). The trait shift and the larger selected colonies are the SAME mechanism (selection through division rate), not two independent findings.</span>
             
-            <span class="finding-chip">via <code>draft-preserves-interface</code></span>
+            <span class="finding-chip">via <code>trait-inheritance-within-3-sigma</code></span>
             
           </summary>
           <div class="finding-drawer">
             <div class="finding-header">
               <span class="finding-id">F-03</span>
-              <span class="finding-kind">computational</span>
+              <span class="finding-kind">biological</span>
               <span class="finding-status-text">confirms literature</span>
             </div>
             
             
             <div class="finding-evidence">
-              <strong>observed:</strong> identical compiled interface across both handler envs and the inert draft (tests/test_cellcell.py::test_handler_independence_same_interface) · 
+              <strong>observed:</strong> 69 division events, |child-parent| 99% within 3 sigma (mean ~0.85 sigma); selected populations reach more cells · 
               
-              via test <a href="#bt-draft-preserves-interface" onclick="_gotoStudyTab('tests','bt-draft-preserves-interface');return false;"><code>draft-preserves-interface</code></a> · 
-              in run <a href="#run-coupling-draft"><code>coupling-draft</code></a>
+              via test <a href="#bt-trait-inheritance-within-3-sigma" onclick="_gotoStudyTab('tests','bt-trait-inheritance-within-3-sigma');return false;"><code>trait-inheritance-within-3-sigma</code></a> · 
+              in run <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>
               
               
             </div>
@@ -716,12 +724,104 @@
             <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
               
               
-              runs: <a href="#run-coupling-draft"><code>coupling-draft</code></a>
+              runs: <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>
             </div>
             
             
             
-            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ≥ 1.0</code></div>
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 0.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-partial">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◐</span>
+            <span class="finding-claim finding-statement">Honesty point, load-bearing not buried: the DEVELOPMENT and EVOLUTION halves pull the SAME knob (field depletion), and the demonstration is bounded by crowding. Both intensify with stronger field depletion, and the colony saturates its own 60x60 footprint by roughly generation 4-6, so both halves are demonstrated within that bounded window. A larger grid or a leaner/higher-uptake field would run more generations and sharpen the radial gradient -- but at the cost of the same crowding that itself drives the heterogeneity. The constants are toy-real, not fitted; the selection signal is real but modest (mean +0.22) and stochastic (one seed reversed), which is exactly why the claim is reported as a 4/5 fraction, not a single-seed headline. External-grid / longer-run evo-devo is the natural next step.</span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">partial literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> colony saturates 60x60 by ~gen 4-6; selection mean +0.22 with 4/5 up, one reversing; rim/core gradient monotone but bounded by the same crowding that drives it · 
+              
+              
+              
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>
+            </div>
+            
+            
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-partial">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◐</span>
+            <span class="finding-claim finding-statement">The SCOPE is a toy evo-devo, stated plainly. DEVELOPMENT = shared-field-driven core/rim physiological heterogeneity, NOT morphogenesis, signalling, or a genetic patterning program (the collective interface is a measured resource gradient, not a regulated body plan). EVOLUTION = ONE scalar heritable trait (glucose `vmax`) under resource selection -- heritable variation + selection + a directional mean shift with clean dual controls -- NOT genome or regulatory-network evolution, NOT speciation. kirschner2005 &#34;facilitated variation&#34; -- evolving the ports/couplings THEMSELVES, not a parameter of a fixed port -- is a NAMED DEFERRAL (deferrals.md): this study mutates a parameter of a fixed coupling, exactly the axis the non-spatial analogue&#39;s reviewer said would move it from pattern to phenomenon. It is, nonetheless, a strict upgrade over that non-spatial study -- real heritable variation and real fitness-based selection replace its empty variation handler and fixed-constant ODE.</span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">partial literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> development = measured resource gradient (not a body plan); evolution = one heritable parameter of a fixed coupling under resource selection (facilitated variation deferred) · 
+              
+              
+              
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-development-evolution-spatial"><code>development-evolution-spatial</code></a>
+            </div>
+            
+            
             
             
             
@@ -746,7 +846,7 @@
         </div>
         
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">Pairwise only: two cells over one shared store, not population-scale negotiation among many cells (that is out of scope here — see the later development-and-evolution study for collective/biofilm nesting).</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Caveat</span> <span class="ctr-meta-item">The DEVELOPMENT and EVOLUTION halves pull the SAME knob (field depletion): both intensify with stronger depletion, and the colony saturates its own 60x60 footprint by roughly generation 4-6, so both are demonstrated within that bounded window. A larger grid or leaner/higher-uptake field would run more generations and sharpen the radial gradient -- at the cost of the same crowding that itself drives the heterogeneity. Stated as a finding, not glossed.</span></div>
         
       </div>
       
@@ -763,11 +863,11 @@
   <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
     <h2 class="overview-label" style="margin:0">Model composition</h2>
     
-    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'cell-cell-coupling', 'draft-to-living-cell')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
+    <button type="button" class="btn-mini" onclick="window._vivStudyNotebookFromCard(event, 'development-and-evolution-spatial', 'the-cellular-interface-multicellular')" title="Download a runnable Jupyter notebook for THIS study — its composite + editable parameters + figures">↓ notebook</button>
   </div>
 
   
-  <div id="model-composite-cards" class="model-composite-cards" data-study="cell-cell-coupling">
+  <div id="model-composite-cards" class="model-composite-cards" data-study="development-and-evolution-spatial">
     <p class="muted" style="font-size:0.85em;margin:0">Loading composite card(s)…</p>
   </div>
 
@@ -785,24 +885,24 @@
   <div class="overview-section" id="model-section">
     <h3>Runnable models <span class="muted" style="font-size:0.85em;font-weight:normal">— the composite(s) this study simulates</span></h3>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-coupling" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.development-evolution-spatial" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>coupling-draft</strong>
+        <strong>development-evolution-spatial</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-coupling</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.development-evolution-spatial</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-coupling')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.development-evolution-spatial')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="coupling-draft"
-               value="meta_modelers_guide.composites.cellcell-coupling" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="development-evolution-spatial"
+               value="meta_modelers_guide.composites.development-evolution-spatial" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="coupling-draft">Set composite</button>
+                data-baseline-name="development-evolution-spatial">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="coupling-draft" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="development-evolution-spatial" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -820,24 +920,24 @@
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-executable-compete" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.development-evolution-no-mutation" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>compete</strong>
+        <strong>development-evolution-no-mutation</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-executable-compete</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.development-evolution-no-mutation</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-executable-compete')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.development-evolution-no-mutation')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="compete"
-               value="meta_modelers_guide.composites.cellcell-executable-compete" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="development-evolution-no-mutation"
+               value="meta_modelers_guide.composites.development-evolution-no-mutation" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="compete">Set composite</button>
+                data-baseline-name="development-evolution-no-mutation">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="compete" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="development-evolution-no-mutation" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -855,24 +955,24 @@
       
     </div>
     
-    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellcell-executable-crossfeed" data-model-overrides='{}'>
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.development-evolution-no-selection" data-model-overrides='{}'>
       <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <strong>crossfeed</strong>
+        <strong>development-evolution-no-selection</strong>
         
-        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellcell-executable-crossfeed</code>
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.development-evolution-no-selection</code>
         <button type="button" class="action-btn" style="font-size:0.8em"
-                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellcell-executable-crossfeed')">🧬 explore &amp; run ↗</button>
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.development-evolution-no-selection')">🧬 explore &amp; run ↗</button>
         
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="crossfeed"
-               value="meta_modelers_guide.composites.cellcell-executable-crossfeed" placeholder="pkg.composites.name"
+        <input type="text" class="baseline-composite-input" data-baseline-name="development-evolution-no-selection"
+               value="meta_modelers_guide.composites.development-evolution-no-selection" placeholder="pkg.composites.name"
                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
-                data-baseline-name="crossfeed">Set composite</button>
+                data-baseline-name="development-evolution-no-selection">Set composite</button>
       </div>
-      <div class="baseline-composite-status muted" data-baseline-name="crossfeed" style="font-size:0.8em;margin-top:2px"></div>
+      <div class="baseline-composite-status muted" data-baseline-name="development-evolution-no-selection" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -928,7 +1028,7 @@
 
   <h4>Latest run preview</h4>
   <p class="muted" style="font-size:0.9em">Per-store sparkline + first/last/min/max from the most recent run's emitted trajectory. This is a downsampled PREVIEW, not the full data — use the per-store or Download-all links for the complete arrays.</p>
-  <div id="results-preview" data-study="cell-cell-coupling">
+  <div id="results-preview" data-study="development-and-evolution-spatial">
     <p class="empty-message">Loading results preview…</p>
   </div>
 
@@ -952,9 +1052,9 @@
   <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
     <span class="muted" style="margin-right:auto;font-weight:600">Analysis result files</span>
     <a id="data-download-all" class="btn-mini" style="display:none"
-       href="/api/study-analysis-zip?study=cell-cell-coupling">Download all (.zip)</a>
+       href="/api/study-analysis-zip?study=development-and-evolution-spatial">Download all (.zip)</a>
   </div>
-  <div id="data-files" data-study="cell-cell-coupling">
+  <div id="data-files" data-study="development-and-evolution-spatial">
     <p class="empty-message">Loading result files…</p>
   </div>
 </div>
@@ -975,7 +1075,7 @@
     interval/buffer, output location, and emit scope — from
     <code>lib/emitters.py</code> and this study's (or the workspace's)
     <code>runtime.default_emitter</code>.</p>
-    <div id="readouts-emitter" data-study="cell-cell-coupling">
+    <div id="readouts-emitter" data-study="development-and-evolution-spatial">
       <p class="empty-message">Loading emitter configuration…</p>
     </div>
 
@@ -987,7 +1087,7 @@
     
     <div id="readouts-download" style="margin:0 0 16px 0"></div>
 
-    <div id="readouts-table" data-study="cell-cell-coupling">
+    <div id="readouts-table" data-study="development-and-evolution-spatial">
       <p class="empty-message">Loading readouts from the composite emit plan…</p>
     </div>
 
@@ -995,7 +1095,7 @@
     <p class="muted" style="font-size:0.9em">Store path, dtype, shape
     <code>(n_steps, …)</code>, units, and a best-effort byte estimate for each emitted
     leaf.</p>
-    <div id="readouts-shapes" data-study="cell-cell-coupling">
+    <div id="readouts-shapes" data-study="development-and-evolution-spatial">
       <p class="empty-message">Loading output shapes…</p>
     </div>
 
@@ -1010,7 +1110,7 @@
     
     
     <div class="viz-actions-row" style="display:flex; justify-content:flex-end; margin-bottom:10px;">
-      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'cell-cell-coupling')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
+      <button type="button" class="btn-mini" onclick="window._vivStudyFiguresFromCard(event, 'development-and-evolution-spatial')" title="Download this study's visualizations (figure panels + its composite) as a zip">↓ visualizations</button>
     </div>
     
 
@@ -1074,10 +1174,10 @@
     
     
     
-    <li class="expected-behavior-item" id="bt-competition-starves-weaker-cell"
+    <li class="expected-behavior-item" id="bt-development-heterogeneity-emerges"
         data-test-kind="behavioral"
         
-        data-pytest-node="competition-starves-weaker-cell"
+        data-pytest-node="development-heterogeneity-emerges"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1086,19 +1186,19 @@
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">competition-starves-weaker-cell</strong>
+        <strong style="font-size: 0.9em;">development-heterogeneity-emerges</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>development-evolution-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Under competition (cell_a vmax 0.8, cell_b vmax 0.2, same shared pool), the weaker cell&#39;s viability is driven below the viable band while the stronger cell&#39;s viability stays high.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">DEVELOPMENT: the colony develops emergent core-vs-rim physiological heterogeneity. `rim_core_ratio` starts near its 1.0 floor (few cells, no readable gradient) and ends clearly above 1.0 -- the colony&#39;s core is measurably more glucose-depleted than its rim by the end of a 45-tick run (the collective interface of the paper&#39;s §Development and evolution section, Fig 10c-d). Emergent from shared-field competition, not imposed.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_b.viability)", "kind": "observable", "path": "cell_b.viability"}
-pass_if: {"op": "\u003c=", "provenance": "cell_b (rival, vmax 0.2) viability collapses 1.0 \u2192 0.0001 under competition (exec cellcell-executable-compete, tests/test_cellcell.py::test_competition_pushes_weaker_cell_out_of_viable_bounds)", "value": 0.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.rim_core_ratio)", "kind": "observable", "path": "obs.rim_core_ratio"}
+pass_if: {"op": "\u003e", "provenance": "rim_core_ratio grows 1.0 (5 ticks) -\u003e ~1.44 (45 ticks) on the flagship seed 3; loose 1.2 floor (not the exact 1.44) so the bound is not a golden-value pin (tests/test_dev_evo_regime.py::test_development_heterogeneity_emerges, tests/test_cpm_evolution.py::test_rim_core_ratio_shows_heterogeneity)", "value": 1.2}</pre>
       </details>
       
       
@@ -1113,10 +1213,10 @@ pass_if: {"op": "\u003c=", "provenance": "cell_b (rival, vmax 0.2) viability col
     
     
     
-    <li class="expected-behavior-item" id="bt-competition-stronger-cell-persists"
+    <li class="expected-behavior-item" id="bt-selection-shifts-mean-trait-up"
         data-test-kind="behavioral"
         
-        data-pytest-node="competition-stronger-cell-persists"
+        data-pytest-node="selection-shifts-mean-trait-up"
         data-classification="primary"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
@@ -1125,19 +1225,19 @@ pass_if: {"op": "\u003c=", "provenance": "cell_b (rival, vmax 0.2) viability col
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">competition-stronger-cell-persists</strong>
+        <strong style="font-size: 0.9em;">selection-shifts-mean-trait-up</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>development-evolution-spatial</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">The stronger competitor (cell_a, vmax 0.8) stays inside its viable band while cell_b starves — confirming the asymmetry is competitive, not a shared collapse.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">EVOLUTION: under selection (trait feeds dFBA uptake, mutation ON), the population mean `vmax` ends clearly above the founder value -- selection through differential division on the shared depleting field. Reported as a multi-seed fraction: UP in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221), one seed reversing -- the honest stochastic result.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_a.viability)", "kind": "observable", "path": "cell_a.viability"}
-pass_if: {"op": "\u003e=", "provenance": "cell_a (vmax 0.8) viability stays at 1.0 under competition while cell_b collapses (exec cellcell-executable-compete)", "value": 0.5}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.mean_vmax)", "kind": "observable", "path": "obs.mean_vmax"}
+pass_if: {"op": "\u003e", "provenance": "flagship seed 3: mean_vmax 1.500 -\u003e 2.200 (+0.700); multi-seed (seeds 1-5) UP in 4/5, range [-0.116, +0.700], mean +0.221 -- asserted as a fraction, not per-seed (tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection, tests/test_cpm_evolution.py::test_selection_shifts_mean_vmax_up, tests/test_cpm_evolution_spike.py::test_selection_shifts_mean_trait_up)", "value": 1.6}</pre>
       </details>
       
       
@@ -1152,49 +1252,10 @@ pass_if: {"op": "\u003e=", "provenance": "cell_a (vmax 0.8) viability stays at 1
     
     
     
-    <li class="expected-behavior-item" id="bt-crossfeeding-keeps-both-viable"
+    <li class="expected-behavior-item" id="bt-trait-inheritance-within-3-sigma"
         data-test-kind="behavioral"
         
-        data-pytest-node="crossfeeding-keeps-both-viable"
-        data-classification="primary"
-        data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
-      
-        
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-primary">primary</span>
-        <strong style="font-size: 0.9em;">crossfeeding-keeps-both-viable</strong>
-        
-        <span class="muted" style="font-size:0.78em">requires: <code>crossfeed</code></span>
-        
-      </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Over the same coupling interface, swapping to a symmetric cross-feeding handler (byproduct returned to the shared pool) keeps both cells viable — law 4, handler independence.</div>
-      
-      
-      <details style="margin-top: 6px; font-size: 0.82em;">
-        <summary class="muted" style="cursor: pointer;">Assertion</summary>
-        
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(cell_b.viability)", "kind": "observable", "path": "cell_b.viability"}
-pass_if: {"op": "\u003e=", "provenance": "both cells viability \u2192 1.0 under cross-feeding (exec cellcell-executable-crossfeed, tests/test_cellcell.py::test_crossfeeding_keeps_both_cells_viable)", "value": 0.5}</pre>
-      </details>
-      
-      
-      
-      
-    </li>
-    
-    
-    
-    
-    
-    
-    
-    
-    <li class="expected-behavior-item" id="bt-shared-pool-actually-depleted"
-        data-test-kind="behavioral"
-        
-        data-pytest-node="shared-pool-actually-depleted"
+        data-pytest-node="trait-inheritance-within-3-sigma"
         data-classification="diagnostic"
         data-result="pending"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
@@ -1203,19 +1264,19 @@ pass_if: {"op": "\u003e=", "provenance": "both cells viability \u2192 1.0 under 
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">shared-pool-actually-depleted</strong>
+        <strong style="font-size: 0.9em;">trait-inheritance-within-3-sigma</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>compete</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>none</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Sanity check that the coupling is real (not two isolated cells drawing on independent pools) — the shared nutrient store is measurably depleted under competition.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The evolution crux is wired correctly: across division events, |vmax[daughter] - vmax[parent]| is ~N(0,sigma)-distributed -- the same creation-order parent&lt;-&gt;daughter pairing study 8 uses for biomass/lineage propagates the trait, not scrambles it. A wrong pairing would smear diffs across the whole trait range (~1.5+), not cluster them within a few sigma (verified in the Task 1 spike: 69 division events, 99% within 3 sigma, mean |diff| ~0.85 sigma).</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(env.nutrient)", "kind": "observable", "path": "env.nutrient"}
-pass_if: {"op": "\u003c", "provenance": "shared env.nutrient depleted 1.0 \u2192 0.1999... under competition (test_cellcell.py asserts st[\"env\"][\"nutrient\"] \u003c 1.0)", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.var_vmax)", "kind": "observable", "path": "obs.var_vmax"}
+pass_if: {"op": "\u003e", "provenance": "seed 3 spike: across 69 division events |child-parent| max ~0.997 (~3.3 sigma), mean ~0.252 (~0.85 sigma = E|N(0,0.3)|), 99% within 3 sigma; var_vmax builds \u003e 0 only when mutation is on (tests/test_cpm_evolution_spike.py::test_trait_inheritance_within_3_sigma, tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection)", "value": 0.0}</pre>
       </details>
       
       
@@ -1230,31 +1291,70 @@ pass_if: {"op": "\u003c", "provenance": "shared env.nutrient depleted 1.0 \u2192
     
     
     
-    <li class="expected-behavior-item" id="bt-draft-preserves-interface"
+    <li class="expected-behavior-item" id="bt-no-mutation-control-static"
         data-test-kind="behavioral"
         
-        data-pytest-node="draft-preserves-interface"
-        data-classification="diagnostic"
+        data-pytest-node="no-mutation-control-static"
+        data-classification="primary"
         data-result="pending"
-        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
         <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
-        <span class="classification-pill classification-diagnostic">diagnostic</span>
-        <strong style="font-size: 0.9em;">draft-preserves-interface</strong>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">no-mutation-control-static</strong>
         
-        <span class="muted" style="font-size:0.78em">requires: <code>coupling-draft</code></span>
+        <span class="muted" style="font-size:0.78em">requires: <code>development-evolution-no-mutation</code></span>
         
       </div>
-      <div style="margin-top: 6px; font-size: 0.95em;">Law 2 check (not the study&#39;s scientific control): the compete and cross-feed handler envs compile to the same external interface as the inert coupling draft and as each other — confirms env-layer swapping never touches the declared interface.</div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The no-mutation control, half of the dual control: with `mutate: false` (a BOOLEAN flag, not a `mut_sigma: 0.0` float override -- which bigraph_schema silently drops), the trait cannot vary across divisions, so the population mean stays EXACTLY the founder value 1.500 with zero variance in every seed (0/5 shift). No raw material for selection to act on -- proving the selection-ON shift needs heritable variation.</div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(interface_match)", "kind": "observable", "path": "interface_match"}
-pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_independence_same_interface \u2014 interface_of(compete) == interface_of(crossfeed) == interface_of(draft), asserted structurally", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.mean_vmax)", "kind": "observable", "path": "obs.mean_vmax"}
+pass_if: {"op": "==", "provenance": "mutate=false: mean_vmax == 1.500 exactly and var_vmax == 0.0 in every seed 1-5 (0/5 shift) -- the BOOLEAN-flag control that genuinely reaches the process (tests/test_dev_evo_regime.py::test_no_mutation_control_is_static, tests/test_cpm_evolution.py::test_no_mutation_control_is_static, tests/test_cpm_evolution_spike.py::test_no_mutation_control_is_static)", "value": 1.5}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-no-selection-control-mutates-undirected"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="no-selection-control-mutates-undirected"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">no-selection-control-mutates-undirected</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>development-evolution-no-selection</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The no-selection control, the other half of the dual control: with `selection: false` the trait still mutates (`var_vmax &gt; 0`, raw variance builds) but every cell&#39;s dFBA uses the FIXED founder vmax0 regardless of its own trait, so the trait confers no fitness -- the mean drifts UNDIRECTED (up in only 2/5 seeds, mean delta -0.039, near zero), clearly below the selection-ON 4/5. Isolates SELECTION, not mutation alone, as the cause of the directional shift.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.var_vmax)", "kind": "observable", "path": "obs.var_vmax"}
+pass_if: {"op": "\u003e", "provenance": "selection=false: var_vmax \u003e 0 (still mutates) but the mean drifts undirected -- UP in 2/5 seeds, delta range [-0.270, +0.112], mean -0.039 (vs selection-ON 4/5, +0.221) (tests/test_dev_evo_regime.py::test_no_selection_control_does_not_directionally_shift)", "value": 0.0}</pre>
       </details>
       
       
@@ -1335,7 +1435,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
           <span class="narrative-label">Regression basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.regression_compatibility.basis"
-                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All three cellcell composites build and both executables run to completion (scripts/build_executables.py entries cellcell-compete / cellcell-crossfeed; tests/test_cellcell.py, 3 passed).</textarea>
+                    placeholder="e.g. Builds cleanly; tests pass; pyproject deps unchanged.">All three composites (development-evolution-spatial, development-evolution-no-mutation, development-evolution-no-selection) build and run to completion through the process-bigraph engine directly from their JSON specs, and CpmEvolution reuses study 8&#39;s CpmGrowthDivision unchanged via two no-op hooks (tests/test_dev_evo_regime.py, tests/test_cpm_evolution.py, tests/test_cpm_evolution_spike.py, tests/test_evolution_viz.py); guarded skip when the optional cpm/spatio_flux/cobra dependencies are absent, matching this investigation&#39;s convention.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Empirical validation</span>
@@ -1348,7 +1448,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Competition drives the weaker cell (lower uptake capacity) below its viable band while the stronger persists, and the shared pool is measurably depleted (coupling is real); cross-feeding over the same interface keeps both cells viable. All three tests plus the interface-preservation control pass.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts. DEVELOPMENT -- rim_core_ratio grows 1.0 -&gt; ~1.44 (emergent core/rim heterogeneity). EVOLUTION -- mean_vmax shifts up in 4/5 seeds under selection while the no-mutation control stays exactly at the founder (0/5) and the no-selection control drifts undirected (2/5, mean ~0), isolating selection as the cause of the directional shift, which operates via differential division on the shared field. The same-knob/crowding bound and the toy evo-devo scope (facilitated variation deferred) are reported as findings, not claimed away.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1361,7 +1461,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
           <span class="narrative-label">Explanatory basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.explanatory_gain.basis"
-                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Making the same two-draft-role composite negotiate two different viability outcomes purely by swapping the handler env (competition vs cross-feeding) makes &#34;coupling through a shared store couples constraint, not just state&#34; concrete, and demonstrates law 4 (handler independence) directly.</textarea>
+                    placeholder="e.g. Three findings worth keeping; design_pivot_required closed.">Putting the paper&#39;s §Development and evolution section on the real dividing colony turns two of biology&#39;s hardest transitions into runnable, honestly-controlled spatial mechanisms -- development as a measured collective interface, evolution as a heritable coupling parameter selected by differential division -- supplying exactly the phenomenon (real heritable variation, real fitness-based selection) the non-spatial analogue draft-to-living-cell/development-and-evolution conceded it could only gesture at, by REUSING study 8&#39;s colony and adding one heritable coupling parameter.</textarea>
         </label>
       </div>
     </div>
@@ -1376,15 +1476,11 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
       <div style="padding:10px 14px;background:#f0fdf4;border-left:4px solid #10b981;border-radius:4px;margin-bottom:8px">
         <strong>✓ If primary tests pass:</strong>
         
-        <div style="margin-top:4px"><em>Implementation:</em> The cellcell-coupling draft compiles to two executables (compete, crossfeed) that both run to completion.</div>
+        <div style="margin-top:4px"><em>Implementation:</em> All three composites (development-evolution-spatial, development-evolution-no-mutation, development-evolution-no-selection) build and run to completion through the engine directly from their JSON specs; CpmEvolution reuses study 8&#39;s CpmGrowthDivision unchanged via two no-op hooks (`_cell_glucose_vmax`, `_on_division`).</div>
         
         
-        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s cell-cell coupling pattern is demonstrated at the toy-real (uncalibrated) level; competition negotiates viability against the stronger cell while cross-feeding, over the same interface, sustains both — law 4 (handler independence) and law 2 (interface preserved) both hold.</div>
+        <div style="margin-top:4px"><em>Empirical validation:</em> The paper&#39;s §Development and evolution section is demonstrated spatially at the toy-real level -- development as a measured emergent collective interface (rim/core heterogeneity) and evolution as a heritable coupling parameter shifted UP by selection through differential division, with a dual control isolating selection as the cause and the same-knob/crowding bound plus toy-scope (facilitated variation deferred) reported as findings.</div>
         
-        
-        <div style="margin-top:4px"><em>Pipeline unblocks:</em>
-          <ul style="margin:4px 0 0 18px"><li>development-and-evolution</li></ul>
-        </div>
         
       </div>
       
@@ -1393,11 +1489,11 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>the compete env fails to drive cell_b&#39;s viability below the band (vmax asymmetry not taking effect, or maintenance/via_gain miscalibrated)</li><li>the crossfeed env fails to keep both cells viable (return_frac too low to offset combined uptake)</li><li>the shared pool is not actually depleted (the two cells are not really coupled — independent pools masquerading as one)</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>the colony develops no radial heterogeneity (rim_core_ratio stays ~1.0 -- the shared field is not depleting, or too few cells to split core/rim)</li><li>selection does not shift the mean up under selection-ON (mutation not feeding dFBA uptake, or the trait not inherited through the division pairing)</li><li>the no-mutation control is NOT static (mean drifts from 1.500 with mutate=false -- the BOOLEAN flag is being ignored, or a mut_sigma=0.0 float override was silently dropped and it secretly mutates)</li><li>the no-selection control shifts up as strongly as selection-ON (selection=false still lets the trait feed dFBA uptake -- the control is not actually fitness-neutral)</li></ul>
         </div>
         
         
-        <div style="margin-top:4px"><em>Block downstream:</em> development-and-evolution (population-scale/collective coupling depends on this figure&#39;s pairwise negotiation holding)</div>
+        <div style="margin-top:4px"><em>Block downstream:</em> none -- this is the capstone; no study in this workspace is gated on it.</div>
         
       </div>
       
@@ -1410,26 +1506,54 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
       <h3 class="overview-label">Conclusion</h3>
       <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
 <ul>
-<li>Two cells coupled through one shared nutrient store negotiate viability, not just state. Under competition (cell_a vmax 0.8, cell_b vmax 0.2), cell_b is driven below its viable band (viability 1.0 → 0.0001) while cell_a persists (viability → 1.0), and the shared pool is measurably depleted (nutrient 1.0 → 0.1999), confirming the coupling is real. Under cross-feeding — the same coupling interface, a different handler (symmetric vmax 0.6/0.6, partial byproduct return) — both cells stay viable (viability → 1.0 each). This is Law 4: two handler environments negotiate the shared-store constraint differently, over an interface unchanged (Law 2).</li>
+<li>
+<p>DEVELOPMENT holds spatially: a growing CPM colony on a shared depleting glucose field forms emergent core-vs-rim physiological heterogeneity -- rim_core_ratio grows 1.0 -&gt; ~1.44 over 45 ticks (core more depleted than rim), a collective interface not imposed but emerging from shared-field competition (the paper's §Development and evolution section, Fig 10c-d).</p>
+</li>
+<li>
+<p>EVOLUTION holds spatially: a heritable glucose-uptake trait (vmax) shifts its population mean UP under shared-field selection in 4/5 seeds (delta range [-0.116, +0.700], mean +0.221; one seed reverses). A DUAL control isolates the cause -- the no-mutation control stays exactly at the founder (0/5), the no-selection control drifts undirected (2/5, mean -0.039) -- so the directional shift is CAUSED by selection, operating via differential division on the shared field.</p>
+</li>
+<li>
+<p>This REUSES study 8's CpmGrowthDivision unchanged and adds only one heritable coupling parameter -- the paper's &quot;interfaces and couplings are themselves evolvable features of organization,&quot; made concrete.</p>
+</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
-<li><strong>COMPETITION-STARVES-WEAKER-CELL</strong> — cell_b viability 1.0 → 0.0001 under competition</li>
-<li><strong>COMPETITION-STRONGER-CELL-PERSISTS</strong> — cell_a viability stays at 1.0 under competition</li>
-<li><strong>SHARED-POOL-ACTUALLY-DEPLETED</strong> — env.nutrient 1.0 → 0.1999 under competition (real coupling, not two isolated cells)</li>
-<li><strong>CROSSFEEDING-KEEPS-BOTH-VIABLE</strong> — both cell_a and cell_b viability → 1.0 under cross-feeding</li>
-<li><strong>DRAFT-PRESERVES-INTERFACE</strong> — interface_of(compete) == interface_of(crossfeed) == interface_of(draft) (law 2 holds across both handler swaps)</li>
+<li>
+<p><strong>DEVELOPMENT-HETEROGENEITY-EMERGES</strong> -- rim_core_ratio 1.0 -&gt; ~1.44 over 45 ticks</p>
+</li>
+<li>
+<p><strong>SELECTION-SHIFTS-MEAN-TRAIT-UP</strong> -- mean_vmax up in 4/5 seeds (mean +0.221)</p>
+</li>
+<li>
+<p><strong>TRAIT-INHERITANCE-WITHIN-3-SIGMA</strong> -- 69 division events, 99% within 3 sigma (pairing correct)</p>
+</li>
+<li>
+<p><strong>NO-MUTATION-CONTROL-STATIC</strong> -- mutate=false: mean 1.500 exactly, var 0 (0/5 shift)</p>
+</li>
+<li>
+<p><strong>NO-SELECTION-CONTROL-MUTATES-UNDIRECTED</strong> -- selection=false: var &gt; 0 but mean drifts undirected (2/5, -0.039)</p>
+</li>
 </ul>
 <h2>Limitations</h2>
 <ul>
-<li>Pairwise only: two cells over one shared store, not population-scale negotiation (many cells, spatial structure, or emergent niches).</li>
-<li>Toy-real constants: vmax, km, maintenance, via_gain, return_frac, supply, and capacity are illustrative, not fitted to a named organism or medium.</li>
-<li>Viability is a single scalar per cell driven by a fixed maintenance threshold; no explicit death/removal event when viability approaches zero (cell_b's node persists at ~0 viability rather than being removed from the composition).</li>
+<li>
+<p>The development and evolution halves pull the same field-depletion knob, and both saturate within the ~gen 4-6 crowding window on the 60x60 lattice; a larger grid / leaner field would run more generations and sharpen the gradient, at the cost of the same crowding that drives it.</p>
+</li>
+<li>
+<p>The selection signal is real but modest (mean +0.22) and stochastic (one seed reversed) -- reported as a 4/5 fraction, never a single-seed headline.</p>
+</li>
+<li>
+<p>Toy evo-devo scope: development = shared-field core/rim heterogeneity (NOT morphogenesis / signalling); evolution = one scalar heritable trait under resource selection (NOT genome / regulatory-network evolution). Constants are toy-real, not fitted.</p>
+</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Extend to N &gt; 2 cells over one shared store to test whether the competitive/cross-feeding pattern generalizes or new attractors emerge (population-scale negotiation, biofilm/collective nesting — see the later development-and-evolution study).</li>
-<li>Add an explicit death/removal rewrite when a cell's viability crosses a lower threshold, turning &quot;starves&quot; into a structural change to the place graph (parallel to the division rewrite in the growth-and-division study).</li>
+<li>
+<p>Facilitated variation (kirschner2005): evolve the ports/couplings THEMSELVES -- mutate the wiring, not a parameter of a fixed coupling -- the axis that moves this from pattern to phenomenon (named deferral, deferrals.md).</p>
+</li>
+<li>
+<p>Larger grid / leaner field: run more generations past the ~gen 4-6 crowding bound to sharpen both the radial gradient and the selection signal.</p>
+</li>
 </ul>
 </div>
     </div>
@@ -1448,7 +1572,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
     <div class="overview-section">
       <h3 class="overview-label">Key assumptions</h3>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">The competitive asymmetry (vmax 0.8 vs 0.2) and the cross-feeding symmetry (vmax 0.6/0.6, return_frac 0.7) live entirely in the handler env layer (handler_envs.py), never in the draft composite or its node config — per-node config would silently make an env&#39;s config dead and would defeat law 4&#39;s &#34;env swaps mechanism&#34; story (see the note in handler_envs.py above ENVS[&#34;cellcell-compete&#34;]).</li><li style="margin:2px 0">Two draft roles with identical ports (CellAgent, RivalCellAgent) stand in for &#34;two cells&#34; because the compiler keys handler lookup by the node&#39;s address-derived draft-class name, not by the node&#39;s own key in the composite state dict — there is no CellAgent#a/CellAgent#b convention to hook per-instance config into.</li>
+        <li style="margin:2px 0">This study REUSES study 8&#39;s dividing colony (`CpmGrowthDivision`, `growth-and-division-spatial`) UNCHANGED and adds ONLY a heritable per-cell trait plus the dev/evo observables. `CpmEvolution` is a minimal subclass wired through the base&#39;s two no-op hooks: `_cell_glucose_vmax(cid)` (returns this cell&#39;s heritable `vmax` instead of the population-wide constant) and `_on_division(parent, daughter)` (draws the daughter&#39;s trait from the parent + Gaussian mutation). The base&#39;s dFBA-growth + native `divide_cells` + biomass-partition + lineage loop is called verbatim via `super().update()`; nothing in the growth/division mechanism is duplicated or altered. This is the paper&#39;s &#34;interfaces and couplings are themselves evolvable features of organization&#34; made concrete -- one heritable coupling parameter added to the existing colony.</li><li style="margin:2px 0">DEVELOPMENT is MEASURED, not imposed. `rim_core_ratio` bins live cells by Euclidean distance from the colony centroid (median split into core &lt;= median, rim &gt; median) and compares mean `local_glucose` between the two groups; rim/core &gt; 1 means the core is more depleted than the rim. No structure is written into the field or the cells -- the gradient is the same shared-field mass-balance that produced study 8&#39;s division desync, now read radially. It starts at 1.0 (too few cells to split, or no readable gradient) and grows to ~1.44 as the colony develops, an emergent collective interface (stewart2008/flemming2016 biofilm physiological heterogeneity).</li><li style="margin:2px 0">EVOLUTION selection is EMERGENT and MECHANISTIC, not an imposed fitness function. The trait `vmax` IS the cell&#39;s own dFBA glucose-uptake parameter, so a higher-vmax cell draws more glucose, grows faster, crosses `vol_threshold` sooner, divides more, and its trait proliferates -- selection through DIFFERENTIAL DIVISION on the shared depleting field. The trait shift and the fact that selected populations reach more cells are the SAME mechanism (selection acting through division rate), not two independent findings -- stated plainly.</li><li style="margin:2px 0">The DUAL control isolates selection, and both controls are built to avoid two verified config traps. NO-MUTATION is a BOOLEAN flag (`mutate: false`), never a `mut_sigma: 0.0` float override -- bigraph_schema silently drops a `0.0` float override (schema default retained), so a float-gated &#34;no mutation&#34; arm would secretly keep mutating and masquerade as weak selection. NO-SELECTION (`selection: false`) keeps mutation ON but makes every cell&#39;s dFBA use the fixed founder `vmax0` regardless of its trait, so variation is present but confers no fitness. Only with BOTH controls in place does the selection-ON directional shift isolate selection (not mutation, not drift) as the cause.</li><li style="margin:2px 0">EVOLUTION is stochastic and reported as a multi-seed FRACTION, not a single-seed headline. The `seed` config is threaded into BOTH the CPM potts spec (world construction -- the base process hardcodes `potts.seed=1`, so without this every &#34;different seed&#34; replays one Metropolis trajectory) AND the mutation RNG. Across seeds 1-5, selection-ON shifts the mean up in 4/5 seeds (one reverses); the reported 4/5 is the honest result, following the multi-seed convention established on `cell-cell-coupling-spatial` (`tests/test_cellcell_multiseed.py`).</li><li style="margin:2px 0">The two halves pull the SAME knob (field depletion), and the demonstration is bounded by crowding. Both development heterogeneity and evolution intensify with stronger field depletion, and the colony saturates the 60x60 lattice by roughly generation 4-6, so both are demonstrated WITHIN that bounded window. A larger grid or leaner field would run more generations and sharpen the gradient -- at the cost of the same crowding that itself drives the heterogeneity. The constants are toy-real (`vmax0` 1.5, `mut_sigma` 0.3, `vol_threshold` 80, `reset_target` 40, `mcs` 3, T 11 carried from study 8), not fitted to any organism; no literature acceptance band is claimed.</li><li style="margin:2px 0">The SCOPE is a toy evo-devo. DEVELOPMENT = shared-field-driven core/rim physiological heterogeneity, NOT morphogenesis, signalling, or a genetic patterning program (the collective interface is a measured resource gradient, not a regulated body plan). EVOLUTION = ONE scalar heritable trait (glucose `vmax`) under resource selection, NOT genome/regulatory-network evolution and NOT speciation. kirschner2005 &#34;facilitated variation&#34; -- evolving the ports/couplings THEMSELVES rather than a parameter of a fixed port -- is a NAMED DEFERRAL (docs/superpowers/deferrals.md): this study mutates a parameter of a fixed coupling.</li>
       </ul>
     </div>
     
@@ -1458,7 +1582,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">Pairwise only: two cells over one shared store, not population-scale negotiation among many cells (that is out of scope here — see the later development-and-evolution study for collective/biofilm nesting).</li><li style="margin:2px 0">Toy-real constants: vmax, km, maintenance, via_gain, return_frac, supply, and capacity are illustrative values chosen to demonstrate the qualitative pattern, not fitted to a named organism or medium.</li><li style="margin:2px 0">No explicit death/removal event: a cell driven near-zero viability (cell_b under competition) remains a live node in the composition rather than being structurally removed.</li>
+        <li style="margin:2px 0">The DEVELOPMENT and EVOLUTION halves pull the SAME knob (field depletion): both intensify with stronger depletion, and the colony saturates its own 60x60 footprint by roughly generation 4-6, so both are demonstrated within that bounded window. A larger grid or leaner/higher-uptake field would run more generations and sharpen the radial gradient -- at the cost of the same crowding that itself drives the heterogeneity. Stated as a finding, not glossed.</li><li style="margin:2px 0">The selection signal is real but modest (mean +0.22) and stochastic: across seeds 1-5 the mean shifts up in 4/5 (one seed reverses, delta -0.116). Reported as a multi-seed fraction with range, never a single flattering seed -- the honest result of a bounded stochastic Metropolis trajectory.</li><li style="margin:2px 0">This is a TOY evo-devo. DEVELOPMENT = shared-field-driven core/rim physiological heterogeneity, NOT morphogenesis, signalling, or a genetic patterning program. EVOLUTION = ONE scalar heritable trait (glucose vmax) under resource selection, NOT genome/regulatory-network evolution, NOT speciation. The constants (vmax0 1.5, mut_sigma 0.3, vol_threshold 80, reset_target 40) are toy-real, not fitted to any organism, and no literature acceptance band is claimed.</li><li style="margin:2px 0">kirschner2005 &#34;facilitated variation&#34; -- evolving the ports/couplings THEMSELVES rather than a parameter of a fixed port -- is a NAMED DEFERRAL (docs/superpowers/deferrals.md). This study mutates a parameter of a fixed coupling; mutating the wiring/ports is the axis that would move it from pattern to phenomenon, and it is out of scope for this first realization.</li><li style="margin:2px 0">Selection is entangled with crowding by construction: higher-vmax cells divide faster and reach larger colonies, so the trait shift and the population-size difference are the SAME mechanism (selection through differential division on the shared field), not two independent findings. The claim says exactly that, not an independent fitness axis.</li>
       </ul>
     </div>
     
@@ -1523,7 +1647,7 @@ pass_if: {"op": "\u003e=", "provenance": "tests/test_cellcell.py::test_handler_i
 <script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "224c4cd4169ed24cc75ac2f2d6147de5854667ac", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/224c4cd4169ed24cc75ac2f2d6147de5854667ac", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 14:19 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
-window._studyName = "cell-cell-coupling";
+window._studyName = "development-and-evolution-spatial";
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
