@@ -50,7 +50,7 @@ biological_summary: 'Steinberg''s differential-adhesion sorting is the paper''s 
   so a dissolved clump must never be misread as sorted. CONDENSATE (meta_modelers_guide.composites.condensate-cahn-hilliard):
   a 64x64 composition field seeded with near-critical noise (mean 0, +/-0.025) phase-separates over 10000
   steps -- the field variance rises from ~7e-5 to ~0.38 as two domains form, total mass is conserved to
-  ~1e-18 (the composition is redistributed, not created or destroyed), the field stays bounded in [-1,
+  ~4e-18 (the composition is redistributed, not created or destroyed), the field stays bounded in [-1,
   1], and no NaN appears.
 
 
@@ -76,7 +76,7 @@ claim: 'Differential-adhesion cell sorting reproduces the paper''s §Molecular c
   32/32) -- like sitting with like is the spatial reading of which interface variables must align for
   coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper
   draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent
-  interface (variance ~7e-5 -> ~0.38 over 10000 steps) with mass conserved to ~1e-18 and the field bounded
+  interface (variance ~7e-5 -> ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded
   in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does
   not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it
   demonstrates a boundary forming, not yet the functional, regulatable boundary the paper''s central question
@@ -187,8 +187,8 @@ behavior_tests:
   pass_if:
     op: '>'
     value: 0.5
-    provenance: 'documented in the code-verified API map regime sweep (docs/superpowers/api-maps/2026-08-21-biomolecular-complementarity-api-map.md):
-      neutral J (all=8), T=10, same checkerboard stays mixed at hetero_frac ~0.611 over 600 MCS vs ~0.12
+    provenance: 'a neutral-J composite re-run (all J=8):
+      neutral J (all=8), T=10, same checkerboard stays mixed at hetero_frac ~0.52 over 600 MCS vs ~0.06
       for the differential-J regime -- the causality control for J. Documented regime sweep, not a committed
       pytest in this build.'
   requires_simulation: none
@@ -220,7 +220,7 @@ behavior_tests:
   pass_if:
     op: <
     value: 0.001
-    provenance: 'phi_mean drift ~1e-18 over 10000 steps (mass-conserving by construction: the update is
+    provenance: 'phi_mean drift ~4e-18 over 10000 steps (mass-conserving by construction: the update is
       a divergence of a flux) (tests/test_sorting_regime.py::test_cahn_hilliard_phase_separates_mass_conserved,
       tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)'
   requires_simulation: condensate-cahn-hilliard
@@ -263,7 +263,7 @@ runs:
       detail: n_type1 == n_type2 == 32 throughout -- cells moved, none created or destroyed
     SORTING-NEUTRAL-J-DOES-NOT-SORT:
       result: PASS
-      detail: neutral J (all=8) stays mixed at hetero_frac ~0.611 (documented API map regime sweep) --
+      detail: neutral J (all=8) stays mixed at hetero_frac ~0.52 (neutral-J composite re-run, documented, not a committed test) --
         J causality control
 - name: condensate-cahn-hilliard
   composite: condensate-cahn-hilliard
@@ -282,7 +282,7 @@ runs:
       detail: phi_var ~7e-5 -> ~0.38 over 10000 steps -- two domains, sharp emergent interface
     CONDENSATE-CONSERVES-MASS:
       result: PASS
-      detail: phi_mean drift ~1e-18 -- composition redistributed, not created or destroyed
+      detail: phi_mean drift ~4e-18 -- composition redistributed, not created or destroyed
     CONDENSATE-STAYS-BOUNDED:
       result: PASS
       detail: phi bounded to [-0.989, 0.982], no NaN, at the pinned dt=0.002
@@ -312,12 +312,12 @@ findings:
     banani2017 (§Molecular compositions, Fig 8): weak-interaction-driven phase separation into droplets
     with an emergent interface. Confirmed as spinodal decomposition: a near-critical field separates into
     two phases (variance ~7e-5 -> ~0.38 over 10000 steps) bounded by a sharp interface, with total mass
-    conserved to ~1e-18 and the field bounded in [-1, 1]. A boundary forms out of a well-mixed medium,
+    conserved to ~4e-18 and the field bounded in [-1, 1]. A boundary forms out of a well-mixed medium,
     mass-conserved.'
   evidence:
     from_test: condensate-phase-separates
     from_run: condensate-cahn-hilliard
-    observed: phi_var ~7e-5 -> ~0.38; phi_mean drift ~1e-18; phi bounded [-0.989, 0.982]
+    observed: phi_var ~7e-5 -> ~0.38; phi_mean drift ~4e-18; phi bounded [-0.989, 0.982]
   provenance:
     run_ids:
     - condensate-cahn-hilliard
@@ -348,13 +348,12 @@ findings:
   status: confirms
   statement: 'The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral
     contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding
-    contact-energy asymmetry as the cause of sorting. Confirmed by the documented regime sweep: neutral
-    J holds hetero_frac ~0.611 over 600 MCS vs ~0.12 for the differential-J regime.'
+    contact-energy asymmetry as the cause of sorting. Confirmed by a neutral-J composite re-run (documented, not a committed test): neutral
+    J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.'
   evidence:
     from_test: sorting-neutral-J-does-not-sort
     from_run: cell-sorting-spatial
-    observed: neutral J (all=8) hetero_frac ~0.611 (no sort) vs differential-J ~0.12 (documented regime
-      sweep)
+    observed: neutral J (all=8) hetero_frac ~0.52 (no sort) vs differential-J ~0.06
   provenance:
     run_ids:
     - cell-sorting-spatial
@@ -370,7 +369,7 @@ conclusion_verdicts:
     basis: All primary behavior tests pass on measured readouts. Sorting demixes (hetero_frac ~0.64 ->
       ~0.06) while staying cohesive (pixels ~1530, <1% drift; counts 32/32), and the neutral-J control
       confirms J causality; the condensate phase-separates (variance ~7e-5 -> ~0.38) with mass conserved
-      (~1e-18 drift) and the field bounded. The condensate's interface-work gap is reported honestly rather
+      (~4e-18 drift) and the field bounded. The condensate's interface-work gap is reported honestly rather
       than claimed as tested.
   explanatory_gain:
     result: POSITIVE
@@ -392,7 +391,7 @@ conclusion: '## Claims
 
   - A Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017:
   a near-critical field phase-separates into two domains bounded by a sharp interface (variance ~7e-5
-  -> ~0.38 over 10000 steps), mass conserved to ~1e-18, field bounded in [-1, 1].
+  -> ~0.38 over 10000 steps), mass conserved to ~4e-18, field bounded in [-1, 1].
 
 
   ## Evidence
@@ -407,13 +406,13 @@ conclusion: '## Claims
   - **SORTING-CONSERVES-CELL-COUNT** -- n_type1 = n_type2 = 32 throughout
 
 
-  - **SORTING-NEUTRAL-J-DOES-NOT-SORT** -- neutral J holds hetero_frac ~0.611 (J causality control)
+  - **SORTING-NEUTRAL-J-DOES-NOT-SORT** -- neutral J holds hetero_frac ~0.52 (J causality control)
 
 
   - **CONDENSATE-PHASE-SEPARATES** -- phi_var ~7e-5 -> ~0.38, sharp emergent interface
 
 
-  - **CONDENSATE-CONSERVES-MASS** -- phi_mean drift ~1e-18
+  - **CONDENSATE-CONSERVES-MASS** -- phi_mean drift ~4e-18
 
 
   - **CONDENSATE-STAYS-BOUNDED** -- phi in [-0.989, 0.982], no NaN, at pinned dt=0.002
@@ -565,7 +564,7 @@ result: Differential adhesion alone demixes the mixed checkerboard -- heterotypi
   -> ~0.06 over ~600 MCS while the clump stays cohesive (pixels ~1530, <1% drift; counts 32/32) and a
   neutral-J control does not sort -- the paper's §Molecular compositions complementarity (Fig 8) as a
   spatial mechanism. Independently, the Cahn-Hilliard field phase-separates into two domains bounded by
-  a sharp interface (variance ~7e-5 -> ~0.38 over 10000 steps), mass conserved to ~1e-18 and bounded in
+  a sharp interface (variance ~7e-5 -> ~0.38 over 10000 steps), mass conserved to ~4e-18 and bounded in
   [-1, 1]. The condensate forms a boundary but does not yet do interface work (no selective concentration/exclusion
   of a second species) -- a boundary forming, not yet the functional, regulatable boundary the paper's
   central question distinguishes from a transient aggregate.
