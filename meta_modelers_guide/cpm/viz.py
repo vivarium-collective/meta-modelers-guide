@@ -1285,6 +1285,103 @@ def run_protocell_frames(composite_state: dict, core, steps: int = 36, cadence: 
 
 
 # --------------------------------------------------------------------------
+# Molecular interfaces (Gray-Scott reaction-diffusion) frame capture
+# --------------------------------------------------------------------------
+
+def _render_gray_scott_frame(v: np.ndarray, time: float, v_vmax: float) -> np.ndarray:
+    """Render one matplotlib (Agg) frame for a Gray-Scott tick: the inhibitor
+    field ``v`` as a sequential heatmap fixed at ``0..v_vmax`` (``v_vmax`` is
+    the RUN's own observed peak, computed once by the caller after every
+    frame is captured -- unlike protocell's transient-overshoot seed pin,
+    ``v``'s peak here is stable across the run (no runaway/decay transient),
+    so a whole-run max keeps the color scale comparable frame-to-frame
+    without washing out either the early near-uniform seed or the settled
+    pattern, the same fixed-scale reasoning as every other renderer here).
+    Returns an (H, W, 3) uint8 RGB array (the figure canvas buffer)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(1, 1, figsize=(6.2, 5.6), dpi=100)
+
+    im = ax.imshow(v, origin="lower", cmap="magma", vmin=0.0, vmax=v_vmax)
+    fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="v (inhibitor concentration)")
+
+    ax.set_xticks([]); ax.set_yticks([])
+    _pattern_title(fig, "Molecular interfaces — reaction-diffusion patterning", time)
+    fig.tight_layout(rect=(0, 0, 1, 0.92))
+
+    fig.canvas.draw()
+    buf = np.asarray(fig.canvas.buffer_rgba())
+    rgb = buf[:, :, :3].copy()
+    plt.close(fig)
+    return rgb
+
+
+def run_gray_scott_frames(composite_state: dict, core, steps: int = 16, cadence: int = 1
+                           ) -> tuple[list[np.ndarray], dict[str, list[float]]]:
+    """Mirror :func:`run_cahn_hilliard_frames`, but for the molecular-
+    interfaces study (``GrayScott``): builds a fresh :class:`Composite` from
+    ``composite_state`` and runs it in a manual cadence loop, capturing one
+    animation frame + one metrics row per tick.
+
+    Like ``CahnHilliard``/``Protocell``, there is no world-owning process
+    instance to reach into -- ``v`` IS a genuine process-bigraph ``fields``
+    store (see ``molecular/gray_scott.py``'s module docstring), so it's read
+    straight off ``comp.state["fields"]["v"]`` after each tick (the
+    autocatalytic inhibitor whose spatial variance/domain structure IS the
+    Turing pattern -- ``u`` is the depleted-substrate complement and not
+    separately rendered, matching ``phi``-only for Cahn-Hilliard/protocell).
+
+    Default ``steps=16, cadence=1`` matches
+    ``tests/test_molecular_regime.py``'s already-validated ``N_TICKS=16`` at
+    the composite's baked ``steps_per_tick=500`` -- 8000 total internal
+    steps, the same total the regression module confirms both patterns the
+    flagship regime and (for the equal-diffusion control) stays flat -- and
+    yields exactly 16 frames, one every 500 internal steps, tracing the
+    near-uniform seed's rapid growth into the settled reaction-diffusion
+    pattern.
+
+    Returns ``(frames, metrics)``: ``frames`` is a list of (H, W, 3) uint8 RGB
+    arrays; ``metrics`` is ``{"time": [...], "v_var": [...], "n_domains":
+    [...]}`` -- flat, equal-length lists (one entry per frame), drawn
+    straight from the composite's ``obs`` store after each tick, plus the
+    explicit panel-dispatch marker ``metrics["_panel"] = "gray_scott"`` (see
+    :func:`metrics_panel`). ``v_var`` rises from near-zero (the near-uniform
+    seed, below ``PATTERN_FLOOR``) as the pattern forms and plateaus once it
+    settles; ``n_domains`` tracks the connected ``v``-concentration domain
+    count over the same window.
+    """
+    from process_bigraph import Composite
+
+    comp = Composite({"state": composite_state}, core=core)
+    n_ticks = max(int(steps) // max(int(cadence), 1), 1)
+
+    metrics: dict[str, list[float]] = {"time": [], "v_var": [], "n_domains": []}
+    raw: list[tuple[np.ndarray, float]] = []
+
+    for tick in range(n_ticks):
+        comp.run(cadence)
+
+        v = np.asarray(comp.state["fields"]["v"]).copy()
+        obs = comp.state["obs"]
+
+        t = float((tick + 1) * cadence)
+        raw.append((v, t))
+
+        metrics["time"].append(t)
+        metrics["v_var"].append(float(obs.get("v_var", 0.0)))
+        metrics["n_domains"].append(float(obs.get("n_domains", 0.0)))
+
+    v_vmax = max((float(v.max()) for v, _ in raw), default=1e-9) or 1e-9
+
+    frames = [_render_gray_scott_frame(v, t, v_vmax) for v, t in raw]
+
+    metrics["_panel"] = "gray_scott"
+    return frames, metrics
+
+
+# --------------------------------------------------------------------------
 # GIF encoding
 # --------------------------------------------------------------------------
 
@@ -1863,6 +1960,58 @@ def _metrics_panel_protocell(metrics: dict[str, list[float]], out_path: Path,
     return "plotly"
 
 
+def _metrics_panel_gray_scott(metrics: dict[str, list[float]], out_path: Path,
+                               include_plotlyjs: str | bool) -> str:
+    """Molecular-interfaces (Gray-Scott) counterpart of :func:`metrics_panel`
+    for ``run_gray_scott_frames``' output shape (flat equal-length lists).
+    ``v_var`` is the study's headline number -- it rises from near-zero (the
+    near-uniform seed, below ``PATTERN_FLOOR``) as the reaction-diffusion
+    instability grows the pattern -- so it gets the primary left-hand axis;
+    ``n_domains`` (an integer domain COUNT, a very different scale) goes on
+    a secondary right-hand axis, same reasoning as ``_metrics_panel_flat``'s
+    volume split / ``_metrics_panel_protocell``'s membrane_mass split. Falls
+    back to a small static HTML table if Plotly is unavailable.
+    """
+    times = metrics.get("time") or []
+    v_var = metrics.get("v_var") or []
+    n_domains = metrics.get("n_domains") or []
+
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        rows = "".join(
+            f"<tr><td>{t}</td><td>{v}</td><td>{n}</td></tr>"
+            for t, v, n in zip(times, v_var, n_domains)
+        )
+        out_path.write_text(
+            f"<html><body><p>Plotly unavailable — static table fallback.</p>"
+            f"<table border='1'><tr><th>time</th><th>v_var</th>"
+            f"<th>n_domains</th></tr>{rows}</table></body></html>"
+        )
+        return "table-fallback"
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=times, y=v_var, mode="lines+markers", name="v_var",
+                              line=dict(width=2.8, color=_PALETTE[0])))
+    fig.add_trace(go.Scatter(x=times, y=n_domains, mode="lines+markers", name="n_domains",
+                              line=dict(width=2.2, color=_PALETTE[1], dash="dot"),
+                              yaxis="y2"))
+
+    fig.update_layout(
+        title=dict(text="<b>molecular interfaces — reaction-diffusion patterning</b>",
+                    x=0.01, xanchor="left"),
+        xaxis=dict(title="time", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis=dict(title="v_var", gridcolor="rgba(120,130,125,0.16)"),
+        yaxis2=dict(title="n_domains", overlaying="y", side="right", showgrid=False),
+        template="plotly_white", height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="left", x=0),
+        hovermode="x unified", margin=dict(l=56, r=56, t=54, b=54),
+    )
+    out_path.write_text(fig.to_html(include_plotlyjs=include_plotlyjs, full_html=True,
+                                     config={"displayModeBar": False, "responsive": True}))
+    return "plotly"
+
+
 # Explicit renderer→panel-kind dispatch table (see `metrics_panel`'s
 # docstring): every `run_*_frames` in this module stamps `metrics["_panel"]`
 # with its own kind name, looked up here instead of sniffed from which keys
@@ -1876,4 +2025,5 @@ _METRICS_PANEL_DISPATCH: dict[str, Any] = {
     "sorting": _metrics_panel_sorting,
     "cahn_hilliard": _metrics_panel_cahn_hilliard,
     "protocell": _metrics_panel_protocell,
+    "gray_scott": _metrics_panel_gray_scott,
 }
