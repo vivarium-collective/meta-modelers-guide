@@ -23,14 +23,35 @@ Run:  PYTHONPATH=. .venv/bin/python scripts/render_report.py --workspace . --out
 from __future__ import annotations
 
 import argparse
+import base64
 import html
 import json
+import mimetypes
 import re
 from pathlib import Path
 
 import yaml
 
 TEAL = "#0d6e6b"
+
+# The arc the nine studies trace (the paper's through-line), one entry per study
+# slug: (short label, composition direction). Direction: "out" = outward
+# (cell<->environment / cell<->cell), "in" = inward (internal processes compose
+# to produce the interface), "both" = the interface itself / across timescales.
+ARC_STUDIES = {
+    "cellular-interface":            ("interface",       "both"),
+    "cell-environment-coupling":     ("cell ↔ env",  "out"),
+    "cell-cell-coupling":            ("cell ↔ cell", "out"),
+    "disintegration":                ("disintegration",  "in"),
+    "molecular-interfaces":          ("molecular",       "in"),
+    "biomolecular-complementarity":  ("complementarity", "in"),
+    "autopoiesis":                   ("autopoiesis",     "in"),
+    "growth-and-division":           ("growth+division", "out"),
+    "development-and-evolution":     ("dev+evolution",   "both"),
+}
+# The rung words beneath the arc (the paper's ladder), learning still open.
+ARC_RUNGS = ["interface", "individuality", "viability", "self-maintenance",
+             "agency", "adaptation", "learning"]
 
 
 def discover_investigations(ws_root: Path) -> list[str]:
@@ -191,6 +212,104 @@ def bars_chart(items: list[tuple[str, float]], vmax: float | None = None) -> str
     return "".join(parts)
 
 
+def _data_uri(path: Path) -> str:
+    """Base64 data: URI for a raster figure (gif/png/jpg), so the report stays a
+    single self-contained file. Empty string if the file is missing."""
+    if not path or not path.exists():
+        return ""
+    mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+    b64 = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{b64}"
+
+
+def arc_diagram_svg(studies: list[dict]) -> str:
+    """The through-line: the studies as an ordered path left→right, each a node
+    tagged with its composition direction (outward/inward/both), with the paper's
+    rung ladder beneath and 'learning' as a ghosted, still-open final node."""
+    n = len(studies)
+    if not n:
+        return ""
+    W, H = 900, 240
+    ml, mr = 40, 40
+    row_y = 96                       # the spine
+    span = W - ml - mr
+    # node x centers: n study nodes + 1 ghost (learning)
+    total = n + 1
+    xs = [ml + span * (i + 0.5) / total for i in range(total)]
+    dir_fill = {"out": "var(--teal)", "in": "var(--ochre)", "both": "var(--ink-2)"}
+    dir_label = {"out": "outward", "in": "inward", "both": "both"}
+    p = [f'<svg viewBox="0 0 {W} {H}" class="arc-svg" role="img" '
+         f'aria-label="The arc traced by the {n} studies, from the interface to adaptation">']
+    # spine
+    p.append(f'<line x1="{xs[0]:.0f}" y1="{row_y}" x2="{xs[-1]:.0f}" y2="{row_y}" class="arc-spine"/>')
+    # rung ladder beneath (evenly spread words)
+    for i, rung in enumerate(ARC_RUNGS):
+        rx = ml + span * (i + 0.5) / len(ARC_RUNGS)
+        ghost = ' arc-rung-open' if rung == "learning" else ''
+        p.append(f'<text x="{rx:.0f}" y="{H-18}" class="arc-rung{ghost}">{esc(rung)}</text>')
+    p.append(f'<line x1="{ml}" y1="{H-40}" x2="{W-mr}" y2="{H-40}" class="arc-ladder"/>')
+    # study nodes
+    for i, s in enumerate(studies):
+        slug = s.get("name", "")
+        label, direction = ARC_STUDIES.get(slug, (s.get("title") or slug, "both"))
+        x = xs[i]
+        fill = dir_fill.get(direction, "var(--ink-2)")
+        p.append(f'<a href="#{esc(slug)}">')
+        p.append(f'<circle cx="{x:.0f}" cy="{row_y}" r="13" class="arc-dot" style="fill:{fill}"/>')
+        p.append(f'<text x="{x:.0f}" y="{row_y+4:.0f}" class="arc-dot-n">{i+1:02d}</text>')
+        # direction pill above
+        p.append(f'<text x="{x:.0f}" y="{row_y-24:.0f}" class="arc-dir">{esc(dir_label.get(direction,""))}</text>')
+        # label below (two lines if it contains a space and is long)
+        words = str(label).split()
+        if len(label) > 11 and len(words) > 1:
+            mid = len(words) // 2
+            l1, l2 = " ".join(words[:mid]), " ".join(words[mid:])
+            p.append(f'<text x="{x:.0f}" y="{row_y+34:.0f}" class="arc-lbl">'
+                     f'<tspan x="{x:.0f}" dy="0">{esc(l1)}</tspan>'
+                     f'<tspan x="{x:.0f}" dy="12">{esc(l2)}</tspan></text>')
+        else:
+            p.append(f'<text x="{x:.0f}" y="{row_y+34:.0f}" class="arc-lbl">{esc(label)}</text>')
+        p.append('</a>')
+    # ghost 'learning' node
+    gx = xs[-1]
+    p.append(f'<circle cx="{gx:.0f}" cy="{row_y}" r="13" class="arc-dot arc-dot-open"/>')
+    p.append(f'<text x="{gx:.0f}" y="{row_y+4:.0f}" class="arc-dot-n arc-dot-n-open">?</text>')
+    p.append(f'<text x="{gx:.0f}" y="{row_y-24:.0f}" class="arc-dir">open</text>')
+    p.append(f'<text x="{gx:.0f}" y="{row_y+34:.0f}" class="arc-lbl arc-lbl-open">learning</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
+def substitutability_chart(pairs: list[tuple[str, float, float, str]]) -> str:
+    """Paired bars: for each interface observable, the dynamic-FBA value and the
+    lumped Michaelis–Menten value, each normalised to the dFBA value (=1.0) so the
+    eye reads agreement directly. Each pair is annotated with the divergence."""
+    W = 460
+    gh, bh, gap = 62, 18, 6          # group height, bar height, intra-gap
+    top = 16
+    H = top + len(pairs) * gh + 8
+    plot_x, plot_w = 150, W - 150 - 60
+    p = [f'<svg viewBox="0 0 {W} {H}" class="chart subst" role="img" '
+         f'aria-label="dynamic-FBA vs Michaelis–Menten, per interface observable">']
+    # 1.0 reference line
+    x1 = plot_x + plot_w
+    p.append(f'<line x1="{x1:.0f}" y1="{top}" x2="{x1:.0f}" y2="{H-8}" class="subst-ref"/>')
+    p.append(f'<text x="{x1:.0f}" y="{top-4}" class="subst-ref-l">dFBA = 1.0</text>')
+    for i, (lbl, dfba, mm, delta) in enumerate(pairs):
+        gy = top + i * gh
+        p.append(f'<text x="0" y="{gy+gh/2:.0f}" class="subst-obs">{esc(lbl)}</text>')
+        # dFBA bar (normalised to 1.0) then MM bar (mm/dfba)
+        for j, (name, frac, cls) in enumerate((("dFBA", 1.0, "subst-dfba"),
+                                               ("MM", (mm/dfba if dfba else 0), "subst-mm"))):
+            by = gy + 6 + j * (bh + gap)
+            bw = plot_w * frac
+            p.append(f'<rect x="{plot_x}" y="{by}" width="{bw:.1f}" height="{bh}" rx="3" class="{cls}"/>')
+            p.append(f'<text x="{plot_x+6}" y="{by+bh*0.72:.0f}" class="subst-bl">{esc(name)}</text>')
+        p.append(f'<text x="{W-56}" y="{gy+gh/2:.0f}" class="subst-delta">{esc(delta)}</text>')
+    p.append("</svg>")
+    return "".join(p)
+
+
 # ─── report assembly ─────────────────────────────────────────────────────────
 def load_study(ws: Path, slug: str) -> dict:
     for base in (ws / "workspace" / "studies", ws / "studies"):
@@ -216,6 +335,32 @@ def study_exec_svgs(study: dict) -> list[Path]:
     if not d:
         return []
     return sorted((d / "visualizations").glob("*-dynamics.svg"))
+
+
+def study_figures(study: dict) -> list[str]:
+    """Figure HTML for a study card: inline its declared ``image:…gif`` simulation
+    movies as self-contained data-URIs, plus any hand-drawn executable-dynamics
+    SVG. Skips the interactive ``html:`` metrics panels (Plotly, not
+    self-contained) and the multi-MB illustration PNG/SVGs."""
+    d = study.get("_dir")
+    figs: list[str] = []
+    if not d:
+        return figs
+    for v in study.get("visualizations", []) or []:
+        addr = str(v.get("address") or "")
+        scheme, _, rel = addr.partition(":")
+        if scheme in {"image", "gif"} and rel.endswith(".gif"):
+            uri = _data_uri(d / rel)
+            if not uri:
+                continue
+            cfg = v.get("config") if isinstance(v.get("config"), dict) else {}
+            caption = cfg.get("caption") if isinstance(cfg, dict) else ""
+            cap = f'<figcaption class="fig-cap">{md_inline(caption)}</figcaption>' if caption else ""
+            figs.append(f'<figure class="fig-wrap"><img src="{uri}" '
+                        f'alt="{esc(v.get("name",""))}" loading="lazy" class="fig-img"/>{cap}</figure>')
+    for p in study_exec_svgs(study):
+        figs.append(f'<figure class="fig-wrap">{inline_svg(p)}</figure>')
+    return figs
 
 
 def confidence_badge(study: dict) -> str:
@@ -251,23 +396,135 @@ def _inv_label(kind: str) -> str:
     return INV_LABEL.get(kind, (kind or "checked").replace("-", " ").title())
 
 
-def study_card(study: dict, order: int, inv_map: dict) -> str:
+# ─── model definition + interface contract (read from the composite JSON) ─────
+def _composite_file(ws: Path, dotted: str) -> Path | None:
+    """Resolve a study's ``meta_modelers_guide.composites.<name>`` to its
+    ``<name>.composite.json`` on disk."""
+    if not dotted:
+        return None
+    name = str(dotted).split(".")[-1]
+    for base in (ws / "meta_modelers_guide" / "composites",
+                 ws / "workspace" / "composites", ws / "composites"):
+        p = base / f"{name}.composite.json"
+        if p.is_file():
+            return p
+    return None
+
+
+def load_composite(ws: Path, dotted: str) -> dict:
+    p = _composite_file(ws, dotted)
+    if not p:
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8")) or {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _short_cls(address: str) -> str:
+    """``local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection`` →
+    ``DiffusionAdvection``; ``local:CpmCellField`` → ``CpmCellField``."""
+    a = str(address).split(":")[-1].lstrip("!")
+    return a.split(".")[-1] or a
+
+
+_EMITTERS = {"RAMEmitter", "ConsoleEmitter", "DatabaseEmitter"}
+
+
+def _fmt_params(config: dict, limit: int = 9) -> list[tuple[str, str]]:
+    """The model's scalar/short parameters as (key, value) pairs — the physically
+    meaningful knobs, skipping RNG seeds and long state arrays."""
+    out: list[tuple[str, str]] = []
+    for k, v in (config or {}).items():
+        if k in {"seed", "seed_block"}:
+            continue
+        if isinstance(v, bool):
+            out.append((k, "true" if v else "false"))
+        elif isinstance(v, (int, float)):
+            out.append((k, f"{v:g}"))
+        elif isinstance(v, str) and len(v) <= 24:
+            out.append((k, v))
+        elif isinstance(v, list) and 0 < len(v) <= 4 and all(isinstance(x, (int, float)) for x in v):
+            out.append((k, "[" + ", ".join(f"{x:g}" for x in v) + "]"))
+        elif isinstance(v, dict) and 0 < len(v) <= 3 and all(isinstance(x, (int, float)) for x in v.values()):
+            out.append((k, "{" + ", ".join(f"{kk} {vv:g}" for kk, vv in v.items()) + "}"))
+    return out[:limit]
+
+
+def _processes(comp: dict) -> list[dict]:
+    procs = []
+    for name, v in (comp.get("state") or {}).items():
+        if isinstance(v, dict) and v.get("_type") in ("process", "step"):
+            procs.append({"name": name, "cls": _short_cls(v.get("address", "")),
+                          "config": v.get("config") or {},
+                          "inputs": v.get("inputs") or {}, "outputs": v.get("outputs") or {}})
+    return procs
+
+
+def _model_panel(comp: dict, label: str, param_limit: int, extra_rows: str = "") -> str:
+    """One 'model definition' panel: every process in a composite with its params.
+    ``label`` (the baseline name) is shown when a study has more than one."""
+    rows = []
+    for p in (pp for pp in _processes(comp) if pp["cls"] not in _EMITTERS):
+        params = _fmt_params(p["config"], param_limit)
+        pstr = "".join(f'<span class="pm"><b>{esc(k)}</b> {esc(v)}</span>' for k, v in params)
+        rows.append(f'<div class="proc"><code class="proc-cls">{esc(p["cls"])}</code>'
+                    f'<span class="proc-params">{pstr or "—"}</span></div>')
+    lbl = f'<span class="spec-sub">{esc(label)}</span>' if label else ""
+    return (
+        '<div class="spec-panel modeldef">'
+        f'<div class="spec-h"><span class="spec-tag">model definition</span>{lbl}'
+        f'<code class="spec-cls">{esc(comp.get("name",""))}</code></div>'
+        f'{"".join(rows)}{extra_rows}</div>')
+
+
+def spec_block_html(study: dict, ws: Path) -> str:
+    """The interface contract (the primary process's typed ports) and the model
+    definition — a panel per baseline composite, so a study realized several ways
+    (e.g. the cellular interface: lumped modalities, executable, and spatial)
+    shows every composition, read straight from the composite JSON."""
+    baselines = study.get("baseline") or []
+    comps = [(str(b.get("name") or ""), load_composite(ws, b.get("composite", "")))
+             for b in baselines]
+    comps = [(n, c) for n, c in comps if _processes(c)]
+    if not comps:
+        return ""
+
+    # interface contract — the primary (most-exposed) process of the first baseline
+    procs0 = [p for p in _processes(comps[0][1]) if p["cls"] not in _EMITTERS]
+    prim = max(procs0, key=lambda p: len(p["outputs"])) if procs0 else None
+    contract = ""
+    if prim:
+        reads = " · ".join(prim["inputs"].keys()) or "—"
+        exposes = " · ".join(prim["outputs"].keys()) or "—"
+        contract = (
+            '<div class="spec-panel contract">'
+            f'<div class="spec-h"><span class="spec-tag">interface contract</span>'
+            f'<code class="spec-cls">{esc(prim["cls"])}</code></div>'
+            f'<div class="port"><span class="port-k">reads</span><code>{esc(reads)}</code></div>'
+            f'<div class="port"><span class="port-k">exposes</span><code>{esc(exposes)}</code></div>'
+            '</div>')
+
+    multi = len(comps) > 1
+    limit = 6 if multi else 9
+    variants = study.get("variants") or []
+    vstr = ""
+    if variants:
+        vs = " · ".join(f'<code>{esc(v.get("name",""))}</code>' for v in variants)
+        vstr = f'<div class="proc"><span class="port-k">variants</span><span class="proc-params">{vs}</span></div>'
+    panels = "".join(
+        _model_panel(c, (n if multi else ""), limit, vstr if i == 0 else "")
+        for i, (n, c) in enumerate(comps))
+    return f'<div class="spec">{contract}{panels}</div>'
+
+
+def study_card(study: dict, order: int, inv_map: dict, ws: Path) -> str:
     slug = study.get("name", "")
     title = study.get("title") or slug
     claim = study.get("claim") or ""
     oc = outcomes(study)
-    svgs = study_exec_svgs(study)
-    inv = inv_map.get(slug, {})
-    # Figure caption BELOW the plot (publication convention): the physically-
-    # checked readout for this figure, badged with its precise invariant label.
-    if inv.get("invariant"):
-        cap = (f'<figcaption class="fig-cap"><span class="inv-k">'
-               f'{esc(_inv_label(inv.get("invariant_kind","")).upper())}</span> '
-               f'{md_inline(inv.get("invariant",""))}</figcaption>')
-    else:
-        cap = ""
-    figs = "".join(f'<figure class="fig-wrap">{inline_svg(p)}{cap}</figure>' for p in svgs)
-    inv_html = ""
+    figs = "".join(study_figures(study))
+    spec = spec_block_html(study, ws)
 
     # collapsible full detail — the parts a reader only wants on demand
     findings = study.get("findings", [])
@@ -293,7 +550,7 @@ def study_card(study: dict, order: int, inv_map: dict) -> str:
         </div>
       </div>
       {chips(oc)}
-      {inv_html}
+      {spec}
       <div class="figs">{figs}</div>
       {detail}
     </article>"""
@@ -330,67 +587,46 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     inv_map = json.loads(inv_path.read_text()) if inv_path.exists() else {}
 
     # ── hero stats
-    stats = [("studies", str(len(studies))), ("executables", str(len(inv_map) or len(studies))),
-             ("checked signatures", str(len(inv_map))), ("whole cell", "1")]
+    n_figs = sum(1 for s in studies if study_figures(s))
+    stats = [("studies", str(len(studies))),
+             ("composition patterns", str(len(studies))),
+             ("with figures", str(n_figs)),
+             ("modalities realized", "2 of 4")]
     stat_html = "".join(f'<div class="stat"><b>{v}</b><span>{esc(k)}</span></div>' for k, v in stats)
 
-    # ── the arc spine
-    arc = "".join(
-        f'<a class="arc-node" href="#{esc(s["name"])}"><span class="arc-n">{i+1:02d}</span>'
-        f'<span class="arc-t">{esc(s.get("title") or s["name"])}</span></a>'
-        + ('<span class="arc-arrow">→</span>' if i < len(studies) - 1 else "")
-        for i, s in enumerate(studies))
+    # ── the arc (an SVG through-line: the studies as an ordered path)
+    arc_svg = arc_diagram_svg(studies)
 
-    def hl_fig(s):
-        svgs = study_exec_svgs(s)
-        return f'<figure class="hl-fig">{inline_svg(svgs[0])}</figure>' if svgs else ""
-
-    def inv_line(s):
-        d = inv_map.get(s.get("name", ""), {})
-        return (f'<div class="invariant"><span class="inv-k">'
-                f'{esc(_inv_label(d.get("invariant_kind","")).upper())}</span> '
-                f'{md_inline(d.get("invariant",""))}</div>') if d.get("invariant") else ""
-
-    # ── highlights (the interesting components, promoted)
+    # ── highlight: the thesis in one figure — substitutability (dFBA vs MM)
     highlights = []
-    atlas = by_slug.get("the-living-atlas")
-    if atlas:
-        highlights.append(f"""
-        <section class="hl">
-          <div class="hl-txt">
-            <span class="kicker">The payoff</span>
-            <h2>A cell, assembled from drafts, that lives and dies</h2>
-            <p>The figures don't just each run — they <em>compose</em>. Assembled into one cell,
-            it grows on a depleting nutrient (biomass peaks ≈5.1), divides once as it grows
-            (cell_count 1→2), then a thermal shock ramps its temperature 37→50 °C past tolerance,
-            viability collapses (1.0→0.02), and its biomass converts to molecular debris (0→4.87).
-            The whole arc — grow, divide, die — in one run.</p>
-            {chips(outcomes(atlas)[:4])}
-            {inv_line(atlas)}
-          </div>
-          {hl_fig(atlas)}
-        </section>""")
-    three = by_slug.get("one-interface-three-mechanisms")
-    if three:
+    if by_slug.get("cell-environment-coupling"):
+        subst_pairs = [
+            ("final biomass", 0.370, 0.342, "Δ 7.5%"),
+            ("CPM volume", 110.0, 99.0, "Δ 10%"),
+            ("acetate secreted", 47.02, 47.02, "Δ ~0%"),
+            ("glucose depleted", 31.6, 33.6, "Δ 6.2%"),
+        ]
         highlights.append(f"""
         <section class="hl reverse">
           <div class="hl-txt">
             <span class="kicker">The thesis, in one figure</span>
-            <h2>One interface, three mechanisms</h2>
-            <p>One metabolism interface — nutrients ⇒ biomass — realized three ways: a first-order
-            lumped yield, saturating Michaelis–Menten kinetics, and a real COBRApy flux-balance LP.
-            The compiler installs each behind the <strong>identical ports</strong>, and the three
-            produce <strong>three genuinely different trajectories</strong> — biomass 4.0 (linear),
-            2.67 (saturating), and 6.29 (with an acetate overflow of 30.4 on the secretions port the
-            FBA solver discovers on its own). Same interface, interchangeable mechanism, distinct
-            dynamics — handler independence (law 4) made runnable.</p>
-            {inv_line(three)}
+            <h2>Same interface, different mechanism</h2>
+            <p>The flagship's cell–environment interface (<code>CpmCellField</code>) is realized two
+            ways behind <strong>byte-identical ports</strong>: a constraint-based dynamic-FBA
+            metabolism (cobra <code>e_coli_core</code>, O₂-capped to force acetate overflow) and a
+            lumped, cobra-free Michaelis–Menten kinetic. Every interface-level observable agrees
+            within ~10% — an executable instance of the paper's equivalence-class claim: the
+            composition pattern is a property of the <em>interface</em>, not of the mechanism behind
+            it.</p>
           </div>
-          {hl_fig(three)}
+          <figure class="hl-fig hl-bars">{substitutability_chart(subst_pairs)}
+            <figcaption class="fig-cap">Interface observables over 20 ticks, each bar normalised to
+            the dynamic-FBA value; the lumped Michaelis–Menten twin tracks it within ~10%.</figcaption>
+          </figure>
         </section>""")
 
     # ── studies
-    cards = "".join(study_card(by_slug[s], i + 1, inv_map)
+    cards = "".join(study_card(by_slug[s], i + 1, inv_map, ws)
                     for i, s in enumerate(sn for sn in order if sn in by_slug))
 
     # ── shared caveats (lifted from identical per-study boilerplate)
@@ -421,6 +657,8 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
 
     verdict = execu.get("verdict", "")
     status = str(inv.get("status") or "").strip()
+    nstudies_word = {8: "eight", 9: "nine", 10: "ten", 11: "eleven",
+                     12: "twelve"}.get(len(studies), str(len(studies)))
 
     body = f"""
     <header class="hero">
@@ -437,7 +675,10 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
       {paras(execu.get('what_is_this') or '')}
     </section>
 
-    <nav class="arc" aria-label="the arc">{arc}</nav>
+    <section class="arcfig" aria-label="the arc traced by the studies">
+      <span class="kicker">The arc — from the interface to an adapting agent</span>
+      {arc_svg}
+    </section>
 
     {''.join(highlights)}
 
@@ -447,7 +688,7 @@ def render_investigation(ws: Path, slug: str, out_dir: Path) -> Path:
     </section>
 
     <section class="studies-wrap">
-      <h2>The ten studies <span class="sub">— in arc order; claim + measured readouts + the running figure. Open a card for the full detail.</span></h2>
+      <h2>The {nstudies_word} studies <span class="sub">— in arc order; claim + measured readouts + the running figure. Open a card for the full detail.</span></h2>
       {cards}
     </section>
 
@@ -645,6 +886,61 @@ figcaption{margin-top:8px;font-size:.78rem;color:var(--muted);display:flex;gap:1
 .two-col p{color:var(--ink-2);font-size:.93rem;margin:0}
 
 .foot{margin:56px 0 0;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:.86rem}
+
+/* arc figure (SVG through-line) */
+.arcfig{margin:26px 0 8px;padding:22px 0 12px;border-bottom:1px solid var(--line)}
+.arcfig .kicker{color:var(--teal);display:block;margin-bottom:6px}
+.arc-svg{width:100%;height:auto;display:block;overflow:visible}
+.arc-spine{stroke:var(--line);stroke-width:2}
+.arc-ladder{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+.arc-dot{stroke:var(--surface);stroke-width:2}
+.arc-dot-open{fill:var(--surface);stroke:var(--muted);stroke-width:1.5;stroke-dasharray:3 3}
+.arc-dot-n{fill:#fff;font:700 11px var(--mono);text-anchor:middle;dominant-baseline:middle}
+.arc-dot-n-open{fill:var(--muted)}
+.arc-dir{fill:var(--muted);font:600 8px var(--sans);text-anchor:middle;text-transform:uppercase;letter-spacing:.05em}
+.arc-lbl{fill:var(--ink);font:600 10.5px var(--sans);text-anchor:middle}
+.arc-lbl-open{fill:var(--muted);font-style:italic}
+.arc-rung{fill:var(--muted);font:600 9.5px var(--sans);text-anchor:middle;text-transform:uppercase;letter-spacing:.04em}
+.arc-rung-open{fill:var(--ochre)}
+.arc-svg a{cursor:pointer}
+.arc-svg a:hover .arc-lbl{fill:var(--teal)}
+
+/* study figure images (simulation movies) */
+.fig-img{width:100%;height:auto;display:block;border-radius:8px}
+
+/* model definition + interface contract (datasheet read from the composite) */
+.spec{display:flex;flex-direction:column;gap:12px;margin:20px 0 0}
+.spec-panel{background:color-mix(in srgb,var(--teal) 4%,var(--surface));border:1px solid var(--line);
+  border-radius:11px;padding:13px 16px;min-width:0}
+.spec-panel.contract{border-left:3px solid var(--teal)}
+.spec-panel.modeldef{border-left:3px solid var(--ochre)}
+.spec-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:9px;
+  padding-bottom:8px;border-bottom:1px solid var(--line)}
+.spec-tag{font:700 .62rem var(--sans);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.contract .spec-tag{color:var(--teal)}
+.modeldef .spec-tag{color:var(--ochre)}
+.spec-sub{font:600 .7rem var(--mono);color:var(--ink-2)}
+.spec-cls{font-family:var(--mono);font-size:.82rem;color:var(--ink);background:none;padding:0}
+.port{display:flex;gap:10px;align-items:baseline;margin:5px 0;font-size:.82rem}
+.port-k{flex:none;width:60px;font:600 .64rem var(--sans);text-transform:uppercase;letter-spacing:.05em;
+  color:var(--muted)}
+.port code{font-family:var(--mono);font-size:.8rem;color:var(--ink-2);background:none;padding:0;word-break:break-word}
+.proc{display:flex;gap:12px;align-items:baseline;margin:7px 0;font-size:.8rem;flex-wrap:wrap}
+.proc-cls{flex:none;font-family:var(--mono);font-size:.8rem;font-weight:700;color:var(--ochre-2);
+  background:none;padding:0}
+.proc-params{color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;min-width:0}
+.pm{font-family:var(--mono);font-size:.73rem;white-space:nowrap}
+.pm b{color:var(--ink-2);font-weight:600}
+
+/* substitutability paired bars */
+.subst{width:100%;height:auto;display:block;overflow:visible;max-width:440px}
+.subst-obs{fill:var(--ink);font:600 12px var(--sans);text-anchor:start;dominant-baseline:middle}
+.subst-dfba{fill:var(--teal)}
+.subst-mm{fill:var(--ochre-2)}
+.subst-bl{fill:#fff;font:700 9px var(--sans)}
+.subst-delta{fill:var(--muted);font:600 11px var(--mono);text-anchor:start;dominant-baseline:middle}
+.subst-ref{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 2}
+.subst-ref-l{fill:var(--muted);font:600 8px var(--sans);text-anchor:middle}
 
 @media (max-width:720px){
   body{font-size:16px}
