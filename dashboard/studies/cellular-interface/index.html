@@ -568,7 +568,7 @@
       <p class="ctr-text">Start with the Fig 4 interface as an inert specification, install a bounded-cell mechanism behind it, and run the resulting composite. The compiler must preserve the declared interface exactly, and must reject any handler whose ports don&#39;t match it (Law 1).</p>
       
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>interaction-modalities</code>, <code>cellular-interface</code>, <code>cellular-interface-executable</code></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>interaction-modalities</code>, <code>cellular-interface</code>, <code>cellular-interface-executable</code>, <code>cellular-interface-spatial</code></div>
         <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">The conforming handler grows the cell through its interface — shape climbs well above its seed.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell takes up chemical across its interface — net chemical flux goes negative.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The cell pursues its declared objective — the objective readout climbs from zero.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">One-line sanity check (not the study&#39;s control): the inert draft has empty updates by construction, so shape stays at its 1.0 seed and fails this threshold by design — confirming the framework&#39;s definition of a draft, not a scientific counterfactual.</span></div>
       </div>
       
@@ -2759,6 +2759,55 @@ z
         </details>
       </div>
       
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The same `CellularInterfaceHandler` contract, unchanged, composed with a spatial diffusion field via a field↔point adapter — evidence the interface is substrate-independent. Only the chemical modality is spatialized here; mechanical, electrical, and thermal remain lumped. Taking the byte-identical fig04b handler and composing a spatio-flux `DiffusionAdvection` chemical field behind its chemical port (through the small `FieldPointCoupling` adapter that samples the field over the cell&#39;s footprint and writes the handler&#39;s uptake flux back as a spatial delta) yields a running 2D composite: the field depletes at the footprint (niche construction, footprint mean 1.68 → 1.43 over 20 steps) and the concentration the interface senses now varies with position on the gradient — a cell on the low side senses ≈0.74 and grows slower, one on the high side senses ≈2.1 and grows faster — rather than a fixed constant.</span>
+            
+            <span class="finding-chip">via <code>tests/test_cellular_interface_spatial.py</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> footprint field mean 1.68 → 1.43 (net uptake depletes the field where the cell feeds); sensed chemical_ext ≈0.74 (low side) vs ≈2.1 (high side), growth_rate follows the local field · 
+              
+              via test <a href="#bt-tests/test_cellular_interface_spatial.py" onclick="_gotoStudyTab('tests','bt-tests/test_cellular_interface_spatial.py');return false;"><code>tests/test_cellular_interface_spatial.py</code></a> · 
+              
+              
+              
+            </div>
+            
+            
+            
+            
+            
+            
+            <div class="finding-expected">
+              
+              
+              
+            </div>
+            <div class="finding-exp-summary"><em>Reference says:</em> If the interface is genuinely substrate-independent, the unchanged handler should run against a spatial field with the same ports, sensing a spatially-varying concentration and constructing a depletion niche.</div>
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
     </div>
     
       
@@ -2900,6 +2949,41 @@ z
                 data-baseline-name="cellular-interface-executable">Set composite</button>
       </div>
       <div class="baseline-composite-status muted" data-baseline-name="cellular-interface-executable" style="font-size:0.8em;margin-top:2px"></div>
+      
+      
+      
+      <div class="model-config-mount" style="margin-top:8px">
+        <p class="muted" style="font-size:0.85em;margin:0">Loading configuration…</p></div>
+      
+      
+      
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:0.8em">
+        
+        
+        
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
+      </div>
+      
+    </div>
+    
+    <div class="cond-block" data-model-composite="meta_modelers_guide.composites.cellular-interface-spatial" data-model-overrides='{}'>
+      <div class="cond-block-title" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <strong>cellular-interface-spatial</strong>
+        
+        <code style="font-size:0.82em;color:#374151;background:#f1f5f9;padding:1px 6px;border-radius:3px">meta_modelers_guide.composites.cellular-interface-spatial</code>
+        <button type="button" class="action-btn" style="font-size:0.8em"
+                onclick="_openCompositeLoom('meta_modelers_guide.composites.cellular-interface-spatial')">🧬 explore &amp; run ↗</button>
+        
+      </div>
+      
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+        <input type="text" class="baseline-composite-input" data-baseline-name="cellular-interface-spatial"
+               value="meta_modelers_guide.composites.cellular-interface-spatial" placeholder="pkg.composites.name"
+               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
+        <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
+                data-baseline-name="cellular-interface-spatial">Set composite</button>
+      </div>
+      <div class="baseline-composite-status muted" data-baseline-name="cellular-interface-spatial" style="font-size:0.8em;margin-top:2px"></div>
       
       
       
@@ -3507,7 +3591,7 @@ pass_if: {"op": "\u003e=", "provenance": "inert-draft run: shape stays 1.0 (empt
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "f9830302f3670bc67e5dae28f5cbba55e7675c5d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/f9830302f3670bc67e5dae28f5cbba55e7675c5d", "branch": "main", "lockfile": "uv.lock@940bf66f841f", "generated_at": "2026-08-22 15:14 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "633db9666eaf00a6e700023704005413ff0f3456", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/633db9666eaf00a6e700023704005413ff0f3456", "branch": "main", "lockfile": "uv.lock@f614867f376e", "generated_at": "2026-08-22 16:37 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "cellular-interface";

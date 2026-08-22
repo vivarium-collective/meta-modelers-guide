@@ -162,6 +162,7 @@ def _render_one(address, config, runs_db, study_yaml):
 # | `interaction-modalities` | `meta_modelers_guide.composites.fig04a-interaction-modalities` | 0 | — |
 # | `cellular-interface` | `meta_modelers_guide.composites.fig04b-cellular-interface` | 0 | — |
 # | `cellular-interface-executable` | `meta_modelers_guide.composites.fig04b-executable` | 0 | — |
+# | `cellular-interface-spatial` | `meta_modelers_guide.composites.cellular-interface-spatial` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
@@ -230,6 +231,48 @@ spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']
 spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['signaling_gain'] = 0.4
 spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['interval'] = 1.0
 
+# **Composite `meta_modelers_guide.composites.cellular-interface-spatial`** — `spec_meta_modelers_guide_composites_cellular_interface_spatial` (a plain, editable dict)
+
+from viva_superpowers.composite_spec import load_spec
+spec_meta_modelers_guide_composites_cellular_interface_spatial = load_spec(REPO / 'meta_modelers_guide/composites/cellular-interface-spatial.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_cellular_interface_spatial)
+
+# === Edit parameters for composite 'cellular-interface-spatial' ===
+# Each line is the spec's CURRENT value — change any, then run the Run cell
+# below. The spec is a plain dict, so you may also add or remove keys.
+
+# process 'field'  (local:!spatio_flux.processes.diffusion_advection.DiffusionAdvection)
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['field']['config']['n_bins'] = [40, 40]
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['field']['config']['bounds'] = [40.0, 40.0]
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['field']['config']['diffusion_coeffs']['chemical'] = 0.4
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['field']['config']['boundary_conditions']['chemical']['default']['type'] = 'neumann'
+
+# process 'couple'  (local:FieldPointCoupling)
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['couple']['config']['nx'] = 40
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['couple']['config']['ny'] = 40
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['couple']['config']['cx'] = 20
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['couple']['config']['cy'] = 20
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['couple']['config']['radius'] = 4.0
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['couple']['config']['species'] = 'chemical'
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['couple']['config']['active'] = True
+
+# process 'cell'  (local:CellularInterfaceHandler)
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['uptake_rate'] = 0.8
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['growth_max'] = 0.6
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['km'] = 0.5
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['shape_growth_coupling'] = 1.0
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['objective_yield'] = 0.5
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['death_Ea'] = 300000.0
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['gas_R'] = 8.314
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['d_value_ref_min'] = 1.0
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['temp_ref_death'] = 55.0
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['temp_opt'] = 37.0
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['viability_init'] = 1.0
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['elasticity'] = 0.1
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['membrane_conductance'] = 0.05
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['thermal_conductance'] = 0.02
+spec_meta_modelers_guide_composites_cellular_interface_spatial['state']['cell']['config']['signaling_gain'] = 0.4
+
 # ### Run
 #
 # _Set the runtime (`STEPS`) and step size (`INTERVAL`), then run. Each simulation builds the (edited) spec above and writes `runs.db`; the figures below read it. Set `RERUN = False` to skip re-simulating._
@@ -246,7 +289,7 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **fig04b-executable-dynamics**
+# **cellular-interface-spatial**
 
 def _save_viz(study, slug, html):
     d = REPO / 'reports/notebooks/figures' / study
@@ -255,6 +298,11 @@ def _save_viz(study, slug, html):
     out.write_text(html, encoding='utf-8')
     print('  wrote', out)
 
+
+# cellular-interface-spatial
+_save_viz('cellular-interface', 'cellular-interface-spatial', _render_one('image:viz/cellular-interface-spatial.gif', {'chart': 'image', 'caption': "The unchanged Fig 4b handler composed over a real 2D chemical field -- the adapter senses the local footprint concentration and deposits the handler's uptake back into the field, depleting it where the cell feeds."}, RUNS_DB, STUDY_YAML))
+
+# **fig04b-executable-dynamics**
 
 # fig04b-executable-dynamics
 _save_viz('cellular-interface', 'fig04b-executable-dynamics', _render_one('html:fig04b-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 4: viability holds inside its shaded "viable" band while shape and objective climb from the installed handler\'s Monod-driven growth.'}, RUNS_DB, STUDY_YAML))
