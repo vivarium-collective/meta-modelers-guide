@@ -85,6 +85,25 @@ class CpmCellField(Process):
         "glucose_source_target": _f(0.0),
         "acetate_decay_rate": _f(0.0),
         "biomass_capacity": _f(0.0),   # 0.0 -> unbounded (flagship); >0 -> logistic cap
+        # --- CHEMOTAXIS: directed motion up the sensed glucose gradient ------------
+        # The flagship senses -> metabolizes -> grows -> secretes but does NOT act on
+        # what it senses (no directed motion). This term closes the sense->act loop by
+        # biasing the CPM cell's Metropolis pixel-copy UP the local glucose gradient of
+        # the SHARED spatio-flux field (not viva-cpm's separate internal PDE field).
+        #
+        # Mechanism: each tick we read the shared glucose field the cell already senses,
+        # take its spatial gradient grad(glucose) averaged over the cell's footprint, and
+        # set viva-cpm's per-type external-potential force f = chemotaxis_strength *
+        # grad(glucose). viva-cpm's Hamiltonian then adds U(r) = -f.r per pixel, so
+        # dH = (f_old - f_new).r for a copy — a copy that moves the footprint toward
+        # higher x (higher glucose) is energetically favoured. This is the linearized
+        # (grad-driven) form of CC3D chemotaxis dH = -lambda*dc, driven by the external
+        # shared field rather than a viva-cpm-internal one (which has no write path here).
+        #
+        # DEFAULT 0.0 -> OFF: when strength is 0 we never call set_external_potential, so
+        # the world's ext-potential stays all-zero and the base flagship run is
+        # byte-identical. >0 turns on directed up-gradient motion (the chemotaxis variant).
+        "chemotaxis_strength": _f(0.0),
     }
 
     def inputs(self):
@@ -282,6 +301,22 @@ class CpmCellField(Process):
         k_dec = float(self.config["acetate_decay_rate"])
         if k_dec:
             dace += -k_dec * acetate * interval
+
+        # CHEMOTAXIS (default strength 0.0 -> no-op, flagship byte-identical): bias the
+        # CPM cell up the SENSED glucose gradient. We take grad(glucose) of the shared
+        # field averaged over the cell's current footprint and set viva-cpm's per-type
+        # external-potential force f = chemotaxis_strength * grad(glucose). The engine
+        # adds U(r) = -f.r per pixel, so a pixel-copy that shifts the footprint toward
+        # higher glucose lowers H and is favoured in the Metropolis acceptance — directed
+        # up-gradient motion, the "act" the flagship deferred. grad points toward higher
+        # concentration, so the cell climbs the gradient (positive strength).
+        chi = float(self.config["chemotaxis_strength"])
+        if chi != 0.0 and fp.any():
+            # np.gradient over [ny, nx] returns (d/dy, d/dx); lattice coords are (x, y).
+            g_y, g_x = np.gradient(glucose)
+            fx = chi * float(g_x[fp].mean())
+            fy = chi * float(g_y[fp].mean())
+            self.world.set_external_potential(1, fx, fy, 0.0)
 
         # grow the CPM cell from biomass, then step the world
         target = float(self.config["grow_per_biomass"]) * self.biomass

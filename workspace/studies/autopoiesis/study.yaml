@@ -18,8 +18,12 @@ gate_class_note: >-
   bleeds precursor through the gap and starves locally. MEASURED this build -- v2 sustains topological
   closure ~2451 internal steps (metastable, same order as v1) while the precursor knockout s_p=0 collapses
   at ~step 95, so the EMERGE claim is upgraded from authored-closure to genuinely-emergent local-mechanism
-  closure. The plateau remains metastable (finite closed budget, no external influx) -- an open-system
-  version is the remaining next step.
+  closure. The plateau remains metastable (finite closed budget). The open-system driven version is now
+  BUILT AND MEASURED (v2-open, ProtocellV2Open, finding F-04) -- and the honest measured verdict is that a
+  local external drive does NOT convert the metastable ring into an indefinite steady state -- it
+  DESTABILISES it into faster runaway filling (closure lost ~step 591 at the canonical drive vs ~2451
+  undriven), so EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady
+  self-maintenance.
 confidence: Provisional
 units_and_time:
   tick: 1 tick = unspecified physical time (dimensionless model time); the run is 36 ticks = 1800 internal reaction-diffusion steps (50 steps_per_tick).
@@ -29,6 +33,7 @@ acceptance_criteria:
 - Breaking the boundary so nothing is enclosed should shut off the closure-gated production irreversibly (a viability bound) -- the punctured ring should not rebuild from nothing.
 - Because the closure gate is what conditions production, flipping the single production rate constant should flip persistence into dissipation -- persistence should track the authored closure gate, not seed geometry or diffusion alone.
 - MECHANISM-LEVEL (v2, M4 answer) -- with production made to depend on a LOCAL interior precursor and NO global closure observer in the update, closure-dependence should EMERGE from local physics -- a closed membrane should retain its self-secreted precursor and sustain itself, a precursor knockout (s_p=0) should collapse it, and a puncture should make the interior precursor bleed out through the gap and production starve locally, all without any binary_fill_holes gating the dynamics.
+- OPEN-SYSTEM LEVEL (v2-open, the remaining EMERGE step, built and measured) -- adding an external drive (a local open dissipative throughflow -- uniform precursor feed plus washout to an external reservoir -- that lifts the closed-budget constraint, still with NO global closure observer in the update) should be tested for whether it turns v2''s metastable closure into an INDEFINITE steady self-maintenance. The measured verdict is reported honestly whichever way it falls -- the driven loop''s fate measured against the undriven ~2451-step window -- and the controls (precursor knockout, puncture) must show the drive does NOT rescue closure if closure is genuinely load-bearing.
 question: 'The paper''s §Self-organized processes section states the autopoiesis criterion as a boundary
   problem, not a bookkeeping one: "A membrane alone is insufficient: a vesicle may form a boundary without
   constituting a living system. A stronger criterion is that the processes inside the boundary collectively
@@ -102,9 +107,15 @@ biological_summary: 'The paper''s §Self-organized processes section (its autopo
   pooled ~72) with no global observer in the loop, while the mechanistic precursor knockout s_p=0 collapses
   at ~step 95 (~26x faster) and a 60-degree wedge puncture makes the interior precursor bleed out through
   the gap so the wedge membrane starves LOCALLY (~2 vs ~79 intact) and never self-heals. So EMERGE is
-  upgraded from authored-closure (v1) to genuinely-emergent local-mechanism closure (v2); v2''s only
-  remaining boundary is that its plateau is still metastable on a finite closed budget (an open-system
-  driven version is the next step). Read this side by side with the
+  upgraded from authored-closure (v1) to genuinely-emergent local-mechanism closure (v2); v2''s plateau is
+  still metastable on a finite closed budget. The open-system driven version (v2-open, ProtocellV2Open,
+  finding F-04) is now BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT
+  make emergent closure sustain indefinitely -- it DESTABILISES the metastable ring into faster runaway
+  filling (closure lost ~step 591 at the canonical drive vs ~2451 undriven; an ~80-point drive sweep found
+  no local drive reaching a bounded steady enclosed_area), while the controls confirm the drive does not
+  rescue closure (s_p=0 still collapses ~step 188, a puncture is not healed). EMERGE therefore stays at
+  genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance -- an honest measure of
+  how hard steady emergent closure is. Read this side by side with the
   lumped ODE predecessor, which built the same closure idea as a compiled minimal-cell
   coupling of metabolism/containment/replication with no boundary-maintenance criterion applied; this
   study supplies exactly the boundary-maintenance criterion that one named as its own next step, at a
@@ -148,8 +159,13 @@ claim: 'The paper''s §Self-organized processes autopoiesis criterion -- a membr
   restatement -- zeroing a 60-degree wedge of the steady ring makes the interior precursor bleed out
   through the gap and the wedge membrane starves LOCALLY (punctured-wedge mass stays ~2 versus ~79 in the
   intact ring at the same step) and never self-heals. So EMERGE is upgraded from authored-closure to
-  genuinely-emergent local-mechanism closure. What v2 does NOT yet do -- the plateau is still METASTABLE
-  (a closed budget with no external influx); an open-system driven version is the remaining next step.'
+  genuinely-emergent local-mechanism closure. What v2 does NOT do -- reach steady self-maintenance: the
+  plateau is still METASTABLE (a closed budget). The open-system driven version (v2-open, ProtocellV2Open)
+  is BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT sustain closure
+  indefinitely -- it DESTABILISES the ring into faster runaway filling (closure lost ~step 591 vs the
+  undriven ~2451; no local drive in an ~80-point sweep reaches a bounded steady enclosed_area), while the
+  controls confirm the drive does not rescue closure. So EMERGE stays at genuinely-emergent-but-metastable
+  closure, NOT upgraded to steady self-maintenance.'
 baseline:
 - name: protocell-autopoietic
   composite: meta_modelers_guide.composites.protocell-autopoietic
@@ -159,6 +175,9 @@ baseline:
   params: {}
 - name: protocell-autopoietic-v2
   composite: meta_modelers_guide.composites.protocell-autopoietic-v2
+  params: {}
+- name: protocell-autopoietic-v2-open
+  composite: meta_modelers_guide.composites.protocell-autopoietic-v2-open
   params: {}
 variants: []
 key_assumptions:
@@ -418,6 +437,82 @@ behavior_tests:
       the gap never healing. The == 0.0 is a deterministic pin (no RNG)
       (tests/test_protocell_v2.py::test_puncture_starves_locally_and_does_not_heal)
   requires_simulation: none
+- name: v2-open-drive-does-not-sustain
+  classification: primary
+  gate_class: acceptance_criterion
+  description: 'OPEN-SYSTEM LEVEL (v2-open, ProtocellV2Open -- the remaining EMERGE step, built and
+    measured). The honest measured verdict on whether an external drive makes emergent closure sustain
+    INDEFINITELY -- it does NOT. A local open dissipative throughflow (uniform precursor feed f_in plus
+    washout k_wash to an external reservoir, no global observer in the update) DESTABILISES the metastable
+    v2 ring rather than converting it into a steady state -- the driven loop loses closure at ~step 591,
+    ~4x FASTER than the undriven ~2451, via runaway autocatalytic filling (membrane mass runs away far
+    above the seed, enclosed_area -> 0), so persists flips to 0.0 within the run window.'
+  measure:
+    kind: observable
+    path: obs.persists
+    expr: last(obs.persists)
+  pass_if:
+    op: ==
+    value: 0.0
+    kind: acceptance_criterion
+    deterministic_pin: true
+    provenance: prior -- external drive was hypothesised to possibly turn v2''s metastable closure into an
+      indefinite steady self-maintenance; the honest measured result is the opposite. Confirmed -- the
+      canonical drive (f_in=0.01, k_wash=0.02) loses closure at internal step ~591 (vs the undriven ~2451),
+      membrane_mass runs away to ~3092 (seed ~624) as the whole 64x64 domain fills, persists == 0.0 and
+      collapse_tick > 0 by 1000 steps. An ~80-point drive sweep (feed, washout, feed+washout+turnover,
+      saturable export, substrate feed) found NO local drive reaching a bounded steady enclosed_area > 0.
+      The == 0.0 is a deterministic pin (persists is binary, no RNG) -- exact only while the engine build is
+      fixed (tests/test_protocell_v2_open.py::test_composite_open_does_not_sustain,
+      tests/test_protocell_v2_open.py::test_open_drive_destabilises_faster_than_closed)
+  requires_simulation: protocell-autopoietic-v2-open
+- name: v2-open-drive-off-recovers-v2
+  classification: diagnostic
+  gate_class: regression_pin
+  description: 'Diagnostic that the destabilisation is caused by the DRIVE, not by the ProtocellV2Open code
+    path -- overriding the drive off (f_in=0, k_wash=0) on the same open composite recovers v2''s
+    persistence exactly (persists == 1.0 at 1000 steps, collapse_tick == -1.0), and the open update reduces
+    bit-for-bit to rd_step_v2 when the drive is off.'
+  measure:
+    kind: observable
+    path: obs.persists
+    expr: last(obs.persists)
+  pass_if:
+    op: ==
+    value: 1.0
+    kind: regression_pin
+    deterministic_pin: true
+    provenance: with f_in=k_wash=0 the open composite persists == 1.0, enclosed_area > 100, collapse_tick
+      == -1.0 at 1000 steps -- identical to v2 -- so the ~591-step collapse under drive is caused by the
+      drive alone. The == 1.0 is a deterministic pin (no RNG)
+      (tests/test_protocell_v2_open.py::test_composite_open_off_recovers_v2_persistence,
+      tests/test_protocell_v2_open.py::test_drive_off_reduces_exactly_to_closed_v2)
+  requires_simulation: protocell-autopoietic-v2-open
+- name: v2-open-controls-still-load-bearing
+  classification: primary
+  control: negative
+  gate_class: acceptance_criterion
+  description: 'The drive must NOT rescue closure -- both v2 controls stay load-bearing under drive. The
+    precursor knockout s_p=0 still loses closure fast (~step 188; the external feed sustains a little
+    diffuse membrane mass but never re-closes the ring), and a 60-degree puncture of the driven ring is NOT
+    healed -- enclosed_area stays 0 even as membrane mass runs away. So closure remains genuinely
+    load-bearing under drive, not overridden by it.'
+  measure:
+    kind: observable
+    path: obs.enclosed_area
+    expr: last(obs.enclosed_area)
+  pass_if:
+    op: ==
+    value: 0.0
+    kind: acceptance_criterion
+    deterministic_pin: true
+    provenance: prior -- if closure is genuinely load-bearing, the external drive should not rescue a
+      no-precursor membrane nor a punctured one. Confirmed -- under the canonical drive the s_p=0 knockout
+      loses closure at ~step 188 (enclosed_area -> 0) and a wedge puncture leaves enclosed_area == 0 for the
+      rest of the run (never restored). The == 0.0 is a deterministic pin (no RNG)
+      (tests/test_protocell_v2_open.py::test_open_precursor_knockout_still_collapses,
+      tests/test_protocell_v2_open.py::test_open_puncture_is_not_healed_by_drive)
+  requires_simulation: protocell-autopoietic-v2-open
 runs:
 - name: protocell-autopoietic
   composite: protocell-autopoietic
@@ -468,6 +563,31 @@ runs:
     V2-PUNCTURE-STARVES-LOCALLY:
       result: PASS
       detail: after wedge puncture, precursor bleeds through the gap and wedge membrane stays ~2 vs ~79 intact -- local starvation, no self-heal
+- name: protocell-autopoietic-v2-open
+  composite: protocell-autopoietic-v2-open
+  emitter: RAMEmitter
+  id: protocell-autopoietic-v2-open
+  status: completed
+  provenance: meta_modelers_guide/composites/protocell-autopoietic-v2-open.composite.json (ProtocellV2Open
+    -- membrane phi seed and interior precursor p identical to protocell-autopoietic-v2, plus the canonical
+    open drive f_in=0.01/k_wash=0.02/k_turn=0 on top of the v2 params;
+    D=0.02/k_decay=0.01/k_prod=0.06/Mp=0.10/alpha=0.9/s_p=0.03/k_leak=0.03/k_cons=0.03/phi_max=1.2/thr=0.30,
+    steps_per_tick=50) run 20 ticks (1000 internal steps) to completion through the process-bigraph engine,
+    past the measured ~591-step driven collapse (tests/test_protocell_v2_open.py). The drive-off recovery,
+    s_p=0 knockout, and puncture are the same composite/physics with one override each
+    (tests/test_protocell_v2_open.py). The ~80-point drive sweep behind the verdict is a documented
+    scratchpad regime search (feed, washout, feed+washout+turnover, saturable export, substrate feed).
+  params: {}
+  outcomes:
+    V2-OPEN-DRIVE-DOES-NOT-SUSTAIN:
+      result: PASS
+      detail: canonical drive collapses at ~step 591 (vs undriven ~2451) via runaway fill, membrane_mass ~3092 (seed ~624), persists == 0.0 -- external drive destabilises, does NOT reach a steady state
+    V2-OPEN-DRIVE-OFF-RECOVERS-V2:
+      result: PASS
+      detail: with f_in=k_wash=0 the same open composite persists == 1.0 at 1000 steps (collapse_tick == -1.0) -- the destabilisation is caused by the drive alone
+    V2-OPEN-CONTROLS-STILL-LOAD-BEARING:
+      result: PASS
+      detail: under drive, s_p=0 still loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0) -- the drive does not rescue closure
 - name: protocell-vesicle-control
   composite: protocell-vesicle-control
   emitter: RAMEmitter
@@ -557,8 +677,9 @@ findings:
     puncture is now a REAL LOCAL PREDICTION -- zeroing a 60-degree wedge makes interior precursor bleed out
     through the gap and the wedge membrane starve locally (wedge mass ~2 vs ~79 intact) with no self-heal.
     EMERGE is therefore upgraded from authored-closure to genuinely-emergent local-mechanism closure. The
-    plateau remains metastable (finite closed budget); an open-system driven version is the remaining
-    next step.'
+    plateau remains metastable (finite closed budget); the open-system driven version is built and measured
+    in finding F-04 (external drive DESTABILISES rather than sustains -- it does NOT reach steady
+    self-maintenance).'
   evidence:
     from_test: v2-emergent-closure-sustains
     from_run: protocell-autopoietic-v2
@@ -566,6 +687,35 @@ findings:
   provenance:
     run_ids:
     - protocell-autopoietic-v2
+- id: F-04
+  kind: biological
+  tier: mechanism
+  status: novel
+  statement: 'OPEN-SYSTEM STEP BUILT AND MEASURED (v2-open, ProtocellV2Open) -- the explicitly named
+    remaining EMERGE step, and the HONEST verdict is that external drive does NOT make emergent closure
+    sustain indefinitely; it DESTABILISES it. The v2 metastable collapse is diagnosed as a GEOMETRIC
+    positive feedback (the secreted precursor concentrates in the shrinking enclosed pocket -- interior
+    precursor mass climbs ~40 -> ~158 while total stays ~350 -- and, because production is autocatalytic in
+    phi and strongest where phi is small, that pooled precursor thickens the membrane inward until the
+    centre crosses thr), not a finite-budget exhaustion. Adding a local open dissipative throughflow
+    (uniform precursor feed f_in plus washout k_wash to an external reservoir, no global observer in the
+    update) at the canonical drive loses closure at ~step 591 -- ~4x FASTER than the undriven ~2451 -- via
+    runaway autocatalytic filling (membrane mass runs away ~624 -> ~3092, the whole domain fills,
+    enclosed_area -> 0). This is not a one-drive artefact -- an ~80-point sweep (feed, washout,
+    feed+washout+turnover, saturable export, substrate feed) found NO local drive reaching a bounded steady
+    enclosed_area > 0: a uniform local drive cannot tell interior from exterior, so any feed strong enough
+    to counter decay over-drives the inward filling and any washout strong enough to prevent pooling
+    starves the ring. The controls stay load-bearing (the drive does NOT rescue closure) -- s_p=0 still
+    loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0). So EMERGE stays at
+    genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance -- an honest finding
+    about how hard steady emergent closure is, not a defect papered over.'
+  evidence:
+    from_test: v2-open-drive-does-not-sustain
+    from_run: protocell-autopoietic-v2-open
+    observed: 'canonical drive (f_in=0.01, k_wash=0.02) -- persists == 0.0, closure lost ~step 591 (vs undriven ~2451), membrane_mass ~3092 (runaway fill, seed ~624); drive-off recovers persists == 1.0; s_p=0 still collapses ~step 188; puncture not healed (enclosed_area stays 0); ~80-point sweep reaches no bounded steady enclosed_area > 0; update references no binary_fill_holes'
+  provenance:
+    run_ids:
+    - protocell-autopoietic-v2-open
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -594,7 +744,10 @@ conclusion_verdicts:
       authored, and the puncture becomes a real local prediction (precursor bleeds, membrane starves
       locally). This supplies the boundary-maintenance criterion a coarser, specification-stage lumped
       realization named as its own missing next step, AND builds the mechanistically-local version that was
-      v1's own named next step, leaving only an open-system (external-influx) version ahead.
+      v1's own named next step. The open-system (external-influx) version that was v2's own named next step
+      is now built and measured too (v2-open, F-04) -- with the honest, informative verdict that a local
+      external drive destabilises the metastable ring into faster runaway filling rather than reaching a
+      steady state, so no local drive tested converts emergent closure into indefinite self-maintenance.
 conclusion: '## Claims
 
 
@@ -656,6 +809,15 @@ conclusion: '## Claims
   - **V2-PUNCTURE-STARVES-LOCALLY** -- wedge membrane stays ~2 vs ~79 intact, precursor bleeds through the gap, no self-heal (real local prediction)
 
 
+  - **V2-OPEN-DRIVE-DOES-NOT-SUSTAIN** -- external drive (v2-open, local throughflow): persists == 0.0, closure lost ~step 591 (vs undriven ~2451) via runaway fill, membrane_mass ~3092 -- external drive DESTABILISES, does NOT reach a steady state (no local drive in an ~80-point sweep does)
+
+
+  - **V2-OPEN-DRIVE-OFF-RECOVERS-V2** -- with f_in=k_wash=0 the same open composite persists == 1.0 at 1000 steps -- the destabilisation is caused by the drive alone
+
+
+  - **V2-OPEN-CONTROLS-STILL-LOAD-BEARING** -- under drive, s_p=0 still loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0) -- the drive does not rescue closure
+
+
   ## Limitations
 
 
@@ -690,11 +852,22 @@ conclusion: '## Claims
   puncture starves locally.
 
 
-  - External-influx / open-system autopoiesis: drive the v2 loop with a genuine energy/material influx
-  (a precursor feed that does not depend on the membrane''s own finite secretion budget) so
-  self-maintenance is no longer bounded by the closed toy''s finite budget -- moving v2''s metastable
-  plateau (enclosed_area still declines 465 -> 0 over ~2451 steps as the interior fills) toward a true
-  non-equilibrium steady state.
+  - DONE this build -- External-influx / open-system autopoiesis (v2-open, ProtocellV2Open, F-04): the v2
+  loop is driven with a local open dissipative throughflow (a uniform precursor feed plus washout to an
+  external reservoir, no global observer in the update) so it is no longer on a closed budget. MEASURED, and
+  the honest verdict is the hard way -- the drive does NOT reach a non-equilibrium steady state; it
+  DESTABILISES the metastable ring into faster runaway autocatalytic filling (closure lost ~step 591 at the
+  canonical drive vs ~2451 undriven, membrane mass runs away ~624 -> ~3092), and an ~80-point drive sweep
+  found no local drive reaching a bounded steady enclosed_area > 0 (a uniform local drive cannot tell
+  interior from exterior -- feed over-drives the inward filling, washout starves the ring). The controls
+  stay load-bearing (s_p=0 still collapses ~step 188, a puncture is not healed). EMERGE stays at
+  genuinely-emergent-but-metastable closure.
+
+
+  - Still open -- a NON-UNIFORM or geometry-aware open drive (e.g. an absorbing exterior boundary, or a
+  feed that couples to the membrane rather than the whole domain) that might break the interior/exterior
+  degeneracy this build shows a uniform drive cannot -- the honest next question raised by F-04''s negative
+  result.
 
 
   - Graded puncture self-repair: extend v2 so a partial puncture can be partially repaired (a small leak
@@ -730,9 +903,13 @@ limitations:
   puncture bleeds precursor and starves the wedge locally).'
 - 'v2''s emergent closure is still METASTABLE, not eternal: enclosed_area declines 465 -> 0 over ~2451
   internal steps as the membrane thickens inward and the interior fills -- a long metastable transient on a
-  finite closed budget, of the same order as v1''s window, not a true fixed point. An open-system version
-  driven by external influx is the remaining next step. The metastable window also depends on seed
-  geometry -- a thinner seed ring fills faster (measured -- a sigma=2.2 ring collapses by ~step 975).'
+  finite closed budget, of the same order as v1''s window, not a true fixed point. The open-system version
+  driven by external influx is BUILT AND MEASURED (v2-open, ProtocellV2Open, F-04) and does NOT remove this
+  limitation -- a local external drive destabilises the ring into faster runaway filling (closure lost ~step
+  591 vs undriven ~2451) rather than reaching a steady state, and no local drive in an ~80-point sweep
+  reaches a bounded steady enclosed_area > 0, so v2-open remains non-steady (indeed shorter-lived than v2).
+  The metastable window also depends on seed geometry -- a thinner seed ring fills faster (measured -- a
+  sigma=2.2 ring collapses by ~step 975).'
 - 'The homeostatic plateau is metastable, not perpetual: a closed toy system with no external material
   influx self-maintains over a bounded window (~2000 internal steps, versus the control''s ~96-step
   collapse) and eventually runs down. This is the physically-correct signature of finite closure --
@@ -770,7 +947,14 @@ falsifiability: 'v1 (specification-level) is overturned if the closed loop fails
   alone holds the ring), if the v2 update is found to reference a global closure operator such as
   binary_fill_holes (closure-dependence would then be authored, not emergent), or if a puncture SELF-HEALS
   (enclosed_area recovering above 0 or the wedge membrane rebuilding to intact levels -- the interior
-  precursor not actually bleeding out through the gap).'
+  precursor not actually bleeding out through the gap). v2-open (open-system EMERGE step) carries a
+  DIFFERENT falsifiable claim -- that a local external drive DESTABILISES rather than sustains: it is
+  overturned if the canonical driven loop instead reaches a bounded steady enclosed_area > 0 that persists
+  indefinitely (the honest verdict would then flip to steady self-maintenance), if the drive-off override
+  does NOT recover v2''s persistence (the destabilisation would then be a code artefact, not the drive), or
+  if the drive RESCUES a control (the s_p=0 knockout re-closing, or a puncture healing above enclosed_area 0
+  -- closure would then not be load-bearing under drive). The measured result is reported honestly whichever
+  way these fall; as built they fall to destabilisation, not steady self-maintenance.'
 visualizations:
 - name: protocell-autopoietic-movie
   address: image:viz/protocell-autopoietic.gif
@@ -821,7 +1005,13 @@ experiment: 'Run reaction-diffusion protocell composites to completion through t
   the update; 1000 internal steps inside the ~2451-step window) and its s_p=0 precursor knockout; measure
   whether closure-dependence EMERGES -- the closed loop confines its self-secreted precursor and sustains
   itself, the precursor knockout collapses, and a wedge puncture makes the interior precursor bleed out and
-  the membrane starve locally -- and assert structurally that the update references no binary_fill_holes.'
+  the membrane starve locally -- and assert structurally that the update references no binary_fill_holes.
+  OPEN-SYSTEM level (v2-open, the remaining EMERGE step): protocell-autopoietic-v2-open (ProtocellV2Open,
+  the same v2 seed and physics plus a LOCAL open dissipative throughflow -- uniform precursor feed f_in
+  plus washout k_wash to an external reservoir, still no global observer in the update; canonical drive
+  f_in=0.01/k_wash=0.02, 1000 internal steps) and its drive-off, s_p=0, and puncture controls; measure
+  whether the external drive turns v2''s metastable closure into an INDEFINITE steady self-maintenance --
+  the honest verdict reported whichever way it falls -- backed by an ~80-point drive regime sweep.'
 result: The autopoietic closed loop persists -- enclosed interior area plateaus at ~149 px (homeostasis,
   down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 over 1800 steps -- while the
   single-variable k_prod=0 vesicle control collapses (enclosed_area -> 0 by step ~96, persists == 0.0),
@@ -837,8 +1027,13 @@ result: The autopoietic closed loop persists -- enclosed interior area plateaus 
   px, precursor pooled ~72) with no binary_fill_holes in the update (asserted structurally), the precursor
   knockout s_p=0 collapses at ~step 95, and a wedge puncture makes the interior precursor bleed out so the
   wedge membrane starves locally (~2 vs ~79 intact), never self-healing. EMERGE is upgraded from
-  authored-closure (v1) to genuinely-emergent local-mechanism closure (v2). Remaining boundaries are
-  reported as limitations -- v2''s plateau is still metastable on a finite closed budget (an open-system
-  driven version is the next step; the window also depends on seed geometry), the physics is deterministic
-  so persistence is not seed-dependent (the multi-seed range is a degenerate single point), and this is a
-  minimal self-maintaining boundary, not real membrane chemistry or metabolism.
+  authored-closure (v1) to genuinely-emergent local-mechanism closure (v2). The open-system driven version
+  (v2-open, ProtocellV2Open, F-04) is then BUILT AND MEASURED, and the honest verdict is that a local
+  external drive does NOT convert the metastable ring into steady self-maintenance -- it DESTABILISES it into
+  faster runaway filling (closure lost ~step 591 vs undriven ~2451; no local drive in an ~80-point sweep
+  reaches a bounded steady enclosed_area), with the controls confirming the drive does not rescue closure
+  (s_p=0 collapses ~step 188, a puncture is not healed). So EMERGE stays at genuinely-emergent-but-metastable
+  closure. Remaining boundaries are reported as limitations -- v2''s plateau is still metastable on a finite
+  closed budget and external drive does not fix it (the window also depends on seed geometry), the physics is
+  deterministic so persistence is not seed-dependent (the multi-seed range is a degenerate single point), and
+  this is a minimal self-maintaining boundary, not real membrane chemistry or metabolism.

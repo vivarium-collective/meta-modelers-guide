@@ -31,14 +31,19 @@ try {
 }
 
 const BASE = process.env.LOOM_BASE || 'http://127.0.0.1:8790';
-const PKG = 'meta_modelers_guide.composites';
+const PKG = process.env.LOOM_PKG || 'meta_modelers_guide.composites';
 
 // [studySlug, compositeStem]  (svg stem == compositeStem, matching study viz addrs)
 const JOBS = [
+  // Fig 2 (simplified a–c): a generic process, a store hierarchy, a bio bigraph
+  ['fig-02',   'fig02a-process'],
+  ['fig-02',   'fig02b-store-hierarchy'],
+  ['fig-02',   'fig02c-bio-bigraph'],
   ['fig-04',   'fig04a-interaction-modalities'],
   ['fig-04',   'fig04b-cellular-interface'],
   ['fig-05',   'fig05-cell-environment'],
   ['fig-06',   'fig06-disintegration'],
+  ['fig-06',   'fig06b-grain-swap'],
   ['fig-07',   'fig07-molecular-mechanism'],
   ['fig-08',   'fig08-nested-hierarchy'],
   ['fig-09',   'fig09a-coarse-graining'],
@@ -54,8 +59,16 @@ const JOBS = [
   ['fig-compilation', 'fig09b-executable'],
 ];
 
+const ENV_JOBS = process.env.LOOM_JOBS ? JSON.parse(process.env.LOOM_JOBS) : null;
 const ONLY = process.env.ONLY;  // optional: render just the composites whose stem includes this
-const jobs = ONLY ? JOBS.filter(([, stem]) => stem.includes(ONLY)) : JOBS;
+const _JOBS = ENV_JOBS || JOBS;
+const jobs = ONLY ? _JOBS.filter(([, stem]) => stem.includes(ONLY)) : _JOBS;
+
+// Process-contract figures: show ONLY the process card, in FULL detail (contract
+// + port types), no stores — Fig 4b (the cellular interface) and Fig 7 (the
+// molecular mechanism). Everything else renders the full composite.
+const PROC_ONLY = new Set(['fig04b-cellular-interface', 'fig07-molecular-mechanism', 'fig02a-process']);
+
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1700, height: 1200 }, deviceScaleFactor: 2 });
@@ -64,15 +77,19 @@ for (const [slug, stem] of jobs) {
   const id = `${PKG}.${stem}`;
   const out = `${WS}/workspace/studies/${slug}/visualizations/${stem}.svg`;
   const outPng = `${WS}/workspace/studies/${slug}/visualizations/${stem}.png`;
-  const url = `${BASE}/bigraph-loom/?id=${encodeURIComponent(id)}&tabs=explore,document&nopersist=1`;
+  const extra = PROC_ONLY.has(stem) ? '&only=processes&detail=full&ports=types&contract=full' : '';
+  const url = `${BASE}/bigraph-loom/?id=${encodeURIComponent(id)}&tabs=explore,document&nopersist=1${extra}`;
   try {
-    // Default every composite to loom's "Tree" layout (mode: flow-down —
-    // a vertical store place-graph). Persisted server-side so the interactive
-    // Composite Explorer AND this render both default to the tree view.
-    await fetch(`${BASE}/api/composite-default-view`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, view: { v: 1, mode: 'flow-down', positions: {} } }),
-    }).catch(() => {});
+    // By default HONOR the saved default view (the aesthetic arrangement saved
+    // from the Composite Explorer). Only when RESET_VIEWS=1 do we force the
+    // auto "Tree" layout (mode: flow-down, empty positions) — e.g. to reset a
+    // composite that has no hand-arranged view yet.
+    if (process.env.RESET_VIEWS) {
+      await fetch(`${BASE}/api/composite-default-view`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, view: { v: 1, mode: 'flow-down', positions: {} } }),
+      }).catch(() => {});
+    }
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForSelector('.react-flow__node', { timeout: 40000 });
     await page.waitForTimeout(5000);  // settle: layout + fitView + font load
