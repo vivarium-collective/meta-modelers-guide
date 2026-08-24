@@ -65,12 +65,9 @@ def panel(name, label=None, scale=1.0, rotate=0, crop=None):
 # Numbering follows the paper AFTER the overview (old Fig 1) was dropped:
 # process bigraph is now Fig 1, orchestration Fig 2, … evolution Fig 11.
 FIGURES: dict[int, dict] = {
-    1: {"study": "fig-02", "root": group("col", [
-        group("row", [
-            loom("fig-02", "fig02a-process", "a"),           # a generic process (full contract)
-            loom("fig-02", "fig02b-store-hierarchy", "b"),   # a biological store hierarchy w/ units
-        ]),
-        loom("fig-02", "fig02c-bio-bigraph", "c"),           # a biological process bigraph
+    1: {"study": "fig-02", "root": group("row", [   # a generic process (left) + store hierarchy (right)
+        loom("fig-02", "fig02a-process", "a"),
+        loom("fig-02", "fig02b-store-hierarchy", "b"),
     ])},
     2: {"study": "fig-03", "root":   # orchestration — hand-created figure (a/b/c baked in)
         rawimg(str(ROOT / "assets" / "orchestration.tif")),
