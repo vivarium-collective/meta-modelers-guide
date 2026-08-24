@@ -88,7 +88,7 @@
           <span class="status-detail-axis">2 · Execution</span>
           <span class="status-chip gate-state-not-assessed">not set</span>
           
-          <span class="gate-computed-chip gate-state-passed" title="10 completed run(s)">◆ computed: ran</span>
+          <span class="gate-computed-chip gate-state-passed" title="12 completed run(s)">◆ computed: ran</span>
           
           
           
@@ -152,8 +152,9 @@ nutrient gradient it depends on — environmental modification (local resource d
 metabolism: one cell sensing local glucose, running flux-balance analysis at its own footprint,
 growing, and secreting a byproduct that diffuses back into the field it senses? The paper
 frames this feedback loop as &#34;the minimal structure required for control&#34;; here the loop is
-genuinely closed (a real depletion → uptake feedback), while directed control — chemotaxis up
-the sensed gradient — is the deferred half. Mechanistically, the cell and its environment are
+genuinely closed (a real depletion → uptake feedback) in the flagship, while directed control —
+chemotaxis up the sensed gradient — is the flagship&#39;s non-motile-by-design other half, now
+BUILT and MEASURED in the `chemotaxis` variant (finding F-08). Mechanistically, the cell and its environment are
 two real, independently-built simulators (viva-cpm&#39;s Cellular Potts engine, spatio-flux&#39;s
 diffusion-advection and dynamic-FBA processes) composed through one typed coupling process
 (`CpmCellField`), rather than a scripted or lumped stand-in for that coupling.
@@ -571,7 +572,8 @@ diffusion-advection and dynamic-FBA processes) composed through one typed coupli
       <p class="ctr-text">Composing a real CPM cell with a real spatio-flux nutrient field through one typed
 coupling process (`CpmCellField`) reproduces the paper&#39;s §Cell–environment coupling
 sense → metabolize → secrete loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in
-for it (the loop is closed; directed control/chemotaxis is deferred): over 20 ticks the
+for it (the flagship loop is closed; directed control/chemotaxis is built and measured in the
+`chemotaxis` variant, finding F-08) — over 20 ticks the
 cell runs dynamic-FBA at its own
 footprint (`e_coli_core`, O2-capped to force acetate overflow), grows ~3.4x in CPM volume (32
 -&gt; 110 px, ~3% of a 60x60 lattice it does not come close to filling), depletes local glucose by
@@ -586,9 +588,10 @@ the field, measurably reshaping the very gradient it depends on: environmental m
 realized spatially. This is the paper&#39;s §Cell–environment coupling sense → metabolize → secrete
 loop (Fig 5), and this investigation&#39;s flagship. The paper frames this feedback loop as &#34;the
 minimal structure required for control&#34;: here the loop is genuinely closed (a real
-depletion → uptake feedback), while directed control — chemotaxis up the sensed gradient — is a
-tracked, deferred half (see key_assumptions/limitations), so this cell senses, metabolizes,
-grows, and secretes, but does not yet act on what it senses. Mechanically it composes two real,
+depletion → uptake feedback), while directed control — chemotaxis up the sensed gradient — is
+the flagship&#39;s non-motile-by-design other half, now built and measured in the `chemotaxis`
+variant (finding F-08); the FLAGSHIP cell itself senses, metabolizes,
+grows, and secretes, but does not act on what it senses. Mechanically it composes two real,
 independently-built simulators through one typed coupling process (`CpmCellField`): one CPM cell
 — a real Cellular Potts Model agent from viva-cpm, with genuine pixel-level shape, adhesion, and
 volume dynamics on a 60x60 lattice — with a shared spatio-flux `fields` grid (glucose, acetate)
@@ -657,7 +660,7 @@ interface observable agrees within ~12%, and out to a 2x-longer run (40 ticks) w
 the MM box carries no oxygen variable — on a held-out O2 cap (dFBA 2.5→5.0, dFBA-only) agreement
 COLLAPSES to ~74% (dFBA nearly quadruples biomass/volume; the O2-blind MM twin cannot follow).
 Mechanism-independence holds within the calibrated regime; the O2 axis is the surrogate&#39;s blind
-spot and the honest boundary of the swap.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a source/sink equilibrium. The `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and is run ~120 ticks to a VERIFIED flux steady state — d(biomass)/dt and both field fluxes fall below tolerance while the cell keeps metabolizing at maintenance. This answers the limitation the flagship itself flags (the field has no continuous source or decay term).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">M7d cadence rigor check (peer review) — the flagship&#39;s operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1, and only the PDE substeps are CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 -&gt; 0.5 -&gt; 0.25) and measuring the drift in the four gated observables between the two finest levels tests whether the pinned trajectories are cadence-converged. Convergence band is &lt;= 10%. HONEST two-sided result — the three TIME-INTEGRATED gated observables converge tightly, but the INSTANTANEOUS local-footprint glucose does NOT (it is the one pinned trajectory that moves under refinement, flagged on F-02 below).</span></div>
+spot and the honest boundary of the swap.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a source/sink equilibrium. The `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and is run ~120 ticks to a VERIFIED flux steady state — d(biomass)/dt and both field fluxes fall below tolerance while the cell keeps metabolizing at maintenance. This answers the limitation the flagship itself flags (the field has no continuous source or decay term).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">M7d cadence rigor check (peer review) — the flagship&#39;s operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1, and only the PDE substeps are CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 -&gt; 0.5 -&gt; 0.25) and measuring the drift in the four gated observables between the two finest levels tests whether the pinned trajectories are cadence-converged. Convergence band is &lt;= 10%. HONEST two-sided result — the three TIME-INTEGRATED gated observables converge tightly, but the INSTANTANEOUS local-footprint glucose does NOT (it is the one pinned trajectory that moves under refinement, flagged on F-02 below).</span><span class="ctr-dot">·</span><span class="ctr-meta-item">The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up the sensed glucose gradient (+x) while the non-motile flagship control barely drifts on the identical field, and by reaching the richer region it acquires more glucose and grows more. Measured head-to-head over 20 ticks — up-gradient displacement (chemo vs control), sensed local glucose, net glucose acquired, biomass, and CPM volume.</span><span class="ctr-dot">·</span><span class="ctr-meta-item">Byte-identical no-op control — chemotaxis_strength 0.0 (the flagship default) leaves the flagship trajectory unchanged. With the force off, CpmCellField never calls set_external_potential, so the world&#39;s external potential stays all-zero and a run with the flag EXPLICITLY 0.0 is identical, to the bit, to a run with the flag ABSENT. This proves the chemotaxis term is a pure add-on that does not perturb the existing flagship.</span></div>
       </div>
       
     </div>
@@ -670,8 +673,9 @@ condition) before diffusion partially resupplies it, and secretes a diffusing ac
 (field-wide acetate 0 -&gt; ~47.0) from an
 O2-capped dynamic-FBA overflow mechanism — demonstrated to be O2-cap-caused by an uncapped
 control (uncapped acetate ~0). The paper&#39;s §Cell–environment coupling sense → metabolize →
-secrete loop (Fig 5) closed as genuine spatial metabolism (directed control/chemotaxis deferred),
-composed from two independently-built simulators through one typed process.
+secrete loop (Fig 5) closed as genuine spatial metabolism (directed control/chemotaxis built and
+measured in the `chemotaxis` variant, F-08), composed from two independently-built simulators
+through one typed process.
 </p>
       
       
@@ -689,7 +693,7 @@ composed from two independently-built simulators through one typed process.
             <span class="finding-claim finding-statement">A real CPM cell coupled to a real spatio-flux nutrient field through one typed
 process (`CpmCellField`) closes the paper&#39;s §Cell–environment coupling
 sense → metabolize → secrete loop (Fig 5) as genuine spatial metabolism (the loop is closed;
-directed control/chemotaxis is deferred): it
+directed control/chemotaxis is built and measured in the `chemotaxis` variant, F-08) — it
 runs dynamic-FBA at its own footprint and grows both biologically (biomass) and structurally
 (CPM lattice volume). Confirmed: biomass 0.1 -&gt; ~0.37, CPM volume 32 -&gt; 110 px (~3.4x) over
 20 ticks, on a 3600-pixel lattice the cell occupies only ~3% of by the end.</span>
@@ -1083,6 +1087,56 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 0.1</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-biological finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">CHEMOTAXIS — DIRECTED UP-GRADIENT MOTION, BUILT AND MEASURED. The flagship senses, metabolizes, grows, and secretes but does NOT act on what it senses — directed control (chemotaxis up the sensed gradient) was the deferred half of the paper&#39;s sense → metabolize → act loop. The `chemotaxis` variant closes it behind the same `CpmCellField` ports — each tick the coupling process takes grad(glucose) of the SHARED spatio-flux field over the cell&#39;s footprint and sets viva-cpm&#39;s per-type external-potential force f = chemotaxis_strength·grad(glucose), so the Metropolis pixel-copy is biased up-gradient via U(r) = −f·r (the linearized form of CC3D chemotaxis ΔH = −λ·Δc, driven by the external shared field the cell already senses, not a viva-cpm-internal PDE field — which has no write path in this coupling). RESULT — directed up-gradient motion is genuinely achieved and it measurably helps. Over 20 ticks on the identical field the chemotaxis cell migrates from COM x ≈ 18.5 to ≈ 39.3 — a +20.8 px up-gradient displacement versus the non-motile flagship control&#39;s +0.2 px thermal drift (~90×) — reaching a ~2.1× richer local glucose region (sensed local glucose 1.95 vs 0.94) and, for it, acquiring ~16% more glucose (net 36.8 vs 31.6), building ~13% more biomass (0.418 vs 0.370), and growing ~36% more CPM volume (150 vs 110 px). The term is off by default (chemotaxis_strength 0.0 never sets the force → flagship byte-identical). Confirmed — the &#34;chemotaxis is deferred&#34; limitation the flagship flagged is now built and measured, and the honest result is positive on both axes (directed motion AND a nutrient/growth advantage).</span>
+            
+            <span class="finding-chip">via <code>chemotaxis-moves-cell-up-gradient-and-helps</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-08</span>
+              <span class="finding-kind">biological</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> COM x 18.5 → 39.3 (+20.8 px up-gradient) vs control +0.2 px (~90×); local glucose 1.95 vs 0.94 (~2.1×); net glucose 36.8 vs 31.6 (+16%); biomass 0.418 vs 0.370 (+13%); CPM volume 150 vs 110 px (+36%) · 
+              
+              via test <a href="#bt-chemotaxis-moves-cell-up-gradient-and-helps" onclick="_gotoStudyTab('tests','bt-chemotaxis-moves-cell-up-gradient-and-helps');return false;"><code>chemotaxis-moves-cell-up-gradient-and-helps</code></a> · 
+              in run <a href="#run-single-cell-in-a-field-chemotaxis"><code>single-cell-in-a-field-chemotaxis</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-single-cell-in-a-field"><code>single-cell-in-a-field</code></a>, <a href="#run-single-cell-in-a-field-chemotaxis"><code>single-cell-in-a-field-chemotaxis</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &gt; 10.0</code></div>
             
             
             
@@ -1765,6 +1819,84 @@ pass_if: {"kind": "rigor_check", "op": "\u003c", "provenance": "MEASURED drift b
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-chemotaxis-moves-cell-up-gradient-and-helps"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="chemotaxis-moves-cell-up-gradient-and-helps"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">chemotaxis-moves-cell-up-gradient-and-helps</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>single-cell-in-a-field-chemotaxis</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up the sensed glucose gradient (+x) while the non-motile flagship control barely drifts on the identical field, and by reaching the richer region it acquires more glucose and grows more. Measured head-to-head over 20 ticks — up-gradient displacement (chemo vs control), sensed local glucose, net glucose acquired, biomass, and CPM volume.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "chemotaxis vs flagship-control COM-x displacement + nutrient/growth deltas over 20 ticks", "kind": "observable", "path": "obs.position, obs.local_nutrient, obs.biomass, obs.volume, fields.glucose"}
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "MEASURED, deterministic fixed-seed run (tests/test_chemotaxis_field.py::test_chemotaxis_moves_cell_up_gradient_and_helps_growth). DIRECTED MOTION \u2014 chemotaxis COM x 18.5 \u2192 39.3 (+20.8 px up-gradient) vs flagship control 18.5 \u2192 18.73 (+0.2 px thermal drift), ~90\u00d7 \u2014 pass_if value 10.0 is the up-gradient displacement floor the migrating cell clears (+20.8) and the control does not (+0.2). REACHES RICHER REGION \u2014 sensed local glucose 1.95 vs 0.94 (~2.1\u00d7). HELPS \u2014 net glucose acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs 110 px (+36%). Directed up-gradient motion is genuinely achieved and measurably improves nutrient acquisition and growth versus the non-motile flagship on the same field.", "value": 10.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-chemotaxis-off-is-byte-identical-to-flagship"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="chemotaxis-off-is-byte-identical-to-flagship"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">chemotaxis-off-is-byte-identical-to-flagship</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>single-cell-in-a-field</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Byte-identical no-op control — chemotaxis_strength 0.0 (the flagship default) leaves the flagship trajectory unchanged. With the force off, CpmCellField never calls set_external_potential, so the world&#39;s external potential stays all-zero and a run with the flag EXPLICITLY 0.0 is identical, to the bit, to a run with the flag ABSENT. This proves the chemotaxis term is a pure add-on that does not perturb the existing flagship.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "flag-absent run == flag-explicitly-0.0 run (exact equality of endpoints)", "kind": "observable", "path": "obs.biomass, obs.volume, obs.position"}
+pass_if: {"kind": "regression_pin", "op": "approx_equal", "provenance": "MEASURED (tests/test_chemotaxis_field.py::test_chemotaxis_off_is_byte_identical_to_flagship) \u2014 flag-absent and flag-explicitly-0.0 runs return bit-identical (biomass, volume, COM-x, COM-y); the flagship endpoints are unchanged (biomass ~0.369, CPM volume 110, only thermal up-gradient drift). The chemotaxis term is off-by-default and byte-identical to the flagship.", "value": 0.0}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1919,7 +2051,8 @@ through the engine over 20 ticks.</div>
 field through one typed coupling process (<code>CpmCellField</code>) reproduces the paper's
 §Cell–environment coupling sense → metabolize → secrete loop (Fig 5) as genuine spatial
 metabolism — the loop closed (depletion → uptake feedback), with directed control (chemotaxis)
-the deferred half.
+the flagship's non-motile-by-design other half, now built and measured in the <code>chemotaxis</code>
+variant (finding F-08 — directed up-gradient migration with a nutrient/growth advantage).
 Over 20 ticks the cell grows ~3.4x in CPM volume (32 -&gt; 110 px, ~3% of a 60x60 lattice it does
 not come close to filling), depletes its own local glucose by ~18% peak-to-trough (~6% from the
 initial condition) before diffusion partially resupplies it (environmental modification), and
@@ -1944,9 +2077,7 @@ footprint</li>
 <li>e_coli_core constants (<code>glucose_km</code>, <code>glucose_vmax</code>, <code>oxygen_vmax</code>, <code>box_volume_L</code>,
 <code>grow_per_biomass</code>) are toy-real — plausible, hand-tuned magnitudes, not fitted to any
 organism or medium.</li>
-<li>Chemotaxis toward the sensed field is deferred to a follow-up variant; the cell does not move
-directionally up-gradient in this composite. Its modest position drift is CPM thermal
-fluctuation, not directed motion.</li>
+<li>Chemotaxis toward the sensed field is now BUILT and MEASURED in the <code>chemotaxis</code> variant (finding F-08) — the FLAGSHIP itself stays non-motile by design (its modest position drift is CPM thermal fluctuation, not directed motion), and the variant adds a gradient-directed external-potential force behind the same ports that produces genuine directed up-gradient migration (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship's thermal drift) with a measured nutrient/growth advantage (local glucose ~2.1×, net glucose +16%, biomass +13%, volume +36%).</li>
 <li>Growth is roughly exponential in this coupling, so the run is deliberately bounded to
 ~20-25 ticks to stay spatially legible; a longer run was not attempted.</li>
 <li>The metabolized field is exclusively the spatio-flux <code>fields</code> store; the CPM cell's own
@@ -1955,7 +2086,7 @@ not a process-bigraph store, and no other process reads or writes it.</li>
 </ul>
 <h2>Next steps</h2>
 <ul>
-<li>Add directed chemotaxis (motion up the sensed gradient) as a variant of this composite.</li>
+<li>Directed chemotaxis (motion up the sensed gradient) is now built and measured as the <code>chemotaxis</code> variant (finding F-08) — directed up-gradient migration with a nutrient/growth advantage. A natural follow-up is chemotaxis under the steady-state / multi-cell regimes.</li>
 <li>Multi-cell competition over one shared field is realized in <code>cell-cell-coupling</code>, which reuses
 <code>CpmCellField</code> for each competing cell.</li>
 </ul>
@@ -1985,7 +2116,7 @@ internal lattice/world (its shape, occupied pixels, footprint) lives inside viva
 engine as a private object the coupling process owns (`CpmCellField.world`) — it is not a
 process-bigraph store, and no other process in the composite reads or writes it. viva-cpm&#39;s
 own internal field concept (`field_at_cell`, `secretory_types`, `receptor_coupling`) is
-separate machinery this composite does not use.</li><li style="margin:2px 0">Growth is roughly exponential in this coupling (biomass compounds each tick), so the run is deliberately bounded to ~20-25 ticks — a longer run would need either a saturating growth term or a much larger field to stay spatially legible rather than filling the lattice.</li><li style="margin:2px 0">Chemotaxis toward the sensed field (directed up-gradient motion) is deferred to a follow-up variant; the flagship cell senses, metabolizes, grows, and secretes, but does not chemotax — its modest position drift over the run (roughly (17,17) seed to about (18.7, 30.3) by t=20) is CPM thermal fluctuation under the configured temperature, not directed motion.</li>
+separate machinery this composite does not use.</li><li style="margin:2px 0">Growth is roughly exponential in this coupling (biomass compounds each tick), so the run is deliberately bounded to ~20-25 ticks — a longer run would need either a saturating growth term or a much larger field to stay spatially legible rather than filling the lattice.</li><li style="margin:2px 0">Chemotaxis toward the sensed field (directed up-gradient motion) is BUILT and MEASURED in the `chemotaxis` variant (finding F-08) — the FLAGSHIP itself remains non-motile by design (its modest position drift, COM x ≈ 18.5 → 18.7 over 20 ticks, is CPM thermal fluctuation under the configured temperature, not directed motion), and the `chemotaxis` variant adds a gradient-directed external-potential force behind the same ports that produces genuine directed up-gradient migration (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship&#39;&#39;s thermal drift) with a measured nutrient/growth advantage.</li>
       </ul>
     </div>
     
@@ -1995,7 +2126,7 @@ separate machinery this composite does not use.</li><li style="margin:2px 0">Gro
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass) are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not fitted to any organism or medium.</li><li style="margin:2px 0">Chemotaxis toward the external field is deferred to a follow-up variant; the cell senses, metabolizes, grows, and secretes, but does not move directionally up-gradient. The minimal extension is well understood — bias the CPM target/footprint up the local gradient (a toy 1-D gradient-drift rule) — so directed action is a small increment, not a new mechanism.</li><li style="margin:2px 0">Growth is roughly exponential in this coupling, so the run is deliberately bounded to ~20-25 ticks to stay spatially legible.</li><li style="margin:2px 0">The metabolized nutrient field is exclusively the spatio-flux ``fields`` store; the CPM cell&#39;s own internal lattice/world lives inside viva-cpm&#39;s Rust engine as a private, write-protected object the coupling process owns, not a process-bigraph store — no other process in the composite reads or writes it, and viva-cpm&#39;s own internal field concept (field_at_cell/secretory_types) is separate machinery this composite does not use.</li><li style="margin:2px 0">The cell&#39;s only channel for acting back on its environment here is metabolic (uptake and secretion). A second, non-metabolic sense/act channel — mechanical stress / traction, where the cell pushes on its surroundings and reads the reaction force — is not modeled; it is a candidate future coupling process alongside chemotaxis.</li><li style="margin:2px 0">The FLAGSHIP nutrient field has no continuous source or decay term — its 20-tick dynamics are transient depletion plus diffusion, not a source/sink equilibrium. M7d (peer review) now ADDRESSES this — the `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and reaches a verified flux steady state by ~t=100-120 (finding F-06). The flagship itself remains a transient by design; the steady-state regime is the standing-field extension.</li><li style="margin:2px 0">CADENCE (M7d, peer review) — the operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1 and only the PDE substeps are CFL-guarded. A cadence-halving/quartering convergence check (finding F-07) shows the time-integrated gated observables (biomass/volume growth, acetate plume, net glucose sink) are cadence-converged (&lt; 3% drift between cadence 0.25 and 0.5), but the INSTANTANEOUS local-footprint glucose is NOT (~16% drift) because the CPM&#39;s fixed mcs_per_update is not interval-scaled. F-02&#39;s local-depletion depths (0.94 / ~18% / ~6%) are therefore approximate cadence-1 readings, not converged quantities; a cadence-invariant local reading would require interval-scaling the CPM Monte-Carlo sweeps, a follow-up.</li>
+        <li style="margin:2px 0">e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass) are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not fitted to any organism or medium.</li><li style="margin:2px 0">Chemotaxis toward the external field is now BUILT and MEASURED (finding F-08, the `chemotaxis` variant). The FLAGSHIP cell stays non-motile by design — it senses, metabolizes, grows, and secretes but does not move directionally up-gradient — while the variant biases the CPM Metropolis pixel-copy up the SHARED glucose gradient via a gradient-directed external-potential force (f = chemotaxis_strength·grad(glucose), U(r) = −f·r) behind the same `CpmCellField` ports. Directed up-gradient motion is genuinely achieved (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship&#39;&#39;s +0.2 px thermal drift) and it measurably helps — the migrating cell reaches a ~2.1× richer glucose region and acquires ~16% more glucose, ~13% more biomass, and ~36% more CPM volume than the stationary control on the identical field. Off by default (strength 0.0 → flagship byte-identical). The variant is single-cell on a static-gradient field; chemotaxis under the steady-state or multi-cell regimes is the follow-up.</li><li style="margin:2px 0">Growth is roughly exponential in this coupling, so the run is deliberately bounded to ~20-25 ticks to stay spatially legible.</li><li style="margin:2px 0">The metabolized nutrient field is exclusively the spatio-flux ``fields`` store; the CPM cell&#39;s own internal lattice/world lives inside viva-cpm&#39;s Rust engine as a private, write-protected object the coupling process owns, not a process-bigraph store — no other process in the composite reads or writes it, and viva-cpm&#39;s own internal field concept (field_at_cell/secretory_types) is separate machinery this composite does not use.</li><li style="margin:2px 0">The cell&#39;s only channel for acting back on its environment here is metabolic (uptake and secretion). A second, non-metabolic sense/act channel — mechanical stress / traction, where the cell pushes on its surroundings and reads the reaction force — is not modeled; it is a candidate future coupling process alongside chemotaxis.</li><li style="margin:2px 0">The FLAGSHIP nutrient field has no continuous source or decay term — its 20-tick dynamics are transient depletion plus diffusion, not a source/sink equilibrium. M7d (peer review) now ADDRESSES this — the `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and reaches a verified flux steady state by ~t=100-120 (finding F-06). The flagship itself remains a transient by design; the steady-state regime is the standing-field extension.</li><li style="margin:2px 0">CADENCE (M7d, peer review) — the operator-split CPM&lt;-&gt;dFBA&lt;-&gt;diffusion loop runs at coupling cadence 1 and only the PDE substeps are CFL-guarded. A cadence-halving/quartering convergence check (finding F-07) shows the time-integrated gated observables (biomass/volume growth, acetate plume, net glucose sink) are cadence-converged (&lt; 3% drift between cadence 0.25 and 0.5), but the INSTANTANEOUS local-footprint glucose is NOT (~16% drift) because the CPM&#39;s fixed mcs_per_update is not interval-scaled. F-02&#39;s local-depletion depths (0.94 / ~18% / ~6%) are therefore approximate cadence-1 readings, not converged quantities; a cadence-invariant local reading would require interval-scaling the CPM Monte-Carlo sweeps, a follow-up.</li>
       </ul>
     </div>
     
@@ -2057,7 +2188,7 @@ separate machinery this composite does not use.</li><li style="margin:2px 0">Gro
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "9d177802acdd8337bb3b69826842863d37975387", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/9d177802acdd8337bb3b69826842863d37975387", "branch": "main", "lockfile": "uv.lock@414137636794", "generated_at": "2026-08-22 21:22 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "d2993a9fe3c2e9fa10ecc8c3b43fe2262eedc524", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/d2993a9fe3c2e9fa10ecc8c3b43fe2262eedc524", "branch": "main", "lockfile": "uv.lock@7497f7aac957", "generated_at": "2026-08-24 12:30 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "cell-environment-coupling";
