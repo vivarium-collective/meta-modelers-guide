@@ -3,16 +3,25 @@ name: fig-10
 title: Development
 kind: theoretical
 purpose:
-  mechanism: 'Multicellular development as a place-graph rewrite: a founder cell colonizes
-    a surface and the biofilm accretes sibling cells.'
+  mechanism: 'Multicellular development as biofilm emergence from free motile bacteria,
+    modelled as a runtime place-graph rewrite. Initial state: an environment holding
+    a surface and N free motile bacteria (top-level siblings, motile). Processes:
+    a BiofilmEmergence process fires two update rules — ATTACHMENT & AGGREGATION
+    (the motile bacteria leave the top level and become children of a new biofilm
+    node, switching to sessile) and MATURATION (the sessile community secretes ECM
+    matrix nodes inside the biofilm). Running it reorganizes the place graph:
+    dispersed free cells → a nested microcolony → a matrix-encased biofilm.'
 visualizations:
-- name: Figure 10
-  address: svg:visualizations/figure_10.svg
+- name: Biofilm emergence sequence
+  address: image:visualizations/fig10-biofilm-sequence.png
   config:
-    caption: 'Multicellular development as a place-graph rewrite: a founder cell colonizes
-      a surface and the biofilm accretes sibling cells.'
+    chart: image
+    caption: 'Biofilm emergence as a genuine runtime place-graph rewrite: free motile
+      bacteria attach to the surface and aggregate into a nested microcolony (losing
+      motility), then the sessile community secretes extracellular matrix. Three snapshots
+      captured from running the fig10-emergence simulation (t=0, t=attach, t=mature).'
 question: How is development a place-graph rewrite?
 baseline:
-- name: fig10-development
-  composite: meta_modelers_guide.composites.fig10-development
+- name: fig10-emergence
+  composite: meta_modelers_guide.composites.fig10-emergence
   params: {}

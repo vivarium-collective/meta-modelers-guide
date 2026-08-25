@@ -1,0 +1,85 @@
+{
+  "name": "Biofilm Emergence \u2014 Live Topology",
+  "description": "Fig 10b as a genuine place-graph rewrite: biofilm emergence from free motile bacteria. The environment starts with a surface and free motile bacteria; running it makes them attach + aggregate into a nested microcolony, then mature by secreting ECM. Steppable topology for the loom run/animate feature.",
+  "default_n_steps": 8,
+  "requires": {
+    "processes": [
+      "BiofilmEmergence"
+    ]
+  },
+  "state": {
+    "env": {
+      "_type": "tree[node]",
+      "surface": {
+        "_control": "surface",
+        "contents": {}
+      },
+      "bacterium_0": {
+        "_control": "cell",
+        "contents": {
+          "biomass": 1.0,
+          "motile": 1.0
+        }
+      },
+      "bacterium_1": {
+        "_control": "cell",
+        "contents": {
+          "biomass": 1.0,
+          "motile": 1.0
+        }
+      },
+      "bacterium_2": {
+        "_control": "cell",
+        "contents": {
+          "biomass": 1.0,
+          "motile": 1.0
+        }
+      },
+      "bacterium_3": {
+        "_control": "cell",
+        "contents": {
+          "biomass": 1.0,
+          "motile": 1.0
+        }
+      }
+    },
+    "emergence": {
+      "_type": "process",
+      "address": "local:BiofilmEmergence",
+      "interval": 1.0,
+      "config": {
+        "attach_at": 2.0,
+        "mature_at": 4.0,
+        "ecm_count": 3.0
+      },
+      "inputs": {
+        "env": [
+          "env"
+        ]
+      },
+      "outputs": {
+        "env": [
+          "env"
+        ]
+      }
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "env": "tree[node]",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "env": [
+          "env"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    }
+  }
+}
