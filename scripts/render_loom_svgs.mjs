@@ -36,27 +36,27 @@ const PKG = process.env.LOOM_PKG || 'meta_modelers_guide.composites';
 // [studySlug, compositeStem]  (svg stem == compositeStem, matching study viz addrs)
 const JOBS = [
   // Fig 2 (simplified a–c): a generic process, a store hierarchy, a bio bigraph
-  ['fig-02',   'fig02a-process'],
-  ['fig-02',   'fig02b-store-hierarchy'],
-  ['fig-02',   'fig02c-bio-bigraph'],
-  ['fig-04',   'fig04a-interaction-modalities'],
-  ['fig-04',   'fig04b-cellular-interface'],
-  ['fig-05',   'fig05-cell-environment'],
-  ['fig-06',   'fig06-disintegration'],
-  ['fig-06',   'fig06b-grain-swap'],
-  ['fig-07',   'fig07-molecular-mechanism'],
-  ['fig-08',   'fig08-nested-hierarchy'],
-  ['fig-09',   'fig09a-coarse-graining'],
-  ['fig-09',   'fig09b-minimal-cell'],
-  ['fig-10-1', 'fig10-1-division'],
-  ['fig-10-2', 'fig10-2-development'],
-  ['fig-10-3', 'fig10-3-evolution'],
+  ['fig-01',   'fig01a-process'],
+  ['fig-01',   'fig01b-store-hierarchy'],
+  ['fig-01',   'fig01c-bio-bigraph'],
+  ['fig-03',   'fig03a-interaction-modalities'],
+  ['fig-03',   'fig03b-cellular-interface'],
+  ['fig-04',   'fig04-cell-environment'],
+  ['fig-05',   'fig05-disintegration'],
+  ['fig-05',   'fig05b-grain-swap'],
+  ['fig-06',   'fig06-molecular-mechanism'],
+  ['fig-07',   'fig07-nested-hierarchy'],
+  ['fig-08',   'fig08a-coarse-graining'],
+  ['fig-08',   'fig08b-minimal-cell'],
+  ['fig-09', 'fig09-division'],
+  ['fig-10', 'fig10-development'],
+  ['fig-11', 'fig11-evolution'],
   // executable compilations (fig-compilation study)
-  ['fig-compilation', 'fig06-executable-coarse'],
-  ['fig-compilation', 'fig06-executable-kinetic'],
-  ['fig-compilation', 'fig04b-executable'],
-  ['fig-compilation', 'fig05-executable'],
-  ['fig-compilation', 'fig09b-executable'],
+  ['fig-compilation', 'fig05-executable-coarse'],
+  ['fig-compilation', 'fig05-executable-kinetic'],
+  ['fig-compilation', 'fig03b-executable'],
+  ['fig-compilation', 'fig04-executable'],
+  ['fig-compilation', 'fig08b-executable'],
 ];
 
 const ENV_JOBS = process.env.LOOM_JOBS ? JSON.parse(process.env.LOOM_JOBS) : null;
@@ -67,7 +67,7 @@ const jobs = ONLY ? _JOBS.filter(([, stem]) => stem.includes(ONLY)) : _JOBS;
 // Process-contract figures: show ONLY the process card, in FULL detail (contract
 // + port types), no stores — Fig 4b (the cellular interface) and Fig 7 (the
 // molecular mechanism). Everything else renders the full composite.
-const PROC_ONLY = new Set(['fig04b-cellular-interface', 'fig07-molecular-mechanism', 'fig02a-process']);
+const PROC_ONLY = new Set(['fig03b-cellular-interface', 'fig06-molecular-mechanism', 'fig01a-process']);
 
 
 const browser = await chromium.launch();

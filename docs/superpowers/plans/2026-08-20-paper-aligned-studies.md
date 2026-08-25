@@ -4,7 +4,7 @@
 
 **Goal:** Restructure the `draft-to-living-cell` investigation into 9 studies, one per composition-pattern section of the paper, each authored as a typed contract compiled to an executable, with the 5-laws apparatus re-homed to where the paper actually argues each law.
 
-**Architecture:** The composite/handler/env/test code is already figure-numbered correctly, so the work is (A) build the one genuinely-missing pattern — cell–cell coupling — as a new draft + handlers + env + composite + BUILD entry + law test; (B) re-author the study layer 6→9 via the `/viva-study` skill, re-homing the three metabolisms into `disintegration`/`autopoiesis` and the impostor into `cellular-interface`; (C) re-anchor `investigation.yaml`, `README.md`, and regenerate reports. The paper's Fig 6 is Disintegration (not a fabricated "metabolism" figure) and the existing `fig06-disintegration` composite already models the cell↔molecular-network grain-swap — the fix is narrative + study placement, not new metabolism code.
+**Architecture:** The composite/handler/env/test code is already figure-numbered correctly, so the work is (A) build the one genuinely-missing pattern — cell–cell coupling — as a new draft + handlers + env + composite + BUILD entry + law test; (B) re-author the study layer 6→9 via the `/viva-study` skill, re-homing the three metabolisms into `disintegration`/`autopoiesis` and the impostor into `cellular-interface`; (C) re-anchor `investigation.yaml`, `README.md`, and regenerate reports. The paper's Fig 6 is Disintegration (not a fabricated "metabolism" figure) and the existing `fig05-disintegration` composite already models the cell↔molecular-network grain-swap — the fix is narrative + study placement, not new metabolism code.
 
 **Tech Stack:** Python, `process_bigraph`, `viva_compiler` (the compiler + laws), pytest, the `/viva-*` workbench skills, COBRApy (optional, guarded).
 
@@ -29,7 +29,7 @@
 - `meta_modelers_guide/handlers_cellcell.py` — competition + cross-feeding handlers over one cell–cell coupling interface, plus its `ENV` maps.
 - `meta_modelers_guide/composites/cellcell-coupling.composite.json` — the draft (contract) composite: two cell agents wired to a shared environmental nutrient store.
 - `tests/test_cellcell.py` — the cell–cell law test (competition drives one cell's viability below the other's; interface preserved; handler independence competition vs cross-feed).
-- `meta_modelers_guide/composites/fig06-disintegration-dynamics.composite.json` — a **playable** level-shift composite (thermal shock → viability collapse → biomass → molecular debris) with a RAM emitter, so stepping through it in the Composite Explorer/loom visibly shows disintegration.
+- `meta_modelers_guide/composites/fig05-disintegration-dynamics.composite.json` — a **playable** level-shift composite (thermal shock → viability collapse → biomass → molecular debris) with a RAM emitter, so stepping through it in the Composite Explorer/loom visibly shows disintegration.
 - `scripts/build_disintegration.py` — serializes `build_disintegration()` to that composite JSON (mirrors `scripts/build_executables.py`'s write pattern).
 - `tests/test_disintegration_dynamics.py` — asserts that over the play viability collapses below the floor and molecular debris accumulates while biomass falls.
 - 3 new study dirs under `workspace/studies/`: `cell-cell-coupling/`, plus renamed dirs (see tasks).
@@ -270,7 +270,7 @@ class CrossFeedingCell(Process):
 
 - [ ] **Step 5: Register the envs in `handler_envs.py`**
 
-After the `ENVS["fig06-fba"] = …` line, append:
+After the `ENVS["fig05-fba"] = …` line, append:
 
 ```python
 # Cell–cell coupling: two cells over ONE shared-nutrient interface (law 4).
@@ -396,12 +396,12 @@ The disintegration study must *show* disintegration when played in the Composite
 **Files:**
 - Modify: `meta_modelers_guide/wholecell.py` (add `build_disintegration()`)
 - Create: `scripts/build_disintegration.py`
-- Create: `meta_modelers_guide/composites/fig06-disintegration-dynamics.composite.json` (generated)
+- Create: `meta_modelers_guide/composites/fig05-disintegration-dynamics.composite.json` (generated)
 - Test: `tests/test_disintegration_dynamics.py`
 
 **Interfaces:**
 - Consumes: the existing `wholecell.py` handlers (`ThermalEnvironment`, `Uptake`, `ViabilityGatedMetabolism`, `ViabilityMonitor`, `DisintegrationEvent`), `build_core`.
-- Produces: `meta_modelers_guide.wholecell.build_disintegration(emit=True) -> dict`; composite stem `fig06-disintegration-dynamics`.
+- Produces: `meta_modelers_guide.wholecell.build_disintegration(emit=True) -> dict`; composite stem `fig05-disintegration-dynamics`.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -521,7 +521,7 @@ Expected: PASS. If viability doesn't collapse in 20 steps, lower `shock_time` or
 ```python
 #!/usr/bin/env python
 """Serialize the playable disintegration composite (build_disintegration) to
-composites/fig06-disintegration-dynamics.composite.json — discoverable by the
+composites/fig05-disintegration-dynamics.composite.json — discoverable by the
 workbench and playable via /viva-explore (the Composite Explorer / loom)."""
 from __future__ import annotations
 
@@ -531,7 +531,7 @@ from pathlib import Path
 from meta_modelers_guide.wholecell import build_disintegration
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "meta_modelers_guide" / "composites" / "fig06-disintegration-dynamics.composite.json"
+OUT = ROOT / "meta_modelers_guide" / "composites" / "fig05-disintegration-dynamics.composite.json"
 
 
 def main() -> None:
@@ -562,16 +562,16 @@ Run:
 ```bash
 PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_disintegration.py
 PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/viva-run-check.py 2>/dev/null || \
-  PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python -c "import json,meta_modelers_guide.core as c; from process_bigraph import Composite; s=json.load(open('meta_modelers_guide/composites/fig06-disintegration-dynamics.composite.json')); Composite(s, core=c.build_core()).run(20); print('plays OK')"
+  PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python -c "import json,meta_modelers_guide.core as c; from process_bigraph import Composite; s=json.load(open('meta_modelers_guide/composites/fig05-disintegration-dynamics.composite.json')); Composite(s, core=c.build_core()).run(20); print('plays OK')"
 ```
-Expected: composite written; a 20-step run completes ("plays OK"). Later, in Task 14, verify visually with `/viva-explore fig06-disintegration-dynamics` (Composite Explorer play) — viability curve drops, debris rises.
+Expected: composite written; a 20-step run completes ("plays OK"). Later, in Task 14, verify visually with `/viva-explore fig05-disintegration-dynamics` (Composite Explorer play) — viability curve drops, debris rises.
 
 - [ ] **Step 7: Commit**
 
 ```bash
 cd ~/code/meta-modelers-guide--paper-aligned
 git add meta_modelers_guide/wholecell.py scripts/build_disintegration.py \
-        meta_modelers_guide/composites/fig06-disintegration-dynamics.composite.json \
+        meta_modelers_guide/composites/fig05-disintegration-dynamics.composite.json \
         tests/test_disintegration_dynamics.py
 git commit -m "feat(disintegration): playable Fig 6a level-shift composite — thermal shock → viability collapse → biomass to debris (loom-visible)"
 ```
@@ -600,7 +600,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content to author (`/viva-study`):**
 - **title:** The Cellular Interface
 - **figure:** Fig 4 (`cellular_interface.pdf`)
-- **baseline:** `meta_modelers_guide.composites.fig04a-interaction-modalities`, `meta_modelers_guide.composites.fig04b-cellular-interface`, `meta_modelers_guide.composites.fig04b-executable`
+- **baseline:** `meta_modelers_guide.composites.fig03a-interaction-modalities`, `meta_modelers_guide.composites.fig03b-cellular-interface`, `meta_modelers_guide.composites.fig03b-executable`
 - **question:** Can the cellular boundary be specified as nothing but typed, unit-bearing exchange ports (chemical mol·s⁻¹, mechanical N, electrical C·s⁻¹, thermal J·s⁻¹) plus higher-level variables (growth, shape, objective, **viability**) — with no committed mechanism — and compiled, by installing one conforming handler, into a bounded, goal-directed cell whose interface is exactly the one declared?
 - **claim:** The cell's interface is authored as an inert typed contract and compiled to a running bounded cell; a non-conforming handler that breaks the port contract is rejected at compile time with a `CompileError` naming the missing ports (**Law 1 conformance**).
 - **law home:** Law 1 (conformance) + the impostor `NonConformingMetabolism` → `CompileError`. Reference `tests/test_fba.py::test_impostor_handler_rejected_by_compiler` and note the impostor breaks a *cell interface* contract (renames/drops ports), not a fabricated metabolism figure.
@@ -616,7 +616,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content:**
 - **title:** Cell–Environment Coupling
 - **figure:** Fig 5 (`cell_environment.pdf`)
-- **baseline:** `meta_modelers_guide.composites.fig05-cell-environment`, `meta_modelers_guide.composites.fig05-executable`
+- **baseline:** `meta_modelers_guide.composites.fig04-cell-environment`, `meta_modelers_guide.composites.fig04-executable`
 - **question:** Does the cellular interface become a genuine sense/act loop when the environment is a real diffusing spatial field the cell reads and acts back on?
 - **claim:** Compiling the Fig 5 draft installs a real Laplacian-diffusion field + single-cell uptake; the cell depletes nutrient locally, diffusion refills it, and the cell reshapes the very gradient it depends on (niche construction) — interface preserved (**Law 2**).
 - **caveats:** toy-real constants; niche construction shown as pattern.
@@ -644,11 +644,11 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content:**
 - **title:** Disintegration
 - **figure:** Fig 6 (`disintegration.pdf`)
-- **baseline (headline first):** `meta_modelers_guide.composites.fig06-disintegration-dynamics` (the **playable** level-shift, Task 1B), then `meta_modelers_guide.composites.fig06-disintegration`, `meta_modelers_guide.composites.fig06-executable-coarse`, `meta_modelers_guide.composites.fig06-executable-kinetic`, `meta_modelers_guide.composites.fig06-executable-fba`
+- **baseline (headline first):** `meta_modelers_guide.composites.fig05-disintegration-dynamics` (the **playable** level-shift, Task 1B), then `meta_modelers_guide.composites.fig05-disintegration`, `meta_modelers_guide.composites.fig05-executable-coarse`, `meta_modelers_guide.composites.fig05-executable-kinetic`, `meta_modelers_guide.composites.fig05-executable-fba`
 - **question:** When viability bounds are crossed the appropriate level of description shifts from a cellular process to interacting molecular components. (a) Played through, does the disintegration composite actually *show* this shift — viability collapsing and biomass turning into molecular debris? (b) And is one metabolic exchange interface realizable at a coarse cell-level grain, an intermediate kinetic grain, and a resolved molecular-network grain (real COBRApy FBA), with coarse-graining the reverse move?
-- **claim:** Disintegration is a change in level of description made executable and **watchable**: playing `fig06-disintegration-dynamics` in the Composite Explorer, a thermal shock pushes the cell past its viability bound, viability collapses, viability-gated metabolism halts, and biomass decays into molecular debris (Fig 6a). The same interface's cell↔molecular-network equivalence carries a coarse lumped yield, a saturating kinetic law, and **real COBRApy flux-balance on `e_coli_core`** (the resolved molecular network, overflowing carbon to acetate) — three grains behind ports that never move (Fig 6b, **Law 4**, `test_fig6_handler_independence`).
+- **claim:** Disintegration is a change in level of description made executable and **watchable**: playing `fig05-disintegration-dynamics` in the Composite Explorer, a thermal shock pushes the cell past its viability bound, viability collapses, viability-gated metabolism halts, and biomass decays into molecular debris (Fig 6a). The same interface's cell↔molecular-network equivalence carries a coarse lumped yield, a saturating kinetic law, and **real COBRApy flux-balance on `e_coli_core`** (the resolved molecular network, overflowing carbon to acetate) — three grains behind ports that never move (Fig 6b, **Law 4**, `test_fig6_handler_independence`).
 - **law home:** Law 4 primary. Home of the three metabolisms (moved from the retired `one-interface-three-mechanisms`).
-- **how to view:** note in the study that a reader should run `/viva-explore fig06-disintegration-dynamics` and step through it to watch the viability curve collapse and debris rise.
+- **how to view:** note in the study that a reader should run `/viva-explore fig05-disintegration-dynamics` and step through it to watch the viability curve collapse and debris rise.
 - **falsifiability:** overturned if, played through, viability never leaves the viable band / never collapses, or biomass never converts to debris (no level shift), or the three grains fail to share one interface.
 - **caveats:** the playable dynamics composite is assembled in the figures' style (`wholecell.py`), not compiler-emitted (same honesty as the capstone); its thermal shock is scripted (hard-coded onset), not emergent; FBA requires optional `cobra` (guarded skip); grain equivalence is structural, not a fitted reduction.
 
@@ -662,7 +662,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content:**
 - **title:** Molecular Interfaces
 - **figure:** Fig 7 (`molecular_interface.pdf`)
-- **baseline:** `meta_modelers_guide.composites.fig07-molecular-mechanism`, `meta_modelers_guide.composites.fig07-executable`
+- **baseline:** `meta_modelers_guide.composites.fig06-molecular-mechanism`, `meta_modelers_guide.composites.fig06-executable`
 - **question:** At the molecular grain, can a single molecular mechanism (F1Fo ATP synthase) be compiled from its draft and run as a PMF-driven rotary catalyst honoring the four physical interface channels (chemical/electrical/mechanical/thermal) and the specialized substrate/cofactor/catalyst/product ports?
 - **claim:** The molecular interface's four typed channels + specialized enzymatic ports compile to a running ATP-synthase mechanism — the molecular level the disintegration study drops into, made concrete.
 - **caveats:** one mechanism, toy-real kinetics.
@@ -676,7 +676,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content:**
 - **title:** Biomolecular Complementarity
 - **figure:** Fig 8 (`cell_structure.pdf` / molecular compositions)
-- **baseline:** `meta_modelers_guide.composites.fig08-nested-hierarchy`, `meta_modelers_guide.composites.fig08-executable`
+- **baseline:** `meta_modelers_guide.composites.fig07-nested-hierarchy`, `meta_modelers_guide.composites.fig07-executable`
 - **question:** Do molecular mechanisms compose into nested hierarchical composites (proteins → complexes → organelles → ECM) whose interfaces survive deep nesting, and does a gene-expression cascade wired to the deepest leaves preserve every interface across six levels (**Law 2** at the deepest nesting)?
 - **claim:** The six-level nested place graph compiles with a coupled transcription→translation→assembly cascade wired to its deepest stores; the interface is preserved through the deepest nesting.
 - **caveats:** complementarity/selectivity (which partners bind) is narrated as the organizing principle but the executable demonstrates hierarchical assembly, not fitted binding selectivity — noted honestly.
@@ -692,11 +692,11 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content:**
 - **title:** Autopoiesis — Composition of the Cellular Interface
 - **figure:** Fig 9 (`self_organized_process.pdf`)
-- **baseline:** `meta_modelers_guide.composites.fig09a-coarse-graining`, `meta_modelers_guide.composites.fig09a-executable`, `meta_modelers_guide.composites.fig09b-minimal-cell`, `meta_modelers_guide.composites.fig09b-executable`
+- **baseline:** `meta_modelers_guide.composites.fig08a-coarse-graining`, `meta_modelers_guide.composites.fig08a-executable`, `meta_modelers_guide.composites.fig08b-minimal-cell`, `meta_modelers_guide.composites.fig08b-executable`
 - **question:** How does a maintained cellular interface arise from molecular processes? Do metabolism, containment, and replication, mutually wired so each maintains the others, compile into a self-sustaining minimal cell — and does each self-organized function run at coarse, self-organized, and molecular grains behind one interface (**Law 4**)?
 - **claim:** The three closure processes compile into a minimal cell whose interface is produced by the coupling itself; each function is realized at three grains behind a fixed interface — the grain-swap in its second home.
 - **caveats (honest):** this illustrates the Maturana–Varela closure *pattern*, not validated autopoiesis; the loop's self-maintenance is demonstrated qualitatively.
-- **note:** promoted from the retired `gallery` (fig09a/09b were deflated there).
+- **note:** promoted from the retired `gallery` (fig08a/09b were deflated there).
 
 - [ ] **Step 1:** Author via `/viva-study`, slug `autopoiesis`, fields above.
 - [ ] **Step 2:** Lint; confirm resolves.
@@ -707,7 +707,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content:**
 - **title:** Growth and Division
 - **figure:** Fig 10a,b (`divide_evolve.pdf`)
-- **baseline:** `meta_modelers_guide.composites.fig10-1-division`, `meta_modelers_guide.composites.fig10-1-rewrite`, `meta_modelers_guide.composites.fig10-1-executable`
+- **baseline:** `meta_modelers_guide.composites.fig09-division`, `meta_modelers_guide.composites.fig09-rewrite`, `meta_modelers_guide.composites.fig09-executable`
 - **question:** Is division a genuine structural rewrite of the place graph — one cell node becoming two daughters at runtime, fired by the cell's own replicated DNA crossing a threshold — that conserves mass (parent partitioned, not duplicated)?
 - **claim:** (reuse the existing `divide` study's verified claim) division is a change to the composition itself, DNA-threshold-gated, one node → two, mass conserved (**Law 2′**, rewrite conformance vs wiring).
 - **law home:** Law 2′ primary. Reuse `tests/test_compilation.py::test_fig10_division_is_event_driven`, `tests/test_fig10_rewrite.py`.
@@ -723,7 +723,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Content:**
 - **title:** Development and Evolution
 - **figure:** Fig 10c–f (`divide_evolve.pdf`)
-- **baseline:** `meta_modelers_guide.composites.fig10-2-development`, `meta_modelers_guide.composites.fig10-2-rewrite`, `meta_modelers_guide.composites.fig10-2-executable`, `meta_modelers_guide.composites.fig10-3-evolution`, `meta_modelers_guide.composites.fig10-3-rewrite`, `meta_modelers_guide.composites.fig10-3-executable`
+- **baseline:** `meta_modelers_guide.composites.fig10-development`, `meta_modelers_guide.composites.fig10-rewrite`, `meta_modelers_guide.composites.fig10-executable`, `meta_modelers_guide.composites.fig11-evolution`, `meta_modelers_guide.composites.fig11-rewrite`, `meta_modelers_guide.composites.fig11-executable`
 - **question:** Can development (cells nesting into a biofilm collective with its own interface) and evolution (a new interface port expanding interaction, selected by viability) be represented as compositional rewrites?
 - **claim:** Development nests individual cells into a collective composite with a shared-ECM interface; evolution adds a new chemical port that switches on — both realized as event-driven rewrites (**Law 2′**).
 - **caveats (explicit, per paper line 580 "an open and substantial challenge"):** these are pattern demonstrations, not validated results — selection is an ODE, the "new port" is a config-driven ramp; the biofilm nesting is pre-declared post-structure, not runtime node insertion.
@@ -756,7 +756,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 **Files:** Modify `README.md`.
 
 - [ ] **Step 1:** Replace the flagship section (currently `README.md:23` "The sharpest single view is **Fig 6 — metabolism**") with the paper's real arc and a correct flagship: the exhibit is now the **three-grain Fig 6 Disintegration** (coarse/kinetic/FBA behind one interface) framed as disintegration/coarse-graining, plus the **impostor rejection** framed against the **cellular interface** (Fig 4), plus the **division rewrite** (Fig 10).
-- [ ] **Step 2:** Fix the composite table (`README.md:224`) so `fig06-*` rows read as Disintegration grains, not "metabolism", and add the `cellcell-*` composites.
+- [ ] **Step 2:** Fix the composite table (`README.md:224`) so `fig05-*` rows read as Disintegration grains, not "metabolism", and add the `cellcell-*` composites.
 - [ ] **Step 3:** Update the study list / links to the 9 new slugs in paper order.
 - [ ] **Step 4:** Confirm no remaining "Fig 6 — metabolism" / "one interface three mechanisms" flagship phrasing: `grep -n "Fig 6 — metabolism\|One Interface, Three" README.md` returns nothing.
 - [ ] **Step 5:** Commit: `git commit -m "docs(readme): re-anchor to the paper's arc; Fig 6 is Disintegration; 9-study index"`.
@@ -765,10 +765,10 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 
 **Files:** none new; regeneration + verification.
 
-- [ ] **Step 1:** Regenerate ONLY the branch's own composites, and protect baked viz. NOTE (discovered in Task 1): `scripts/build_executables.py` recompiles *every* executable from scratch and silently strips the `dynamics_viz` step baked into fig04b/05/06/07/08/09/10 executables by commit `89f2e95`. Do NOT blanket-commit its output. Procedure: run `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_executables.py`, then `git -C ~/code/meta-modelers-guide--paper-aligned checkout -- meta_modelers_guide/composites/fig0*-executable*.composite.json meta_modelers_guide/composites/fig10-*-executable.composite.json` to restore the baked-viz figures, keeping only the two `cellcell-executable-*` files new. Then `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_disintegration.py` (writes only `fig06-disintegration-dynamics.composite.json`). Verify with `git status` that no fig0*/fig10 executable shows a viz-stripping diff before committing.
+- [ ] **Step 1:** Regenerate ONLY the branch's own composites, and protect baked viz. NOTE (discovered in Task 1): `scripts/build_executables.py` recompiles *every* executable from scratch and silently strips the `dynamics_viz` step baked into fig03b/05/06/07/08/09/10 executables by commit `89f2e95`. Do NOT blanket-commit its output. Procedure: run `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_executables.py`, then `git -C ~/code/meta-modelers-guide--paper-aligned checkout -- meta_modelers_guide/composites/fig0*-executable*.composite.json meta_modelers_guide/composites/fig10-*-executable.composite.json` to restore the baked-viz figures, keeping only the two `cellcell-executable-*` files new. Then `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_disintegration.py` (writes only `fig05-disintegration-dynamics.composite.json`). Verify with `git status` that no fig0*/fig10 executable shows a viz-stripping diff before committing.
 - [ ] **Step 2:** Full test suite: `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned pytest -v`. Expected: all pass (FBA/cobra tests skip gracefully if `cobra` absent). Fix any regressions.
 - [ ] **Step 3:** Workspace lint: `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/lint-workspace.py`. Expected: clean; no dangling study/composite references.
-- [ ] **Step 4:** Visually confirm the playable disintegration: `/viva-explore fig06-disintegration-dynamics`, step through the play, and confirm the viability curve collapses and debris rises (the requirement: disintegration is *visible* when played). Then run `/viva-report` (workbench up) — the reviewer-readiness audit (Pass A) + structural lint (Pass B), then regenerate the dashboard + investigation report. Resolve any verdict↔chart drift or stale-framing flags it raises.
+- [ ] **Step 4:** Visually confirm the playable disintegration: `/viva-explore fig05-disintegration-dynamics`, step through the play, and confirm the viability curve collapses and debris rises (the requirement: disintegration is *visible* when played). Then run `/viva-report` (workbench up) — the reviewer-readiness audit (Pass A) + structural lint (Pass B), then regenerate the dashboard + investigation report. Resolve any verdict↔chart drift or stale-framing flags it raises.
 - [ ] **Step 5:** Commit any regenerated report/dashboard artifacts: `git commit -m "report: regenerate dashboard + draft-to-living-cell report for the 9-study realignment"`.
 - [ ] **Step 6:** Final verification statement: confirm (a) 9 study dirs exist and lint clean, (b) `pytest` green, (c) no "Fig 6 = metabolism" flagship anywhere (`grep -rn "Fig 6 — metabolism" README.md workspace/`), (d) investigation references exactly the 9 studies.
 

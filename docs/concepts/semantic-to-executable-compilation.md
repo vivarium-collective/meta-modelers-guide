@@ -76,14 +76,14 @@ from process_bigraph import Composite
 import json
 
 core = build_core()
-semantic = json.load(open(".../fig06-disintegration.composite.json"))["state"]
+semantic = json.load(open(".../fig05-disintegration.composite.json"))["state"]
 
-for env in ("fig06-coarse", "fig06-kinetic"):
+for env in ("fig05-coarse", "fig05-kinetic"):
     ex = compile_composite(semantic, ENVS[env], core)   # ⟦C⟧_H
     c = Composite({"state": ex}, core=core); c.run(10)
     print(env, c.state["coarse"]["biomass"])
-# fig06-coarse  -> 5.000   (linear yield)
-# fig06-kinetic -> 3.333   (saturating kinetics) — same interface, different mechanism
+# fig05-coarse  -> 5.000   (linear yield)
+# fig05-kinetic -> 3.333   (saturating kinetics) — same interface, different mechanism
 ```
 
 Materialize every figure's executable with `python scripts/build_executables.py`
@@ -133,7 +133,7 @@ further extension.
 ### Real external simulators as handlers (Phase 2)
 
 The same signature can be handled by a real engine. `FBAMetabolism`
-(`handlers_fig06_fba.py`) bridges **COBRApy** flux-balance analysis to the Fig 6
+(`handlers_fig05_fba.py`) bridges **COBRApy** flux-balance analysis to the Fig 6
 `CoarseGrainedMetabolism` interface: it sets the nutrient uptake bound from the
 incoming flux and solves the LP for max biomass (capped by a network constraint).
 Fig 6 now demonstrates law 4 with three handlers over one interface — coarse

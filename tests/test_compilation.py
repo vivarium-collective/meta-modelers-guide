@@ -77,12 +77,12 @@ def test_env_conforms_compiles_and_runs(env_name, sem_stem, out_stem):
 
 def test_fig6_handler_independence():
     """Law #4: two conforming handler sets, one interface, different dynamics."""
-    if "fig06-coarse" not in ENVS or "fig06-kinetic" not in ENVS:
-        pytest.skip("fig06 envs not present")
+    if "fig05-coarse" not in ENVS or "fig05-kinetic" not in ENVS:
+        pytest.skip("fig05 envs not present")
     core = build_core()
-    sem = _semantic("fig06-disintegration")
-    coarse = compile_composite(sem, ENVS["fig06-coarse"], core)
-    kinetic = compile_composite(sem, ENVS["fig06-kinetic"], core)
+    sem = _semantic("fig05-disintegration")
+    coarse = compile_composite(sem, ENVS["fig05-coarse"], core)
+    kinetic = compile_composite(sem, ENVS["fig05-kinetic"], core)
     assert interface_of(coarse) == interface_of(kinetic) == interface_of(sem)
 
     def run(state):
@@ -97,24 +97,24 @@ def test_fig10_division_is_event_driven():
     clock. Before the replicated DNA crosses the threshold nothing partitions;
     once it crosses, the parent biomass is PARTITIONED into the two daughters (the
     parent → 0, mass conserved) and the cell count increments. Interface preserved."""
-    if "fig10-1" not in ENVS:
-        pytest.skip("fig10-1 env not present")
+    if "fig09" not in ENVS:
+        pytest.skip("fig09 env not present")
     core = build_core()
-    sem = _semantic("fig10-1-division")
-    ex = compile_composite(sem, ENVS["fig10-1"], core)
+    sem = _semantic("fig09-division")
+    ex = compile_composite(sem, ENVS["fig09"], core)
     assert interface_of(ex) == interface_of(sem)          # law 2 still holds
 
-    threshold = float(ENVS["fig10-1"]["Divide"]["config"]["dna_threshold"])
+    threshold = float(ENVS["fig09"]["Divide"]["config"]["dna_threshold"])
 
     # Early: DNA has not yet reached the threshold → no division.
-    early = Composite({"state": compile_composite(sem, ENVS["fig10-1"], core)}, core=core)
+    early = Composite({"state": compile_composite(sem, ENVS["fig09"], core)}, core=core)
     early.run(1)
     assert early.state["environ"]["cell"]["dna"] < threshold
     assert early.state["environ"]["cell_count"] == 1.0     # not yet divided
     assert early.state["environ"]["daughter_1"]["biomass"] == 0.0
 
     # Late: DNA crosses the threshold → division fires once, mass conserved.
-    late = Composite({"state": compile_composite(sem, ENVS["fig10-1"], core)}, core=core)
+    late = Composite({"state": compile_composite(sem, ENVS["fig09"], core)}, core=core)
     late.run(10)
     assert late.state["environ"]["cell"]["dna"] >= threshold  # the trigger crossed
     assert late.state["environ"]["cell_count"] == 2.0         # divided once
@@ -128,14 +128,14 @@ def test_fig10_division_is_event_driven():
 def test_rewrite_conformance_against_wiring():
     """A rewrite handler (Divide) whose draft signature is a placeholder still
     compiles, because conformance is checked against the node's wiring."""
-    if "fig10-1" not in ENVS:
-        pytest.skip("fig10-1 env not present")
+    if "fig09" not in ENVS:
+        pytest.skip("fig09 env not present")
     core = build_core()
     assert _is_rewrite(core, "DivisionRewrite")
     # compile_composite raises CompileError on non-conformance; reaching a built
     # Composite proves the wiring-conformance path accepted the rewrite handler.
-    sem = _semantic("fig10-1-division")
-    Composite({"state": compile_composite(sem, ENVS["fig10-1"], core)}, core=core)
+    sem = _semantic("fig09-division")
+    Composite({"state": compile_composite(sem, ENVS["fig09"], core)}, core=core)
 
 
 def _observables(comp):

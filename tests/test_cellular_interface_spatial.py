@@ -1,6 +1,6 @@
 # tests/test_cellular_interface_spatial.py
 """The spatial cellular-interface demonstration: the UNCHANGED CellularInterfaceHandler
-(local:CellularInterfaceHandler, the abstract fig04b cellular interface) composed with a
+(local:CellularInterfaceHandler, the abstract fig03b cellular interface) composed with a
 real 2D spatio-flux DiffusionAdvection chemical field via a small field-point adapter
 (local:FieldPointCoupling). Same interface contract as the lumped fig04 composites --
 only the process behind the chemical port has changed, now spatial.

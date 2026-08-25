@@ -27,14 +27,14 @@ NUMERIC = set(UNITS) | {"float"}
 
 # Every composite that actually runs → gets DynamicsPlot.
 TARGETS = [
-    "fig04b-executable", "fig05-executable",
-    "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba",
-    "fig06-disintegration-dynamics",
+    "fig03b-executable", "fig04-executable",
+    "fig05-executable-coarse", "fig05-executable-kinetic", "fig05-executable-fba",
+    "fig05-disintegration-dynamics",
     "cellcell-executable-compete", "cellcell-executable-crossfeed",
-    "fig07-executable", "fig08-executable",
-    "fig09a-executable", "fig09b-executable",
-    "fig10-1-executable", "fig10-2-executable", "fig10-3-executable",
-    "fig10-1-rewrite", "fig10-2-rewrite", "fig10-3-rewrite",
+    "fig06-executable", "fig07-executable",
+    "fig08a-executable", "fig08b-executable",
+    "fig09-executable", "fig10-executable", "fig11-executable",
+    "fig09-rewrite", "fig10-rewrite", "fig11-rewrite",
     "whole-cell",
 ]
 
@@ -46,7 +46,7 @@ TARGETS = [
 # visualization.py's narrative-config docstring). Composites absent from this
 # dict keep the plain behaviour unchanged.
 STORY = {
-    "fig06-disintegration-dynamics": {
+    "fig05-disintegration-dynamics": {
         "keep": ["viability", "biomass", "debris", "temperature"],
         "subtitle": "Fig 6 — a thermal shock pushes the cell past its viability bound",
         "secondary_y": ["temperature"],
@@ -57,12 +57,12 @@ STORY = {
         ],
         "events": [{"x": 8, "label": "thermal shock (37→50 °C)"}],
     },
-    "fig04b-executable": {
+    "fig03b-executable": {
         "keep": ["viability", "shape", "objective", "chemical", "growth_rate"],
         "subtitle": "Fig 4 — a typed contract compiled to a bounded cell",
         "phases": [{"x0": 0, "x1": 8, "label": "viable", "color": "#1c7a77"}],
     },
-    "fig05-executable": {
+    "fig04-executable": {
         "keep": ["uptake_flux", "mechanical_field", "shape", "mass"],
         "subtitle": "Fig 5 — cell ↔ environment over a real diffusing field",
     },
@@ -75,32 +75,32 @@ STORY = {
         "keep": ["viability", "nutrient"],
         "subtitle": "Cell–cell coupling — symmetric handlers, byproduct returned to the pool",
     },
-    "fig07-executable": {
+    "fig06-executable": {
         "keep": ["chemical_out", "electrical_out", "mechanical_out", "thermal_out"],
         "subtitle": "Fig 7 — one proton flux drives four coupled channels",
         "secondary_y": ["electrical_out", "mechanical_out", "thermal_out"],
     },
-    "fig08-executable": {
+    "fig07-executable": {
         "keep": ["rna", "ribosome", "proteins"],
         "subtitle": "Fig 8 — transcription → translation → assembly, six levels deep",
     },
-    "fig09a-executable": {
+    "fig08a-executable": {
         "keep": ["boundary", "membrane", "aggregate", "metabolites", "products", "copies"],
         "subtitle": "Fig 9a — one function (containment), three conforming grains",
     },
-    "fig09b-executable": {
+    "fig08b-executable": {
         "subtitle": "Fig 9b — the minimal cell: metabolism, containment, replication holding each other up",
     },
-    "fig10-1-executable": {
+    "fig09-executable": {
         "keep": ["dna", "biomass", "cell_count"],
         "subtitle": "Fig 10a,b — growth reaches threshold, the place graph splits",
         "events": [{"x": 6, "label": "division fires — mass conserved"}],
     },
-    "fig10-2-executable": {
+    "fig10-executable": {
         "keep": ["biofilm_mass", "ecm", "cells", "attached"],
         "subtitle": "Fig 10c,d — a continuous, pre-declared biofilm store (not a place-graph rewrite)",
     },
-    "fig10-3-executable": {
+    "fig11-executable": {
         "keep": ["cell_count", "new_port"],
         "subtitle": "Fig 10e,f — a config-driven port-onset ramp, not emergent selection",
         "events": [{"x": 7, "label": "new_port crosses 0.5 — port switching on"}],
@@ -108,31 +108,31 @@ STORY = {
 }
 # Figures where watching the arc over time matters → also get DynamicsMovie.
 MOVIE = {
-    "fig08-executable", "fig09a-executable", "fig09b-executable",
-    "fig10-1-executable", "fig10-2-executable", "fig10-3-executable",
-    "fig10-1-rewrite", "fig10-2-rewrite", "fig10-3-rewrite",
+    "fig07-executable", "fig08a-executable", "fig08b-executable",
+    "fig09-executable", "fig10-executable", "fig11-executable",
+    "fig09-rewrite", "fig10-rewrite", "fig11-rewrite",
     "whole-cell",
 }
 
 TITLES = {
-    "fig04b-executable": "The cellular interface, made to run",
-    "fig05-executable": "A closed sense/act loop",
-    "fig06-executable-coarse": "Coarse metabolism (lumped yield)",
-    "fig06-executable-kinetic": "Kinetic metabolism (Michaelis–Menten)",
-    "fig06-executable-fba": "FBA metabolism (e_coli_core, with acetate overflow)",
-    "fig06-disintegration-dynamics": "Disintegration — the cell → molecular level shift",
+    "fig03b-executable": "The cellular interface, made to run",
+    "fig04-executable": "A closed sense/act loop",
+    "fig05-executable-coarse": "Coarse metabolism (lumped yield)",
+    "fig05-executable-kinetic": "Kinetic metabolism (Michaelis–Menten)",
+    "fig05-executable-fba": "FBA metabolism (e_coli_core, with acetate overflow)",
+    "fig05-disintegration-dynamics": "Disintegration — the cell → molecular level shift",
     "cellcell-executable-compete": "Competition — the weaker cell starves",
     "cellcell-executable-crossfeed": "Cross-feeding — both persist",
-    "fig07-executable": "ATP synthase — a proton-motive-force-driven rotary motor",
-    "fig08-executable": "The central-dogma cascade across six nested levels",
-    "fig09a-executable": "Closure sustains the interface — three conforming grains",
-    "fig09b-executable": "Closure sustains the interface — the minimal cell",
-    "fig10-1-executable": "Growth to division — one cell becomes two",
-    "fig10-2-executable": "A biofilm assembles",
-    "fig10-3-executable": "A variant gains a new port",
-    "fig10-1-rewrite": "Division rewrite — the place graph splits",
-    "fig10-2-rewrite": "Biofilm rewrite — the colony assembles",
-    "fig10-3-rewrite": "Evolution rewrite — variation & selection",
+    "fig06-executable": "ATP synthase — a proton-motive-force-driven rotary motor",
+    "fig07-executable": "The central-dogma cascade across six nested levels",
+    "fig08a-executable": "Closure sustains the interface — three conforming grains",
+    "fig08b-executable": "Closure sustains the interface — the minimal cell",
+    "fig09-executable": "Growth to division — one cell becomes two",
+    "fig10-executable": "A biofilm assembles",
+    "fig11-executable": "A variant gains a new port",
+    "fig09-rewrite": "Division rewrite — the place graph splits",
+    "fig10-rewrite": "Biofilm rewrite — the colony assembles",
+    "fig11-rewrite": "Evolution rewrite — variation & selection",
     "whole-cell": "The composed whole cell — grow · divide · die",
 }
 

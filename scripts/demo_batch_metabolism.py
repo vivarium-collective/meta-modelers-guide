@@ -2,7 +2,7 @@
 """Flagship proof: Fig 6 'one interface, three mechanisms' as a CLOSED-LOOP batch
 culture, run through the real process-bigraph engine.
 
-The atlas's fig06 executables ran metabolism open-loop on a clamped constant
+The atlas's fig05 executables ran metabolism open-loop on a clamped constant
 nutrient pool, so coarse/kinetic/FBA all degenerated to straight lines differing
 only in slope. Here the substrate is CONSERVED — the metabolism process consumes
 its own nutrient pool (dS/dt = -uptake), a finite bolus S0 — so each rate law
@@ -78,7 +78,7 @@ class FBABatch(_BatchBase):
 
     def _build(self):
         from cobra import Model, Reaction, Metabolite
-        m = Model("fig06_batch_fba")
+        m = Model("fig05_batch_fba")
         nut = Metabolite("nutrient_c", compartment="c")
         bio = Metabolite("biomass_c", compartment="c")
         ex = Reaction("EX_nutrient"); ex.add_metabolites({nut: 1}); ex.lower_bound = 0; ex.upper_bound = 0
@@ -144,7 +144,7 @@ def main():
     fig.suptitle("Fig 6 · one interface, three mechanisms — CLOSED-LOOP batch culture "
                  f"(S₀={S0:g}, conserved substrate)", fontsize=11, color="#0d6e6b")
     fig.tight_layout(rect=(0, 0, 1, 0.94))
-    out = "scripts/_catalog/fig06_batch_demo"
+    out = "scripts/_catalog/fig05_batch_demo"
     fig.savefig(out + ".svg", format="svg"); fig.savefig(out + ".png", format="png")
     print("\n".join(summary))
     print(f"\nwrote {out}.svg / .png")

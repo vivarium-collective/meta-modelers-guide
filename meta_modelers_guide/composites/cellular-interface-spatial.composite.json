@@ -1,6 +1,6 @@
 {
   "name": "cellular-interface-spatial",
-  "description": "The spatial translation of the cellular-interface study. The UNCHANGED CellularInterfaceHandler (local:CellularInterfaceHandler, the abstract fig04b cellular interface) is composed with a real 2D chemical field: a spatio-flux DiffusionAdvection process diffuses a left-low-to-right-high concentration gradient on a 40x40 grid, and a small field-point adapter (local:FieldPointCoupling) sits behind the handler's chemical port. Each tick the adapter samples the field's mean over the cell's footprint and feeds it to the handler as chemical_ext; the handler returns its net uptake flux (-uptake_rate*chemical_ext); the adapter deposits that uptake back into the footprint as a field delta, depleting the field where the cell feeds (niche construction), which diffusion then partially resupplies from the higher-concentration side. Same interface contract as the lumped fig04 composites, byte-identical ports -- only the process composed behind the chemical port has changed, now spatial. Only the chemical modality is spatialized here; mechanical, electrical and thermal remain lumped.",
+  "description": "The spatial translation of the cellular-interface study. The UNCHANGED CellularInterfaceHandler (local:CellularInterfaceHandler, the abstract fig03b cellular interface) is composed with a real 2D chemical field: a spatio-flux DiffusionAdvection process diffuses a left-low-to-right-high concentration gradient on a 40x40 grid, and a small field-point adapter (local:FieldPointCoupling) sits behind the handler's chemical port. Each tick the adapter samples the field's mean over the cell's footprint and feeds it to the handler as chemical_ext; the handler returns its net uptake flux (-uptake_rate*chemical_ext); the adapter deposits that uptake back into the footprint as a field delta, depleting the field where the cell feeds (niche construction), which diffusion then partially resupplies from the higher-concentration side. Same interface contract as the lumped fig04 composites, byte-identical ports -- only the process composed behind the chemical port has changed, now spatial. Only the chemical modality is spatialized here; mechanical, electrical and thermal remain lumped.",
   "requires": {
     "processes": [
       "CellularInterfaceHandler",
@@ -10,7 +10,7 @@
   "provenance": {
     "kind": "composed",
     "source": "cellular-interface spatial translation (field-point adapter behind the unchanged handler)",
-    "figure": "fig04b-cellular-interface",
+    "figure": "fig03b-cellular-interface",
     "interface": "CellularInterface (unchanged) composed over spatio-flux DiffusionAdvection"
   },
   "state": {

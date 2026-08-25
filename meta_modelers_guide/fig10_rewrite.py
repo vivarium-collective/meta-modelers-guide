@@ -2,7 +2,7 @@
 division, driven through the process-bigraph engine so a viewer can step the
 changing topology frame by frame.
 
-Unlike the pre-declared fig10-1-division composite (daughters already present),
+Unlike the pre-declared fig09-division composite (daughters already present),
 this uses Milner reaction rules (bigraph_schema.assembly) over a `tree[node]`
 store, so running it genuinely ADDS place-graph nodes at runtime:
 

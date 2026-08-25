@@ -9,20 +9,20 @@ from __future__ import annotations
 
 # Per-figure handler environments live beside their handlers (handlers_fig*.py);
 # aggregate them here so compile.py / build_executables.py see one ENVS map.
-from .handlers_fig04b import ENV as _FIG04B_ENV
-from .handlers_fig05 import ENV as _FIG05_ENV
-from .handlers_fig07 import ENV as _FIG07_ENV
-from .handlers_fig08 import ENV as _FIG08_ENV
-from .handlers_fig09a import ENV as _FIG09A_ENV
-from .handlers_fig06_fba import ENV as _FIG06_FBA_ENV
-from .handlers_fig09b import ENV as _FIG09B_ENV
+from .handlers_fig03b import ENV as _FIG04B_ENV
+from .handlers_fig04 import ENV as _FIG05_ENV
+from .handlers_fig06 import ENV as _FIG07_ENV
+from .handlers_fig07 import ENV as _FIG08_ENV
+from .handlers_fig08a import ENV as _FIG09A_ENV
+from .handlers_fig05_fba import ENV as _FIG06_FBA_ENV
+from .handlers_fig08b import ENV as _FIG09B_ENV
 from .handlers_fig10 import (ENV_DIVISION as _FIG10_DIV,
                              ENV_DEVELOPMENT as _FIG10_DEV,
                              ENV_EVOLUTION as _FIG10_EVO)
 
 ENVS: dict[str, dict] = {
     # Fig 6 grain-swap — same CoarseGrainedMetabolism interface, two handlers.
-    "fig06-coarse": {
+    "fig05-coarse": {
         "CoarseGrainedMetabolism": {
             "handler": "CoarseMetabolism",
             "config": {"biomass_yield": 0.5, "energy_yield": 0.3,
@@ -35,7 +35,7 @@ ENVS: dict[str, dict] = {
             "init": {"molecular.substrates": 1.0, "molecular.catalysts": 1.0},
         },
     },
-    "fig06-kinetic": {
+    "fig05-kinetic": {
         "CoarseGrainedMetabolism": {
             "handler": "KineticMetabolism",
             "config": {"vmax": 1.0, "km": 0.5, "biomass_yield": 0.5,
@@ -51,17 +51,17 @@ ENVS: dict[str, dict] = {
 }
 
 # Figures 4b / 5 / 7 / 8 / 9a / 9b (defined next to their handlers).
-ENVS["fig04b"] = _FIG04B_ENV
-ENVS["fig05"] = _FIG05_ENV
-ENVS["fig07"] = _FIG07_ENV
-ENVS["fig08"] = _FIG08_ENV
-ENVS["fig09a"] = _FIG09A_ENV
-ENVS["fig09b"] = _FIG09B_ENV
-ENVS["fig10-1"] = _FIG10_DIV
-ENVS["fig10-2"] = _FIG10_DEV
-ENVS["fig10-3"] = _FIG10_EVO
+ENVS["fig03b"] = _FIG04B_ENV
+ENVS["fig04"] = _FIG05_ENV
+ENVS["fig06"] = _FIG07_ENV
+ENVS["fig07"] = _FIG08_ENV
+ENVS["fig08a"] = _FIG09A_ENV
+ENVS["fig08b"] = _FIG09B_ENV
+ENVS["fig09"] = _FIG10_DIV
+ENVS["fig10"] = _FIG10_DEV
+ENVS["fig11"] = _FIG10_EVO
 # Fig 6, a THIRD handler over the same interface: real FBA (optional cobra dep).
-ENVS["fig06-fba"] = _FIG06_FBA_ENV
+ENVS["fig05-fba"] = _FIG06_FBA_ENV
 
 # Cell–cell coupling: two cells over ONE shared-nutrient interface (law 4).
 #
