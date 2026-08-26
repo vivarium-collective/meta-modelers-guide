@@ -30,8 +30,9 @@ FIGURES = {
         "out": "fig09b-division-sequence.png",
         "stack": "horizontal",   # tall, narrow cell/chromosome trees
         "panels": [
-            ("fig09b-division-1-onecell.png", "t = 0"),
-            ("fig09b-division-3-divided.png", "t = 1"),
+            ("fig09b-division-1-onecell.png",    "t = 0"),   # one cell, one chromosome
+            ("fig09b-division-2-replicated.png", "t = 1"),   # one cell, chromosome replicated → two
+            ("fig09b-division-3-divided.png",    "t = 2"),   # divided into two daughter cells
         ],
     },
     "biofilm": {
