@@ -37,6 +37,10 @@ def test_composites_present():
 DRAFT_SIGNATURES = {
     "fig01a-process", "fig01b-store-hierarchy", "fig01c-bio-bigraph", "fig01d-process",
     "fig05b-grain-swap", "fig07-nested-hierarchy",
+    # legacy conceptual drafts (used by the `overview` study) that main's figure
+    # restructure superseded; unbuildable under the merged type system — the
+    # runnable models are fig01-runnable / fig02-runnable.
+    "fig01-process-bigraph", "overview-multiscale-composite",
 }
 
 
