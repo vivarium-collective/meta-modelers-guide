@@ -40,6 +40,16 @@ FIGURES = {
             ("fig10-biofilm-3-mature.png",      "t = 2"),
         ],
     },
+    "evolution": {
+        "study": "fig-11",
+        "out": "fig11-evolution-sequence.png",
+        "stack": "vertical",   # frames are wide + short → stack them top-to-bottom
+        "panels": [
+            ("fig11-evo-1-founder.png", "t = 0"),
+            ("fig11-evo-2-growing.png", "t = 1"),
+            ("fig11-evo-3-adapted.png", "t = 2"),
+        ],
+    },
 }
 
 INK = (24, 32, 40)
@@ -67,7 +77,49 @@ def _trim(im):
     return im.crop(bbox) if bbox else im
 
 
+def stitch_vertical(cfg):
+    """Top-to-bottom stack — for wide, short frames (e.g. a population row) that
+    would be squeezed side-by-side. Each frame is normalized to a common WIDTH,
+    with its time label to the left and down-arrows between panels."""
+    viz = STUDIES / cfg["study"] / "visualizations"
+    panel_w = 2600
+    raw = [_trim(Image.open(viz / fn).convert("RGB")) for fn, _ in cfg["panels"]]
+    # ONE scale factor for all frames (widest frame fills panel_w) so a cell is
+    # the SAME size in every snapshot — you watch 1 node grow into a full row,
+    # not each frame rescaled to the column width.
+    scale = panel_w / max(im.width for im in raw)
+    panels = [im.resize((int(im.width * scale), int(im.height * scale)), Image.LANCZOS) for im in raw]
+
+    label_f = _font(46, bold=True)
+    label_col = 180                      # left gutter for the t = … label
+    row_gap = 70
+    n = len(panels)
+    total_w = PAD + label_col + panel_w + PAD
+    total_h = PAD + sum(p.height for p in panels) + row_gap * (n - 1) + PAD
+
+    canvas = Image.new("RGB", (total_w, total_h), (255, 255, 255))
+    draw = ImageDraw.Draw(canvas)
+
+    y = PAD
+    x0 = PAD + label_col
+    for i, ((fn, tlabel), p) in enumerate(zip(cfg["panels"], panels)):
+        draw.text((PAD, y + p.height // 2 - 24), tlabel, font=label_f, fill=INK)
+        canvas.paste(p, (x0 + (panel_w - p.width) // 2, y))   # centered in the column
+        if i < n - 1:
+            ax = x0 + panel_w // 2
+            ay0, ay1 = y + p.height + 12, y + p.height + row_gap - 12
+            draw.line([(ax, ay0), (ax, ay1)], fill=ARROW, width=8)
+            draw.polygon([(ax - 22, ay1), (ax + 22, ay1), (ax, ay1 + 30)], fill=ARROW)
+        y += p.height + row_gap
+
+    out = viz / cfg["out"]
+    canvas.save(out)
+    print(f"wrote {out.relative_to(ROOT)}  ({canvas.width}x{canvas.height})")
+
+
 def stitch(cfg):
+    if cfg.get("stack") == "vertical":
+        return stitch_vertical(cfg)
     viz = STUDIES / cfg["study"] / "visualizations"
     panels = []
     for fn, _ in cfg["panels"]:

@@ -105,9 +105,9 @@ FIGURES: dict[int, dict] = {
         panel("fig10c.png", "a", scale=0.6),   # smaller illustration; give 10b more room
         rawimg(str(ROOT / "workspace/studies/fig-10/visualizations/fig10-biofilm-sequence.png"), "b"),
     ])},
-    11: {"study": "fig-11", "root": group("row", [
+    11: {"study": "fig-11", "root": group("col", [   # a illustration on top, b snapshot sequence below
         panel("fig10e.png", "a"),
-        loom("fig-11", "fig11-evolution", "b"),
+        rawimg(str(ROOT / "workspace/studies/fig-11/visualizations/fig11-evolution-sequence.png"), "b"),
     ])},
 }
 
