@@ -32,24 +32,28 @@ from meta_modelers_guide.fig10_topology import build_fig10_biofilm_emergence
 ROOT = Path(__file__).resolve().parent.parent
 COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 
-ATTACH_AT, MATURE_AT, ECM_COUNT, N = 2.0, 4.0, 3.0, 4
+# Timescale: attachment at t=6, maturation (ECM secretion) beginning at t=12 and
+# completing a few steps later — so the biofilm emerges over MANY generations, not
+# one step. RUN_STEPS covers the whole trajectory.
+ATTACH_AT, MATURE_AT, ECM_COUNT, N, RUN_STEPS = 6.0, 12.0, 3.0, 4, 16
 
-# stage stem -> (emitted frame index, panel title, description tail)
+# stage stem -> (emitted frame index, panel title, description tail). Frame index
+# IS the simulation step (interval = 1), so the labels reflect real sim time.
 STAGES = {
     "fig10-biofilm-1-planktonic": (
-        0, "Free motile bacteria",
+        0, "t = 0",
         "t=0 — dispersed, free-swimming bacteria (motile) as top-level siblings in "
         "the environment, alongside a surface. Nothing is attached yet."),
     "fig10-biofilm-2-microcolony": (
-        3, "Attached microcolony",
-        "t=attach — the motile bacteria have attached to the surface and aggregated: "
+        8, "t = 8",
+        "t=8 — the motile bacteria have attached to the surface and aggregated: "
         "they are now children of a single biofilm node (sessile). A genuine "
         "place-graph reorganization — dispersed siblings become a nested community."),
     "fig10-biofilm-3-mature": (
-        6, "Mature biofilm",
-        "t=mature — the sessile community has secreted extracellular matrix: ecm "
-        "(matrix) nodes now sit inside the biofilm, a structured matrix-encased "
-        "multicellular community."),
+        15, "t = 15",
+        "t=15 — after many generations the sessile community has secreted "
+        "extracellular matrix: ecm (matrix) nodes now sit inside the biofilm, a "
+        "structured matrix-encased multicellular community."),
 }
 
 
@@ -84,7 +88,7 @@ def main() -> None:
             "bacteria; running it makes them attach + aggregate into a nested "
             "microcolony, then mature by secreting ECM. Steppable topology for the "
             "loom run/animate feature."),
-        "default_n_steps": 8,
+        "default_n_steps": 16,
         "requires": {"processes": ["BiofilmEmergence"]},
         "state": _emergence_state(),
     }
@@ -94,7 +98,7 @@ def main() -> None:
     # 2. run it and capture the three stages it actually passes through
     core = build_core()
     sim = Composite({"state": _emergence_state()}, core=core)
-    sim.run(7)
+    sim.run(RUN_STEPS)
     frames = [r["env"] for r in gather_emitter_results(sim)[("emitter",)]]
 
     for stem, (idx, title, tail) in STAGES.items():
@@ -114,6 +118,15 @@ def main() -> None:
         (COMPOSITES / f"{stem}.composite.json").write_text(json.dumps(spec, indent=2) + "\n")
         top = [k for k in colony if not k.startswith("_")]
         print(f"wrote {stem}.composite.json  (top-level: {', '.join(top)})")
+
+    # Times manifest: the stitcher reads this to label each panel with its REAL
+    # simulation step (frame index, interval=1), so the sequence's 't = …' labels
+    # can never fall out of sync with the frames these snapshots were taken at.
+    viz = ROOT / "workspace" / "studies" / "fig-10" / "visualizations"
+    viz.mkdir(parents=True, exist_ok=True)
+    (viz / "snapshot-times.json").write_text(
+        json.dumps({f"{stem}.png": idx for stem, (idx, *_) in STAGES.items()}, indent=2) + "\n")
+    print("wrote fig-10 snapshot-times.json")
 
 
 if __name__ == "__main__":

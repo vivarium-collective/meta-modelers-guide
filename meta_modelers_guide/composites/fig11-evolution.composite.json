@@ -1,6 +1,6 @@
 {
   "name": "Evolution — Living Population",
-  "description": "Fig 11b — evolution by natural selection as a genuine place-graph rewrite you can play forward. A `population` (tree[node]) of identically-schema'd `cell` nodes — each carrying a heritable scalar `trait` and a derived `division_rate` — evolves under an `environment` whose `selection_optimum` slowly DRIFTS over time (a moving target). Each generation the optimum shifts, each cell's division rate is re-scored by how close its trait sits to the current optimum (a Gaussian fitness kernel), and cells undergo BINARY FISSION: a dividing cell is REPLACED by two daughters, each inheriting its trait ± Gaussian mutation (so the founder does not persist once it has divided). The population grows to carrying capacity; beyond it, the least-fit cells (furthest from the optimum) die. Over many generations the whole trait cloud tracks the drifting optimum — selection + mutation + division, the minimal Darwinian loop. Running it adds/removes place-graph nodes and shifts the optimum leaf each tick — steppable topology for the loom run/animate feature.",
+  "description": "Fig 11b — evolution by natural selection as a genuine place-graph rewrite you can play forward. A `population` (tree[node]) of identically-schema'd `cell` nodes — each with a heritable scalar `trait` and a derived `division_rate` — evolves under an `environment` whose `selection_optimum` gently DRIFTS over time (starting above zero). Each generation the optimum shifts, each cell's division rate is re-scored by trait↔optimum fit, and cells undergo BINARY FISSION: a dividing cell is REPLACED by two daughters, each inheriting its trait ± Gaussian mutation (the founder does not persist once it divides). The population grows to carrying capacity; beyond it the least-fit cells (furthest from the optimum) die. Over many generations the whole trait cloud tracks the drifting optimum — selection + mutation + division. Steppable topology for the loom run/animate feature.",
   "default_n_steps": 40,
   "requires": {
     "processes": [
@@ -13,10 +13,15 @@
       "default": 1.0,
       "description": "Time between division rounds."
     },
+    "optimum0": {
+      "type": "float",
+      "default": 1.0,
+      "description": "Starting favored trait value (the optimum at t=0)."
+    },
     "drift": {
       "type": "float",
-      "default": 0.07,
-      "description": "Shift of the environment's selection optimum per generation (the moving target)."
+      "default": 0.02,
+      "description": "Shift of the selection optimum per generation (gentle moving target)."
     },
     "sel_strength": {
       "type": "float",
@@ -55,7 +60,7 @@
       "niche": {
         "_control": "niche",
         "contents": {
-          "selection_optimum": 0.0,
+          "selection_optimum": "${optimum0}",
           "resource": 1.0
         }
       }
@@ -66,7 +71,7 @@
       "interval": 1.0,
       "config": {
         "generation": "${generation}",
-        "optimum0": 0.0,
+        "optimum0": "${optimum0}",
         "drift": "${drift}",
         "sel_strength": "${sel_strength}",
         "mut_sigma": "${mut_sigma}",

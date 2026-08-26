@@ -89,6 +89,14 @@ def main() -> None:
         n_cells = sum(1 for k in colony if not k.startswith("_"))
         print(f"wrote {path.name}  ({n_cells} cell(s))")
 
+    # Times manifest so the stitcher labels each panel with its REAL sim step
+    # (frame index, interval=1) — labels can never drift out of sync.
+    viz = ROOT / "workspace" / "studies" / "fig-09" / "visualizations"
+    viz.mkdir(parents=True, exist_ok=True)
+    (viz / "snapshot-times.json").write_text(
+        json.dumps({f"{stem}.png": idx for stem, (idx, *_) in STAGES.items()}, indent=2) + "\n")
+    print("wrote fig-09 snapshot-times.json")
+
 
 if __name__ == "__main__":
     main()

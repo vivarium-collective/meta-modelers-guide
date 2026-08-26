@@ -11,6 +11,7 @@ biofilm figures.
 """
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -18,6 +19,20 @@ from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDIES = ROOT / "workspace" / "studies"
+
+
+def _time_labels(study: str) -> dict:
+    """Load the {panel-filename: sim-step} manifest the matching
+    build_*_snapshots.py wrote, mapped to 't = <step>' labels. The manifest is the
+    SOURCE OF TRUTH for each snapshot's time, so the sequence always shows the real
+    simulation time of each frame — no hand-kept labels to drift out of sync."""
+    p = STUDIES / study / "visualizations" / "snapshot-times.json"
+    if not p.exists():
+        return {}
+    try:
+        return {fn: f"t = {step}" for fn, step in json.loads(p.read_text()).items()}
+    except (json.JSONDecodeError, OSError):
+        return {}
 
 # Each panel is (image filename, time label). No stage titles, no caption —
 # just the topology snapshots with t=0, t=1, t=2 … over them.
@@ -41,7 +56,7 @@ FIGURES = {
         "stack": "vertical",     # wide frames → stack to keep the block narrow
         "panels": [
             ("fig10-biofilm-1-planktonic.png", "t = 0"),
-            ("fig10-biofilm-3-mature.png",     "t = 1"),
+            ("fig10-biofilm-3-mature.png",     "t = 15"),
         ],
     },
     "evolution": {
@@ -85,6 +100,7 @@ def stitch_vertical(cfg):
     would be squeezed side-by-side. Each frame is normalized to a common WIDTH,
     with its time label to the left and down-arrows between panels."""
     viz = STUDIES / cfg["study"] / "visualizations"
+    tlabels = _time_labels(cfg["study"])
     panel_w = 2600
     raw = [_trim(Image.open(viz / fn).convert("RGB")) for fn, _ in cfg["panels"]]
     # ONE scale factor for all frames (widest frame fills panel_w) so a cell is
@@ -106,6 +122,7 @@ def stitch_vertical(cfg):
     y = PAD
     x0 = PAD + label_col
     for i, ((fn, tlabel), p) in enumerate(zip(cfg["panels"], panels)):
+        tlabel = tlabels.get(fn, tlabel)   # real sim time from the manifest
         draw.text((PAD, y + p.height // 2 - 24), tlabel, font=label_f, fill=INK)
         canvas.paste(p, (x0 + (panel_w - p.width) // 2, y))   # centered in the column
         if i < n - 1:
@@ -133,6 +150,7 @@ def stitch(cfg):
     # target height) so a node is the same size in every frame — the population/
     # cell grows between panels rather than each frame being rescaled to fit.
     viz = STUDIES / cfg["study"] / "visualizations"
+    tlabels = _time_labels(cfg["study"])
     target_h = 1500
     raw = [_trim(Image.open(viz / fn).convert("RGB")) for fn, _ in cfg["panels"]]
     scale = target_h / max(im.height for im in raw)
@@ -150,6 +168,7 @@ def stitch(cfg):
     draw = ImageDraw.Draw(canvas)
 
     for i, ((fn, tlabel), p) in enumerate(zip(cfg["panels"], panels)):
+        tlabel = tlabels.get(fn, tlabel)   # real sim time from the manifest
         x0 = PAD + i * (col_w + GAP)
         tw = draw.textlength(tlabel, font=label_f)
         draw.text((x0 + (col_w - tw) / 2, PAD + 16), tlabel, font=label_f, fill=INK)

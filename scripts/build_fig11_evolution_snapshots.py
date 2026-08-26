@@ -110,6 +110,14 @@ def main() -> None:
                       if not k.startswith("_") and isinstance(v, dict) and v.get("_control") == "cell")
         print(f"wrote {stem}.composite.json  (cells: {n_cells})")
 
+    # Times manifest so the stitcher labels each panel with its REAL sim step
+    # (frame index, interval=1) — labels can never drift out of sync.
+    viz = ROOT / "workspace" / "studies" / "fig-11" / "visualizations"
+    viz.mkdir(parents=True, exist_ok=True)
+    (viz / "snapshot-times.json").write_text(
+        json.dumps({f"{stem}.png": idx for stem, (idx, *_) in STAGES.items()}, indent=2) + "\n")
+    print("wrote fig-11 snapshot-times.json")
+
 
 if __name__ == "__main__":
     main()

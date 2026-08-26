@@ -53,8 +53,8 @@ class PopulationEvolution(Process):
 
     config_schema = {
         "generation": _f(1.0),     # time between division rounds
-        "optimum0": _f(0.0),       # starting favored trait value
-        "drift": _f(0.07),         # optimum shift per generation (slow moving target)
+        "optimum0": _f(1.0),       # starting favored trait value (not 0)
+        "drift": _f(0.02),         # optimum shift per generation (gentle moving target)
         "sel_strength": _f(0.6),   # Gaussian selection sharpness (fitness = e^{-s·Δ²})
         "mut_sigma": _f(0.28),     # sd of the heritable mutation step
         "div_rate": _f(0.35),      # per-generation division probability at perfect fitness
@@ -153,7 +153,7 @@ class PopulationEvolution(Process):
 
 
 def build_fig11_population_evolution(
-    generation: float = 1.0, optimum0: float = 0.0, drift: float = 0.07,
+    generation: float = 1.0, optimum0: float = 1.0, drift: float = 0.02,
     sel_strength: float = 0.6, mut_sigma: float = 0.28, div_rate: float = 0.35,
     capacity: float = 12.0, seed: int = 1, interval: float = 1.0,
 ):
