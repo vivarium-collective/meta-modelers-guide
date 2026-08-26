@@ -1,7 +1,7 @@
 {
   "name": "Grain Swap — Live Viability-Driven Switch",
-  "description": "Fig 5 as a fully runnable temporal study: a cell's viability is driven down by a simple external stress ramp (StressRamp), and a GrainSelector swaps which grain realizes the shared interface as a function of that viability. While viability >= 0.5 the cheap CoarseGrainProcess (linear yield) produces the interface's biomass; once viability slides below 0.5 control switches to the mechanistic FineGrainProcess (saturating Michaelis-Menten), which resolves the regime near the boundary. Exactly one grain is active per tick, so the coarse->fine handover happens on-screen as viability crosses the threshold. This is the demonstration behind Fig 5b: a process is swapped between grains on the viability function. Runnable (default_n_steps + RAMEmitter).",
-  "default_n_steps": 20,
+  "description": "Fig 5 as a fully runnable temporal study: a cell's viability is driven down by an external stress ramp (StressRamp); a GrainSelector swaps the active grain as viability crosses a threshold — while viable the COARSE grain grows the cell's biomass (linear yield), and once viability falls below the threshold the FINE grain takes over the dying regime, where biomass stops growing and DECAYS first-order. Exactly one grain runs per tick, so the coarse→fine switch — growth turning over to decline — plays out on-screen as viability slides. Low viability → fine grain.",
+  "default_n_steps": 26,
   "requires": {
     "processes": [
       "StressRamp",
@@ -110,15 +110,17 @@
       "address": "local:FineGrainProcess",
       "interval": 1.0,
       "config": {
-        "vmax": 1.2,
-        "km": 0.5,
-        "biomass_yield": 1.0,
-        "energy_yield": 0.6
+        "decay_rate": 0.09,
+        "energy_decay": 0.09
       },
       "inputs": {
-        "inflow": [
+        "biomass": [
           "interface",
-          "inflow"
+          "biomass"
+        ],
+        "energy": [
+          "interface",
+          "energy"
         ],
         "active_grain": [
           "control",

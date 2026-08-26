@@ -3,16 +3,17 @@
 The runnable fig05 composite (meta_modelers_guide.composites.fig05-grain-runnable)
 drives a cell's viability down with a simple external stress ramp; a GrainSelector
 swaps which grain realizes the shared interface as viability crosses a threshold.
-Two gated processes realize the same biomass output at different grains — a cheap
-coarse linear yield and a mechanistic fine Michaelis-Menten law — and exactly one
+Two gated processes act on the same biomass output at different grains — a coarse
+linear GROWTH while viable and a fine first-order DECAY once dying — and exactly one
 runs per tick. This test asserts the CAUSAL claims the figure makes:
 
   (a) while viability >= threshold, active_grain == "coarse";
   (b) once viability drops below threshold the grain becomes "fine" and STAYS fine;
   (c) the switch happens at the tick where viability crosses the threshold (+/- 1);
   (d) the gate hands control over: driven at active_grain="coarse" only the coarse
-      process produces biomass, at "fine" only the fine process does — and biomass
-      keeps accumulating from whichever grain is active across the run.
+      process runs (grows biomass), at "fine" only the fine process runs (decays it);
+  (e) the biomass trajectory turns over — it GROWS while viable, then DECAYS once the
+      cell crosses the viability boundary and the fine (dying) grain takes over.
 
 Mirrors test_fig10_topology.py (run the composite, assert on the emitted frames).
 """
@@ -83,24 +84,35 @@ def test_gate_hands_control_to_the_active_grain():
     fine = FineGrainProcess({}, core=core)
 
     def drive(proc, active):
-        return proc.update({"inflow": 1.0, "active_grain": active}, 1.0)
+        # supply a standing biomass/energy so the fine (decay) grain has something
+        # to act on; the coarse (growth) grain reads inflow.
+        return proc.update(
+            {"inflow": 1.0, "biomass": 2.0, "energy": 1.0, "active_grain": active}, 1.0)
 
-    # coarse is selected: only the coarse process produces; the fine one is inert.
+    # coarse is selected: only the coarse process runs (GROWS biomass); fine inert.
     assert drive(coarse, "coarse").get("biomass", 0.0) > 0.0
     assert drive(fine, "coarse") == {}
-    # fine is selected: only the fine process produces; the coarse one is inert.
-    assert drive(fine, "fine").get("biomass", 0.0) > 0.0
+    # fine is selected: only the fine process runs (DECAYS biomass); coarse inert.
+    assert drive(fine, "fine").get("biomass", 0.0) < 0.0
     assert drive(coarse, "fine") == {}
-    # the two grains produce DISTINGUISHABLE biomass (the switch is visible).
-    assert abs(drive(coarse, "coarse")["biomass"] - drive(fine, "fine")["biomass"]) > 0.1
+    # the grains act in OPPOSITE directions on biomass — coarse grows, fine decays.
+    assert drive(coarse, "coarse")["biomass"] > 0.0 > drive(fine, "fine")["biomass"]
 
 
-def test_biomass_accumulates_across_the_switch():
+def test_biomass_grows_then_decays_at_the_switch():
+    """Alive (coarse): biomass grows. Past the viability threshold (fine): the cell
+    is dying, so biomass turns over and decays. Anchored on the grain flip (the
+    biomass peaks there), robust to the one-tick handover lag."""
     viab, grain, bio = _cols(_run_trajectory())
-    cross = next(i for i, v in enumerate(viab) if v < THRESHOLD)
     assert bio[0] == 0.0
-    assert bio[cross] > 0.0, "coarse grain should have built biomass before the switch"
-    assert bio[-1] > bio[cross], "fine grain should keep building biomass after the switch"
-    # biomass is non-decreasing throughout (production only, never lost).
-    for a, b in zip(bio, bio[1:]):
-        assert b >= a - 1e-9
+    flip = next(i for i, g in enumerate(grain) if g == "fine")
+    # growth phase: biomass builds monotonically while the coarse grain is active.
+    for a, b in zip(bio[:flip], bio[1:flip + 1]):
+        assert b >= a - 1e-9, "biomass must not fall while still viable (coarse)"
+    assert bio[flip - 1] > bio[0], "coarse grain should have grown biomass before the switch"
+    # the biomass peaks at the switch, then decays under the fine (dying) grain.
+    peak = max(bio)
+    assert abs(bio.index(peak) - flip) <= 1, "biomass should peak at the coarse→fine switch"
+    assert bio[-1] < bio[flip - 1], "fine grain should decay biomass after the switch"
+    for a, b in zip(bio[flip:], bio[flip + 1:]):
+        assert b <= a + 1e-9, "biomass must not rise once dying (fine)"

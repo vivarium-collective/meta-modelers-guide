@@ -66,7 +66,8 @@ def main() -> None:
     assert grain[flip] == "fine" and all(g == "fine" for g in grain[flip:]), \
         "once it flips to fine it must stay fine"
     assert abs(flip - cross) <= 1, f"flip ({flip}) should track the crossing ({cross})"
-    assert bio[-1] > bio[cross], "biomass must keep accumulating across the switch"
+    assert bio[flip - 1] > bio[0], "biomass must grow while viable (coarse)"
+    assert bio[-1] < bio[flip - 1], "biomass must decay once dying (fine)"
 
     t_flip = t[flip]
 
@@ -105,19 +106,18 @@ def main() -> None:
     ax.axvspan(t_flip, t[-1], color=C_FINE, alpha=0.08)
     # split the biomass line at the flip so each grain's contribution shows in colour.
     ax.plot(t[:flip + 1], bio[:flip + 1], color=C_COARSE, lw=2.6, marker="o", ms=3.5,
-            label="biomass — coarse process")
+            label="biomass — coarse (growth, viable)")
     ax.plot(t[flip:], bio[flip:], color=C_FINE, lw=2.6, marker="o", ms=3.5,
-            label="biomass — fine process")
+            label="biomass — fine (decay, dying)")
     ax.axvline(t_flip, color="#333", ls=":", lw=1.3)
     ax.plot([t_flip], [bio[flip]], marker="*", ms=16, color="#333", zorder=5)
     ax.annotate(f"grain flips coarse→fine\nat t = {t_flip:.0f}  (viability = {viab[flip]:.2f})",
-                xy=(t_flip, bio[flip]), xytext=(t_flip - 0.5, bio[flip] + (bio[-1] - bio[0]) * 0.22),
-                ha="right", fontsize=9, color="#333",
+                xy=(t_flip, bio[flip]), xytext=(t_flip + 3.5, max(bio) * 0.86),
+                ha="left", fontsize=9, color="#333",
                 arrowprops=dict(arrowstyle="->", color="#333", lw=1.1))
-    ax.set_ylabel("accumulated biomass")
+    ax.set_ylabel("biomass")
     ax.set_xlabel("time")
-    ax.set_title("Biomass accumulates from whichever grain is active "
-                 "(slope changes at the switch)", fontsize=11)
+    ax.set_title("Biomass grows while viable (coarse), then decays once dying (fine)", fontsize=11)
     ax.grid(alpha=0.25)
     ax.legend(fontsize=8, loc="upper left")
 
@@ -128,7 +128,7 @@ def main() -> None:
     print(f"wrote {OUT.relative_to(ROOT)}")
     print(f"  viability   {viab[0]:.3f} → {viab[-1]:.3f}  (crosses {THRESHOLD} at t={cross})")
     print(f"  active_grain flips coarse→fine at t={flip}  (viability there = {viab[flip]:.3f})")
-    print(f"  biomass     {bio[0]:.3f} → {bio[-1]:.3f}  (keeps rising across the switch)")
+    print(f"  biomass     {bio[0]:.3f} → {bio[-1]:.3f}  (grows to the switch, then decays)")
 
 
 if __name__ == "__main__":

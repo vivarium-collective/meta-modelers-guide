@@ -3,13 +3,15 @@
 The runnable demonstration behind Fig 5b's *grain swap*. A cell's ``viability`` is
 driven down by a simple external stress ramp. A :class:`GrainSelector` watches
 that signal and picks which grain realizes the shared interface: while the cell is
-comfortably viable the cheap **coarse** grain suffices; once viability falls below
-a threshold the mechanistic **fine** grain is swapped in to resolve the regime that
-matters near the boundary. Two gated processes realize the same ``biomass`` output
-at different grains — :class:`CoarseGrainProcess` (cheap linear yield) and
-:class:`FineGrainProcess` (saturating Michaelis–Menten kinetics) — and exactly one
-is active per tick, so as viability slides past the threshold **control switches
-from the coarse process to the fine process** on-screen.
+comfortably viable the cheap **coarse** grain grows its biomass; once viability
+falls below a threshold the mechanistic **fine** grain is swapped in to resolve the
+regime that matters at the boundary — the cell is dying, so biomass stops growing
+and DECAYS. Two gated processes act on the same ``biomass`` output at different
+grains — :class:`CoarseGrainProcess` (linear growth while viable) and
+:class:`FineGrainProcess` (first-order decay once past the threshold) — and exactly
+one is active per tick, so as viability slides past the threshold **control switches
+from the coarse growth process to the fine decay process** on-screen: the biomass
+trajectory turns over from growth to decline.
 
 Decision (spec Pilot B): low viability → fine grain; above threshold → coarse.
 
@@ -99,22 +101,21 @@ class CoarseGrainProcess(Process):
 
 
 class FineGrainProcess(Process):
-    """Fine grain — mechanistic, higher-fidelity realization of the interface.
+    """Fine grain — the mechanistic DEATH/decay regime, resolved once the cell
+    crosses the viability boundary.
 
-    Produces ``biomass`` by a saturating Michaelis–Menten law on ``inflow``
-    (rate = vmax · inflow / (km + inflow)), standing in for resolved kinetics, but
-    ONLY when it is the active grain. When ``active_grain != "fine"`` it returns an
-    empty update (no-op). Its per-step production differs visibly from the coarse
-    grain, so the switch is legible in the biomass trajectory.
+    A viable cell GROWS (the coarse grain adds biomass). Below the viability
+    threshold the cell has stopped growing and is dying: its ``biomass`` now DECAYS
+    first-order — dX/dt = −decay_rate·biomass, and its ``energy`` reserve drains
+    with it — the dynamics the coarse growth model cannot capture. Active ONLY when
+    ``active_grain == "fine"``; otherwise a no-op. So at the switch the biomass
+    trajectory turns over: growth → arrest → decay.
     """
 
-    config_schema = {
-        "vmax": _f(1.2), "km": _f(0.5),
-        "biomass_yield": _f(1.0), "energy_yield": _f(0.6),
-    }
+    config_schema = {"decay_rate": _f(0.09), "energy_decay": _f(0.09)}
 
     def inputs(self):
-        return {"inflow": "chemical_flux", "active_grain": "string"}
+        return {"biomass": "mass", "energy": "energy", "active_grain": "string"}
 
     def outputs(self):
         return {"biomass": "mass", "energy": "energy"}
@@ -122,10 +123,10 @@ class FineGrainProcess(Process):
     def update(self, state, interval):
         if state.get("active_grain") != "fine":
             return {}
-        n = float(state.get("inflow", 0.0))
+        x = float(state.get("biomass", 0.0))
+        e = float(state.get("energy", 0.0))
         c = self.config
-        rate = c["vmax"] * n / (c["km"] + n) if (c["km"] + n) else 0.0
         return {
-            "biomass": c["biomass_yield"] * rate * interval,
-            "energy": c["energy_yield"] * rate * interval,
+            "biomass": -c["decay_rate"] * x * interval,
+            "energy": -c["energy_decay"] * e * interval,
         }
