@@ -59,6 +59,21 @@ def _emergence_state():
         ecm_count=ECM_COUNT, interval=1.0)["state"]
 
 
+def _topology_only(node: dict) -> dict:
+    """Keep only the place-graph NODES (those carrying a _control) and drop the
+    scalar-value leaves (biomass / motile / matrix), so a snapshot renders as a
+    compact topology tree instead of a wide row of value stores — much more
+    readable in the composed figure."""
+    out = {"_control": node["_control"]}
+    contents = node.get("contents")
+    if isinstance(contents, dict):
+        kids = {k: _topology_only(v) for k, v in contents.items()
+                if isinstance(v, dict) and v.get("_control")}
+        if kids:
+            out["contents"] = kids
+    return out
+
+
 def main() -> None:
     # 1. the live, steppable rewrite composite (study baseline)
     live = {
@@ -87,7 +102,7 @@ def main() -> None:
         colony = {"_type": "tree[node]"}
         for k, v in env.items():
             if not k.startswith("_"):
-                colony[k] = v
+                colony[k] = _topology_only(v)
         spec = {
             "name": f"Fig 10b biofilm — {title}",
             "description": (

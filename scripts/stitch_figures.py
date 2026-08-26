@@ -94,10 +94,7 @@ FIGURES: dict[int, dict] = {
     ])},
     8: {"study": "fig-08", "root": group("row", [
         panel("fig08a.png", "a"),
-        group("col", [
-            loom("fig-08", "fig08b-minimal-cell"),
-            loom("fig-08", "fig08a-coarse-graining"),
-        ], "b"),
+        loom("fig-08", "fig08b-minimal-cell", "b"),   # just the minimal cell
     ])},
     # growth/division, development, evolution
     9: {"study": "fig-09", "root": group("col", [   # a illustration on top, b snapshot sequence below
@@ -105,7 +102,7 @@ FIGURES: dict[int, dict] = {
         rawimg(str(ROOT / "workspace/studies/fig-09/visualizations/fig09b-division-sequence.png"), "b"),
     ])},
     10: {"study": "fig-10", "root": group("col", [
-        panel("fig10c.png", "a"),
+        panel("fig10c.png", "a", scale=0.6),   # smaller illustration; give 10b more room
         rawimg(str(ROOT / "workspace/studies/fig-10/visualizations/fig10-biofilm-sequence.png"), "b"),
     ])},
     11: {"study": "fig-11", "root": group("row", [
