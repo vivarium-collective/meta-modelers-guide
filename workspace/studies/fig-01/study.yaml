@@ -1,19 +1,29 @@
 schema_version: 4
 name: fig-01
-title: The meta-modeler's overview
+title: Interfaces & composition (process bigraph)
 kind: theoretical
 purpose:
-  mechanism: Hierarchical composition of processes coupled by explicit interfaces
-    across cellular and environmental scales; the multiscale bigraph beneath the schematic.
+  mechanism: 'A process bigraph: processes interacting with stores through ports and
+    wires, making shared state and dependencies explicit.'
 visualizations:
 - name: Figure 1
   address: svg:visualizations/figure_1.svg
   config:
-    caption: Hierarchical composition of processes coupled by explicit interfaces
-      across cellular and environmental scales; the multiscale bigraph beneath the
-      schematic.
-question: What does the meta-modeler coordinate across scales and interfaces?
+    caption: 'A process bigraph: processes interacting with stores through ports and
+      wires, making shared state and dependencies explicit.'
+- name: A process bigraph is executable
+  address: image:visualizations/fig01-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig01 demonstration (fig01-runnable): the
+      minimal executable process bigraph — ONE real process (StoreTransfer) wired to
+      TWO scalar place-graph nodes, source store_a and sink store_b. A first-order
+      transfer drains the source into the sink (dA/dt=-k*A, dB/dt=+k*A) while the
+      total A+B is conserved. The dynamics behind Fig 1b''s static signature: a
+      process bigraph is an executable place-graph + processes. From
+      scripts/build_fig01_dynamics.py.'
+question: How does a process bigraph make shared state and dependencies explicit?
 baseline:
-- name: fig01b-multiscale-composite
-  composite: meta_modelers_guide.composites.fig01b-multiscale-composite
+- name: fig01-runnable
+  composite: meta_modelers_guide.composites.fig01-runnable
   params: {}

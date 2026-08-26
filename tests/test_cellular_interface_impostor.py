@@ -1,7 +1,7 @@
 """Law 1 (conformance) demonstrated NATIVELY at the Fig 4b cellular interface.
 
 Previously the cellular-interface study proved Law 1 only by cross-referencing the
-metabolism-signature impostor (`NonConformingMetabolism`, handlers_fig06_fba.py),
+metabolism-signature impostor (`NonConformingMetabolism`, handlers_fig05_fba.py),
 which breaks a *different* contract. This exercises the cellular interface's OWN
 impostor (`NonConformingCellularInterface`): a handler that drops the required
 `viability`/`objective` ports must be rejected by the compiler with a
@@ -40,7 +40,7 @@ def test_native_impostor_rejected_by_compiler():
     handler for the CellularInterface draft raises CompileError naming the
     dropped ports."""
     core = build_core()
-    sem = _semantic("fig04b-cellular-interface")
+    sem = _semantic("fig03b-cellular-interface")
     env = {
         "CellularInterface": {
             "handler": "NonConformingCellularInterface",

@@ -1,20 +1,27 @@
 schema_version: 4
 name: fig-04
-title: The cellular interface
+title: Cell–environment coupling
 kind: theoretical
 purpose:
-  mechanism: 'The minimal cellular interface: a cell exposes physical exchange ports
-    (chemical, mechanical, electrical, thermal) and higher-level cellular ports (growth
-    rate, shape, signaling, objective, viability).'
+  mechanism: A cell couples to a spatio-flux nutrient field through one typed process
+    — sensing, metabolizing, growing, and secreting.
 visualizations:
-- name: Figure 3
-  address: svg:visualizations/figure_3.svg
+- name: Figure 4
+  address: svg:visualizations/figure_4.svg
   config:
-    caption: 'The minimal cellular interface: a cell exposes physical exchange ports
-      (chemical, mechanical, electrical, thermal) and higher-level cellular ports
-      (growth rate, shape, signaling, objective, viability).'
-question: What ports and contract define the minimal cellular interface?
+    caption: A cell couples to a spatio-flux nutrient field through one typed process
+      — sensing, metabolizing, growing, and secreting.
+- name: Environment drives the interface ports
+  address: image:visualizations/fig04-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig04 coupling (fig04-runnable): a real
+      diffusing chemical grid seeded as a nutrient gradient drives the cell''s interface
+      ports. The cell at interior grid index 4 senses its LOCAL field; uptake flux
+      tracks that field, mass accumulates on uptake, and the cell drifts up-gradient
+      (chemotaxis) — env→port coupling made runnable. From scripts/build_fig04_dynamics.py.'
+question: How does a cell exchange matter and signals with its environment?
 baseline:
-- name: fig04b-cellular-interface
-  composite: meta_modelers_guide.composites.fig04b-cellular-interface
+- name: fig04-runnable
+  composite: meta_modelers_guide.composites.fig04-runnable
   params: {}

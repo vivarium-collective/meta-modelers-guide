@@ -65,52 +65,49 @@ def panel(name, label=None, scale=1.0, rotate=0, crop=None):
 # Numbering follows the paper AFTER the overview (old Fig 1) was dropped:
 # process bigraph is now Fig 1, orchestration Fig 2, … evolution Fig 11.
 FIGURES: dict[int, dict] = {
-    1: {"study": "fig-02", "root": group("row", [   # a generic process (left) + store hierarchy (right)
-        loom("fig-02", "fig02a-process", "a"),
-        loom("fig-02", "fig02b-store-hierarchy", "b"),
+    1: {"study": "fig-01", "root": group("row", [   # a generic process (left) + store hierarchy (right)
+        loom("fig-01", "fig01a-process", "a"),
+        loom("fig-01", "fig01b-store-hierarchy", "b"),
     ])},
-    2: {"study": "fig-03", "root":   # orchestration — hand-created figure (a/b/c baked in)
+    2: {"study": "fig-02", "root":   # orchestration — hand-created figure (a/b/c baked in)
         rawimg(str(ROOT / "assets" / "orchestration.tif")),
     },
-    3: {"study": "fig-04", "root": group("row", [   # a (illustration) left of b (loom card)
+    3: {"study": "fig-03", "root": group("row", [   # a (illustration) left of b (loom card)
+        panel("fig03a.png", "a"),
+        loom("fig-03", "fig03b-cellular-interface", "b"),
+    ])},
+    4: {"study": "fig-04", "root": group("row", [
         panel("fig04a.png", "a"),
-        loom("fig-04", "fig04b-cellular-interface", "b"),
+        loom("fig-04", "fig04-cell-environment", "b"),
     ])},
-    4: {"study": "fig-05", "root": group("row", [
-        panel("fig05a.png", "a"),
-        loom("fig-05", "fig05-cell-environment", "b"),
+    5: {"study": "fig-05", "root": group("row", [   # a rotated vertical (healthy top→disintegrated bottom), b to its right
+        panel("fig05a.png", "a"),   # already oriented vertically (healthy top → disintegrated bottom)
+        loom("fig-05", "fig05b-grain-swap", "b"),
     ])},
-    5: {"study": "fig-06", "root": group("row", [   # a rotated vertical (healthy top→disintegrated bottom), b to its right
-        panel("fig06a.png", "a", rotate=90),
-        loom("fig-06", "fig06b-grain-swap", "b"),
+    6: {"study": "fig-06", "root": group("row", [   # a (illustration) left of b (loom card)
+        panel("fig06a.png", "a"),
+        loom("fig-06", "fig06-molecular-mechanism", "b"),
     ])},
-    6: {"study": "fig-07", "root": group("row", [   # a (illustration) left of b (loom card)
-        panel("fig07a.png", "a"),
-        loom("fig-07", "fig07-molecular-mechanism", "b"),
+    7: {"study": "fig-07", "root": group("col", [   # 8a a wide banner on top, 8b full-width across below
+        panel("fig07a.png", "a", crop=(0.0, 0.296, 1.0, 0.704)),  # ~6/5 taller banner band
+        loom("fig-07", "fig07-nested-hierarchy", "b"),
     ])},
-    7: {"study": "fig-08", "root": group("col", [   # 8a a wide banner on top, 8b full-width across below
-        panel("fig08a.png", "a", crop=(0.0, 0.296, 1.0, 0.704)),  # ~6/5 taller banner band
-        loom("fig-08", "fig08-nested-hierarchy", "b"),
-    ])},
-    8: {"study": "fig-09", "root": group("row", [
-        panel("fig09a.png", "a"),
-        group("col", [
-            loom("fig-09", "fig09b-minimal-cell"),
-            loom("fig-09", "fig09a-coarse-graining"),
-        ], "b"),
+    8: {"study": "fig-08", "root": group("row", [
+        panel("fig08a.png", "a"),
+        loom("fig-08", "fig08b-minimal-cell", "b"),   # just the minimal cell
     ])},
     # growth/division, development, evolution
-    9: {"study": "fig-10-1", "root": group("row", [
-        panel("fig10a.png", "a", scale=0.65),
-        loom("fig-10-1", "fig10-1-division", "b"),
+    9: {"study": "fig-09", "root": group("row", [   # a illustration left, compact 2-snapshot b to its right
+        panel("fig10a.png", "a"),
+        rawimg(str(ROOT / "workspace/studies/fig-09/visualizations/fig09b-division-sequence.png"), "b"),
     ])},
-    10: {"study": "fig-10-2", "root": group("row", [
-        panel("fig10c.png", "a", scale=0.9),
-        loom("fig-10-2", "fig10-2-development", "b"),
+    10: {"study": "fig-10", "root": group("row", [
+        panel("fig10c.png", "a"),
+        rawimg(str(ROOT / "workspace/studies/fig-10/visualizations/fig10-biofilm-sequence.png"), "b"),
     ])},
-    11: {"study": "fig-10-3", "root": group("row", [
+    11: {"study": "fig-11", "root": group("row", [   # a illustration left, compact 2-snapshot b to its right
         panel("fig10e.png", "a"),
-        loom("fig-10-3", "fig10-3-evolution", "b"),
+        rawimg(str(ROOT / "workspace/studies/fig-11/visualizations/fig11-evolution-sequence.png"), "b"),
     ])},
 }
 

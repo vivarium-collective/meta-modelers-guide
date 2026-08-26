@@ -6,7 +6,7 @@ level (dFBA vs Michaelis-Menten behind the `CpmCellField` ports). This test
 measures it at the most abstract level the investigation has: the cellular
 *interface contract* of Fig 4b itself.
 
-The fig04b executable composite installs ONE handler (`CellularInterfaceHandler`:
+The fig03b executable composite installs ONE handler (`CellularInterfaceHandler`:
 first-order uptake + independent Monod growth + Arrhenius thermal death) behind
 its typed `cell` ports. Here a SECOND, independent handler
 (`CooperativeCellularInterfaceHandler`: a saturable Michaelis-Menten membrane
@@ -41,17 +41,17 @@ import pytest
 from process_bigraph import Composite, allocate_core
 
 from meta_modelers_guide.core import build_core
-from meta_modelers_guide.handlers_fig04b import (
+from meta_modelers_guide.handlers_fig03b import (
     CellularInterfaceHandler,
     CooperativeCellularInterfaceHandler,
 )
 
 COMP_DIR = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"
-COMP_MONOD = COMP_DIR / "fig04b-executable.composite.json"
-COMP_COOP = COMP_DIR / "fig04b-executable-alt.composite.json"
+COMP_MONOD = COMP_DIR / "fig03b-executable.composite.json"
+COMP_COOP = COMP_DIR / "fig03b-executable-alt.composite.json"
 
 # The interface's operating range of chemical supply, and the constant thermal
-# environment the fig04b composites hold (37 degC optimum).
+# environment the fig03b composites hold (37 degC optimum).
 CHEM_LO, CHEM_HI = 0.2, 2.5
 SWEEP = [round(CHEM_LO + i * 0.2, 3) for i in range(int((CHEM_HI - CHEM_LO) / 0.2) + 1)]
 TEMP = 37.0
@@ -153,7 +153,7 @@ def test_integrated_observables_agree_under_ramp():
 
 
 def test_both_composites_build_and_run():
-    """Both fig04b executable composites -- the Monod baseline and the cooperative
+    """Both fig03b executable composites -- the Monod baseline and the cooperative
     alt -- build against the workspace core and run on the base process-bigraph
     runtime (lumped: no cobra, no spatio_flux), producing a growing cell through
     the identical typed interface."""

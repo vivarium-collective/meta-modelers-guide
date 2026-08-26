@@ -28,6 +28,7 @@ UNITS: dict[str, str] = {
     "concentration":   "mol·L⁻¹",
     "mass":            "kg",
     "force":           "kg·m·s⁻² (N)",
+    "torque":          "N·m (kg·m²·s⁻²)",
     "current":         "C·s⁻¹ (A)",
     "voltage":         "V",
     "heat_flux":       "J·s⁻¹ (W)",

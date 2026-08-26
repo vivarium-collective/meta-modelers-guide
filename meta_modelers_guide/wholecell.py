@@ -101,7 +101,7 @@ class ViabilityGatedMetabolism(Process):
         super().__init__(config, core=core)
         self._fba = None
         if (self.config.get("mode") or "coarse") == "fba":
-            from .handlers_fig06_fba import FBAMetabolism
+            from .handlers_fig05_fba import FBAMetabolism
             self._fba = FBAMetabolism({}, core=core)
 
     def _growth_rate(self, nut: float) -> float:

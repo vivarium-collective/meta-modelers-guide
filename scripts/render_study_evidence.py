@@ -46,18 +46,18 @@ PALETTE = ["#0d6e6b", "#a5620f", "#3f9e99", "#657572",
 STUDY_EXECUTABLES = {
     # LEAD — the thesis: one interface, three mechanisms (incl. real FBA)
     "one-interface-three-mechanisms": [
-        "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba"],
-    "divide": ["fig10-1-executable"],
+        "fig05-executable-coarse", "fig05-executable-kinetic", "fig05-executable-fba"],
+    "divide": ["fig09-executable"],
     # "The Contract and Its Coupling" — Fig 4 interface + Fig 5 sense/act loop
-    "typed-interface": ["fig04b-executable", "fig05-executable"],
-    "the-nested-cell": ["fig07-executable", "fig08-executable"],
+    "typed-interface": ["fig03b-executable", "fig04-executable"],
+    "the-nested-cell": ["fig06-executable", "fig07-executable"],
     # gallery appendix — every figure compiles and runs (the 12-panel small-multiple)
     "gallery": [
-        "fig04b-executable", "fig05-executable",
-        "fig06-executable-coarse", "fig06-executable-kinetic", "fig06-executable-fba",
-        "fig07-executable", "fig08-executable",
-        "fig09a-executable", "fig09b-executable",
-        "fig10-1-executable", "fig10-2-executable", "fig10-3-executable"],
+        "fig03b-executable", "fig04-executable",
+        "fig05-executable-coarse", "fig05-executable-kinetic", "fig05-executable-fba",
+        "fig06-executable", "fig07-executable",
+        "fig08a-executable", "fig08b-executable",
+        "fig09-executable", "fig10-executable", "fig11-executable"],
     # the-living-atlas capstone: the composed whole cell run THREE WAYS (metabolism
     # swap) — rendered specially below, not from executable panels.
     "the-living-atlas": [],

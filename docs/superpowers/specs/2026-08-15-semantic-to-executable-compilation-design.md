@@ -89,16 +89,16 @@ Handler ↔ signature map (target figures):
 | 9b | Reactions | `MassActionReactions` |
 
 ### `handler_envs.py`
-`ENVS: dict[str, HandlerEnv]` keyed `"fig04b"`, `"fig05"`, `"fig06-coarse"`,
-`"fig06-kinetic"`, `"fig09b"`. Each `HandlerEnv` = `{draft_name: {address, config,
-init}}`. `fig06-coarse` handles `CoarseGrainedMetabolism`; `fig06-kinetic` handles
+`ENVS: dict[str, HandlerEnv]` keyed `"fig03b"`, `"fig04"`, `"fig05-coarse"`,
+`"fig05-kinetic"`, `"fig08b"`. Each `HandlerEnv` = `{draft_name: {address, config,
+init}}`. `fig05-coarse` handles `CoarseGrainedMetabolism`; `fig05-kinetic` handles
 `CatalyzedReactionNetwork` — both over the same Fig 6 interface.
 
 ## Materialized executables
 `scripts/build_executables.py` runs `compile_composite(load(semantic), ENVS[k])`
 and writes `composites/<name>.composite.json`:
-`fig04b-executable`, `fig05-executable`, `fig06-executable-coarse`,
-`fig06-executable-kinetic`, `fig09b-executable`. Discoverable + `/viva-run`-able.
+`fig03b-executable`, `fig04-executable`, `fig05-executable-coarse`,
+`fig05-executable-kinetic`, `fig08b-executable`. Discoverable + `/viva-run`-able.
 
 ## Study
 `workspace/studies/fig-compilation/` in `paper-figures`: baseline = a semantic
@@ -114,7 +114,7 @@ guide.
 
 ## Tests — `tests/test_compilation.py`
 Per env: conformance holds; `compile_composite` builds; N-step run changes ≥1
-observable; `interface_of(pre)==interface_of(post)`; fig06 coarse+kinetic both
+observable; `interface_of(pre)==interface_of(post)`; fig05 coarse+kinetic both
 conform and share interface.
 
 ## Non-goals

@@ -63,7 +63,7 @@ For the in-progress work: the paper's four molecular channels (chemical, electro
 
 ### A7. Autopoiesis (Fig 9; planned)
 
-The pass/fail criterion is in the text: "A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible." So the study needs a *negative control vesicle* (boundary without closure, decays) against a closed metabolism-membrane-repair loop (persists) — the contrast is the finding. Also: "viability bounds arise as constraints on the shared state that must be maintained for the composition to persist" (beer2023) — this is where the phenomenological threshold of A4 finally becomes emergent.
+The pass/fail criterion is in the text: "A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible." So the study needs a *negative control vesicle* (boundary without closure, decays) against a closed metabolism-membrane-repair loop (persists) — the contrast is the finding. Also: "viability bounds arise as constraints on the shared state that must be maintained for the composition to persist" (beer2024deriving) — this is where the phenomenological threshold of A4 finally becomes emergent.
 
 ### A8. Growth, division, development, evolution (Fig 10) → `growth-and-division-spatial` + planned dev/evo
 

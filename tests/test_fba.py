@@ -24,7 +24,7 @@ COMPOSITES = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "c
 
 
 def _sem():
-    return json.loads((COMPOSITES / "fig06-disintegration.composite.json").read_text())["state"]
+    return json.loads((COMPOSITES / "fig05-disintegration.composite.json").read_text())["state"]
 
 
 def test_fba_conforms_to_metabolism_signature():
@@ -35,7 +35,7 @@ def test_fba_conforms_to_metabolism_signature():
 
 def test_fba_runs_and_tracks_nutrient():
     core = build_core()
-    ex = compile_composite(_sem(), ENVS["fig06-fba"], core)
+    ex = compile_composite(_sem(), ENVS["fig05-fba"], core)
     assert interface_of(ex) == interface_of(_sem())      # law 2
     comp = Composite({"state": ex}, core=core)
     comp.run(10)
@@ -47,7 +47,7 @@ def test_fba_acetate_overflow_only_at_high_uptake():
     """The headline: e_coli_core secretes acetate onto the 'secretions' port only
     above the respiratory ceiling. Low glucose → 0 acetate; high glucose → > 0.
     The coarse/kinetic handlers structurally cannot express this."""
-    from meta_modelers_guide.handlers_fig06_fba import FBAMetabolism
+    from meta_modelers_guide.handlers_fig05_fba import FBAMetabolism
     core = build_core()
     h = FBAMetabolism({}, core=core)
     low = h.update({"nutrients": 0.5}, 1.0)    # glucose uptake 5 → respiratory
@@ -76,7 +76,7 @@ def test_law4_three_handlers_one_interface():
     core = build_core()
     sem = _sem()
     outs = {}
-    for env in ("fig06-coarse", "fig06-kinetic", "fig06-fba"):
+    for env in ("fig05-coarse", "fig05-kinetic", "fig05-fba"):
         ex = compile_composite(sem, ENVS[env], core)
         assert interface_of(ex) == interface_of(sem)
         c = Composite({"state": ex}, core=core)

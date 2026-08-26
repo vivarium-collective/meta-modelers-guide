@@ -33,7 +33,7 @@ The sharpest single view is **Fig 6 — disintegration**. It is two things at on
 **Playable.** A scripted thermal shock pushes the cell outside its viable band:
 viability collapses, viability-gated metabolism halts, and biomass decays into
 molecular debris — a cell-to-molecular **level shift** you can step through in the
-Composite Explorer. Play it: `fig06-disintegration-dynamics`.
+Composite Explorer. Play it: `fig05-disintegration-dynamics`.
 
 **Structural, three grains deep.** The metabolic interface behind that collapse,
 
@@ -152,7 +152,7 @@ Honesty about scope is part of the claim:
   *pattern* (ultrasensitivity, closure, division, disintegration), not a
   quantitatively validated organism.
 - **The playable disintegration composite and the whole-cell capstone are both
-  assembled by hand** in the figures' style (`fig06-disintegration-dynamics`,
+  assembled by hand** in the figures' style (`fig05-disintegration-dynamics`,
   `wholecell.py`) — neither is compiler-emitted from a study's drafts, and the whole
   cell is not tuned to any real cell's physiology.
 - **`development-and-evolution` is the most caveated study** (gate:
@@ -271,37 +271,75 @@ the same sets the dashboard shows — and kept fresh by CI (`workspace-ci` runs
 
 | Composite | What it is |
 |---|---|
-| `A Molecular Mechanism` | Fig 7b/7c — a molecular mechanism as a process with typed physical channels. |
-| `Biofilm Development — Draft Interface` | Fig 10.2 (panels c/d) — biofilm development as a hierarchical reorganization. |
-| `Biofilm Development — Live Topology` | Fig 10.2 (biofilm) as a genuine place-graph rewrite: a founder cell colonizes (sibling cell nodes added one at a time up to capacity), then the mature community secretes extracellular matrix (an ECM… |
-| `Cell Disintegration` | Fig 6b — cell disintegration as a grain-swap equivalence. |
-| `Cell Division — Draft Interface` | Fig 10.1 (panel b) — division as a compositional rewrite. |
-| `Cell Division — Live Topology` | Fig 10.1 as a genuine place-graph rewrite: chromosome segregation then cell division via Milner reaction rules over a tree[node] store. |
+| `A Biological Process Bigraph` | Fig 1c — A biological process bigraph: processes are wired into the store hierarchy, each assigned a specific mechanism declared in its contract. |
+| `A Molecular Mechanism` | Fig 6b/6c — a molecular mechanism as a process with typed physical channels. |
+| `A Process` | Fig 1a — A process: typed input and output ports plus a configuration whose update method maps inputs to a delta over the outputs. |
+| `A Store Hierarchy` | Fig 1b — A store hierarchy: the place graph of biological containment from tissue down to molecules, each store typed with its biological unit. |
+| `Biofilm Development — Draft Interface` | Fig 10 (panels c/d) — biofilm development as a hierarchical reorganization. |
+| `Biofilm Development — Live Topology` | Fig 10 (biofilm) as a genuine place-graph rewrite: a founder cell colonizes (sibling cell nodes added one at a time up to capacity), then the mature community secretes extracellular matrix (an ECM no… |
+| `Cell Disintegration` | Fig 5b — cell disintegration as a grain-swap equivalence. |
+| `Cell Division — Draft Interface` | Fig 9 (panel b) — division as a compositional rewrite. |
+| `Cell Division — Live Topology` | Fig 9 as a genuine place-graph rewrite: chromosome segregation then cell division via Milner reaction rules over a tree[node] store. |
 | `Cell–Cell Coupling` | Paper §Cell–cell coupling (no dedicated figure). Two cell agents are wired to one shared environmental nutrient store: each senses the pool and depletes it, so their interfaces are coupled not only t… |
-| `Cell–Environment Coupling` | Fig 5b — cell–environment coupling. |
-| `Disintegration (playable)` | Fig 6a — cell disintegration as a playable trajectory: a thermal shock pushes the cell past its viability bound; viability collapses, viability-gated metabolism halts, and biomass decays into molecul… |
-| `Evolution — Draft Interface` | Fig 10.3 (panels e/f) — evolution reshapes the composition itself. |
-| `Evolution — Live Topology` | Fig 10.3 (evolution) as a genuine place-graph rewrite: a wildtype population establishes (organism nodes added), a fitter mutant arises, then a selection sweep adds mutant offspring and prunes wildty… |
-| `Interaction Modalities` | Fig 4a — four interaction-modality cards of the cellular interface: nutrient exchange (chemical flux), motile force (mechanical), growth rate, and electrical signaling. |
-| `Nested Molecular Hierarchy` | Fig 8b — molecular compositions as a nested hierarchical composite. |
-| `Self-Organization & Coarse-Graining` | Fig 9a — self-organization, coarse-graining, and autopoiesis. |
-| `The Cellular Interface` | Fig 4b — the minimal cellular interface. |
-| `The Minimal Cell` | Fig 9b — the minimal cell: the three columns of Fig 9a wired into one composite. |
+| `Cell–Environment Coupling` | Fig 4b — cell–environment coupling. |
+| `Disintegration (playable)` | Fig 5a — cell disintegration as a playable trajectory: a thermal shock pushes the cell past its viability bound; viability collapses, viability-gated metabolism halts, and biomass decays into molecul… |
+| `Evolution — Draft Interface` | Fig 11 (panels e/f) — evolution reshapes the composition itself. |
+| `Evolution — Live Topology` | Fig 11 (evolution) as a genuine place-graph rewrite: a wildtype population establishes (organism nodes added), a fitter mutant arises, then a selection sweep adds mutant offspring and prunes wildtype… |
+| `Grain Swap` | Fig 5b — grain swap on viability. |
+| `Interaction Modalities` | Fig 3a — four interaction-modality cards of the cellular interface: nutrient exchange (chemical flux), motile force (mechanical), growth rate, and electrical signaling. |
+| `Nested Molecular Hierarchy` | Fig 7b — molecular compositions as a nested hierarchical composite. |
+| `Self-Organization & Coarse-Graining` | Fig 8a — self-organization, coarse-graining, and autopoiesis. |
+| `The Cellular Interface` | Fig 3b — the minimal cellular interface. |
+| `The Minimal Cell` | Fig 8b — the minimal cell: the three columns of Fig 8a wired into one composite. |
+| `cell-sorting-spatial` | The sorting study flagship: a mixed 8x8 checkerboard of alternating-type 5x5-px CPM cells (64 cells total, 32 type-1 / 32 type-2, on a 70x70 lattice) demixes under differential-adhesion contact energ… |
+| `cellcell-compete` | Two competitor CPM cells (CpmColonyField) share one 60x60 glucose field and race for the same nutrient via independent per-cell dFBA. Both cells run the microaerobic e_coli_core role ('competitor'):… |
+| `cellcell-compete-div` | M7b dividing-population competition: two DIVIDING founder LINEAGES race for one glucose pool supplied at a fixed level from the boundary (Dirichlet BC value 8.0, chemostat-like), each cell growing by… |
+| `cellcell-compete-div-slowmono` | M7b competition CONTROL (slow-lineage monoculture): the cellcell-compete-div slow lineage (glucose_vmax 4) ALONE under the byte-identical boundary glucose supply (Dirichlet 8.0), maintenance (0.10) a… |
+| `cellcell-compete-mm` | Cell-cell (colony) interface-substitutability twin of cellcell-compete: BYTE-IDENTICAL CpmColonyField ports and the same 60x60 shared glucose field, but each cell's INTERNAL per-cell metabolism is sw… |
+| `cellcell-crossfeed` | A tuned two-role cross-feeding pair (CpmColonyField) on a shared 60x60 grid demonstrating a metabolic handoff. |
+| `cellcell-crossfeed-knockout` | Secretor-knockout necessity control for the cross-feeding regime: the cellcell-crossfeed composite with the glucose->acetate SECRETOR cell removed entirely, so no acetate is ever produced anywhere on… |
+| `cellcell-crossfeed-realistic` | M7a realistic-diffusivity control for the cross-feeding regime. |
 | `cellcell-executable-compete` | Executable compilation of cellcell-coupling under handler environment 'cellcell-compete' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
 | `cellcell-executable-crossfeed` | Executable compilation of cellcell-coupling under handler environment 'cellcell-crossfeed' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig04b-executable` | Executable compilation of fig04b-cellular-interface under handler environment 'fig04b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig05-executable` | Executable compilation of fig05-cell-environment under handler environment 'fig05' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig06-executable-coarse` | Executable compilation of fig06-disintegration under handler environment 'fig06-coarse' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig06-executable-fba` | Executable compilation of fig06-disintegration under handler environment 'fig06-fba' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig06-executable-kinetic` | Executable compilation of fig06-disintegration under handler environment 'fig06-kinetic' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig07-executable` | Executable compilation of fig07-molecular-mechanism under handler environment 'fig07' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig08-executable` | Executable compilation of fig08-nested-hierarchy under handler environment 'fig08' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig09a-executable` | Executable compilation of fig09a-coarse-graining under handler environment 'fig09a' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig09b-executable` | Executable compilation of fig09b-minimal-cell under handler environment 'fig09b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig10-1-executable` | Executable compilation of fig10-1-division under handler environment 'fig10-1' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig10-2-executable` | Executable compilation of fig10-2-development under handler environment 'fig10-2' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `fig10-3-executable` | Executable compilation of fig10-3-evolution under handler environment 'fig10-3' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
-| `whole-cell` | The composed whole cell — the paper figure mechanisms (thermal environment, uptake, a selectable Fig 6 metabolism [coarse \| kinetic \| FBA], a viability monitor, DNA-threshold division Fig 10-1, and d… |
+| `cellular-interface-spatial` | The spatial translation of the cellular-interface study. |
+| `condensate-cahn-hilliard` | The condensate study flagship: a scalar field phi on a 64x64 fields grid, seeded with near-critical noise (mean 0, uniform +/-0.025 -- the exact np.random.default_rng(0).uniform(-0.025, 0.025, size=(… |
+| `development-evolution-no-mutation` | Identical to development-evolution-spatial except mutate=false (a BOOLEAN flag, not a mut_sigma=0.0 float override, which bigraph_schema silently drops): the heritable vmax trait cannot vary across d… |
+| `development-evolution-no-selection` | Identical to development-evolution-spatial except selection=false: the vmax trait still mutates on division (raw variance builds up, var_vmax > 0) but every cell's dFBA glucose uptake uses the FIXED… |
+| `development-evolution-spatial` | A growing CPM colony (CpmEvolution, study 8's dFBA growth/division reused unchanged) carrying a heritable per-cell glucose-uptake trait (vmax) that mutates on division (Gaussian, sigma=0.3) and IS un… |
+| `disintegration-spatial` | The disintegration study flagship: a single coherent CPM cell (CpmDisintegration, no metabolism/cobra path) sits centered on a shared 60x60 fields grid inside a radial acetate gradient -- the stresso… |
+| `fig01-process-bigraph` | Fig 1 — Process bigraph (Fig 1b): place-graph nodes n1..n6 with processes p1, p2, p3 connecting them through typed ports — the process-graph replacement for the Milner link graph's hyperedges (Fig 1a… |
+| `fig01b-store` | Fig 1b — A store: a typed container that holds a unit of shared state, accessible to processes. |
+| `fig01c-place-graph` | Fig 1c — The place graph: hierarchical containment relations among stores, independent of process interactions. cell ⊃ {cyto ⊃ {rib, nuc ⊃ DNA}, mem ⊃ chnl}. |
+| `fig01d-process` | Fig 1d — A process: typed input and output ports plus a configuration that maps inputs to outputs. |
+| `fig02b-composite-process` | Fig 2b — Composite process — the `cell`: cyto ⊃ {rib, nuc ⊃ DNA}, mem ⊃ chnl, with grow / express / transport processes and nutrient/signal inputs + shape output. |
+| `fig03b-executable` | Executable compilation of fig03b-cellular-interface under handler environment 'fig03b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig03b-executable-alt` | Alternate executable compilation of fig03b-cellular-interface: the SAME typed cellular-interface contract realized by a SECOND, independent handler (CooperativeCellularInterfaceHandler) with a differ… |
+| `fig04-executable` | Executable compilation of fig04-cell-environment under handler environment 'fig04' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig05-executable-coarse` | Executable compilation of fig05-disintegration under handler environment 'fig05-coarse' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig05-executable-fba` | Executable compilation of fig05-disintegration under handler environment 'fig05-fba' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig05-executable-kinetic` | Executable compilation of fig05-disintegration under handler environment 'fig05-kinetic' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig06-executable` | Executable compilation of fig06-molecular-mechanism under handler environment 'fig06' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig07-executable` | Executable compilation of fig07-nested-hierarchy under handler environment 'fig07' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig08a-executable` | Executable compilation of fig08a-coarse-graining under handler environment 'fig08a' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig08b-executable` | Executable compilation of fig08b-minimal-cell under handler environment 'fig08b' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig09-executable` | Executable compilation of fig09-division under handler environment 'fig09' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig10-executable` | Executable compilation of fig10-development under handler environment 'fig10' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `fig11-executable` | Executable compilation of fig11-evolution under handler environment 'fig11' — draft signatures replaced by conforming Process handlers (see compile.py). Runnable. |
+| `growth-division-spatial` | A single CPM cell (CpmGrowthDivision) grows via per-cell dFBA on an abundant, uniform 60x60 glucose field (spatio-flux DiffusionAdvection) and divides at a volume threshold using the native engine ca… |
+| `molecular-equal-diffusion-control` | The molecular-interfaces study's causal control for molecular-turing-pattern: IDENTICAL Gray-Scott setup (same 128x128 grid, same static np.random.default_rng(1) seed_uv(n=128, seed=1) u/v seed, same… |
+| `molecular-thermal-graded` | The molecular-interfaces study's thermal-channel demonstration: the same molecular-turing-pattern Gray-Scott setup (128x128 grid, static np.random.default_rng(1) seed_uv(n=128, seed=1) u/v seed, cano… |
+| `molecular-turing-pattern` | The molecular-interfaces study flagship: a Gray-Scott reaction-diffusion system on a 128x128 fields grid, seeded near-uniform (u~=1, v~=0 plus small Gaussian noise, plus 5 small nucleation patches of… |
+| `overview-multiscale-composite` | Fig 1b — The multiscale draft composite: tissue ⊃ {fields, cell_population, cells ⊃ cell ⊃ molecules}. Molecular ODEs, FBA metabolism, structural packing, growth/division, and tissue-scale diffusion… |
+| `protocell-autopoietic` | The autopoiesis study flagship: a scalar membrane-density field phi on a 64x64 fields grid, seeded with a deterministic Gaussian-annulus ring (the exact seed_annulus(n=64) draw from meta_modelers_gui… |
+| `protocell-autopoietic-v2` | v2 GENUINELY-LOCAL autopoiesis (peer-review M4 answer) -- the mechanism-level realization. |
+| `protocell-autopoietic-v2-open` | v2-OPEN -- the EXTERNALLY-DRIVEN (open-system) variant of protocell-autopoietic-v2, the explicitly named remaining EMERGE step, built and MEASURED. Same two local fields on a 64x64 periodic grid (mem… |
+| `protocell-vesicle-control` | The autopoiesis study negative control: IDENTICAL seed and process wiring to protocell-autopoietic (same static Gaussian-annulus phi seed, same Protocell process, same canonical D/k_decay/thr/dt/step… |
+| `single-cell-in-a-field` | The flagship spatial sense/act loop: a single CPM cell (CpmCellField) sits in a left-low-to-right-high glucose gradient on a shared 60x60 fields grid, diffusing under spatio-flux DiffusionAdvection. |
+| `single-cell-in-a-field-chemotaxis` | CHEMOTAXIS variant of the flagship: the same single CPM cell (CpmCellField) in the same left-low-to-right-high glucose gradient on the shared 60x60 spatio-flux field, but now the cell ACTS on what it… |
+| `single-cell-in-a-field-mm` | Interface-substitutability twin of the flagship: BYTE-IDENTICAL cell<->field ports, but the internal metabolism behind CpmCellField is swapped from constraint-based dynamic-FBA (e_coli_core, O2-cappe… |
+| `single-cell-in-a-field-o2uncapped` | O2-UNCAPPED mechanism control for the flagship single-cell-in-a-field: byte-for-byte identical to that composite EXCEPT the CpmCellField oxygen bound is lifted (oxygen_vmax = 1000.0, so EX_o2_e is ef… |
+| `single-cell-in-a-field-steadystate` | M7d steady-state regime for the flagship single-cell-in-a-field — byte-for-byte identical to the flagship EXCEPT the CpmCellField adds three cell-independent steady-state terms so the pure-transient… |
+| `whole-cell` | The composed whole cell — the paper figure mechanisms (thermal environment, uptake, a selectable Fig 5 metabolism [coarse \| kinetic \| FBA], a viability monitor, DNA-threshold division Fig 10-1, and d… |
 <!-- END:composites -->
 
 #### Investigations
@@ -311,5 +349,6 @@ the same sets the dashboard shows — and kept fresh by CI (`workspace-ci` runs
 
 | Investigation | Research question |
 |---|---|
-| [From Draft to Living Cell _(complete)_](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html) | Is a cellular interface simultaneously a modeling choice — a decision about which ports matter, what units they carry, how a process couples to the rest of the cell — and a testable biological hypoth… |
+| [From Draft to Living Cell _(running)_](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html) | The paper treats a biological interface as a scientific object — something you can compose with other entities, swap the mechanism behind, and watch emerge from the inside. |
+| [Paper Figures (final — download here) _(complete)_](https://vivarium-collective.github.io/meta-modelers-guide/investigations/paper-figures.html) |  |
 <!-- END:investigations -->

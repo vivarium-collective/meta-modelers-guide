@@ -1,18 +1,32 @@
 schema_version: 4
 name: fig-09
-title: Self-organized processes
+title: Growth & division
 kind: theoretical
 purpose:
-  mechanism: 'Autopoiesis and the minimal cell: coarse-grained containment/metabolism/replication
-    refine into molecular self-organized mechanisms.'
+  mechanism: 'Cell growth and division as a place-graph rewrite: chromosome replication
+    and segregation, then division into two daughter cells.'
 visualizations:
-- name: Figure 8
-  address: svg:visualizations/figure_8.svg
+- name: Figure 9
+  address: svg:visualizations/figure_9.svg
   config:
-    caption: 'Autopoiesis and the minimal cell: coarse-grained containment/metabolism/replication
-      refine into molecular self-organized mechanisms.'
-question: How does a minimal cell coarse-grain into a self-organized process?
+    caption: 'Growth and division. (a) Prokaryotic cell division. (b) Division as a
+      genuine runtime place-graph rewrite — one cell replicates its chromosome, then
+      divides into two daughters; snapshots at t=0, t=1, t=2.'
+- name: Division sequence
+  address: image:visualizations/fig09b-division-sequence.png
+  config:
+    chart: image
+    caption: 'Division as a runtime place-graph rewrite: one cell → chromosome replicates
+      → cell divides. Snapshots at t=0, t=1, t=2 from the fig09-rewrite simulation.'
+- name: Division dynamics
+  address: image:visualizations/fig09-dynamics.png
+  config:
+    chart: image
+    caption: 'Division as quantities over time, from the fig09-rewrite run: the chromosome
+      count and total DNA double at replication, then the cell count doubles one half-cycle
+      later at division (1 → 2 → 4) — replication precedes division, repeatedly.'
+question: How is cell division a place-graph rewrite?
 baseline:
-- name: fig09b-minimal-cell
-  composite: meta_modelers_guide.composites.fig09b-minimal-cell
+- name: fig09-rewrite
+  composite: meta_modelers_guide.composites.fig09-rewrite
   params: {}

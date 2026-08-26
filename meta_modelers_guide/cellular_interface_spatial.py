@@ -2,7 +2,7 @@
 interface run on a real 2D chemical field.
 
 The cellular-interface study's fig04 composites are *lumped*: the
-:class:`~meta_modelers_guide.handlers_fig04b.CellularInterfaceHandler` senses a
+:class:`~meta_modelers_guide.handlers_fig03b.CellularInterfaceHandler` senses a
 single scalar ``chemical_ext`` (a concentration) and returns a scalar
 ``chemical`` flux (net uptake, ``-uptake_rate·chemical_ext`` — negative). This
 adapter is the *spatial translation*: it sits between that handler's chemical

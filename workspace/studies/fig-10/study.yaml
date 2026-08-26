@@ -1,0 +1,41 @@
+schema_version: 4
+name: fig-10
+title: Development
+kind: theoretical
+purpose:
+  mechanism: 'Multicellular development as biofilm emergence from free motile bacteria,
+    modelled as a runtime place-graph rewrite. Initial state: an environment holding
+    a surface and N free motile bacteria (top-level siblings, motile). Processes:
+    a BiofilmEmergence process fires two update rules — ATTACHMENT & AGGREGATION
+    (the motile bacteria leave the top level and become children of a new biofilm
+    node, switching to sessile) and MATURATION (the sessile community secretes ECM
+    matrix nodes inside the biofilm). Running it reorganizes the place graph:
+    dispersed free cells → a nested microcolony → a matrix-encased biofilm.'
+visualizations:
+- name: Figure 10
+  address: svg:visualizations/figure_10.svg
+  config:
+    caption: 'Development. (a) Biofilm formation from free motile bacteria. (b) Biofilm
+      emergence as a genuine runtime place-graph rewrite — free bacteria attach and
+      aggregate into a nested microcolony, then secrete extracellular matrix; snapshots
+      at t=0, t=1, t=2.'
+- name: Biofilm emergence sequence
+  address: image:visualizations/fig10-biofilm-sequence.png
+  config:
+    chart: image
+    caption: 'Biofilm emergence as a runtime place-graph rewrite: free bacteria → attached
+      microcolony → matrix-encased biofilm. Snapshots at t=0, t=1, t=2 from the
+      fig10-emergence simulation.'
+- name: Biofilm emergence dynamics
+  address: image:visualizations/fig10-dynamics.png
+  config:
+    chart: image
+    caption: 'Biofilm emergence as quantities over time, from the fig10-emergence run:
+      free (planktonic) cells fall to zero exactly as biofilm-nested (sessile) cells
+      rise at attachment, then ECM (matrix) nodes accumulate after maturation —
+      planktonic → sessile → matured.'
+question: How is development a place-graph rewrite?
+baseline:
+- name: fig10-emergence
+  composite: meta_modelers_guide.composites.fig10-emergence
+  params: {}

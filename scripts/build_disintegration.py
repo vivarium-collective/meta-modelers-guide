@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Serialize the playable disintegration composite (build_disintegration) to
-composites/fig06-disintegration-dynamics.composite.json — discoverable by the
+composites/fig05-disintegration-dynamics.composite.json — discoverable by the
 workbench and playable via /viva-explore (the Composite Explorer / loom)."""
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 from meta_modelers_guide.wholecell import build_disintegration
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "meta_modelers_guide" / "composites" / "fig06-disintegration-dynamics.composite.json"
+OUT = ROOT / "meta_modelers_guide" / "composites" / "fig05-disintegration-dynamics.composite.json"
 
 
 def main() -> None:

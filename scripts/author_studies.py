@@ -50,7 +50,7 @@ def run(name, emitter="RAMEmitter", steps=9, outcomes=None, params=None):
 # ─── Per-study full-detail spec ──────────────────────────────────────────────
 SPECS = [
     dict(
-        old="fig-04", slug="typed-interface", order=1,
+        old="fig-03", slug="typed-interface", order=1,
         title="The Typed Interface",
         claim="A cell's boundary is a small set of typed, unit-bearing ports; a "
               "conforming handler turns that inert interface into a bounded, "
@@ -94,10 +94,10 @@ SPECS = [
              "The chemical port carries a net uptake (negative outward flux).",
              "min(interface.chemical)", "< 0 (net uptake)"),
         ],
-        exec_svgs=["fig04b-executable.svg"],
+        exec_svgs=["fig03b-executable.svg"],
     ),
     dict(
-        old="fig-05", slug="closing-the-loop", order=2,
+        old="fig-04", slug="closing-the-loop", order=2,
         title="Closing the Loop",
         claim="Sensing and acting are two sides of one coupling: over a real diffusing "
               "map[float] field the cell draws down a local source (1.0→0.20), acts back "
@@ -139,10 +139,10 @@ SPECS = [
              "The cell gains mass over the run from its uptake.",
              "last(single_cell.mass)", "> 1.0"),
         ],
-        exec_svgs=["fig05-executable.svg"],
+        exec_svgs=["fig04-executable.svg"],
     ),
     dict(
-        old="fig-06", slug="one-interface-three-mechanisms", order=3,
+        old="fig-05", slug="one-interface-three-mechanisms", order=3,
         title="One Interface, Three Mechanisms",
         claim="One metabolism interface (nutrients ⇒ biomass, energy, entropy, secretions) is "
               "realized by THREE independent handlers — coarse (biomass 4.0), saturating-kinetic "
@@ -189,12 +189,12 @@ SPECS = [
              "secretions) over the identical wiring (compiler law 2/4).",
              "port-set equality across the three compiled composites", "identical"),
         ],
-        runs_extra=["fig06-executable-kinetic", "fig06-executable-fba"],
-        exec_svgs=["fig06-executable-coarse.svg", "fig06-executable-kinetic.svg",
-                   "fig06-executable-fba.svg"],
+        runs_extra=["fig05-executable-kinetic", "fig05-executable-fba"],
+        exec_svgs=["fig05-executable-coarse.svg", "fig05-executable-kinetic.svg",
+                   "fig05-executable-fba.svg"],
     ),
     dict(
-        old="fig-07", slug="molecular-channels", order=4,
+        old="fig-06", slug="molecular-channels", order=4,
         title="Molecular Channels",
         claim="At the molecular grain, one mechanism transduces four independently-typed "
               "channels at once — chemical (0.6), electrical (0.3), mechanical (0.4) and "
@@ -228,10 +228,10 @@ SPECS = [
              "The four channels are independently typed ports, not one lumped output.",
              "distinct port magnitudes {0.6, 0.3, 0.4, 0.7}", "four distinct values"),
         ],
-        exec_svgs=["fig07-executable.svg"],
+        exec_svgs=["fig06-executable.svg"],
     ),
     dict(
-        old="fig-08", slug="the-nested-cell", order=5,
+        old="fig-07", slug="the-nested-cell", order=5,
         title="The Nested Cell",
         claim="A six-level nested place graph (ECM→membrane→cytoplasm→nucleus→chromosome→"
               "nucleosome) carries a coupled expression cascade — DNA (1.0→1.4) → RNA (→1.41) → "
@@ -272,10 +272,10 @@ SPECS = [
              "Matter crosses the membrane boundary via the transport port.",
              "last(membrane.transport_flux)", "> 0"),
         ],
-        exec_svgs=["fig08-executable.svg"],
+        exec_svgs=["fig07-executable.svg"],
     ),
     dict(
-        old="fig-09", slug="self-made", order=6,
+        old="fig-08", slug="self-made", order=6,
         title="Self-Made",
         claim="Metabolism, containment, and replication close on one another (autopoiesis) and "
               "the same three functions appear at coarse, self-organized, and molecular grains — "
@@ -318,11 +318,11 @@ SPECS = [
              "The Fig 9b minimal cell grows its own membrane and protein pool.",
              "last(membrane.area) and last(proteins.concentration)", "both > 1.0 (1.2 / 1.27)"),
         ],
-        runs_extra=["fig09b-executable"],
-        exec_svgs=["fig09a-executable.svg", "fig09b-executable.svg"],
+        runs_extra=["fig08b-executable"],
+        exec_svgs=["fig08a-executable.svg", "fig08b-executable.svg"],
     ),
     dict(
-        old="fig-10-1", slug="divide", order=7,
+        old="fig-09", slug="divide", order=7,
         title="Divide",
         claim="Division is a genuine event-driven graph rewrite: one cell node becomes two "
               "(cell_count 1→2), partitioning DNA symmetrically (2.745 each) into daughters that "
@@ -360,10 +360,10 @@ SPECS = [
              "The daughter nodes are created by the rewrite at runtime (absent at t=0).",
              "first(daughter_1.dna)", "= 0 at t0, > 0 after the event"),
         ],
-        exec_svgs=["fig10-1-executable.svg"],
+        exec_svgs=["fig09-executable.svg"],
     ),
     dict(
-        old="fig-10-2", slug="biofilm", order=8,
+        old="fig-10", slug="biofilm", order=8,
         title="Biofilm",
         claim="Development is composition at a higher level: cells attach (1.35), secrete ECM "
               "(1.8), and accumulate into a biofilm whose mass grows to 2.25.",
@@ -396,10 +396,10 @@ SPECS = [
              "Cells attach to the surface and secrete extracellular matrix.",
              "last(biofilm.attached) and last(biofilm.ecm)", "both > 0 (1.35 / 1.8)"),
         ],
-        exec_svgs=["fig10-2-executable.svg"],
+        exec_svgs=["fig10-executable.svg"],
     ),
     dict(
-        old="fig-10-3", slug="evolve", order=9,
+        old="fig-11", slug="evolve", order=9,
         title="Evolve",
         claim="Evolution is a compositional rewrite too: a fitter variant is selected (cell_count "
               "→ 3.4) and a lineage gains an entirely new interface port (new_port emerges to 0.57).",
@@ -431,7 +431,7 @@ SPECS = [
              "A new interface port emerges (absent at t=0, nonzero after) — evolution adds a port.",
              "first vs last of cell_O157.new_port", "0 -> > 0 (0.57)"),
         ],
-        exec_svgs=["fig10-3-executable.svg"],
+        exec_svgs=["fig11-executable.svg"],
     ),
     dict(
         old="fig-compilation", slug="the-living-atlas", order=10,
@@ -495,15 +495,15 @@ def outcomes_for(spec):
     """Build runs[].outcomes from the measured readouts — one PASS entry per test,
     keyed UPPERCASE, with the real number in `detail`."""
     stem = {
-        "typed-interface": "fig04b-executable",
-        "closing-the-loop": "fig05-executable",
-        "one-interface-three-mechanisms": "fig06-executable-coarse",
-        "molecular-channels": "fig07-executable",
-        "the-nested-cell": "fig08-executable",
-        "self-made": "fig09a-executable",
-        "divide": "fig10-1-executable",
-        "biofilm": "fig10-2-executable",
-        "evolve": "fig10-3-executable",
+        "typed-interface": "fig03b-executable",
+        "closing-the-loop": "fig04-executable",
+        "one-interface-three-mechanisms": "fig05-executable-coarse",
+        "molecular-channels": "fig06-executable",
+        "the-nested-cell": "fig07-executable",
+        "self-made": "fig08a-executable",
+        "divide": "fig09-executable",
+        "biofilm": "fig10-executable",
+        "evolve": "fig11-executable",
         "the-living-atlas": "wholecell",
     }[spec["slug"]]
     r = READOUTS[stem]
@@ -526,9 +526,9 @@ def outcomes_for(spec):
             "CELL-GROWS": O(f"last(single_cell.mass) = {s['single_cell.mass']['last']} > 1.0"),
         },
         "one-interface-three-mechanisms": lambda: {
-            "ALL-PRODUCE-BIOMASS": O(f"coarse {READOUTS['fig06-executable-coarse']['series']['coarse.biomass']['last']}, "
-                                     f"kinetic {READOUTS['fig06-executable-kinetic']['series']['coarse.biomass']['last']}, "
-                                     f"fba {READOUTS['fig06-executable-fba']['series']['coarse.biomass']['last']} — all > 0"),
+            "ALL-PRODUCE-BIOMASS": O(f"coarse {READOUTS['fig05-executable-coarse']['series']['coarse.biomass']['last']}, "
+                                     f"kinetic {READOUTS['fig05-executable-kinetic']['series']['coarse.biomass']['last']}, "
+                                     f"fba {READOUTS['fig05-executable-fba']['series']['coarse.biomass']['last']} — all > 0"),
             "MECHANISMS-DIFFER": O("biomass spread 2.667–4.0 (Δ = 1.333) > 1.0"),
             "INTERFACE-PRESERVED": O("all three emit {biomass, energy, entropy, secretions} over identical wiring"),
         },
@@ -550,8 +550,8 @@ def outcomes_for(spec):
                                 f"{s['containment_selforg.membrane']['last']}, replication "
                                 f"{s['replication_coarse.copies']['last']} — all > 0"),
             "MULTI-GRAIN": O("coarse + self-organized variants both nonzero for each function"),
-            "MINIMAL-CELL-GROWS": O(f"membrane.area->{READOUTS['fig09b-executable']['series']['membrane.area']['last']}, "
-                                    f"proteins->{READOUTS['fig09b-executable']['series']['proteins.concentration']['last']}"),
+            "MINIMAL-CELL-GROWS": O(f"membrane.area->{READOUTS['fig08b-executable']['series']['membrane.area']['last']}, "
+                                    f"proteins->{READOUTS['fig08b-executable']['series']['proteins.concentration']['last']}"),
         },
         "divide": lambda: {
             "DIVISION-FIRES": O(f"max(cell_count) = {s['environ.cell_count']['max']} ≥ 2"),

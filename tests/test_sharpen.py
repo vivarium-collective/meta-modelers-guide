@@ -64,9 +64,9 @@ def test_metabolism_swap_gives_distinct_life_histories():
 
 
 def test_fig10_division_is_dna_threshold_not_clock():
-    """fig10-1 division fires because replicated DNA crosses the threshold, and it
+    """fig09 division fires because replicated DNA crosses the threshold, and it
     conserves mass (parent → 0, each daughter gets half). It is NOT a wall clock."""
-    doc = json.loads((COMPOSITES / "fig10-1-executable.composite.json").read_text(encoding="utf-8"))
+    doc = json.loads((COMPOSITES / "fig09-executable.composite.json").read_text(encoding="utf-8"))
     divide = doc["state"]["divide"]
     assert "dna_threshold" in divide["config"], "division must be DNA-threshold triggered"
     assert "division_time" not in divide["config"], "division must NOT be wall-clock triggered"

@@ -1,18 +1,30 @@
 schema_version: 4
 name: fig-06
-title: Disintegration
+title: The molecular interface
 kind: theoretical
 purpose:
-  mechanism: 'Loss of the cellular unit: a coarse-grained metabolism refines into
-    its molecular mechanism, and the cell disintegrates into shed material.'
+  mechanism: A molecular mechanism exposes physical ports (chemical, electrical, mechanical,
+    thermal, structural) with molecular subports.
 visualizations:
-- name: Figure 5
-  address: svg:visualizations/figure_5.svg
+- name: Figure 6
+  address: svg:visualizations/figure_6.svg
   config:
-    caption: 'Loss of the cellular unit: a coarse-grained metabolism refines into
-      its molecular mechanism, and the cell disintegrates into shed material.'
-question: How is a process swapped between grains on the viability function?
+    caption: A molecular mechanism exposes physical ports (chemical, electrical, mechanical,
+      thermal, structural) with molecular subports.
+- name: A molecular transducer couples a proton-motive force across four channels
+  address: image:visualizations/fig06-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig06 transducer (fig06-runnable): the F₁Fₒ
+      ATP synthase driven by a proton-motive-force ramp. From the ONE coupled proton
+      flux (drive, dashed) the mechanism produces four TYPED physical channels — ATP
+      synthesis flux (chemical), proton current (electrical), a near-constant rotary
+      torque on the Fₒ rotor (mechanical), and dissipated heat (thermal). ATP flux
+      scales with the drive at the fixed ATP:H⁺ = 1/3.3 stoichiometry, and the
+      electrical energy balance holds (heat = (1−η)·input power, η = 0.75) — matter,
+      charge, angular momentum and energy conserved. From scripts/build_fig06_dynamics.py.'
+question: How is a molecular mechanism a process with typed physical channels?
 baseline:
-- name: fig06b-grain-swap
-  composite: meta_modelers_guide.composites.fig06b-grain-swap
+- name: fig06-runnable
+  composite: meta_modelers_guide.composites.fig06-runnable
   params: {}

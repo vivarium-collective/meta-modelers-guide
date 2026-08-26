@@ -1,23 +1,30 @@
 schema_version: 4
 name: fig-03
-title: Orchestration
+title: The cellular interface
 kind: theoretical
 purpose:
-  mechanism: 'Orchestration: (a) multi-timestepping coordinates processes updating
-    at different rates through a shared store; (b) workflow organizes processes as
-    a dependency DAG; (c) event-driven graph rewrites (division, engulfment, bursting)
-    modify system structure.'
+  mechanism: 'The minimal cellular interface: a cell exposes physical exchange ports
+    (chemical, mechanical, electrical, thermal) and higher-level cellular ports (growth
+    rate, shape, signaling, objective, viability).'
 visualizations:
-- name: Figure 2
-  address: svg:visualizations/figure_2.svg
+- name: Figure 3
+  address: svg:visualizations/figure_3.svg
   config:
-    caption: 'Orchestration: (a) multi-timestepping coordinates processes updating
-      at different rates through a shared store; (b) workflow organizes processes
-      as a dependency DAG; (c) event-driven graph rewrites (division, engulfment,
-      bursting) modify system structure.'
-question: How are processes orchestrated across timescales, workflows, and structural
-  rewrites?
+    caption: 'The minimal cellular interface: a cell exposes physical exchange ports
+      (chemical, mechanical, electrical, thermal) and higher-level cellular ports
+      (growth rate, shape, signaling, objective, viability).'
+- name: Environment senses → interface ports respond
+  address: image:visualizations/fig03-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig03 cellular interface (fig03-runnable):
+      a bounded cell senses its environmental drivers and its typed interface ports
+      respond. A chemical supply drives Monod uptake and growth (the cell accretes
+      volume), while a thermal driver held ABOVE the cell''s 37 °C optimum (45 °C)
+      drives viability strictly down by first-order Arrhenius thermal death —
+      drivers → ports made runnable. From scripts/build_fig03_dynamics.py.'
+question: What ports and contract define the minimal cellular interface?
 baseline:
-- name: fig01b-multiscale-composite
-  composite: meta_modelers_guide.composites.fig01b-multiscale-composite
+- name: fig03-runnable
+  composite: meta_modelers_guide.composites.fig03-runnable
   params: {}
