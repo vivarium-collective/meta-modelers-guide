@@ -49,8 +49,8 @@ FIGURES = {
         "out": "fig11-evolution-sequence.png",
         "stack": "vertical",     # wide population rows → stack top-to-bottom
         "panels": [
-            ("fig11-evo-1-founder.png", "t = 0"),
-            ("fig11-evo-2-growing.png", "t = 1"),
+            ("fig11-evo-1-founder.png",  "t = 0"),
+            ("fig11-evo-2-adapted.png",  "t = 40"),
         ],
     },
 }

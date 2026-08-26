@@ -52,13 +52,12 @@ class PopulationEvolution(Process):
     """
 
     config_schema = {
-        "generation": _f(1.0),     # time between reproduction events
+        "generation": _f(1.0),     # time between division rounds
         "optimum0": _f(0.0),       # starting favored trait value
-        "drift": _f(0.2),          # optimum shift per generation (the moving target)
-        "sel_strength": _f(0.45),  # Gaussian selection sharpness (fitness = e^{-s·Δ²})
-        "mut_sigma": _f(0.55),     # sd of the heritable mutation step
-        "repl_base": _f(1.0),      # base replication rate at perfect fitness
-        "births": _f(3.0),         # reproduction events per generation
+        "drift": _f(0.07),         # optimum shift per generation (slow moving target)
+        "sel_strength": _f(0.6),   # Gaussian selection sharpness (fitness = e^{-s·Δ²})
+        "mut_sigma": _f(0.28),     # sd of the heritable mutation step
+        "div_rate": _f(0.35),      # per-generation division probability at perfect fitness
         "capacity": _f(12.0),      # population carrying capacity (node cap)
         "seed": {"_type": "integer", "_default": 1},
     }
@@ -94,72 +93,79 @@ class PopulationEvolution(Process):
         optimum = float(c["optimum0"]) + float(c["drift"]) * self._gen
         niche["selection_optimum"] = round(optimum, 2)
 
-        # 2) selection re-scores every cell's replication rate by trait↔optimum fit.
+        sel = float(c["sel_strength"])
+        mut_sigma = float(c["mut_sigma"])
+        div_rate = float(c["div_rate"])
+        cap = int(c["capacity"])
+
+        def fitness(trait):
+            return math.exp(-sel * (trait - optimum) ** 2)
+
+        # 2) selection re-scores each cell's division_rate by how close its trait
+        #    sits to the current optimum.
         cells = _top_nodes(pop, "cell")
-        scored = []
         for k in cells:
             contents = pop[k]["contents"]
-            trait = float(contents.get("trait", 0.0))
-            fit = math.exp(-float(c["sel_strength"]) * (trait - optimum) ** 2)
-            contents["replication_rate"] = round(float(c["repl_base"]) * fit, 2)
-            scored.append((k, trait, fit))
+            contents["division_rate"] = round(div_rate * fitness(float(contents.get("trait", 0.0))), 2)
 
-        # 3) reproduction (a Moran-style birth–death so the population keeps
-        #    turning over after it fills): each generation, a few birth events —
-        #    the parent is drawn fitness-weighted (selection), the daughter
-        #    inherits its trait ± Gaussian mutation. While below capacity the
-        #    population GROWS; at capacity, each birth evicts the least-fit cell
-        #    (the one furthest from the optimum), so the trait cloud can keep
-        #    tracking the moving optimum instead of freezing.
-        cap = int(c["capacity"])
-        mut_sigma = float(c["mut_sigma"])
-        repl_base = float(c["repl_base"])
-        total_fit = sum(f for _, _, f in scored) or 1e-9
-        added = False
-        for _ in range(int(round(float(c["births"])))):
-            # fitness-weighted parent selection (roulette).
-            r = self._rng.random() * total_fit
-            acc = 0.0
-            parent_trait, parent_fit = scored[-1][1], scored[-1][2]
-            for _k, tr, f in scored:
-                acc += f
-                if r <= acc:
-                    parent_trait, parent_fit = tr, f
-                    break
-            live = _top_nodes(pop, "cell")
-            if len(live) >= cap and len(live) > 1:
-                victim = max(live, key=lambda k: abs(
-                    float(pop[k]["contents"].get("trait", 0.0)) - optimum))
-                del pop[victim]
+        # 3) BINARY FISSION: a cell divides with probability div_rate·fitness — the
+        #    fitter (nearer the optimum) divide sooner. On division the PARENT is
+        #    REPLACED by two daughters, each inheriting its trait ± Gaussian
+        #    mutation (so cell_0 does not persist once it has divided). Cells that
+        #    don't divide survive unchanged, keeping their identity.
+        changed = False
+        for k in cells:
+            trait = float(pop[k]["contents"].get("trait", 0.0))
+            if self._rng.random() < div_rate * fitness(trait):
+                del pop[k]  # parent consumed by its own division
+                for _ in range(2):
+                    self._n += 1
+                    dt = trait + self._rng.gauss(0.0, mut_sigma)
+                    pop[f"cell_{self._n}"] = _node(
+                        "cell", trait=round(dt, 2),
+                        division_rate=round(div_rate * fitness(dt), 2))
+                changed = True
+
+        # 4) death by selection: if the population overflows carrying capacity, the
+        #    least-fit cells (furthest from the optimum) die — so the trait cloud
+        #    keeps tracking the moving optimum rather than filling with laggards.
+        live = _top_nodes(pop, "cell")
+        if len(live) > cap:
+            doomed = sorted(live, key=lambda k: abs(
+                float(pop[k]["contents"].get("trait", 0.0)) - optimum), reverse=True)
+            for k in doomed[:len(live) - cap]:
+                del pop[k]
+            changed = True
+
+        # Guard against extinction (all cells happened to divide-and-die out): keep
+        # at least the fittest daughter. (In practice capacity>1 prevents this.)
+        if not _top_nodes(pop, "cell"):
             self._n += 1
-            daughter_trait = parent_trait + self._rng.gauss(0.0, mut_sigma)
-            pop[f"cell_{self._n}"] = _node(
-                "cell",
-                trait=round(daughter_trait, 2),
-                replication_rate=round(repl_base * parent_fit, 2),
-            )
-            added = True
+            pop[f"cell_{self._n}"] = _node("cell", trait=round(optimum, 2), division_rate=round(div_rate, 2))
+            changed = True
 
         # Return the environment every generation (optimum moved); the population
-        # only when it actually changed, so no-op ticks stay cheap.
+        # only when its topology actually changed.
         out = {"environment": env}
-        if added:
+        if changed:
             out["population"] = pop
         return out
 
 
 def build_fig11_population_evolution(
-    generation: float = 1.0, optimum0: float = 0.0, drift: float = 0.2,
-    sel_strength: float = 0.45, mut_sigma: float = 0.55, repl_base: float = 1.0,
-    births: float = 3.0, capacity: float = 12.0, seed: int = 1, interval: float = 1.0,
+    generation: float = 1.0, optimum0: float = 0.0, drift: float = 0.07,
+    sel_strength: float = 0.6, mut_sigma: float = 0.28, div_rate: float = 0.35,
+    capacity: float = 12.0, seed: int = 1, interval: float = 1.0,
 ):
     """Composite: a founder ``population`` + a ``environment`` niche + the
     evolution process + a subtree-preserving RAMEmitter. Play it forward and the
-    population grows while the trait cloud tracks the drifting optimum."""
+    founder's lineage divides (binary fission — each parent replaced by two
+    mutated daughters), grows to capacity, and the trait cloud tracks the slowly
+    drifting selection optimum over many generations."""
     return {"state": {
         "population": {
             "_type": "tree[node]",
-            "cell_0": _node("cell", trait=0.0, replication_rate=1.0),
+            "cell_0": _node("cell", trait=0.0, division_rate=div_rate),
         },
         "environment": {
             "_type": "tree[node]",
@@ -172,8 +178,7 @@ def build_fig11_population_evolution(
             "config": {
                 "generation": generation, "optimum0": optimum0, "drift": drift,
                 "sel_strength": sel_strength, "mut_sigma": mut_sigma,
-                "repl_base": repl_base, "births": births,
-                "capacity": capacity, "seed": seed,
+                "div_rate": div_rate, "capacity": capacity, "seed": seed,
             },
             "inputs": {"population": ["population"], "environment": ["environment"]},
             "outputs": {"population": ["population"], "environment": ["environment"]},

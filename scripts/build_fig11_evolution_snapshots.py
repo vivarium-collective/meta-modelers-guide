@@ -34,26 +34,28 @@ from meta_modelers_guide.fig11_topology import build_fig11_population_evolution
 ROOT = Path(__file__).resolve().parent.parent
 COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
 
-N = 18  # run length (matches the live composite's default_n_steps)
+N = 40  # run length (matches the live composite's default_n_steps)
 
 # Keep these scalar leaves in the snapshots (the trait cloud + the moving target);
-# drop the rest (replication_rate / resource) so the frames read cleanly.
+# drop the rest (division_rate / resource) so the frames read cleanly.
 KEEP_LEAVES = {"trait", "selection_optimum"}
 
-# stage stem -> (emitted frame index, panel title, description tail)
-# Two compact snapshots — t=0 and a few instances later — so the pair packs
-# tightly beside the Fig 11a illustration.
+# stage stem -> (emitted frame index, panel title, description tail). The second
+# snapshot is taken MANY generations in, after the founder's lineage has divided
+# (binary fission — founder replaced by daughters), grown to capacity, and the
+# trait cloud has tracked the drifting optimum.
 STAGES = {
     "fig11-evo-1-founder": (
-        0, "A single founder",
+        0, "t = 0",
         "t=0 — one founder cell in the population; the environment's selection "
         "optimum sits at the founder's trait. No variation yet."),
-    "fig11-evo-2-growing": (
-        2, "A few generations later",
-        "t=later — the founder's fitter descendants have reproduced (daughter cells "
-        "added to the population) with mutated traits; a trait cloud has formed and "
-        "the environment's optimum has begun to drift — selection, mutation and "
-        "reproduction, a few generations in."),
+    "fig11-evo-2-adapted": (
+        N, f"t = {N}",
+        f"t={N} — {N} generations of binary fission: the founder's lineage has "
+        "repeatedly DIVIDED (each dividing cell replaced by two mutated daughters, "
+        "so the founder is long gone), grown to carrying capacity, and — under "
+        "selection for the slowly drifting optimum — its whole trait cloud has "
+        "shifted to track that optimum. Adaptation to a moving environment."),
 }
 
 

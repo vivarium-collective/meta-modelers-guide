@@ -1,7 +1,7 @@
 {
   "name": "Evolution — Living Population",
-  "description": "Fig 11b — evolution by natural selection as a genuine place-graph rewrite you can play forward. A `population` (tree[node]) of identically-schema'd `cell` nodes — each carrying a heritable scalar `trait` and a derived `replication_rate` — evolves under an `environment` whose `selection_optimum` DRIFTS over time (a moving target). Every generation the optimum shifts, each cell's replication rate is re-scored by how close its trait sits to the current optimum (a Gaussian fitness kernel), and the fitter cells reproduce: a daughter `cell` node is ADDED to the population with its trait inherited ± Gaussian mutation. Below carrying capacity the population grows; at capacity a Moran-style birth–death evicts the least-fit cell, so the trait cloud keeps chasing the moving optimum instead of freezing. Running it adds/removes place-graph nodes and shifts the optimum leaf each tick — steppable topology for the loom run/animate feature (selection + mutation + reproduction, the minimal Darwinian loop).",
-  "default_n_steps": 18,
+  "description": "Fig 11b — evolution by natural selection as a genuine place-graph rewrite you can play forward. A `population` (tree[node]) of identically-schema'd `cell` nodes — each carrying a heritable scalar `trait` and a derived `division_rate` — evolves under an `environment` whose `selection_optimum` slowly DRIFTS over time (a moving target). Each generation the optimum shifts, each cell's division rate is re-scored by how close its trait sits to the current optimum (a Gaussian fitness kernel), and cells undergo BINARY FISSION: a dividing cell is REPLACED by two daughters, each inheriting its trait ± Gaussian mutation (so the founder does not persist once it has divided). The population grows to carrying capacity; beyond it, the least-fit cells (furthest from the optimum) die. Over many generations the whole trait cloud tracks the drifting optimum — selection + mutation + division, the minimal Darwinian loop. Running it adds/removes place-graph nodes and shifts the optimum leaf each tick — steppable topology for the loom run/animate feature.",
+  "default_n_steps": 40,
   "requires": {
     "processes": [
       "PopulationEvolution"
@@ -11,27 +11,27 @@
     "generation": {
       "type": "float",
       "default": 1.0,
-      "description": "Time between reproduction events."
+      "description": "Time between division rounds."
     },
     "drift": {
       "type": "float",
-      "default": 0.2,
+      "default": 0.07,
       "description": "Shift of the environment's selection optimum per generation (the moving target)."
     },
     "sel_strength": {
       "type": "float",
-      "default": 0.45,
+      "default": 0.6,
       "description": "Selection sharpness — the Gaussian fitness width (fitness = e^{-s·Δ²})."
     },
     "mut_sigma": {
       "type": "float",
-      "default": 0.55,
+      "default": 0.28,
       "description": "Standard deviation of the heritable mutation step passed to each daughter."
     },
-    "births": {
+    "div_rate": {
       "type": "float",
-      "default": 3.0,
-      "description": "Reproduction (birth) events per generation."
+      "default": 0.35,
+      "description": "Per-generation division probability for a perfectly-fit cell."
     },
     "capacity": {
       "type": "int",
@@ -46,7 +46,7 @@
         "_control": "cell",
         "contents": {
           "trait": 0.0,
-          "replication_rate": 1.0
+          "division_rate": 0.35
         }
       }
     },
@@ -70,8 +70,7 @@
         "drift": "${drift}",
         "sel_strength": "${sel_strength}",
         "mut_sigma": "${mut_sigma}",
-        "repl_base": 1.0,
-        "births": "${births}",
+        "div_rate": "${div_rate}",
         "capacity": "${capacity}",
         "seed": 1
       },
