@@ -161,100 +161,108 @@ def _render_one(address, config, runs_db, study_yaml):
 #
 # | simulation | composite | steps | params |
 # | --- | --- | --- | --- |
-# | `interaction-modalities` | `meta_modelers_guide.composites.fig04a-interaction-modalities` | 0 | — |
-# | `cellular-interface` | `meta_modelers_guide.composites.fig04b-cellular-interface` | 0 | — |
-# | `cellular-interface-executable` | `meta_modelers_guide.composites.fig04b-executable` | 0 | — |
+# | `interaction-modalities` | `meta_modelers_guide.composites.fig03a-interaction-modalities` | 0 | — |
+# | `cellular-interface` | `meta_modelers_guide.composites.fig03b-cellular-interface` | 0 | — |
+# | `cellular-interface-executable` | `meta_modelers_guide.composites.fig03b-executable` | 0 | — |
 # | `cellular-interface-spatial` | `meta_modelers_guide.composites.cellular-interface-spatial` | 0 | — |
 
 # ### Specification (process-bigraph) — load, inspect, edit
 #
 # Each composite is a process-bigraph *document*: named processes (`_type: process`) bound to an `address`, wired by `inputs`/`outputs` ports over shared stores. For every composite below the first cell loads the spec into a plain **editable Python dict** and prints its structure; the second cell is a **control panel** listing every configuration value and per-process `interval` so you can tweak any of them. Your edits are read when the composite is built and run, in the **Run** section.
 
-# **Composite `meta_modelers_guide.composites.fig04a-interaction-modalities`** — `spec_meta_modelers_guide_composites_fig04a_interaction_modalities` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig03a-interaction-modalities`** — `spec_meta_modelers_guide_composites_fig03a_interaction_modalities` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig04a_interaction_modalities = load_spec(REPO / 'meta_modelers_guide/composites/fig04a-interaction-modalities.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig04a_interaction_modalities)
+spec_meta_modelers_guide_composites_fig03a_interaction_modalities = load_spec(REPO / 'meta_modelers_guide/composites/fig03a-interaction-modalities.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig03a_interaction_modalities)
 
 # === Edit parameters for composite 'Interaction Modalities' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'nutrient_exchange'  (local:NutrientExchange)
-spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['nutrient_exchange']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig03a_interaction_modalities['state']['nutrient_exchange']['config']['interval'] = 1.0
 
 # process 'motile_force'  (local:MotileForce)
-spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['motile_force']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig03a_interaction_modalities['state']['motile_force']['config']['interval'] = 1.0
 
 # process 'growth'  (local:Growth)
-spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['growth']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig03a_interaction_modalities['state']['growth']['config']['interval'] = 1.0
 
 # process 'electrical_signaling'  (local:ElectricalSignaling)
-spec_meta_modelers_guide_composites_fig04a_interaction_modalities['state']['electrical_signaling']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig03a_interaction_modalities['state']['electrical_signaling']['config']['interval'] = 1.0
 
-# **Composite `meta_modelers_guide.composites.fig04b-cellular-interface`** — `spec_meta_modelers_guide_composites_fig04b_cellular_interface` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig03b-cellular-interface`** — `spec_meta_modelers_guide_composites_fig03b_cellular_interface` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig04b_cellular_interface = load_spec(REPO / 'meta_modelers_guide/composites/fig04b-cellular-interface.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig04b_cellular_interface)
+spec_meta_modelers_guide_composites_fig03b_cellular_interface = load_spec(REPO / 'meta_modelers_guide/composites/fig03b-cellular-interface.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig03b_cellular_interface)
 
 # === Edit parameters for composite 'The Cellular Interface' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'cell'  (local:CellularInterface)
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['interval'] = 1.0
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['summary'] = 'The cell as a bounded interface — senses environment, exposes exchange + goal ports'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['status'] = 'draft — typed interface; dynamics supplied by an executable handler'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['summary'] = 'The cell as a bounded interface — senses environment, exposes exchange + goal ports'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['description'] = 'The minimal cellular interface: a bounded, goal-directed cell that reads its environmental drivers and exposes physical exchange ports (chemical, mechanical, electrical, thermal) plus higher-level cellular ports (growth rate, shape, signaling, objective, viability). Chemical/mechanical exchange refine into subports. All ports carry biological units.'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['math'] = ['\\text{chemical} = -\\,k_{\\text{up}}\\,[\\text{chemical}_{\\text{ext}}]', '\\text{growth\\_rate} = \\mu_{\\max}\\,\\frac{[\\text{chemical}_{\\text{ext}}]}{K_m + [\\text{chemical}_{\\text{ext}}]}', '\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/RT}\\,\\text{viability}']
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['symbols']['k_up'] = 'uptake rate constant'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['symbols']['μ_max'] = 'maximum specific growth rate (hr⁻¹)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['symbols']['K_m'] = 'half-saturation constant (mol·L⁻¹)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['symbols']['A, E_a'] = 'Arrhenius prefactor & activation energy (E_a ≈ 300 kJ·mol⁻¹)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['symbols']['T'] = 'absolute temperature (K)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['chemical_ext'] = 'external nutrient concentration  (mol·L⁻¹)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['mechanical_ext'] = 'external force / stress  (N)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['electrical_ext'] = 'membrane driving potential  (mV)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['thermal_ext'] = 'environmental temperature  (°C)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['chemical'] = 'net nutrient uptake flux  (mol·s⁻¹)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['mechanical'] = 'force exerted / felt  (N)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['electrical'] = 'transmembrane current  (A)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['thermal'] = 'heat flux  (W)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['growth_rate'] = 'specific growth rate  (hr⁻¹)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['shape'] = 'cell volume  (µm³)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['signaling'] = 'signaling activity  (bits·s⁻¹)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['objective'] = 'fitness objective  (dimensionless)'
-spec_meta_modelers_guide_composites_fig04b_cellular_interface['state']['cell']['config']['contract']['ports']['viability'] = 'survival probability  (0–1)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['summary'] = 'The cell as a bounded interface — senses environment, exposes exchange + goal ports'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['status'] = 'draft — typed interface; dynamics supplied by an executable handler'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['summary'] = 'The cell as a bounded interface — senses environment, exposes exchange + goal ports'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['description'] = 'The minimal cellular interface: a bounded, goal-directed cell that reads its environmental drivers and exposes physical exchange ports (chemical, mechanical, electrical, thermal) plus higher-level cellular ports (growth rate, shape, signaling, objective, viability). Chemical/mechanical exchange refine into subports. All ports carry biological units.'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['math'] = ['\\text{chemical} = -\\,k_{\\text{up}}\\,[S]\\qquad(\\text{first-order, dilute limit})', '\\mu = \\mu_{\\max}\\,\\frac{[S]}{K_s + [S]}', '\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/(R\\,T)}\\,\\text{viability}']
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['symbols']['[S]'] = 'external substrate concentration [chemical_ext] (mol·L⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['symbols']['k_up'] = 'first-order uptake clearance (L·s⁻¹); a saturable carrier substitutes within a few % over the physiological range'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['symbols']['μ_max'] = 'maximum specific growth rate (hr⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['symbols']['K_s'] = 'half-saturation constant for growth (mol·L⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['symbols']['A, E_a'] = 'Arrhenius prefactor & activation energy (E_a ≈ 300 kJ·mol⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['symbols']['R'] = 'gas constant (8.314 J·mol⁻¹·K⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['symbols']['T'] = 'absolute temperature (K); thermal_ext is °C, so T = °C + 273.15'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['chemical_ext'] = 'external nutrient concentration  (mol·L⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['mechanical_ext'] = 'external force / stress  (N)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['electrical_ext'] = 'membrane driving potential  (mV)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['thermal_ext'] = 'environmental temperature  (°C; converted to K in the death law)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['chemical'] = 'net nutrient uptake flux  (mol·s⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['mechanical'] = 'force exerted / felt  (N)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['electrical'] = 'transmembrane current  (A)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['thermal'] = 'heat flux  (W)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['growth_rate'] = 'specific growth rate  (hr⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['shape'] = 'cell size — volume  (µm³)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['signaling'] = 'signaling activity  (bits·s⁻¹)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['objective'] = 'fitness objective  (dimensionless)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['contract']['ports']['viability'] = 'survival probability  (0–1)'
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['uptake_rate'] = 0.8
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['growth_max'] = 0.6
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['km'] = 0.5
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['death_Ea'] = 300000.0
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['gas_R'] = 8.314
+spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['config']['temp_opt'] = 37.0
 
-# **Composite `meta_modelers_guide.composites.fig04b-executable`** — `spec_meta_modelers_guide_composites_fig04b_executable` (a plain, editable dict)
+# **Composite `meta_modelers_guide.composites.fig03b-executable`** — `spec_meta_modelers_guide_composites_fig03b_executable` (a plain, editable dict)
 
 from viva_superpowers.composite_spec import load_spec
-spec_meta_modelers_guide_composites_fig04b_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig04b-executable.composite.json')
-describe_spec(spec_meta_modelers_guide_composites_fig04b_executable)
+spec_meta_modelers_guide_composites_fig03b_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig03b-executable.composite.json')
+describe_spec(spec_meta_modelers_guide_composites_fig03b_executable)
 
-# === Edit parameters for composite 'fig04b-executable' ===
+# === Edit parameters for composite 'fig03b-executable' ===
 # Each line is the spec's CURRENT value — change any, then run the Run cell
 # below. The spec is a plain dict, so you may also add or remove keys.
 
 # process 'cell'  (local:CellularInterfaceHandler)
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['uptake_rate'] = 0.8
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['growth_max'] = 0.6
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['km'] = 0.5
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['shape_growth_coupling'] = 1.0
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['objective_yield'] = 0.5
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['death_Ea'] = 300000.0
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['gas_R'] = 8.314
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['d_value_ref_min'] = 1.0
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_ref_death'] = 55.0
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['temp_opt'] = 37.0
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['viability_init'] = 1.0
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['elasticity'] = 0.1
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['membrane_conductance'] = 0.05
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['thermal_conductance'] = 0.02
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['signaling_gain'] = 0.4
-spec_meta_modelers_guide_composites_fig04b_executable['state']['cell']['config']['interval'] = 1.0
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['uptake_rate'] = 0.8
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['growth_max'] = 0.6
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['km'] = 0.5
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['shape_growth_coupling'] = 1.0
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['objective_yield'] = 0.5
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['death_Ea'] = 300000.0
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['gas_R'] = 8.314
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['d_value_ref_min'] = 1.0
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['temp_ref_death'] = 55.0
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['temp_opt'] = 37.0
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['viability_init'] = 1.0
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['elasticity'] = 0.1
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['membrane_conductance'] = 0.05
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['thermal_conductance'] = 0.02
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['signaling_gain'] = 0.4
+spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']['interval'] = 1.0
 
 # **Composite `meta_modelers_guide.composites.cellular-interface-spatial`** — `spec_meta_modelers_guide_composites_cellular_interface_spatial` (a plain, editable dict)
 
@@ -325,32 +333,32 @@ def _save_viz(study, slug, html):
 
 
 # cellular-interface-spatial
-_save_viz('cellular-interface', 'cellular-interface-spatial', _render_one('image:viz/cellular-interface-spatial.gif', {'chart': 'image', 'caption': "The unchanged Fig 4b handler composed over a real 2D chemical field -- the adapter senses the local footprint concentration and deposits the handler's uptake back into the field, depleting it where the cell feeds."}, RUNS_DB, STUDY_YAML))
+_save_viz('cellular-interface', 'cellular-interface-spatial', _render_one('image:viz/cellular-interface-spatial.gif', {'chart': 'image', 'caption': "The unchanged Fig 3b handler composed over a real 2D chemical field -- the adapter senses the local footprint concentration and deposits the handler's uptake back into the field, depleting it where the cell feeds."}, RUNS_DB, STUDY_YAML))
 
-# **fig04b-executable-dynamics**
+# **fig03b-executable-dynamics**
 
-# fig04b-executable-dynamics
-_save_viz('cellular-interface', 'fig04b-executable-dynamics', _render_one('html:fig04b-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 4: viability holds inside its shaded "viable" band while shape and objective climb from the installed handler\'s Monod-driven growth.'}, RUNS_DB, STUDY_YAML))
+# fig03b-executable-dynamics
+_save_viz('cellular-interface', 'fig03b-executable-dynamics', _render_one('html:fig03b-executable.html', {'chart': 'html', 'caption': 'Interactive Fig 3: viability holds inside its shaded "viable" band while shape and objective climb from the installed handler\'s Monod-driven growth.'}, RUNS_DB, STUDY_YAML))
 
 # **cellular-interface-dynamics**
 
 # cellular-interface-dynamics
-_save_viz('cellular-interface', 'cellular-interface-dynamics', _render_one('image:visualizations/cellular-interface-dynamics.svg', {'chart': 'image', 'caption': 'Dynamics of the compiled Fig 4 executable, run to completion.'}, RUNS_DB, STUDY_YAML))
+_save_viz('cellular-interface', 'cellular-interface-dynamics', _render_one('image:visualizations/cellular-interface-dynamics.svg', {'chart': 'image', 'caption': 'Dynamics of the compiled Fig 3 executable, run to completion.'}, RUNS_DB, STUDY_YAML))
 
-# **fig04a-interaction-modalities**
+# **fig03a-interaction-modalities**
 
-# fig04a-interaction-modalities
-_save_viz('cellular-interface', 'fig04a-interaction-modalities', _render_one('image:visualizations/fig04a-interaction-modalities.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# fig03a-interaction-modalities
+_save_viz('cellular-interface', 'fig03a-interaction-modalities', _render_one('image:visualizations/fig03a-interaction-modalities.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig04b-cellular-interface**
+# **fig03b-cellular-interface**
 
-# fig04b-cellular-interface
-_save_viz('cellular-interface', 'fig04b-cellular-interface', _render_one('image:visualizations/fig04b-cellular-interface.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# fig03b-cellular-interface
+_save_viz('cellular-interface', 'fig03b-cellular-interface', _render_one('image:visualizations/fig03b-cellular-interface.svg', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
-# **fig04-illustration**
+# **fig03-illustration**
 
-# fig04-illustration
-_save_viz('cellular-interface', 'fig04-illustration', _render_one('image:visualizations/fig04-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
+# fig03-illustration
+_save_viz('cellular-interface', 'fig03-illustration', _render_one('image:visualizations/fig03-illustration.png', {'chart': 'image'}, RUNS_DB, STUDY_YAML))
 
 # ### Acceptance criteria
 #
@@ -358,16 +366,16 @@ _save_viz('cellular-interface', 'fig04-illustration', _render_one('image:visuali
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | shape-growth | kind=observable path=shape expr=max(shape) | kind regression_pin op >= value 2.0 provenance executable run: shape 1.0→4.2 (chemical uptake drives growth); exec last≈4.2 (fig04b-executable) |
-# | chemical-uptake | kind=observable path=chemical expr=min(chemical) | kind regression_pin op <= value -0.5 provenance chemical flux 0.0→-0.8 (net uptake across the interface); exec last≈-0.8 (fig04b-executable) |
-# | objective-climbs | kind=observable path=objective expr=last(objective) | kind regression_pin op >= value 1.0 provenance objective 0.0→1.6 as growth proceeds; exec last≈1.6 (fig04b-executable) |
+# | shape-growth | kind=observable path=shape expr=max(shape) | kind regression_pin op >= value 2.0 provenance executable run: shape 1.0→4.2 (chemical uptake drives growth); exec last≈4.2 (fig03b-executable) |
+# | chemical-uptake | kind=observable path=chemical expr=min(chemical) | kind regression_pin op <= value -0.5 provenance chemical flux 0.0→-0.8 (net uptake across the interface); exec last≈-0.8 (fig03b-executable) |
+# | objective-climbs | kind=observable path=objective expr=last(objective) | kind regression_pin op >= value 1.0 provenance objective 0.0→1.6 as growth proceeds; exec last≈1.6 (fig03b-executable) |
 # | draft-is-inert | kind=observable path=shape expr=max(shape) | kind regression_pin op >= value 2.0 provenance inert-draft run: shape stays 1.0 (empty update by construction) → fails by design (expected-fail control) |
 
 # ## Study: Cell–Environment Coupling (flagship) (`cell-environment-coupling`)
 #
 # **Question.** When a single cell metabolizes at its own location, does it measurably reshape the very
 # nutrient gradient it depends on — environmental modification (local resource depletion + secretion) — closing the paper's
-# §Cell–environment coupling sense → metabolize → secrete loop (Fig 5) as real spatial
+# §Cell–environment coupling sense → metabolize → secrete loop (Fig 4) as real spatial
 # metabolism: one cell sensing local glucose, running flux-balance analysis at its own footprint,
 # growing, and secreting a byproduct that diffuses back into the field it senses? The paper
 # frames this feedback loop as "the minimal structure required for control"; here the loop is
@@ -380,7 +388,7 @@ _save_viz('cellular-interface', 'fig04-illustration', _render_one('image:visuali
 #
 # **Claim.** Composing a real CPM cell with a real spatio-flux nutrient field through one typed
 # coupling process (`CpmCellField`) reproduces the paper's §Cell–environment coupling
-# sense → metabolize → secrete loop (Fig 5) as genuine spatial metabolism, not a scripted stand-in
+# sense → metabolize → secrete loop (Fig 4) as genuine spatial metabolism, not a scripted stand-in
 # for it (the flagship loop is closed; directed control/chemotaxis is built and measured in the
 # `chemotaxis` variant, finding F-08) — over 20 ticks the
 # cell runs dynamic-FBA at its own
@@ -710,7 +718,7 @@ _save_viz('cell-cell-coupling', 'cellcell-crossfeed-metrics', _render_one('html:
 
 # ## Study: Disintegration (`disintegration`)
 #
-# **Question.** Does the paper's §Disintegration level-shift (Fig 6) hold spatially -- a coherent CPM cell that loses structural
+# **Question.** Does the paper's §Disintegration level-shift (Fig 5) hold spatially -- a coherent CPM cell that loses structural
 # viability when a diffusing field of acetate (the SAME metabolic byproduct that is waste-and-food
 # in `cell-cell-coupling`, here toxic at high local concentration) crosses its viability
 # bound, its domain resorbing while its shed material becomes scattering physical particles -- composed from independent frameworks
@@ -720,7 +728,7 @@ _save_viz('cell-cell-coupling', 'cellcell-crossfeed-metrics', _render_one('html:
 # **Claim.** Composing one real CPM cell with a real spatio-flux acetate field and a real spatio-flux
 # particle-movement process through two coupling processes (`CpmDisintegration` for the
 # viability-collapse trigger and resorption, stock `BrownianMovement` for the debris scatter)
-# reproduces the paper's §Disintegration level-shift (Fig 6) as spatial dissolution with a SCRIPTED
+# reproduces the paper's §Disintegration level-shift (Fig 5) as spatial dissolution with a SCRIPTED
 # resorption schedule (resorb_per_tick=6.0): the trigger timing is simulation-derived (the
 # footprint-local acetate crossing a viability bound), the resorption ramp itself is scripted -- not a
 # lumped scalar stand-in: over a fixed-seed deterministic 20-tick CPM run, the cell holds coherent
@@ -731,7 +739,7 @@ _save_viz('cell-cell-coupling', 'cellcell-crossfeed-metrics', _render_one('html:
 # `BrownianMovement`, so its exact RMS magnitudes are representative of one run, not
 # run-to-run-reproducible -- only the strict-increase direction is the robust claim) -- hold,
 # cross, resorb, scatter, end to end from one coupling process plus one stock movement process,
-# mirroring a lumped, specification-stage realization's §Disintegration level-shift pattern (Fig 6) at
+# mirroring a lumped, specification-stage realization's §Disintegration level-shift pattern (Fig 5) at
 # real spatial, per-pixel resolution.
 
 # ### Parameters
@@ -826,9 +834,9 @@ _save_viz('disintegration', 'disintegration-metrics', _render_one('html:viz/disi
 
 # ## Study: Molecular Interfaces (`molecular-interfaces`)
 #
-# **Question.** The paper's §Molecular interface (Fig 7) frames a molecule not as a lump of state but as a typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal -- through which molecules bind, react, and transmit force and heat. It even names the public databases (PDB, Reactome, ChEBI, GO) as "partial specifications of molecular interfaces and their types". This study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY? Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized as finite-amplitude, nucleation-driven Gray-Scott reaction-diffusion patterning -- not linear-instability Turing sensu stricto) turn a near-uniform seed into emergent spatial structure, and does a static uniform temperature field acting as an Arrhenius rate multiplier (no heat transport, no reaction->heat feedback) GRADE that structure -- so that a temperature PARAMETER demonstrably modulates the spatialized chemical channel over one shared spatial field? The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable and isolates the diffusion asymmetry as the cause of structure (a regime-specific conclusion for this Gray-Scott system), so the contrast between pattern and uniformity is the finding.
+# **Question.** The paper's §Molecular interface (Fig 6) frames a molecule not as a lump of state but as a typed interface exposing several physical channels -- chemical, electrostatic, mechanical, thermal -- through which molecules bind, react, and transmit force and heat. It even names the public databases (PDB, Reactome, ChEBI, GO) as "partial specifications of molecular interfaces and their types". This study asks the discriminating question one channel down: does that molecular interface hold SPATIALLY? Concretely -- do local molecular reactions plus differential diffusion (the CHEMICAL channel spatialized as finite-amplitude, nucleation-driven Gray-Scott reaction-diffusion patterning -- not linear-instability Turing sensu stricto) turn a near-uniform seed into emergent spatial structure, and does a static uniform temperature field acting as an Arrhenius rate multiplier (no heat transport, no reaction->heat feedback) GRADE that structure -- so that a temperature PARAMETER demonstrably modulates the spatialized chemical channel over one shared spatial field? The causal control -- equal diffusion (Du = Dv), chemistry untouched -- differs in exactly one variable and isolates the diffusion asymmetry as the cause of structure (a regime-specific conclusion for this Gray-Scott system), so the contrast between pattern and uniformity is the finding.
 #
-# **Claim.** The paper's §Molecular interface (Fig 7) holds spatially for its CHEMICAL channel, and a temperature parameter modulates it. The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du), turns a near-uniform seed into an emergent finite-amplitude, nucleation-driven Gray-Scott spot pattern (not linear-instability Turing sensu stricto): v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion asymmetry, not the chemistry alone -- a regime-specific conclusion for this Gray-Scott system. A static uniform temperature field acting as an Arrhenius rate multiplier exp(-Ea*(1/T - 1/Tref)) (no heat transport, no reaction->heat feedback) GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -> ~2, v_var ~0.0119 -> ~0.0096) while staying patterned: a temperature parameter modulating the chemical channel, not a second physically-transported channel and not a collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The boundaries are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap; the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping; and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.
+# **Claim.** The paper's §Molecular interface (Fig 6) holds spatially for its CHEMICAL channel, and a temperature parameter modulates it. The CHEMICAL channel, realized as a Gray-Scott reaction-diffusion system (local autocatalysis U + 2V -> 3V plus differential diffusion Dv < Du), turns a near-uniform seed into an emergent finite-amplitude, nucleation-driven Gray-Scott spot pattern (not linear-instability Turing sensu stricto): v_var rises from ~0.0011 to ~0.0119 with ~12 connected domains (patterned == 1.0). The equal-diffusion causal control (Du = Dv = 0.12, chemistry unchanged -- the single differing variable) stays UNIFORM (v_var ~= 0, patterned == 0.0), so the pattern is CAUSED by the diffusion asymmetry, not the chemistry alone -- a regime-specific conclusion for this Gray-Scott system. A static uniform temperature field acting as an Arrhenius rate multiplier exp(-Ea*(1/T - 1/Tref)) (no heat transport, no reaction->heat feedback) GRADES the pattern (Ea=0.15, T=1.2: ~12 domains -> ~2, v_var ~0.0119 -> ~0.0096) while staying patterned: a temperature parameter modulating the chemical channel, not a second physically-transported channel and not a collapse. Multi-seed (seeds 1-5, physics is deterministic so the seed is re-drawn into the initial field): v_var in [0.01157, 0.01193], n_domains in [8, 12] -- reported as a range. The boundaries are findings, not caveats: the ELECTROSTATIC and MECHANICAL channels are the named four-modality gap; the databases claim (PDB/Reactome/ChEBI/GO as partial specifications of molecular-interface types) is realized as an ILLUSTRATIVE typed-port annotation over the Gray-Scott species, not a resolved mapping; and this is a toy reaction-diffusion demonstration, not real molecular structure or conformation.
 
 # ### Parameters
 #
@@ -960,9 +968,9 @@ _save_viz('molecular-interfaces', 'molecular-metrics', _render_one('html:viz/mol
 
 # ## Study: Biomolecular Complementarity (`biomolecular-complementarity`)
 #
-# **Question.** The paper's §Molecular compositions section (Fig 8) frames its subject as a question about interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates? This study puts two spatial primitives of that question on the lattice. Differential-adhesion cell sorting -- Steinberg's Differential Adhesion Hypothesis -- is complementarity made spatial: a mixed population of two cell types, distinguished only by which contacts they find energetically favorable, demixes so that like sits with like and the heterotypic boundary between them collapses, a direct spatial reading of which interface variables must align for two cells to stay coupled. Biomolecular-condensate phase separation is the diffuse-interface counterpart: a scalar composition field, seeded near-critical, spontaneously separates into two phases divided by a sharp interface -- a boundary forming out of a well-mixed medium, the way a condensate droplet does. Each is a real 2D spatial mechanism run through the process-bigraph engine; the two are independent demonstrations, not one coupled model.
+# **Question.** The paper's §Molecular compositions section (Fig 7) frames its subject as a question about interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates? This study puts two spatial primitives of that question on the lattice. Differential-adhesion cell sorting -- Steinberg's Differential Adhesion Hypothesis -- is complementarity made spatial: a mixed population of two cell types, distinguished only by which contacts they find energetically favorable, demixes so that like sits with like and the heterotypic boundary between them collapses, a direct spatial reading of which interface variables must align for two cells to stay coupled. Biomolecular-condensate phase separation is the diffuse-interface counterpart: a scalar composition field, seeded near-critical, spontaneously separates into two phases divided by a sharp interface -- a boundary forming out of a well-mixed medium, the way a condensate droplet does. Each is a real 2D spatial mechanism run through the process-bigraph engine; the two are independent demonstrations, not one coupled model.
 #
-# **Claim.** Differential-adhesion cell sorting reproduces the paper's §Molecular compositions complementarity (Fig 8) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard (heterotypic-interface fraction ~0.64 -> ~0.06 over ~600 Monte Carlo steps) while staying cohesive (live-cell pixels ~1530, <1% drift; per-type counts constant at 32/32) -- like sitting with like is the spatial reading of which interface variables must align for coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent interface (variance ~7e-5 -> ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it demonstrates a boundary forming, not yet the functional, regulatable boundary the paper's central question distinguishes from a transient aggregate. Neither regime computes a binding affinity; both are tuned demonstration primitives, not fitted to a measured tissue or condensate. The two run as independent processes through the process-bigraph engine, with no coupling between them.
+# **Claim.** Differential-adhesion cell sorting reproduces the paper's §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard (heterotypic-interface fraction ~0.64 -> ~0.06 over ~600 Monte Carlo steps) while staying cohesive (live-cell pixels ~1530, <1% drift; per-type counts constant at 32/32) -- like sitting with like is the spatial reading of which interface variables must align for coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent interface (variance ~7e-5 -> ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it demonstrates a boundary forming, not yet the functional, regulatable boundary the paper's central question distinguishes from a transient aggregate. Neither regime computes a binding affinity; both are tuned demonstration primitives, not fitted to a measured tissue or condensate. The two run as independent processes through the process-bigraph engine, with no coupling between them.
 
 # ### Parameters
 #
@@ -1082,9 +1090,9 @@ _save_viz('biomolecular-complementarity', 'condensate-metrics', _render_one('htm
 
 # ## Study: Autopoiesis (`autopoiesis`)
 #
-# **Question.** The paper's §Self-organized processes section states the autopoiesis criterion as a boundary problem, not a bookkeeping one: "A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible." This study puts that criterion on a 2D lattice and asks the discriminating question directly: does a membrane PERSIST because an internal production loop -- gated on the boundary itself staying topologically closed -- replenishes the membrane against decay, and does a mere vesicle with no such loop, from the identical seed, DISSIPATE? The two composites differ in exactly one variable (the production rate constant k_prod), so the contrast between persistence and collapse is the finding. beer2023's viability bounds -- constraints on a shared state that must be maintained for the composition to persist -- are the frame: closure here is that the membrane's own maintenance is conditioned on the boundary it maintains, so break the boundary and the maintenance cannot fire.
+# **Question.** The paper's §Self-organized processes section states the autopoiesis criterion as a boundary problem, not a bookkeeping one: "A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible." This study puts that criterion on a 2D lattice and asks the discriminating question directly: does a membrane PERSIST because an internal production loop -- gated on the boundary itself staying topologically closed -- replenishes the membrane against decay, and does a mere vesicle with no such loop, from the identical seed, DISSIPATE? The two composites differ in exactly one variable (the production rate constant k_prod), so the contrast between persistence and collapse is the finding. beer2024deriving's viability bounds -- constraints on a shared state that must be maintained for the composition to persist -- are the frame: closure here is that the membrane's own maintenance is conditioned on the boundary it maintains, so break the boundary and the maintenance cannot fire.
 #
-# **Claim.** The paper's §Self-organized processes autopoiesis criterion -- a membrane persists because the processes inside the boundary maintain the organization that keeps those processes possible -- is IMPLEMENTED here as an AUTHORED operational-closure criterion and its consequences are tested. The closure-dependence is hand-coded (production is gated by a global binary_fill_holes topological observer), NOT emergent from local physics; the persistence, knockout, and puncture results all follow from that construction, and are worthwhile because the criterion is implemented and its consequences are verified -- not because closure arose on its own. A scalar membrane field under reaction-diffusion, with production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -> 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so within this authored construction the production loop is what maintains the boundary -- confirmed independently by a fatal-puncture viability bound (beer2023): breaking the boundary so nothing is enclosed shuts off the closure-gated production, and the ring cannot rebuild from nothing. The boundaries of the claim are stated as findings: the homeostatic plateau is metastable, not eternal (the physically-correct signature of a closed system with no external influx, not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal self-maintaining boundary, NOT real membrane chemistry or metabolism. The v1 maintenance gate is an authored global topological test, and the mechanistically-local version that removes it is NO LONGER just a named next step -- it is built and measured here as v2 (see below).
+# **Claim.** The paper's §Self-organized processes autopoiesis criterion -- a membrane persists because the processes inside the boundary maintain the organization that keeps those processes possible -- is IMPLEMENTED here as an AUTHORED operational-closure criterion and its consequences are tested. The closure-dependence is hand-coded (production is gated by a global binary_fill_holes topological observer), NOT emergent from local physics; the persistence, knockout, and puncture results all follow from that construction, and are worthwhile because the criterion is implemented and its consequences are verified -- not because closure arose on its own. A scalar membrane field under reaction-diffusion, with production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -> 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so within this authored construction the production loop is what maintains the boundary -- confirmed independently by a fatal-puncture viability bound (beer2024deriving): breaking the boundary so nothing is enclosed shuts off the closure-gated production, and the ring cannot rebuild from nothing. The boundaries of the claim are stated as findings: the homeostatic plateau is metastable, not eternal (the physically-correct signature of a closed system with no external influx, not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal self-maintaining boundary, NOT real membrane chemistry or metabolism. The v1 maintenance gate is an authored global topological test, and the mechanistically-local version that removes it is NO LONGER just a named next step -- it is built and measured here as v2 (see below).
 #
 # MECHANISM-LEVEL UPGRADE (v2, ProtocellV2, answering peer-review M4). v2 removes the global observer entirely -- production depends on a LOCAL interior precursor field p, k_prod*phi*p*(1-phi/phi_max), and binary_fill_holes appears ONLY as a passive enclosed_area readout, never in the update (asserted structurally on the update's referenced names). Closure-dependence EMERGES from geometry -- the membrane secretes precursor (s_p*phi) and is a barrier to it (mobility Mp*(1-alpha*phi) drops inside the membrane), so a CLOSED ring confines the precursor it secretes into the enclosed pocket (measured -- interior precursor pools from ~0 to ~72 by step 1000) and sustains itself, while an OPEN ring bleeds it. MEASURED this build -- the v2 closed loop SUSTAINS topological closure ~2451 internal steps (metastable, the same order as v1's ~2450-2650 window, but with no global observer in the loop; enclosed_area declines 465 -> 0 as the membrane thickens inward -- a long metastable transient, not an eternal fixed point), while the PRECURSOR knockout s_p=0 (the new mechanistic single-variable control) collapses at ~step 95, ~26x faster, as does k_prod=0. The PUNCTURE is now a genuine local PREDICTION, not a restatement -- zeroing a 60-degree wedge of the steady ring makes the interior precursor bleed out through the gap and the wedge membrane starves LOCALLY (punctured-wedge mass stays ~2 versus ~79 in the intact ring at the same step) and never self-heals. So EMERGE is upgraded from authored-closure to genuinely-emergent local-mechanism closure. What v2 does NOT do -- reach steady self-maintenance: the plateau is still METASTABLE (a closed budget). The open-system driven version (v2-open, ProtocellV2Open) is BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT sustain closure indefinitely -- it DESTABILISES the ring into faster runaway filling (closure lost ~step 591 vs the undriven ~2451; no local drive in an ~80-point sweep reaches a bounded steady enclosed_area), while the controls confirm the drive does not rescue closure. So EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance.
 
