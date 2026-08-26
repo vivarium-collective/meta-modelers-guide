@@ -95,7 +95,7 @@ def stitch_vertical(cfg):
 
     label_f = _font(46, bold=True)
     label_col = 180                      # left gutter for the t = … label
-    row_gap = 70
+    row_gap = 200                        # room for a clear arrow fully inside the gap
     n = len(panels)
     total_w = PAD + label_col + panel_w + PAD
     total_h = PAD + sum(p.height for p in panels) + row_gap * (n - 1) + PAD
@@ -109,10 +109,16 @@ def stitch_vertical(cfg):
         draw.text((PAD, y + p.height // 2 - 24), tlabel, font=label_f, fill=INK)
         canvas.paste(p, (x0 + (panel_w - p.width) // 2, y))   # centered in the column
         if i < n - 1:
+            # A clear down-arrow centered in the gap between the two snapshots —
+            # fully contained so it never clips into the panel below.
             ax = x0 + panel_w // 2
-            ay0, ay1 = y + p.height + 12, y + p.height + row_gap - 12
-            draw.line([(ax, ay0), (ax, ay1)], fill=ARROW, width=8)
-            draw.polygon([(ax - 22, ay1), (ax + 22, ay1), (ax, ay1 + 30)], fill=ARROW)
+            gap_top = y + p.height
+            head_w, head_h = 34, 46
+            ay0 = gap_top + 44                          # shaft start
+            tip = gap_top + row_gap - 44                # arrow tip
+            ay1 = tip - head_h                          # shaft end / head base
+            draw.line([(ax, ay0), (ax, ay1)], fill=ARROW, width=11)
+            draw.polygon([(ax - head_w, ay1), (ax + head_w, ay1), (ax, tip)], fill=ARROW)
         y += p.height + row_gap
 
     out = viz / cfg["out"]

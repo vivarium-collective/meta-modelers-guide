@@ -158,8 +158,11 @@ def build_fig10_biofilm_emergence(n_bacteria: int = 4, attach_at: float = 2.0,
     the emergence process, and a tree-preserving RAMEmitter (captures the whole
     subtree each tick so the reorganizing topology appears in the trajectory)."""
     env = {"_type": "tree[node]", "surface": _node("surface")}
+    # Free swimmers are `cell_N` (control 'cell') — the SAME name they keep after
+    # they attach and nest into the biofilm, so the two snapshots read as one
+    # continuous population rather than "bacterium" becoming "cell".
     for i in range(int(n_bacteria)):
-        env[f"bacterium_{i}"] = _node("cell", biomass=1.0, motile=1.0)
+        env[f"cell_{i}"] = _node("cell", biomass=1.0, motile=1.0)
     return {"state": {
         "env": env,
         "emergence": {"_type": "process",
