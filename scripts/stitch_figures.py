@@ -81,7 +81,7 @@ FIGURES: dict[int, dict] = {
         loom("fig-04", "fig04-cell-environment", "b"),
     ])},
     5: {"study": "fig-05", "root": group("row", [   # a rotated vertical (healthy top→disintegrated bottom), b to its right
-        panel("fig05a.png", "a", rotate=90),
+        panel("fig05a.png", "a"),   # already oriented vertically (healthy top → disintegrated bottom)
         loom("fig-05", "fig05b-grain-swap", "b"),
     ])},
     6: {"study": "fig-06", "root": group("row", [   # a (illustration) left of b (loom card)
