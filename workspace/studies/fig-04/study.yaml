@@ -11,8 +11,17 @@ visualizations:
   config:
     caption: A cell couples to a spatio-flux nutrient field through one typed process
       — sensing, metabolizing, growing, and secreting.
+- name: Environment drives the interface ports
+  address: image:visualizations/fig04-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig04 coupling (fig04-runnable): a real
+      diffusing chemical grid seeded as a nutrient gradient drives the cell''s interface
+      ports. The cell at interior grid index 4 senses its LOCAL field; uptake flux
+      tracks that field, mass accumulates on uptake, and the cell drifts up-gradient
+      (chemotaxis) — env→port coupling made runnable. From scripts/build_fig04_dynamics.py.'
 question: How does a cell exchange matter and signals with its environment?
 baseline:
-- name: fig04-cell-environment
-  composite: meta_modelers_guide.composites.fig04-cell-environment
+- name: fig04-runnable
+  composite: meta_modelers_guide.composites.fig04-runnable
   params: {}

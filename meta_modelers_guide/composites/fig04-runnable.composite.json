@@ -1,0 +1,301 @@
+{
+  "name": "Cell ↔ Environment — Live Coupling",
+  "description": "Fig 4 as a fully runnable temporal study: a real length-9 diffusing chemical grid seeded as a nutrient GRADIENT (low at index 0, high at index 8). The single cell sits at an interior index (4) and senses its LOCAL field through one typed interface — driving uptake (→mass growth), traction, and up-gradient chemotactic drift, writing uptake/traction back to the shared environment. This is the demonstration behind Fig 4b: the environment's fields DRIVE the cell's interface ports. Runnable (default_n_steps + RAMEmitter); the seeded gradient is what drives the cell (the source is off, so diffusion only relaxes it slowly).",
+  "default_n_steps": 24,
+  "requires": {
+    "processes": [
+      "MechanicalRelax",
+      "ProductionDegradationField",
+      "SingleCellSpatial",
+      "SpatialDiffusion"
+    ]
+  },
+  "provenance": {
+    "figure": "fig04-cell-environment",
+    "environment": "fig04",
+    "handlers": {
+      "ReactionDiffusion": {
+        "handler": "SpatialDiffusion",
+        "process_term": "GO:0006810"
+      },
+      "ProductionDegradation": {
+        "handler": "ProductionDegradationField",
+        "process_term": "GO:0009058"
+      },
+      "MechanicalStress": {
+        "handler": "MechanicalRelax",
+        "process_term": "GO:0009612"
+      },
+      "SingleCellProcesses": {
+        "handler": "SingleCellSpatial",
+        "process_term": "CBO:cellular process"
+      }
+    }
+  },
+  "state": {
+    "reaction_diffusion": {
+      "_type": "process",
+      "address": "local:SpatialDiffusion",
+      "interval": 1.0,
+      "config": {
+        "diffusivity": 0.2
+      },
+      "inputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ]
+      },
+      "outputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"5\" cy=\"12\" r=\"1.5\" fill=\"#4b5bd6\" stroke=\"none\"/><circle cx=\"10\" cy=\"9\" r=\"1.1\"/><circle cx=\"11\" cy=\"15\" r=\"1.1\"/><circle cx=\"15\" cy=\"11\" r=\".9\"/><circle cx=\"16\" cy=\"16\" r=\".9\"/><circle cx=\"19\" cy=\"8\" r=\".7\"/><circle cx=\"20\" cy=\"14\" r=\".7\"/></svg>"
+    },
+    "production_degradation": {
+      "_type": "process",
+      "address": "local:ProductionDegradationField",
+      "interval": 1.0,
+      "config": {
+        "source_index": 0,
+        "source_rate": 0.0,
+        "decay_rate": 0.0
+      },
+      "inputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ]
+      },
+      "outputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"9.5\" r=\"2\"/><circle cx=\"15\" cy=\"13.5\" r=\"2\"/><path d=\"M9.7 10.7l3.6 2.1M15 11.7V8.5M15 8.5l1.8-1\"/></svg>"
+    },
+    "mechanical_stress": {
+      "_type": "process",
+      "address": "local:MechanicalRelax",
+      "interval": 1.0,
+      "config": {
+        "relax_rate": 0.3
+      },
+      "inputs": {
+        "mechanical_field": [
+          "environment",
+          "mechanical_field"
+        ],
+        "barriers": [
+          "environment",
+          "barriers"
+        ]
+      },
+      "outputs": {
+        "mechanical_field": [
+          "environment",
+          "mechanical_field"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"13\" y=\"8\" width=\"7\" height=\"8\" rx=\"1\"/><path d=\"M3 12h9M9 9l3 3-3 3\"/></svg>"
+    },
+    "single_cell_processes": {
+      "_type": "process",
+      "address": "local:SingleCellSpatial",
+      "interval": 1.0,
+      "config": {
+        "cell_index": 4
+      },
+      "inputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ],
+        "mechanical_field": [
+          "environment",
+          "mechanical_field"
+        ],
+        "location": [
+          "single_cell",
+          "location"
+        ]
+      },
+      "outputs": {
+        "location": [
+          "single_cell",
+          "location"
+        ],
+        "mass": [
+          "single_cell",
+          "mass"
+        ],
+        "shape": [
+          "single_cell",
+          "shape"
+        ],
+        "uptake": [
+          "environment",
+          "uptake_flux"
+        ],
+        "traction": [
+          "environment",
+          "traction"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3.5a8.5 8 0 1 0 .1 0z\"/><circle cx=\"13\" cy=\"13\" r=\"2.4\"/></svg>"
+    },
+    "environment": {
+      "chemical_field": {
+        "_type": "map",
+        "_value": "float",
+        "_figure": "float",
+        "0": 0.0,
+        "1": 0.125,
+        "2": 0.25,
+        "3": 0.375,
+        "4": 0.5,
+        "5": 0.625,
+        "6": 0.75,
+        "7": 0.875,
+        "8": 1.0
+      },
+      "mechanical_field": {
+        "_type": "force",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"13\" y=\"8\" width=\"7\" height=\"8\" rx=\"1\"/><path d=\"M3 12h9M9 9l3 3-3 3\"/></svg>",
+        "_default": 0.0
+      },
+      "barriers": {
+        "_type": "force",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 8h16M4 12h16M4 16h16\"/><path d=\"M9 8v4M15 8v4M12 12v4\"/></svg>",
+        "_default": 1.0
+      },
+      "uptake_flux": {
+        "_type": "chemical_flux",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 8h6M15 8h6M3 16h6M15 16h6\"/><path d=\"M9 6v12M15 6v12\"/><path d=\"M12 7v10M12 7l-1.4 1.6M12 7l1.4 1.6\"/></svg>"
+      },
+      "traction": {
+        "_type": "force",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"13\" y=\"8\" width=\"7\" height=\"8\" rx=\"1\"/><path d=\"M3 12h9M9 9l3 3-3 3\"/></svg>"
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3a9 9 0 1 0 .1 0z\"/><path d=\"M3.5 10h17M4 15h16M12 3c-3 3-3 15 0 18M12 3c3 3 3 15 0 18\"/></svg>"
+    },
+    "single_cell": {
+      "location": {
+        "_type": "volume",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12h16M12 4v16\"/><circle cx=\"15\" cy=\"9\" r=\"1.7\" fill=\"#0b7a75\" stroke=\"none\"/></svg>",
+        "_default": 4.0
+      },
+      "mass": {
+        "_type": "mass",
+        "_value": 1.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"10\" r=\"3.1\"/><circle cx=\"15.5\" cy=\"10.5\" r=\"2.8\"/><circle cx=\"12\" cy=\"15.5\" r=\"3\"/></svg>",
+        "_default": 1.0
+      },
+      "shape": {
+        "_type": "volume",
+        "_value": 1.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6.5 8c-2 3.5 0 8 4 9s9-1.5 8.5-6.5S15 4 11.5 5.2 8 5.5 6.5 8z\"/><path d=\"M9 12h6\"/></svg>",
+        "_default": 1.0
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3.5a8.5 8 0 1 0 .1 0z\"/><circle cx=\"13\" cy=\"13\" r=\"2.4\"/></svg>"
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "chemical_field": "map[float]",
+          "uptake_flux": "chemical_flux",
+          "mechanical_field": "force",
+          "traction": "force",
+          "mass": "mass",
+          "shape": "volume",
+          "location": "volume",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ],
+        "uptake_flux": [
+          "environment",
+          "uptake_flux"
+        ],
+        "mechanical_field": [
+          "environment",
+          "mechanical_field"
+        ],
+        "traction": [
+          "environment",
+          "traction"
+        ],
+        "mass": [
+          "single_cell",
+          "mass"
+        ],
+        "shape": [
+          "single_cell",
+          "shape"
+        ],
+        "location": [
+          "single_cell",
+          "location"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "The environment drives the cell's interface ports",
+        "observables": {
+          "uptake_flux": "float",
+          "mass": "float",
+          "location": "float",
+          "traction": "float"
+        },
+        "subtitle": "Fig 4 — cell ↔ environment over a real diffusing nutrient gradient"
+      },
+      "inputs": {
+        "uptake_flux": [
+          "environment",
+          "uptake_flux"
+        ],
+        "mass": [
+          "single_cell",
+          "mass"
+        ],
+        "location": [
+          "single_cell",
+          "location"
+        ],
+        "traction": [
+          "environment",
+          "traction"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
+    }
+  }
+}
