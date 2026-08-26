@@ -61,12 +61,12 @@ class MolecularMechanismHandler(Process):
 
     def inputs(self):
         return {"chemical_in": "chemical_flux", "electrical_in": "current",
-                "mechanical_in": "force", "thermal_in": "heat_flux",
+                "mechanical_in": "torque", "thermal_in": "heat_flux",
                 "structure": "structure"}
 
     def outputs(self):
         return {"chemical_out": "chemical_flux", "electrical_out": "current",
-                "mechanical_out": "force", "thermal_out": "heat_flux"}
+                "mechanical_out": "torque", "thermal_out": "heat_flux"}
 
     def _set(self, port, value):
         if not hasattr(self, "_last"):

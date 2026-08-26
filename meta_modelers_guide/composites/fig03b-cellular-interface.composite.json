@@ -32,33 +32,41 @@
           "summary": "The cell as a bounded interface — senses environment, exposes exchange + goal ports",
           "description": "The minimal cellular interface: a bounded, goal-directed cell that reads its environmental drivers and exposes physical exchange ports (chemical, mechanical, electrical, thermal) plus higher-level cellular ports (growth rate, shape, signaling, objective, viability). Chemical/mechanical exchange refine into subports. All ports carry biological units.",
           "math": [
-            "\\text{chemical} = -\\,k_{\\text{up}}\\,[\\text{chemical}_{\\text{ext}}]",
-            "\\text{growth\\_rate} = \\mu_{\\max}\\,\\frac{[\\text{chemical}_{\\text{ext}}]}{K_m + [\\text{chemical}_{\\text{ext}}]}",
-            "\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/RT}\\,\\text{viability}"
+            "\\text{chemical} = -\\,k_{\\text{up}}\\,[S]\\qquad(\\text{first-order, dilute limit})",
+            "\\mu = \\mu_{\\max}\\,\\frac{[S]}{K_s + [S]}",
+            "\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/(R\\,T)}\\,\\text{viability}"
           ],
           "symbols": {
-            "k_up": "uptake rate constant",
+            "[S]": "external substrate concentration [chemical_ext] (mol·L⁻¹)",
+            "k_up": "first-order uptake clearance (L·s⁻¹); a saturable carrier substitutes within a few % over the physiological range",
             "μ_max": "maximum specific growth rate (hr⁻¹)",
-            "K_m": "half-saturation constant (mol·L⁻¹)",
+            "K_s": "half-saturation constant for growth (mol·L⁻¹)",
             "A, E_a": "Arrhenius prefactor & activation energy (E_a ≈ 300 kJ·mol⁻¹)",
-            "T": "absolute temperature (K)"
+            "R": "gas constant (8.314 J·mol⁻¹·K⁻¹)",
+            "T": "absolute temperature (K); thermal_ext is °C, so T = °C + 273.15"
           },
           "ports": {
             "chemical_ext": "external nutrient concentration  (mol·L⁻¹)",
             "mechanical_ext": "external force / stress  (N)",
             "electrical_ext": "membrane driving potential  (mV)",
-            "thermal_ext": "environmental temperature  (°C)",
+            "thermal_ext": "environmental temperature  (°C; converted to K in the death law)",
             "chemical": "net nutrient uptake flux  (mol·s⁻¹)",
             "mechanical": "force exerted / felt  (N)",
             "electrical": "transmembrane current  (A)",
             "thermal": "heat flux  (W)",
             "growth_rate": "specific growth rate  (hr⁻¹)",
-            "shape": "cell volume  (µm³)",
+            "shape": "cell size — volume  (µm³)",
             "signaling": "signaling activity  (bits·s⁻¹)",
             "objective": "fitness objective  (dimensionless)",
             "viability": "survival probability  (0–1)"
           }
-        }
+        },
+        "uptake_rate": 0.8,
+        "growth_max": 0.6,
+        "km": 0.5,
+        "death_Ea": 300000.0,
+        "gas_R": 8.314,
+        "temp_opt": 37.0
       },
       "inputs": {
         "chemical_ext": [
@@ -140,22 +148,24 @@
         "description": "The minimal cellular interface: a bounded, goal-directed cell that reads its environmental drivers and exposes physical exchange ports (chemical, mechanical, electrical, thermal) plus higher-level cellular ports (growth rate, shape, signaling, objective, viability). Chemical/mechanical exchange refine into subports. All ports carry biological units.",
         "status": "draft — typed interface; dynamics supplied by an executable handler",
         "math": [
-          "\\text{chemical} = -\\,k_{\\text{up}}\\,[\\text{chemical}_{\\text{ext}}]",
-          "\\text{growth\\_rate} = \\mu_{\\max}\\,\\frac{[\\text{chemical}_{\\text{ext}}]}{K_m + [\\text{chemical}_{\\text{ext}}]}",
-          "\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/RT}\\,\\text{viability}"
+          "\\text{chemical} = -\\,k_{\\text{up}}\\,[S]\\qquad(\\text{first-order, dilute limit})",
+          "\\mu = \\mu_{\\max}\\,\\frac{[S]}{K_s + [S]}",
+          "\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/(R\\,T)}\\,\\text{viability}"
         ],
         "symbols": {
-          "k_up": "uptake rate constant",
+          "[S]": "external substrate concentration [chemical_ext] (mol·L⁻¹)",
+          "k_up": "first-order uptake clearance (L·s⁻¹); a saturable carrier substitutes within a few % over the physiological range",
           "μ_max": "maximum specific growth rate (hr⁻¹)",
-          "K_m": "half-saturation constant (mol·L⁻¹)",
+          "K_s": "half-saturation constant for growth (mol·L⁻¹)",
           "A, E_a": "Arrhenius prefactor & activation energy (E_a ≈ 300 kJ·mol⁻¹)",
-          "T": "absolute temperature (K)"
+          "R": "gas constant (8.314 J·mol⁻¹·K⁻¹)",
+          "T": "absolute temperature (K); thermal_ext is °C, so T = °C + 273.15"
         },
         "inputs": {
           "chemical_ext": "external nutrient concentration  (mol·L⁻¹)",
           "mechanical_ext": "external force / stress  (N)",
           "electrical_ext": "membrane driving potential  (mV)",
-          "thermal_ext": "environmental temperature  (°C)"
+          "thermal_ext": "environmental temperature  (°C; converted to K in the death law)"
         },
         "outputs": {
           "chemical": "net nutrient uptake flux  (mol·s⁻¹)",
@@ -163,7 +173,7 @@
           "electrical": "transmembrane current  (A)",
           "thermal": "heat flux  (W)",
           "growth_rate": "specific growth rate  (hr⁻¹)",
-          "shape": "cell volume  (µm³)",
+          "shape": "cell size — volume  (µm³)",
           "signaling": "signaling activity  (bits·s⁻¹)",
           "objective": "fitness objective  (dimensionless)",
           "viability": "survival probability  (0–1)"
