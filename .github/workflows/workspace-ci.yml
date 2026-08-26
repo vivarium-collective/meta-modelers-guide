@@ -8,11 +8,26 @@
 # re-scaffolding, or by copying the current source from
 #   vivarium-collective/viva-template/template/.github/workflows/<template>
 # template: workspace-ci.yml.j2
-# sha256: a1176cb3abe72e32ec48ef76d4b86711c19d315b5992fd3602c30040fe4b3c89
+# sha256: 12577c7a4f0e0f732a6ac0c14fcd4e964c4a56a96f19f82ed3ec528bd64a6ee6
 # <<< viva-template-provenance <<<
 
 name: workspace-ci
-on: [push, pull_request]
+
+# Trigger scope keeps CI honest without flooding: pushes run CI only on the
+# default branch, while all other-branch validation happens via the PR. That
+# stops every work-in-progress push to a feature branch from firing a run (and
+# emailing a failure) — you get ONE run per PR sync instead of a push + a
+# pull_request run per commit. The concurrency group then cancels a superseded
+# run when you push again, so rapid iteration no longer leaves a trail of
+# completed red runs.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: workspace-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 # CI for a workspace scaffolded from viva-template.
 #
@@ -38,11 +53,18 @@ jobs:
         with:
           submodules: false
       # Fail fast if a local absolute path (file:///, /Users/, /home/) was
-      # committed into a tracked file — a recurring CI break when a sibling
-      # editable install leaks into pyproject.toml. Only needs the repo, so it
-      # runs right after checkout, before any venv-dependent step.
+      # committed into a dependency/config file — a recurring CI break when a
+      # sibling editable install leaks into pyproject.toml. Only needs the repo,
+      # so it runs right after checkout, before any venv-dependent step.
+      # Guarded on presence: an older workspace scaffolded before this script
+      # existed must skip it, not fail with "No such file or directory" (127).
       - name: Check for leaked local paths
-        run: bash scripts/check-no-local-paths.sh
+        run: |
+          if [ -f scripts/check-no-local-paths.sh ]; then
+            bash scripts/check-no-local-paths.sh
+          else
+            echo "scripts/check-no-local-paths.sh not present — skipping local-path check."
+          fi
       - name: Init external submodules (best-effort, non-recursive)
         run: |
           # Default `git submodule update` is non-recursive — omit --recursive
