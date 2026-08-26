@@ -11,8 +11,22 @@ visualizations:
   config:
     caption: 'Loss of the cellular unit: a coarse-grained metabolism refines into
       its molecular mechanism, and the cell disintegrates into shed material.'
+- name: The grain switch triggered by viability
+  address: image:visualizations/fig05-grain-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig05 grain swap (fig05-grain-runnable):
+      a simple external stress ramp drives the cell''s viability steadily down, and
+      a GrainSelector swaps which grain realizes the shared interface as a function
+      of that viability. While viability stays above the threshold (0.5) the cheap
+      COARSE process produces the interface''s biomass; as viability slides below the
+      threshold, control switches to the mechanistic FINE process (saturating
+      Michaelis–Menten), which resolves the regime near the boundary. Biomass keeps
+      accumulating from whichever grain is active, and its slope changes at the
+      coarse→fine switch — a process swapped between grains on the viability
+      function, made runnable. From scripts/build_fig05_grain_dynamics.py.'
 question: How is a process swapped between grains on the viability function?
 baseline:
-- name: fig05b-grain-swap
-  composite: meta_modelers_guide.composites.fig05b-grain-swap
+- name: fig05-grain-runnable
+  composite: meta_modelers_guide.composites.fig05-grain-runnable
   params: {}
