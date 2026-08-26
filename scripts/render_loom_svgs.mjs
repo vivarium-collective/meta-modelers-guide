@@ -77,7 +77,7 @@ for (const [slug, stem] of jobs) {
   const id = `${PKG}.${stem}`;
   const out = `${WS}/workspace/studies/${slug}/visualizations/${stem}.svg`;
   const outPng = `${WS}/workspace/studies/${slug}/visualizations/${stem}.png`;
-  const extra = PROC_ONLY.has(stem) ? '&only=processes&detail=full&ports=types&contract=full' : '';
+  const extra = PROC_ONLY.has(stem) ? '&only=processes&detail=full&ports=types&contract=full&cardw=920' : '';
   const url = `${BASE}/bigraph-loom/?id=${encodeURIComponent(id)}&tabs=explore,document&nopersist=1${extra}`;
   try {
     // By default HONOR the saved default view (the aesthetic arrangement saved
