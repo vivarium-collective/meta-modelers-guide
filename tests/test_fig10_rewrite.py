@@ -107,3 +107,25 @@ def test_each_daughter_keeps_one_chromosome_with_dna():
         assert len(chroms) == 1, f"{ck} has {len(chroms)} chromosomes, expected 1"
         chrom = _find_node(cell, chroms[0])
         assert _dna_of(chrom) == 1.0, f"{ck}'s chromosome lost its DNA"
+
+
+def test_keeps_dividing_when_run_longer():
+    """The cell cycle REPEATS: run it several cycles and the colony keeps
+    dividing (1 -> 2 -> 4 -> 8 ...), not stopping at two cells."""
+    frames = _run_frames(cycle=3.0, interval=1.0, total=20.0)
+    cell_counts = [len(_nodes(f, "cell")) for f in frames]
+    assert max(cell_counts) >= 4, f"expected continued division past 2 cells, got {cell_counts}"
+    assert cell_counts == sorted(cell_counts)          # monotonic, never shrinks
+
+
+def test_capacity_caps_the_colony():
+    """`capacity` bounds the colony so a long run stays finite."""
+    from meta_modelers_guide.fig10_rewrite import build_fig10_division
+    from meta_modelers_guide.core import build_core
+    from process_bigraph import Composite, gather_emitter_results
+    spec = build_fig10_division(cycle=2.0, interval=1.0)
+    spec["state"]["cell_cycle"]["config"]["capacity"] = 4.0
+    sim = Composite(spec, core=build_core())
+    sim.run(40)
+    frames = [r["colony"] for r in gather_emitter_results(sim)[("emitter",)]]
+    assert max(len(_nodes(f, "cell")) for f in frames) <= 4
