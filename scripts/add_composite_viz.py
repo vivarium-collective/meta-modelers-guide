@@ -34,7 +34,7 @@ TARGETS = [
     "fig06-executable", "fig07-executable",
     "fig08a-executable", "fig08b-executable",
     "fig09-executable", "fig10-executable", "fig11-executable",
-    "fig09-rewrite", "fig10-rewrite", "fig11-rewrite",
+    "fig09-rewrite", "fig10-emergence", "fig11-rewrite",
     "whole-cell",
 ]
 
@@ -110,7 +110,7 @@ STORY = {
 MOVIE = {
     "fig07-executable", "fig08a-executable", "fig08b-executable",
     "fig09-executable", "fig10-executable", "fig11-executable",
-    "fig09-rewrite", "fig10-rewrite", "fig11-rewrite",
+    "fig09-rewrite", "fig10-emergence", "fig11-rewrite",
     "whole-cell",
 }
 
@@ -131,7 +131,7 @@ TITLES = {
     "fig10-executable": "A biofilm assembles",
     "fig11-executable": "A variant gains a new port",
     "fig09-rewrite": "Division rewrite — the place graph splits",
-    "fig10-rewrite": "Biofilm rewrite — the colony assembles",
+    "fig10-emergence": "Biofilm emergence — free bacteria form a biofilm",
     "fig11-rewrite": "Evolution rewrite — variation & selection",
     "whole-cell": "The composed whole cell — grow · divide · die",
 }
