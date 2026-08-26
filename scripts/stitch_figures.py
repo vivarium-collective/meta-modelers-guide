@@ -100,13 +100,13 @@ FIGURES: dict[int, dict] = {
         ], "b"),
     ])},
     # growth/division, development, evolution
-    9: {"study": "fig-09", "root": group("row", [
-        panel("fig10a.png", "a", scale=0.65),
-        loom("fig-09", "fig09-division", "b"),
+    9: {"study": "fig-09", "root": group("col", [   # a illustration on top, b snapshot sequence below
+        panel("fig10a.png", "a"),
+        rawimg(str(ROOT / "workspace/studies/fig-09/visualizations/fig09b-division-sequence.png"), "b"),
     ])},
-    10: {"study": "fig-10", "root": group("row", [
-        panel("fig10c.png", "a", scale=0.9),
-        loom("fig-10", "fig10-development", "b"),
+    10: {"study": "fig-10", "root": group("col", [
+        panel("fig10c.png", "a"),
+        rawimg(str(ROOT / "workspace/studies/fig-10/visualizations/fig10-biofilm-sequence.png"), "b"),
     ])},
     11: {"study": "fig-11", "root": group("row", [
         panel("fig10e.png", "a"),
