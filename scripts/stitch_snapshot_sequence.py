@@ -21,33 +21,35 @@ STUDIES = ROOT / "workspace" / "studies"
 
 # Each panel is (image filename, time label). No stage titles, no caption —
 # just the topology snapshots with t=0, t=1, t=2 … over them.
+# Two compact snapshots per figure, arranged to pack tightly beside the a-panel.
+# Orientation is chosen by frame shape: tall-narrow frames sit side-by-side
+# (horizontal); wide-short frames stack top-to-bottom (vertical) to stay narrow.
 FIGURES = {
     "division": {
         "study": "fig-09",
         "out": "fig09b-division-sequence.png",
+        "stack": "horizontal",   # tall, narrow cell/chromosome trees
         "panels": [
-            ("fig09b-division-1-onecell.png",    "t = 0"),
-            ("fig09b-division-2-replicated.png", "t = 1"),
-            ("fig09b-division-3-divided.png",    "t = 2"),
+            ("fig09b-division-1-onecell.png", "t = 0"),
+            ("fig09b-division-3-divided.png", "t = 1"),
         ],
     },
     "biofilm": {
         "study": "fig-10",
         "out": "fig10-biofilm-sequence.png",
+        "stack": "vertical",     # wide frames → stack to keep the block narrow
         "panels": [
-            ("fig10-biofilm-1-planktonic.png",  "t = 0"),
-            ("fig10-biofilm-2-microcolony.png", "t = 1"),
-            ("fig10-biofilm-3-mature.png",      "t = 2"),
+            ("fig10-biofilm-1-planktonic.png", "t = 0"),
+            ("fig10-biofilm-3-mature.png",     "t = 1"),
         ],
     },
     "evolution": {
         "study": "fig-11",
         "out": "fig11-evolution-sequence.png",
-        "stack": "vertical",   # frames are wide + short → stack them top-to-bottom
+        "stack": "vertical",     # wide population rows → stack top-to-bottom
         "panels": [
             ("fig11-evo-1-founder.png", "t = 0"),
             ("fig11-evo-2-growing.png", "t = 1"),
-            ("fig11-evo-3-adapted.png", "t = 2"),
         ],
     },
 }
@@ -120,17 +122,22 @@ def stitch_vertical(cfg):
 def stitch(cfg):
     if cfg.get("stack") == "vertical":
         return stitch_vertical(cfg)
+    # Horizontal: side-by-side with ONE scale factor (tallest frame fills the
+    # target height) so a node is the same size in every frame — the population/
+    # cell grows between panels rather than each frame being rescaled to fit.
     viz = STUDIES / cfg["study"] / "visualizations"
-    panels = []
-    for fn, _ in cfg["panels"]:
-        im = _trim(Image.open(viz / fn).convert("RGB"))
-        panels.append(im.resize((int(im.width * PANEL_H / im.height), PANEL_H), Image.LANCZOS))
+    target_h = 1500
+    raw = [_trim(Image.open(viz / fn).convert("RGB")) for fn, _ in cfg["panels"]]
+    scale = target_h / max(im.height for im in raw)
+    panels = [im.resize((int(im.width * scale), int(im.height * scale)), Image.LANCZOS) for im in raw]
 
-    label_f = _font(40, bold=True)
+    label_f = _font(46, bold=True)
+    label_h = 80
     col_w = max(p.width for p in panels) + 40
+    row_h = max(p.height for p in panels)
     n = len(panels)
     total_w = col_w * n + GAP * (n - 1) + 2 * PAD
-    total_h = PAD + LABEL_H + PANEL_H + PAD
+    total_h = PAD + label_h + row_h + PAD
 
     canvas = Image.new("RGB", (total_w, total_h), (255, 255, 255))
     draw = ImageDraw.Draw(canvas)
@@ -138,10 +145,10 @@ def stitch(cfg):
     for i, ((fn, tlabel), p) in enumerate(zip(cfg["panels"], panels)):
         x0 = PAD + i * (col_w + GAP)
         tw = draw.textlength(tlabel, font=label_f)
-        draw.text((x0 + (col_w - tw) / 2, PAD + 14), tlabel, font=label_f, fill=INK)
-        canvas.paste(p, (x0 + (col_w - p.width) // 2, PAD + LABEL_H))
+        draw.text((x0 + (col_w - tw) / 2, PAD + 16), tlabel, font=label_f, fill=INK)
+        canvas.paste(p, (x0 + (col_w - p.width) // 2, PAD + label_h))
 
-    ay = PAD + LABEL_H + PANEL_H // 2
+    ay = PAD + label_h + row_h // 2
     for i in range(n - 1):
         gx = PAD + (i + 1) * col_w + i * GAP
         x0, x1 = gx + 30, gx + GAP - 40

@@ -97,15 +97,15 @@ FIGURES: dict[int, dict] = {
         loom("fig-08", "fig08b-minimal-cell", "b"),   # just the minimal cell
     ])},
     # growth/division, development, evolution
-    9: {"study": "fig-09", "root": group("col", [   # a illustration on top, b snapshot sequence below
+    9: {"study": "fig-09", "root": group("row", [   # a illustration left, compact 2-snapshot b to its right
         panel("fig10a.png", "a"),
         rawimg(str(ROOT / "workspace/studies/fig-09/visualizations/fig09b-division-sequence.png"), "b"),
     ])},
-    10: {"study": "fig-10", "root": group("col", [
-        panel("fig10c.png", "a", scale=0.6),   # smaller illustration; give 10b more room
+    10: {"study": "fig-10", "root": group("row", [
+        panel("fig10c.png", "a"),
         rawimg(str(ROOT / "workspace/studies/fig-10/visualizations/fig10-biofilm-sequence.png"), "b"),
     ])},
-    11: {"study": "fig-11", "root": group("col", [   # a illustration on top, b snapshot sequence below
+    11: {"study": "fig-11", "root": group("row", [   # a illustration left, compact 2-snapshot b to its right
         panel("fig10e.png", "a"),
         rawimg(str(ROOT / "workspace/studies/fig-11/visualizations/fig11-evolution-sequence.png"), "b"),
     ])},

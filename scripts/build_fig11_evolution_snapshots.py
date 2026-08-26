@@ -41,21 +41,19 @@ N = 18  # run length (matches the live composite's default_n_steps)
 KEEP_LEAVES = {"trait", "selection_optimum"}
 
 # stage stem -> (emitted frame index, panel title, description tail)
+# Two compact snapshots — t=0 and a few instances later — so the pair packs
+# tightly beside the Fig 11a illustration.
 STAGES = {
     "fig11-evo-1-founder": (
         0, "A single founder",
         "t=0 — one founder cell in the population; the environment's selection "
         "optimum sits at the founder's trait. No variation yet."),
     "fig11-evo-2-growing": (
-        3, "The population grows",
-        "t=mid — the founder's fitter descendants have reproduced (daughter cells "
-        "added to the population) with mutated traits; a trait cloud forms as the "
-        "environment's optimum begins to drift."),
-    "fig11-evo-3-adapted": (
-        18, "Adapted to the moving target",
-        "t=end — at carrying capacity the population turns over (Moran birth–death); "
-        "selection on the mutated variants has shifted the whole trait cloud to "
-        "track the drifted optimum — adaptation to a moving environment."),
+        2, "A few generations later",
+        "t=later — the founder's fitter descendants have reproduced (daughter cells "
+        "added to the population) with mutated traits; a trait cloud has formed and "
+        "the environment's optimum has begun to drift — selection, mutation and "
+        "reproduction, a few generations in."),
 }
 
 
