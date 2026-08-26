@@ -11,8 +11,19 @@ visualizations:
   config:
     caption: 'A process bigraph: processes interacting with stores through ports and
       wires, making shared state and dependencies explicit.'
+- name: A process bigraph is executable
+  address: image:visualizations/fig01-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig01 demonstration (fig01-runnable): the
+      minimal executable process bigraph — ONE real process (StoreTransfer) wired to
+      TWO scalar place-graph nodes, source store_a and sink store_b. A first-order
+      transfer drains the source into the sink (dA/dt=-k*A, dB/dt=+k*A) while the
+      total A+B is conserved. The dynamics behind Fig 1b''s static signature: a
+      process bigraph is an executable place-graph + processes. From
+      scripts/build_fig01_dynamics.py.'
 question: How does a process bigraph make shared state and dependencies explicit?
 baseline:
-- name: fig01-process-bigraph
-  composite: meta_modelers_guide.composites.fig01-process-bigraph
+- name: fig01-runnable
+  composite: meta_modelers_guide.composites.fig01-runnable
   params: {}

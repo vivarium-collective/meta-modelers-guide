@@ -12,8 +12,10 @@ chemical (substrate/turnover) input — so the ports are physically consistent:
 * **chemical**   — ATP synthesis flux, ``J_ATP = k_cat · activity``.
 * **electrical** — the proton current carried by the H⁺ flux, ``I = J_H · e``,
   where ``J_H = (H⁺/ATP)·J_ATP`` and the driving proton-motive force is ≈ 150 mV.
-* **mechanical** — rotary power of the Fₒ motor, ``torque · ω``, with torque
-  ≈ 40 pN·nm and ω set by the H⁺ flux through the c-ring.
+* **mechanical** — rotary **torque** delivered by the Fₒ motor, ≈ 40 pN·nm
+  (≈ 4×10⁻²⁰ N·m), roughly constant with load — the drive sets the rotor's
+  *speed* (ω = 2π·J_H/c-ring), not its torque. Matches the draft's declared
+  ``mechanical_out: torque`` port (N·m).
 * **thermal**    — the non-conserved remainder dissipated as heat,
   ``(1 − η)·(PMF work)``, η ≈ 75 % (60–90 %).
 
@@ -29,8 +31,6 @@ are declared config-independently so conformance is checkable before instantiati
 Mirrors handlers_fig03b.py (the set-semantics exemplar).
 """
 from __future__ import annotations
-
-import math
 
 from process_bigraph import Process
 
@@ -85,18 +85,42 @@ class MolecularMechanismHandler(Process):
         e = c["proton_charge"]
 
         i_proton = j_h * e                                # proton current (A)
-        w_pmf = j_h * e * c["pmf_volts"]                  # PMF work rate (W)
-        omega = 2.0 * math.pi * j_h / c["c_ring"]         # Fₒ rotation (rad·s⁻¹)
-        torque_nm = c["torque_pn_nm"] * 1e-21             # 1 pN·nm = 1e-21 N·m
-        p_mech = torque_nm * omega                        # rotary mechanical power (W)
+        w_pmf = j_h * e * c["pmf_volts"]                  # PMF work rate (W) = input power
+        torque_nm = c["torque_pn_nm"] * 1e-21             # rotary torque (N·m); 1 pN·nm = 1e-21 N·m
         q_heat = (1.0 - c["efficiency"]) * w_pmf          # non-conserved remainder → heat
 
+        # Energy balance holds by construction on the electrical channel: the PMF
+        # input power w_pmf = i_proton·pmf_volts is split into the conserved useful
+        # fraction (η·w_pmf, driving ATP synthesis) and the dissipated remainder
+        # q_heat = (1−η)·w_pmf, so w_pmf = η·w_pmf + q_heat exactly. The mechanical
+        # channel carries the rotor's (near-constant) torque; the drive sets its speed.
         return {
             "chemical_out": self._set("chemical_out", j_atp),
             "electrical_out": self._set("electrical_out", i_proton),
-            "mechanical_out": self._set("mechanical_out", p_mech),
+            "mechanical_out": self._set("mechanical_out", torque_nm),
             "thermal_out": self._set("thermal_out", q_heat),
         }
+
+
+class ProtonMotiveRamp(Process):
+    """The membrane charging up: ramps the substrate/proton drive (``chemical_in``)
+    linearly over the run so the transducer sweeps its operating range. Writes a
+    fixed positive increment into the shared ``chemical_in`` store each tick, so the
+    driving proton flux rises monotonically and every coupled output channel scales
+    with it. This is the fig06 analogue of fig04's diffusing gradient — an evolving
+    driver that makes the environment→transducer coupling legible over time."""
+
+    config_schema = {"drive_rate": _f(0.06)}  # Δ(chemical_in) per unit interval
+
+    def inputs(self):
+        return {}
+
+    def outputs(self):
+        return {"drive": "chemical_flux"}
+
+    def update(self, state, interval):
+        # accumulate-by-default: this delta raises the shared chemical_in each tick.
+        return {"drive": self.config["drive_rate"] * interval}
 
 
 # ── handler environment ⟦Fig7⟧_H ──────────────────────────────────────────────

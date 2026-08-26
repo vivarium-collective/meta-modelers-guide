@@ -15,9 +15,21 @@ visualizations:
       at different rates through a shared store; (b) workflow organizes processes
       as a dependency DAG; (c) event-driven graph rewrites (division, engulfment,
       bursting) modify system structure.'
+- name: Multi-timestepping through a shared store
+  address: image:visualizations/fig02-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig02 demonstration (fig02-runnable) of
+      Fig 2''s panel (a), multi-timestepping: two processes update at DIFFERENT rates
+      through ONE shared pool store. FastProduction (interval 1) fills pool.molecules
+      every tick; SlowConversion (interval 5) fires every 5 ticks, converting the
+      pool into pool.biomass. molecules ramps and saws down on the fast clock while
+      biomass advances in coarse staircase steps on the slow clock — two rates
+      coordinated through a shared store. Panels (b) workflow-DAG and (c) event
+      rewrites stay schematic. From scripts/build_fig02_dynamics.py.'
 question: How are processes orchestrated across timescales, workflows, and structural
   rewrites?
 baseline:
-- name: overview-multiscale-composite
-  composite: meta_modelers_guide.composites.overview-multiscale-composite
+- name: fig02-runnable
+  composite: meta_modelers_guide.composites.fig02-runnable
   params: {}

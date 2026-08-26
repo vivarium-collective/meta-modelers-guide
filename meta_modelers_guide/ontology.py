@@ -32,6 +32,7 @@ QUANTITY_TERMS: dict[str, dict] = {
     "concentration":  {"ontology": "PATO", "label": "concentration", "id": "PATO:0000033"},
     "mass":           {"ontology": "PATO", "label": "mass", "id": "PATO:0000125"},
     "force":          {"ontology": "PATO", "label": "force"},
+    "torque":         {"ontology": "PATO", "label": "torque"},
     "current":        {"ontology": "UO",   "label": "electric current (ampere)"},
     "voltage":        {"ontology": "PATO", "label": "electric potential"},
     "heat_flux":      {"ontology": "UO",   "label": "power (watt)"},
