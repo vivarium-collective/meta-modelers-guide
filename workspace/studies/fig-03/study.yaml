@@ -1,11 +1,443 @@
 schema_version: 4
 name: fig-03
+investigation: paper-figures
 title: The cellular interface
-kind: theoretical
-purpose:
-  mechanism: 'The minimal cellular interface: a cell exposes physical exchange ports
-    (chemical, mechanical, electrical, thermal) and higher-level cellular ports (growth
-    rate, shape, signaling, objective, viability).'
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'The paper''s §Cellular interface (Fig cell_interface) defines a cell as an
+  organization that senses and acts on its environment through typed PORTS -- "each port
+  is a typed connection from the cell to a single variable in the shared state, with a
+  type that fixes the units of what crosses it." Fig cell_interface a. shows interaction
+  modalities as ports (nutrient exchange, motile force, growth, electrical signaling);
+  Fig cell_interface b. shows a minimal interface combining physical exchange ports with
+  higher-level cellular variables (growth, shape, objectives, viability bounds). Is that
+  interface EXECUTABLE rather than merely drawn -- i.e. does a runnable process-bigraph
+  composite exercise those typed ports so that each port''s value RESPONDS to its driving
+  environmental input, demonstrating the typed cell -> shared-variable connection the
+  caption asserts?'
+biological_summary: 'This study makes Fig cell_interface runnable. The `fig03-runnable`
+  composite (`meta_modelers_guide.composites.fig03-runnable`) wires ONE bounded cell
+  (`CellularInterfaceHandler`, a conforming process-bigraph Process) to an environment
+  that supplies four typed drivers -- a chemical concentration, a mechanical force, an
+  electrical voltage, and a thermal temperature -- and reads back the cell''s typed
+  interface ports: the physical exchange ports (chemical flux, mechanical force,
+  electrical current, thermal heat flux) plus the higher-level cellular variables the
+  caption names -- growth_rate, shape (volume), signaling, objective, and viability.
+
+  Each port is a typed connection from the cell to a single shared variable (paper:
+  W(cell,q)=p with type Sigma(p)), and the demonstration is that the ports RESPOND: a
+  higher chemical supply drives a proportionally larger uptake flux and (via Monod) a
+  larger growth rate; the mechanical, electrical, and thermal exchange ports each track
+  their own driver through a plausible linear response law (elastic force, Ohmic current,
+  Fourier heat flux) and stay put when their driver is off; the cell accretes shape
+  (volume) as it grows; and viability -- the higher-level variable that says whether the
+  cellular description still holds -- declines by first-order Arrhenius thermal death when
+  the environment is held ABOVE the cell''s 37 C optimum. The runnable composite seeds the
+  thermal driver at 45 C (above optimum) so viability visibly falls over the run, the
+  cell taking up chemical and growing while its viability bound is being pushed toward
+  collapse. This is Fig cell_interface b. in action: the environment''s drivers drive the
+  cell''s typed interface ports, over time, through the process-bigraph engine.
+
+  The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod km,
+  elasticity, membrane conductance, thermal conductance) and the Arrhenius thermal-death
+  constants are plausible, hand-chosen magnitudes -- pinned so the D-value is ~1 min at
+  the 55 C E. coli thermal-death reference and negligible near 37 C -- chosen to make each
+  port''s response legible in a short run, not calibrated to a named cell type or a
+  literature dataset. The rigorous, mechanism-independent treatment of this same interface
+  -- specifying the cell as nothing but typed unit-bearing ports, compiling a conforming
+  handler into the draft, and MEASURING that two different internal mechanisms realize the
+  same interface relation to within tolerance -- is its cousin `cellular-interface` in the
+  `draft-to-living-cell` investigation; this study''s job is only to show the caption''s
+  ports RESPOND, runnably.'
+claim: 'Fig cell_interface is executable: composing one bounded cell
+  (`CellularInterfaceHandler`) with a four-driver environment through the
+  `fig03-runnable` composite exercises the caption''s typed interface ports so that each
+  port''s value responds to its driving input, demonstrating the typed cell -> shared-variable
+  connection the paper asserts. Deterministically: a 5x higher chemical supply (0.2 -> 1.0)
+  produces exactly a 5x larger uptake flux (-0.16 -> -0.80) and a strictly larger Monod
+  growth rate (0.171 -> 0.400); the mechanical, electrical, and thermal exchange ports each
+  respond linearly to their own driver and read zero when it is off; the cell accretes shape
+  (volume 1.0 -> 10.6) as it grows over the 24-step run; and with the thermal driver held at
+  45 C (above the 37 C optimum) viability falls strictly monotonically from 1.0 to 0.175 by
+  Arrhenius thermal death, whereas at the 37 C optimum it barely moves (1.0 -> 0.911, a
+  decline < 0.1) -- isolating temperature as the cause. Every number is a deterministic
+  function of the handler''s response laws and reproduces exactly run to run.'
+baseline:
+- name: fig03-runnable
+  composite: meta_modelers_guide.composites.fig03-runnable
+  params: {}
+variants: []
+key_assumptions:
+- 'The `fig03-runnable` composite is DIDACTIC / toy-real: it is built to look like Fig
+  cell_interface and play forward, NOT calibrated to a named cell type or literature dataset.
+  The response-law constants (uptake_rate 0.8, growth_max 0.6, Monod km 0.5, elasticity 0.1,
+  membrane_conductance 0.05, thermal_conductance 0.02, signaling_gain 0.4) are plausible,
+  hand-chosen magnitudes selected to make each port''s response legible in a 24-step run.'
+- 'The Arrhenius thermal-death law (k(T)=A*exp(-Ea/RT), dV/dt=-k(T)*V, Ea~=300 kJ/mol) is a
+  genuine functional form, but its constants are pinned to a reference target, not fitted to
+  data: A is set so the D-value (time for a 1-log kill) is ~1 min at the 55 C E. coli
+  thermal-death reference, which makes death negligible near 37 C (D ~ 10 h) and severe above
+  it. The 45 C driver in the runnable composite is chosen so viability visibly falls within
+  the run.'
+- 'Every port in this study is a single lumped cell''s response law -- there is no space, no
+  membrane geometry, and no molecular detail. The interface is exactly the paper''s
+  coarse-grained representation: internal processes are not resolved, only their effects on
+  the shared typed variables (metabolism as exchange flux, motility as force, growth as an
+  accreting volume).'
+- 'The instantaneous ports (chemical, mechanical, electrical, thermal, growth_rate,
+  signaling) are written with "set" semantics over process-bigraph''s accumulate-by-default
+  stores; only shape and objective are genuine accumulating pools. The emitter''s first row
+  (tick 0) therefore reads 0 for the set-semantics ports before the first update, which is a
+  recording artifact of the initial state, not a dynamical fact.'
+- 'This study demonstrates only that the caption''s ports RESPOND, runnably. It does NOT claim
+  mechanism-independence, unit-correctness of a real cell, or calibration. The rigorous
+  spatial/compositional cousin that specifies the interface as typed unit-bearing ports and
+  MEASURES that two different internal mechanisms realize the same interface relation is
+  `cellular-interface` in the `draft-to-living-cell` investigation.'
+acceptance_criteria:
+- A higher chemical supply drives a proportionally larger uptake flux AND a strictly larger
+  Monod growth rate -- the chemical exchange port and the growth port respond to their driver.
+- Each physical exchange port (mechanical force, electrical current, thermal heat flux)
+  responds to its OWN driver linearly and in isolation, reading zero when that driver is off --
+  a typed connection from the cell to one shared variable.
+- The higher-level `shape` (volume) port accretes monotonically as the cell grows -- a
+  higher-level cellular variable responding to sustained uptake.
+- With the thermal driver held ABOVE the cell''s optimum, the `viability` port falls strictly
+  monotonically (Arrhenius thermal death), whereas at the optimum it barely changes -- the
+  viability-bound variable responding to temperature, with temperature isolated as the cause.
+units_and_time:
+  time: 1 step = 1 minute of model time (the thermal-death constants are pinned in minutes);
+    the runnable composite runs 24 such steps.
+  quantities: 'chemical_ext is a concentration and chemical flux is its negated uptake;
+    mechanical is force, electrical is current, thermal is a heat flux, temperature is in C
+    (converted to K internally for Arrhenius); growth_rate is a specific rate, shape a volume,
+    objective a biomass proxy, viability a dimensionless [0,1] fraction. The magnitudes are
+    toy-real model units, not calibrated to a physical cell.'
+  note: No quantity here is calibrated to a named cell type, material, or literature target;
+    the thermal-death form is pinned to an E. coli reference D-value, not fitted.
+behavior_tests:
+- name: higher-chemical-drives-uptake-and-growth
+  classification: primary
+  description: A higher chemical supply drives a proportionally larger uptake flux and a
+    strictly larger Monod growth rate -- the chemical exchange port and the growth port
+    respond to their driving input (Fig cell_interface a. nutrient exchange + growth).
+  measure:
+    kind: observable
+    path: cell.chemical, cell.growth_rate
+    expr: uptake flux and growth_rate at chemical supply 0.2 vs 1.0 (fresh handler updates)
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: flux ratio == 5.0 (high -0.80 / low -0.16); growth 0.171 -> 0.400
+    provenance: 'prior: uptake is first-order in supply and growth is Monod, so a 5x higher
+      supply gives a 5x larger uptake flux and a strictly larger growth rate. Observed
+      (deterministic): supply 0.2 -> flux -0.16, growth 0.17143; supply 1.0 -> flux -0.80,
+      growth 0.40000; flux ratio exactly 5.0 and 0 < growth(low) < growth(high)
+      (tests/test_fig03_interface_responds.py::test_higher_chemical_supply_drives_uptake_and_growth)'
+  requires_simulation: none
+- name: physical-ports-respond-to-their-drivers
+  classification: primary
+  description: Each typed physical exchange port (mechanical force, electrical current,
+    thermal heat flux) responds to its OWN driver linearly and in isolation, and reads zero
+    when that driver is off -- the typed cell -> shared-variable connection of Fig
+    cell_interface a.
+  measure:
+    kind: observable
+    path: cell.mechanical, cell.electrical, cell.thermal
+    expr: each port's value under a single nonzero driver, and under all drivers off
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: mechanical 0.1*2.0=0.2; electrical 0.05*3.0=0.15; thermal 0.02*10=0.2; all 0 at rest
+    provenance: 'prior: each physical exchange port is a linear response to one driver, so it
+      moves with that driver and stays at zero otherwise. Observed (deterministic): with all
+      physical drivers off the mechanical/electrical/thermal ports read 0.0; force = 0.1x2.0 =
+      0.2, current = 0.05x3.0 = 0.15, heat flux = 0.02x(47-37) = 0.2, each with the non-driven
+      ports unchanged, and a stronger driver gives a strictly stronger response
+      (tests/test_fig03_interface_responds.py::test_each_physical_exchange_port_responds_to_its_driver)'
+  requires_simulation: none
+- name: shape-accretes-with-growth
+  classification: primary
+  description: The higher-level `shape` (volume) port accretes strictly monotonically as the
+    cell takes up chemical and grows over the run -- a higher-level cellular variable of Fig
+    cell_interface b. responding to sustained uptake.
+  measure:
+    kind: observable
+    path: interface.shape
+    expr: shape (volume) trajectory over the 24-step runnable composite
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: shape strictly increasing, 1.0 -> 10.6 over the run
+    provenance: 'prior: shape is an accumulating volume pool driven by growth, so it rises
+      monotonically while growth_rate > 0. Observed (deterministic): shape strictly increases
+      from 1.0 (seeded) to 10.6 by the final step, with max growth_rate 0.40 > 0
+      (tests/test_fig03_interface_responds.py::test_shape_accretes_as_the_cell_grows)'
+  requires_simulation: fig03-runnable
+- name: above-optimum-drives-viability-down
+  classification: primary
+  description: With the thermal driver held ABOVE the 37 C optimum (45 C in the runnable
+    composite), the `viability` port falls strictly monotonically by first-order Arrhenius
+    thermal death -- the viability-bound variable of Fig cell_interface b. responding to its
+    driver.
+  measure:
+    kind: observable
+    path: interface.viability
+    expr: viability trajectory over the 24-step run with thermal_ext == 45 C
+  pass_if:
+    op: <
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: viability strictly decreasing, 1.0 -> 0.175 (ends < 0.5)
+    provenance: 'prior: above optimum the Arrhenius death rate is nonzero, so viability decays
+      strictly monotonically and ends well below its start. Observed (deterministic): the
+      thermal driver is held at 45 C > 37 C throughout, viability starts > 0.99 and falls
+      strictly step by step to 0.17493 (< 0.5) by the final step
+      (tests/test_fig03_interface_responds.py::test_above_optimum_drives_viability_strictly_down)'
+  requires_simulation: fig03-runnable
+- name: at-optimum-viability-holds
+  classification: primary
+  description: Holding the thermal driver AT the 37 C optimum, the viability port barely
+    changes over the same run -- isolating temperature as the cause of the decline above
+    optimum (the negative control for the viability claim).
+  measure:
+    kind: observable
+    path: interface.viability
+    expr: viability at the end of the run with thermal_ext overridden to 37 C
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: viability stays > 0.9 (1.0 -> 0.911, decline < 0.1)
+    provenance: 'prior: at optimum the thermal-death D-value is ~10 h, so the loss over a
+      24-min run is small. Observed (deterministic): with thermal_ext == 37 C viability ends at
+      0.91073 (> 0.9) with a total decline of 0.089 (< 0.1), in stark contrast to the 45 C run
+      (tests/test_fig03_interface_responds.py::test_at_optimum_viability_barely_changes)'
+  requires_simulation: fig03-runnable
+- name: hotter-kills-faster-than-optimum
+  classification: primary
+  control: negative
+  description: Direct contrast of the two temperatures -- after the run, viability at 45 C is
+    far below viability at the 37 C optimum, confirming the temperature driver, not the run
+    length or the uptake, causes the viability decline.
+  measure:
+    kind: derived
+    path: interface.viability
+    expr: final viability at 45 C vs final viability at 37 C
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: opt - hot > 0.5 (0.911 - 0.175 == 0.736)
+    provenance: 'prior: if temperature is the cause, the hot run ends far below the optimum
+      run. Observed (deterministic): final viability 0.17493 (45 C) vs 0.91073 (37 C), a gap of
+      0.736 > 0.5, with hot < opt
+      (tests/test_fig03_interface_responds.py::test_hotter_kills_faster_than_optimum)'
+  requires_simulation: fig03-runnable
+runs:
+- name: fig03-runnable
+  composite: fig03-runnable
+  emitter: RAMEmitter
+  id: fig03-runnable
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig03-runnable.composite.json
+    (CellularInterfaceHandler, one bounded cell wired to a four-driver environment with the
+    chemical supply at 1.0 and the thermal driver held at 45 C above the 37 C optimum) run 24
+    steps through the process-bigraph engine (tests/test_fig03_interface_responds.py). The
+    baked dynamics PNG in visualizations/ was rendered over the same run via
+    scripts/build_fig03_dynamics.py.'
+  params: {}
+  outcomes:
+    HIGHER-CHEMICAL-DRIVES-UPTAKE-AND-GROWTH:
+      result: PASS
+      detail: supply 0.2 -> flux -0.16, growth 0.171; supply 1.0 -> flux -0.80, growth 0.400;
+        flux ratio exactly 5.0
+    PHYSICAL-PORTS-RESPOND-TO-THEIR-DRIVERS:
+      result: PASS
+      detail: force 0.2, current 0.15, heat flux 0.2 under their drivers; all physical ports 0
+        at rest; non-driven ports unchanged
+    SHAPE-ACCRETES-WITH-GROWTH:
+      result: PASS
+      detail: shape strictly increases 1.0 -> 10.6 over 24 steps
+    ABOVE-OPTIMUM-DRIVES-VIABILITY-DOWN:
+      result: PASS
+      detail: thermal held at 45 C; viability falls strictly 1.0 -> 0.175 (< 0.5)
+    AT-OPTIMUM-VIABILITY-HOLDS:
+      result: PASS
+      detail: at 37 C viability ends 0.911 (> 0.9), decline 0.089 < 0.1
+    HOTTER-KILLS-FASTER-THAN-OPTIMUM:
+      result: PASS
+      detail: final viability 0.175 (45 C) vs 0.911 (37 C), gap 0.736 > 0.5
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'Fig cell_interface is executable, not merely drawn: composing one bounded cell
+    (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable`
+    composite exercises the caption''s typed interface ports so each responds to its driving
+    input. The chemical exchange port and the growth port respond to chemical supply (a 5x
+    supply gives exactly 5x uptake flux and a strictly larger Monod growth rate); the
+    mechanical, electrical, and thermal exchange ports each respond linearly to their own
+    driver and read zero when it is off; and the higher-level shape (volume) port accretes
+    strictly (1.0 -> 10.6) as the cell grows. Each is a deterministic typed cell ->
+    shared-variable connection.'
+  evidence:
+    from_test: physical-ports-respond-to-their-drivers
+    from_run: fig03-runnable
+    observed: flux ratio 5.0; force 0.2 / current 0.15 / heat flux 0.2 under their drivers, 0
+      at rest; shape 1.0 -> 10.6
+  provenance:
+    run_ids:
+    - fig03-runnable
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The higher-level viability-bound variable of Fig cell_interface b. responds to
+    its thermal driver: with the temperature held above the 37 C optimum (45 C) viability
+    falls strictly monotonically by first-order Arrhenius thermal death from 1.0 to 0.175,
+    whereas at the 37 C optimum it barely moves (ends 0.911, decline < 0.1). The paired runs
+    isolate temperature as the cause -- final viability differs by 0.736 between the two --
+    demonstrating the interface''s viability bound as a runnable, driver-responsive port
+    rather than a drawn label. Toy-real: the death constants are pinned to an E. coli
+    reference D-value, not fitted.'
+  evidence:
+    from_test: hotter-kills-faster-than-optimum
+    from_run: fig03-runnable
+    observed: viability 1.0 -> 0.175 at 45 C; 1.0 -> 0.911 at 37 C; final gap 0.736
+  provenance:
+    run_ids:
+    - fig03-runnable
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'fig03-runnable.composite.json builds and runs 24 steps to completion through the
+      process-bigraph engine, and the conforming `CellularInterfaceHandler` compiles against
+      the cellular-interface signature (tests/test_fig03_interface_responds.py, and the
+      companion conformance/spatial tests referenced in the handler module).'
+  biological_validation:
+    result: PASS
+    basis: All six primary behavior tests pass on measured readouts. The chemical, mechanical,
+      electrical, and thermal exchange ports each respond to their own driver; the higher-level
+      shape and viability ports respond to sustained uptake and to temperature; and paired
+      optimum/above-optimum runs isolate temperature as the cause of the viability decline.
+      Every readout is a deterministic function of the handler's response laws and reproduces
+      exactly run to run.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Making Fig cell_interface runnable turns the caption''s static ports into a
+      demonstration that each typed port''s value CHANGES in response to its driving variable --
+      the paper''s "typed connection from the cell to a single variable in the shared state"
+      shown playing forward through the engine, one lumped cell, drivers -> ports over time.'
+conclusion: '## Claims
+
+  - Fig cell_interface is executable: the `fig03-runnable` composite exercises the caption''s
+    typed interface ports so each responds to its driving input. A 5x chemical supply gives
+    exactly 5x uptake flux (-0.16 -> -0.80) and a strictly larger Monod growth rate (0.171 ->
+    0.400); the mechanical, electrical, and thermal exchange ports respond linearly to their
+    own driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the
+    higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run.
+
+  - The viability-bound variable responds to temperature: held at 45 C (above the 37 C
+    optimum) viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal
+    death, while at the optimum it barely changes (ends 0.911, decline < 0.1). Paired runs
+    isolate temperature as the cause -- a 0.736 gap in final viability.
+
+  - Every number is a deterministic function of the handler''s response laws and reproduces
+    exactly run to run.
+
+
+  ## Evidence
+
+  - **HIGHER-CHEMICAL-DRIVES-UPTAKE-AND-GROWTH** -- flux ratio exactly 5.0; growth 0.171 -> 0.400
+
+  - **PHYSICAL-PORTS-RESPOND-TO-THEIR-DRIVERS** -- force 0.2, current 0.15, heat flux 0.2; all 0 at rest
+
+  - **SHAPE-ACCRETES-WITH-GROWTH** -- shape 1.0 -> 10.6, strictly increasing
+
+  - **ABOVE-OPTIMUM-DRIVES-VIABILITY-DOWN** -- viability 1.0 -> 0.175 (< 0.5), strictly decreasing
+
+  - **AT-OPTIMUM-VIABILITY-HOLDS** -- viability ends 0.911 (> 0.9), decline 0.089
+
+  - **HOTTER-KILLS-FASTER-THAN-OPTIMUM** -- final gap 0.736 (0.911 vs 0.175)
+
+
+  ## Limitations
+
+  - The `fig03-runnable` composite is didactic / toy-real: the response-law constants and the
+    Arrhenius thermal-death constants are plausible, hand-chosen magnitudes (the death form
+    pinned to an E. coli reference D-value), not calibrated to a named cell type or literature
+    dataset.
+
+  - It is one lumped cell with no space, membrane geometry, or molecular detail -- exactly the
+    paper''s coarse-grained interface, internal processes represented only through their
+    effects on the shared typed variables.
+
+  - This study demonstrates only that the caption''s ports RESPOND, runnably; it does not claim
+    mechanism-independence or calibration. The rigorous cousin that specifies the interface as
+    typed unit-bearing ports and measures that two different internal mechanisms realize the
+    same interface relation is `cellular-interface` in the `draft-to-living-cell` investigation.
+
+
+  ## Next steps
+
+  - Read this alongside the calibrated cousin `cellular-interface` to compare the same
+    interface at didactic vs mechanism-independent rigor.
+
+  - Fan out to the next figure''s runnable study in the `paper-figures` investigation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig03-runnable.composite.json builds and runs 24 steps to
+      completion through the process-bigraph engine, all six primary behavior tests green.'
+    biological_validation: Fig cell_interface is demonstrated as executable at the toy-real
+      (uncalibrated) level -- each typed interface port responds to its driving environmental
+      variable, with paired runs isolating temperature as the cause of the viability decline.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - the chemical/growth ports do not scale with supply (the Monod or first-order uptake law
+      is mis-wired, or the driver is not reaching the handler input)
+    - a physical exchange port does not track its driver or leaks onto a non-driven port (the
+      linear response law or the port wiring is broken)
+    - shape fails to accrete (growth is not driving the accumulating volume pool)
+    - viability does not fall at 45 C, or falls at 37 C too (the Arrhenius thermal-death law or
+      its temperature reference is mis-pinned)
+    block_downstream: 'any figure study reusing the CellularInterfaceHandler response laws or
+      the drivers -> typed-ports demonstration pattern'
+limitations:
+- 'The `fig03-runnable` composite is didactic / toy-real: the response-law constants
+  (uptake_rate 0.8, growth_max 0.6, km 0.5, elasticity 0.1, membrane_conductance 0.05,
+  thermal_conductance 0.02, signaling_gain 0.4) are plausible, hand-chosen magnitudes chosen
+  to make each port''s response legible in a 24-step run, not calibrated to a named cell type
+  or literature dataset.'
+- 'The Arrhenius thermal-death form is genuine but its constants are pinned to a reference, not
+  fitted: A is set so the D-value is ~1 min at the 55 C E. coli thermal-death reference
+  (negligible near 37 C, severe above it), and the 45 C driver is chosen so viability visibly
+  falls within the run.'
+- It is one lumped cell with no space, membrane geometry, or molecular detail -- the paper's
+  coarse-grained interface, internal processes represented only through their effects on the
+  shared typed variables.
+- The instantaneous ports use "set" semantics over accumulate-by-default stores, so the
+  emitter's first row (tick 0) reads 0 for those ports before the first update -- a recording
+  artifact of the initial state, not a dynamical fact.
+- This study demonstrates only that the caption's ports RESPOND, runnably. The rigorous cousin
+  that specifies the interface as typed unit-bearing ports and MEASURES that two different
+  internal mechanisms realize the same interface relation to within tolerance is
+  `cellular-interface` in the `draft-to-living-cell` investigation; its numbers are not
+  restated here as this study's own.
+falsifiability: Overturned if a higher chemical supply fails to give a proportionally larger
+  uptake flux or a larger growth rate, if any physical exchange port fails to respond to its
+  own driver or responds to a driver that is off, if shape fails to accrete as the cell grows,
+  if viability fails to fall strictly at 45 C, if viability falls substantially at the 37 C
+  optimum, or if any of these readouts stops being deterministic across repeated runs of the
+  same composite.
 visualizations:
 - name: Figure 3
   address: svg:visualizations/figure_3.svg
@@ -23,8 +455,24 @@ visualizations:
       volume), while a thermal driver held ABOVE the cell''s 37 °C optimum (45 °C)
       drives viability strictly down by first-order Arrhenius thermal death —
       drivers → ports made runnable. From scripts/build_fig03_dynamics.py.'
-question: What ports and contract define the minimal cellular interface?
-baseline:
-- name: fig03-runnable
-  composite: meta_modelers_guide.composites.fig03-runnable
-  params: {}
+parent_studies:
+- study: cellular-interface
+  condition: tests-passed
+experiment: 'Run the `fig03-runnable` composite (`CellularInterfaceHandler`, one bounded cell
+  wired to a four-driver environment: chemical supply 1.0, thermal driver 45 C above the 37 C
+  optimum) for 24 steps through the process-bigraph engine, and additionally drive a fresh
+  handler at paired chemical supplies (0.2 vs 1.0) and paired temperatures (45 C vs 37 C), to
+  measure whether each typed interface port''s value responds to its driving environmental
+  input as Fig cell_interface asserts.'
+result: 'Fig cell_interface is executable. A 5x chemical supply (0.2 -> 1.0) gives exactly a
+  5x uptake flux (-0.16 -> -0.80) and a strictly larger Monod growth rate (0.171 -> 0.400);
+  the mechanical, electrical, and thermal exchange ports each respond linearly to their own
+  driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the
+  higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run;
+  and with the thermal driver held at 45 C above the 37 C optimum, viability falls strictly
+  monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the optimum it barely
+  moves (ends 0.911, decline < 0.1) -- a 0.736 gap in final viability isolating temperature as
+  the cause. Every number is a deterministic function of the handler''s response laws and
+  reproduces exactly run to run. The composite is didactic / toy-real (uncalibrated); the
+  rigorous, mechanism-independent treatment of this same interface is the cousin
+  `cellular-interface` in the `draft-to-living-cell` investigation.'

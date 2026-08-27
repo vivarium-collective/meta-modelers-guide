@@ -89,3 +89,40 @@ def test_biomass_only_advances():
     assert bio[-1] > bio[0]
     for x, y in zip(bio, bio[1:]):
         assert y >= x - 1e-12
+
+
+# ── mass is conserved through the shared store, across the two timescales ──────
+def test_mass_conserved_across_timescales():
+    """The two rates are coordinated through ONE shared store, and nothing is lost
+    across the timescales: the fast process is the sole source (it injects rate*dt
+    per base tick), and the slow process only MOVES mass between molecules and
+    biomass within the pool. So at every emitted tick the total in the shared store
+    (molecules + biomass) equals the cumulative fast injection, which for rate=1.0,
+    interval=1.0 equals the elapsed time exactly. Deterministic — no RNG anywhere."""
+    rows = _run_trajectory()
+    for r in rows:
+        total = float(r["molecules"]) + float(r["biomass"])
+        assert abs(total - float(r["time"])) < 1e-9, (
+            f"shared-store total {total} != cumulative fast injection {r['time']}")
+    # and the exact final split is a deterministic regression pin.
+    last = rows[-1]
+    assert abs(float(last["time"]) - 20.0) < 1e-9
+    assert abs(float(last["molecules"]) - 8.12) < 1e-9
+    assert abs(float(last["biomass"]) - 11.88) < 1e-9
+
+
+def test_biomass_is_a_coarse_slow_clock_staircase():
+    """Biomass only advances on the slow clock (interval 5), so over a 20-tick run it
+    changes just a handful of times and holds flat between slow firings — a coarse
+    staircase, not the fast pool's per-tick motion. Deterministic pins on the three
+    visible slow conversions."""
+    rows = _run_trajectory()
+    bio = [float(r["biomass"]) for r in rows]
+    slow_changes = _n_changes(bio)
+    # three visible slow conversions over the run (at t=10, 15, 20) ...
+    assert slow_changes == 3, f"expected 3 slow conversions, saw {slow_changes}"
+    # ... far fewer than the fast pool's per-tick updates.
+    assert _n_changes([float(r["molecules"]) for r in rows]) > 3 * slow_changes
+    # exact staircase levels the slow clock settles onto (deterministic).
+    levels = sorted(set(round(b, 2) for b in bio))
+    assert levels == [0.0, 3.0, 7.2, 11.88]

@@ -54,6 +54,23 @@ def test_higher_local_field_drives_larger_uptake():
     assert abs(high / low - 4.0) < 1e-6
 
 
+# ── (a′) negative control: no field ⇒ no drive on ANY interface port ──────────
+def test_zero_field_gives_no_drive():
+    """The ports are driven BY the environment, not free-running: with a flat
+    ZERO chemical field the cell's uptake, traction, and chemotactic drift are
+    all exactly zero. This is the control that makes the env→port claim causal —
+    remove the driving field and the interface goes silent."""
+    core = build_core()
+    cell = SingleCellSpatial({"cell_index": CELL_INDEX}, core=core)
+    out = cell.update(
+        {"chemical_field": _uniform_grid(0.0),
+         "mechanical_field": 0.0, "location": float(CELL_INDEX)}, 1.0)
+    assert float(out["uptake"]) == 0.0
+    assert float(out["traction"]) == 0.0
+    assert float(out["location"]) == 0.0      # no gradient ⇒ no chemotactic drift
+    assert float(out["mass"]) == 0.0          # no uptake ⇒ no biomass gain
+
+
 # ── run the runnable composite for (b) and (c) ───────────────────────────────
 def _run_trajectory():
     spec = json.loads(COMPOSITE.read_text())
@@ -78,6 +95,29 @@ def test_net_drift_is_up_gradient():
     # the cell starts at index 4 and drifts toward the higher-field side (index 8):
     # net displacement is positive (up-gradient chemotaxis).
     assert loc[-1] - loc[0] > 0.05
+
+
+def test_control_loop_closes_output_written_back_to_shared_env():
+    """The cell's `uptake` OUTPUT is written back into the shared environment
+    store `environment.uptake_flux` — the same store other processes read — so
+    the sense→act loop closes through a shared store (Fig 4b). Two checks:
+
+      * the shared `uptake_flux` accumulates strictly (cell acts back on env);
+      * the CPM→env ledger closes exactly: mass gained == biomass_yield (0.5) ×
+        cumulative uptake written to the environment — no mass appears that the
+        environment store did not account for.
+    """
+    rows = _run_trajectory()
+    cum_uptake = [float(r["uptake_flux"]) for r in rows]
+    mass = [float(r["mass"]) for r in rows]
+    # the cell writes back to the shared env store, and it accumulates.
+    assert cum_uptake[0] == 0.0
+    assert cum_uptake[-1] > 0.0
+    for a, b in zip(cum_uptake, cum_uptake[1:]):
+        assert b >= a - 1e-12                 # write-back is monotone (uptake ≥ 0)
+    # ledger: every unit of biomass is 0.5 × a unit of uptake booked to the env.
+    biomass_yield = 0.5
+    assert abs((mass[-1] - mass[0]) - biomass_yield * cum_uptake[-1]) < 1e-9
 
 
 def test_uptake_tracks_the_local_sensed_field():

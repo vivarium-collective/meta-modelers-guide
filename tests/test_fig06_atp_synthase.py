@@ -114,3 +114,34 @@ def test_energy_balance_heat_equals_input_minus_useful():
         assert q >= 0.0
         assert useful >= 0.0
         assert abs(useful - EFFICIENCY * input_power) < 1e-24
+
+
+# ── the four typed channels are ONE coupled quantity, not four free knobs ──────
+def test_four_channels_all_derive_from_the_single_proton_flux():
+    """Fig 6a's core claim: a molecular mechanism exchanges matter AND energy through
+    coupled physical channels, not independent ones. Every step, the electrical channel
+    is the chemical channel carried as charge (I = J_ATP·n·e — matter⇒charge) and the
+    thermal channel is the fixed remainder of the electrical channel's PMF power
+    (Q = (1−η)·I·pmf — charge⇒energy). Pin the whole coupling chain on the live run."""
+    atp, current, torque, heat, _j = _channels(_run_trajectory())
+    for a, i, tau, q in zip(atp[1:], current[1:], torque[1:], heat[1:]):
+        # chemical ⇒ electrical: the proton current IS the ATP flux carried as charge.
+        assert abs(i - a * N_PROTONS * E_CHARGE) < 1e-30
+        # electrical ⇒ thermal: heat is the fixed (1−η) remainder of the PMF power.
+        assert abs(q - (1.0 - EFFICIENCY) * i * PMF_VOLTS) < 1e-30
+        # all four typed channels co-fire from the one drive; none is independently zero.
+        assert a > 0.0 and i > 0.0 and tau > 0.0 and q > 0.0
+
+
+# ── no drive ⇒ no flux: the channels are driven, not spontaneous ──────────────
+def test_zero_drive_yields_zero_flux_on_every_channel():
+    """No proton-motive force ⇒ no output on any channel (a molecular mechanism
+    transduces a supplied drive; it does not manufacture flux). At zero substrate
+    activity all four typed outputs are exactly zero — except the constant mechanical
+    torque leaf, whose port is a fixed motor property, so it never turns negative."""
+    core = build_core()
+    mech = MolecularMechanismHandler({}, core=core)
+    out = mech.update({"chemical_in": 0.0}, 1.0)
+    assert out["chemical_out"] == 0.0
+    assert out["electrical_out"] == 0.0
+    assert out["thermal_out"] == 0.0

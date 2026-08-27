@@ -116,3 +116,51 @@ def test_biomass_grows_then_decays_at_the_switch():
     assert bio[-1] < bio[flip - 1], "fine grain should decay biomass after the switch"
     for a, b in zip(bio[flip:], bio[flip + 1:]):
         assert b <= a + 1e-9, "biomass must not rise once dying (fine)"
+
+
+# ── viability driver: the StressRamp slides the cell to its boundary ──────────
+def test_viability_declines_monotonically_to_zero():
+    """The StressRamp is the clean driver: viability only ever falls (never rises),
+    and is driven all the way to its 0 floor within the run — so the crossing is
+    guaranteed, not incidental."""
+    viab, _, _ = _cols(_run_trajectory())
+    assert viab[0] == 1.0
+    for a, b in zip(viab, viab[1:]):
+        assert b <= a + 1e-9, "viability must never rise under the stress ramp"
+    # driven below the threshold, and all the way to the clamped 0 floor.
+    assert min(viab) < THRESHOLD
+    assert viab[-1] == 0.0, "viability should reach its clamped 0 floor by the end"
+
+
+# ── the gate acts on BOTH interface outputs, not just biomass ────────────────
+def test_energy_mirrors_biomass_across_the_switch():
+    """energy is the second output the gate hands over: the coarse grain builds it
+    while viable, the fine grain drains it once dying — so it grows-then-decays with
+    the SAME turn-over as biomass. Anchored on the grain flip (robust to the handover
+    lag), not on the viability cross."""
+    _, grain, _ = _cols(_run_trajectory())
+    rows = _run_trajectory()
+    energy = [float(r["energy"]) for r in rows]
+    flip = next(i for i, g in enumerate(grain) if g == "fine")
+    assert energy[0] == 0.0
+    # grows while coarse …
+    for a, b in zip(energy[:flip], energy[1:flip + 1]):
+        assert b >= a - 1e-9, "energy must not fall while viable (coarse)"
+    assert energy[flip - 1] > energy[0], "coarse grain should have built energy before the switch"
+    # … peaks at the switch, then drains under the fine (dying) grain.
+    peak = max(energy)
+    assert abs(energy.index(peak) - flip) <= 1, "energy should peak at the coarse→fine switch"
+    assert energy[-1] < energy[flip - 1], "fine grain should drain energy after the switch"
+    for a, b in zip(energy[flip:], energy[flip + 1:]):
+        assert b <= a + 1e-9, "energy must not rise once dying (fine)"
+
+
+# ── the composite has no RNG — the whole trajectory is bit-reproducible ───────
+def test_trajectory_is_deterministic():
+    """No process here draws randomness (StressRamp, GrainSelector, and both grains
+    are pure functions of state), so two independent builds must emit an identical
+    viability / grain / biomass trajectory — the pins in this study are exact, not
+    representative."""
+    v1, g1, b1 = _cols(_run_trajectory())
+    v2, g2, b2 = _cols(_run_trajectory())
+    assert v1 == v2 and g1 == g2 and b1 == b2

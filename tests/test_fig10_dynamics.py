@@ -46,13 +46,36 @@ def _env_counts(env: dict):
     return free, nested, ecm
 
 
-def _trajectory():
+def _cell_depth(env: dict):
+    """Place-graph depth of the cell nodes in one env frame.
+
+    1 = cells are direct children of env (free planktonic siblings);
+    2 = cells are children of a `biofilm` node that is itself a child of env
+        (embedded in the collective composite). Returns None if no cells found.
+    """
+    if _top_nodes(env, "cell"):
+        return 1
+    bf = env.get("biofilm")
+    if isinstance(bf, dict):
+        contents = bf.get("contents", {})
+        if any(isinstance(v, dict) and v.get("_control") == "cell"
+               for v in contents.values()):
+            return 2
+    return None
+
+
+def _env_frames():
+    """The raw per-step env frames of the fig10-emergence run."""
     spec = json.loads(COMPOSITE.read_text())
     core = build_core()
     sim = Composite({"state": spec["state"]}, core=core)
     sim.run(spec["default_n_steps"])
     rows = gather_emitter_results(sim)[("emitter",)]
-    return [_env_counts(r["env"]) for r in rows]
+    return [r["env"] for r in rows]
+
+
+def _trajectory():
+    return [_env_counts(env) for env in _env_frames()]
 
 
 def test_free_cells_attach_into_a_nested_biofilm():
@@ -81,3 +104,29 @@ def test_ecm_appears_only_after_maturation():
     for f, n, e in traj:
         if e > 0:
             assert n > 0
+
+
+def test_attachment_nests_cells_one_level_deeper():
+    """Fig 10b's principle: biofilm formation is a HIERARCHICAL REORGANIZATION —
+    individual cells become embedded in a collective composite, not merely
+    relabelled or multiplied. The place-graph DEPTH of the cells jumps from 1
+    (free top-level siblings of env) to 2 (children of a NEW `biofilm` collective
+    node), and the collective node did not exist before attachment."""
+    frames = _env_frames()
+    # start: every cell is a free top-level sibling of env; no collective exists.
+    assert "biofilm" not in frames[0]
+    assert _cell_depth(frames[0]) == 1
+    depths = [_cell_depth(env) for env in frames]
+    # the run genuinely rewrites the place graph one level deeper: 1 -> 2.
+    assert depths[0] == 1
+    assert depths[-1] == 2
+    # a brand-new `biofilm` collective node appears exactly when depth increases,
+    # and once it appears it never dissolves (the reorganization is not undone).
+    attach_i = next(i for i, d in enumerate(depths) if d == 2)
+    assert "biofilm" not in frames[attach_i - 1]
+    assert "biofilm" in frames[attach_i]
+    assert all(d == 2 for d in depths[attach_i:])
+    # nesting is a re-parenting, not a copy: no cell is left stranded at top level
+    # once it has been embedded in the collective.
+    for env in frames[attach_i:]:
+        assert _top_nodes(env, "cell") == []

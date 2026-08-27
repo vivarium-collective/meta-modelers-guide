@@ -1,10 +1,378 @@
 schema_version: 4
 name: fig-09
+investigation: paper-figures
 title: Growth & division
-kind: theoretical
-purpose:
-  mechanism: 'Cell growth and division as a place-graph rewrite: chromosome replication
-    and segregation, then division into two daughter cells.'
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'Does the paper''s §Growth-and-division claim (Fig. division) hold as a runnable
+  composite -- that division is a compositional rewrite in which "one maintained boundary
+  becomes two, with stores partitioned across daughters and interface ports duplicated"
+  (caption a: DNA replication, elongation, septum, separation; caption b: "division ...
+  partitions state variables such as DNA and biomass into two cells") -- when realized
+  as a genuine place-graph rewrite over a colony `tree[node]` store driven through the
+  process-bigraph engine?'
+biological_summary: 'This is the executable realization of the paper''s §Growth, division,
+  development, evolution section and its Fig. division. The paper frames division as the
+  more radical of the transformations a self-maintaining cellular interface undergoes:
+  "a compositional rewrite in which one maintained boundary becomes two, with stores
+  $x$ partitioned across daughters and interface ports $W$ duplicated and re-established"
+  -- each daughter inheriting a subset of stores and reconstructing a viable interface.
+  Caption a walks the prokaryotic sequence (DNA replication, elongation, septum
+  formation, separation into daughters); caption b abstracts it to "a compositional
+  rewrite that partitions state variables such as DNA and biomass into two cells."
+
+
+  The `fig09-rewrite` composite (`meta_modelers_guide.composites.fig09-rewrite`, built via
+  `build_fig10_division`) realizes exactly caption b at the place-graph level. A single
+  `CellCycleDivision` Process owns a colony `tree[node]` store holding one founder cell,
+  itself holding one chromosome carrying `dna = 1.0`. Every `cycle` (= 3) time units the
+  process alternates two genuine place-graph rewrites, emitted as an
+  `overwrite[tree[node]]` so removed nodes actually disappear from the trajectory:
+
+
+  REPLICATE -- a cell holding one chromosome duplicates it into two sisters (the DNA-copy
+  step; the total DNA store doubles while the boundary count stays 1). DIVIDE -- a cell
+  holding two sisters splits into two daughter cells with fresh ids, partitioning one
+  chromosome to each (the boundary rewrite: one node becomes two, each daughter''s cell
+  subtree re-established with its own chromosome port). Because both rewrites apply to
+  every cell each round, running it forward keeps dividing: 1 -> 2 -> 4 cells over the
+  default 12-tick run, replication always preceding division.
+
+
+  This is a DIDACTIC, toy-real composite: the "growth" that drives division here is
+  discrete DNA replication reaching two chromosomes (the division precondition), NOT a
+  continuously integrated biomass store crossing a calibrated threshold, and the cycle
+  length, DNA amounts, and capacity cap are illustrative model units, not fitted to any
+  organism''s replication timing or genome size. Its purpose is to make the paper''s
+  "division is a compositional rewrite" claim literally executable and steppable frame by
+  frame -- one boundary becoming two at runtime -- not to reproduce quantitative division
+  kinetics. The rigorous spatial cousin, where a real CPM cell grows and divides with
+  per-pixel biomass, is `growth-and-division` in the `draft-to-living-cell` investigation.
+
+
+  The composite is a pure clock-driven rewrite with NO randomness, so the whole trajectory
+  is deterministic and reproduces exactly run to run: founder 1 cell / dna 1.0; at t=3
+  replication gives 1 cell / 2 chromosomes / dna 2.0; at t=6 division gives 2 cells with
+  dna 1.0 each (total conserved at 2.0); at t=9 replication gives 2 cells / 4 chromosomes /
+  dna 4.0; at t=12 division gives 4 cells with dna 1.0 each (total conserved at 4.0). The
+  caption-b claim -- division partitions the DNA store into two daughters, conserving it --
+  is asserted directly from the emitted trajectory: at every division event the boundary
+  count exactly doubles, total DNA is unchanged across the split, and each daughter
+  inherits exactly half of a parent cell''s DNA.'
+claim: 'Realizing the paper''s Fig. division caption b as a genuine place-graph rewrite over
+  a colony `tree[node]` store (one `CellCycleDivision` process alternating REPLICATE and
+  DIVIDE rewrites, driven through the process-bigraph engine) reproduces "division ...
+  partitions state variables such as DNA ... into two cells": over a deterministic 12-tick
+  run the founder cell replicates its chromosome (DNA store doubles 1.0 -> 2.0 while the
+  boundary count stays 1) then divides (one cell becomes two, each daughter carrying one
+  chromosome with dna 1.0), and repeats to 4 cells -- and at every division event the
+  boundary count exactly doubles, the total DNA store is conserved across the rewrite
+  (2.0 -> 2x1.0; 4.0 -> 4x1.0, nothing created or destroyed), and each daughter inherits
+  exactly half of a parent cell''s DNA. Replication always precedes division. This is a
+  toy-real, uncalibrated didactic composite -- the division trigger is a discrete cell-cycle
+  clock reaching a replicated (two-chromosome) state, not an integrated biomass threshold --
+  whose point is to make "division is a compositional rewrite" literally executable, not to
+  reproduce division kinetics.'
+baseline:
+- name: fig09-rewrite
+  composite: meta_modelers_guide.composites.fig09-rewrite
+  params: {}
+variants: []
+key_assumptions:
+- 'This `fig09-rewrite` composite is DIDACTIC / toy-real: a small, illustrative place-graph
+  rewrite built to look like Fig. division and play forward, NOT calibrated to any organism.
+  The cycle length (3 time units), the per-chromosome DNA amount (1.0), the capacity cap (16
+  cells), and the run length (12 ticks) are illustrative model units chosen to make
+  replicate -> divide -> repeat legible, not fitted to real replication timing, genome size,
+  or growth rate.'
+- 'The "growth" that gates division here is DISCRETE DNA replication -- a cell reaching two
+  chromosomes is the division precondition -- driven by a cell-cycle clock, NOT a continuously
+  integrated biomass store crossing a calibrated threshold. The paper''s caption b names "DNA
+  and biomass"; this composite realizes the DNA-partition half literally (chromosomes with a
+  `dna` store) and treats division timing as clock-driven rather than biomass-threshold-driven.'
+- 'Division is realized as a genuine place-graph rewrite: the process returns an
+  `overwrite[tree[node]]`, deleting the parent cell node and adding two fresh daughter cell
+  nodes each with its own chromosome subtree -- so "interface ports duplicated" is realized as
+  each daughter re-establishing a cell->chromosome place-graph structure, NOT as re-wiring
+  quantitative interface fluxes to an environment (this composite has no environment/metabolism
+  coupling at all).'
+- 'The composite is fully deterministic: there is no randomness anywhere in `CellCycleDivision`
+  (a clock plus structural rewrites), so every count and DNA value in this study is an exact,
+  run-to-run-reproducible pin, not a representative single-run value.'
+- 'The rigorous cousin `growth-and-division` (in the `draft-to-living-cell` investigation)
+  realizes growth-then-division with a real CPM cell and per-pixel biomass; this study does
+  NOT restate that cousin''s numbers. This study''s contribution is the compositional-rewrite
+  / store-partition principle at the place-graph level, made executable and steppable.'
+acceptance_criteria:
+- Over the run the colony''s cell count increases from one founder to at least four cells, and
+  is never decreasing -- cells are only ADDED by division, never removed.
+- Replication precedes division -- the chromosome (DNA) count doubles while the cell count is
+  still one, before any cell has partitioned that DNA into daughters.
+- The total DNA store doubles at each replication event (1.0 -> 2.0 -> 4.0), realizing the
+  DNA-copy step of caption a.
+- At every division event the boundary count exactly doubles, the total DNA store is CONSERVED
+  across the rewrite (sum over daughters equals the pre-division total; nothing created or
+  destroyed), and each daughter inherits exactly HALF of a parent cell''s DNA -- caption b''s
+  "partitions state variables such as DNA ... into two cells."
+units_and_time:
+  time: 1 tick = 1 dimensionless model time unit; the run is 12 ticks with a cell cycle of 3,
+    so replication/division events fall at t = 3, 6, 9, 12.
+  quantities: 'cell and chromosome counts are integer node counts in the colony place graph; the
+    `dna` store is a dimensionless model quantity (founder chromosome carries dna = 1.0), NOT a
+    calibrated genome mass. The capacity cap (16 cells) is a finite-tree guard, not a biological
+    carrying capacity.'
+  note: No quantity here is calibrated to a named organism, replication rate, or genome size --
+    all magnitudes are toy-real, chosen for didactic legibility.
+behavior_tests:
+- name: cell-count-increases-division-happened
+  classification: primary
+  description: The colony grows from one founder cell to at least four over the run, and the cell
+    count never falls -- division genuinely adds place-graph nodes at runtime (caption a's
+    separation into daughters), the boundary count only ever increasing.
+  measure:
+    kind: observable
+    path: colony.n_cells
+    expr: cell count per emitted frame over a 12-tick run
+  pass_if:
+    op: '>='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: 4.0
+    provenance: 'prior: a genuine division rewrite ADDS cell nodes, so the count rises from the
+      one founder and never falls. Observed (deterministic, no RNG): cells 1 (t=0-5) -> 2 (t=6-11)
+      -> 4 (t=12); count monotone non-decreasing throughout. The >= 4 endpoint is the a-priori
+      prediction, exact because the composite is clock-driven and deterministic
+      (tests/test_fig09_dynamics.py::test_cell_count_increases_division_happened)'
+  requires_simulation: fig09-rewrite
+- name: replication-precedes-division
+  classification: primary
+  description: The chromosome (DNA) count doubles while the cell count is still one -- DNA is
+    copied BEFORE the cell partitions it into two daughters, the replicate-then-divide ordering
+    of caption a.
+  measure:
+    kind: observable
+    path: colony.n_chromosomes
+    expr: first tick at which chromosome count exceeds its initial value, vs first tick at which
+      cell count exceeds its initial value
+  pass_if:
+    op: <
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: first_replication_tick (3) < first_division_tick (6)
+    provenance: 'prior: replication (DNA copied) must precede division (DNA partitioned). Observed:
+      chromosome count first doubles at t=3 while the cell count is still 1; the cell count first
+      doubles at t=6 -- replication strictly precedes division, and the cell has not yet divided at
+      the replication tick. Deterministic
+      (tests/test_fig09_dynamics.py::test_replication_precedes_division)'
+  requires_simulation: fig09-rewrite
+- name: total-dna-doubles-at-replication
+  classification: primary
+  description: The total DNA store doubles at each replication event -- 1.0 -> 2.0 -> 4.0 -- the
+    DNA-copy step of caption a made quantitative.
+  measure:
+    kind: observable
+    path: colony.total_dna
+    expr: total DNA summed over all chromosomes per frame; initial and maximum over the run
+  pass_if:
+    op: '>='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: 4.0
+    provenance: 'prior: replication copies DNA, so the total DNA store doubles each replication.
+      Observed: total DNA 1.0 (founder) -> 2.0 (t=3, first replication) -> 4.0 (t=9, second
+      replication); starts at exactly 1.0 and reaches 4.0. Deterministic
+      (tests/test_fig09_dynamics.py::test_total_dna_doubles_at_replication)'
+  requires_simulation: fig09-rewrite
+- name: division-conserves-and-equipartitions-dna
+  classification: primary
+  description: At every division event the boundary count exactly doubles, the total DNA store is
+    conserved across the rewrite (nothing created or destroyed), and each daughter inherits exactly
+    half of a parent cell's DNA -- caption b's "division ... partitions state variables such as DNA
+    ... into two cells."
+  measure:
+    kind: derived
+    path: colony
+    expr: 'at each division tick: cells_after vs cells_before, total_dna_after vs total_dna_before,
+      and per-daughter DNA vs (parent DNA / 2)'
+  pass_if:
+    op: conservation_and_equipartition
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: 'cells_after == 2 * cells_before AND total_dna_after == total_dna_before AND each
+      daughter_dna == (total_dna_before / cells_before) / 2, at every division event'
+    provenance: 'prior: a division rewrite that partitions stores conserves them and splits them
+      evenly. Observed at both division events (deterministic): t=6, 1 cell -> 2, total DNA 2.0 ->
+      2.0 (conserved), each daughter dna 1.0 == (2.0/1)/2; t=12, 2 cells -> 4, total DNA 4.0 -> 4.0
+      (conserved), each daughter dna 1.0 == (4.0/2)/2. Boundary count doubles, DNA store conserved,
+      equipartitioned, at every division
+      (tests/test_fig09_dynamics.py::test_division_conserves_and_equipartitions_dna)'
+  requires_simulation: fig09-rewrite
+runs:
+- name: fig09-rewrite
+  composite: fig09-rewrite
+  emitter: RAMEmitter
+  id: fig09-rewrite
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig09-rewrite.composite.json (CellCycleDivision over a
+    colony tree[node] store, cycle=3, capacity=16, built via
+    meta_modelers_guide.fig10_rewrite.build_fig10_division) run 12 ticks to completion through the
+    process-bigraph engine; the whole colony subtree is captured each tick by a RAMEmitter, so new
+    nested place-graph nodes appear in the trajectory automatically
+    (tests/test_fig09_dynamics.py). Deterministic -- no randomness in the composite, so every value
+    reproduces exactly run to run.'
+  params: {}
+  outcomes:
+    CELL-COUNT-INCREASES-DIVISION-HAPPENED:
+      result: PASS
+      detail: cells 1 (t=0-5) -> 2 (t=6-11) -> 4 (t=12), monotone non-decreasing
+    REPLICATION-PRECEDES-DIVISION:
+      result: PASS
+      detail: chromosome count doubles at t=3 (cells still 1); cells first double at t=6
+    TOTAL-DNA-DOUBLES-AT-REPLICATION:
+      result: PASS
+      detail: total DNA 1.0 -> 2.0 (t=3) -> 4.0 (t=9)
+    DIVISION-CONSERVES-AND-EQUIPARTITIONS-DNA:
+      result: PASS
+      detail: t=6 (1->2, DNA 2.0 conserved, 1.0 each) and t=12 (2->4, DNA 4.0 conserved, 1.0 each);
+        boundary count doubles, each daughter = half of parent
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'Division realized as a genuine place-graph rewrite ADDS cell nodes at runtime and
+    orders replication before division, exactly as caption a describes (DNA replication then
+    separation into daughters). Over a deterministic 12-tick run the colony grows 1 -> 2 -> 4 cells,
+    the count never falling, and at each round the chromosome count doubles (replication) a
+    half-cycle before the cell count doubles (division). Confirmed: cells reach 4, monotone
+    non-decreasing; first replication at t=3 strictly precedes first division at t=6.'
+  evidence:
+    from_test: replication-precedes-division
+    from_run: fig09-rewrite
+    observed: cells 1 -> 2 (t=6) -> 4 (t=12); chromosome count doubles at t=3 while cells still 1
+  provenance:
+    run_ids:
+    - fig09-rewrite
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The composite realizes caption b''s core claim -- "division ... partitions state
+    variables such as DNA ... into two cells" -- as a CONSERVING, EQUIPARTITIONING rewrite. At each
+    replication the total DNA store doubles (1.0 -> 2.0 -> 4.0); at each division the boundary count
+    exactly doubles, the total DNA is conserved across the split (nothing created or destroyed), and
+    each daughter inherits exactly half of a parent cell''s DNA. Confirmed at both division events:
+    t=6 (2.0 conserved, 1.0 per daughter) and t=12 (4.0 conserved, 1.0 per daughter). One maintained
+    boundary becomes two with its stores partitioned across the daughters -- executable, not merely
+    drawn.'
+  evidence:
+    from_test: division-conserves-and-equipartitions-dna
+    from_run: fig09-rewrite
+    observed: 'division events: 1->2 cells, DNA 2.0 conserved -> 1.0 each; 2->4 cells, DNA 4.0
+      conserved -> 1.0 each (each daughter = half of parent, all deterministic)'
+  provenance:
+    run_ids:
+    - fig09-rewrite
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'fig09-rewrite.composite.json builds and runs to completion through the process-bigraph
+      engine over a deterministic 12-tick run (tests/test_fig09_dynamics.py); the RAMEmitter captures
+      the full colony subtree each tick so runtime-added place-graph nodes appear in the trajectory.'
+  biological_validation:
+    result: PASS
+    basis: All four primary behavior tests pass on measured readouts from the emitted trajectory --
+      the colony grows 1 -> 2 -> 4, replication precedes division, total DNA doubles at each
+      replication, and every division event doubles the boundary count while conserving and
+      equipartitioning the DNA store. Because the composite has no randomness, every value is an
+      exact, run-to-run-reproducible pin.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Realizing Fig. division as a genuine `overwrite[tree[node]]` rewrite -- deleting one cell
+      node and adding two daughter nodes with partitioned chromosome subtrees at runtime -- makes the
+      paper''s "division is a compositional rewrite in which one maintained boundary becomes two, with
+      stores partitioned across daughters" claim literally executable and steppable, rather than a
+      static three-panel drawing. A viewer can watch one boundary become two and the DNA store split
+      evenly, frame by frame.'
+conclusion: "## Claims\n\n- Realizing the paper's Fig. division caption b as a genuine place-graph\
+  \ rewrite over a colony `tree[node]` store (one `CellCycleDivision` process alternating REPLICATE\
+  \ and DIVIDE rewrites through the process-bigraph engine) reproduces \"division ... partitions state\
+  \ variables such as DNA ... into two cells.\" Over a deterministic 12-tick run the founder cell\
+  \ replicates its chromosome (DNA store 1.0 -> 2.0, boundary count still 1) then divides (one cell\
+  \ becomes two, each daughter carrying one chromosome with dna 1.0), repeating to 4 cells.\n\n- At\
+  \ every division event the boundary count exactly doubles, the total DNA store is conserved across\
+  \ the rewrite (2.0 -> 2x1.0; 4.0 -> 4x1.0), and each daughter inherits exactly half of a parent\
+  \ cell's DNA -- caption b's store-partition claim, asserted directly from the emitted trajectory.\
+  \ Replication always precedes division (caption a's replicate-then-separate ordering).\n\n## Evidence\n\
+  \n- **CELL-COUNT-INCREASES-DIVISION-HAPPENED** -- cells 1 (t=0-5) -> 2 (t=6-11) -> 4 (t=12),\
+  \ monotone non-decreasing\n\n- **REPLICATION-PRECEDES-DIVISION** -- chromosome count doubles at\
+  \ t=3 (cells still 1); cells first double at t=6\n\n- **TOTAL-DNA-DOUBLES-AT-REPLICATION** -- total\
+  \ DNA 1.0 -> 2.0 (t=3) -> 4.0 (t=9)\n\n- **DIVISION-CONSERVES-AND-EQUIPARTITIONS-DNA** -- t=6\
+  \ (1->2, DNA 2.0 conserved, 1.0 each) and t=12 (2->4, DNA 4.0 conserved, 1.0 each); boundary count\
+  \ doubles, each daughter = half of parent\n\n## Limitations\n\n- Didactic / toy-real: cycle length,\
+  \ DNA amounts, capacity cap, and run length are illustrative model units, not calibrated to any\
+  \ organism's replication timing or genome size.\n\n- The division trigger is a discrete cell-cycle\
+  \ clock reaching a replicated (two-chromosome) state, NOT an integrated biomass store crossing a\
+  \ calibrated threshold; the caption's \"biomass\" half is not modeled as a continuous store here.\n\
+  \n- \"Interface ports duplicated\" is realized as each daughter re-establishing a cell->chromosome\
+  \ place-graph subtree, not as re-wiring quantitative interface fluxes to an environment -- this\
+  \ composite has no environment/metabolism coupling.\n\n- The rigorous spatial cousin is\
+  \ `growth-and-division` in the `draft-to-living-cell` investigation (a real CPM cell growing and\
+  \ dividing with per-pixel biomass); this study does not restate its numbers.\n\n## Next steps\n\n\
+  - Couple a continuous biomass store that integrates to a division threshold, so division timing is\
+  \ emergent rather than clock-driven.\n\n- Add an environment coupling so daughters must re-establish\
+  \ interface fluxes after division, realizing the \"interface ports ... re-established\" half of the\
+  \ paper's claim quantitatively."
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig09-rewrite.composite.json builds and runs to completion through the
+      engine over a deterministic 12-tick run, adding place-graph nodes at runtime.'
+    biological_validation: The paper's Fig. division compositional-rewrite claim is demonstrated at
+      the toy-real (uncalibrated) place-graph level -- one boundary becomes two, with the DNA store
+      doubled at replication and then conserved and equipartitioned across the division rewrite --
+      rather than as a static drawing or a scripted count.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - the cell count fails to grow (the DIVIDE rewrite is not deleting the parent and adding two
+      daughters, or the capacity cap is hit too early)
+    - replication does not precede division (the phase alternation is inverted, or the cycle clock
+      is mis-firing)
+    - total DNA does not double at replication (the REPLICATE rewrite is not duplicating the
+      chromosome's dna store)
+    - division does not conserve or equipartition DNA (a daughter is dropped, DNA is manufactured
+      or lost in the split, or the partition is uneven)
+    block_downstream: 'any future study reusing the CellCycleDivision place-graph rewrite pattern
+      (e.g. a spatial growth-and-division study that partitions biomass on division)'
+limitations:
+- 'Didactic / toy-real composite: the cell-cycle length (3), per-chromosome DNA (1.0), capacity cap
+  (16), and 12-tick run are illustrative model units chosen for legibility, not calibrated to any
+  organism''s replication timing, growth rate, or genome size.'
+- The "growth" that gates division is DISCRETE DNA replication reaching two chromosomes (a cell-cycle
+  clock precondition), NOT a continuously integrated biomass store crossing a calibrated threshold.
+  The caption names "DNA and biomass"; this composite realizes the DNA-partition half literally and
+  treats division timing as clock-driven, leaving continuous biomass growth to the spatial cousin.
+- '"Interface ports duplicated and re-established" is realized structurally -- each daughter
+  re-establishes a cell->chromosome place-graph subtree -- not as re-wiring quantitative interface
+  fluxes to an environment. This composite has no environment/metabolism coupling at all, so
+  daughters do not have to re-couple to nutrients to remain viable.'
+- The composite is fully deterministic (no randomness anywhere), so every count and DNA value here is
+  an exact, reproducible pin -- there is no stochastic variability to characterize, which is a
+  simplification relative to real division (variable timing, asymmetric partition).
+- 'The rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell` investigation:
+  a real CPM cell that grows via per-pixel biomass and divides spatially. This study demonstrates the
+  compositional-rewrite / store-partition PRINCIPLE at the place-graph level and does NOT restate the
+  cousin''s calibrated numbers as its own.'
+falsifiability: Overturned if the colony fails to grow from one founder to at least four cells, if the
+  cell count ever decreases (division removing rather than adding boundaries), if division precedes
+  replication in any round, if the total DNA store fails to double at a replication event, if total DNA
+  is not conserved across a division event (mass created or destroyed in the split), or if any division
+  fails to partition the parent's DNA evenly (a daughter dropped or the split uneven) -- any of which
+  would break the "division partitions state variables such as DNA into two cells" claim. Because the
+  composite is deterministic, any such failure would reproduce exactly.
 visualizations:
 - name: Figure 9
   address: svg:visualizations/figure_9.svg
@@ -25,8 +393,25 @@ visualizations:
     caption: 'Division as quantities over time, from the fig09-rewrite run: the chromosome
       count and total DNA double at replication, then the cell count doubles one half-cycle
       later at division (1 → 2 → 4) — replication precedes division, repeatedly.'
-question: How is cell division a place-graph rewrite?
-baseline:
-- name: fig09-rewrite
-  composite: meta_modelers_guide.composites.fig09-rewrite
-  params: {}
+parent_studies:
+- study: growth-and-division
+  condition: tests-passed
+experiment: 'Run the `fig09-rewrite` composite (`CellCycleDivision` over a colony `tree[node]` store,
+  cycle=3, built via build_fig10_division) to completion over 12 ticks through the process-bigraph
+  engine, capturing the whole colony subtree each tick, and measure whether a genuine place-graph
+  rewrite realizes the paper''s Fig. division caption b -- whether the boundary count doubles at each
+  division while the DNA store is copied at replication and then conserved and equipartitioned across
+  each division.'
+result: 'Over a deterministic 12-tick run the founder cell (1 cell, dna 1.0) replicates its chromosome
+  at t=3 (1 cell, 2 chromosomes, dna 2.0), then divides at t=6 into 2 cells with dna 1.0 each (total
+  conserved at 2.0), replicates again at t=9 (2 cells, 4 chromosomes, dna 4.0), and divides at t=12
+  into 4 cells with dna 1.0 each (total conserved at 4.0). At every division event the boundary count
+  exactly doubles, the total DNA store is conserved across the rewrite, and each daughter inherits
+  exactly half of a parent cell''s DNA -- caption b''s "division ... partitions state variables such
+  as DNA ... into two cells." Replication always precedes division (caption a''s replicate-then-separate
+  ordering). Every value is an exact, run-to-run-reproducible pin because the composite has no
+  randomness. This is a toy-real, uncalibrated didactic realization whose point is to make "division is
+  a compositional rewrite" literally executable at the place-graph level -- one boundary becoming two,
+  its stores partitioned across daughters, steppable frame by frame -- not to reproduce division
+  kinetics; the rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell`
+  investigation.'

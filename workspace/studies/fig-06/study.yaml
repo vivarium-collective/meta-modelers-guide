@@ -1,10 +1,439 @@
 schema_version: 4
 name: fig-06
+investigation: paper-figures
 title: The molecular interface
-kind: theoretical
-purpose:
-  mechanism: A molecular mechanism exposes physical ports (chemical, electrical, mechanical,
-    thermal, structural) with molecular subports.
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'Does the paper''s §Molecular interfaces figure (Fig molecular_interface) hold as a
+  runnable process -- a molecular mechanism (F₁Fₒ ATP synthase) that exchanges matter and energy
+  through a small set of TYPED physical channels (chemical mol·s⁻¹, electrical C·s⁻¹, mechanical
+  torque N·m, thermal J·s⁻¹) with NO cell-level boundary, all four channels driven from ONE coupled
+  proton flux so matter, charge, angular momentum, and energy are conserved across the interface?'
+biological_summary: 'This is the executable realization of the paper''s §Molecular interfaces figure
+  (Fig molecular_interface). The paper''s point is that at the molecular level interactions are
+  governed directly by molecular processes rather than by a maintained cell-level boundary: molecules
+  exchange matter, energy, and momentum through a small set of physical channels -- chemical exchange,
+  electrostatics, mechanical forces, and thermal fluctuations (Fig molecular_interface a) -- and a
+  molecular interface must expose exactly these as typed ports over molecular structure (Fig
+  molecular_interface b), with no cell boundary.
+
+  The runnable composite (`meta_modelers_guide.composites.fig06-runnable`) names the mechanism: the
+  F₁Fₒ ATP synthase as a four-channel transducer (`MolecularMechanismHandler`). A `ProtonMotiveRamp`
+  charges the substrate/proton drive (`chemical_in`) linearly over the run -- the fig06 analogue of
+  fig04''s diffusing gradient -- so the driving proton flux sweeps upward. From that ONE coupled
+  quantity the mechanism produces four TYPED physical outputs: an ATP synthesis flux (chemical,
+  `J_ATP = k_cat·activity`), the proton current carried across the proton-motive force (electrical,
+  `I = J_ATP·n·e`), a near-constant rotary torque on the Fₒ rotor (mechanical, `τ ≈ 40 pN·nm =
+  4×10⁻²⁰ N·m`), and the non-conserved remainder dissipated as heat (thermal, `Q = (1−η)·PMF power`,
+  η = 0.75). Because all four derive from the single proton flux, the interface is physically
+  consistent: matter⇒charge coupling (`I = J_ATP·n·e`) and charge⇒energy coupling (`Q = (1−η)·I·pmf`)
+  hold exactly on every step, and the PMF input power splits into a conserved useful fraction and the
+  dissipated remainder (`w_pmf = η·w_pmf + Q`).
+
+  The literature constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈ 150 mV, Fₒ torque ≈ 40 pN·nm,
+  η ≈ 75 %) live in `config`, and the mechanical channel deliberately carries TORQUE (N·m), not
+  force or power -- the drive sets the rotor''s speed, not its torque, so torque holds near-constant
+  while the chemical/electrical/thermal channels scale with the drive. The composite runs 20 ticks
+  through the process-bigraph engine and every output channel is a deterministic function of the
+  ramped drive, so the whole trajectory reproduces exactly run to run. There is no cell-level
+  boundary anywhere in the state -- only the molecular mechanism, its ramp driver, and the typed
+  ports over molecular structure.'
+claim: 'The F₁Fₒ ATP synthase modeled as a single molecular process with four TYPED physical ports
+  (chemical `chemical_flux`, electrical `current`, mechanical `torque`, thermal `heat_flux`) over a
+  `structure` leaf -- and NO cell boundary -- reproduces the paper''s §Molecular interfaces figure
+  (Fig molecular_interface) as a runnable transducer: driven by one ramped proton flux, the mechanism
+  emits an ATP synthesis flux that scales linearly with the drive (`J_ATP = k_cat·activity`, exactly
+  4× flux for 4× activity), a proton current fixed to that flux at the ATP:H⁺ = 1/3.3 stoichiometry
+  on every step, a near-constant rotary torque of 4×10⁻²⁰ N·m, and a dissipated heat exactly equal to
+  (1−η)·PMF-power = 25 % of input power -- so matter (chemical), charge (electrical), angular momentum
+  (mechanical), and energy (thermal) are conserved across one coupled interface, all four channels
+  derived from the single proton flux, all deterministic and reproducible run to run.'
+baseline:
+- name: fig06-runnable
+  composite: meta_modelers_guide.composites.fig06-runnable
+  params: {}
+variants: []
+key_assumptions:
+- 'This `fig06-runnable` composite is a **didactic / toy-real** transducer, not a calibrated
+  biophysical model of ATP synthase. Its constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈ 150 mV,
+  Fₒ torque ≈ 40 pN·nm, η ≈ 75 %) are literature-plausible order-of-magnitude values placed in
+  `config`, chosen to make the four-channel coupling legible over a 20-tick run -- NOT fitted to a
+  specific enzyme, membrane potential, or measured turnover curve.'
+- 'The four output channels are computed by an algebraic transduction law, not a mechanistic rotary
+  kinetics model: `J_ATP = k_cat·activity` is strictly linear (no saturation / Michaelis–Menten
+  rollover, no back-pressure from a proton-motive force that depletes), the ATP:H⁺ ratio is a fixed
+  constant, and the torque is a fixed leaf value. This is the paper''s point (a molecular interface
+  exposes typed coupled channels) rendered minimally, not a claim about the enzyme''s true rate law.'
+- 'The mechanical channel deliberately carries TORQUE (N·m), not force (N) or power (W) -- the drive
+  sets the Fₒ rotor''s rotational speed (ω = 2π·J_H/c-ring), not its torque, so torque holds
+  near-constant with load while the other three channels scale with the drive. This was a deliberate
+  modeling choice matching the draft''s declared `mechanical_out: torque` port; the caption''s
+  "mechanical forces" is realized here specifically as rotary torque.'
+- 'There is NO cell-level boundary, membrane compartment, or spatial lattice in the composite state --
+  only the molecular mechanism, its `ProtonMotiveRamp` driver, and the typed ports over a `structure`
+  leaf. That absence is deliberate: it is exactly the paper''s Fig molecular_interface b point (typed
+  ports over molecular structure, with no cell-level boundary).'
+- 'The `ProtonMotiveRamp` charges the drive by a fixed positive increment each tick (drive_rate =
+  0.06), a scripted monotonic driver standing in for a real, self-consistently maintained
+  proton-motive force. The environment→transducer coupling it makes legible is real; the ramp shape
+  itself is scripted, not emergent.'
+- 'The `structure` port is a read-only string leaf (a PDB/SMILES-style identifier) and does not enter
+  the dynamics -- it stands for the molecular structure the interface is defined over, not a
+  simulated conformation.'
+acceptance_criteria:
+- The ATP synthesis flux (chemical channel) is strictly positive under drive and scales linearly with
+  the proton drive -- 4× the activity gives exactly 4× the ATP flux, and rises monotonically as the
+  ramp charges the drive over the run.
+- The four typed channels are ONE coupled quantity, not four free knobs -- the electrical channel is the
+  chemical channel carried as charge (`I = J_ATP·n·e`, matter⇒charge) and the thermal channel is the
+  fixed remainder of the electrical channel's PMF power (`Q = (1−η)·I·pmf`, charge⇒energy), exactly on
+  every step.
+- The ATP:H⁺ stoichiometry holds at 1/n_protons_per_atp (1/3.3) on every active step -- matter and
+  charge are conserved together across the chemical and electrical ports.
+- The rotary torque (mechanical channel) is strictly positive and holds near-constant at the
+  configured 4×10⁻²⁰ N·m (40 pN·nm) -- torque, not force or power, and independent of the drive level.
+- The electrical energy balance closes -- dissipated heat equals (1−η)·input PMF power (= 25 % of input),
+  useful work is the conserved η-fraction, and both are non-negative -- energy conserved across the
+  interface.
+units_and_time:
+  time: 1 tick = 1 unit interval of dimensionless model time; the run is 20 ticks (21 emitted rows,
+    t=0..20).
+  quantities: 'chemical channel J_ATP in ATP·s⁻¹ (mol·s⁻¹ analogue); electrical channel I in amperes
+    (C·s⁻¹) via proton_charge e = 1.602×10⁻¹⁹ C; mechanical channel torque in N·m (40 pN·nm =
+    4×10⁻²⁰ N·m); thermal channel heat in watts (J·s⁻¹); proton-motive force pmf = 0.15 V. The
+    substrate/proton drive `chemical_in` is a dimensionless activity that ramps 0.2 → 1.34 over the
+    run at drive_rate 0.06/tick.'
+  note: Constants are literature-plausible order-of-magnitude values in `config`, not calibrated to a
+    specific enzyme or membrane -- the units are physically typed and internally consistent, the
+    magnitudes are toy-real.
+behavior_tests:
+- name: atp-flux-scales-with-the-proton-drive
+  classification: primary
+  description: The chemical channel (ATP synthesis flux) is strictly positive under drive, scales
+    linearly with the substrate/proton activity (4× activity ⇒ 4× flux), and rises monotonically as
+    the ProtonMotiveRamp charges the drive over the run -- the driven matter-exchange channel of
+    Fig molecular_interface a.
+  measure:
+    kind: observable
+    path: obs.chemical_out
+    expr: J_ATP driven directly at activity 0.3 vs 1.2, and over the ramped run
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: 0.0
+    provenance: 'prior: a driven molecular mechanism produces a strictly positive matter-exchange flux
+      that scales with the drive. Observed deterministically: J_ATP = k_cat·activity exactly (30.0 at
+      activity 0.3, 120.0 at 1.2 -- ratio exactly 4.0); over the ramped run ATP flux rises monotonically
+      from 20.0 (tick 1, chemical_in 0.2) to 128.0 (tick 19), never decreasing. The >-direction and the
+      4× linear-scaling are the a-priori predictions; the exact values are deterministic pins
+      (tests/test_fig06_atp_synthase.py::test_higher_drive_scales_atp_flux,
+      tests/test_fig06_atp_synthase.py::test_atp_flux_rises_with_the_proton_drive)'
+  requires_simulation: fig06-runnable
+- name: four-channels-derive-from-one-proton-flux
+  classification: primary
+  description: The four typed channels are ONE coupled quantity, not four free knobs -- the electrical
+    channel is the chemical channel carried as charge (I = J_ATP·n·e, matter⇒charge) and the thermal
+    channel is the fixed remainder of the electrical channel's PMF power (Q = (1−η)·I·pmf,
+    charge⇒energy), and all four co-fire from the single drive. This is Fig molecular_interface's core
+    claim -- matter AND energy exchanged through coupled physical channels, not independent ones.
+  measure:
+    kind: derived
+    path: obs.chemical_out, obs.electrical_out, obs.mechanical_out, obs.thermal_out
+    expr: I == J_ATP·n·e and Q == (1−η)·I·pmf on every active step, all four channels > 0
+  pass_if:
+    op: coupling_holds
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: I == chemical_out·3.3·1.602e-19 and thermal_out == 0.25·(I·0.15), exactly, every step
+    provenance: 'the four output channels are one coupled quantity by construction; asserted exactly on
+      the live 20-tick run (tolerance 1e-30): the proton current equals the ATP flux carried as charge
+      (matter⇒charge) and heat equals the fixed 25 % remainder of the electrical PMF power
+      (charge⇒energy), with all four channels strictly positive and co-firing under drive
+      (tests/test_fig06_atp_synthase.py::test_four_channels_all_derive_from_the_single_proton_flux)'
+  requires_simulation: fig06-runnable
+- name: atp-proton-stoichiometry-conserved
+  classification: primary
+  description: The ATP:H⁺ stoichiometry holds at 1/n_protons_per_atp (1/3.3 ≈ 0.30303) on every active
+    step -- matter (chemical) and charge (electrical) conserved together across the two ports.
+  measure:
+    kind: observable
+    path: obs.chemical_out / (obs.electrical_out / e)
+    expr: J_ATP / J_H on every active step
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: 0.30303030...
+    provenance: 'prior: matter and charge are coupled through a fixed stoichiometry. Observed: J_ATP/J_H
+      == 1/3.3 == 0.30303 exactly on every active step of the run (tolerance 1e-6), independent of the
+      drive level -- the a-priori coupling, deterministic while n_protons_per_atp is pinned at 3.3
+      (tests/test_fig06_atp_synthase.py::test_atp_proton_stoichiometry)'
+  requires_simulation: fig06-runnable
+- name: rotary-torque-holds-near-constant
+  classification: primary
+  description: The mechanical channel carries a strictly positive rotary TORQUE (N·m, not force or
+    power) that holds near-constant at the configured 4×10⁻²⁰ N·m (40 pN·nm) independent of the drive
+    -- the drive sets the rotor's speed, not its torque. The angular-momentum channel of Fig
+    molecular_interface a.
+  measure:
+    kind: observable
+    path: obs.mechanical_out
+    expr: rotary torque on every active step
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: 4.0e-20
+    provenance: 'prior: the mechanical channel carries torque (a fixed motor property), not a
+      drive-scaled force. Observed: mechanical_out == 4.0×10⁻²⁰ N·m exactly on every active step
+      (tolerance 1e-24), strictly positive and constant while the chemical/electrical/thermal channels
+      scale with the drive -- confirming the port is torque, not power
+      (tests/test_fig06_atp_synthase.py::test_rotary_torque_holds_at_configured_value)'
+  requires_simulation: fig06-runnable
+- name: electrical-energy-balance-closes
+  classification: primary
+  description: The dissipated heat (thermal channel) equals (1−η)·input PMF power = 25 % of the
+    electrical PMF work rate, the useful work is the conserved η-fraction, and both are non-negative --
+    energy conserved across the interface, the thermal channel of Fig molecular_interface a.
+  measure:
+    kind: derived
+    path: obs.thermal_out vs obs.electrical_out
+    expr: heat == (1−η)·(I·pmf); useful == η·(I·pmf); both ≥ 0
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: heat == 0.25·(I·0.15), useful == 0.75·(I·0.15), both ≥ 0
+    provenance: 'prior: the PMF input power splits into a conserved useful fraction and a dissipated
+      remainder (energy conserved). Observed: heat == (1−0.75)·input_power exactly (tolerance 1e-24) --
+      e.g. at tick 10 input_power 5.87×10⁻¹⁸ W, heat 1.47×10⁻¹⁸ W = 25 %, useful 4.40×10⁻¹⁸ W = 75 %,
+      both non-negative on every step
+      (tests/test_fig06_atp_synthase.py::test_energy_balance_heat_equals_input_minus_useful)'
+  requires_simulation: fig06-runnable
+- name: no-drive-no-spontaneous-flux
+  classification: diagnostic
+  control: negative
+  description: 'Negative control (not the figure''s scientific claim, a soundness check): with zero
+    substrate/proton drive the mechanism transduces nothing -- the chemical, electrical, and thermal
+    outputs are exactly zero (the mechanism does not manufacture flux without a proton-motive force).
+    The mechanical torque leaf is a fixed motor property and is excluded.'
+  measure:
+    kind: observable
+    path: obs.chemical_out, obs.electrical_out, obs.thermal_out
+    expr: outputs at chemical_in == 0.0
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: 0.0
+    provenance: 'driving the handler at zero activity yields chemical_out == electrical_out ==
+      thermal_out == 0.0 exactly -- a driven transducer, not a spontaneous source; the constant
+      mechanical torque leaf is a fixed port property and is deliberately excluded
+      (tests/test_fig06_atp_synthase.py::test_zero_drive_yields_zero_flux_on_every_channel)'
+  requires_simulation: none
+runs:
+- name: fig06-runnable
+  composite: fig06-runnable
+  emitter: RAMEmitter
+  id: fig06-runnable
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig06-runnable.composite.json (MolecularMechanismHandler
+    + ProtonMotiveRamp, k_cat_atp=100, n_protons_per_atp=3.3, pmf_volts=0.15, torque_pn_nm=40,
+    efficiency=0.75, proton_charge=1.602e-19, drive_rate=0.06) run 20 ticks (21 emitted rows) to
+    completion through the process-bigraph engine (tests/test_fig06_atp_synthase.py). The
+    fig06-dynamics.png time-series in visualizations/ was baked over the same run via
+    scripts/build_fig06_dynamics.py.'
+  params: {}
+  outcomes:
+    ATP-FLUX-SCALES-WITH-THE-PROTON-DRIVE:
+      result: PASS
+      detail: J_ATP = k_cat·activity exactly (30.0 at 0.3, 120.0 at 1.2 -- ratio 4.0); rises
+        monotonically 20.0 (tick 1) → 128.0 (tick 19)
+    FOUR-CHANNELS-DERIVE-FROM-ONE-PROTON-FLUX:
+      result: PASS
+      detail: I == J_ATP·3.3·e and heat == 0.25·(I·pmf) exactly (1e-30) every step; all four channels
+        co-fire under drive
+    ATP-PROTON-STOICHIOMETRY-CONSERVED:
+      result: PASS
+      detail: J_ATP/J_H == 1/3.3 == 0.30303 exactly on every active step
+    ROTARY-TORQUE-HOLDS-NEAR-CONSTANT:
+      result: PASS
+      detail: mechanical_out == 4.0×10⁻²⁰ N·m exactly, constant while other channels scale
+    ELECTRICAL-ENERGY-BALANCE-CLOSES:
+      result: PASS
+      detail: heat == 25 % of input PMF power, useful == 75 %, both ≥ 0 every step
+    NO-DRIVE-NO-SPONTANEOUS-FLUX:
+      result: PASS
+      detail: chemical_out == electrical_out == thermal_out == 0.0 at zero drive
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'A molecular mechanism (F₁Fₒ ATP synthase) modeled as a single process with four typed
+    physical ports over a `structure` leaf -- and no cell boundary -- reproduces the paper''s
+    §Molecular interfaces figure (Fig molecular_interface) as a runnable transducer. Driven by one
+    ramped proton flux, it emits an ATP synthesis flux that scales linearly with the drive (4× activity
+    ⇒ exactly 4× flux; monotone rise 20.0 → 128.0 over the run), a proton current fixed to that flux at
+    ATP:H⁺ = 1/3.3 on every step, a near-constant 4×10⁻²⁰ N·m rotary torque, and a dissipated heat equal
+    to (1−η)·PMF power. Confirmed deterministically across the 20-tick run.'
+  evidence:
+    from_test: four-channels-derive-from-one-proton-flux
+    from_run: fig06-runnable
+    observed: I == J_ATP·3.3·e and heat == 0.25·(I·pmf) exactly every step; ATP flux 20.0 → 128.0;
+      torque 4.0×10⁻²⁰ N·m constant
+  provenance:
+    run_ids:
+    - fig06-runnable
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The four typed channels are ONE coupled quantity, not four independent knobs: matter,
+    charge, angular momentum, and energy are conserved together across the interface. The electrical
+    channel is the chemical channel carried as charge (I = J_ATP·n·e), the thermal channel is the fixed
+    (1−η) remainder of the electrical PMF power (energy balance: input power = useful + heat, 75 % / 25 %
+    split), and the ATP:H⁺ stoichiometry holds at 1/3.3 exactly on every step. All coupling identities
+    hold to 1e-30 on the live run -- the interface is physically consistent, not four separately
+    scripted traces.'
+  evidence:
+    from_test: atp-proton-stoichiometry-conserved
+    from_run: fig06-runnable
+    observed: J_ATP/J_H == 1/3.3 == 0.30303 every step; heat == 25 % of input power, useful == 75 %,
+      both ≥ 0
+  provenance:
+    run_ids:
+    - fig06-runnable
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'fig06-runnable.composite.json builds and runs to completion (20 ticks) through the
+      process-bigraph engine, and the MolecularMechanismHandler conforms + compiles
+      (tests/test_fig06_atp_synthase.py, tests/test_compilation.py).'
+  biological_validation:
+    result: PASS
+    basis: All five primary behavior tests plus the negative control pass on measured readouts from a
+      real 20-tick run -- the ATP flux scales linearly with the drive, the four channels are one
+      coupled quantity (matter⇒charge⇒energy identities exact to 1e-30), the ATP:H⁺ stoichiometry holds
+      at 1/3.3 on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m, the energy balance closes
+      at a 75/25 split, and a zero drive produces zero flux. Every readout is a deterministic function
+      of the ramped drive and reproduces exactly run to run.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Rendering the paper''s §Molecular interfaces figure as a runnable transducer makes its
+      central claim concrete and checkable: a molecular mechanism exposes a small set of TYPED physical
+      channels (chemical, electrical, mechanical torque, thermal) over molecular structure with no
+      cell-level boundary, and those channels are coupled -- one proton flux drives all four with matter,
+      charge, angular momentum, and energy conserved. The figure is executable, not merely drawn.'
+conclusion: '## Claims
+
+  - The F₁Fₒ ATP synthase modeled as a single molecular process with four TYPED physical ports
+    (chemical, electrical, mechanical torque, thermal) over a `structure` leaf -- and NO cell
+    boundary -- reproduces the paper''s §Molecular interfaces figure (Fig molecular_interface) as a
+    runnable transducer. Driven by one ramped proton flux over a 20-tick run: the ATP synthesis flux
+    scales linearly with the drive (4× activity ⇒ exactly 4× flux; monotone 20.0 → 128.0), the proton
+    current is fixed to that flux at ATP:H⁺ = 1/3.3 on every step, the rotary torque holds constant at
+    4×10⁻²⁰ N·m, and the dissipated heat equals (1−η)·PMF power (25 % of input). All readouts are
+    deterministic and reproduce exactly.
+
+  - The four channels are ONE coupled quantity, not four free knobs -- the coupling identities
+    (I = J_ATP·n·e for matter⇒charge, Q = (1−η)·I·pmf for charge⇒energy) hold exactly to 1e-30 on the
+    live run, so matter, charge, angular momentum, and energy are conserved across the interface. The
+    energy balance closes at a 75 %/25 % useful/dissipated split.
+
+  - There is no cell-level boundary anywhere in the state -- only the mechanism, its ramp driver, and
+    the typed ports over molecular structure -- which is exactly the Fig molecular_interface b point.
+
+
+  ## Evidence
+
+  - **ATP-FLUX-SCALES-WITH-THE-PROTON-DRIVE** -- J_ATP = k_cat·activity exactly (ratio 4.0 for 4×
+    drive); monotone rise 20.0 → 128.0
+
+  - **FOUR-CHANNELS-DERIVE-FROM-ONE-PROTON-FLUX** -- I == J_ATP·3.3·e and heat == 0.25·(I·pmf) exactly
+    (1e-30) every step; all four co-fire under drive
+
+  - **ATP-PROTON-STOICHIOMETRY-CONSERVED** -- J_ATP/J_H == 1/3.3 == 0.30303 on every active step
+
+  - **ROTARY-TORQUE-HOLDS-NEAR-CONSTANT** -- mechanical_out == 4.0×10⁻²⁰ N·m exactly, constant while
+    the other channels scale
+
+  - **ELECTRICAL-ENERGY-BALANCE-CLOSES** -- heat == 25 % of input PMF power, useful == 75 %, both ≥ 0
+
+  - **NO-DRIVE-NO-SPONTANEOUS-FLUX** -- all three flux channels == 0.0 at zero drive (negative control)
+
+
+  ## Limitations
+
+  - This is a didactic / toy-real transducer, not a calibrated biophysical model: the constants are
+    literature-plausible order-of-magnitude values, and the transduction law is algebraic (strictly
+    linear J_ATP, fixed stoichiometry, fixed torque leaf), with no saturation or PMF back-pressure.
+
+  - The mechanical channel is realized specifically as rotary torque (N·m), a deliberate choice
+    matching the draft''s `mechanical_out: torque` port; the caption''s "mechanical forces" appears
+    here as torque, not force or power.
+
+  - The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell`
+    investigation -- see limitations; this study does not restate its numbers as its own.
+
+
+  ## Next steps
+
+  - Add saturation / Michaelis–Menten kinetics and a self-consistent proton-motive force with
+    back-pressure, so the ATP flux rolls over rather than rising linearly without bound.
+
+  - Couple this molecular interface into a cell-level composite to show the same typed ports composing
+    across scales (the QM/MM and integrative-structural-modeling composition the paper cites).'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig06-runnable.composite.json builds and runs to completion over a
+      deterministic 20-tick run through the engine.'
+    biological_validation: The §Molecular interfaces figure (Fig molecular_interface) is demonstrated
+      at the toy-real (uncalibrated) level -- a molecular mechanism exposing four typed, coupled
+      physical channels over molecular structure with no cell boundary, matter/charge/angular-momentum/
+      energy conserved across the interface, rather than a static drawing.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - the ATP flux does not scale with the drive (the ProtonMotiveRamp is not wired to chemical_in, or
+      the k_cat·activity law is broken)
+    - the coupling identities fail (I ≠ J_ATP·n·e or heat ≠ (1−η)·I·pmf -- the four channels have become
+      independent rather than derived from the one proton flux)
+    - the stoichiometry drifts off 1/3.3 (n_protons_per_atp changed or matter/charge decoupled)
+    - the torque is no longer constant or is scaling with the drive (the mechanical port has been
+      turned into a force/power channel)
+    - the energy balance no longer closes (efficiency changed or heat is not the (1−η) remainder)
+    block_downstream: 'any future study composing this molecular interface into a larger multiscale
+      composite through its typed ports'
+limitations:
+- This `fig06-runnable` composite is a didactic / toy-real transducer, not a calibrated biophysical
+  model of ATP synthase. Its constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈ 150 mV, Fₒ torque
+  ≈ 40 pN·nm, η ≈ 75 %) are literature-plausible order-of-magnitude values in `config`, chosen to make
+  the four-channel coupling legible over a 20-tick run -- not fitted to a specific enzyme, membrane
+  potential, or measured turnover curve.
+- The transduction law is algebraic, not a mechanistic rotary-kinetics model -- J_ATP = k_cat·activity
+  is strictly linear (no Michaelis–Menten saturation, no proton-motive-force back-pressure), the ATP:H⁺
+  ratio is a fixed constant, and the torque is a fixed leaf value. This renders the paper''s
+  typed-coupled-channels point minimally, not the enzyme''s true rate law.
+- The mechanical channel deliberately carries torque (N·m), not force (N) or power (W) -- the drive sets
+  the rotor's speed, not its torque. The caption's "mechanical forces" is realized here specifically as
+  rotary torque, matching the draft's declared `mechanical_out` torque port (N·m).
+- The `ProtonMotiveRamp` is a scripted monotonic driver (drive_rate 0.06/tick), standing in for a real,
+  self-consistently maintained proton-motive force. The environment→transducer coupling it makes legible
+  is real; the ramp shape itself is scripted, not emergent.
+- The `structure` port is a read-only string identifier and does not enter the dynamics -- it stands for
+  the molecular structure the interface is defined over, not a simulated conformation.
+- The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell`
+  investigation, which treats the molecular interface at higher fidelity; this study is the deliberately
+  minimal, runnable figure-carrier and does not restate that study's numbers as its own.
+falsifiability: Overturned if the ATP flux fails to scale linearly with the proton drive, if any of the
+  coupling identities (I = J_ATP·n·e, Q = (1−η)·I·pmf) fails on the live run, if the ATP:H⁺ stoichiometry
+  drifts off 1/3.3, if the rotary torque is not constant or begins scaling with the drive (implying a
+  force/power channel rather than torque), if the energy balance fails to close at the (η, 1−η) split, or
+  if a zero drive produces a non-zero flux on any of the three driven channels.
 visualizations:
 - name: Figure 6
   address: svg:visualizations/figure_6.svg
@@ -23,8 +452,27 @@ visualizations:
       scales with the drive at the fixed ATP:H⁺ = 1/3.3 stoichiometry, and the
       electrical energy balance holds (heat = (1−η)·input power, η = 0.75) — matter,
       charge, angular momentum and energy conserved. From scripts/build_fig06_dynamics.py.'
-question: How is a molecular mechanism a process with typed physical channels?
-baseline:
-- name: fig06-runnable
-  composite: meta_modelers_guide.composites.fig06-runnable
-  params: {}
+parent_studies:
+- study: molecular-interfaces
+  condition: tests-passed
+experiment: 'Run the `fig06-runnable` composite (MolecularMechanismHandler -- the F₁Fₒ ATP synthase as
+  a four-channel transducer -- driven by a ProtonMotiveRamp charging the substrate/proton drive
+  linearly) to completion over 20 ticks through the process-bigraph engine, and measure whether one
+  coupled proton flux drives four TYPED physical channels (chemical ATP flux, electrical proton current,
+  mechanical rotary torque, thermal heat) with matter, charge, angular momentum, and energy conserved
+  across a molecular interface that has no cell-level boundary.'
+result: 'Over a deterministic 20-tick run, the F₁Fₒ ATP synthase transducer drives four TYPED physical
+  channels from ONE ramped proton flux, with no cell-level boundary in the state. The chemical channel
+  (ATP synthesis flux) scales linearly with the drive -- 4× activity gives exactly 4× flux (30.0 at
+  activity 0.3, 120.0 at 1.2), rising monotonically 20.0 → 128.0 over the run. The four channels are one
+  coupled quantity: the proton current is the ATP flux carried as charge (I = J_ATP·n·e), the ATP:H⁺
+  stoichiometry holds at 1/3.3 exactly on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m
+  (torque, not force/power -- the drive sets speed, not torque), and the dissipated heat equals
+  (1−η)·PMF power = 25 % of input, useful work 75 %, both non-negative. All coupling identities hold to
+  1e-30 on the live run and every readout reproduces exactly. A zero drive produces zero flux on all
+  three driven channels (negative control). The paper''s §Molecular interfaces figure (Fig
+  molecular_interface) holds as a runnable process: a molecular mechanism exposing typed, coupled
+  chemical/electrical/mechanical/thermal channels over molecular structure, matter/charge/
+  angular-momentum/energy conserved across the interface, with no cell boundary -- executable, not merely
+  drawn. The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell`
+  investigation.'
