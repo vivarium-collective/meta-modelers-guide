@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 from process_bigraph import Composite, gather_emitter_results
 
 from meta_modelers_guide.core import build_core
@@ -43,6 +44,10 @@ def test_transfer_moves_from_source_to_sink():
     assert delta["source"] < 0.0        # source drains
     assert delta["sink"] > 0.0          # sink fills
     assert abs(delta["source"] + delta["sink"]) < 1e-12   # transfer conserves
+    # the flux is exactly k·source·interval — the write to sink equals the
+    # drain from source (the port pair is a conservative transfer, not a source/sink term)
+    assert delta["sink"] == 0.15        # k=0.15, source=1.0, interval=1.0
+    assert delta["source"] == -0.15
 
 
 # ── the composite runs and the wired stores evolve ────────────────────────────
@@ -62,8 +67,38 @@ def test_source_drains_and_sink_fills_over_the_run():
         assert y > x - 1e-12
 
 
+def test_trajectory_is_the_exact_geometric_decay():
+    """The composite is fixed-rate deterministic: with k=0.15 over interval 1.0,
+    each step multiplies the source by (1-k)=0.85, so store_a[n] == 0.85**n and
+    store_b[n] == 1 - 0.85**n exactly. Pins the real run, not just its direction."""
+    rows = _run_trajectory()
+    a = [float(r["store_a"]) for r in rows]
+    b = [float(r["store_b"]) for r in rows]
+    assert len(a) == 21                          # default_n_steps=20 -> ticks 0..20
+    for n, (av, bv) in enumerate(zip(a, b)):
+        assert av == pytest.approx(0.85 ** n, abs=1e-12)
+        assert bv == pytest.approx(1.0 - 0.85 ** n, abs=1e-12)
+    assert a[-1] == pytest.approx(0.85 ** 20, abs=1e-12)   # ~0.038760
+
+
+def test_sink_overtakes_source_at_the_crossover_tick():
+    """Source drains and sink fills, so the sink overtakes the source at a
+    specific, deterministic tick — the crossover where b first exceeds a.
+    0.85**n < 0.5 first at n=5, so store_b overtakes store_a at tick 5."""
+    rows = _run_trajectory()
+    a = [float(r["store_a"]) for r in rows]
+    b = [float(r["store_b"]) for r in rows]
+    crossover = next(n for n, (av, bv) in enumerate(zip(a, b)) if bv > av)
+    assert crossover == 5
+    assert b[4] < a[4]        # sink still below source the tick before
+    assert b[5] > a[5]        # sink above source at the crossover
+
+
 def test_total_is_conserved():
     rows = _run_trajectory()
     total = [float(r["store_a"]) + float(r["store_b"]) for r in rows]
     assert max(total) - min(total) < 1e-9, "the transfer conserves store_a + store_b"
     assert abs(total[0] - 1.0) < 1e-9      # seeded total
+    # conserved at the seeded total for EVERY tick, not just endpoints
+    for tot in total:
+        assert tot == pytest.approx(1.0, abs=1e-9)

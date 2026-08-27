@@ -120,3 +120,28 @@ def test_knocking_out_metabolism_starves_downstream_pools():
     assert e_base[-1] > e_base[0]                       # metabolism grows the energy pool
     assert abs(e_ko[-1] - e_ko[0]) < 1e-9              # no source left → frozen
     assert e_ko[-1] < e_base[-1]                        # dependent pool responded
+
+
+def test_gene_expression_sustains_the_enzymes_metabolism_depends_on():
+    """Closure closes a LOOP, not just a chain (paper §Composition of the cellular
+    interface — "each process's outputs sustain the inputs the others depend on").
+    Gene expression is the sole source of the enzyme pool, and metabolism depends on
+    those enzymes to turn nutrients into metabolites. Knock out gene expression and the
+    loop opens: enzymes freeze exactly at their seed (no producer left) and metabolism's
+    metabolite output falls — the coupling that sustains one process's inputs from
+    another's outputs is what keeps the whole balance up."""
+    baseline = _trajectory()
+
+    spec = _spec()
+    knocked = copy.deepcopy(spec["state"])
+    del knocked["gene_expression"]                      # open the maintenance loop
+    ko = _run(knocked, spec["default_n_steps"])
+
+    # enzymes: grown by gene expression under closure, frozen at seed without it.
+    enz_base = _series(baseline, "enzymes")
+    enz_ko = _series(ko, "enzymes")
+    assert enz_base[-1] > enz_base[0]                   # closure grows the enzyme pool
+    assert abs(enz_ko[-1] - enz_ko[0]) < 1e-9          # sole source removed → frozen at seed
+
+    # metabolism depends on those enzymes: its metabolite output falls once they stop growing.
+    assert _series(ko, "metabolites")[-1] < _series(baseline, "metabolites")[-1]

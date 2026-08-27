@@ -1,11 +1,517 @@
 schema_version: 4
 name: fig-07
-title: Nested cellular hierarchy
-kind: theoretical
-purpose:
-  mechanism: The cell's structural composition as a place graph — extracellular matrix,
-    membrane, cytoplasm, nucleus, organelles — with the processes that act across
-    levels.
+investigation: paper-figures
+title: "fig-07: Nested cellular hierarchy"
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'Does the paper''s §Biomolecular compositions figure (Fig molecular_compositions)
+  hold as an executable composite -- can molecular structures organized hierarchically
+  across scales (proteins to complexes, organelles, ECM) be represented as a NESTED
+  place graph, with processes that interact with those nested states corresponding to
+  cellular compartments and structures, such that a process acting at one nesting level
+  actually moves quantity in a deeply-nested store while the place-graph containment is
+  preserved as the whole cell evolves as one coupled system?'
+biological_summary: 'This is the runnable realization of the paper''s §Biomolecular
+  compositions figure (Fig molecular_compositions), whose two panels are: **a.** molecular
+  structures organized hierarchically across scales -- from proteins to complexes,
+  organelles, and extracellular matrix; and **b.** a composite process diagram in which
+  processes interact with nested states corresponding to cellular compartments and
+  structures. The paper''s point is that complementarity organizes molecules into
+  complexes and higher-level assemblies, and that as organization increases the model
+  must carry the containment -- membranes, compartments, organelles -- as structure,
+  not flatten it into a bag of species.
+
+
+  The `fig07-runnable` composite
+  (`meta_modelers_guide.composites.fig07-runnable`) wires SIX ODE handlers over one
+  place graph whose stores nest up to SIX levels deep
+  (`cytoplasm -> nucleus -> chromosome -> chromatin -> nucleosome -> DNA`) WITHOUT
+  flattening it, and a ribosome pool four levels deep
+  (`cytoplasm -> organelles -> ribosomal_complex -> ribosome`). The handlers'' outputs
+  feed each other''s inputs, so running the composite makes the whole hierarchy evolve
+  as one coupled cell:
+
+
+  transmembrane transport -> cytoplasmic nutrients; metabolism -> metabolites + energy;
+  transcription reads the DEEP nested DNA -> RNA; translation -> protein; subunit
+  assembly grows the ribosome pool (closing the loop back to translation); replication
+  / repair holds the DNA at its genome set point. Each process is wired to input/output
+  paths that address stores buried inside the compartment hierarchy -- transcription
+  and replication both read/write the DNA six levels down, translation and assembly
+  read/write the ribosome pool four levels down -- so the place graph''s containment is
+  load-bearing, not decorative.
+
+
+  Over a fixed-seed deterministic 30-step run (31 emitted frames), the nested cascade
+  propagates across every level: cytoplasmic nutrients rise 0 -> 9.0 (monotonic fill
+  from the imported flux), metabolites 0 -> ~20.5 and energy 0 -> ~13.1, RNA 0 -> ~0.64
+  and protein 0 -> ~0.24 (protein trails RNA, as translation is downstream of
+  transcription), and the four-levels-deep ribosome pool grows 0.5 -> ~0.88 past its
+  bootstrap seed. The six-levels-deep genome is held at its set point (DNA == 1.0
+  throughout) by replication / repair -- a homeostatic hold, not drift. After the run
+  the place-graph containment is intact: every intermediate container along the
+  six-level chain is still a nested store, the deep DNA and ribosome leaves are still
+  reachable at full depth, and the DNA leaf still sits nested alongside its untouched
+  histone sibling. Every one of these numbers reproduces exactly run to run.
+
+
+  This is a didactic / toy-real composite: the ODE rate constants, yields, and pool
+  seeds are hand-chosen so the whole nested cascade is legible within 30 steps, not
+  calibrated to a named cell type or literature target. Its role in the paper-figures
+  investigation is to make Fig molecular_compositions **executable** -- to show that the
+  nested-hierarchy-of-composites claim it draws is one a process-bigraph composite
+  actually runs, with real processes acting on real deeply-nested stores.'
+claim: 'Wiring six ODE processes over one place graph whose stores nest up to six levels
+  deep -- WITHOUT flattening the compartment hierarchy -- reproduces the paper''s
+  §Biomolecular compositions figure (Fig molecular_compositions) as a runnable nested
+  cascade: over a deterministic 30-step run, a process acting at each nesting level moves
+  quantity in its nested store (transport fills cytoplasmic nutrients 0 -> 9.0;
+  metabolism makes metabolites 0 -> ~20.5 and energy 0 -> ~13.1; transcription reads the
+  six-levels-deep DNA to make RNA 0 -> ~0.64; translation makes protein 0 -> ~0.24;
+  subunit assembly grows the four-levels-deep ribosome pool 0.5 -> ~0.88, closing the
+  loop; replication / repair holds the six-levels-deep genome at DNA == 1.0), and the
+  place-graph containment is preserved as the dynamics run -- the deep stores stay
+  nested inside their parents, reachable only at full depth, alongside their untouched
+  siblings. The whole hierarchy evolves as one coupled cell; every value reproduces
+  exactly run to run.'
+baseline:
+- name: fig07-runnable
+  composite: meta_modelers_guide.composites.fig07-runnable
+  params: {}
+variants: []
+key_assumptions:
+- 'This `fig07-runnable` composite is **didactic / toy-real**: a small, illustrative
+  composite built to look like Fig molecular_compositions and play forward as a coupled
+  nested cascade -- NOT calibrated to a named cell type, organism, or literature target.
+  The ODE rate constants (transport k=0.3, metabolism k=0.25 with metabolite_yield=0.6
+  / energy_yield=0.4, assembly k=0.2), the transcription / translation kinetics
+  (elongation rates, half-lives, Michaelis constants), and the initial pool seeds are
+  hand-chosen so the whole hierarchy is legible within a 30-step run, not fitted values.'
+- 'The processes are ODE handlers over dimensionless concentration / count / energy
+  stores; "levels" here are place-graph nesting depths (compartment containment), not
+  physical length scales. The six-level DNA path and four-level ribosome path are the
+  load-bearing nesting the figure asserts; the exact depths are a modeling choice that
+  mirrors the biological compartment hierarchy (cytoplasm > nucleus > chromosome >
+  chromatin > nucleosome > DNA).'
+- 'Products (nutrients, metabolites, energy, RNA, proteins) initialise empty and are
+  MADE over the run from the environment-seeded driver pools (interstitial matrix,
+  enzymes, genes, ribosomal subunits); the ribosome pool starts at a nonzero bootstrap
+  seed (0.5) so translation has a nonzero rate at t=0. The DNA set point (dna_init=1.0)
+  is the homeostatic target replication / repair holds, not a fitted copy number.'
+- 'The composite is fully deterministic (fixed ODE integration, no stochasticity), so
+  every emitted value and every final nested store value reproduces exactly run to run;
+  the exact endpoints (nutrients 9.0, metabolites ~20.5, ribosome ~0.88) are regression
+  pins tied to the current rate constants, while the DIRECTION of each (rise at every
+  level, DNA held at set point, protein trailing RNA) is the a-priori structural
+  prediction.'
+acceptance_criteria:
+- The composite runs its default step count to completion and emits a clean trajectory
+  (default_n_steps ticks + the initial emit) -- the figure is executable, not merely
+  drawn.
+- 'A process acting at each nesting level moves quantity in its store: transport fills the
+  cytoplasmic nutrient pool (monotonically, supply is on), metabolism makes metabolites
+  and energy, transcription of the deeply-nested DNA makes RNA, translation makes
+  protein (protein trailing RNA, as it is downstream), and subunit assembly grows the
+  deeply-nested ribosome pool past its bootstrap seed.'
+- The nested cascade propagates across MULTIPLE levels in one coupled run -- a non-trivial
+  change occurs at every level (transport, metabolism, transcription, translation,
+  assembly), not just at the seeded input.
+- The place-graph containment is PRESERVED as the dynamics run -- after a full run the
+  six-level DNA chain and four-level ribosome chain are still nested stores reachable
+  only at full depth, and the deep DNA leaf still sits nested alongside its untouched
+  histone sibling (containment, not a flattened bag of species).
+- 'A process acting on a deeply-nested store moves the quantity IN that nested store: the
+  four-levels-deep ribosome pool grows over the run and its final place-graph value
+  equals the last emitted frame (same store), and the six-levels-deep genome is held at
+  its set point by replication / repair (conserved within tolerance, never runs away).'
+units_and_time:
+  time: 1 step = unspecified physical time (dimensionless model time); the run is 30 such
+    steps (31 emitted frames including the initial emit).
+  quantities: 'nutrient / metabolite / RNA / protein / enzyme / gene stores are
+    dimensionless concentration units; the ribosome and subunit pools are dimensionless
+    counts; energy is a dimensionless energy unit; transport_flux is a dimensionless
+    chemical-flux unit. No quantity carries a calibrated physical unit.'
+  note: No quantity here is calibrated to a named cell type, organism, or literature
+    target; "levels" are place-graph nesting depths, not physical length scales.
+behavior_tests:
+- name: composite-runs-and-emits
+  classification: diagnostic
+  description: The fig07-runnable composite runs its default step count to completion and
+    emits a clean trajectory of the expected length -- the figure is executable.
+  measure:
+    kind: observable
+    path: len(rows)
+    expr: number of emitted frames and final time value
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: default_n_steps + 1 frames (31), final time == 30.0
+    provenance: 'the composite (default_n_steps=30) runs to completion through the
+      process-bigraph engine and emits 31 frames (30 ticks + the initial emit), final
+      time == 30.0; deterministic across repeated runs
+      (tests/test_fig07_nested_dynamics.py::test_composite_runs_default_n_steps_and_emits)'
+  requires_simulation: fig07-runnable
+- name: transport-fills-cytoplasmic-nutrients
+  classification: primary
+  description: Level 1 -- the membrane transporter imports nutrients across the membrane
+    into the cytoplasm; the pool starts empty and fills monotonically because supply is on.
+  measure:
+    kind: observable
+    path: obs.nutrients
+    expr: nutrients over the run
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: 1.0
+    provenance: 'prior: with the transporter on, the cytoplasmic nutrient pool fills
+      monotonically from empty -> expect a substantial rise well above a small floor.
+      Observed: nutrients 0.0 -> 9.0, non-decreasing at every step; the > 1.0 floor is a
+      loose pin, the monotonic fill is the a-priori prediction; deterministic
+      (tests/test_fig07_nested_dynamics.py::test_transport_fills_the_cytoplasmic_nutrient_pool)'
+  requires_simulation: fig07-runnable
+- name: metabolism-makes-metabolites-and-energy
+  classification: primary
+  description: Level 2 -- metabolism converts imported nutrients (+ enzymes) into
+    metabolites and energy in the cytoplasm; both rise well past their empty start.
+  measure:
+    kind: observable
+    path: obs.metabolites, obs.energy
+    expr: metabolites and energy over the run
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: start + 1.0
+    provenance: 'prior: metabolism turns the imported nutrients into metabolites + energy
+      -> both rise substantially over the run. Observed: metabolites 0.0 -> ~20.5, energy
+      0.0 -> ~13.1 (both start empty, both rise well past start + 1.0); deterministic
+      (tests/test_fig07_nested_dynamics.py::test_metabolism_produces_metabolites_and_energy)'
+  requires_simulation: fig07-runnable
+- name: central-dogma-transcription-and-translation-rise
+  classification: primary
+  description: Levels 3-4 -- transcription of the six-levels-deep nested DNA makes RNA,
+    which translation turns into protein; both downstream products rise, and protein
+    trails RNA because translation is downstream of transcription.
+  measure:
+    kind: observable
+    path: obs.rna, obs.proteins
+    expr: rna and proteins over the run
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: rna[-1] > proteins[-1] > 0, both from 0
+    provenance: 'prior: transcription reads the deeply-nested DNA to make RNA, translation
+      reads RNA to make protein downstream -> both rise from empty, protein trailing RNA.
+      Observed: rna 0.0 -> ~0.64, proteins 0.0 -> ~0.24, rna[-1] > proteins[-1];
+      deterministic; the rise-from-zero and RNA-leads-protein ordering are the a-priori
+      predictions
+      (tests/test_fig07_nested_dynamics.py::test_central_dogma_transcription_and_translation_rise)'
+  requires_simulation: fig07-runnable
+- name: assembly-grows-ribosome-pool-closing-the-loop
+  classification: primary
+  description: Level 5 -- subunit assembly consumes protein + subunits to grow the
+    four-levels-deep ribosome pool past its bootstrap seed, the downstream observable
+    that closes the loop back to translation.
+  measure:
+    kind: observable
+    path: obs.ribosome
+    expr: ribosome over the run
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: ribosome[0] (0.5 bootstrap seed)
+    provenance: 'prior: subunit assembly grows the ribosome pool from its bootstrap seed,
+      closing the loop back to translation -> the deeply-nested ribosome count rises.
+      Observed: ribosome 0.5 -> ~0.88 (grows past its seed); deterministic
+      (tests/test_fig07_nested_dynamics.py::test_assembly_builds_ribosomes_closing_the_loop)'
+  requires_simulation: fig07-runnable
+- name: cascade-propagates-across-multiple-levels
+  classification: primary
+  description: The whole point -- a non-trivial change occurs at MULTIPLE levels of the
+    nested hierarchy in one coupled run (transport, metabolism, transcription, translation,
+    assembly), not just at the seeded input.
+  measure:
+    kind: derived
+    path: set of changed levels
+    expr: which of {nutrients, metabolites, rna, proteins, ribosome} change by > 1e-3
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: all five levels change
+    provenance: 'prior: because the handlers'' outputs feed each other''s inputs, seeding
+      the environment drives a change at every level of the hierarchy, not just the input.
+      Observed: all five of {nutrients, metabolites, rna, proteins, ribosome} change by
+      more than 1e-3 over the run; deterministic
+      (tests/test_fig07_nested_dynamics.py::test_cascade_propagates_across_multiple_levels)'
+  requires_simulation: fig07-runnable
+- name: place-graph-containment-preserved
+  classification: primary
+  description: The figure's core structural claim -- processes act on stores buried deep
+    in the place graph WITHOUT flattening it. After a full run every intermediate
+    container along the six-level DNA chain is still a nested store, the deep DNA and
+    ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested
+    alongside its untouched histone sibling.
+  measure:
+    kind: structural
+    path: final place-graph tree (sim.state)
+    expr: nested containers along cytoplasm/nucleus/chromosome/chromatin/nucleosome/DNA
+      still present; histone still nested beside DNA
+  pass_if:
+    op: containment_preserved
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: six-level DNA chain + four-level ribosome chain intact, DNA nested beside histone
+    provenance: 'read the final place-graph tree after a 30-step run: every intermediate
+      container along the six-level DNA path is still a dict (not flattened), the DNA (6
+      levels) and ribosome (4 levels) leaves are reachable only at full depth, and the
+      nucleosome still contains BOTH DNA and its untouched histone sibling -- containment,
+      not a flattened bag of species
+      (tests/test_fig07_nested_dynamics.py::test_place_graph_containment_is_preserved_as_dynamics_run)'
+  requires_simulation: fig07-runnable
+- name: process-moves-quantity-in-deep-nested-store
+  classification: primary
+  description: The anchor -- a process acting at ONE nesting level moves quantity in a
+    nested store. Subunit assembly grows the four-levels-deep ribosome pool (final
+    place-graph value == last emitted frame, same store); replication / repair holds the
+    six-levels-deep genome at its set point (conserved within tolerance).
+  measure:
+    kind: structural
+    path: final place-graph tree (sim.state) vs emitted trajectory
+    expr: deep ribosome value grew and equals emitted ribosome[-1]; deep DNA held at set
+      point across the run and equals emitted dna[-1]
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: ribosome grew and final store == emitted last frame; DNA == 1.0 set point throughout
+    provenance: 'read the four-levels-deep ribosome store and six-levels-deep DNA store
+      from the final place graph: ribosome grew 0.5 -> ~0.88 and its final nested-store
+      value == the last emitted ribosome frame (same store); DNA held at its set point
+      (dna_init == 1.0) at every emitted frame, within 1e-6, and its final nested-store
+      value == the last emitted dna frame; deterministic
+      (tests/test_fig07_nested_dynamics.py::test_process_at_a_deep_level_moves_quantity_in_its_nested_store)'
+  requires_simulation: fig07-runnable
+runs:
+- name: fig07-runnable
+  composite: fig07-runnable
+  emitter: RAMEmitter
+  id: fig07-runnable
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig07-runnable.composite.json (six ODE
+    handlers -- TransmembraneTransportODE, CellMetabolismODE, TranscriptionODE,
+    TranslationODE, SubunitAssemblyODE, ReplicationAndRepairODE -- over one place graph
+    nesting up to six levels deep, default_n_steps=30) run to completion through the
+    process-bigraph engine (tests/test_fig07_nested_dynamics.py); the fig07-dynamics.png
+    time-series in visualizations/ was rendered from scripts/build_fig07_dynamics.py over
+    the same run.'
+  params: {}
+  outcomes:
+    COMPOSITE-RUNS-AND-EMITS:
+      result: PASS
+      detail: 31 frames (30 ticks + initial emit), final time == 30.0
+    TRANSPORT-FILLS-CYTOPLASMIC-NUTRIENTS:
+      result: PASS
+      detail: nutrients 0.0 -> 9.0, monotonic non-decreasing
+    METABOLISM-MAKES-METABOLITES-AND-ENERGY:
+      result: PASS
+      detail: metabolites 0.0 -> ~20.5, energy 0.0 -> ~13.1
+    CENTRAL-DOGMA-TRANSCRIPTION-AND-TRANSLATION-RISE:
+      result: PASS
+      detail: rna 0.0 -> ~0.64, proteins 0.0 -> ~0.24, rna leads protein
+    ASSEMBLY-GROWS-RIBOSOME-POOL-CLOSING-THE-LOOP:
+      result: PASS
+      detail: ribosome 0.5 -> ~0.88 (past bootstrap seed)
+    CASCADE-PROPAGATES-ACROSS-MULTIPLE-LEVELS:
+      result: PASS
+      detail: all five levels {nutrients, metabolites, rna, proteins, ribosome} change
+    PLACE-GRAPH-CONTAINMENT-PRESERVED:
+      result: PASS
+      detail: six-level DNA chain + four-level ribosome chain intact, DNA nested beside histone
+    PROCESS-MOVES-QUANTITY-IN-DEEP-NESTED-STORE:
+      result: PASS
+      detail: deep ribosome grew and == emitted last frame; deep DNA held at set point 1.0
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'Six ODE processes wired over one place graph nesting up to six levels deep
+    -- WITHOUT flattening the compartment hierarchy -- run to completion as one coupled
+    cell and drive a non-trivial change at EVERY level of the nested hierarchy. A process
+    acting at each level moves quantity in its store: transport fills cytoplasmic
+    nutrients (0 -> 9.0, monotonic), metabolism makes metabolites (0 -> ~20.5) and energy
+    (0 -> ~13.1), transcription of the six-levels-deep DNA makes RNA (0 -> ~0.64),
+    translation makes protein (0 -> ~0.24, trailing RNA), and subunit assembly grows the
+    four-levels-deep ribosome pool (0.5 -> ~0.88, closing the loop). All five levels
+    change; every value is deterministic and reproduces exactly run to run.'
+  evidence:
+    from_test: cascade-propagates-across-multiple-levels
+    from_run: fig07-runnable
+    observed: all five of {nutrients, metabolites, rna, proteins, ribosome} change over
+      the run; nutrients 0 -> 9.0, metabolites 0 -> ~20.5, rna 0 -> ~0.64, protein 0 ->
+      ~0.24 (rna leads), ribosome 0.5 -> ~0.88
+  provenance:
+    run_ids:
+    - fig07-runnable
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The place-graph containment is PRESERVED as the dynamics run -- the figure''s
+    core structural claim. After a full 30-step run every intermediate container along the
+    six-level DNA chain (cytoplasm > nucleus > chromosome > chromatin > nucleosome > DNA)
+    is still a nested store, the deep DNA and ribosome leaves are reachable only at full
+    depth, and the DNA leaf still sits nested alongside its untouched histone sibling --
+    containment, not a flattened bag of species. A process acting on a deeply-nested store
+    moves the quantity IN that store: the four-levels-deep ribosome pool grew and its
+    final place-graph value equals the last emitted frame (same store), while the
+    six-levels-deep genome was held at its set point (DNA == 1.0 within 1e-6 at every
+    frame) by replication / repair -- a homeostatic hold, not drift.'
+  evidence:
+    from_test: process-moves-quantity-in-deep-nested-store
+    from_run: fig07-runnable
+    observed: six-level DNA chain + four-level ribosome chain intact after the run; deep
+      ribosome value == emitted ribosome[-1] and grew from 0.5; deep DNA == 1.0 held at
+      set point and == emitted dna[-1]
+  provenance:
+    run_ids:
+    - fig07-runnable
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'fig07-runnable.composite.json builds and runs its default 30 steps to
+      completion through the process-bigraph engine (tests/test_fig07_nested_dynamics.py,
+      8 tests), matching this investigation''s convention for runnable figure composites.'
+  biological_validation:
+    result: PASS
+    basis: All primary behavior tests pass on measured readouts from a real 30-step run --
+      a process acting at each nesting level moves quantity in its store, the cascade
+      propagates across all five levels, the place-graph containment is preserved after
+      the run, and a process acting on a deeply-nested store moves the quantity in that
+      nested store (ribosome grown four levels deep, DNA held at set point six levels
+      deep). Every value is deterministic and reproduces exactly. The composite is
+      toy-real (uncalibrated), so the exact endpoints are regression pins while the
+      per-level direction and the containment claim are the a-priori structural predictions.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Realizing Fig molecular_compositions as a runnable composite -- six real
+      processes acting on stores buried up to six levels deep in a preserved place graph
+      -- makes the paper''s nested-hierarchy-of-composites claim concrete and executable:
+      the figure''s two panels (hierarchical molecular structures; a composite process
+      diagram over nested compartment states) are not merely drawn but run forward as one
+      coupled cell, with the compartment containment load-bearing rather than flattened.'
+conclusion: '## Claims
+
+  - Wiring six ODE processes over one place graph nesting up to six levels deep -- WITHOUT
+    flattening the compartment hierarchy -- reproduces the paper''s §Biomolecular
+    compositions figure (Fig molecular_compositions) as a runnable nested cascade. Over a
+    deterministic 30-step run, a process acting at each nesting level moves quantity in its
+    store (transport 0 -> 9.0 nutrients; metabolism 0 -> ~20.5 metabolites and 0 -> ~13.1
+    energy; transcription of the six-levels-deep DNA 0 -> ~0.64 RNA; translation 0 -> ~0.24
+    protein, trailing RNA; assembly 0.5 -> ~0.88 on the four-levels-deep ribosome pool,
+    closing the loop). All five levels change; every value reproduces exactly.
+
+  - The place-graph containment is PRESERVED as the dynamics run -- after the run the
+    six-level DNA chain and four-level ribosome chain are still nested stores reachable
+    only at full depth, and the DNA leaf still sits nested alongside its untouched histone
+    sibling. A process acting on a deeply-nested store moves the quantity IN that store:
+    the deep ribosome pool grew (final store == last emitted frame) and the deep genome
+    was held at its set point (DNA == 1.0) by replication / repair.
+
+
+  ## Evidence
+
+  - **COMPOSITE-RUNS-AND-EMITS** -- 31 frames (30 ticks + initial emit), final time == 30.0
+
+  - **TRANSPORT-FILLS-CYTOPLASMIC-NUTRIENTS** -- nutrients 0.0 -> 9.0, monotonic
+
+  - **METABOLISM-MAKES-METABOLITES-AND-ENERGY** -- metabolites 0.0 -> ~20.5, energy 0.0 -> ~13.1
+
+  - **CENTRAL-DOGMA-TRANSCRIPTION-AND-TRANSLATION-RISE** -- rna 0.0 -> ~0.64, proteins 0.0
+    -> ~0.24, rna leads protein
+
+  - **ASSEMBLY-GROWS-RIBOSOME-POOL-CLOSING-THE-LOOP** -- ribosome 0.5 -> ~0.88 past its seed
+
+  - **CASCADE-PROPAGATES-ACROSS-MULTIPLE-LEVELS** -- all five levels change
+
+  - **PLACE-GRAPH-CONTAINMENT-PRESERVED** -- six-level DNA chain + four-level ribosome
+    chain intact, DNA nested beside histone
+
+  - **PROCESS-MOVES-QUANTITY-IN-DEEP-NESTED-STORE** -- deep ribosome grew and == emitted
+    last frame; deep DNA held at set point 1.0
+
+
+  ## Limitations
+
+  - This fig07-runnable composite is didactic / toy-real -- the ODE rate constants, yields,
+    and pool seeds are hand-chosen so the whole nested cascade is legible within 30 steps,
+    not calibrated to a named cell type, organism, or literature target.
+
+  - "Levels" are place-graph nesting depths (compartment containment), not physical length
+    scales; the exact depths mirror the biological compartment hierarchy but are a modeling
+    choice.
+
+  - The calibrated cousin for the molecular-complementarity narrative is
+    `biomolecular-complementarity` in the `draft-to-living-cell` investigation; this study
+    does not restate its numbers.
+
+
+  ## Next steps
+
+  - Fan out to the remaining runnable figure composites in the paper-figures investigation.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig07-runnable.composite.json builds and runs its default 30
+      steps to completion through the engine over a deterministic run.'
+    biological_validation: The nested-hierarchy-of-composites claim of Fig
+      molecular_compositions is demonstrated at the toy-real (uncalibrated) level -- six
+      real processes act on stores up to six levels deep in a preserved place graph, the
+      cascade propagates across every level, and the compartment containment survives the
+      run intact.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - a level fails to change (a process is mis-wired to its nested input/output path, or a
+      driver pool is not seeded)
+    - protein leads RNA, or RNA/protein never rise (transcription/translation wiring to the
+      deep DNA / RNA stores is broken)
+    - the ribosome pool does not grow (subunit assembly is not writing the four-levels-deep
+      store, or the loop back to translation is broken)
+    - the DNA set point drifts (replication / repair is not holding the six-levels-deep
+      genome)
+    - the place-graph containment is not preserved (a nested path was flattened, or a deep
+      store is no longer reachable at full depth)
+    block_downstream: 'any future study reusing the fig07 nested-place-graph pattern or its
+      six coupled ODE processes'
+limitations:
+- This fig07-runnable composite is didactic / toy-real -- the ODE rate constants (transport
+  k=0.3, metabolism k=0.25, assembly k=0.2), yields, transcription / translation kinetics,
+  and initial pool seeds are hand-chosen so the whole nested cascade is legible within a
+  30-step run, not fitted to a named cell type, organism, or literature target. The exact
+  endpoint magnitudes (nutrients 9.0, metabolites ~20.5, ribosome ~0.88) are regression
+  pins tied to those constants; the per-level direction and the containment claim are the
+  a-priori structural predictions.
+- '"Levels" here are place-graph nesting depths (compartment containment), not physical
+  length scales; the six-level DNA path and four-level ribosome path mirror the biological
+  compartment hierarchy (cytoplasm > nucleus > chromosome > chromatin > nucleosome > DNA)
+  but the exact depths are a modeling choice.'
+- The processes are ODE handlers over dimensionless concentration / count / energy stores;
+  no quantity carries a calibrated physical unit, and there is no spatial, stochastic, or
+  rule-based molecular detail -- the figure''s molecular-structure panel is represented by
+  named nested stores, not by explicit binding sites or conformations.
+- The rigorous molecular-complementarity cousin is `biomolecular-complementarity` in the
+  `draft-to-living-cell` investigation; this study is the executable-figure counterpart and
+  does not restate that cousin''s numbers as its own.
+falsifiability: Overturned if the composite fails to run its default step count to
+  completion, if any level fails to change over the run (a mis-wired process), if protein
+  leads RNA or the ribosome pool fails to grow past its seed, if the DNA set point drifts
+  away from 1.0, if the run is not deterministic across repeated runs of the same composite,
+  or if the place-graph containment is not preserved after the run (a nested path flattened,
+  or a deep store no longer reachable at full depth).
 visualizations:
 - name: Figure 7
   address: svg:visualizations/figure_7.svg
@@ -25,8 +531,30 @@ visualizations:
       subunit assembly grows the ribosome pool (closing the loop); replication holds
       DNA at its genome set point. The cascade propagates across every level — the
       nested hierarchy of coupled processes running together. From scripts/build_fig07_dynamics.py.'
-question: How do nested composites build a structural hierarchy?
-baseline:
-- name: fig07-runnable
-  composite: meta_modelers_guide.composites.fig07-runnable
-  params: {}
+parent_studies:
+- study: biomolecular-complementarity
+  condition: tests-passed
+experiment: 'Run the `fig07-runnable` composite (six ODE handlers -- transmembrane
+  transport, metabolism, transcription, translation, subunit assembly, replication /
+  repair -- over one place graph nesting up to six levels deep) to completion over its
+  default 30 steps through the process-bigraph engine, and measure whether a process acting
+  at each nesting level moves quantity in its nested store, whether the cascade propagates
+  across every level as one coupled cell, and whether the place-graph containment is
+  preserved as the dynamics run.'
+result: 'Over a deterministic 30-step run (31 emitted frames), a process acting at each
+  nesting level moves quantity in its store: transmembrane transport fills the cytoplasmic
+  nutrient pool 0 -> 9.0 (monotonic), metabolism makes metabolites 0 -> ~20.5 and energy 0
+  -> ~13.1, transcription of the six-levels-deep DNA makes RNA 0 -> ~0.64, translation makes
+  protein 0 -> ~0.24 (trailing RNA, as it is downstream), and subunit assembly grows the
+  four-levels-deep ribosome pool 0.5 -> ~0.88, closing the loop back to translation. All
+  five levels change in one coupled run. The place-graph containment is preserved as the
+  dynamics run: after the run every intermediate container along the six-level DNA chain is
+  still a nested store, the deep DNA and ribosome leaves are reachable only at full depth,
+  and the DNA leaf still sits nested alongside its untouched histone sibling. A process
+  acting on a deeply-nested store moves the quantity IN that store -- the deep ribosome pool
+  grew (final store == last emitted frame) and the deep genome was held at its set point
+  (DNA == 1.0) by replication / repair. Every value reproduces exactly run to run. The
+  paper''s §Biomolecular compositions figure (Fig molecular_compositions) is thus executable,
+  not merely drawn -- its nested hierarchy of composites runs forward as one coupled cell.
+  This is a didactic / toy-real composite; the calibrated molecular-complementarity cousin
+  is `biomolecular-complementarity` in the `draft-to-living-cell` investigation.'

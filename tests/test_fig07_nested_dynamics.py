@@ -34,13 +34,32 @@ COMPOSITE = (
     / "meta_modelers_guide" / "composites" / "fig07-runnable.composite.json"
 )
 
+# The two deepest place-graph paths the figure nests: the genome six levels down,
+# and the ribosome pool four levels down. Processes act on these WITHOUT the place
+# graph being flattened.
+DNA_PATH = ("cytoplasm", "nucleus", "chromosome", "chromatin", "nucleosome", "DNA")
+RIBOSOME_PATH = ("cytoplasm", "organelles", "ribosomal_complex", "ribosome")
 
-def _trajectory():
+
+def _dig(tree, path):
+    node = tree
+    for key in path:
+        node = node[key]
+    return node
+
+
+def _run():
+    """Run the composite and return (spec, final_state_tree, emitter_rows)."""
     spec = json.loads(COMPOSITE.read_text())
     core = build_core()
     sim = Composite({"state": spec["state"]}, core=core)
     sim.run(spec["default_n_steps"])
     rows = gather_emitter_results(sim)[("emitter",)]
+    return spec, sim.state, rows
+
+
+def _trajectory():
+    spec, _state, rows = _run()
     return spec, rows
 
 
@@ -108,3 +127,46 @@ def test_cascade_propagates_across_multiple_levels():
     }
     changed = [name for name, s in levels.items() if abs(s[-1] - s[0]) > 1e-3]
     assert set(changed) == set(levels), f"only these levels changed: {changed}"
+
+
+def test_place_graph_containment_is_preserved_as_dynamics_run():
+    """The figure's core claim: processes act on stores buried deep in the place
+    graph WITHOUT flattening it. After a full run the nested containment is still
+    intact — the genome six levels down, the ribosome pool four levels down — and
+    the deep stores still sit as nested dicts inside their parents, alongside their
+    untouched siblings (histone next to DNA)."""
+    _spec, state, _rows = _run()
+    # Every intermediate container along the deepest path is still a nested dict —
+    # the six-level chain was never collapsed into a flat key.
+    for depth in range(1, len(DNA_PATH)):
+        node = _dig(state, DNA_PATH[:depth])
+        assert isinstance(node, dict), f"level {depth} ({DNA_PATH[depth-1]}) was flattened"
+    # The leaf stores are reachable at full depth and hold scalar quantities.
+    dna = _dig(state, DNA_PATH)
+    ribosome = _dig(state, RIBOSOME_PATH)
+    assert isinstance(dna, float)
+    assert isinstance(ribosome, float)
+    # A sibling store one level up from DNA is still nested alongside it (the
+    # nucleosome contains BOTH DNA and histone) — containment, not just reachability.
+    nucleosome = _dig(state, DNA_PATH[:-1])
+    assert "DNA" in nucleosome and "histone" in nucleosome
+
+
+def test_process_at_a_deep_level_moves_quantity_in_its_nested_store():
+    """Anchor: a process acting at ONE nesting level moves quantity in a nested
+    store. Subunit assembly writes the ribosome pool four levels deep — it grows
+    past its bootstrap seed. Replication/repair holds the genome six levels deep at
+    its set point — a homeostatic hold, not drift. Both are read from the final
+    place graph at full depth, not from a flattened observable."""
+    spec, state, rows = _run()
+    ribosome_series = _series(rows, "ribosome")
+    # Deep-nested (4 levels) store the assembly process drives: grows over the run
+    # AND the final place-graph value matches the last emitted frame (same store).
+    assert ribosome_series[-1] > ribosome_series[0]
+    assert _dig(state, RIBOSOME_PATH) == ribosome_series[-1]
+    # Deep-nested (6 levels) genome the replication/repair process holds at its set
+    # point (dna_init == 1.0): conserved within tolerance, never runs away.
+    dna_series = _series(rows, "dna")
+    set_point = float(spec["state"]["replication_and_repair"]["config"]["dna_init"])
+    assert all(abs(d - set_point) < 1e-6 for d in dna_series)
+    assert _dig(state, DNA_PATH) == dna_series[-1]
