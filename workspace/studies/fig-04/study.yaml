@@ -7,125 +7,39 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Provisional
-question: 'Is the paper''s §Cell-environment coupling figure (Fig cell_environment)
-  executable — does a runnable process-bigraph composite actually close the control
-  loop the caption asserts, where an environmental chemical field DRIVES the cell''s
-  interface ports (sensing, uptake, growth, motility) and the cell acts back on that
-  shared field? Concretely: does a real diffusing nutrient gradient, sensed locally
-  at an interior grid index, drive uptake that tracks the sensed field, grow the cell''s
-  mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake →
-  mass gain, plus up-gradient drift — all as measured simulation output, not a drawn
-  diagram?'
-biological_summary: 'This is the runnable realization of the paper''s §Cell-environment
-  coupling figure (Fig cell_environment). The section frames coupling as closing a
-  loop: "cellular outputs modify the environmental state, environmental processes update
-  it further, and that state feeds back to the cellular interface as inputs -- the
-  minimal structure required for control." Panel **a** shows a cell interacting with
-  environmental fields (chemical, electrical, mechanical) and physical barriers; panel
-  **b** shows a composition diagram wiring internal cell state to those environmental
-  fields through exchange processes and shared stores, alongside environmental processes
-  such as diffusion and mechanical relaxation.
+question: 'Is the paper''s §Cell-environment coupling figure (Fig cell_environment) executable — does a runnable process-bigraph composite actually close the control loop the caption asserts, where an environmental chemical field DRIVES the cell''s interface ports (sensing, uptake, growth, motility) and the cell acts back on that shared field? Concretely: does a real diffusing nutrient gradient, sensed locally at an interior grid index, drive uptake that tracks the sensed field, grow the cell''s mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake → mass gain, plus up-gradient drift — all as measured simulation output, not a drawn diagram?'
+biological_summary: 'This is the runnable realization of the paper''s §Cell-environment coupling figure (Fig cell_environment). The section frames coupling as closing a loop: "cellular outputs modify the environmental state, environmental processes update it further, and that state feeds back to the cellular interface as inputs -- the minimal structure required for control." Panel **a** shows a cell interacting with environmental fields (chemical, electrical, mechanical) and physical barriers; panel **b** shows a composition diagram wiring internal cell state to those environmental fields through exchange processes and shared stores, alongside environmental processes such as diffusion and mechanical relaxation.
 
-  The `fig04-runnable` composite makes that diagram executable. A real length-9 1-D
-  diffusing chemical grid (a `map[float]` store, keys `"0"`..`"8"`) is seeded as a
-  nutrient GRADIENT — 0.0 at index 0 rising linearly to 1.0 at index 8 — and relaxes
-  under a genuine finite-difference `SpatialDiffusion` step (D=0.2, zero-flux edges,
-  mass-conserving). A single cell (`SingleCellSpatial`) sits at interior index 4 and
-  is wired to that SHARED chemical_field store: each tick it senses its LOCAL field
-  value, takes up chemical linearly in that value (uptake_rate=0.1), grows mass at a
-  biomass yield of 0.5, exerts traction, and drifts up the local concentration gradient
-  (migration_rate=0.1). Its `uptake` and `traction` outputs are written BACK into the
-  shared environment store (`environment.uptake_flux`, `environment.traction`) — the
-  same stores the environmental processes and emitter read — so the sense→act loop
-  closes through a shared store exactly as the caption describes. A `MechanicalRelax`
-  process relaxes the scalar mechanical field toward its barrier-imposed equilibrium,
-  standing in for the mechanical/barrier field of panel a.
+  The `fig04-runnable` composite makes that diagram executable. A real length-9 1-D diffusing chemical grid (a `map[float]` store, keys `"0"`..`"8"`) is seeded as a nutrient GRADIENT — 0.0 at index 0 rising linearly to 1.0 at index 8 — and relaxes under a genuine finite-difference `SpatialDiffusion` step (D=0.2, zero-flux edges, mass-conserving). A single cell (`SingleCellSpatial`) sits at interior index 4 and is wired to that SHARED chemical_field store: each tick it senses its LOCAL field value, takes up chemical linearly in that value (uptake_rate=0.1), grows mass at a biomass yield of 0.5, exerts traction, and drifts up the local concentration gradient (migration_rate=0.1). Its `uptake` and `traction` outputs are written BACK into the shared environment store (`environment.uptake_flux`, `environment.traction`) — the same stores the environmental processes and emitter read — so the sense→act loop closes through a shared store exactly as the caption describes. A `MechanicalRelax` process relaxes the scalar mechanical field toward its barrier-imposed equilibrium, standing in for the mechanical/barrier field of panel a.
 
-  Over a 24-step run every leg of the control loop is visible in the emitted trace and
-  is deterministic (no RNG anywhere in this composite): the cell at index 4 senses a
-  starting local field of 0.5 (relaxing to ~0.24 as diffusion smooths the gradient and
-  uptake draws it down), its per-step uptake tracks that sensed field with correlation
-  1.0, cumulative uptake booked to the shared env reaches ~0.864, mass climbs
-  monotonically 1.0 → ~1.432, and the cell drifts up-gradient from index 4.0 to ~4.196.
-  A zero-field control confirms causality: flatten the field to 0 and uptake, traction,
-  drift, and mass gain are all exactly 0 — the ports are driven BY the environment, not
-  free-running. This is a small, didactic, toy-real composite: it is built to look like
-  the figure and play the coupling forward, not to reproduce a calibrated chemotaxis or
-  metabolic rate.'
-claim: 'The paper''s §Cell-environment coupling figure is executable, not merely drawn:
-  the `fig04-runnable` composite closes the caption''s control loop as measured
-  simulation output. A real diffusing nutrient gradient, sensed locally at interior grid
-  index 4, drives the cell''s interface ports — uptake is linear in the local sensed
-  field (exactly 4× the field ⇒ 4× the uptake; per-step uptake tracks the sensed field
-  at correlation 1.0), mass grows monotonically (1.0 → ~1.432 over 24 steps), and the
-  cell drifts up-gradient (index 4.0 → ~4.196, net +0.196). The cell writes its uptake
-  back into the shared environment store, closing the sense→act loop, and the mass↔uptake
-  ledger closes exactly (Δmass == 0.5 × cumulative uptake booked to the env). A zero-field
-  negative control gives zero drive on every port, establishing the field as the causal
-  driver. All values are deterministic run-to-run (no RNG in the composite). These are
-  toy-real, uncalibrated magnitudes — the calibrated spatial cousin is
-  `cell-environment-coupling` in the `draft-to-living-cell` investigation.'
+  Over a 24-step run every leg of the control loop is visible in the emitted trace and is deterministic (no RNG anywhere in this composite): the cell at index 4 senses a starting local field of 0.5 (relaxing to ~0.24 as diffusion smooths the gradient and uptake draws it down), its per-step uptake tracks that sensed field with correlation 1.0, cumulative uptake booked to the shared env reaches ~0.864, mass climbs monotonically 1.0 → ~1.432, and the cell drifts up-gradient from index 4.0 to ~4.196. A zero-field control confirms causality: flatten the field to 0 and uptake, traction, drift, and mass gain are all exactly 0 — the ports are driven BY the environment, not free-running. This is a small, didactic, toy-real composite: it is built to look like the figure and play the coupling forward, not to reproduce a calibrated chemotaxis or metabolic rate.'
+claim: 'The paper''s §Cell-environment coupling figure is executable, not merely drawn: the `fig04-runnable` composite closes the caption''s control loop as measured simulation output. A real diffusing nutrient gradient, sensed locally at interior grid index 4, drives the cell''s interface ports — uptake is linear in the local sensed field (exactly 4× the field ⇒ 4× the uptake; per-step uptake tracks the sensed field at correlation 1.0), mass grows monotonically (1.0 → ~1.432 over 24 steps), and the cell drifts up-gradient (index 4.0 → ~4.196, net +0.196). The cell writes its uptake back into the shared environment store, closing the sense→act loop, and the mass↔uptake ledger closes exactly (Δmass == 0.5 × cumulative uptake booked to the env). A zero-field negative control gives zero drive on every port, establishing the field as the causal driver. All values are deterministic run-to-run (no RNG in the composite). These are toy-real, uncalibrated magnitudes — the calibrated spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.'
 baseline:
 - name: fig04-runnable
   composite: meta_modelers_guide.composites.fig04-runnable
   params: {}
 variants: []
 key_assumptions:
-- 'This `fig04-runnable` composite is DIDACTIC / toy-real: a length-9 1-D lattice, a
-  single cell, and hand-picked rate constants (uptake_rate=0.1, biomass_yield=0.5,
-  migration_rate=0.1, traction_coef=0.05, diffusivity D=0.2) chosen so every leg of the
-  control loop — sense, uptake, grow, drift — is legible within a 24-step run. It is
-  built to look like the figure and play the coupling forward, NOT calibrated to a named
-  nutrient, a measured chemotactic velocity, or a literature metabolic rate.'
-- 'The cell''s interface is intentionally minimal-but-real. The chemical field is a
-  genuine process-bigraph `map[float]` grid store with real neighbour coupling under a
-  finite-difference diffusion step (not a scalar stand-in and not a list-of-floats
-  fallback); the cell reads its LOCAL grid value at its own lattice index. But mass,
-  location, uptake, traction, and shape are SCALAR cell outputs, and the mechanical field
-  is a single scalar relaxed toward a barrier equilibrium — a 1-D reduction of panel a''s
-  chemical/electrical/mechanical/barrier fields.'
-- 'The chemotactic drift and uptake use simple linear policies (drift ∝ local gradient,
-  uptake ∝ local field), so the whole composite is deterministic — there is no RNG
-  anywhere. Exact numeric pins in the behavior tests are therefore legitimate regression
-  pins, exact run-to-run while the composite spec and rate constants are held fixed.'
-- 'The environmental "source" process (`ProductionDegradationField`) is effectively OFF
-  in this composite (source_index=99 is out of the length-9 grid, so it injects nothing;
-  decay_rate=0.03 only). The gradient the cell responds to is the SEEDED initial
-  condition relaxing under diffusion, not a maintained source — the coupling shown is the
-  cell reading and drawing down a decaying gradient, not a steady-state supply.'
-- 'The `location`/`shape` outputs are lightweight proxies: `location` is a 1-D lattice
-  coordinate (a drift index, not a physical position in µm), and `shape` is a scalar
-  volume proxy growing with uptake. No 2-D/3-D morphology is represented.'
+- 'This `fig04-runnable` composite is DIDACTIC / toy-real: a length-9 1-D lattice, a single cell, and hand-picked rate constants (uptake_rate=0.1, biomass_yield=0.5, migration_rate=0.1, traction_coef=0.05, diffusivity D=0.2) chosen so every leg of the control loop — sense, uptake, grow, drift — is legible within a 24-step run. It is built to look like the figure and play the coupling forward, NOT calibrated to a named nutrient, a measured chemotactic velocity, or a literature metabolic rate.'
+- 'The cell''s interface is intentionally minimal-but-real. The chemical field is a genuine process-bigraph `map[float]` grid store with real neighbour coupling under a finite-difference diffusion step (not a scalar stand-in and not a list-of-floats fallback); the cell reads its LOCAL grid value at its own lattice index. But mass, location, uptake, traction, and shape are SCALAR cell outputs, and the mechanical field is a single scalar relaxed toward a barrier equilibrium — a 1-D reduction of panel a''s chemical/electrical/mechanical/barrier fields.'
+- 'The chemotactic drift and uptake use simple linear policies (drift ∝ local gradient, uptake ∝ local field), so the whole composite is deterministic — there is no RNG anywhere. Exact numeric pins in the behavior tests are therefore legitimate regression pins, exact run-to-run while the composite spec and rate constants are held fixed.'
+- 'The environmental "source" process (`ProductionDegradationField`) is effectively OFF in this composite (source_index=99 is out of the length-9 grid, so it injects nothing; decay_rate=0.03 only). The gradient the cell responds to is the SEEDED initial condition relaxing under diffusion, not a maintained source — the coupling shown is the cell reading and drawing down a decaying gradient, not a steady-state supply.'
+- 'The `location`/`shape` outputs are lightweight proxies: `location` is a 1-D lattice coordinate (a drift index, not a physical position in µm), and `shape` is a scalar volume proxy growing with uptake. No 2-D/3-D morphology is represented.'
 acceptance_criteria:
-- A higher LOCAL chemical field produces a larger `uptake` output — the port is driven by
-  the environment (and, because uptake is linear, 4× the field gives 4× the uptake).
-- With nutrient present, the cell's `mass` increases monotonically over the run (net
-  growth, never falling) — sensed field → uptake → biomass gain.
-- 'Per-step uptake tracks the LOCAL sensed field over the actual run (strong positive
-  correlation): the interface port responds to the environmental state tick by tick.'
-- Net `location` drift over the run is UP-gradient (toward the higher-field side) — the
-  cell constructs its own trajectory by climbing the gradient it senses (chemotaxis).
-- 'The loop CLOSES through a shared store: the cell''s `uptake` output is written back into
-  the shared `environment.uptake_flux` store and accumulates, and the mass↔uptake ledger
-  closes exactly (Δmass == biomass_yield × cumulative uptake booked to the environment).'
-- 'Negative control: with a flat ZERO field the cell''s uptake, traction, drift, and mass
-  gain are all exactly zero — the environment is the causal driver of the interface.'
+- A higher LOCAL chemical field produces a larger `uptake` output — the port is driven by the environment (and, because uptake is linear, 4× the field gives 4× the uptake).
+- With nutrient present, the cell's `mass` increases monotonically over the run (net growth, never falling) — sensed field → uptake → biomass gain.
+- 'Per-step uptake tracks the LOCAL sensed field over the actual run (strong positive correlation): the interface port responds to the environmental state tick by tick.'
+- Net `location` drift over the run is UP-gradient (toward the higher-field side) — the cell constructs its own trajectory by climbing the gradient it senses (chemotaxis).
+- 'The loop CLOSES through a shared store: the cell''s `uptake` output is written back into the shared `environment.uptake_flux` store and accumulates, and the mass↔uptake ledger closes exactly (Δmass == biomass_yield × cumulative uptake booked to the environment).'
+- 'Negative control: with a flat ZERO field the cell''s uptake, traction, drift, and mass gain are all exactly zero — the environment is the causal driver of the interface.'
 units_and_time:
-  time: 1 tick = 1.0 unit of dimensionless model time (interval=1.0); the run is 24 such
-    ticks (25 emitted rows including the initial state).
-  quantities: 'chemical_field values, uptake_flux, mass, traction, and the mechanical
-    field are dimensionless model units; `location` is a 1-D lattice index (0..8), not a
-    physical position. Rate constants (uptake_rate=0.1, biomass_yield=0.5,
-    migration_rate=0.1, traction_coef=0.05, diffusivity=0.2) carry no calibrated physical
-    unit.'
-  note: No quantity here is calibrated to a named nutrient, a measured chemotactic
-    velocity, or a literature metabolic/diffusion rate.
+  time: 1 tick = 1.0 unit of dimensionless model time (interval=1.0); the run is 24 such ticks (25 emitted rows including the initial state).
+  quantities: 'chemical_field values, uptake_flux, mass, traction, and the mechanical field are dimensionless model units; `location` is a 1-D lattice index (0..8), not a physical position. Rate constants (uptake_rate=0.1, biomass_yield=0.5, migration_rate=0.1, traction_coef=0.05, diffusivity=0.2) carry no calibrated physical unit.'
+  note: No quantity here is calibrated to a named nutrient, a measured chemotactic velocity, or a literature metabolic/diffusion rate.
 behavior_tests:
 - name: higher-local-field-drives-larger-uptake
   classification: primary
-  description: A higher local chemical field drives a larger `uptake` output, and because
-    uptake is linear in the sensed field, exactly 4× the field gives 4× the uptake — the
-    env→port drive made causal by driving the handler directly at two field levels.
+  description: A higher local chemical field drives a larger `uptake` output, and because uptake is linear in the sensed field, exactly 4× the field gives 4× the uptake — the env→port drive made causal by driving the handler directly at two field levels.
   measure:
     kind: observable
     path: obs.uptake
@@ -135,17 +49,12 @@ behavior_tests:
     kind: acceptance_criterion
     deterministic_pin: true
     value: 4.0
-    provenance: 'prior: uptake is driven by the local field, so more field ⇒ more uptake;
-      the linear policy makes the ratio exactly the field ratio. Observed: uptake(0.2)=0.02,
-      uptake(0.8)=0.08, ratio == 4.0 to <1e-6 (deterministic — no RNG)
-      (tests/test_fig04_env_drives_interface.py::test_higher_local_field_drives_larger_uptake)'
+    provenance: 'prior: uptake is driven by the local field, so more field ⇒ more uptake; the linear policy makes the ratio exactly the field ratio. Observed: uptake(0.2)=0.02, uptake(0.8)=0.08, ratio == 4.0 to <1e-6 (deterministic — no RNG) (tests/test_fig04_env_drives_interface.py::test_higher_local_field_drives_larger_uptake)'
   requires_simulation: none
 - name: zero-field-gives-no-drive
   classification: diagnostic
   control: negative
-  description: 'Negative control for the causal claim: with a flat ZERO chemical field the
-    cell''s uptake, traction, chemotactic drift, and mass gain are ALL exactly zero — the
-    interface ports are driven BY the environment, not free-running.'
+  description: 'Negative control for the causal claim: with a flat ZERO chemical field the cell''s uptake, traction, chemotactic drift, and mass gain are ALL exactly zero — the interface ports are driven BY the environment, not free-running.'
   measure:
     kind: observable
     path: obs.uptake
@@ -155,16 +64,11 @@ behavior_tests:
     kind: acceptance_criterion
     deterministic_pin: true
     value: 0.0
-    provenance: 'prior: remove the driving field and the interface should go silent.
-      Observed: uptake==0.0, traction==0.0, drift==0.0, mass_gain==0.0 exactly at a flat
-      zero field (deterministic)
-      (tests/test_fig04_env_drives_interface.py::test_zero_field_gives_no_drive)'
+    provenance: 'prior: remove the driving field and the interface should go silent. Observed: uptake==0.0, traction==0.0, drift==0.0, mass_gain==0.0 exactly at a flat zero field (deterministic) (tests/test_fig04_env_drives_interface.py::test_zero_field_gives_no_drive)'
   requires_simulation: none
 - name: mass-increases-monotonically-under-nutrient
   classification: primary
-  description: With nutrient present throughout, the cell's mass increases monotonically
-    over the run (net growth, never falling) — the sensed field → uptake → biomass leg of
-    the loop.
+  description: With nutrient present throughout, the cell's mass increases monotonically over the run (net growth, never falling) — the sensed field → uptake → biomass leg of the loop.
   measure:
     kind: observable
     path: obs.mass
@@ -173,16 +77,11 @@ behavior_tests:
     op: '>'
     kind: acceptance_criterion
     value: 1.0
-    provenance: 'prior: uptake is non-negative each tick and mass grows from it, so mass is
-      monotone non-decreasing and ends above its start. Observed: mass 1.0 → 1.432152 over
-      24 ticks, monotone non-decreasing throughout (the > 1.0 direction is the a-priori
-      prediction; 1.432 is the deterministic endpoint)
-      (tests/test_fig04_env_drives_interface.py::test_mass_increases_monotonically_under_nutrient)'
+    provenance: 'prior: uptake is non-negative each tick and mass grows from it, so mass is monotone non-decreasing and ends above its start. Observed: mass 1.0 → 1.432152 over 24 ticks, monotone non-decreasing throughout (the > 1.0 direction is the a-priori prediction; 1.432 is the deterministic endpoint) (tests/test_fig04_env_drives_interface.py::test_mass_increases_monotonically_under_nutrient)'
   requires_simulation: fig04-runnable
 - name: uptake-tracks-the-local-sensed-field
   classification: primary
-  description: Per-step uptake rises and falls WITH the local sensed concentration over the
-    actual run — the environment→port coupling, tick by tick, not just at endpoints.
+  description: Per-step uptake rises and falls WITH the local sensed concentration over the actual run — the environment→port coupling, tick by tick, not just at endpoints.
   measure:
     kind: derived
     path: obs.uptake_flux
@@ -191,16 +90,11 @@ behavior_tests:
     op: '>'
     kind: acceptance_criterion
     value: 0.99
-    provenance: 'prior: the port is driven by the local field, so per-step uptake should
-      track the sensed field tick by tick. Observed: correlation == 1.0 (uptake is exactly
-      linear in the sensed field; > 0.99 asserted to leave the deterministic value a small
-      margin) (tests/test_fig04_env_drives_interface.py::test_uptake_tracks_the_local_sensed_field)'
+    provenance: 'prior: the port is driven by the local field, so per-step uptake should track the sensed field tick by tick. Observed: correlation == 1.0 (uptake is exactly linear in the sensed field; > 0.99 asserted to leave the deterministic value a small margin) (tests/test_fig04_env_drives_interface.py::test_uptake_tracks_the_local_sensed_field)'
   requires_simulation: fig04-runnable
 - name: net-drift-is-up-gradient
   classification: primary
-  description: The cell drifts UP the concentration gradient over the run (net location
-    displacement positive, toward the higher-field side) — chemotaxis, the cell
-    constructing its own trajectory by climbing the field it senses.
+  description: The cell drifts UP the concentration gradient over the run (net location displacement positive, toward the higher-field side) — chemotaxis, the cell constructing its own trajectory by climbing the field it senses.
   measure:
     kind: observable
     path: obs.location
@@ -209,17 +103,11 @@ behavior_tests:
     op: '>'
     kind: acceptance_criterion
     value: 0.05
-    provenance: 'prior: drift ∝ the local gradient (higher toward index 8), so net
-      displacement is up-gradient and positive. Observed: location 4.0 → 4.195695, net drift
-      +0.195695 (> 0.05 is the loose a-priori floor; +0.196 is the deterministic value)
-      (tests/test_fig04_env_drives_interface.py::test_net_drift_is_up_gradient)'
+    provenance: 'prior: drift ∝ the local gradient (higher toward index 8), so net displacement is up-gradient and positive. Observed: location 4.0 → 4.195695, net drift +0.195695 (> 0.05 is the loose a-priori floor; +0.196 is the deterministic value) (tests/test_fig04_env_drives_interface.py::test_net_drift_is_up_gradient)'
   requires_simulation: fig04-runnable
 - name: control-loop-closes-through-shared-store
   classification: primary
-  description: The cell's `uptake` output is written back into the SHARED
-    `environment.uptake_flux` store (the same store other processes read), accumulates
-    monotonically, and the mass↔uptake ledger closes exactly — the sense→act loop closing
-    through a shared store, as the caption describes.
+  description: The cell's `uptake` output is written back into the SHARED `environment.uptake_flux` store (the same store other processes read), accumulates monotonically, and the mass↔uptake ledger closes exactly — the sense→act loop closing through a shared store, as the caption describes.
   measure:
     kind: derived
     path: obs.uptake_flux
@@ -229,11 +117,7 @@ behavior_tests:
     kind: acceptance_criterion
     deterministic_pin: true
     value: cum_uptake_flux 0.0 → 0.864305 (monotone); Δmass 0.432152 == 0.5 × 0.864305
-    provenance: 'prior: the cell writes uptake back to the shared env store and every unit
-      of biomass is biomass_yield (0.5) × a unit of uptake booked to the env, so the ledger
-      must close. Observed: cumulative uptake_flux 0.0 → 0.864305, monotone; Δmass 0.432152
-      == 0.5 × 0.864305 to <1e-9 (deterministic)
-      (tests/test_fig04_env_drives_interface.py::test_control_loop_closes_output_written_back_to_shared_env)'
+    provenance: 'prior: the cell writes uptake back to the shared env store and every unit of biomass is biomass_yield (0.5) × a unit of uptake booked to the env, so the ledger must close. Observed: cumulative uptake_flux 0.0 → 0.864305, monotone; Δmass 0.432152 == 0.5 × 0.864305 to <1e-9 (deterministic) (tests/test_fig04_env_drives_interface.py::test_control_loop_closes_output_written_back_to_shared_env)'
   requires_simulation: fig04-runnable
 runs:
 - name: fig04-runnable
@@ -241,14 +125,7 @@ runs:
   emitter: RAMEmitter
   id: fig04-runnable
   status: completed
-  provenance: 'meta_modelers_guide/composites/fig04-runnable.composite.json
-    (SpatialDiffusion D=0.2 on a length-9 map[float] grid seeded as a 0→1 nutrient
-    gradient, ProductionDegradationField source off / decay 0.03, MechanicalRelax
-    relax_rate=0.3, SingleCellSpatial cell_index=4) run 24 ticks (25 emitted rows)
-    through the process-bigraph engine (tests/test_fig04_env_drives_interface.py). The
-    composite is fully deterministic — no RNG — so all numbers reproduce exactly. The
-    baked fig04-dynamics.png in visualizations/ was rendered over the same run
-    (scripts/build_fig04_dynamics.py).'
+  provenance: 'meta_modelers_guide/composites/fig04-runnable.composite.json (SpatialDiffusion D=0.2 on a length-9 map[float] grid seeded as a 0→1 nutrient gradient, ProductionDegradationField source off / decay 0.03, MechanicalRelax relax_rate=0.3, SingleCellSpatial cell_index=4) run 24 ticks (25 emitted rows) through the process-bigraph engine (tests/test_fig04_env_drives_interface.py). The composite is fully deterministic — no RNG — so all numbers reproduce exactly. The baked fig04-dynamics.png in visualizations/ was rendered over the same run (scripts/build_fig04_dynamics.py).'
   params: {}
   outcomes:
     HIGHER-LOCAL-FIELD-DRIVES-LARGER-UPTAKE:
@@ -269,23 +146,22 @@ runs:
     CONTROL-LOOP-CLOSES-THROUGH-SHARED-STORE:
       result: PASS
       detail: cum uptake_flux 0.0 → 0.864305; Δmass 0.432152 == 0.5 × 0.864305
+- name: meta_modelers_guide.composites.fig04-runnable__1787799780__c3343d
+  status: complete
+  timestamp: 1787799780.415134
+  emitter:
+    kind: unknown
+  params: '{}'
 findings:
 - id: F-01
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'The paper''s §Cell-environment coupling figure is executable: a runnable
-    composite closes the caption''s control loop as measured simulation output. A real
-    diffusing nutrient gradient sensed at interior grid index 4 drives the cell''s interface
-    ports — uptake is linear in the local sensed field (4× field ⇒ 4× uptake; per-step
-    uptake tracks the sensed field at correlation 1.0), and a flat zero field gives zero
-    drive on every port, establishing the field as the causal driver. Deterministic
-    (no RNG), so every value reproduces run-to-run.'
+  statement: 'The paper''s §Cell-environment coupling figure is executable: a runnable composite closes the caption''s control loop as measured simulation output. A real diffusing nutrient gradient sensed at interior grid index 4 drives the cell''s interface ports — uptake is linear in the local sensed field (4× field ⇒ 4× uptake; per-step uptake tracks the sensed field at correlation 1.0), and a flat zero field gives zero drive on every port, establishing the field as the causal driver. Deterministic (no RNG), so every value reproduces run-to-run.'
   evidence:
     from_test: uptake-tracks-the-local-sensed-field
     from_run: fig04-runnable
-    observed: uptake linear in field (ratio 4.0 at 0.8 vs 0.2); per-step uptake↔local-field
-      corr == 1.0; zero field ⇒ zero uptake/traction/drift/mass-gain
+    observed: uptake linear in field (ratio 4.0 at 0.8 vs 0.2); per-step uptake↔local-field corr == 1.0; zero field ⇒ zero uptake/traction/drift/mass-gain
   provenance:
     run_ids:
     - fig04-runnable
@@ -293,173 +169,92 @@ findings:
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'The loop closes and its ledger balances: the cell writes its uptake back into
-    the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone), grows
-    mass monotonically (1.0 → 1.432152), and drifts up-gradient (index 4.0 → 4.196,
-    chemotaxis). The mass↔uptake ledger closes exactly — Δmass 0.432152 == 0.5 × cumulative
-    uptake booked to the environment — so no biomass appears that the shared env store did
-    not account for. The sense→act loop runs through a shared store exactly as panel b
-    diagrams.'
+  statement: 'The loop closes and its ledger balances: the cell writes its uptake back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone), grows mass monotonically (1.0 → 1.432152), and drifts up-gradient (index 4.0 → 4.196, chemotaxis). The mass↔uptake ledger closes exactly — Δmass 0.432152 == 0.5 × cumulative uptake booked to the environment — so no biomass appears that the shared env store did not account for. The sense→act loop runs through a shared store exactly as panel b diagrams.'
   evidence:
     from_test: control-loop-closes-through-shared-store
     from_run: fig04-runnable
-    observed: cum uptake_flux 0.0 → 0.864305; Δmass 0.432152 == 0.5 × 0.864305; mass
-      1.0 → 1.432152; location 4.0 → 4.195695 (+0.196 up-gradient)
+    observed: cum uptake_flux 0.0 → 0.864305; Δmass 0.432152 == 0.5 × 0.864305; mass 1.0 → 1.432152; location 4.0 → 4.195695 (+0.196 up-gradient)
   provenance:
     run_ids:
     - fig04-runnable
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: 'fig04-runnable.composite.json builds and runs to completion (24 ticks) through
-      the process-bigraph engine (tests/test_fig04_env_drives_interface.py); guarded by the
-      same optional-dependency conventions as the rest of this investigation.'
+    basis: 'fig04-runnable.composite.json builds and runs to completion (24 ticks) through the process-bigraph engine (tests/test_fig04_env_drives_interface.py); guarded by the same optional-dependency conventions as the rest of this investigation.'
   biological_validation:
     result: PASS
-    basis: All primary behavior tests pass on measured readouts from a real 24-tick run —
-      uptake is driven by and tracks the local sensed field, mass grows monotonically, the
-      cell drifts up-gradient, the loop closes through the shared env store, and the
-      mass↔uptake ledger balances exactly. A zero-field negative control confirms the
-      environment is the causal driver. All values are deterministic (no RNG in the
-      composite) and reproduce exactly.
+    basis: All primary behavior tests pass on measured readouts from a real 24-tick run — uptake is driven by and tracks the local sensed field, mass grows monotonically, the cell drifts up-gradient, the loop closes through the shared env store, and the mass↔uptake ledger balances exactly. A zero-field negative control confirms the environment is the causal driver. All values are deterministic (no RNG in the composite) and reproduce exactly.
   explanatory_gain:
     result: POSITIVE
-    basis: 'Making Fig cell_environment executable — a real diffusing gradient driving a real
-      typed interface that acts back on the shared store — turns the caption''s "minimal
-      structure required for control" from a drawn diagram into a runnable, testable control
-      loop: env field → sensed value → uptake → mass gain, plus up-gradient drift, with the
-      cell''s output written back to the field it depends on.'
+    basis: 'Making Fig cell_environment executable — a real diffusing gradient driving a real typed interface that acts back on the shared store — turns the caption''s "minimal structure required for control" from a drawn diagram into a runnable, testable control loop: env field → sensed value → uptake → mass gain, plus up-gradient drift, with the cell''s output written back to the field it depends on.'
 conclusion: '## Claim
 
-  The paper''s §Cell-environment coupling figure (Fig cell_environment) is executable, not
-  merely drawn. The `fig04-runnable` composite closes the caption''s control loop as
-  measured, deterministic simulation output: a real length-9 diffusing chemical grid seeded
-  as a 0→1 nutrient gradient drives a single cell at interior index 4 through one typed
-  interface (`SingleCellSpatial`), and the cell writes its uptake/traction back into the
-  shared environment store — the sense→act loop the caption calls "the minimal structure
-  required for control."
+  The paper''s §Cell-environment coupling figure (Fig cell_environment) is executable, not merely drawn. The `fig04-runnable` composite closes the caption''s control loop as measured, deterministic simulation output: a real length-9 diffusing chemical grid seeded as a 0→1 nutrient gradient drives a single cell at interior index 4 through one typed interface (`SingleCellSpatial`), and the cell writes its uptake/traction back into the shared environment store — the sense→act loop the caption calls "the minimal structure required for control."
 
 
   ## Evidence
 
-  - **HIGHER-LOCAL-FIELD-DRIVES-LARGER-UPTAKE** — uptake(0.2)=0.02, uptake(0.8)=0.08,
-    ratio == 4.0 (linear env→port drive)
+  - **HIGHER-LOCAL-FIELD-DRIVES-LARGER-UPTAKE** — uptake(0.2)=0.02, uptake(0.8)=0.08, ratio == 4.0 (linear env→port drive)
 
-  - **ZERO-FIELD-GIVES-NO-DRIVE** — flat zero field ⇒ uptake, traction, drift, mass-gain all
-    == 0.0 (the environment is the causal driver)
+  - **ZERO-FIELD-GIVES-NO-DRIVE** — flat zero field ⇒ uptake, traction, drift, mass-gain all == 0.0 (the environment is the causal driver)
 
   - **MASS-INCREASES-MONOTONICALLY-UNDER-NUTRIENT** — mass 1.0 → 1.432152, monotone
 
-  - **UPTAKE-TRACKS-THE-LOCAL-SENSED-FIELD** — per-step uptake ↔ local sensed field
-    correlation == 1.0
+  - **UPTAKE-TRACKS-THE-LOCAL-SENSED-FIELD** — per-step uptake ↔ local sensed field correlation == 1.0
 
-  - **NET-DRIFT-IS-UP-GRADIENT** — location 4.0 → 4.195695, net drift +0.196 up-gradient
-    (chemotaxis)
+  - **NET-DRIFT-IS-UP-GRADIENT** — location 4.0 → 4.195695, net drift +0.196 up-gradient (chemotaxis)
 
-  - **CONTROL-LOOP-CLOSES-THROUGH-SHARED-STORE** — cumulative uptake_flux 0.0 → 0.864305
-    (monotone); Δmass 0.432152 == 0.5 × 0.864305 (ledger closes)
+  - **CONTROL-LOOP-CLOSES-THROUGH-SHARED-STORE** — cumulative uptake_flux 0.0 → 0.864305 (monotone); Δmass 0.432152 == 0.5 × 0.864305 (ledger closes)
 
 
   ## Limitations
 
-  - This is a DIDACTIC / toy-real composite — a length-9 1-D lattice, a single cell, and
-    hand-picked rate constants chosen to make the loop legible in 24 ticks, not calibrated to
-    a named nutrient, a measured chemotactic velocity, or a literature metabolic rate.
+  - This is a DIDACTIC / toy-real composite — a length-9 1-D lattice, a single cell, and hand-picked rate constants chosen to make the loop legible in 24 ticks, not calibrated to a named nutrient, a measured chemotactic velocity, or a literature metabolic rate.
 
-  - The rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell`
-    investigation; its calibrated numbers are NOT restated as this study''s own.
+  - The rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation; its calibrated numbers are NOT restated as this study''s own.
 
-  - The environmental source is effectively OFF (source_index=99 is off-grid); the cell reads
-    and draws down a SEEDED gradient relaxing under diffusion, not a maintained supply.
+  - The environmental source is effectively OFF (source_index=99 is off-grid); the cell reads and draws down a SEEDED gradient relaxing under diffusion, not a maintained supply.
 
-  - Panel a''s chemical/electrical/mechanical/barrier fields are reduced to one 1-D chemical
-    grid plus a scalar mechanical field; location/shape are lightweight scalar proxies.
+  - Panel a''s chemical/electrical/mechanical/barrier fields are reduced to one 1-D chemical grid plus a scalar mechanical field; location/shape are lightweight scalar proxies.
 
 
   ## Next steps
 
-  - Turn on a maintained source (a valid on-grid source_index) to show steady-state coupling
-    rather than a relaxing seeded gradient.
+  - Turn on a maintained source (a valid on-grid source_index) to show steady-state coupling rather than a relaxing seeded gradient.
 
-  - Compare against the calibrated `cell-environment-coupling` cousin for the same
-    env→interface claim at a rigorous spatial resolution.'
+  - Compare against the calibrated `cell-environment-coupling` cousin for the same env→interface claim at a rigorous spatial resolution.'
 conclusion_logic:
   if_primary_tests_pass:
-    implementation_status: 'fig04-runnable.composite.json builds and runs to completion over a
-      deterministic 24-tick run through the process-bigraph engine.'
-    biological_validation: The §Cell-environment coupling control loop is demonstrated at the
-      toy-real (uncalibrated) level — a real diffusing gradient driving a real typed interface
-      that acts back on the shared store — rather than as a drawn diagram.
+    implementation_status: 'fig04-runnable.composite.json builds and runs to completion over a deterministic 24-tick run through the process-bigraph engine.'
+    biological_validation: The §Cell-environment coupling control loop is demonstrated at the toy-real (uncalibrated) level — a real diffusing gradient driving a real typed interface that acts back on the shared store — rather than as a drawn diagram.
     pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
-    - uptake no longer tracks the local field (the cell is reading the wrong grid index, or the
-      field store is no longer refined to the map[float] grid)
+    - uptake no longer tracks the local field (the cell is reading the wrong grid index, or the field store is no longer refined to the map[float] grid)
     - mass fails to grow monotonically (biomass_yield/uptake_rate mis-wired, or nutrient absent)
     - net drift is not up-gradient (the chemotaxis sign is wrong, or the seeded gradient is flat)
-    - the loop fails to close (uptake is not written back to environment.uptake_flux, or the
-      mass↔uptake ledger no longer balances)
-    block_downstream: 'any figure study reusing the SingleCellSpatial interface or the refined
-      map[float] chemical-grid store'
+    - the loop fails to close (uptake is not written back to environment.uptake_flux, or the mass↔uptake ledger no longer balances)
+    block_downstream: 'any figure study reusing the SingleCellSpatial interface or the refined map[float] chemical-grid store'
 limitations:
-- 'This `fig04-runnable` composite is DIDACTIC / toy-real: a length-9 1-D lattice, a single
-  cell, and hand-picked rate constants (uptake_rate=0.1, biomass_yield=0.5, migration_rate=0.1,
-  traction_coef=0.05, D=0.2) chosen so sense/uptake/grow/drift are all legible within a 24-tick
-  run — not fitted to a named nutrient, a measured chemotactic velocity, or a literature rate.'
-- The rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell`
-  investigation. That study demonstrates the same env→interface coupling at a calibrated spatial
-  resolution; its numbers are NOT restated here as this study's own.
-- The environmental source process is effectively OFF (source_index=99 lies off the length-9
-  grid, injecting nothing); the gradient the cell responds to is the SEEDED initial condition
-  relaxing under diffusion and being drawn down by uptake, not a maintained steady-state supply.
-- Panel a's chemical/electrical/mechanical/barrier fields are reduced here to one real 1-D
-  chemical grid plus a single scalar mechanical field relaxed toward a barrier equilibrium; the
-  electrical field is not represented.
-- '`location` is a 1-D lattice index (a drift coordinate, not a physical position in µm) and
-  `shape` is a scalar volume proxy; no 2-D/3-D morphology is represented.'
-- All numbers are exact regression pins that hold only while the composite spec and rate
-  constants are held fixed; the composite is deterministic (no RNG), so they reproduce exactly
-  run-to-run under that pinning.
-falsifiability: Overturned if a higher local field fails to produce larger uptake, if per-step
-  uptake stops tracking the local sensed field, if mass fails to grow monotonically while
-  nutrient is present, if net location drift is not up-gradient, if the cell's uptake is not
-  written back into the shared environment store or the mass↔uptake ledger fails to close, or if
-  a flat zero field produces any non-zero drive on the interface ports.
+- 'This `fig04-runnable` composite is DIDACTIC / toy-real: a length-9 1-D lattice, a single cell, and hand-picked rate constants (uptake_rate=0.1, biomass_yield=0.5, migration_rate=0.1, traction_coef=0.05, D=0.2) chosen so sense/uptake/grow/drift are all legible within a 24-tick run — not fitted to a named nutrient, a measured chemotactic velocity, or a literature rate.'
+- The rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation. That study demonstrates the same env→interface coupling at a calibrated spatial resolution; its numbers are NOT restated here as this study's own.
+- The environmental source process is effectively OFF (source_index=99 lies off the length-9 grid, injecting nothing); the gradient the cell responds to is the SEEDED initial condition relaxing under diffusion and being drawn down by uptake, not a maintained steady-state supply.
+- Panel a's chemical/electrical/mechanical/barrier fields are reduced here to one real 1-D chemical grid plus a single scalar mechanical field relaxed toward a barrier equilibrium; the electrical field is not represented.
+- '`location` is a 1-D lattice index (a drift coordinate, not a physical position in µm) and `shape` is a scalar volume proxy; no 2-D/3-D morphology is represented.'
+- All numbers are exact regression pins that hold only while the composite spec and rate constants are held fixed; the composite is deterministic (no RNG), so they reproduce exactly run-to-run under that pinning.
+falsifiability: Overturned if a higher local field fails to produce larger uptake, if per-step uptake stops tracking the local sensed field, if mass fails to grow monotonically while nutrient is present, if net location drift is not up-gradient, if the cell's uptake is not written back into the shared environment store or the mass↔uptake ledger fails to close, or if a flat zero field produces any non-zero drive on the interface ports.
 visualizations:
 - name: Figure 4
   address: svg:visualizations/figure_4.svg
   config:
-    caption: A cell couples to a spatio-flux nutrient field through one typed process
-      — sensing, metabolizing, growing, and secreting.
+    caption: A cell couples to a spatio-flux nutrient field through one typed process — sensing, metabolizing, growing, and secreting.
 - name: Environment drives the interface ports
   address: image:visualizations/fig04-dynamics.png
   config:
     chart: image
-    caption: 'Time series of the runnable fig04 coupling (fig04-runnable): a real
-      diffusing chemical grid seeded as a nutrient gradient drives the cell''s interface
-      ports. The cell at interior grid index 4 senses its LOCAL field; uptake flux
-      tracks that field, mass accumulates on uptake, and the cell drifts up-gradient
-      (chemotaxis) — env→port coupling made runnable. From scripts/build_fig04_dynamics.py.'
+    caption: 'Time series of the runnable fig04 coupling (fig04-runnable): a real diffusing chemical grid seeded as a nutrient gradient drives the cell''s interface ports. The cell at interior grid index 4 senses its LOCAL field; uptake flux tracks that field, mass accumulates on uptake, and the cell drifts up-gradient (chemotaxis) — env→port coupling made runnable. From scripts/build_fig04_dynamics.py.'
 parent_studies:
 - study: cell-environment-coupling
   condition: tests-passed
-experiment: 'Run the `fig04-runnable` composite (SpatialDiffusion on a length-9 map[float]
-  chemical grid seeded as a 0→1 nutrient gradient, a MechanicalRelax field, and a single
-  SingleCellSpatial cell at interior index 4 wired to the shared environment store) for 24
-  ticks through the process-bigraph engine, and measure whether the environmental field
-  drives the cell''s interface ports and the cell acts back on the shared field — env field →
-  sensed value → uptake → mass gain, plus up-gradient chemotactic drift, with the loop closing
-  through a shared store. Drive the SingleCellSpatial handler directly at two field levels and
-  at a flat zero field to establish the causal env→port relationship.'
-result: 'Over a deterministic 24-tick run, the environmental field drives every leg of the
-  control loop and the cell acts back on the shared field. Uptake is linear in the local sensed
-  field (uptake(0.8)/uptake(0.2) == 4.0) and per-step uptake tracks the local sensed field at
-  correlation 1.0; a flat zero field gives exactly zero drive on every port (the environment is
-  the causal driver). Mass grows monotonically 1.0 → 1.432152, the cell drifts up-gradient from
-  index 4.0 to 4.195695 (chemotaxis), and the cell''s uptake is written back into the shared
-  environment store (cumulative uptake_flux 0.0 → 0.864305, monotone) with the mass↔uptake
-  ledger closing exactly (Δmass 0.432152 == 0.5 × 0.864305). The paper''s §Cell-environment
-  coupling figure (Fig cell_environment) is thus executable, not merely drawn — the caption''s
-  "minimal structure required for control" runs as measured simulation output. These are
-  toy-real, uncalibrated magnitudes; the rigorous spatial cousin is `cell-environment-coupling`
-  in the `draft-to-living-cell` investigation.'
+experiment: 'Run the `fig04-runnable` composite (SpatialDiffusion on a length-9 map[float] chemical grid seeded as a 0→1 nutrient gradient, a MechanicalRelax field, and a single SingleCellSpatial cell at interior index 4 wired to the shared environment store) for 24 ticks through the process-bigraph engine, and measure whether the environmental field drives the cell''s interface ports and the cell acts back on the shared field — env field → sensed value → uptake → mass gain, plus up-gradient chemotactic drift, with the loop closing through a shared store. Drive the SingleCellSpatial handler directly at two field levels and at a flat zero field to establish the causal env→port relationship.'
+result: 'Over a deterministic 24-tick run, the environmental field drives every leg of the control loop and the cell acts back on the shared field. Uptake is linear in the local sensed field (uptake(0.8)/uptake(0.2) == 4.0) and per-step uptake tracks the local sensed field at correlation 1.0; a flat zero field gives exactly zero drive on every port (the environment is the causal driver). Mass grows monotonically 1.0 → 1.432152, the cell drifts up-gradient from index 4.0 to 4.195695 (chemotaxis), and the cell''s uptake is written back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone) with the mass↔uptake ledger closing exactly (Δmass 0.432152 == 0.5 × 0.864305). The paper''s §Cell-environment coupling figure (Fig cell_environment) is thus executable, not merely drawn — the caption''s "minimal structure required for control" runs as measured simulation output. These are toy-real, uncalibrated magnitudes; the rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.'

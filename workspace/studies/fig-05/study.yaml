@@ -7,108 +7,39 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Provisional
-question: 'Does the paper''s §Disintegration Fig 5b grain swap hold as a runnable composite --
-  a viability signal driving a control that toggles between a coarse cellular process and a fine
-  molecular one realizing the same interface, so that crossing the viability bound replaces the
-  coarse description with the finer one? Concretely: as an external stress ramp slides viability
-  across a threshold, does a GrainSelector flip the active grain coarse->fine at the crossing,
-  and does the shared biomass output turn over from growth (coarse, alive) to decay (fine, dying)
-  at the switch?'
-biological_summary: 'This is the toy-real runnable realization of Fig 5b''s grain swap. The paper''s
-  §Disintegration describes viability as the region of state space in which a given cellular
-  description is valid: while viability holds, the interface (inflow, biomass, energy, secretions)
-  can be treated as a coarse-grained cellular process; once environmental stress pushes interface
-  variables outside the viable bounds, that coarse description fails and the finer molecular
-  mechanism must be re-exposed. Fig 5b renders this as "a grain selector switches the active level
-  of description: a viability signal drives a control that toggles between a coarse cellular process
-  and a fine molecular one realizing the same interface. Crossing viability bounds replaces the
-  coarse description with the finer one."
+question: 'Does the paper''s §Disintegration Fig 5b grain swap hold as a runnable composite -- a viability signal driving a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface, so that crossing the viability bound replaces the coarse description with the finer one? Concretely: as an external stress ramp slides viability across a threshold, does a GrainSelector flip the active grain coarse->fine at the crossing, and does the shared biomass output turn over from growth (coarse, alive) to decay (fine, dying) at the switch?'
+biological_summary: 'This is the toy-real runnable realization of Fig 5b''s grain swap. The paper''s §Disintegration describes viability as the region of state space in which a given cellular description is valid: while viability holds, the interface (inflow, biomass, energy, secretions) can be treated as a coarse-grained cellular process; once environmental stress pushes interface variables outside the viable bounds, that coarse description fails and the finer molecular mechanism must be re-exposed. Fig 5b renders this as "a grain selector switches the active level of description: a viability signal drives a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface. Crossing viability bounds replaces the coarse description with the finer one."
 
-  The `fig05-grain-runnable` composite makes exactly that toggle executable and plays it forward in
-  time. A `StressRamp` process drives `viability` steadily down (a clean, controllable driver, not
-  a calibrated stressor). A `GrainSelector` watches that signal and SETS a shared `active_grain`
-  control string: "coarse" while viability >= threshold, "fine" once it drops below. Two gated
-  processes act on the SAME `biomass`/`energy` interface at different grains -- a `CoarseGrainProcess`
-  that grows biomass by a linear yield on inflow (the alive, cheap lumped regime) and a
-  `FineGrainProcess` that decays biomass first-order (the dying, resolved regime the coarse model
-  cannot capture) -- and each is a no-op unless it is the active grain, so exactly one runs per
-  tick. As viability slides across the threshold the biomass trajectory therefore turns over from
-  growth to decline on-screen: growth -> arrest -> decay. This is the level shift of §Disintegration
-  in miniature -- when the assumptions supporting the coarse cellular process fail, the model is
-  replaced by a description that resolves the mechanism responsible for the failure (here, the death/
-  decay regime).
+  The `fig05-grain-runnable` composite makes exactly that toggle executable and plays it forward in time. A `StressRamp` process drives `viability` steadily down (a clean, controllable driver, not a calibrated stressor). A `GrainSelector` watches that signal and SETS a shared `active_grain` control string: "coarse" while viability >= threshold, "fine" once it drops below. Two gated processes act on the SAME `biomass`/`energy` interface at different grains -- a `CoarseGrainProcess` that grows biomass by a linear yield on inflow (the alive, cheap lumped regime) and a `FineGrainProcess` that decays biomass first-order (the dying, resolved regime the coarse model cannot capture) -- and each is a no-op unless it is the active grain, so exactly one runs per tick. As viability slides across the threshold the biomass trajectory therefore turns over from growth to decline on-screen: growth -> arrest -> decay. This is the level shift of §Disintegration in miniature -- when the assumptions supporting the coarse cellular process fail, the model is replaced by a description that resolves the mechanism responsible for the failure (here, the death/ decay regime).
 
-  Observed over a deterministic 26-step run (27 emitted frames): viability declines monotonically
-  from 1.0 by 0.045/tick to its clamped 0 floor by t=23; it first drops below the 0.5 threshold at
-  t=12 (v=0.46); the active grain flips coarse->fine at t=13 -- a one-tick handover lag behind the
-  crossing, the composite''s scheduling latency, not a modeled delay. Biomass grows linearly
-  0 -> 3.9 through the flip (0.3/tick), PEAKS at 3.9 exactly at the flip tick (t=13), then decays
-  first-order to ~1.14 by t=26; energy mirrors it (peak 2.6, draining to ~0.76). No process draws
-  randomness, so the whole viability/grain/biomass/energy trajectory is bit-reproducible run to run.'
-claim: 'Composing a `StressRamp`, a `GrainSelector`, and two gated grain processes
-  (`CoarseGrainProcess`, `FineGrainProcess`) sharing one biomass/energy interface reproduces Fig 5b''s
-  viability-driven grain swap as a runnable temporal study: over a deterministic 26-step run,
-  viability declines monotonically across the 0.5 threshold, the GrainSelector flips the active grain
-  coarse->fine at the crossing (t=13, one tick after viability first reads below threshold at t=12),
-  exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse,
-  alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26). This is a didactic,
-  uncalibrated realization of the level shift the paper draws -- the coarse cellular description being
-  replaced by the finer molecular one as the cell crosses its viability bound.'
+  Observed over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23; it first drops below the 0.5 threshold at t=12 (v=0.46); the active grain flips coarse->fine at t=13 -- a one-tick handover lag behind the crossing, the composite''s scheduling latency, not a modeled delay. Biomass grows linearly 0 -> 3.9 through the flip (0.3/tick), PEAKS at 3.9 exactly at the flip tick (t=13), then decays first-order to ~1.14 by t=26; energy mirrors it (peak 2.6, draining to ~0.76). No process draws randomness, so the whole viability/grain/biomass/energy trajectory is bit-reproducible run to run.'
+claim: 'Composing a `StressRamp`, a `GrainSelector`, and two gated grain processes (`CoarseGrainProcess`, `FineGrainProcess`) sharing one biomass/energy interface reproduces Fig 5b''s viability-driven grain swap as a runnable temporal study: over a deterministic 26-step run, viability declines monotonically across the 0.5 threshold, the GrainSelector flips the active grain coarse->fine at the crossing (t=13, one tick after viability first reads below threshold at t=12), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26). This is a didactic, uncalibrated realization of the level shift the paper draws -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound.'
 baseline:
 - name: fig05-grain-runnable
   composite: meta_modelers_guide.composites.fig05-grain-runnable
   params: {}
 variants: []
 key_assumptions:
-- 'This `fig05-grain-runnable` composite is DIDACTIC / toy-real: small and illustrative, built to
-  look like Fig 5b and play forward under test -- NOT calibrated to any literature. The stress rate
-  (0.045/tick), viability threshold (0.5), coarse biomass/energy yields (0.3, 0.2), and fine decay
-  rates (0.09, 0.09) are hand-tuned magnitudes chosen to make hold -> cross -> flip -> turn-over all
-  legible within a 26-step run, not fitted to a named stressor, molecule, or measured rate.'
-- 'The coarse and fine grains are lumped stand-ins for "a coarse cellular process" and "a fine
-  molecular one," not mechanistic models: the coarse grain is a single linear yield on inflow and the
-  fine grain a single first-order decay. They realize the SAME interface (biomass, energy) at two
-  levels of description, which is the point of the figure, but neither resolves real molecular
-  mechanism.'
-- 'Viability here is an abstract scalar driven monotonically down by an external `StressRamp` -- a
-  clean controllable driver, not an emergent consequence of the cell''s own metabolism or environment.
-  The trigger is a threshold crossing on that scalar, not a spatial or biochemical collapse.'
-- 'Exactly one grain acts per tick by construction: each grain process returns an empty (no-op) update
-  unless `active_grain` matches it. The switch is a hard toggle on a shared control string, not a
-  blended or overlapping hand-off.'
-- 'The active grain flips ONE tick after viability first reads below threshold (crossing at t=12,
-  flip at t=13). This one-tick lag is the composite''s process-scheduling latency (the GrainSelector''s
-  set propagating to the grains'' gate on the next tick), NOT a modeled biological delay -- so the
-  biomass peak coincides with the grain flip (t=13), and the tests anchor on the grain flip, not the
-  raw viability cross.'
+- 'This `fig05-grain-runnable` composite is DIDACTIC / toy-real: small and illustrative, built to look like Fig 5b and play forward under test -- NOT calibrated to any literature. The stress rate (0.045/tick), viability threshold (0.5), coarse biomass/energy yields (0.3, 0.2), and fine decay rates (0.09, 0.09) are hand-tuned magnitudes chosen to make hold -> cross -> flip -> turn-over all legible within a 26-step run, not fitted to a named stressor, molecule, or measured rate.'
+- 'The coarse and fine grains are lumped stand-ins for "a coarse cellular process" and "a fine molecular one," not mechanistic models: the coarse grain is a single linear yield on inflow and the fine grain a single first-order decay. They realize the SAME interface (biomass, energy) at two levels of description, which is the point of the figure, but neither resolves real molecular mechanism.'
+- 'Viability here is an abstract scalar driven monotonically down by an external `StressRamp` -- a clean controllable driver, not an emergent consequence of the cell''s own metabolism or environment. The trigger is a threshold crossing on that scalar, not a spatial or biochemical collapse.'
+- 'Exactly one grain acts per tick by construction: each grain process returns an empty (no-op) update unless `active_grain` matches it. The switch is a hard toggle on a shared control string, not a blended or overlapping hand-off.'
+- 'The active grain flips ONE tick after viability first reads below threshold (crossing at t=12, flip at t=13). This one-tick lag is the composite''s process-scheduling latency (the GrainSelector''s set propagating to the grains'' gate on the next tick), NOT a modeled biological delay -- so the biomass peak coincides with the grain flip (t=13), and the tests anchor on the grain flip, not the raw viability cross.'
 acceptance_criteria:
-- While viability >= threshold the active grain is "coarse"; the coarse (growth) grain is the one
-  realizing the interface throughout the viable phase.
-- Once viability drops below threshold the active grain flips to "fine" and STAYS fine for the rest of
-  the run -- exactly one grain switch, coarse->fine, never reverting.
-- The grain switch tracks the viability-threshold crossing (within one tick, the scheduling handover
-  lag).
-- 'The gate hands control over: when coarse is selected only the coarse process acts (grows biomass);
-  when fine is selected only the fine process acts (decays biomass); the two act in OPPOSITE directions
-  on the shared biomass output.'
-- The shared biomass (and energy) output turns over at the switch -- growing monotonically while the
-  coarse grain is active, peaking at the flip, then decaying monotonically once the fine grain takes
-  over.
-- With no RNG anywhere in the composite, the whole viability/grain/biomass/energy trajectory is
-  bit-reproducible across independent builds.
+- While viability >= threshold the active grain is "coarse"; the coarse (growth) grain is the one realizing the interface throughout the viable phase.
+- Once viability drops below threshold the active grain flips to "fine" and STAYS fine for the rest of the run -- exactly one grain switch, coarse->fine, never reverting.
+- The grain switch tracks the viability-threshold crossing (within one tick, the scheduling handover lag).
+- 'The gate hands control over: when coarse is selected only the coarse process acts (grows biomass); when fine is selected only the fine process acts (decays biomass); the two act in OPPOSITE directions on the shared biomass output.'
+- The shared biomass (and energy) output turns over at the switch -- growing monotonically while the coarse grain is active, peaking at the flip, then decaying monotonically once the fine grain takes over.
+- With no RNG anywhere in the composite, the whole viability/grain/biomass/energy trajectory is bit-reproducible across independent builds.
 units_and_time:
-  time: 1 tick = unspecified physical time (dimensionless model time); the run is 26 steps (27 emitted
-    frames).
-  quantities: 'viability, biomass, energy, and inflow are dimensionless model units -- viability is an
-    abstract [0,1] scalar, the 0.5 threshold, the 0.045/tick stress rate, the coarse yields (0.3, 0.2),
-    and the fine decay rates (0.09, 0.09) carry no calibrated physical unit; active_grain is a control
-    string ("coarse"/"fine").'
+  time: 1 tick = unspecified physical time (dimensionless model time); the run is 26 steps (27 emitted frames).
+  quantities: 'viability, biomass, energy, and inflow are dimensionless model units -- viability is an abstract [0,1] scalar, the 0.5 threshold, the 0.045/tick stress rate, the coarse yields (0.3, 0.2), and the fine decay rates (0.09, 0.09) carry no calibrated physical unit; active_grain is a control string ("coarse"/"fine").'
   note: No quantity here is calibrated to a named stressor, molecule, or literature target.
 behavior_tests:
 - name: coarse-grain-while-viable
   classification: primary
-  description: While viability >= threshold, the active grain is "coarse" -- the coarse cellular
-    process realizes the interface throughout the viable phase (the pre-crossing hold of Fig 5b).
+  description: While viability >= threshold, the active grain is "coarse" -- the coarse cellular process realizes the interface throughout the viable phase (the pre-crossing hold of Fig 5b).
   measure:
     kind: observable
     path: obs.active_grain
@@ -117,17 +48,11 @@ behavior_tests:
     op: '=='
     kind: acceptance_criterion
     value: coarse
-    provenance: 'prior: while the cell is viable the cheap coarse description suffices -> expect
-      active_grain == "coarse" for every frame with viability >= 0.5. Observed: coarse for all frames
-      t=0..12 (viability 1.0 down to 0.505 at t=11, 0.46 at t=12 still emitted coarse -- the flip lags
-      one tick); no frame with viability >= 0.5 ever reads "fine"
-      (tests/test_fig05_grain_swap.py::test_coarse_grain_while_viable)'
+    provenance: 'prior: while the cell is viable the cheap coarse description suffices -> expect active_grain == "coarse" for every frame with viability >= 0.5. Observed: coarse for all frames t=0..12 (viability 1.0 down to 0.505 at t=11, 0.46 at t=12 still emitted coarse -- the flip lags one tick); no frame with viability >= 0.5 ever reads "fine" (tests/test_fig05_grain_swap.py::test_coarse_grain_while_viable)'
   requires_simulation: fig05-grain-runnable
 - name: flips-to-fine-and-stays
   classification: primary
-  description: Once viability drops below threshold the active grain flips to "fine" and stays fine for
-    the rest of the run -- exactly one grain switch, coarse->fine, never reverting. The compositional
-    rewrite of Fig 5b (coarse description replaced by the finer one).
+  description: Once viability drops below threshold the active grain flips to "fine" and stays fine for the rest of the run -- exactly one grain switch, coarse->fine, never reverting. The compositional rewrite of Fig 5b (coarse description replaced by the finer one).
   measure:
     kind: observable
     path: obs.active_grain
@@ -136,16 +61,11 @@ behavior_tests:
     op: '=='
     kind: acceptance_criterion
     value: exactly one transition, coarse->fine, fine thereafter
-    provenance: 'prior: crossing the viability bound replaces the coarse description with the finer one,
-      and (with viability monotonically falling) it never reverts -> expect exactly one coarse->fine
-      switch and fine for all subsequent frames. Observed: grain[0]=="coarse", a single flip at t=13,
-      "fine" for every frame t=13..26
-      (tests/test_fig05_grain_swap.py::test_flips_to_fine_and_stays)'
+    provenance: 'prior: crossing the viability bound replaces the coarse description with the finer one, and (with viability monotonically falling) it never reverts -> expect exactly one coarse->fine switch and fine for all subsequent frames. Observed: grain[0]=="coarse", a single flip at t=13, "fine" for every frame t=13..26 (tests/test_fig05_grain_swap.py::test_flips_to_fine_and_stays)'
   requires_simulation: fig05-grain-runnable
 - name: switch-at-threshold-crossing
   classification: primary
-  description: The grain switch tracks the viability-threshold crossing -- the flip happens within one
-    tick of the tick where viability first drops below threshold (the scheduling handover lag).
+  description: The grain switch tracks the viability-threshold crossing -- the flip happens within one tick of the tick where viability first drops below threshold (the scheduling handover lag).
   measure:
     kind: observable
     path: obs.active_grain
@@ -154,18 +74,11 @@ behavior_tests:
     op: <=
     kind: acceptance_criterion
     value: 1
-    provenance: 'prior: the viability signal drives the control, so the flip must coincide with the
-      crossing up to the composite''s one-tick scheduling latency. Observed: viability first < 0.5 at
-      t=12; grain flips coarse->fine at t=13; |13-12| == 1
-      (tests/test_fig05_grain_swap.py::test_switch_at_threshold_crossing)'
+    provenance: 'prior: the viability signal drives the control, so the flip must coincide with the crossing up to the composite''s one-tick scheduling latency. Observed: viability first < 0.5 at t=12; grain flips coarse->fine at t=13; |13-12| == 1 (tests/test_fig05_grain_swap.py::test_switch_at_threshold_crossing)'
   requires_simulation: fig05-grain-runnable
 - name: gate-hands-control-to-the-active-grain
   classification: primary
-  description: The control string genuinely gates the two grains -- when coarse is selected only the
-    coarse process acts (grows biomass) and the fine process is inert; when fine is selected only the
-    fine process acts (decays biomass) and the coarse process is inert; the two act in OPPOSITE
-    directions on the shared biomass output. Unit-level test on the process objects, independent of the
-    full run.
+  description: The control string genuinely gates the two grains -- when coarse is selected only the coarse process acts (grows biomass) and the fine process is inert; when fine is selected only the fine process acts (decays biomass) and the coarse process is inert; the two act in OPPOSITE directions on the shared biomass output. Unit-level test on the process objects, independent of the full run.
   measure:
     kind: derived
     path: process.update
@@ -174,17 +87,11 @@ behavior_tests:
     op: opposite_signs_and_gated
     kind: acceptance_criterion
     value: coarse.update>0 when active, fine.update<0 when active, each == {} when not active
-    provenance: 'driven the two process objects directly with a standing biomass/energy/inflow: coarse
-      selected -> biomass update +0.3 (>0), fine selected -> biomass update <0 (decay); each returns an
-      empty dict when it is not the active grain; coarse (grows) and fine (decays) act in opposite
-      directions on the shared biomass output
-      (tests/test_fig05_grain_swap.py::test_gate_hands_control_to_the_active_grain)'
+    provenance: 'driven the two process objects directly with a standing biomass/energy/inflow: coarse selected -> biomass update +0.3 (>0), fine selected -> biomass update <0 (decay); each returns an empty dict when it is not the active grain; coarse (grows) and fine (decays) act in opposite directions on the shared biomass output (tests/test_fig05_grain_swap.py::test_gate_hands_control_to_the_active_grain)'
   requires_simulation: none
 - name: biomass-turns-over-at-the-switch
   classification: primary
-  description: The shared biomass output turns over at the grain switch -- growing monotonically while
-    the coarse grain is active, peaking at the flip, then decaying monotonically once the fine grain
-    takes over. The on-screen signature of the level shift.
+  description: The shared biomass output turns over at the grain switch -- growing monotonically while the coarse grain is active, peaking at the flip, then decaying monotonically once the fine grain takes over. The on-screen signature of the level shift.
   measure:
     kind: observable
     path: obs.biomass
@@ -193,17 +100,11 @@ behavior_tests:
     op: peaks_at_flip_then_decays
     kind: acceptance_criterion
     value: biomass grows to a peak at the flip tick then strictly declines
-    provenance: 'prior: the coarse (alive) grain grows biomass, the fine (dying) grain decays it, so
-      the trajectory must turn over at the switch. Observed: biomass rises linearly 0 -> 3.9 through
-      t=13 (0.3/tick), peaks at 3.9 exactly at the flip tick (t=13), then decays first-order to ~1.14
-      by t=26; peak index == flip index (|peak-flip| == 0 <= 1)
-      (tests/test_fig05_grain_swap.py::test_biomass_grows_then_decays_at_the_switch)'
+    provenance: 'prior: the coarse (alive) grain grows biomass, the fine (dying) grain decays it, so the trajectory must turn over at the switch. Observed: biomass rises linearly 0 -> 3.9 through t=13 (0.3/tick), peaks at 3.9 exactly at the flip tick (t=13), then decays first-order to ~1.14 by t=26; peak index == flip index (|peak-flip| == 0 <= 1) (tests/test_fig05_grain_swap.py::test_biomass_grows_then_decays_at_the_switch)'
   requires_simulation: fig05-grain-runnable
 - name: energy-mirrors-biomass
   classification: primary
-  description: Energy is the second shared output the gate hands over -- the coarse grain builds it
-    while viable, the fine grain drains it once dying, so it grows-then-decays with the same turn-over
-    as biomass, confirming the gate acts on the whole interface, not just biomass.
+  description: Energy is the second shared output the gate hands over -- the coarse grain builds it while viable, the fine grain drains it once dying, so it grows-then-decays with the same turn-over as biomass, confirming the gate acts on the whole interface, not just biomass.
   measure:
     kind: observable
     path: obs.energy
@@ -212,16 +113,11 @@ behavior_tests:
     op: peaks_at_flip_then_decays
     kind: acceptance_criterion
     value: energy grows to a peak at the flip tick then strictly declines
-    provenance: 'prior: both interface outputs are gated by the same control, so energy must mirror
-      biomass. Observed: energy rises 0 -> 2.6 through t=13 (0.2/tick), peaks at 2.6 at the flip tick,
-      then drains first-order to ~0.76 by t=26
-      (tests/test_fig05_grain_swap.py::test_energy_mirrors_biomass_across_the_switch)'
+    provenance: 'prior: both interface outputs are gated by the same control, so energy must mirror biomass. Observed: energy rises 0 -> 2.6 through t=13 (0.2/tick), peaks at 2.6 at the flip tick, then drains first-order to ~0.76 by t=26 (tests/test_fig05_grain_swap.py::test_energy_mirrors_biomass_across_the_switch)'
   requires_simulation: fig05-grain-runnable
 - name: viability-declines-monotonically
   classification: primary
-  description: The StressRamp is the clean driver -- viability only ever falls and is driven below the
-    threshold, all the way to its clamped 0 floor, so the crossing (and thus the grain swap) is
-    guaranteed rather than incidental.
+  description: The StressRamp is the clean driver -- viability only ever falls and is driven below the threshold, all the way to its clamped 0 floor, so the crossing (and thus the grain swap) is guaranteed rather than incidental.
   measure:
     kind: observable
     path: obs.viability
@@ -230,17 +126,11 @@ behavior_tests:
     op: monotone_nonincreasing_to_zero
     kind: acceptance_criterion
     value: viability[0]==1.0, never rises, min<0.5, viability[-1]==0.0
-    provenance: 'prior: the StressRamp returns a non-positive delta clamped so viability never goes
-      below 0 -> expect a monotone non-increasing trajectory that reaches the 0 floor. Observed:
-      viability 1.0 falling by 0.045/tick, never rising, below 0.5 from t=12, reaching 0.0 by t=23 and
-      held there through t=26
-      (tests/test_fig05_grain_swap.py::test_viability_declines_monotonically_to_zero)'
+    provenance: 'prior: the StressRamp returns a non-positive delta clamped so viability never goes below 0 -> expect a monotone non-increasing trajectory that reaches the 0 floor. Observed: viability 1.0 falling by 0.045/tick, never rising, below 0.5 from t=12, reaching 0.0 by t=23 and held there through t=26 (tests/test_fig05_grain_swap.py::test_viability_declines_monotonically_to_zero)'
   requires_simulation: fig05-grain-runnable
 - name: trajectory-is-deterministic
   classification: diagnostic
-  description: 'No process in the composite draws randomness, so two independent builds emit an
-    identical viability/grain/biomass trajectory -- the pins in this study are exact, not
-    representative.'
+  description: 'No process in the composite draws randomness, so two independent builds emit an identical viability/grain/biomass trajectory -- the pins in this study are exact, not representative.'
   measure:
     kind: derived
     path: obs
@@ -250,10 +140,7 @@ behavior_tests:
     kind: regression_pin
     deterministic_pin: true
     value: run_A == run_B
-    provenance: 'StressRamp, GrainSelector, and both grains are pure functions of state (no RNG), so
-      two independent Composite builds emit byte-identical viability/grain/biomass sequences -- the
-      exact tick pins (crossing t=12, flip t=13, biomass peak 3.9) are reproducible, not seed-dependent
-      (tests/test_fig05_grain_swap.py::test_trajectory_is_deterministic)'
+    provenance: 'StressRamp, GrainSelector, and both grains are pure functions of state (no RNG), so two independent Composite builds emit byte-identical viability/grain/biomass sequences -- the exact tick pins (crossing t=12, flip t=13, biomass peak 3.9) are reproducible, not seed-dependent (tests/test_fig05_grain_swap.py::test_trajectory_is_deterministic)'
   requires_simulation: fig05-grain-runnable
 runs:
 - name: fig05-grain-runnable
@@ -261,11 +148,7 @@ runs:
   emitter: RAMEmitter
   id: fig05-grain-runnable
   status: completed
-  provenance: 'meta_modelers_guide/composites/fig05-grain-runnable.composite.json (StressRamp
-    stress_rate=0.045, GrainSelector threshold=0.5, CoarseGrainProcess biomass_yield=0.3/
-    energy_yield=0.2, FineGrainProcess decay_rate=0.09/energy_decay=0.09) run 26 steps (27 emitted
-    frames) to completion through the process-bigraph engine
-    (tests/test_fig05_grain_swap.py). Deterministic -- no RNG anywhere in the composite.'
+  provenance: 'meta_modelers_guide/composites/fig05-grain-runnable.composite.json (StressRamp stress_rate=0.045, GrainSelector threshold=0.5, CoarseGrainProcess biomass_yield=0.3/ energy_yield=0.2, FineGrainProcess decay_rate=0.09/energy_decay=0.09) run 26 steps (27 emitted frames) to completion through the process-bigraph engine (tests/test_fig05_grain_swap.py). Deterministic -- no RNG anywhere in the composite.'
   params: {}
   outcomes:
     COARSE-GRAIN-WHILE-VIABLE:
@@ -292,17 +175,18 @@ runs:
     TRAJECTORY-IS-DETERMINISTIC:
       result: PASS
       detail: two independent builds emit identical viability/grain/biomass sequences
+- name: meta_modelers_guide.composites.fig05-grain-runnable__1787799780__641657
+  status: complete
+  timestamp: 1787799780.434656
+  emitter:
+    kind: unknown
+  params: '{}'
 findings:
 - id: F-01
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'A viability signal driving a GrainSelector that toggles a shared control string flips the
-    active grain coarse->fine exactly at the viability-threshold crossing (within the composite''s
-    one-tick scheduling handover), and stays fine for the rest of the run. This realizes Fig 5b''s
-    central claim -- crossing the viability bound replaces the coarse cellular description with the
-    finer molecular one -- as a runnable, deterministic toggle. Confirmed: exactly one flip, coarse->
-    fine at t=13, one tick after viability first reads below 0.5 at t=12, fine thereafter.'
+  statement: 'A viability signal driving a GrainSelector that toggles a shared control string flips the active grain coarse->fine exactly at the viability-threshold crossing (within the composite''s one-tick scheduling handover), and stays fine for the rest of the run. This realizes Fig 5b''s central claim -- crossing the viability bound replaces the coarse cellular description with the finer molecular one -- as a runnable, deterministic toggle. Confirmed: exactly one flip, coarse-> fine at t=13, one tick after viability first reads below 0.5 at t=12, fine thereafter.'
   evidence:
     from_test: flips-to-fine-and-stays
     from_run: fig05-grain-runnable
@@ -314,14 +198,7 @@ findings:
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'Because exactly one grain acts per tick and the two grains act in opposite directions on
-    the same interface, the shared biomass (and energy) output visibly turns over at the switch --
-    growing under the coarse (alive) grain, peaking at the flip, then decaying under the fine (dying)
-    grain. This is the on-screen signature of the §Disintegration level shift: the coarse growth model
-    is replaced by the finer decay model the moment its viability assumption fails. Confirmed: biomass
-    0 -> 3.9 (peak at the flip, t=13) -> ~1.14 by t=26; energy mirrors it (2.6 -> ~0.76). The
-    biomass/energy peaks coincide with the grain flip, so the tests anchor on the flip, not the raw
-    viability cross.'
+  statement: 'Because exactly one grain acts per tick and the two grains act in opposite directions on the same interface, the shared biomass (and energy) output visibly turns over at the switch -- growing under the coarse (alive) grain, peaking at the flip, then decaying under the fine (dying) grain. This is the on-screen signature of the §Disintegration level shift: the coarse growth model is replaced by the finer decay model the moment its viability assumption fails. Confirmed: biomass 0 -> 3.9 (peak at the flip, t=13) -> ~1.14 by t=26; energy mirrors it (2.6 -> ~0.76). The biomass/energy peaks coincide with the grain flip, so the tests anchor on the flip, not the raw viability cross.'
   evidence:
     from_test: biomass-turns-over-at-the-switch
     from_run: fig05-grain-runnable
@@ -333,10 +210,7 @@ findings:
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'The whole trajectory is deterministic -- no process draws randomness, so two independent
-    builds emit byte-identical viability/grain/biomass/energy sequences. The exact pins in this study
-    (crossing at t=12, flip at t=13, biomass peak 3.9) are therefore reproducible facts of the
-    composite, not seed-dependent artifacts.'
+  statement: 'The whole trajectory is deterministic -- no process draws randomness, so two independent builds emit byte-identical viability/grain/biomass/energy sequences. The exact pins in this study (crossing at t=12, flip at t=13, biomass peak 3.9) are therefore reproducible facts of the composite, not seed-dependent artifacts.'
   evidence:
     from_test: trajectory-is-deterministic
     from_run: fig05-grain-runnable
@@ -347,33 +221,18 @@ findings:
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: 'fig05-grain-runnable.composite.json builds and runs to completion (26 steps) through the
-      process-bigraph engine (tests/test_fig05_grain_swap.py, 8 tests).'
+    basis: 'fig05-grain-runnable.composite.json builds and runs to completion (26 steps) through the process-bigraph engine (tests/test_fig05_grain_swap.py, 8 tests).'
   biological_validation:
     result: PASS
-    basis: All primary behavior tests pass on measured readouts from a deterministic 26-step run -- the
-      coarse grain holds while viable, the grain flips coarse->fine at the viability-threshold crossing
-      (within the one-tick handover) and stays fine, the gate hands control so exactly one grain acts
-      per tick, and the shared biomass/energy output turns over from growth to decay at the switch. The
-      composite has no RNG, so every pin is exact and reproducible.
+    basis: All primary behavior tests pass on measured readouts from a deterministic 26-step run -- the coarse grain holds while viable, the grain flips coarse->fine at the viability-threshold crossing (within the one-tick handover) and stays fine, the gate hands control so exactly one grain acts per tick, and the shared biomass/energy output turns over from growth to decay at the switch. The composite has no RNG, so every pin is exact and reproducible.
   explanatory_gain:
     result: POSITIVE
-    basis: 'Making Fig 5b''s grain swap runnable -- a real GrainSelector toggling real gated processes
-      on a live viability signal, rather than a static diagram -- shows the level shift as temporal
-      behavior: the biomass trajectory itself turning over as the coarse description is replaced by the
-      finer one. The figure is executable, not merely drawn.'
+    basis: 'Making Fig 5b''s grain swap runnable -- a real GrainSelector toggling real gated processes on a live viability signal, rather than a static diagram -- shows the level shift as temporal behavior: the biomass trajectory itself turning over as the coarse description is replaced by the finer one. The figure is executable, not merely drawn.'
 conclusion: '## Claims
 
-  - Composing a StressRamp, a GrainSelector, and two gated grain processes (CoarseGrainProcess,
-    FineGrainProcess) sharing one biomass/energy interface reproduces Fig 5b''s viability-driven grain
-    swap as a runnable temporal study. Over a deterministic 26-step run: viability declines
-    monotonically across the 0.5 threshold, the grain flips coarse->fine at t=13 (one tick after
-    viability first reads below threshold at t=12, the scheduling handover), exactly one grain acts per
-    tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the
-    flip) to first-order decay (fine, dying; ~1.14 by t=26), with energy mirroring it (2.6 -> ~0.76).
+  - Composing a StressRamp, a GrainSelector, and two gated grain processes (CoarseGrainProcess, FineGrainProcess) sharing one biomass/energy interface reproduces Fig 5b''s viability-driven grain swap as a runnable temporal study. Over a deterministic 26-step run: viability declines monotonically across the 0.5 threshold, the grain flips coarse->fine at t=13 (one tick after viability first reads below threshold at t=12, the scheduling handover), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26), with energy mirroring it (2.6 -> ~0.76).
 
-  - The whole trajectory is bit-reproducible -- no process draws randomness -- so every pin (crossing
-    t=12, flip t=13, biomass peak 3.9) is an exact, deterministic fact of the composite.
+  - The whole trajectory is bit-reproducible -- no process draws randomness -- so every pin (crossing t=12, flip t=13, biomass peak 3.9) is an exact, deterministic fact of the composite.
 
 
   ## Evidence
@@ -384,8 +243,7 @@ conclusion: '## Claims
 
   - **SWITCH-AT-THRESHOLD-CROSSING** -- viability first < 0.5 at t=12, flip at t=13, |13-12| == 1
 
-  - **GATE-HANDS-CONTROL-TO-THE-ACTIVE-GRAIN** -- coarse grows (+), fine decays (-), each inert when
-    not selected; opposite directions on the shared biomass output
+  - **GATE-HANDS-CONTROL-TO-THE-ACTIVE-GRAIN** -- coarse grows (+), fine decays (-), each inert when not selected; opposite directions on the shared biomass output
 
   - **BIOMASS-TURNS-OVER-AT-THE-SWITCH** -- biomass 0 -> 3.9 (peak at the flip) -> ~1.14 by t=26
 
@@ -398,74 +256,41 @@ conclusion: '## Claims
 
   ## Limitations
 
-  - This composite is didactic / toy-real: the stress rate, threshold, yields, and decay rates are
-    hand-tuned to make the arc legible in 26 steps, not calibrated to any named stressor, molecule, or
-    measured rate.
+  - This composite is didactic / toy-real: the stress rate, threshold, yields, and decay rates are hand-tuned to make the arc legible in 26 steps, not calibrated to any named stressor, molecule, or measured rate.
 
-  - The coarse and fine grains are lumped single-term stand-ins for "a coarse cellular process" and "a
-    fine molecular one"; neither resolves real molecular mechanism.
+  - The coarse and fine grains are lumped single-term stand-ins for "a coarse cellular process" and "a fine molecular one"; neither resolves real molecular mechanism.
 
-  - Viability is an abstract scalar driven down by an external ramp, not an emergent consequence of the
-    cell''s metabolism or environment; the trigger is a threshold crossing on that scalar.
+  - Viability is an abstract scalar driven down by an external ramp, not an emergent consequence of the cell''s metabolism or environment; the trigger is a threshold crossing on that scalar.
 
-  - The one-tick lag between the viability crossing (t=12) and the grain flip (t=13) is the composite''s
-    process-scheduling latency, not a modeled biological delay.
+  - The one-tick lag between the viability crossing (t=12) and the grain flip (t=13) is the composite''s process-scheduling latency, not a modeled biological delay.
 
-  - The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation, where
-    a real CPM cell loses structural viability under a real diffusing acetate field and its shed pixels
-    become scattering debris particles -- a per-pixel, calibrated-in-form realization of the same
-    §Disintegration level shift. Do not read that cousin''s numbers as this study''s.
+  - The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation, where a real CPM cell loses structural viability under a real diffusing acetate field and its shed pixels become scattering debris particles -- a per-pixel, calibrated-in-form realization of the same §Disintegration level shift. Do not read that cousin''s numbers as this study''s.
 
 
   ## Next steps
 
-  - Drive viability from an emergent quantity (e.g. an energy or nutrient store) rather than a scripted
-    ramp, so the crossing arises from the cell''s own dynamics.
+  - Drive viability from an emergent quantity (e.g. an energy or nutrient store) rather than a scripted ramp, so the crossing arises from the cell''s own dynamics.
 
-  - Make the fine grain a genuinely multi-species molecular mechanism rather than a single decay term,
-    to show the coarse->fine refinement resolving real structure.'
+  - Make the fine grain a genuinely multi-species molecular mechanism rather than a single decay term, to show the coarse->fine refinement resolving real structure.'
 conclusion_logic:
   if_primary_tests_pass:
-    implementation_status: 'fig05-grain-runnable.composite.json builds and runs to completion (26
-      steps) through the engine, deterministically.'
-    biological_validation: Fig 5b''s viability-driven grain swap is demonstrated at the toy-real
-      (uncalibrated) level -- a live viability signal toggling gated coarse/fine grains on a shared
-      interface, with the biomass trajectory turning over at the switch, rather than a static diagram.
+    implementation_status: 'fig05-grain-runnable.composite.json builds and runs to completion (26 steps) through the engine, deterministically.'
+    biological_validation: Fig 5b''s viability-driven grain swap is demonstrated at the toy-real (uncalibrated) level -- a live viability signal toggling gated coarse/fine grains on a shared interface, with the biomass trajectory turning over at the switch, rather than a static diagram.
     pipeline_unblocks: []
   if_primary_tests_fail:
     diagnose:
-    - the grain never flips (GrainSelector not wired to viability, or viability never crosses threshold
-      within the run)
-    - the flip does not track the crossing (scheduling latency changed, or the stress rate no longer
-      brings viability below threshold in time)
-    - biomass does not turn over (a grain''s gate is broken, so both or neither act, or the yields/decay
-      rates no longer produce visible growth-then-decay)
+    - the grain never flips (GrainSelector not wired to viability, or viability never crosses threshold within the run)
+    - the flip does not track the crossing (scheduling latency changed, or the stress rate no longer brings viability below threshold in time)
+    - biomass does not turn over (a grain''s gate is broken, so both or neither act, or the yields/decay rates no longer produce visible growth-then-decay)
     - the trajectory is not reproducible (an RNG was introduced somewhere in the composite)
     block_downstream: 'any figure study reusing the GrainSelector / gated-grain toggle pattern'
 limitations:
-- This composite is didactic / toy-real -- the stress rate (0.045/tick), viability threshold (0.5),
-  coarse yields (0.3, 0.2), and fine decay rates (0.09, 0.09) are hand-tuned magnitudes chosen to make
-  hold -> cross -> flip -> turn-over legible within a 26-step run, not fitted to a named stressor,
-  molecule, or measured rate.
-- The coarse and fine grains are lumped single-term stand-ins (one linear yield, one first-order decay)
-  for "a coarse cellular process" and "a fine molecular one"; they realize the same interface at two
-  levels of description -- the point of the figure -- but neither resolves real molecular mechanism.
-- Viability is an abstract scalar driven monotonically down by an external StressRamp, a clean
-  controllable driver rather than an emergent consequence of the cell''s own metabolism or environment;
-  the trigger is a threshold crossing on that scalar, not a spatial or biochemical collapse.
-- The active grain flips one tick after viability first reads below threshold (crossing t=12, flip
-  t=13). This one-tick lag is the composite''s process-scheduling latency (the GrainSelector''s set
-  propagating to the grains'' gate on the next tick), not a modeled biological delay -- so the biomass
-  peak coincides with the grain flip and the tests anchor on the flip, not the raw viability cross.
-- The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation, where a
-  real CPM cell loses structural viability under a real diffusing acetate field and its shed pixels
-  become scattering debris particles -- a per-pixel realization of the same §Disintegration level
-  shift. This study does not restate that cousin''s numbers as its own.
-falsifiability: Overturned if the active grain fails to be "coarse" throughout the viable phase, if the
-  grain never flips to "fine" or flips more than once or reverts, if the flip does not track the
-  viability-threshold crossing within one tick, if the gate fails to make exactly one grain act per
-  tick (both or neither acting), if the shared biomass output fails to grow-then-decay with a peak at
-  the switch, or if two independent builds produce differing trajectories (implying a hidden RNG).
+- This composite is didactic / toy-real -- the stress rate (0.045/tick), viability threshold (0.5), coarse yields (0.3, 0.2), and fine decay rates (0.09, 0.09) are hand-tuned magnitudes chosen to make hold -> cross -> flip -> turn-over legible within a 26-step run, not fitted to a named stressor, molecule, or measured rate.
+- The coarse and fine grains are lumped single-term stand-ins (one linear yield, one first-order decay) for "a coarse cellular process" and "a fine molecular one"; they realize the same interface at two levels of description -- the point of the figure -- but neither resolves real molecular mechanism.
+- Viability is an abstract scalar driven monotonically down by an external StressRamp, a clean controllable driver rather than an emergent consequence of the cell''s own metabolism or environment; the trigger is a threshold crossing on that scalar, not a spatial or biochemical collapse.
+- The active grain flips one tick after viability first reads below threshold (crossing t=12, flip t=13). This one-tick lag is the composite''s process-scheduling latency (the GrainSelector''s set propagating to the grains'' gate on the next tick), not a modeled biological delay -- so the biomass peak coincides with the grain flip and the tests anchor on the flip, not the raw viability cross.
+- The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation, where a real CPM cell loses structural viability under a real diffusing acetate field and its shed pixels become scattering debris particles -- a per-pixel realization of the same §Disintegration level shift. This study does not restate that cousin''s numbers as its own.
+falsifiability: Overturned if the active grain fails to be "coarse" throughout the viable phase, if the grain never flips to "fine" or flips more than once or reverts, if the flip does not track the viability-threshold crossing within one tick, if the gate fails to make exactly one grain act per tick (both or neither acting), if the shared biomass output fails to grow-then-decay with a peak at the switch, or if two independent builds produce differing trajectories (implying a hidden RNG).
 visualizations:
 - name: Figure 5
   address: svg:visualizations/figure_5.svg
@@ -479,19 +304,5 @@ visualizations:
 parent_studies:
 - study: disintegration
   condition: tests-passed
-experiment: 'Run the `fig05-grain-runnable` composite (StressRamp -> GrainSelector -> gated
-  CoarseGrainProcess / FineGrainProcess sharing one biomass/energy interface) to completion over 26
-  steps through the process-bigraph engine, and measure whether a monotonically declining viability
-  signal crossing a threshold is enough to flip the active grain coarse->fine at the crossing and turn
-  the shared biomass output over from growth to decay.'
-result: 'Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from
-  1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12
-  (v=0.46). The active grain flips coarse->fine at t=13 -- exactly one flip, one tick after the
-  crossing (the composite''s scheduling handover), fine for the rest of the run. Exactly one grain acts
-  per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -> 3.9 through
-  the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with
-  energy mirroring it (peak 2.6 -> ~0.76). No process draws randomness, so the whole trajectory is
-  bit-reproducible and every pin is exact. This realizes Fig 5b''s viability-driven grain swap as a
-  runnable temporal study -- the coarse cellular description being replaced by the finer molecular one
-  as the cell crosses its viability bound -- at the toy-real, uncalibrated level. The rigorous spatial
-  cousin is `disintegration` in the `draft-to-living-cell` investigation.'
+experiment: 'Run the `fig05-grain-runnable` composite (StressRamp -> GrainSelector -> gated CoarseGrainProcess / FineGrainProcess sharing one biomass/energy interface) to completion over 26 steps through the process-bigraph engine, and measure whether a monotonically declining viability signal crossing a threshold is enough to flip the active grain coarse->fine at the crossing and turn the shared biomass output over from growth to decay.'
+result: 'Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse->fine at t=13 -- exactly one flip, one tick after the crossing (the composite''s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -> 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -> ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b''s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.'
