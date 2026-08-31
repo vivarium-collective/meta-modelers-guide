@@ -99,7 +99,7 @@ membrane* (`prop to phi`), never ex nihilo. So the internal process's ability to
 boundary material is conditioned on the boundary it maintains — a closed loop, not an
 external supply.
 
-**Viability bound (beer2023 "constraints on the shared state that must be maintained")** —
+**Viability bound (beer2024deriving "constraints on the shared state that must be maintained")** —
 verified by breaking the boundary at steady state and watching it fail to recover:
 
 ```
@@ -207,7 +207,7 @@ caveat ("illustrates the closure pattern, not validated autopoiesis";
   *"A membrane alone is insufficient: a vesicle may form a boundary without constituting a
   living system. A stronger criterion is that the processes inside the boundary
   collectively contribute to maintaining the organization that, in turn, keeps those
-  processes possible."* And the viability-bound line (beer2023): *"viability bounds arise
+  processes possible."* And the viability-bound line (beer2024deriving): *"viability bounds arise
   as constraints on the shared state that must be maintained for the composition to
   persist."* The negative-control vesicle **is** the "membrane alone"; the closed loop is
   the "stronger criterion." Re-verify these against the current paper source at

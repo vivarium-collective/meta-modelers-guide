@@ -28,6 +28,7 @@ UNITS: dict[str, str] = {
     "concentration":   "mol·L⁻¹",
     "mass":            "kg",
     "force":           "kg·m·s⁻² (N)",
+    "torque":          "N·m (kg·m²·s⁻²)",
     "current":         "C·s⁻¹ (A)",
     "voltage":         "V",
     "heat_flux":       "J·s⁻¹ (W)",
@@ -44,8 +45,14 @@ UNITS: dict[str, str] = {
     # counts / dimensionless bookkeeping
     "count":           "molecules",
     "cell_count":      "cells",
+    "cells":           "cells",
+    "copies":          "copies",
     "fraction":        "dimensionless",
     "rate":            "s⁻¹",
+    # generic unlabeled scalar quantity (didactic figures that don't commit to a unit)
+    "quantity":        "dimensionless",
+    # phase-field / cell-cycle phase (dimensionless order parameter, 0–1)
+    "phase":           "0–1 (dimensionless)",
     # thermodynamic / spatial / temporal (used by Figs 6–10)
     "entropy":         "J·K⁻¹·s⁻¹",
     "information":     "bits",
@@ -54,7 +61,9 @@ UNITS: dict[str, str] = {
 }
 
 # structural/string interface variables (no numeric unit).
-STRING_TYPES: tuple[str, ...] = ("structure", "sequence", "identity")
+# place_node: a place-graph node identity (bigraph nesting structure, Fig 2).
+# grain: a coarse-graining level label (Fig 6b grain-swap).
+STRING_TYPES: tuple[str, ...] = ("structure", "sequence", "identity", "place_node", "grain")
 
 # every numeric quantity resolves as a named float.
 _SCALAR_SCHEMA = {"_inherit": "float"}

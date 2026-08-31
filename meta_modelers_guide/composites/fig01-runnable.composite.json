@@ -1,0 +1,98 @@
+{
+  "name": "Process bigraph — minimal executable demonstration",
+  "description": "Fig 1 made runnable at the smallest honest scale: ONE real process (StoreTransfer) wired to TWO scalar place-graph nodes (store_a the source, store_b the sink). A first-order transfer dA/dt=-k*A, dB/dt=+k*A drains the source into the sink while the total A+B is conserved. This is the dynamics behind Fig 1b's static signature: a process bigraph is an EXECUTABLE place-graph + processes — give a process an update rule and the wired stores evolve. Runnable (default_n_steps + RAMEmitter); interval 1.0.",
+  "default_n_steps": 20,
+  "requires": {
+    "processes": [
+      "StoreTransfer"
+    ]
+  },
+  "provenance": {
+    "figure": "fig01-process-bigraph",
+    "process_term": "GO:0006810"
+  },
+  "state": {
+    "store_a": {
+      "_type": "float",
+      "_default": 1.0,
+      "_value": 1.0
+    },
+    "store_b": {
+      "_type": "float",
+      "_default": 0.0,
+      "_value": 0.0
+    },
+    "transfer": {
+      "_type": "process",
+      "address": "local:StoreTransfer",
+      "interval": 1.0,
+      "config": {
+        "rate": 0.15
+      },
+      "inputs": {
+        "source": [
+          "store_a"
+        ]
+      },
+      "outputs": {
+        "source": [
+          "store_a"
+        ],
+        "sink": [
+          "store_b"
+        ]
+      }
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "store_a": "float",
+          "store_b": "float",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "store_a": [
+          "store_a"
+        ],
+        "store_b": [
+          "store_b"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "A process bigraph is an executable place-graph + processes",
+        "observables": {
+          "store_a": "float",
+          "store_b": "float"
+        },
+        "subtitle": "Fig 1 — one process (StoreTransfer) drains source store_a into sink store_b; total conserved"
+      },
+      "inputs": {
+        "store_a": [
+          "store_a"
+        ],
+        "store_b": [
+          "store_b"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
+    }
+  }
+}

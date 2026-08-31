@@ -48,6 +48,6 @@ def test_conformance_uses_ontology(monkeypatch=None):
 
 
 def test_figure_provenance_shape():
-    prov = figure_provenance(ENVS["fig06-coarse"])
+    prov = figure_provenance(ENVS["fig05-coarse"])
     assert "CoarseGrainedMetabolism" in prov
     assert prov["CoarseGrainedMetabolism"]["process_term"].startswith("GO:")

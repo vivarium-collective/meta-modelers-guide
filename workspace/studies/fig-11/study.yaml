@@ -1,0 +1,251 @@
+schema_version: 4
+name: fig-11
+investigation: paper-figures
+title: "fig-11: Evolution"
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'Does the paper''s §Evolution figure (Fig 11) hold as a runnable place-graph rewrite -- a top-level population of identically-schema''d cells, each exposing a scalar trait, evolving over generations toward a selection optimum set by the environmental niche, so that (Fig 11b) the trait distribution shifts toward the optimum via binary fission + heritable mutation + selection, while division itself (Fig 11a) is a discrete event that REPLACES a parent cell with two daughters?'
+biological_summary: 'This is the runnable realization of the paper''s §Evolution pattern (Fig 11), built on one process, `PopulationEvolution`, that reads and rewrites two `tree[node]` stores: a `population` of `cell` nodes that all share one schema -- each a heritable scalar `trait` plus a derived `division_rate` -- and an `environment` whose single `niche` node carries a `selection_optimum` that DRIFTS over the run. Each generation the process (1) shifts the optimum forward (a moving target), (2) re-scores every cell''s division rate by a Gaussian fitness kernel on how close its trait sits to the current optimum, (3) performs BINARY FISSION -- a cell divides with probability `div_rate·fitness`, and on division the PARENT is deleted and REPLACED by two daughters, each inheriting the parent''s trait ± Gaussian mutation, and (4) applies death by selection: once the population overflows carrying capacity, the least-fit cells (furthest from the optimum) die. This is the paper''s §Evolution claim in action: evolution changes not the state of a single composition but the SPACE of compositions across generations -- new cell nodes are added and old ones removed at runtime, so the place graph itself is edited, and the trait distribution shifts toward the environmental optimum.
+
+  One fixed-seed regime over `fig11-evolution` (`meta_modelers_guide.composites.fig11-evolution`, seed=1) demonstrates the full arc over a 40-generation run. The founder `cell_0` sits at trait 0.0, far below the niche optimum (which starts at 1.0). Playing it forward: the lone founder divides -- `cell_0` is consumed and replaced by two daughters (`cell_1`, `cell_2`) on the first generation -- and the lineage grows by binary fission to carrying capacity (12 cells, reached at generation 14) and never exceeds it (death by selection caps it). Over the same run the selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02 per generation), and the population''s mean trait -- starting at 0.0, a gap of 1.0 below the optimum -- climbs to ~1.68, closing the gap to ~0.12: the trait cloud tracks the drifting target. Because the composite is fixed-seed (seed=1), the whole trajectory (population sizes, mean trait, optimum, and the daughter-node ids) reproduces exactly run to run.
+
+  Every one of these is a genuine place-graph rewrite: the daughter nodes are fresh `tree[node]` vertices added at runtime with brand-new ids that are never reused, and the parents are deleted -- not values mutated in place. This is precisely the paper''s §Evolution point (Fig 11): variation enters through discrete events (division + mutation) that edit the inventory of nodes, and selection -- an environmental niche optimum acting on the composition -- shifts the trait distribution toward the optimum over generations. It is a didactic, toy-real illustration of the Darwinian loop (variation + heritability + selection), not a calibrated population-genetics model.'
+claim: 'Composing one `population` (`tree[node]` of identically-schema''d `cell` nodes) with one `environment` niche through a single `PopulationEvolution` process reproduces the paper''s §Evolution pattern (Fig 11) as a runnable place-graph rewrite: over a fixed-seed (seed=1) 40-generation run the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- the parent REPLACED by two mutated daughters -- grows to carrying capacity (12) and never exceeds it, while the selection optimum drifts monotonically from 1.0 to 1.80 and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12. The distribution shifts toward the environmental optimum via variation (mutation) + heritability + selection, and division edits the place graph (parent id gone, two fresh daughter ids present) -- the whole trajectory is deterministic and reproduces exactly run to run. This is a didactic, toy-real illustration of the Darwinian loop, not a calibrated population-genetics model.'
+baseline:
+- name: fig11-evolution
+  composite: meta_modelers_guide.composites.fig11-evolution
+  params: {}
+variants: []
+key_assumptions:
+- 'This `fig11-evolution` composite is **didactic / toy-real**: a small, illustrative minimal Darwinian loop built to look like Fig 11 and play forward -- NOT calibrated to any literature population-genetics target. The selection strength (Gaussian width sel_strength=0.6), mutation size (mut_sigma=0.28), per-generation division probability (div_rate=0.35), carrying capacity (12), optimum start (1.0) and drift (0.02/generation) are plausible hand-tuned magnitudes chosen to make variation -> selection -> adaptation legible within a 40-generation run, not fitted to a named organism, trait, or fitness landscape.'
+- 'The trait is a single abstract heritable scalar and fitness is a single Gaussian kernel on trait<->optimum distance. There is no genotype, no genome, no recombination, no epistasis, no standing variation beyond what mutation injects at each division -- one locus, asexual binary fission.'
+- 'Division is BINARY FISSION with parent replacement: a dividing cell is deleted and replaced by exactly two daughters, each trait = parent trait ± Gaussian(0, mut_sigma). The founder does not persist once it divides. This is a deliberate modeling choice (each division edits the place graph) rather than a budding/overlapping-generations scheme.'
+- 'Population size is bounded by a hard carrying capacity (12): once the population overflows, the least-fit cells (furthest from the current optimum) are culled. Death is therefore purely selective and capacity-triggered -- there is no age, no random death, no resource depletion feedback (the niche `resource` field is carried but not consumed).'
+- 'The composite is fixed-seed (seed=1), so the entire trajectory -- population sizes, mean trait, optimum, and the exact daughter-node ids -- is deterministic and reproduces exactly run to run. The pinned integers in the behavior tests are true regression pins under that seed, not run-to-run-variable magnitudes.'
+- 'The rigorous, spatially-explicit cousin of this figure is `development-and-evolution` in the `draft-to-living-cell` investigation; this study does NOT restate that cousin''s numbers as its own.'
+acceptance_criteria:
+- The population grows from a single founder cell to carrying capacity (12) by binary fission and never exceeds capacity.
+- The environmental selection optimum drifts monotonically forward over the run (a moving target), reaching 1.80 from a start of 1.0.
+- The population mean trait -- starting far below the optimum (gap 1.0) -- moves toward the drifting optimum, closing the gap to well under its starting value, and the mean trait itself climbs (the cloud moves to the target, not the target to the cloud).
+- 'Division is a genuine place-graph rewrite by binary fission -- a dividing cell is REPLACED by exactly two fresh daughter nodes (parent id gone, two new ids present, net +1 cell), and cell ids are never reused.'
+units_and_time:
+  time: 1 tick = 1 generation (dimensionless model time); the run is 40 such generations (41 emitted rows, t=0..40).
+  quantities: 'trait, selection_optimum, division_rate, sel_strength, mut_sigma, drift and capacity are dimensionless model quantities -- the trait is an abstract heritable scalar, the optimum a favored trait value, division_rate a per-generation probability; population size is a node count.'
+  note: No quantity here is calibrated to a named organism, trait, or literature fitness landscape.
+behavior_tests:
+- name: population-grows-to-capacity-by-fission
+  classification: primary
+  description: The population grows from the lone founder to carrying capacity by binary fission and never exceeds it -- discrete division events (Fig 11a) expanding the composition until death-by-selection caps it.
+  measure:
+    kind: observable
+    path: population
+    expr: number of cell nodes at t=0 and t=40, and the max over the run
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: 12.0
+    provenance: 'prior: a single founder divides and the lineage grows until carrying capacity bounds it. Observed (seed=1): size 1 at t=0, rising to 12 by generation 14 and holding at 12 through t=40, with max size == 12 (never exceeds capacity). The ==12 pin is exact under the fixed seed; the grows-then-caps direction is the a-priori prediction (tests/test_fig11_dynamics.py::test_population_grows_to_capacity)'
+  requires_simulation: fig11-evolution
+- name: selection-optimum-drifts
+  classification: primary
+  description: The environmental niche's selection optimum drifts monotonically forward over the run -- a moving target the population must chase (Fig 11b).
+  measure:
+    kind: observable
+    path: environment
+    expr: niche selection_optimum at t=0 and t=40
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: 1.8
+    provenance: 'prior: the niche optimum shifts each generation, so the environment is a moving target. Observed: optimum starts at 1.0, increases monotonically at drift 0.02/generation, and ends at 1.80 after 40 generations. The ==1.80 endpoint is exact (deterministic linear drift); the monotone-forward direction is the a-priori prediction (tests/test_fig11_dynamics.py::test_selection_optimum_drifts)'
+  requires_simulation: fig11-evolution
+- name: mean-trait-tracks-the-drifting-optimum
+  classification: primary
+  description: The population mean trait, starting far below the optimum, moves toward the drifting optimum and closes the gap -- the trait distribution shifting toward the environmental optimum (Fig 11b), the core adaptation claim.
+  measure:
+    kind: observable
+    path: population
+    expr: '|mean_trait - optimum| at t=0 vs t=40, and mean_trait climb'
+  pass_if:
+    op: '<'
+    kind: acceptance_criterion
+    value: 0.4
+    provenance: 'prior: under Gaussian selection for the moving optimum, the trait cloud tracks the target and the trait-optimum gap shrinks. Observed (seed=1): mean trait 0.0 at t=0 (gap 1.0 below optimum 1.0), climbing to ~1.68 by t=40 (gap ~0.12 below optimum 1.80) -- gap closes from 1.0 to ~0.12 (< 0.4) and the mean trait itself climbs by > 1.0 (the cloud moves to the target). The gap-closes / mean-climbs direction is the a-priori prediction; the 0.4 bound is a loose pin (tests/test_fig11_dynamics.py::test_mean_trait_tracks_the_drifting_optimum)'
+  requires_simulation: fig11-evolution
+- name: division-is-binary-fission-place-graph-rewrite
+  classification: primary
+  description: Division is a genuine place-graph rewrite -- a dividing cell is REPLACED by two fresh daughters (parent id gone, two new ids present), and ids are never reused (Fig 11a, the discrete variation event that edits the composition).
+  measure:
+    kind: observable
+    path: population
+    expr: cell-id set transitions across generations (parents removed vs daughters added)
+  pass_if:
+    op: fission_replaces_parent
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: founder cell_0 replaced by exactly two daughters (cell_1, cell_2) at first division; appeared == 2*vanished below capacity; no id ever reused
+    provenance: 'prior: on division the parent is consumed and replaced by two mutated daughters, each a fresh place-graph node. Observed (seed=1): at the first division the founder cell_0 is deleted and replaced by exactly two new nodes cell_1, cell_2 (net +1); below capacity every topology change has appeared == 2*vanished (one parent -> two daughters); and no retired cell id ever reappears over the run (tests/test_fig11_dynamics.py::test_division_is_binary_fission_place_graph_rewrite)'
+  requires_simulation: fig11-evolution
+- name: trajectory-is-deterministic
+  classification: diagnostic
+  control: positive
+  description: 'Foundational control: the composite is fixed-seed (seed=1), so two independent builds emit an identical (size, mean_trait, optimum) trajectory -- the pinned integers above are true regression pins, not run-to-run-variable magnitudes.'
+  measure:
+    kind: derived
+    path: population
+    expr: two independent runs' (size, mean_trait, optimum) trajectories compared for equality
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: identical trajectories
+    provenance: 'two independent builds of the same fixed-seed composite emit byte-identical (size, mean_trait, optimum) trajectories and identical daughter-node ids -- the run is fully deterministic under seed=1 (tests/test_fig11_dynamics.py::test_trajectory_is_deterministic)'
+  requires_simulation: fig11-evolution
+runs:
+- name: fig11-evolution
+  composite: fig11-evolution
+  emitter: RAMEmitter
+  id: fig11-evolution
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig11-evolution.composite.json (PopulationEvolution over a population tree[node] + an environment niche; optimum0=1.0, drift=0.02, sel_strength=0.6, mut_sigma=0.28, div_rate=0.35, capacity=12, seed=1) run 40 generations (41 emitted rows) through the process-bigraph engine (tests/test_fig11_dynamics.py).'
+  params: {}
+  outcomes:
+    POPULATION-GROWS-TO-CAPACITY-BY-FISSION:
+      result: PASS
+      detail: size 1 (t=0) -> 12 by generation 14, held at 12 through t=40, max == 12
+    SELECTION-OPTIMUM-DRIFTS:
+      result: PASS
+      detail: optimum 1.0 (t=0) -> 1.80 (t=40), monotone at drift 0.02/generation
+    MEAN-TRAIT-TRACKS-THE-DRIFTING-OPTIMUM:
+      result: PASS
+      detail: mean trait 0.0 (gap 1.0) -> ~1.68 (gap ~0.12); mean climbs by > 1.0
+    DIVISION-IS-BINARY-FISSION-PLACE-GRAPH-REWRITE:
+      result: PASS
+      detail: cell_0 -> cell_1, cell_2 at first division; appeared == 2*vanished below capacity; no id reused
+    TRAJECTORY-IS-DETERMINISTIC:
+      result: PASS
+      detail: two independent builds emit identical trajectories and daughter ids (seed=1)
+- name: meta_modelers_guide.composites.fig11-evolution__1787799780__ff8b62
+  status: complete
+  timestamp: 1787799780.584349
+  emitter:
+    kind: unknown
+  params: '{}'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'A `population` of identically-schema''d `cell` nodes coupled to an `environment` niche through one `PopulationEvolution` process reproduces the paper''s §Evolution pattern (Fig 11b) as a runnable place-graph rewrite: under Gaussian selection for a drifting optimum, the population mean trait -- starting at 0.0, a gap of 1.0 below the niche optimum -- climbs to ~1.68 and closes the gap to ~0.12 as the optimum drifts from 1.0 to 1.80, the trait distribution shifting toward the environmental optimum via variation (mutation) + heritability + selection. Confirmed (seed=1, deterministic): optimum 1.0 -> 1.80 monotone, mean trait 0.0 -> ~1.68, gap 1.0 -> ~0.12.'
+  evidence:
+    from_test: mean-trait-tracks-the-drifting-optimum
+    from_run: fig11-evolution
+    observed: mean trait 0.0 (gap 1.0) -> ~1.68 (gap ~0.12); optimum 1.0 -> 1.80
+  provenance:
+    run_ids:
+    - fig11-evolution
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Division is a genuine place-graph rewrite by binary fission (Fig 11a): a dividing cell is REPLACED by two fresh daughter nodes rather than duplicated in place. Confirmed (seed=1): the founder cell_0 is deleted and replaced by exactly two new nodes (cell_1, cell_2) at the first division; below carrying capacity every topology change adds exactly two daughters per vanished parent (appeared == 2*vanished); the lineage grows to capacity (12) and never exceeds it as death-by-selection culls the least-fit cells; and no retired cell id is ever reused -- each daughter is a genuinely new place-graph vertex.'
+  evidence:
+    from_test: division-is-binary-fission-place-graph-rewrite
+    from_run: fig11-evolution
+    observed: cell_0 -> {cell_1, cell_2} at first division; appeared == 2*vanished below capacity; size caps at 12; no id reused
+  provenance:
+    run_ids:
+    - fig11-evolution
+- id: F-03
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The evolution run is fully deterministic under the pinned seed (seed=1): two independent builds of the composite emit byte-identical (size, mean_trait, optimum) trajectories and identical daughter-node ids. This makes the pinned integers in the behavior tests (final size 12, optimum 1.80) true regression pins rather than run-to-run-variable magnitudes.'
+  evidence:
+    from_test: trajectory-is-deterministic
+    from_run: fig11-evolution
+    observed: two independent runs produce identical trajectories and daughter ids
+  provenance:
+    run_ids:
+    - fig11-evolution
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'fig11-evolution.composite.json builds and runs to completion through the process-bigraph engine over a deterministic 40-generation run (tests/test_fig11_dynamics.py, 5 tests passing).'
+  biological_validation:
+    result: PASS
+    basis: All four primary behavior tests pass on measured readouts from a real 40-generation run -- the population grows to capacity by binary fission and never exceeds it, the selection optimum drifts forward, the mean trait closes on the drifting optimum, and division replaces each parent with two fresh daughters. The composite is fixed-seed (seed=1), so the trajectory and its pinned integers reproduce exactly; the positive determinism control confirms it.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Realizing the paper''s §Evolution pattern (Fig 11) as a runnable place-graph rewrite -- cell nodes ADDED and REMOVED at runtime as the trait distribution shifts toward an environmental optimum -- makes the paper''s core §Evolution claim concrete: evolution changes not the state of one composition but the SPACE of compositions across generations. The trait cloud chasing a moving target, with parents genuinely replaced by mutated daughters on the place graph, is the Darwinian loop (variation + heritability + selection) made executable, not merely drawn.'
+conclusion: '## Claims
+
+  - Composing one `population` (`tree[node]` of identically-schema''d `cell` nodes) with one `environment` niche through a single `PopulationEvolution` process reproduces the paper''s §Evolution pattern (Fig 11) as a runnable place-graph rewrite. Over a fixed-seed (seed=1) 40-generation run: the founder cell (trait 0.0, gap 1.0 below the optimum) divides by binary fission, grows to carrying capacity (12) and never exceeds it; the selection optimum drifts monotonically from 1.0 to 1.80; and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12 -- the trait distribution shifting toward the environmental optimum via variation (mutation) + heritability + selection. The whole trajectory is deterministic and reproduces exactly run to run.
+
+  - Division (Fig 11a) is a genuine place-graph rewrite: a dividing cell is REPLACED by two fresh daughter nodes (parent id gone, two new ids present, net +1 cell), ids are never reused, and death by selection culls the least-fit cells at capacity -- nodes added and removed at runtime, editing the inventory of compositions rather than mutating values in place.
+
+  ## Evidence
+
+  - **POPULATION-GROWS-TO-CAPACITY-BY-FISSION** -- size 1 (t=0) -> 12 by generation 14, held at 12 through t=40, max == 12 (never exceeds capacity)
+
+  - **SELECTION-OPTIMUM-DRIFTS** -- optimum 1.0 -> 1.80, monotone at drift 0.02/generation
+
+  - **MEAN-TRAIT-TRACKS-THE-DRIFTING-OPTIMUM** -- mean trait 0.0 (gap 1.0) -> ~1.68 (gap ~0.12); the mean climbs by > 1.0
+
+  - **DIVISION-IS-BINARY-FISSION-PLACE-GRAPH-REWRITE** -- cell_0 -> {cell_1, cell_2} at first division; appeared == 2*vanished below capacity; no id reused
+
+  - **TRAJECTORY-IS-DETERMINISTIC** -- two independent builds emit identical trajectories and daughter ids (seed=1)
+
+  ## Limitations
+
+  - This composite is didactic / toy-real: a minimal Darwinian loop (one abstract heritable scalar trait, one Gaussian fitness kernel) with hand-tuned magnitudes, not calibrated to any organism, trait, or literature fitness landscape.
+
+  - No genome, recombination, epistasis, or standing variation beyond mutation; asexual binary fission at one locus. Death is purely selective and capacity-triggered (no age, random death, or resource-depletion feedback -- the niche `resource` field is carried but not consumed).
+
+  - The rigorous cousin of this figure is `development-and-evolution` in the `draft-to-living-cell` investigation; its numbers are NOT restated here.
+
+  ## Next steps
+
+  - Sweep selection strength, mutation size, and drift rate to show the adaptation-lag trade-off (a faster drift or weaker selection leaves a larger residual gap).
+
+  - Add standing genetic variation / recombination to move from a single-locus toy toward a population-genetics-flavored model.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig11-evolution.composite.json builds and runs to completion through the engine over a deterministic 40-generation run.'
+    biological_validation: The §Evolution pattern (Fig 11) is demonstrated at the toy-real (uncalibrated) level, with genuine runtime place-graph rewrites (cell nodes added and removed) and a trait distribution shifting toward a drifting environmental optimum, rather than a scripted trajectory.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - the population fails to grow to capacity (div_rate or fitness too low relative to the run length, or the founder's trait sits so far from the optimum that fitness ~ 0)
+    - the optimum fails to drift (the drift parameter is zero or the environment output is not being written back)
+    - the mean trait fails to close on the optimum (selection too weak, mutation too large/small, or the population is too small to hold favorable variants against drift)
+    - division does not replace the parent with two daughters (the fission rewrite is broken, or ids are being reused rather than freshly minted)
+    block_downstream: 'any future study reusing the PopulationEvolution place-graph-rewrite pattern (e.g. a multi-trait or multi-niche extension)'
+limitations:
+- 'This `fig11-evolution` composite is didactic / toy-real -- a minimal Darwinian loop built to look like Fig 11 and play forward, NOT calibrated to any literature population-genetics target. The selection strength (0.6), mutation size (0.28), division probability (0.35), carrying capacity (12), optimum start (1.0) and drift (0.02/generation) are plausible hand-tuned magnitudes chosen to make variation -> selection -> adaptation legible within a 40-generation run, not fitted to a named organism, trait, or fitness landscape.'
+- The trait is a single abstract heritable scalar and fitness a single Gaussian kernel on trait<->optimum distance -- no genotype, genome, recombination, epistasis, or standing variation beyond what mutation injects at each division. One locus, asexual binary fission.
+- Division is binary fission with parent replacement (a dividing cell is deleted and replaced by two mutated daughters); the founder does not persist once it divides. This is a deliberate modeling choice (each division edits the place graph), not a budding/overlapping-generations scheme.
+- Population size is bounded by a hard carrying capacity (12) with purely selective, capacity-triggered death -- no age, no random death, no resource-depletion feedback (the niche `resource` field is carried but not consumed).
+- The composite is fixed-seed (seed=1), so the entire trajectory -- sizes, mean trait, optimum, and daughter-node ids -- is deterministic and reproduces exactly; the pinned integers are true regression pins under that seed.
+- 'The rigorous cousin of this figure is `development-and-evolution` in the `draft-to-living-cell` investigation; this study does NOT restate that cousin''s numbers as its own.'
+falsifiability: Overturned if the population fails to grow to carrying capacity by binary fission or exceeds it, if the selection optimum fails to drift monotonically, if the mean trait fails to close on the drifting optimum (the gap not shrinking, or the mean not climbing), if division fails to replace a parent with exactly two fresh daughter nodes, if cell ids are reused, or if the fixed-seed trajectory fails to reproduce exactly across independent builds.
+visualizations:
+- name: Figure 11
+  address: svg:visualizations/figure_11.svg
+  config:
+    caption: 'Evolution as a place-graph rewrite: a population establishes and diversifies into lineages under selection.'
+- name: Evolution dynamics
+  address: image:visualizations/fig11-dynamics.png
+  config:
+    chart: image
+    caption: 'Evolution as quantities over time, from the fig11-evolution run: the founder lineage divides to carrying capacity while its trait cloud — starting far below the target — climbs to sit on the environment''s drifting selection optimum: adaptation to a moving target.'
+parent_studies:
+- study: development-and-evolution
+  condition: tests-passed
+experiment: 'Run the `fig11-evolution` composite (`PopulationEvolution` over a population tree[node] of identically-schema''d cell nodes + an environment niche whose selection optimum drifts) to completion over 40 generations through the process-bigraph engine, and measure whether variation (heritable mutation at binary fission) + selection (a Gaussian fitness kernel on trait<->optimum distance, with death-by-selection at carrying capacity) is enough to shift the population''s trait distribution toward a drifting environmental optimum, while division genuinely edits the place graph (parent replaced by two daughters).'
+result: 'Over a fixed-seed (seed=1) 40-generation run, the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- cell_0 replaced by two daughters cell_1, cell_2 -- and the lineage grows to carrying capacity (12 by generation 14) and never exceeds it. The selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02/generation) and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12: the trait distribution shifts toward the environmental optimum via variation + heritability + selection. Division is a genuine place-graph rewrite throughout -- below capacity every topology change adds exactly two fresh daughters per vanished parent, ids are never reused, and death-by-selection culls the least-fit cells at capacity. The whole trajectory (sizes, mean trait, optimum, daughter ids) is deterministic and reproduces exactly across independent builds. The paper''s §Evolution pattern (Fig 11) holds as a runnable place-graph rewrite at the toy-real (uncalibrated) level: evolution changes the space of compositions across generations, not the state of a single composition. The rigorous cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.'

@@ -101,14 +101,14 @@ class CatalyzedReactionNetwork(DraftProcess):
     inputs={
         "chemical_in": "chemical_flux",
         "electrical_in": "current",
-        "mechanical_in": "force",
+        "mechanical_in": "torque",
         "thermal_in": "heat_flux",
         "structure": "structure",
     },
     outputs={
         "chemical_out": "chemical_flux",
         "electrical_out": "current",
-        "mechanical_out": "force",
+        "mechanical_out": "torque",
         "thermal_out": "heat_flux",
     },
     contract={
@@ -122,7 +122,7 @@ class CatalyzedReactionNetwork(DraftProcess):
                   "read against its molecular structure.",
         "affects": "the outgoing chemical, electrical, mechanical, and thermal "
                    "channels.",
-        "constraints": "mass, charge, momentum, and energy are conserved through "
+        "constraints": "mass, charge, angular momentum, and energy are conserved through "
                        "the mechanism; fluxes bounded by molecular kinetics and "
                        "the local physical gradients.",
         "subports": "chemical refines into {substrates, cofactors, catalysts, "
@@ -130,12 +130,12 @@ class CatalyzedReactionNetwork(DraftProcess):
         "ports": {
             "chemical_in": "chemical flux in (mol·s⁻¹)",
             "electrical_in": "electrical current in (C·s⁻¹, A)",
-            "mechanical_in": "mechanical force in (kg·m·s⁻², N)",
+            "mechanical_in": "applied rotary load — torque in (N·m)",
             "thermal_in": "heat flux in (J·s⁻¹, W)",
             "structure": "molecular structure (PDB / SMILES)",
             "chemical_out": "chemical flux out (mol·s⁻¹)",
             "electrical_out": "electrical current out (C·s⁻¹, A)",
-            "mechanical_out": "mechanical force out (kg·m·s⁻², N)",
+            "mechanical_out": "rotary torque out (N·m)",
             "thermal_out": "heat flux out (J·s⁻¹, W)",
         },
     },

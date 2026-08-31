@@ -1,18 +1,257 @@
 schema_version: 4
 name: fig-02
-title: Interfaces & composition (process bigraph)
-kind: theoretical
-purpose:
-  mechanism: 'A process bigraph: processes interacting with stores through ports and
-    wires, making shared state and dependencies explicit.'
-visualizations:
-- name: Figure 1
-  address: svg:visualizations/figure_1.svg
-  config:
-    caption: 'A process bigraph: processes interacting with stores through ports and
-      wires, making shared state and dependencies explicit.'
-question: How does a process bigraph make shared state and dependencies explicit?
+investigation: paper-figures
+title: "fig-02: Orchestration"
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'Is the paper''s orchestration claim (Fig orchestration, panel a) executable rather than merely drawn -- does a runnable process-bigraph composite in which two processes update at DIFFERENT rates through ONE shared store actually reproduce multi-timescale coordination: the fast process filling the shared pool far more often than the slow one converts it, the two rates coordinated through the shared store, and the combined trajectory reflecting both timescales while conserving mass?'
+biological_summary: 'This is the runnable realization of the paper''s §Composition-vs-orchestration distinction (main.tex §composition vs orchestration; Fig orchestration, panel a). The paper defines orchestration as *when* processes act and *how* their updates are combined across timescales -- distinct from composition, which is *how* processes are coupled through shared variables. Panel (a) states it directly: "Multi-timescale orchestration coordinates processes that update at different rates through a shared store and discrete-event scheduling." (Panels (b) workflow-DAG and (c) event-driven graph rewrites are structural/schematic and are deliberately NOT part of this runnable demonstration -- only panel (a), the piece a minimal run can show honestly.)
+
+
+  The fig02-runnable composite (`meta_modelers_guide.composites.fig02-runnable`) wires two processes to one shared `pool` store, each on its own clock:
+
+  * `FastProduction` (interval 1.0, rate 1.0) adds to `pool.molecules` every base tick -- dmolecules/dt = +rate.
+
+  * `SlowConversion` (interval 5.0, yield_frac 0.6) fires once per 5 ticks, converting a fraction of whatever has accumulated in the pool into `pool.biomass` and drawing that same amount back out of `pool.molecules`.
+
+
+  Run together on the process-bigraph engine''s discrete-event scheduler, the two clocks interleave and the combined trajectory reflects BOTH timescales: `molecules` ramps up on the fast clock (+1 per tick) and saws down each time the slow process fires, while `biomass` advances in a coarse staircase on the slow clock -- flat between slow firings, stepping up at each. Over the pinned 20-tick run the fast pool updates on every tick (20 changes) while the slow store changes only 3 times (the three visible conversions at t=10, 15, 20), so the fast process touches the shared store far more often than the slow one -- the multi-timescale signature made concrete. Crucially the two are coordinated through the ONE shared store and mass is conserved across the timescales: the fast process is the sole source and the slow process only MOVES mass between `molecules` and `biomass` within the pool, so at every emitted tick the shared-store total `molecules + biomass` equals the cumulative fast injection, which for rate=1.0 equals the elapsed time exactly (t=20: 8.12 + 11.88 = 20.0). The whole trajectory is deterministic -- no RNG anywhere -- so every number here reproduces exactly run to run.'
+claim: 'The paper''s multi-timescale orchestration claim (Fig orchestration, panel a) is executable, not merely drawn: composing a fast process and a slow process through ONE shared `pool` store, each updating on its own interval, reproduces panel (a)''s "processes that update at different rates through a shared store" as a runnable, deterministic trajectory. Over a fixed 20-tick run the fast process updates the shared store on every tick (20 changes) while the slow process converts only 3 times, `molecules` is a sawtooth (rises on the fast clock, drawn down at each slow firing), `biomass` advances monotonically in a coarse staircase on the slow clock (levels 0 -> 3.0 -> 7.2 -> 11.88, never returning to the pool), and mass is conserved through the shared store across both timescales -- at every tick `molecules + biomass` equals the cumulative fast injection (== elapsed time), ending 8.12 + 11.88 = 20.0. The combined trajectory reflects both timescales at once; the composite is didactic and uncalibrated, so this demonstrates the ORCHESTRATION MECHANISM, not any biological magnitude.'
 baseline:
-- name: fig02-process-bigraph
-  composite: meta_modelers_guide.composites.fig02-process-bigraph
+- name: fig02-runnable
+  composite: meta_modelers_guide.composites.fig02-runnable
   params: {}
+variants: []
+key_assumptions:
+- 'This `fig02-runnable` composite is **didactic / toy-real**: a minimal illustrative demonstration built to make Fig orchestration panel (a) play forward under test, NOT calibrated to any literature. `FastProduction` (rate 1.0), `SlowConversion` (yield_frac 0.6), the intervals (1.0 and 5.0), and the 20-tick run length are hand-picked magnitudes chosen to make the two timescales legible in one short run, not fitted to any named biological process, rate, or measurement. The quantities `molecules` and `biomass` are abstract shared-store values, not calibrated concentrations or masses.'
+- 'Only panel (a) -- multi-timestepping through a shared store -- is demonstrated at runtime. Panel (b) (workflow orchestration as a dependency DAG) and panel (c) (event-driven graph rewrites -- division, engulfment, bursting) are structural / schematic in the paper and are deliberately NOT part of this runnable composite. This study makes no runtime claim about (b) or (c).'
+- 'The composite is fully deterministic -- there is no RNG in either process nor in the scheduler -- so every value pinned here (the final split, the biomass staircase levels, the shared-store conservation) reproduces exactly run to run. The exact numeric pins are regression pins over the current process configs and intervals; the directional claims (fast outpaces slow, sawtooth, monotone staircase, conservation) are the a-priori predictions that hold for any such fast/slow pair.'
+- 'Orchestration timing here is the process-bigraph engine''s own discrete-event scheduler acting on each process''s declared `interval`. The slow process''s effect becomes visible in the emitted `biomass` series one coarse step after each firing window; the ``interval`` fields, not any hand-written schedule, drive when each process acts.'
+acceptance_criteria:
+- The fast process updates the shared store far more often than the slow process -- the two clocks are visibly different rates coordinated through one store.
+- The shared fast pool (`molecules`) is a sawtooth -- it rises on the fast clock and is drawn down each time the slow process fires -- so the combined trajectory reflects both timescales at once.
+- Biomass advances monotonically in coarse staircase steps on the slow clock and never returns to the pool -- the slow process moves mass one way, on its own clock.
+- Mass is conserved through the shared store across the two timescales -- the fast process is the sole source and the slow process only moves mass within the pool, so at every tick `molecules + biomass` equals the cumulative fast injection (== elapsed time). No mass is created or lost in crossing timescales.
+units_and_time:
+  time: 1 tick = 1.0 dimensionless base time unit (the fast process''s interval); the slow process fires every 5 such ticks; the run is 20 ticks.
+  quantities: '`molecules` and `biomass` are dimensionless shared-store quantities (abstract pool amounts), not calibrated concentrations or masses. rate (1.0), yield_frac (0.6), and the intervals (1.0, 5.0) carry no physical unit.'
+  note: No quantity here is calibrated to a named biological process, rate, or literature target; the magnitudes are didactic.
+behavior_tests:
+- name: fast-clock-outpaces-slow-clock
+  classification: primary
+  description: The fast process updates the shared store far more often than the slow one -- two rates coordinated through a single store, the core of Fig orchestration panel (a).
+  measure:
+    kind: observable
+    path: obs.molecules
+    expr: n_changes(molecules) vs n_changes(biomass) over the 20-tick run
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: 3.0
+    provenance: 'prior: a fast process (interval 1) and a slow process (interval 5) sharing one store must update it at visibly different rates -> the fast pool changes many-fold more often than the slow store. Observed: the fast pool changes on every tick (20 changes) while the slow store changes 3 times (the three visible conversions), so fast_changes (20) > 3 * slow_changes (3); the >-direction is the a-priori prediction, the exact counts are deterministic pins (tests/test_fig02_runs.py::test_fast_pool_updates_far_more_often_than_slow_biomass, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)'
+  requires_simulation: fig02-runnable
+- name: fast-pool-is-a-sawtooth
+  classification: primary
+  description: The shared fast pool rises on the fast clock and is drawn down each time the slow process converts it -- the combined trajectory reflecting both timescales in one series.
+  measure:
+    kind: observable
+    path: obs.molecules
+    expr: molecules both rises (some y>x) and falls (some y<x) across the run
+  pass_if:
+    op: rises_and_falls
+    kind: acceptance_criterion
+    value: molecules has both up-steps (fast fill) and down-steps (slow draw)
+    provenance: 'prior: the fast process fills the pool every tick while the slow process periodically draws a fraction back out -> molecules is a sawtooth. Observed: molecules ramps +1/tick (e.g. 5->9 over t=5..9) then drops at each slow firing (9->7 at t=10, 11->7.8 at t=15, 11.8->8.12 at t=20) -- both up- and down-steps present, deterministic (tests/test_fig02_runs.py::test_fast_pool_is_a_sawtooth)'
+  requires_simulation: fig02-runnable
+- name: biomass-advances-monotonically-on-slow-clock
+  classification: primary
+  description: Biomass is produced on the slow clock in a coarse staircase, never returns to the pool (non-decreasing), and ends strictly above where it started -- the slow-timescale product accumulating one way.
+  measure:
+    kind: observable
+    path: obs.biomass
+    expr: biomass is non-decreasing, changes only 3 times, ends > start
+  pass_if:
+    op: monotone_nondecreasing
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: biomass staircase levels [0.0, 3.0, 7.2, 11.88]; bio[-1] (11.88) > bio[0] (0.0)
+    provenance: 'prior: the slow process moves mass one way (pool -> biomass) on its own clock -> biomass is non-decreasing, flat between firings, ending above start. Observed: biomass holds 0 through t=9, then steps 3.0 (t=10), 7.2 (t=15), 11.88 (t=20) -- exactly 3 slow conversions, monotone, never returning to the pool. The staircase levels are deterministic regression pins; the monotone-nondecreasing direction and end>start are the a-priori predictions (tests/test_fig02_runs.py::test_biomass_only_advances, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)'
+  requires_simulation: fig02-runnable
+- name: mass-conserved-across-timescales
+  classification: primary
+  description: Mass is conserved through the shared store across the two timescales -- at every tick the shared-store total (molecules + biomass) equals the cumulative fast injection (== elapsed time). Nothing is created or lost in crossing timescales; the slow process only moves mass within the pool.
+  measure:
+    kind: derived
+    path: obs.molecules + obs.biomass
+    expr: molecules + biomass vs elapsed time at every emitted tick; final split
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: molecules + biomass == time at every tick; final 8.12 + 11.88 == 20.0
+    provenance: 'prior: the fast process is the sole source (injects rate*dt = 1.0 per tick) and the slow process only moves mass between molecules and biomass within the one pool -> the shared-store total equals the cumulative fast injection at every tick, which for rate=1.0 equals elapsed time. Observed exactly at every tick (t=5: 5+0; t=10: 7+3; t=15: 7.8+7.2; t=20: 8.12+11.88 = 20.0). Deterministic -- no RNG; the == invariant is the a-priori prediction, the final split is a regression pin (tests/test_fig02_runs.py::test_mass_conserved_across_timescales)'
+  requires_simulation: fig02-runnable
+- name: fast-process-adds-each-tick
+  classification: diagnostic
+  control: unit
+  description: 'Foundational unit control (not the composite-level claim): the fast process''s handler adds rate*interval to molecules on a single step, driven directly.'
+  measure:
+    kind: observable
+    path: obs.molecules
+    expr: FastProduction.update({molecules:3.0}, 1.0)["molecules"]
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: 1.0
+    provenance: 'FastProduction (rate 1.0) returns +1.0 to molecules for a unit interval, driven directly with no composite -- an exact deterministic unit pin (tests/test_fig02_runs.py::test_fast_production_adds_each_tick)'
+  requires_simulation: none
+- name: slow-conversion-conserves-what-it-moves
+  classification: diagnostic
+  control: unit
+  description: 'Foundational unit control (not the composite-level claim): the slow process''s handler moves exactly what it converts -- +converted to biomass, -converted to molecules -- so its single-step delta nets to zero.'
+  measure:
+    kind: observable
+    path: obs.biomass
+    expr: SlowConversion.update delta[biomass] + delta[molecules]
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: delta[biomass] + delta[molecules] == 0 (biomass > 0)
+    provenance: 'SlowConversion (yield_frac 0.6) on molecules=10 moves +6.0 to biomass and -6.0 from molecules -- what leaves the pool exactly equals what arrives as biomass, so the per-step delta nets to zero. This is the unit-level root of the composite mass-conservation invariant (tests/test_fig02_runs.py::test_slow_conversion_conserves_what_it_moves)'
+  requires_simulation: none
+runs:
+- name: fig02-runnable
+  composite: fig02-runnable
+  emitter: RAMEmitter
+  id: fig02-runnable
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig02-runnable.composite.json (FastProduction interval 1.0 rate 1.0 and SlowConversion interval 5.0 yield_frac 0.6 wired to one shared pool store, molecules + biomass) run 20 steps to completion through the process-bigraph engine and gathered via RAMEmitter (tests/test_fig02_runs.py). Fully deterministic -- no RNG -- so the trajectory reproduces exactly run to run.'
+  params: {}
+  outcomes:
+    FAST-CLOCK-OUTPACES-SLOW-CLOCK:
+      result: PASS
+      detail: fast pool changes 20 times, slow store 3 times (20 > 3*3)
+    FAST-POOL-IS-A-SAWTOOTH:
+      result: PASS
+      detail: molecules rises +1/tick and drops at t=10, 15, 20
+    BIOMASS-ADVANCES-MONOTONICALLY-ON-SLOW-CLOCK:
+      result: PASS
+      detail: biomass staircase 0 -> 3.0 -> 7.2 -> 11.88, monotone, 3 conversions
+    MASS-CONSERVED-ACROSS-TIMESCALES:
+      result: PASS
+      detail: molecules + biomass == time at every tick; final 8.12 + 11.88 == 20.0
+    FAST-PROCESS-ADDS-EACH-TICK:
+      result: PASS
+      detail: unit control -- FastProduction adds +1.0 per unit interval
+    SLOW-CONVERSION-CONSERVES-WHAT-IT-MOVES:
+      result: PASS
+      detail: unit control -- delta biomass + delta molecules == 0
+- name: meta_modelers_guide.composites.fig02-runnable__1787799780__5a11fd
+  status: complete
+  timestamp: 1787799780.37654
+  emitter:
+    kind: unknown
+  params: '{}'
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The paper''s multi-timescale orchestration claim (Fig orchestration, panel a) is executable: two processes updating at different rates through one shared pool store reproduce panel (a) as a runnable, deterministic trajectory. The fast process updates the shared store on every tick (20 changes) while the slow process converts only 3 times, so the fast clock visibly outpaces the slow one; molecules is a sawtooth (rises +1/tick, drawn down at each slow firing t=10, 15, 20) and biomass advances in a coarse monotone staircase on the slow clock (0 -> 3.0 -> 7.2 -> 11.88), so the combined trajectory reflects both timescales at once. All deterministic across repeated runs.'
+  evidence:
+    from_test: fast-clock-outpaces-slow-clock
+    from_run: fig02-runnable
+    observed: fast pool 20 changes vs slow store 3 changes; molecules sawtooth; biomass staircase 0 -> 3.0 -> 7.2 -> 11.88
+  provenance:
+    run_ids:
+    - fig02-runnable
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The two rates are coordinated through ONE shared store and mass is conserved across the timescales: the fast process is the sole source and the slow process only moves mass between molecules and biomass within the pool, so at every emitted tick the shared-store total (molecules + biomass) equals the cumulative fast injection, which for rate=1.0 equals the elapsed time exactly -- ending 8.12 + 11.88 = 20.0 at tick 20. Nothing is created or lost in crossing timescales. This is the honest core of "combining updates across timescales": coordination through a shared variable that conserves what it holds. Deterministic -- no RNG.'
+  evidence:
+    from_test: mass-conserved-across-timescales
+    from_run: fig02-runnable
+    observed: molecules + biomass == time at every tick (t=5:5, t=10:10, t=15:15, t=20:20); final split 8.12 + 11.88 == 20.0
+  provenance:
+    run_ids:
+    - fig02-runnable
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'fig02-runnable.composite.json builds and runs to completion through the process-bigraph engine over a deterministic 20-tick run (tests/test_fig02_runs.py, 7 tests); the two process handlers also pass unit-level controls driven directly. No optional heavy dependencies -- the demonstration is a minimal two-process composite.'
+  biological_validation:
+    result: PASS
+    basis: All four primary behavior tests pass on measured readouts from the 20-tick run -- the fast clock outpaces the slow clock (20 vs 3 changes), the fast pool is a sawtooth, biomass advances monotonically in a coarse staircase, and mass is conserved through the shared store across both timescales (molecules + biomass == elapsed time at every tick). The two unit controls (fast adds each tick, slow conversion conserves what it moves) pass independently. Every value is fixed and deterministic -- no RNG -- so all pins reproduce exactly run to run. "Biological validation" here is didactic -- the composite demonstrates the orchestration MECHANISM, not a calibrated biological magnitude.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Making Fig orchestration panel (a) runnable -- rather than only drawn -- turns the paper''s composition-vs-orchestration distinction into a checked fact: one can point to a live trajectory where two processes provably update at different rates through a shared store, the combined series carries both timescales, and mass is conserved across them. It grounds the paper''s central figures-are-executable claim for the orchestration figure.'
+conclusion: '## Claims
+
+  - The paper''s multi-timescale orchestration claim (Fig orchestration, panel a) is executable, not merely drawn: composing a fast process (interval 1.0) and a slow process (interval 5.0) through ONE shared pool store reproduces panel (a)''s "processes that update at different rates through a shared store" as a runnable, deterministic 20-tick trajectory. The fast process updates the shared store on every tick (20 changes) while the slow process converts only 3 times; molecules is a sawtooth (rises +1/tick, drawn down at each slow firing); biomass advances monotonically in a coarse staircase on the slow clock (0 -> 3.0 -> 7.2 -> 11.88), never returning to the pool.
+
+  - The two rates are coordinated through the one shared store and mass is conserved across the timescales: at every tick molecules + biomass equals the cumulative fast injection (== elapsed time), ending 8.12 + 11.88 = 20.0. The combined trajectory reflects both timescales at once, and nothing is created or lost in crossing them.
+
+
+  ## Evidence
+
+  - **FAST-CLOCK-OUTPACES-SLOW-CLOCK** -- fast pool changes 20 times, slow store 3 times (20 > 3*3)
+
+  - **FAST-POOL-IS-A-SAWTOOTH** -- molecules rises +1/tick and drops at t=10, 15, 20
+
+  - **BIOMASS-ADVANCES-MONOTONICALLY-ON-SLOW-CLOCK** -- staircase 0 -> 3.0 -> 7.2 -> 11.88, monotone, exactly 3 conversions
+
+  - **MASS-CONSERVED-ACROSS-TIMESCALES** -- molecules + biomass == time at every tick; final 8.12 + 11.88 == 20.0
+
+  - **FAST-PROCESS-ADDS-EACH-TICK** -- unit control, +1.0 per unit interval
+
+  - **SLOW-CONVERSION-CONSERVES-WHAT-IT-MOVES** -- unit control, delta biomass + delta molecules == 0
+
+
+  ## Limitations
+
+  - This composite is didactic / toy-real: the rates, yield fraction, intervals, and run length are hand-picked to make the two timescales legible, not calibrated to any biological process or literature target. It demonstrates the orchestration MECHANISM, not a biological magnitude.
+
+  - Only panel (a), multi-timestepping through a shared store, is demonstrated at runtime. Panels (b) workflow-DAG and (c) event-driven graph rewrites are structural / schematic in the paper and are not part of this runnable composite; this study makes no runtime claim about them.
+
+
+  ## Next steps
+
+  - A future study could make panel (b) executable by wiring a small dependency DAG of Steps and asserting execution follows the dependency structure, and panel (c) by running an event-driven rewrite (division / engulfment / bursting) that mutates the composite structure mid-run.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig02-runnable.composite.json builds and runs to completion through the engine over a deterministic 20-tick run.'
+    biological_validation: Fig orchestration panel (a) -- multi-timescale coordination through a shared store -- is demonstrated at the toy-real (uncalibrated) level with genuine two-clock interleaving, a sawtooth fast pool, a coarse biomass staircase, and mass conserved across the timescales, rather than a scripted or single-rate trajectory.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - the fast pool does not outpace the slow store (the two intervals are no longer distinct, or the scheduler is not honoring per-process intervals)
+    - molecules is not a sawtooth (the slow process is not drawing mass back out of the pool, or the fast process stopped filling)
+    - biomass is not a monotone staircase (the slow process is returning mass to the pool, or firing on the wrong clock)
+    - molecules + biomass no longer equals elapsed time (a source or sink was introduced -- mass is being created or lost across the timescales)
+    block_downstream: 'any future study reusing the multi-timestepping-through-a-shared-store pattern to demonstrate orchestration'
+limitations:
+- This composite is didactic / toy-real -- FastProduction (rate 1.0), SlowConversion (yield_frac 0.6), the intervals (1.0 and 5.0), and the 20-tick run length are hand-picked magnitudes chosen to make the two timescales legible in one short run, not fitted to any named biological process, rate, or measurement. molecules and biomass are abstract shared-store amounts, not calibrated concentrations or masses. It demonstrates the orchestration MECHANISM, not a biological magnitude.
+- Only panel (a) -- multi-timestepping through a shared store -- is demonstrated at runtime. Panel (b) (workflow orchestration as a dependency DAG) and panel (c) (event-driven graph rewrites -- division, engulfment, bursting) are structural / schematic in the paper and are deliberately NOT part of this runnable composite. This study makes no runtime claim about (b) or (c).
+- The exact numeric values pinned here (final split 8.12 + 11.88, biomass levels 3.0 / 7.2 / 11.88, the 20-vs-3 change counts) are regression pins over the current process configs and intervals; changing rate, yield_frac, or either interval would shift them. The DIRECTIONAL claims -- fast outpaces slow, sawtooth, monotone staircase, and conservation (molecules + biomass == elapsed time) -- are the robust, a-priori predictions that hold for any such fast/slow pair through one shared store.
+- This study is figure-only -- it has no calibrated spatial or biological cousin in the sibling `draft-to-living-cell` investigation. It stands as a minimal executable demonstration of the orchestration figure''s panel (a), not a scaled-up model.
+falsifiability: Overturned if the fast process does not update the shared store more often than the slow one, if molecules is not a sawtooth (missing either the fast fill or the slow draw-down), if biomass is not a non-decreasing coarse staircase on the slow clock, if the shared-store total (molecules + biomass) fails to equal the cumulative fast injection at any tick (implying mass created or lost across the timescales), or if any of these fails to reproduce exactly across repeated runs of the deterministic composite.
+visualizations:
+- name: Figure 2
+  address: svg:visualizations/figure_2.svg
+  config:
+    caption: 'Orchestration: (a) multi-timestepping coordinates processes updating at different rates through a shared store; (b) workflow organizes processes as a dependency DAG; (c) event-driven graph rewrites (division, engulfment, bursting) modify system structure.'
+- name: Multi-timestepping through a shared store
+  address: image:visualizations/fig02-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig02 demonstration (fig02-runnable) of Fig 2''s panel (a), multi-timestepping: two processes update at DIFFERENT rates through ONE shared pool store. FastProduction (interval 1) fills pool.molecules every tick; SlowConversion (interval 5) fires every 5 ticks, converting the pool into pool.biomass. molecules ramps and saws down on the fast clock while biomass advances in coarse staircase steps on the slow clock — two rates coordinated through a shared store. Panels (b) workflow-DAG and (c) event rewrites stay schematic. From scripts/build_fig02_dynamics.py.'
+parent_studies: []
+experiment: 'Run the `fig02-runnable` composite (FastProduction interval 1.0 rate 1.0 and SlowConversion interval 5.0 yield_frac 0.6 wired to one shared pool store) to completion over 20 ticks through the process-bigraph engine, and measure whether two processes updating at different rates through a single shared store reproduce Fig orchestration panel (a): the fast clock outpacing the slow clock, a sawtooth fast pool, a coarse monotone biomass staircase, and mass conserved through the shared store across the two timescales.'
+result: 'Over the deterministic 20-tick run, the fast process updates the shared store on every tick (20 changes) while the slow process converts only 3 times (at t=10, 15, 20), so the fast clock visibly outpaces the slow clock. `molecules` is a sawtooth -- it ramps +1/tick and is drawn down at each slow firing (9->7 at t=10, 11->7.8 at t=15, 11.8->8.12 at t=20) -- while `biomass` advances monotonically in a coarse staircase on the slow clock (0 -> 3.0 -> 7.2 -> 11.88), never returning to the pool. The two rates are coordinated through the ONE shared store and mass is conserved across the timescales: at every emitted tick `molecules + biomass` equals the cumulative fast injection (== elapsed time), ending 8.12 + 11.88 = 20.0. Every value is fixed and deterministic (no RNG), so the whole trajectory reproduces exactly run to run. The paper''s multi-timescale orchestration claim (Fig orchestration, panel a) is thus executable, not merely drawn -- demonstrated here at the didactic (uncalibrated) level for the orchestration mechanism, with panels (b) workflow-DAG and (c) event rewrites left schematic.'

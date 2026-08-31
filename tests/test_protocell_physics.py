@@ -160,7 +160,7 @@ def test_negative_control_k_prod_zero_collapses():
 
 
 def test_puncture_is_fatal_no_recovery():
-    # Viability bound (api-map Q3 / beer2023): take the closed-loop steady
+    # Viability bound (api-map Q3 / beer2024deriving): take the closed-loop steady
     # state, zero a wedge of the membrane so nothing is enclosed, and confirm
     # production -- gated on closure -- cannot rebuild the boundary from
     # nothing. A broken boundary relaxes to phi=0 under decay+diffusion.

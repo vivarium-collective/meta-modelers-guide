@@ -30,7 +30,7 @@ from meta_modelers_guide.compile import (
 
 ROOT = Path(__file__).resolve().parent.parent
 COMPOSITES = ROOT / "meta_modelers_guide" / "composites"
-SEMANTIC = COMPOSITES / "fig06-disintegration.composite.json"
+SEMANTIC = COMPOSITES / "fig05-disintegration.composite.json"
 
 DRAFT = "CoarseGrainedMetabolism"
 

@@ -1,0 +1,273 @@
+{
+  "name": "The Cellular Interface — Made to Run",
+  "description": "Fig 3 as a fully runnable temporal study: a bounded cell (local:CellularInterfaceHandler) senses its environmental drivers and exposes typed interface ports. The environment supplies a chemical concentration (1.0) and holds a thermal driver ABOVE the cell's optimum (45 °C, opt 37 °C). Over the run the cell takes up chemical (Monod uptake → chemical flux), grows (growth_rate, accreting shape/volume), and its viability DECLINES by first-order Arrhenius thermal death because the temperature is above tolerance. This is the demonstration behind Fig 3b: the environment's drivers DRIVE the cell's interface ports. Runnable (default_n_steps + RAMEmitter): drivers → ports over time.",
+  "default_n_steps": 24,
+  "requires": {
+    "processes": [
+      "CellularInterfaceHandler"
+    ]
+  },
+  "provenance": {
+    "figure": "fig03b-cellular-interface",
+    "environment": "fig03b",
+    "handlers": {
+      "CellularInterface": {
+        "handler": "CellularInterfaceHandler",
+        "process_term": "CBO:cellular interface"
+      }
+    }
+  },
+  "state": {
+    "cell": {
+      "_type": "process",
+      "address": "local:CellularInterfaceHandler",
+      "interval": 1.0,
+      "config": {
+        "uptake_rate": 0.8,
+        "growth_max": 0.6,
+        "km": 0.5,
+        "shape_growth_coupling": 1.0,
+        "objective_yield": 0.5,
+        "death_Ea": 300000.0,
+        "gas_R": 8.314,
+        "d_value_ref_min": 1.0,
+        "temp_ref_death": 55.0,
+        "temp_opt": 37.0,
+        "viability_init": 1.0,
+        "elasticity": 0.1,
+        "membrane_conductance": 0.05,
+        "thermal_conductance": 0.02,
+        "signaling_gain": 0.4
+      },
+      "inputs": {
+        "chemical_ext": [
+          "environment",
+          "chemical"
+        ],
+        "mechanical_ext": [
+          "environment",
+          "mechanical"
+        ],
+        "electrical_ext": [
+          "environment",
+          "electrical"
+        ],
+        "thermal_ext": [
+          "environment",
+          "thermal"
+        ]
+      },
+      "outputs": {
+        "chemical": [
+          "interface",
+          "chemical"
+        ],
+        "mechanical": [
+          "interface",
+          "mechanical"
+        ],
+        "electrical": [
+          "interface",
+          "electrical"
+        ],
+        "thermal": [
+          "interface",
+          "thermal"
+        ],
+        "growth_rate": [
+          "interface",
+          "growth_rate"
+        ],
+        "shape": [
+          "interface",
+          "shape"
+        ],
+        "signaling": [
+          "interface",
+          "signaling"
+        ],
+        "objective": [
+          "interface",
+          "objective"
+        ],
+        "viability": [
+          "interface",
+          "viability"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3.5a8.5 8 0 1 0 .1 0z\"/><circle cx=\"13\" cy=\"13\" r=\"2.4\"/></svg>"
+    },
+    "environment": {
+      "chemical": {
+        "_type": "concentration",
+        "_value": 1.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"8\" r=\"1\"/><circle cx=\"13\" cy=\"7\" r=\"1\"/><circle cx=\"17\" cy=\"9\" r=\"1\"/><circle cx=\"10\" cy=\"13\" r=\"1\"/><circle cx=\"15\" cy=\"14\" r=\"1\"/><circle cx=\"18\" cy=\"16\" r=\"1\"/><circle cx=\"7\" cy=\"17\" r=\"1\"/><circle cx=\"12\" cy=\"18\" r=\"1\"/></svg>",
+        "_default": 1.0
+      },
+      "mechanical": {
+        "_type": "force",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"13\" y=\"8\" width=\"7\" height=\"8\" rx=\"1\"/><path d=\"M3 12h9M9 9l3 3-3 3\"/></svg>",
+        "_default": 0.0
+      },
+      "electrical": {
+        "_type": "voltage",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"24\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 4v16M17 4v16\"/><path d=\"M9.4 9h2.2M10.5 7.9v2.2\"/><path d=\"M12.4 15h2.2\"/><path d=\"M12.8 12h3.4M15 10.8l1.4 1.2-1.4 1.2\"/></svg>",
+        "_default": 0.0
+      },
+      "thermal": {
+        "_type": "temperature",
+        "_value": 45.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4a2 2 0 0 1 2 2v8a4 4 0 1 1-4 0V6a2 2 0 0 1 2-2z\"/><circle cx=\"12\" cy=\"18\" r=\"2\" fill=\"#0b7a75\" stroke=\"none\"/><path d=\"M12 8v6\"/></svg>",
+        "_default": 45.0
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3a9 9 0 1 0 .1 0z\"/><path d=\"M3.5 10h17M4 15h16M12 3c-3 3-3 15 0 18M12 3c3 3 3 15 0 18\"/></svg>"
+    },
+    "interface": {
+      "chemical": {
+        "_type": "chemical_flux",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"8\" r=\"1\"/><circle cx=\"13\" cy=\"7\" r=\"1\"/><circle cx=\"17\" cy=\"9\" r=\"1\"/><circle cx=\"10\" cy=\"13\" r=\"1\"/><circle cx=\"15\" cy=\"14\" r=\"1\"/><circle cx=\"18\" cy=\"16\" r=\"1\"/><circle cx=\"7\" cy=\"17\" r=\"1\"/><circle cx=\"12\" cy=\"18\" r=\"1\"/></svg>"
+      },
+      "mechanical": {
+        "_type": "force",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"13\" y=\"8\" width=\"7\" height=\"8\" rx=\"1\"/><path d=\"M3 12h9M9 9l3 3-3 3\"/></svg>"
+      },
+      "electrical": {
+        "_type": "current",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 4v16M17 4v16\"/><path d=\"M9.4 9h2.2M10.5 7.9v2.2\"/><path d=\"M12.4 15h2.2\"/><path d=\"M12.8 12h3.4M15 10.8l1.4 1.2-1.4 1.2\"/></svg>"
+      },
+      "thermal": {
+        "_type": "heat_flux",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4a2 2 0 0 1 2 2v8a4 4 0 1 1-4 0V6a2 2 0 0 1 2-2z\"/><circle cx=\"12\" cy=\"18\" r=\"2\" fill=\"#0b7a75\" stroke=\"none\"/><path d=\"M12 8v6\"/></svg>"
+      },
+      "growth_rate": {
+        "_type": "growth_rate",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 18c3.5 0 4.5-7 8.5-9.5C15.5 6.6 17.5 5.4 20 5\"/><path d=\"M16 5h4v4\"/></svg>"
+      },
+      "shape": {
+        "_type": "volume",
+        "_value": 1.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6.5 8c-2 3.5 0 8 4 9s9-1.5 8.5-6.5S15 4 11.5 5.2 8 5.5 6.5 8z\"/><path d=\"M9 12h6\"/></svg>",
+        "_default": 1.0
+      },
+      "signaling": {
+        "_type": "signaling_rate",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"5\" cy=\"12\" r=\"1.5\" fill=\"#0b7a75\" stroke=\"none\"/><path d=\"M8 12a3 3 0 0 0-3-3M10.2 12a5.2 5.2 0 0 0-5.2-5.2\"/><path d=\"M15 8.5v7M15 8.5a2.4 2.4 0 0 1 4 1.6M15 15.5a2.4 2.4 0 0 0 4-1.6\"/></svg>"
+      },
+      "objective": {
+        "_type": "objective",
+        "_value": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 19c2-1 3.2-9 6-9 2.4 0 2.8 5 5 5 2 0 3.5-6 7-7\"/><path d=\"M9 10V5M7.6 6.4L9 5l1.4 1.4\"/></svg>"
+      },
+      "viability": {
+        "_type": "viability",
+        "_value": 1.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4a7 7 0 1 0 .1 0z\"/><path d=\"M5.4 13.5a7 7 0 0 0 13.2 0z\" fill=\"#0b7a75\" stroke=\"none\"/><circle cx=\"12\" cy=\"9.6\" r=\"1.1\"/></svg>",
+        "_default": 1.0
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"6\" cy=\"12\" r=\"2\"/><path d=\"M8 12h9\"/><path d=\"M17 9.5v5\"/></svg>"
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "chemical_ext": "concentration",
+          "thermal_ext": "temperature",
+          "chemical_flux": "chemical_flux",
+          "growth_rate": "growth_rate",
+          "shape": "volume",
+          "objective": "objective",
+          "viability": "viability",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "chemical_ext": [
+          "environment",
+          "chemical"
+        ],
+        "thermal_ext": [
+          "environment",
+          "thermal"
+        ],
+        "chemical_flux": [
+          "interface",
+          "chemical"
+        ],
+        "growth_rate": [
+          "interface",
+          "growth_rate"
+        ],
+        "shape": [
+          "interface",
+          "shape"
+        ],
+        "objective": [
+          "interface",
+          "objective"
+        ],
+        "viability": [
+          "interface",
+          "viability"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "The environment senses → the cell's interface ports respond",
+        "observables": {
+          "chemical_ext": "float",
+          "thermal_ext": "float",
+          "growth_rate": "float",
+          "shape": "float",
+          "viability": "float"
+        },
+        "subtitle": "Fig 3 — a bounded cell over its environmental drivers (chemical supply + elevated temperature)"
+      },
+      "inputs": {
+        "chemical_ext": [
+          "environment",
+          "chemical"
+        ],
+        "thermal_ext": [
+          "environment",
+          "thermal"
+        ],
+        "growth_rate": [
+          "interface",
+          "growth_rate"
+        ],
+        "shape": [
+          "interface",
+          "shape"
+        ],
+        "viability": [
+          "interface",
+          "viability"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
+    }
+  }
+}

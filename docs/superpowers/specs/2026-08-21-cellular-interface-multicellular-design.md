@@ -17,7 +17,7 @@
 - **Force / mechanical interface** → new **upstream viva-cpm modules** that derive effective forces from CPM adhesion/volume/surface energies and expose mechanical-interface ports (a viva-cpm PR), scheduled **after** the flagship.
 - **The CPM↔field coupling bridge lives in this repo first** (`meta_modelers_guide` package), upstreamed to viva-cpm later once general.
 - **Flagship-first**: build study 2 (`single-cell-in-a-field`) end-to-end (composite → run → GIF+metrics → study → report) to lock the pattern, then fan out.
-- **FBA source**: spatio-flux `DynamicFBA` (spatial, composable) for the multicellular/field studies; the existing `draft-to-living-cell` COBRApy `fig06` path is unchanged. No `viva-cobra` exists.
+- **FBA source**: spatio-flux `DynamicFBA` (spatial, composable) for the multicellular/field studies; the existing `draft-to-living-cell` COBRApy `fig05` path is unchanged. No `viva-cobra` exists.
 - **Visualizations**: a new `cpm_viz` module renders CPM lattice frames (+ field heatmap overlay) to an animated **GIF**, beside a **synced time-series panel** sharing the run's time axis.
 
 ## Composition architecture — the `CpmFieldBridge` (load-bearing new module)

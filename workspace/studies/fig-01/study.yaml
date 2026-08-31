@@ -1,19 +1,234 @@
 schema_version: 4
 name: fig-01
-title: The meta-modeler's overview
-kind: theoretical
-purpose:
-  mechanism: Hierarchical composition of processes coupled by explicit interfaces
-    across cellular and environmental scales; the multiscale bigraph beneath the schematic.
+investigation: paper-figures
+title: "fig-01: Interfaces & composition"
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'Is the paper''s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) executable rather than merely drawn -- does the smallest honest process bigraph, one typed process wired through ports to two nested place-graph stores, actually run and move quantity from a source store to a sink store while conserving the total?'
+biological_summary: 'This study puts runnable dynamics behind the paper''s definitional figure. §Interfaces and composition introduces process bigraphs as the notation for multiscale biology: a *process* is a mechanism that generates change, reading and writing *shared variables* held in *stores* through typed input/output *ports*; the *wiring* W connects each (process, port) to a store path; stores nest into a *place graph* of containment (molecules within compartments within a cell); and the *process graph* over that place graph is what makes the whole structure a process bigraph (Fig composition_framework caption: "A process reads and writes data through typed input and output ports. Those ports wire to stores ... Wiring the two together -- a process graph that links processes to the stores they read and write, overlaid on a place graph that nests those stores into a hierarchy -- is what makes the structure a process bigraph"). The published figure draws this structure statically. The `fig01-runnable` composite supplies the smallest honest bit of dynamics behind it: ONE real process, `StoreTransfer`, wired to TWO scalar place-graph nodes -- source `store_a` (seeded 1.0) and sink `store_b` (seeded 0.0). The process reads `store_a` through its `source` input port and writes both stores through its `source` and `sink` output ports, under a first-order transfer dA/dt = -k*A, dB/dt = +k*A with k=0.15 over interval 1.0. Running it demonstrates the core vocabulary of Table box:compositional in miniature -- paths, types, and values (two typed `float` locations with concrete seeded values); state/stores (the two shared variables); process/mechanism (the transfer rule); interface/ports (the read/write wiring W); and composition (a process coupled to stores in one typed system). Over a 20-tick run the source drains geometrically (store_a[n] = 0.85^n, from 1.0 to ~0.0388), the sink fills as its complement (store_b[n] = 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off every tick. The figure''s claim -- that a process bigraph is an *executable* place-graph-plus-processes, not merely a static diagram -- is code-verified: give a process an update rule wired through ports and the connected stores evolve.'
+claim: 'The paper''s definitional Fig 1 is executable, not merely drawn: the minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- runs forward under the process-bigraph engine and moves quantity from source `store_a` to sink `store_b` while conserving the total. Because the transfer is fixed-rate deterministic (k=0.15, interval 1.0), the trajectory is exact: store_a[n] == 0.85^n (draining from 1.0 to ~0.0388 over 20 ticks), store_b[n] == 1 - 0.85^n (filling as its complement), the sink overtakes the source at tick 5, and store_a + store_b == 1.0 to round-off at every tick. This is the dynamics behind the figure''s static signature -- a process reading and writing shared variables through ports wired to stores in a place graph -- shown to actually run.'
+baseline:
+- name: fig01-runnable
+  composite: meta_modelers_guide.composites.fig01-runnable
+  params: {}
+variants: []
+key_assumptions:
+- 'This is a DIDACTIC / toy-real composite: the smallest honest process bigraph that looks like Fig 1 and plays forward. It is illustrative, NOT calibrated to any literature target. store_a and store_b are dimensionless scalar quantities; the rate k=0.15 and interval 1.0 are hand-chosen so the drain-and-fill arc is legible within a 20-tick run, not fitted to a measured transport or reaction rate.'
+- 'The place graph here is deliberately minimal -- two sibling scalar stores, not a deep containment hierarchy. It demonstrates the process-graph-over-place-graph wiring (one process wired through ports to two stores) that DEFINES a process bigraph, at the smallest scale that still exhibits it; the paper''s deeper nesting (molecules within compartments within a cell, Fig composition_framework b) is described but not built out in this toy.'
+- 'The transfer is a first-order (mass-action) rule dA/dt = -k*A, dB/dt = +k*A. The `source` port is both read and written (the store drains) and the `sink` port is written (it fills); the two writes are equal-and-opposite by construction, so conservation is a property of the update rule, not an emergent balance.'
+- 'The dynamics are fully deterministic -- no seed, no stochastic engine -- so the exact geometric trajectory (0.85^n) and the tick-5 crossover are reproducible run-to-run and may be pinned exactly, not merely asserted by direction.'
+acceptance_criteria:
+- The composite builds and runs forward through the process-bigraph engine (a process wired through ports to two place-graph stores), emitting a real trajectory rather than a static diagram.
+- The source store drains and the sink store fills over the run -- store_a strictly decreases and store_b strictly increases, step by step.
+- The transfer conserves the total -- store_a + store_b stays fixed at the seeded total (1.0) to round-off at every tick.
+- Because the transfer is fixed-rate deterministic, the trajectory is the exact geometric decay store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n, and the sink overtakes the source at a specific, reproducible tick.
+units_and_time:
+  time: 1 tick = 1 unit of dimensionless model time (interval 1.0); the run is 20 such ticks (ticks 0..20, 21 emitted rows).
+  quantities: 'store_a and store_b are dimensionless scalar quantities (typed `float`), seeded 1.0 and 0.0; the total is 1.0. The rate k=0.15 is a per-tick fractional transfer, dimensionless. No quantity carries a calibrated physical unit.'
+  note: No quantity here is calibrated to a measured transport rate, concentration, or literature target -- the magnitudes are chosen for legibility.
+behavior_tests:
+- name: process-reads-and-writes-through-typed-ports
+  classification: primary
+  description: The `StoreTransfer` process, driven directly, reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer -- the interface (ports/wiring W) of Table box:compositional in action, at one tick.
+  measure:
+    kind: derived
+    path: delta
+    expr: proc.update({source 1.0}, 1.0) -> delta[source], delta[sink]
+  pass_if:
+    op: conservative_transfer
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: delta[source] == -0.15 and delta[sink] == +0.15 (drain == -fill)
+    provenance: 'the update rule flux = k*source*interval writes -flux to source and +flux to sink; with k=0.15, source=1.0, interval=1.0 that is exactly delta[source] == -0.15, delta[sink] == +0.15, sum 0 to round-off -- an exact deterministic pin (tests/test_fig01_runs.py::test_transfer_moves_from_source_to_sink)'
+  requires_simulation: none
+- name: source-drains-and-sink-fills-over-the-run
+  classification: primary
+  description: Over the composite run the wired stores genuinely evolve -- source store_a strictly decreases and sink store_b strictly increases, tick by tick -- demonstrating that the process bigraph is executable, not a static diagram.
+  measure:
+    kind: observable
+    path: obs.store_a, obs.store_b
+    expr: store_a[n+1] < store_a[n] and store_b[n+1] > store_b[n] for all ticks
+  pass_if:
+    op: monotone
+    kind: acceptance_criterion
+    value: store_a strictly decreasing, store_b strictly increasing; store_a drains from 1.0 to ~0.0388 and store_b fills from 0.0 to ~0.9612 over 20 ticks
+    provenance: 'prior: a first-order transfer drains the source into the sink, so store_a decreases monotonically and store_b increases monotonically. Observed: store_a 1.0 -> 0.03876, store_b 0.0 -> 0.96124 over ticks 0..20, both strictly monotone step by step (tests/test_fig01_runs.py::test_source_drains_and_sink_fills_over_the_run)'
+  requires_simulation: fig01-runnable
+- name: trajectory-is-the-exact-geometric-decay
+  classification: primary
+  description: Because the transfer is fixed-rate deterministic, the run reproduces the exact geometric decay store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n -- the real trajectory pinned exactly, not just its direction.
+  measure:
+    kind: observable
+    path: obs.store_a, obs.store_b
+    expr: store_a[n] vs 0.85^n and store_b[n] vs 1 - 0.85^n for all n in 0..20
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: store_a[n] == 0.85**n and store_b[n] == 1 - 0.85**n to abs 1e-12
+    provenance: 'each step multiplies the source by (1-k) = 0.85, so store_a[n] == 0.85^n exactly and store_b[n] == 1 - 0.85^n exactly; verified for every tick 0..20 to 1e-12. Deterministic (no seed), reproduces run-to-run (tests/test_fig01_runs.py::test_trajectory_is_the_exact_geometric_decay)'
+  requires_simulation: fig01-runnable
+- name: sink-overtakes-source-at-the-crossover-tick
+  classification: primary
+  description: The sink overtakes the source at a specific, deterministic tick -- store_b first exceeds store_a at tick 5, the drain/fill crossover.
+  measure:
+    kind: observable
+    path: obs.store_a, obs.store_b
+    expr: first tick n where store_b[n] > store_a[n]
+  pass_if:
+    op: '=='
+    kind: regression_pin
+    deterministic_pin: true
+    value: 5.0
+    provenance: '0.85^n crosses below 0.5 first at n=5 (0.85^4 = 0.522 > 0.5, 0.85^5 = 0.444 < 0.5), so the sink overtakes the source at tick 5: store_b[4] < store_a[4] and store_b[5] > store_a[5]. Exact deterministic pin (tests/test_fig01_runs.py::test_sink_overtakes_source_at_the_crossover_tick)'
+  requires_simulation: fig01-runnable
+- name: total-is-conserved
+  classification: primary
+  description: The transfer conserves the total -- store_a + store_b stays fixed at the seeded total (1.0) to round-off at every tick, because the sink write equals the source drain by construction.
+  measure:
+    kind: observable
+    path: obs.store_a, obs.store_b
+    expr: store_a[n] + store_b[n] for all ticks
+  pass_if:
+    op: '=='
+    kind: acceptance_criterion
+    deterministic_pin: true
+    value: 1.0
+    provenance: 'prior: the two port writes are equal-and-opposite (-flux, +flux), so the total is conserved. Observed: store_a + store_b == 1.0 to within 1e-9 at every tick 0..20 (max-min spread < 1e-9), seeded total 1.0 (tests/test_fig01_runs.py::test_total_is_conserved)'
+  requires_simulation: fig01-runnable
+runs:
+- name: fig01-runnable
+  composite: fig01-runnable
+  emitter: RAMEmitter
+  id: fig01-runnable
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig01-runnable.composite.json (StoreTransfer, rate k=0.15, interval 1.0, source store_a seeded 1.0, sink store_b seeded 0.0) run for default_n_steps=20 to completion through the process-bigraph engine (tests/test_fig01_runs.py). Fully deterministic -- no seed -- so the emitted trajectory reproduces exactly run-to-run.'
+  params: {}
+  outcomes:
+    PROCESS-READS-AND-WRITES-THROUGH-TYPED-PORTS:
+      result: PASS
+      detail: delta[source] == -0.15, delta[sink] == +0.15, sum 0 (conservative transfer through the ports)
+    SOURCE-DRAINS-AND-SINK-FILLS-OVER-THE-RUN:
+      result: PASS
+      detail: store_a 1.0 -> 0.03876 (strictly decreasing), store_b 0.0 -> 0.96124 (strictly increasing) over ticks 0..20
+    TRAJECTORY-IS-THE-EXACT-GEOMETRIC-DECAY:
+      result: PASS
+      detail: store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 for every tick 0..20
+    SINK-OVERTAKES-SOURCE-AT-THE-CROSSOVER-TICK:
+      result: PASS
+      detail: store_b first exceeds store_a at tick 5 (0.556 vs 0.444)
+    TOTAL-IS-CONSERVED:
+      result: PASS
+      detail: store_a + store_b == 1.0 to within 1e-9 at every tick
+- name: meta_modelers_guide.composites.fig01-runnable__1787799653__fa2aab
+  status: complete
+  timestamp: 1787799653.275527
+  emitter:
+    kind: unknown
+  params: '{}'
+findings:
+- id: F-01
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The paper''s definitional Fig 1 is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- builds and runs forward through the process-bigraph engine, and the wired stores genuinely evolve: source store_a drains from 1.0 to ~0.0388 and sink store_b fills from 0.0 to ~0.9612 over 20 ticks, both strictly monotone. This is the dynamics behind the figure''s static signature (a process reading and writing shared variables through ports wired to stores) shown to actually run.'
+  evidence:
+    from_test: source-drains-and-sink-fills-over-the-run
+    from_run: fig01-runnable
+    observed: store_a 1.0 -> 0.03876, store_b 0.0 -> 0.96124 over ticks 0..20, strictly monotone
+  provenance:
+    run_ids:
+    - fig01-runnable
+- id: F-02
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The transfer conserves quantity exactly, and because it is fixed-rate deterministic the trajectory is exact, not merely directional. store_a + store_b stays fixed at the seeded total 1.0 to round-off at every tick (the two port writes are equal-and-opposite by construction); store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 at every tick; and the sink overtakes the source at tick 5. The interface (ports/wiring) carries a conservative transfer, and the whole run reproduces exactly with no seed -- the toy is honest about exactly what it does.'
+  evidence:
+    from_test: trajectory-is-the-exact-geometric-decay
+    from_run: fig01-runnable
+    observed: store_a[n] == 0.85^n, store_b[n] == 1 - 0.85^n to 1e-12; total == 1.0 to 1e-9 every tick; sink overtakes source at tick 5
+  provenance:
+    run_ids:
+    - fig01-runnable
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: fig01-runnable.composite.json builds and runs to completion through the process-bigraph engine (tests/test_fig01_runs.py), fully deterministic (no seed).
+  biological_validation:
+    result: PASS
+    basis: All primary behavior tests pass on measured readouts from a real 20-tick run -- the process reads and writes through its typed ports with a conservative transfer, the source drains while the sink fills, the trajectory is the exact geometric decay store_a[n] == 0.85^n, the sink overtakes the source at tick 5, and the total is conserved at 1.0 to round-off every tick. Every pin is deterministic and reproduces run-to-run.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Making the definitional figure runnable turns Fig 1''s static signature into demonstrated behavior: the process-graph-over-place-graph wiring that DEFINES a process bigraph is shown to actually execute -- a process wired through ports to two stores, given an update rule, moves quantity between them and conserves the total. It grounds the paper''s core vocabulary (paths, types, values; state/stores; process; interface/ports; composition) in a composite that runs.'
+conclusion: '## Claims
+
+  - The paper''s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores (source store_a, sink store_b) -- runs forward through the process-bigraph engine and moves quantity from source to sink while conserving the total.
+
+  - Over a 20-tick run the source drains geometrically (store_a[n] == 0.85^n, from 1.0 to ~0.0388), the sink fills as its complement (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and store_a + store_b stays fixed at 1.0 to round-off at every tick. The transfer is fixed-rate deterministic, so every one of these values is an exact pin that reproduces run-to-run.
+
+  - This is the dynamics behind the figure''s static signature -- a process reading and writing shared variables through typed ports wired to stores in a place graph -- shown to actually run, grounding the core vocabulary of Table box:compositional (paths/types/values, state/stores, process, interface/ports, composition) in a running composite.
+
+
+  ## Evidence
+
+  - **PROCESS-READS-AND-WRITES-THROUGH-TYPED-PORTS** -- delta[source] == -0.15, delta[sink] == +0.15, sum 0 (conservative transfer through the ports)
+
+  - **SOURCE-DRAINS-AND-SINK-FILLS-OVER-THE-RUN** -- store_a 1.0 -> 0.03876, store_b 0.0 -> 0.96124, both strictly monotone over ticks 0..20
+
+  - **TRAJECTORY-IS-THE-EXACT-GEOMETRIC-DECAY** -- store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 for every tick
+
+  - **SINK-OVERTAKES-SOURCE-AT-THE-CROSSOVER-TICK** -- store_b first exceeds store_a at tick 5
+
+  - **TOTAL-IS-CONSERVED** -- store_a + store_b == 1.0 to within 1e-9 at every tick
+
+
+  ## Limitations
+
+  - This is a didactic / toy-real composite: the smallest honest process bigraph that looks like Fig 1 and plays forward, illustrative and NOT calibrated to any literature target. store_a and store_b are dimensionless scalars; k=0.15 and interval 1.0 are chosen for legibility, not fitted to a measured rate.
+
+  - The place graph is deliberately minimal (two sibling scalar stores), enough to exhibit the process-graph-over-place-graph wiring that defines a process bigraph but not the paper''s deeper containment nesting (molecules within compartments within a cell).
+
+  - Conservation is a property of the update rule (the two port writes are equal-and-opposite by construction), not an emergent balance.
+
+
+  ## Next steps
+
+  - Nest the stores into a genuine multi-level place graph (compartments within a cell) to demonstrate containment, not just sibling stores.
+
+  - Compose a second process on the same stores to show orchestration across processes on shared state (the subject of Fig orchestration).'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig01-runnable.composite.json builds and runs to completion through the engine over a deterministic 20-tick run.'
+    biological_validation: The definitional Fig 1 process bigraph is demonstrated to be executable at the toy-real (uncalibrated) level -- a real process wired through typed ports to two place-graph stores moves quantity from source to sink and conserves the total, with an exact deterministic trajectory.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - the composite fails to build or run (the StoreTransfer process is not registered, or the port wiring to store_a/store_b is broken)
+    - the stores do not evolve (the process update is not being applied, or the ports are wired to the wrong paths)
+    - the total is not conserved (the source/sink writes are no longer equal-and-opposite)
+    - the trajectory drifts from 0.85^n or the crossover tick moves (the rate k or interval changed)
+    block_downstream: 'any figure study that reuses the minimal process-wired-to-stores pattern as its executable substrate'
+limitations:
+- This is a didactic / toy-real composite -- the smallest honest process bigraph that looks like Fig 1 and plays forward. It is illustrative, NOT calibrated to a measured transport rate, concentration, or literature target. store_a and store_b are dimensionless scalars; k=0.15 and interval 1.0 are hand-chosen for legibility within a 20-tick run.
+- The place graph is deliberately minimal -- two sibling scalar stores, not a deep containment hierarchy. It exhibits the process-graph-over-place-graph wiring that DEFINES a process bigraph at the smallest scale that still shows it, but not the paper's deeper nesting (molecules within compartments within a cell, Fig composition_framework b).
+- Conservation is a property of the first-order update rule (the `source` and `sink` port writes are equal-and-opposite by construction), not an emergent balance between independent mechanisms.
+- The dynamics are fully deterministic (no seed, no stochastic engine), so the exact geometric trajectory and the tick-5 crossover are pinned exactly rather than asserted by direction only -- honest for this toy, but note the exactness comes from the simplicity, not from calibration.
+- fig-01 and fig-02 are figure-only carriers in the paper-figures investigation -- this study has no calibrated spatial cousin in the draft-to-living-cell investigation to cross-link (parent_studies is empty by design).
+falsifiability: Overturned if the fig01-runnable composite fails to build or run through the engine, if the wired stores do not evolve (source draining, sink filling) over the run, if store_a + store_b is not conserved at the seeded total to round-off, if the trajectory departs from the exact geometric decay store_a[n] == 0.85^n, or if the sink/source crossover tick is not deterministic across repeated runs of the same composite.
 visualizations:
 - name: Figure 1
   address: svg:visualizations/figure_1.svg
   config:
-    caption: Hierarchical composition of processes coupled by explicit interfaces
-      across cellular and environmental scales; the multiscale bigraph beneath the
-      schematic.
-question: What does the meta-modeler coordinate across scales and interfaces?
-baseline:
-- name: fig01b-multiscale-composite
-  composite: meta_modelers_guide.composites.fig01b-multiscale-composite
-  params: {}
+    caption: 'A process bigraph: processes interacting with stores through ports and wires, making shared state and dependencies explicit.'
+- name: A process bigraph is executable
+  address: image:visualizations/fig01-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig01 demonstration (fig01-runnable): the minimal executable process bigraph — ONE real process (StoreTransfer) wired to TWO scalar place-graph nodes, source store_a and sink store_b. A first-order transfer drains the source into the sink (dA/dt=-k*A, dB/dt=+k*A) while the total A+B is conserved. The dynamics behind Fig 1b''s static signature: a process bigraph is an executable place-graph + processes. From scripts/build_fig01_dynamics.py.'
+parent_studies: []
+experiment: 'Run the `fig01-runnable` composite (StoreTransfer, rate k=0.15, interval 1.0, source store_a seeded 1.0, sink store_b seeded 0.0) for default_n_steps=20 to completion through the process-bigraph engine, and measure whether a single typed process wired through ports to two place-graph stores actually moves quantity from the source store to the sink store while conserving the total -- i.e. whether the definitional Fig 1 is executable, not merely drawn.'
+result: 'Over a 20-tick run the minimal process bigraph runs forward and the wired stores genuinely evolve: source store_a drains geometrically from 1.0 to ~0.0388 (store_a[n] == 0.85^n to 1e-12), sink store_b fills as its complement from 0.0 to ~0.9612 (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off at every tick. Driven directly, the process reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer (delta -0.15 / +0.15). The paper''s definitional Fig 1 (§Interfaces and composition) is therefore executable, not merely drawn -- a real typed process wired through ports to two place-graph stores moves quantity from source to sink and conserves the total, with a fully deterministic, exactly reproducible trajectory. This is a didactic / toy-real demonstration: the smallest honest process bigraph, illustrative rather than calibrated to any literature target.'

@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-21
 **Investigation:** `the-cellular-interface-multicellular`
-**Analogue:** Fig 10a,b — a cell grows (volume target driven by metabolism) and **divides** at a threshold. Spatial analogue of the non-spatial `draft-to-living-cell` `growth-and-division` study (`workspace/studies/growth-and-division/study.yaml`, composites `fig10-1-*`), where an autocatalytic energy-coupled growth process drives a store across a threshold and fires a **place-graph rewrite** (1 cell node → 2 daughters, mass conserved) — "growth, not a timer, is what puts the cell at the division trigger."
+**Analogue:** Fig 10a,b — a cell grows (volume target driven by metabolism) and **divides** at a threshold. Spatial analogue of the non-spatial `draft-to-living-cell` `growth-and-division` study (`workspace/studies/growth-and-division/study.yaml`, composites `fig09-*`), where an autocatalytic energy-coupled growth process drives a store across a threshold and fires a **place-graph rewrite** (1 cell node → 2 daughters, mass conserved) — "growth, not a timer, is what puts the cell at the division trigger."
 **Verified against installed code:** `cpm` (`~/code/viva-cpm/cpm/`, Rust `cpm_core`; division source `~/code/viva-cpm/crates/cpm-core/src/mitosis.rs`, binding `crates/cpm-py/src/lib.rs:230`), the merged flagship `meta_modelers_guide/cpm/cell_field.py`, study-3 `colony_field.py`, and `cobra` textbook `e_coli_core`.
 **Interpreter:** `~/code/meta-modelers-guide/.venv/bin/python`, `PYTHONPATH=<worktree>` (`~/code/meta-modelers-guide--cpm-multicellular`). Every snippet below was RUN; scratch scripts (`verify_div.py`, `verify_growth.py`, `verify_edge.py`) live in the session scratchpad.
 

@@ -1,0 +1,243 @@
+{
+  "name": "Grain Swap — Live Viability-Driven Switch",
+  "description": "Fig 5 as a fully runnable temporal study: a cell's viability is driven down by an external stress ramp (StressRamp); a GrainSelector swaps the active grain as viability crosses a threshold — while viable the COARSE grain grows the cell's biomass (linear yield), and once viability falls below the threshold the FINE grain takes over the dying regime, where biomass stops growing and DECAYS first-order. Exactly one grain runs per tick, so the coarse→fine switch — growth turning over to decline — plays out on-screen as viability slides. Low viability → fine grain.",
+  "default_n_steps": 26,
+  "requires": {
+    "processes": [
+      "StressRamp",
+      "GrainSelector",
+      "CoarseGrainProcess",
+      "FineGrainProcess"
+    ]
+  },
+  "provenance": {
+    "figure": "fig05-grain-swap",
+    "environment": "fig05",
+    "handlers": {
+      "StressRamp": {
+        "handler": "StressRamp",
+        "process_term": "GO:0006950"
+      },
+      "GrainSelector": {
+        "handler": "GrainSelector",
+        "process_term": "CBO:grain selection"
+      },
+      "CoarseGrain": {
+        "handler": "CoarseGrainProcess",
+        "process_term": "GO:0008152"
+      },
+      "FineGrain": {
+        "handler": "FineGrainProcess",
+        "process_term": "GO:0008152"
+      }
+    }
+  },
+  "state": {
+    "stress_ramp": {
+      "_type": "process",
+      "address": "local:StressRamp",
+      "interval": 1.0,
+      "config": {
+        "stress_rate": 0.045
+      },
+      "inputs": {
+        "viability": [
+          "interface",
+          "viability"
+        ]
+      },
+      "outputs": {
+        "viability": [
+          "interface",
+          "viability"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6l18 12\"/><path d=\"M3 12h6M3 16h9\"/></svg>"
+    },
+    "grain_selector": {
+      "_type": "process",
+      "address": "local:GrainSelector",
+      "interval": 1.0,
+      "config": {
+        "threshold": 0.5
+      },
+      "inputs": {
+        "viability": [
+          "interface",
+          "viability"
+        ]
+      },
+      "outputs": {
+        "active_grain": [
+          "control",
+          "active_grain"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"8\" width=\"18\" height=\"8\" rx=\"4\"/><circle cx=\"16\" cy=\"12\" r=\"2.6\" fill=\"#4b5bd6\" stroke=\"none\"/></svg>"
+    },
+    "coarse_process": {
+      "_type": "process",
+      "address": "local:CoarseGrainProcess",
+      "interval": 1.0,
+      "config": {
+        "biomass_yield": 0.3,
+        "energy_yield": 0.2
+      },
+      "inputs": {
+        "inflow": [
+          "interface",
+          "inflow"
+        ],
+        "active_grain": [
+          "control",
+          "active_grain"
+        ]
+      },
+      "outputs": {
+        "biomass": [
+          "interface",
+          "biomass"
+        ],
+        "energy": [
+          "interface",
+          "energy"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"4.6\" r=\"1.25\"/><circle cx=\"19.4\" cy=\"12\" r=\"1.25\"/><circle cx=\"12\" cy=\"19.4\" r=\"1.25\"/><circle cx=\"4.6\" cy=\"12\" r=\"1.25\"/><path d=\"M13.4 5.4a7.4 7.4 0 0 1 4.7 5\"/><path d=\"M18.3 13.5a7.4 7.4 0 0 1-4.8 4.9\"/><path d=\"M10.5 18.3a7.4 7.4 0 0 1-4.8-4.9\"/><path d=\"M5.7 10.4a7.4 7.4 0 0 1 4.7-5\"/></svg>"
+    },
+    "fine_process": {
+      "_type": "process",
+      "address": "local:FineGrainProcess",
+      "interval": 1.0,
+      "config": {
+        "decay_rate": 0.09,
+        "energy_decay": 0.09
+      },
+      "inputs": {
+        "biomass": [
+          "interface",
+          "biomass"
+        ],
+        "energy": [
+          "interface",
+          "energy"
+        ],
+        "active_grain": [
+          "control",
+          "active_grain"
+        ]
+      },
+      "outputs": {
+        "biomass": [
+          "interface",
+          "biomass"
+        ],
+        "energy": [
+          "interface",
+          "energy"
+        ]
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"12\" r=\"3\"/><circle cx=\"9\" cy=\"12\" r=\"1\"/><path d=\"M9 8.2V6.6M9 17.4v-1.6M5.2 12H3.6M13 12h1.6M6.4 9.4L5.2 8.2M11.6 9.4l1.2-1.2\"/><circle cx=\"17\" cy=\"15\" r=\"2\"/></svg>"
+    },
+    "control": {
+      "active_grain": {
+        "_type": "string",
+        "_default": "coarse"
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"8\" width=\"18\" height=\"8\" rx=\"4\"/><circle cx=\"16\" cy=\"12\" r=\"2.6\" fill=\"#0b7a75\" stroke=\"none\"/></svg>"
+    },
+    "interface": {
+      "inflow": {
+        "_type": "chemical_flux",
+        "_default": 1.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"9.5\" r=\"2\"/><circle cx=\"15\" cy=\"13.5\" r=\"2\"/><path d=\"M9.7 10.7l3.6 2.1M15 11.7V8.5M15 8.5l1.8-1\"/></svg>"
+      },
+      "biomass": {
+        "_type": "mass",
+        "_default": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"10\" r=\"3.1\"/><circle cx=\"15.5\" cy=\"10.5\" r=\"2.8\"/><circle cx=\"12\" cy=\"15.5\" r=\"3\"/></svg>"
+      },
+      "energy": {
+        "_type": "energy",
+        "_default": 0.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M2.6 12l1.9-1.1 1.9 1.1v2.2l-1.9 1.1-1.9-1.1z\"/><path d=\"M6.4 12h1.3\"/><circle cx=\"14\" cy=\"12.7\" r=\"1.4\"/></svg>"
+      },
+      "viability": {
+        "_type": "viability",
+        "_default": 1.0,
+        "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 4a7 7 0 1 0 .1 0z\"/><path d=\"M5.4 13.5a7 7 0 0 0 13.2 0z\" fill=\"#0b7a75\" stroke=\"none\"/><circle cx=\"12\" cy=\"9.6\" r=\"1.1\"/></svg>"
+      },
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"6\" cy=\"12\" r=\"2\"/><path d=\"M8 12h9\"/><path d=\"M17 9.5v5\"/></svg>"
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "viability": "viability",
+          "active_grain": "string",
+          "biomass": "mass",
+          "energy": "energy",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "viability": [
+          "interface",
+          "viability"
+        ],
+        "active_grain": [
+          "control",
+          "active_grain"
+        ],
+        "biomass": [
+          "interface",
+          "biomass"
+        ],
+        "energy": [
+          "interface",
+          "energy"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    },
+    "dynamics_viz": {
+      "_type": "step",
+      "address": "local:DynamicsPlot",
+      "config": {
+        "title": "The grain switch triggered by viability",
+        "subtitle": "Fig 5 — viability slides; coarse grows biomass, then the fine grain decays it",
+        "observables": {
+          "viability": "float",
+          "biomass": "float",
+          "energy": "float"
+        }
+      },
+      "inputs": {
+        "viability": [
+          "interface",
+          "viability"
+        ],
+        "biomass": [
+          "interface",
+          "biomass"
+        ],
+        "energy": [
+          "interface",
+          "energy"
+        ],
+        "time": [
+          "global_time"
+        ]
+      },
+      "outputs": {
+        "html": [
+          "_viz",
+          "dynamicsplot"
+        ]
+      }
+    }
+  }
+}

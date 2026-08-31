@@ -1,20 +1,280 @@
 schema_version: 4
 name: fig-08
-title: Nested cellular hierarchy
-kind: theoretical
-purpose:
-  mechanism: The cell's structural composition as a place graph — extracellular matrix,
-    membrane, cytoplasm, nucleus, organelles — with the processes that act across
-    levels.
-visualizations:
-- name: Figure 7
-  address: svg:visualizations/figure_7.svg
-  config:
-    caption: The cell's structural composition as a place graph — extracellular matrix,
-      membrane, cytoplasm, nucleus, organelles — with the processes that act across
-      levels.
-question: How do nested composites build a structural hierarchy?
+investigation: paper-figures
+title: "fig-08: Self-organized processes"
+created: '2026-08-26'
+status: complete
+phase: Decide
+gate_status: passed
+confidence: Provisional
+question: 'Is the paper''s Fig. self_organized_process (§Composition of the cellular interface) executable rather than merely drawn -- does the `fig08-runnable` composite actually demonstrate that a cellular interface EMERGES when molecular processes are compositionally coupled so they maintain one another (metabolism synthesizes the components the membrane and replication need, containment/expression maintain the pools metabolism needs), so that the coupled system holds a sustained, far-from-equilibrium balance rather than each process running down independently?'
+biological_summary: 'This study makes Fig. self_organized_process runnable. The paper''s §Composition of the cellular interface asks how molecular processes give rise to a cellular interface: at the molecular level, reactions, transport, and template-directed synthesis act on shared variables, and "a cellular interface emerges when these processes are compositionally coupled so that they maintain one another" -- membrane structure depends on metabolism that synthesizes lipids, metabolism depends on containment to maintain concentrations, and template-directed synthesis maintains the molecular components that realize these processes over time (caption a: self-organized processes -- autocatalysis, membrane formation, template replication -- combine into a self-maintaining organization; caption b: a minimal cell composition diagram -- metabolism, containment, replication supporting each other through shared components).
+
+
+  The `fig08-runnable` composite is the executable form of caption b. It wires the six minimal-cell processes -- containment (assembles membrane from lipids), metabolism (turns enzymes + nutrients into metabolites + energy), gene expression (translates genes + amino_acids into proteins + enzymes), replication (copies genes by spending energy, returns nucleic_acids), diffusion (metabolite turnover), and mass-action reactions (interconvert building blocks) -- over ten FLAT scalar building-block pools they all share (membrane, lipids, metabolites, nutrients, amino_acids, nucleic_acids, enzymes, proteins, genes, energy). Because the processes share those pools, none stands alone: gene expression makes the enzymes metabolism needs, metabolism makes the energy replication spends, replication grows the gene template expression reads. This is the paper''s closure condition made concrete -- each process''s outputs sustain the inputs the others depend on.
+
+
+  Run 40 ticks through the process-bigraph engine (deterministic ODE handlers, no RNG), the coupling holds: every one of the observed pools stays strictly positive and bounded (nothing collapses to zero, nothing explodes -- the largest pool, membrane, reaches only 2.2). The catalytic/template pools hold a sustained steady balance (genes 1.00 -> 1.07, energy 0.50 -> 0.58, metabolites 0.30 -> 0.33, nucleic_acids 0.30 -> 0.29; each drifts < 25% over the second half of the run) while the cell''s structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). That the balance is MAINTAINED by the coupling, not intrinsic to any one pool, is shown by opening the loop: knock metabolism out and its downstream metabolite pool collapses toward zero (0.33 -> 0.011) while energy, whose only source is metabolism, freezes exactly at its 0.5 seed; knock gene expression out and the enzyme pool metabolism depends on freezes exactly at its 0.3 seed, dragging metabolism''s own metabolite output down (0.33 -> 0.23). The sustained balance is the composite maintaining one another''s inputs, not each process coasting on its own reserves.
+
+
+  This is a didactic, toy-real realization: the pools, rate constants, and yields are hand-chosen so the coupled balance is legible over a 40-tick run, NOT calibrated to a named organism, metabolite, or literature flux. Its rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation, which realizes the same self-maintenance claim at higher fidelity; this study''s job is only to show that the figure''s specific caption -- coupled processes maintaining one another into a self-sustaining whole -- runs and holds under test.'
+claim: 'Fig. self_organized_process is executable: the `fig08-runnable` composite couples containment, metabolism, gene expression, replication, diffusion, and mass-action reactions over ten shared flat building-block pools, and over a deterministic 40-tick run it demonstrates the caption''s exact principle -- the coupled processes maintain one another into a sustained, far-from-equilibrium balance (every pool strictly positive and bounded; template/catalytic pools genes, energy, metabolites, nucleic_acids hold steady within 25% while structural material membrane, proteins, enzymes is net-produced), and that balance is a property of the COUPLING, not of any pool in isolation: removing metabolism starves its downstream metabolite pool toward zero and freezes energy at its seed, and removing gene expression freezes the enzyme pool metabolism depends on and drops metabolism''s metabolite output. This is a toy-real didactic demonstration, not a calibrated model; its rigorous cousin is the `autopoiesis` study in `draft-to-living-cell`.'
 baseline:
-- name: fig08-nested-hierarchy
-  composite: meta_modelers_guide.composites.fig08-nested-hierarchy
+- name: fig08-runnable
+  composite: meta_modelers_guide.composites.fig08-runnable
   params: {}
+variants: []
+key_assumptions:
+- 'The `fig08-runnable` composite is a **didactic, toy-real** realization of the figure -- small, illustrative, built to look like Fig. self_organized_process b and play forward. The ten building-block pools, the six processes'' rate constants (assembly_rate 0.05, k_cat 0.1, k_expr 0.08, k_rep 0.015, turnover_rate 0.08, k_react 0.06), and the yields are hand-chosen so the coupled balance is legible over 40 ticks. They are NOT calibrated to a named organism, metabolite, enzyme, or literature flux.'
+- 'The composite integrates over FLAT scalar pools (membrane, lipids, metabolites, ...), not spatially resolved fields or a real membrane geometry. "Containment" here is a scalar membrane-assembly ODE, not a diffusion barrier maintaining a concentration gradient in space. The self-maintenance shown is compositional (shared-pool coupling), not spatial.'
+- 'The handlers are deterministic ODEs with no random seed, so every number below is exactly reproducible run to run; there is no stochasticity to average over.'
+- 'The mutual-maintenance loop is demonstrated by process knockout (deleting a process from the state), which drives that process''s contribution to its shared pools to zero. This isolates each coupling edge but is a structural intervention on the composite, not a perturbation of a physical rate.'
+- 'The rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation; this study does not restate that study''s numbers or fidelity as its own.'
+acceptance_criteria:
+- The coupled composite sustains itself over the full run -- every observed shared pool stays strictly positive (nothing collapses to zero) and bounded (nothing explodes).
+- The catalytic/template pools (genes, energy, metabolites, nucleic_acids) hold a sustained steady balance across the second half of the run, while the cell's structural material (membrane, proteins, enzymes) is net-produced -- a far-from-equilibrium organization maintaining structure over time, not an equilibrium flatline.
+- 'The sustained balance is a property of the coupling, not of any pool in isolation: removing metabolism starves its downstream metabolite pool (toward zero) and freezes the energy pool it is the sole source of.'
+- 'The maintenance loop closes both ways: removing gene expression, the sole source of the enzyme pool metabolism depends on, freezes that enzyme pool at its seed and lowers metabolism''s own metabolite output -- each process''s outputs sustain the inputs the others depend on.'
+units_and_time:
+  time: 1 tick = process interval 1.0, dimensionless model time; the run is 40 ticks (41 emits including t=0).
+  quantities: 'all pool values are dimensionless model concentrations / area / energy units -- membrane carries type `area`, energy carries type `energy`, the rest `concentration`; none is calibrated to a physical unit. Rate constants and yields are dimensionless per-tick coefficients.'
+  note: No quantity here is calibrated to a named organism, metabolite, enzyme, or literature flux; the numbers exist to make the coupled balance legible, not to match data.
+behavior_tests:
+- name: closure-sustains-itself-every-pool-positive
+  classification: primary
+  description: Over the full 40-tick run every observed shared pool (membrane, metabolites, enzymes, proteins, genes, energy, nucleic_acids) stays strictly positive -- the coupled organization sustains itself, nothing collapses to zero (caption a self-maintaining organization).
+  measure:
+    kind: observable
+    path: min over run of each pool
+    expr: min(series[k]) for k in the seven emitted pools
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: 0.0
+    provenance: 'prior: a self-maintaining composition keeps every shared store above zero for the run. Observed (deterministic): pool minima all > 0 -- smallest is metabolites (min 0.267), largest floor genes (min 1.0); membrane 0.2 -> 2.2 monotone. The > 0 direction is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_positive)'
+  requires_simulation: fig08-runnable
+- name: closure-is-bounded-nothing-explodes
+  classification: primary
+  description: The coupled balance neither runs away nor blows up -- every pool stays well bounded over the run, the mark of a maintained far-from-equilibrium steady state rather than an unstable positive-feedback loop.
+  measure:
+    kind: observable
+    path: max over run of each pool
+    expr: max(series[k]) for k in the seven emitted pools
+  pass_if:
+    op: <
+    kind: acceptance_criterion
+    value: 1000.0
+    provenance: 'prior: a maintained balance does not explode. Observed (deterministic): the largest value any pool reaches over the run is membrane at 2.2, far under the 1e3 guard; the < 1e3 bound is a loose sanity ceiling, boundedness is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_bounded)'
+  requires_simulation: fig08-runnable
+- name: template-pools-hold-a-steady-balance
+  classification: primary
+  description: The catalytic/template pools (genes, energy, metabolites, nucleic_acids) hold a sustained steady balance across the second half of the run -- the maintained state the coupling produces, not a pool draining or accumulating.
+  measure:
+    kind: observable
+    path: relative drift midpoint -> end of each template pool
+    expr: abs(s[-1] - s[mid]) / max(s[mid], 1e-9) for k in (genes, energy, metabolites, nucleic_acids)
+  pass_if:
+    op: <
+    kind: acceptance_criterion
+    value: 0.25
+    provenance: 'prior: under closure the catalytic/template pools settle to a sustained balance (small second-half drift). Observed (deterministic) relative drift midpoint->end: genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25; the 0.25 threshold is a legibility bound, the "holds steady" direction is the prediction (tests/test_fig08_autopoiesis.py::test_template_pools_hold_a_steady_balance)'
+  requires_simulation: fig08-runnable
+- name: structural-material-is-net-produced
+  classification: primary
+  description: While the template pools hold steady, the cell's structural material (membrane, proteins, enzymes) is net-produced over the run -- the organization builds itself, the far-from-equilibrium direction the paper describes.
+  measure:
+    kind: observable
+    path: end vs start of each structural pool
+    expr: s[-1] > s[0] for k in (membrane, proteins, enzymes)
+  pass_if:
+    op: '>'
+    kind: acceptance_criterion
+    value: 0.0
+    provenance: 'prior: the coupling net-produces structural material. Observed (deterministic) start -> end: membrane 0.20 -> 2.20, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50 -- each end strictly above its start (the pass_if encodes end - start > 0) (tests/test_fig08_autopoiesis.py::test_structural_material_is_net_produced)'
+  requires_simulation: fig08-runnable
+- name: metabolism-knockout-starves-downstream-pools
+  classification: primary
+  description: The sustained balance is a property of the coupling, not of any pool in isolation. Remove metabolism (its sole downstream source) and metabolites collapse toward zero while energy, whose only source is metabolism, freezes exactly at its seed.
+  measure:
+    kind: derived
+    path: baseline vs metabolism-knockout end states
+    expr: metabolites_ko / metabolites_base at end; energy_ko drift; energy_base growth
+  pass_if:
+    op: starves_downstream
+    kind: acceptance_criterion
+    value: metabolites_ko(0.011) < 0.5 * metabolites_base(0.33) and energy frozen at 0.5 (base grows 0.50 -> 0.58)
+    provenance: 'prior: removing a process opens the loop and its downstream shared pools respond. Observed (deterministic): metabolites end 0.33 (base) -> 0.011 (KO), well under half of base; energy stays exactly 0.5 with metabolism removed vs growing to 0.58 in the baseline -- the dependent pools track the coupling, not their own reserves (tests/test_fig08_autopoiesis.py::test_knocking_out_metabolism_starves_downstream_pools)'
+  requires_simulation: fig08-runnable
+- name: gene-expression-sustains-the-enzymes-metabolism-depends-on
+  classification: primary
+  description: The maintenance loop closes both ways. Gene expression is the sole source of the enzyme pool, and metabolism depends on those enzymes. Knock gene expression out and the enzyme pool freezes exactly at its seed, dragging metabolism's own metabolite output down -- each process's outputs sustain the inputs the others depend on.
+  measure:
+    kind: derived
+    path: baseline vs gene-expression-knockout end states
+    expr: enzymes_ko drift; enzymes_base growth; metabolites_ko vs metabolites_base at end
+  pass_if:
+    op: sustains_partner_inputs
+    kind: acceptance_criterion
+    value: enzymes frozen at 0.30 in KO (base grows 0.30 -> 0.50) and metabolites_ko(0.23) < metabolites_base(0.33)
+    provenance: 'prior: the coupling that sustains one process''s inputs from another''s outputs is what keeps the balance up. Observed (deterministic): with gene expression removed the enzyme pool stays exactly 0.30 across the whole run (min == max == 0.30) vs growing to 0.50 in the baseline, and metabolism''s metabolite output falls from 0.33 to 0.23 -- the partner-input coupling made concrete (tests/test_fig08_autopoiesis.py::test_gene_expression_sustains_the_enzymes_metabolism_depends_on)'
+  requires_simulation: fig08-runnable
+- name: runs-default-n-steps
+  classification: diagnostic
+  control: positive
+  description: 'Foundational control (not the scientific claim): the composite builds and runs its declared default horizon through the process-bigraph engine, emitting one row per tick plus the t=0 emit.'
+  measure:
+    kind: observable
+    path: len(emitted rows)
+    expr: len(trajectory) == default_n_steps + 1
+  pass_if:
+    op: ==
+    kind: regression_pin
+    deterministic_pin: true
+    value: 41.0
+    provenance: 'the composite declares default_n_steps == 40 and emits 41 rows (including the t=0 emit); an exact count pin, exact while the composite horizon is pinned (tests/test_fig08_autopoiesis.py::test_runs_default_n_steps)'
+  requires_simulation: fig08-runnable
+runs:
+- name: fig08-runnable
+  composite: fig08-runnable
+  emitter: RAMEmitter
+  id: fig08-runnable
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig08-runnable.composite.json (six coupled processes -- ContainmentODE, MetabolismLinear, GeneExpressionODE, ReplicationODE, DiffusionRelax, MassActionReactions -- over ten shared flat scalar building-block pools) run 40 ticks through the process-bigraph engine with a RAMEmitter (tests/test_fig08_autopoiesis.py). Deterministic ODE handlers, no RNG, so every readout reproduces exactly run to run.'
+  params: {}
+  outcomes:
+    CLOSURE-SUSTAINS-ITSELF-EVERY-POOL-POSITIVE:
+      result: PASS
+      detail: all seven pool minima > 0 (smallest metabolites 0.267); nothing collapses
+    CLOSURE-IS-BOUNDED-NOTHING-EXPLODES:
+      result: PASS
+      detail: largest pool value over the run is membrane 2.2, far under the 1e3 guard
+    TEMPLATE-POOLS-HOLD-A-STEADY-BALANCE:
+      result: PASS
+      detail: second-half relative drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25
+    STRUCTURAL-MATERIAL-IS-NET-PRODUCED:
+      result: PASS
+      detail: membrane 0.20 -> 2.20, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50
+    METABOLISM-KNOCKOUT-STARVES-DOWNSTREAM-POOLS:
+      result: PASS
+      detail: metabolites 0.33 -> 0.011 with metabolism removed; energy frozen exactly at 0.5 (base grows to 0.58)
+    GENE-EXPRESSION-SUSTAINS-THE-ENZYMES-METABOLISM-DEPENDS-ON:
+      result: PASS
+      detail: enzymes frozen exactly at 0.30 with gene expression removed (base grows to 0.50); metabolites drop 0.33 -> 0.23
+    RUNS-DEFAULT-N-STEPS:
+      result: PASS
+      detail: 41 emitted rows == default_n_steps (40) + 1
+- name: meta_modelers_guide.composites.fig08-runnable__1787799780__7ef66e
+  status: complete
+  timestamp: 1787799780.494557
+  emitter:
+    kind: unknown
+  params: '{}'
+findings:
+- id: F-01
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The `fig08-runnable` composite makes Fig. self_organized_process executable: six processes coupled over ten shared flat building-block pools maintain one another into a sustained, far-from-equilibrium balance. Over a deterministic 40-tick run every observed pool stays strictly positive and bounded (nothing collapses to zero, the largest pool reaches only 2.2), the catalytic/template pools hold a steady balance (genes, energy, metabolites, nucleic_acids drift < 25% over the second half) while the cell''s structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). This is caption a''s self-maintaining organization, running.'
+  evidence:
+    from_test: template-pools-hold-a-steady-balance
+    from_run: fig08-runnable
+    observed: pool minima all > 0; template drifts genes 0.034 / energy 0.083 / metabolites 0.203 / nucleic_acids 0.000; membrane 0.2 -> 2.2, proteins 0.30 -> 0.88
+  provenance:
+    run_ids:
+    - fig08-runnable
+- id: F-02
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The sustained balance is a property of the COUPLING, not of any pool in isolation -- the paper''s closure condition ("each process''s outputs sustain the inputs the others depend on") holds both ways. Removing metabolism starves its downstream metabolite pool from 0.33 toward zero (0.011) and freezes energy, whose only source is metabolism, exactly at its 0.5 seed. Removing gene expression freezes the enzyme pool metabolism depends on exactly at its 0.3 seed and drops metabolism''s own metabolite output (0.33 -> 0.23). Each knockout opens one edge of the mutual-maintenance loop and the dependent pools respond, confirming the balance is maintained by the composition rather than coasting on any pool''s reserves.'
+  evidence:
+    from_test: gene-expression-sustains-the-enzymes-metabolism-depends-on
+    from_run: fig08-runnable
+    observed: metabolism KO -> metabolites 0.011, energy frozen 0.5; gene-expression KO -> enzymes frozen 0.30, metabolites 0.23 (vs base 0.33)
+  provenance:
+    run_ids:
+    - fig08-runnable
+conclusion_verdicts:
+  regression_compatibility:
+    result: PASS
+    basis: 'fig08-runnable.composite.json builds and runs its declared 40-tick horizon through the process-bigraph engine, emitting 41 rows (tests/test_fig08_autopoiesis.py). All seven behavior tests pass on measured readouts.'
+  biological_validation:
+    result: PASS
+    basis: All primary behavior tests pass on readouts from a real 40-tick run -- every pool stays positive and bounded, the template pools hold a steady balance while structural material is net-produced, and two independent process knockouts confirm the balance is a property of the coupling (metabolism KO starves metabolites and freezes energy; gene-expression KO freezes enzymes and lowers metabolites). The demonstration is deterministic and reproduces exactly.
+  explanatory_gain:
+    result: POSITIVE
+    basis: 'Turning Fig. self_organized_process b from a static composition diagram into a composite that runs and holds under test shows the caption''s claim is executable, not merely asserted: coupled processes maintaining one another into a self-sustaining balance is demonstrated, and the knockouts make the "maintain one another" edges concrete rather than illustrative.'
+conclusion: '## Claims
+
+  - Fig. self_organized_process is executable. The `fig08-runnable` composite couples containment, metabolism, gene expression, replication, diffusion, and mass-action reactions over ten shared flat building-block pools, and over a deterministic 40-tick run it demonstrates the caption''s exact principle -- the coupled processes maintain one another into a sustained, far-from-equilibrium balance rather than each running down independently.
+
+  - The maintained balance holds: every observed pool stays strictly positive and bounded (smallest minimum metabolites 0.267, largest value membrane 2.2), the catalytic/template pools genes, energy, metabolites, nucleic_acids drift < 25% over the second half of the run, and the structural material membrane, proteins, enzymes is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50).
+
+  - That balance is a property of the coupling, not of any pool in isolation. Removing metabolism starves its downstream metabolite pool (0.33 -> 0.011) and freezes energy at its 0.5 seed; removing gene expression freezes the enzyme pool metabolism depends on at its 0.3 seed and drops metabolism''s metabolite output (0.33 -> 0.23). The loop closes both ways.
+
+
+  ## Evidence
+
+  - **CLOSURE-SUSTAINS-ITSELF-EVERY-POOL-POSITIVE** -- all seven pool minima > 0 (smallest metabolites 0.267)
+
+  - **CLOSURE-IS-BOUNDED-NOTHING-EXPLODES** -- largest value over the run is membrane 2.2
+
+  - **TEMPLATE-POOLS-HOLD-A-STEADY-BALANCE** -- second-half drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 (all < 0.25)
+
+  - **STRUCTURAL-MATERIAL-IS-NET-PRODUCED** -- membrane 0.20 -> 2.20, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50
+
+  - **METABOLISM-KNOCKOUT-STARVES-DOWNSTREAM-POOLS** -- metabolites 0.33 -> 0.011, energy frozen at 0.5
+
+  - **GENE-EXPRESSION-SUSTAINS-THE-ENZYMES-METABOLISM-DEPENDS-ON** -- enzymes frozen at 0.30, metabolites 0.33 -> 0.23
+
+  - **RUNS-DEFAULT-N-STEPS** -- 41 emitted rows == 40 + 1
+
+
+  ## Limitations
+
+  - `fig08-runnable` is a didactic, toy-real composite: the ten pools, the six processes'' rate constants and yields are hand-chosen to make the coupled balance legible over 40 ticks, not calibrated to a named organism, metabolite, enzyme, or literature flux.
+
+  - The composite integrates over flat scalar pools, not spatial fields or a real membrane geometry; "containment" is a scalar membrane-assembly ODE, so the self-maintenance shown is compositional (shared-pool coupling), not spatial.
+
+  - The rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation; this study does not restate that study''s numbers as its own.
+
+
+  ## Next steps
+
+  - Compare against the `autopoiesis` cousin to see the same self-maintenance claim at higher fidelity.
+
+  - Optionally push a knockout toward full viability collapse to connect this figure''s closure to the §Disintegration level-shift studied elsewhere in the paper.'
+conclusion_logic:
+  if_primary_tests_pass:
+    implementation_status: 'fig08-runnable.composite.json builds and runs its declared 40-tick horizon through the process-bigraph engine, deterministically.'
+    biological_validation: The caption''s self-maintaining-composition principle is demonstrated at the toy-real (uncalibrated) level -- coupled processes holding a sustained far-from-equilibrium balance, with two knockouts confirming the balance depends on the coupling -- rather than asserted from a static diagram.
+    pipeline_unblocks: []
+  if_primary_tests_fail:
+    diagnose:
+    - a pool collapses to zero or explodes (a rate constant or yield is mistuned, breaking the balance)
+    - a template pool drifts more than 25% over the second half (the coupling no longer settles to a sustained balance within the run)
+    - structural material is not net-produced (containment/expression yields too low)
+    - a knockout fails to move its downstream pool (the shared-pool wiring is broken, so the processes are not actually coupled through the pools they should share)
+    block_downstream: 'any figure study that reuses the shared-flat-pool coupling pattern to demonstrate compositional self-maintenance'
+limitations:
+- '`fig08-runnable` is a didactic, toy-real composite -- the ten building-block pools, the six processes'' rate constants (assembly_rate 0.05, k_cat 0.1, k_expr 0.08, k_rep 0.015, turnover_rate 0.08, k_react 0.06), and the yields are hand-chosen so the coupled balance is legible over a 40-tick run, NOT calibrated to a named organism, metabolite, enzyme, or literature flux.'
+- The composite integrates over flat scalar pools, not spatially resolved fields or a real membrane geometry; "containment" is a scalar membrane-assembly ODE rather than a diffusion barrier maintaining a spatial gradient. The self-maintenance demonstrated is compositional (shared-pool coupling), not spatial.
+- The handlers are deterministic ODEs with no random seed, so the numbers are exact and reproducible but carry no stochastic-robustness claim; there is no ensemble to average over.
+- The mutual-maintenance loop is demonstrated by process knockout (deleting a process from the composite state), a structural intervention that zeroes a process's contribution to its shared pools -- it isolates each coupling edge cleanly but is not a physical rate perturbation.
+- 'The rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation, which realizes the same self-maintenance claim at higher fidelity. This study demonstrates only that this figure''s specific caption runs and holds under test; it does not restate the cousin''s numbers or fidelity as its own.'
+falsifiability: Overturned if any observed pool collapses to zero or blows up over the run, if the template/catalytic pools fail to hold a steady balance (second-half drift >= 25%), if the structural pools are not net-produced, or if either process knockout fails to move its downstream shared pool (metabolism KO not starving metabolites / not freezing energy, or gene-expression KO not freezing enzymes / not lowering metabolites) -- any of which would mean the processes are not actually coupled into a mutually maintaining whole.
+visualizations:
+- name: Figure 8
+  address: svg:visualizations/figure_8.svg
+  config:
+    caption: 'Autopoiesis and the minimal cell: coarse-grained containment/metabolism/replication refine into molecular self-organized mechanisms.'
+- name: The minimal cell sustains itself (autopoietic closure)
+  address: image:visualizations/fig08-dynamics.png
+  config:
+    chart: image
+    caption: 'Time series of the runnable fig08 minimal cell (fig08-runnable): the six coupled processes — containment, metabolism, gene-expression, replication, diffusion and reactions — wired over flat scalar building-block pools. Because they share those pools they mutually produce the components that sustain each other: the catalytic/template pools (genes, energy, metabolites, nucleic acids) hold a SUSTAINED steady balance while the cell''s structural material (membrane, proteins, enzymes) is net-produced — nothing collapses to zero, nothing explodes. This is autopoietic closure made runnable. From scripts/build_fig08_dynamics.py.'
+parent_studies:
+- study: autopoiesis
+  condition: tests-passed
+experiment: 'Run the `fig08-runnable` composite (six coupled processes -- containment, metabolism, gene expression, replication, diffusion, mass-action reactions -- over ten shared flat scalar building-block pools) for its declared 40 ticks through the process-bigraph engine, and measure whether the coupled processes maintain one another into a sustained, far-from-equilibrium balance: every pool positive and bounded, the catalytic/template pools holding steady while structural material is net-produced. Then open the maintenance loop with two process knockouts (metabolism; gene expression) and measure whether the downstream shared pools each depend on collapse -- showing the balance is a property of the coupling, not of any pool in isolation.'
+result: 'Over a deterministic 40-tick run the `fig08-runnable` composite holds the coupled balance: every observed pool stays strictly positive (smallest minimum metabolites 0.267) and bounded (largest value membrane 2.2), the catalytic/template pools hold a sustained steady balance (second-half drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25), and the structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). Two process knockouts confirm the balance is a property of the coupling: removing metabolism starves its downstream metabolite pool (0.33 -> 0.011) and freezes energy exactly at its 0.5 seed, and removing gene expression freezes the enzyme pool metabolism depends on exactly at its 0.3 seed and drops metabolism''s metabolite output (0.33 -> 0.23). Fig. self_organized_process is executable -- the caption''s self-maintaining composition runs and holds under test. This is a toy-real didactic demonstration; its rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation.'
