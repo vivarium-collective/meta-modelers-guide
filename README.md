@@ -1,51 +1,56 @@
-# A meta-modeler's guide to the cellular interface — made executable
+# A meta-modeler's guide to the cellular interface — executable companion
 
-*A meta-modeler's guide to the cellular interface and its composition patterns* treats a
-cell's **interface** — the variables through which it senses and acts on its environment — as
-a scientific object: both a modeling choice and a testable hypothesis about which interactions
-matter. Composition is an ongoing practice — connect descriptions where their assumptions hold,
-cut them apart when they fail — and a cell-level description is valid only while its interface
-stays within **viability bounds**. This repository makes that argument runnable.
+Runnable companion to the paper *A meta-modeler's guide to the cellular interface and its
+composition patterns* (E. Agmon). The paper treats a cell's **interface** — the variables
+through which it senses and acts on its environment — as both a modeling choice and a
+testable hypothesis about which interactions matter. Composition is an ongoing practice:
+connect descriptions where their assumptions agree, cut them apart where they fail. A
+cell-level description holds only while its interface stays within **viability bounds**.
 
-- 🔬 **[Executable Figures →](https://vivarium-collective.github.io/meta-modelers-guide/investigations/paper-figures.html)** — all eleven figures, each a runnable composite behind its published diagram, tested against its caption.
-- 🧫 **[From Draft to Living Cell →](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html)** — the composition patterns as real 2-D spatial models: Cellular Potts cells, dynamic-FBA, diffusing fields, a Turing pattern, an emergent membrane.
-- 📊 **[Live dashboard →](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/)** — every composite, study, and run, in the browser.
+Every figure in the paper is specified here as a *draft process* — an interface contract
+with no mechanism behind it — and then realized as an executable process-bigraph simulation.
+The composition diagrams in the paper are generated from these specifications.
 
-## The composition patterns
+Two investigations carry the argument:
 
-Outward from the cell to its environment and neighbours, inward to the molecular organization
-that builds the interface, then on to how it grows, divides, and evolves:
+- **[Executable Figures](https://vivarium-collective.github.io/meta-modelers-guide/investigations/paper-figures.html)** — the eleven figures, each a runnable composite behind its diagram, checked against its caption.
+- **[From Draft to Living Cell](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html)** — the composition patterns as 2-D spatial models: Cellular Potts cells, dynamic FBA, diffusing fields, a Turing pattern, an emergent membrane.
+
+## Composition patterns
+
+The patterns run outward from the cell to its environment and neighbours, inward to the
+molecular organization that builds the interface, then on to growth, division, and evolution.
 
 | Pattern | Fig | What it shows |
 |---|:---:|---|
 | [cellular-interface](workspace/studies/cellular-interface/study.yaml) | 3 | the cell's typed exchange ports, before any mechanism |
 | [cell-environment-coupling](workspace/studies/cell-environment-coupling/study.yaml) | 4 | a sense/act loop over a diffusing field; the cell reshapes its own gradient |
-| [cell-cell-coupling](workspace/studies/cell-cell-coupling/study.yaml) | — | two cells on one shared nutrient store: competition, or cross-feeding |
-| [disintegration](workspace/studies/disintegration/study.yaml) | 5 | a cell past its viability bound; the cell description gives way to molecules |
-| [molecular-interfaces](workspace/studies/molecular-interfaces/study.yaml) | 6 | an ATP-synthase driving four physical channels from one proton flux |
+| [cell-cell-coupling](workspace/studies/cell-cell-coupling/study.yaml) | — | two cells on one shared nutrient store: competition or cross-feeding |
+| [disintegration](workspace/studies/disintegration/study.yaml) | 5 | a cell past its viability bound; the cell-level description gives way to molecules |
+| [molecular-interfaces](workspace/studies/molecular-interfaces/study.yaml) | 6 | ATP synthase driving four physical channels from one proton flux |
 | [biomolecular-complementarity](workspace/studies/biomolecular-complementarity/study.yaml) | 7 | molecular structure as a nested hierarchical composite |
-| [autopoiesis](workspace/studies/autopoiesis/study.yaml) | 8 | metabolism, containment, and replication maintaining one another — the interface from the inside |
-| [growth-and-division](workspace/studies/growth-and-division/study.yaml) | 9 | division as a rewrite of the composition: one cell becomes two |
-| [development-and-evolution](workspace/studies/development-and-evolution/study.yaml) | 10–11 | biofilm nesting and selection as rewrites (the paper's "open challenge") |
+| [autopoiesis](workspace/studies/autopoiesis/study.yaml) | 8 | metabolism, containment, and replication maintaining one another |
+| [growth-and-division](workspace/studies/growth-and-division/study.yaml) | 9 | division as a rewrite of the composition |
+| [development-and-evolution](workspace/studies/development-and-evolution/study.yaml) | 10–11 | biofilm nesting and selection as rewrites |
 
 *Executable Figures* also covers Figs 1–2 (process bigraphs and orchestration).
 
 ## One interface, many mechanisms
 
-The mechanism behind an interface can be swapped as long as the interface is preserved — that
-is what other models couple to. **Disintegration** realizes one metabolic interface
-(`nutrients ⇒ biomass, energy, secretions`) three ways — a lumped yield, Michaelis–Menten
-kinetics, and flux-balance analysis on *E. coli*'s `e_coli_core` network (which overflows carbon
-to acetate under an oxygen cap): three trajectories, one unchanged interface. A small compiler
-([viva-compiler](https://github.com/vivarium-collective/viva-compiler)) installs each mechanism
-behind the draft's ports and checks they line up.
+The mechanism behind an interface can be replaced as long as the interface is preserved,
+because the interface is what other models couple to. The disintegration study realizes one
+metabolic interface (`nutrients ⇒ biomass, energy, secretions`) three ways — a lumped yield,
+Michaelis–Menten kinetics, and flux-balance analysis on *E. coli*'s `e_coli_core` network
+(which overflows carbon to acetate under an oxygen cap) — giving three trajectories behind one
+unchanged interface. The [viva-compiler](https://github.com/vivarium-collective/viva-compiler)
+installs each mechanism behind the draft's ports and checks that they match.
 
 ## Scope
 
-Illustrative, not calibrated: plausible constants that show a *pattern*, not a fitted organism.
-The interface check is structural (port names, types, wiring); units are documentary labels.
-The playable disintegration and the whole-cell capstone are hand-assembled in the figures'
-style, not tuned to a real cell.
+The models are illustrative, not calibrated: plausible constants chosen to show a pattern,
+not a fitted organism. The interface check is structural (port names, types, wiring); units
+are documentary labels. The playable disintegration and the whole-cell capstone are
+hand-assembled in the figures' style, not tuned to a real cell.
 
 ## Working with this workspace
 
@@ -53,38 +58,25 @@ style, not tuned to a real cell.
     python3 scripts/lint-workspace.py     # validate the workspace
     python scripts/build_executables.py   # materialize every figure's executable
 
-Scaffolded from [viva-template](https://github.com/vivarium-collective/viva-template);
-compilation is derived in
+Scaffolded from [viva-template](https://github.com/vivarium-collective/viva-template); the
+compilation from interface contract to executable is described in
 [`docs/concepts/semantic-to-executable-compilation.md`](docs/concepts/semantic-to-executable-compilation.md).
-Driving this with an AI assistant? Start from
-[`docs/first-run-agent-guide.md`](docs/first-run-agent-guide.md). The
-[viva-superpowers](https://github.com/vivarium-collective/viva-superpowers) skills
+The [viva-superpowers](https://github.com/vivarium-collective/viva-superpowers) skills
 (`/viva-study`, `/viva-investigation`, `/viva-expert`, `/viva-viz`, `/viva-report`) drive the
-study → investigation → report → PR flow. Research state lives under `workspace/`; locations are
-set by `layout:` in `workspace.yaml`.
+study → investigation → report → PR flow. Research state lives under `workspace/`, with
+locations set by `layout:` in `workspace.yaml`.
 
 <!-- BEGIN dashboard -->
 > ## 📊 [**Live dashboard →**](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/)
 > Browse every investigation & study interactively, or read the [published investigation reports](https://vivarium-collective.github.io/meta-modelers-guide/). Auto-published from `main` on every merge.
 <!-- END dashboard -->
 
-<!-- BEGIN:dashboard -->
-<!-- generated by `vivarium-workbench gen-readme` — edit the source, not this table -->
+## Composites and investigations
 
-> ### 🔬 [Explore the interactive read-only dashboard →](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/)
->
-> Every composite, study, and result — browsable in your browser, no install required.
-> Published from `main` by the `publish-dashboard` workflow (allow a few minutes after the first push).
-<!-- END:dashboard -->
+Generated from the workspace by `vivarium-workbench gen-readme` (the same sets the dashboard
+shows) and refreshed by CI. Regenerate with `vivarium-workbench gen-readme --workspace .`.
 
-### Composites & investigations
-
-These two tables are generated from the workspace by `vivarium-workbench gen-readme` —
-the same sets the dashboard shows — and kept fresh by CI (`workspace-ci` runs
-`gen-readme --check`). Regenerate any time with
-`vivarium-workbench gen-readme --workspace .`.
-
-#### Composites
+### Composites
 
 <!-- BEGIN:composites -->
 <!-- generated by `vivarium-workbench gen-readme` — edit the source, not this table -->
@@ -172,7 +164,7 @@ the same sets the dashboard shows — and kept fresh by CI (`workspace-ci` runs
 | `whole-cell` | The composed whole cell — the paper figure mechanisms (thermal environment, uptake, a selectable Fig 5 metabolism [coarse \| kinetic \| FBA], a viability monitor, DNA-threshold division Fig 10-1, and d… |
 <!-- END:composites -->
 
-#### Investigations
+### Investigations
 
 <!-- BEGIN:investigations -->
 <!-- generated by `vivarium-workbench gen-readme` — edit the source, not this table -->
