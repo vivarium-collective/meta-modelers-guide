@@ -16,6 +16,11 @@ Two investigations carry the argument:
 - **[Executable Figures](https://vivarium-collective.github.io/meta-modelers-guide/investigations/paper-figures.html)** — the eleven figures, each a runnable composite behind its diagram, checked against its caption.
 - **[From Draft to Living Cell](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html)** — the composition patterns as 2-D spatial models: Cellular Potts cells, dynamic FBA, diffusing fields, a Turing pattern, an emergent membrane.
 
+<!-- BEGIN dashboard -->
+> ## 📊 [**Live dashboard →**](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/)
+> Browse every investigation & study interactively, or read the [published investigation reports](https://vivarium-collective.github.io/meta-modelers-guide/). Auto-published from `main` on every merge.
+<!-- END dashboard -->
+
 ## Composition patterns
 
 The patterns run outward from the cell to its environment and neighbours, inward to the
@@ -65,11 +70,6 @@ The [viva-superpowers](https://github.com/vivarium-collective/viva-superpowers) 
 (`/viva-study`, `/viva-investigation`, `/viva-expert`, `/viva-viz`, `/viva-report`) drive the
 study → investigation → report → PR flow. Research state lives under `workspace/`, with
 locations set by `layout:` in `workspace.yaml`.
-
-<!-- BEGIN dashboard -->
-> ## 📊 [**Live dashboard →**](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/)
-> Browse every investigation & study interactively, or read the [published investigation reports](https://vivarium-collective.github.io/meta-modelers-guide/). Auto-published from `main` on every merge.
-<!-- END dashboard -->
 
 ## Composites and investigations
 
