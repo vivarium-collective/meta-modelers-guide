@@ -848,7 +848,7 @@
     // Also load the investigation list so the panel can offer a picker when no
     // investigation is branch-current — the user chooses which investigation to
     // load sources INTO (its own sources, not the repo-wide shared sources).
-    var _pList = fetch('/api/investigation-summaries')
+    var _pList = fetch(_api('/api/investigation-summaries'))
       .then(function(r) { return r.json(); })
       .then(function(d) { return (d && d.investigations) || []; })
       .catch(function() { return []; });
@@ -1546,7 +1546,7 @@
       '<h4 style="margin:0 0 8px;font-size:0.95em;text-transform:uppercase;letter-spacing:0.06em;color:#374151">Visualizations' +
       ' <span class="count-badge" style="font-size:0.8em">' + vizzes.length + '</span></h4>';
     if (vizzes.length === 0) {
-      html += '<p class="empty-state muted" style="margin:0">No Visualization classes found. Install a pbg-* package that provides one (Registry tab &rarr; Available modules).</p>';
+      html += '<p class="empty-state muted" style="margin:0">No Visualization classes found. Install a pbg-* package that provides one (Catalog tab &rarr; Available modules).</p>';
     } else {
       html += vizzes.map(_renderClassCard).join('');
     }
@@ -1860,7 +1860,7 @@
 
   function _renderKindPicker(items, container, kind) {
     if (!items || items.length === 0) {
-      container.innerHTML = '<p class="empty-state">No ' + kind + 's registered. Install a pbg-* package that provides one (Registry tab &rarr; Available modules).</p>';
+      container.innerHTML = '<p class="empty-state">No ' + kind + 's registered. Install a pbg-* package that provides one (Catalog tab &rarr; Available modules).</p>';
       return;
     }
     // Sort: in_workspace → framework → environment_only, then alpha by name.
@@ -8824,7 +8824,7 @@
       ' <button class="btn-mini" onclick="_rerunInvestigation()" ' +
         'title="Re-run every member study\'s CURRENT baseline spec (re-derives from each study\'s study.yaml)">▶ Run current spec</button>');
     if (name) {
-      fetch('/api/investigation-summaries', {headers: {Accept: 'application/json'}})
+      fetch(_api('/api/investigation-summaries'), {headers: {Accept: 'application/json'}})
         .then(function (r) { return r.json(); })
         .then(function (j) {
           var me = ((j && j.investigations) || []).filter(function (i) { return i.name === name; })[0];
@@ -9987,6 +9987,30 @@
 
   function _vivPollRunProgress(jobId) {
     if (_vivRunUnblockedTimer) clearTimeout(_vivRunUnblockedTimer);
+    // Plan §A3′ option (c): an item gated behind an unfinished prerequisite is
+    // parked `waiting` and its worker RETURNS, rather than holding a thread for
+    // the life of a Batch job. Something has to come back and release it once
+    // the prerequisite lands, and this poll is the natural caller — it is
+    // already here, already watching the same job.
+    //
+    // Fired on CHANGE, not every tick. The status GET resolves `submitted`
+    // items against viva-api, so a prerequisite completing on Batch shows up
+    // here as `progress.done` increasing; that edge is exactly when a redrive
+    // can accomplish something. Polling it blindly every 2s would spawn a
+    // worker thread per tick for the whole life of a multi-hour campaign, each
+    // one re-parking the same items.
+    var lastDone = -1;
+    function maybeRedrive(job) {
+      var prog = job.progress || {};
+      if (!prog.waiting) { lastDone = (prog.done || 0); return; }
+      if ((prog.done || 0) === lastDone) return;   // nothing settled since last look
+      lastDone = (prog.done || 0);
+      fetch(_api('/api/investigation-run-redrive'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_id: jobId })
+      }).catch(function() { /* best-effort: the next change re-tries */ });
+    }
     function tick() {
       fetch('/api/investigation-run-unblocked-status?job_id=' + encodeURIComponent(jobId))
         .then(function(r) { return r.json().then(function(j) { return {ok: r.ok, body: j}; }); })
@@ -10002,6 +10026,7 @@
             }
             return;
           }
+          maybeRedrive(res.body);
           _vivRunUnblockedTimer = setTimeout(tick, 2000);
         });
     }
@@ -10013,8 +10038,11 @@
     if (!panel) return;
     var items = (job.items || []).map(function(it) {
       var statusCls = 'inv-run-item inv-run-' + (it.status || 'queued');
+      // `submitted` (A2′) and `waiting` (A3′) both post-date this map, so both
+      // rendered as '?' — a dispatched Batch run and a gated dependent looked
+      // like a bug rather than the two normal states they are.
       var icon = ({queued: '⋯', running: '▶', done: '✓', failed: '✗',
-                   blocked: '⛔', skipped: '—'})[it.status] || '?';
+                   blocked: '⛔', skipped: '—', submitted: '☁', waiting: '⏸'})[it.status] || '?';
       var err = it.error ? ' <span class="inv-run-err">' + _h(it.error) + '</span>' : '';
       return '<div class="' + statusCls + '">'
         + '<span class="inv-run-icon">' + icon + '</span>'
@@ -10032,7 +10060,9 @@
       headline = '<strong>✗ Job failed.</strong> ' + prog.done + ' / ' + prog.total + ' attempted.';
     } else {
       headline = '<strong>Running…</strong> ' + prog.done + ' / ' + prog.total + ' complete' +
-                 (prog.running ? ' · ' + prog.running + ' in flight' : '');
+                 (prog.running ? ' · ' + prog.running + ' in flight' : '') +
+                 (prog.submitted ? ' · ' + prog.submitted + ' on Batch' : '') +
+                 (prog.waiting ? ' · ' + prog.waiting + ' waiting on prerequisites' : '');
     }
     panel.innerHTML = '<div class="inv-run-progress-banner">' + headline + '</div>'
                     + '<div class="inv-run-list">' + items + '</div>';
@@ -10886,7 +10916,8 @@
         var pop = document.getElementById('dag-followups-popover');
         if (pop) pop.remove();
         alert('Created: ' + res.body.new_study_name + '\nOpening it now.');
-        window.location.href = '/studies/' + encodeURIComponent(res.body.new_study_name);
+        window.location.href = (window.__BASE_PATH__ || '') + '/studies/' +
+          encodeURIComponent(res.body.new_study_name);
       });
   }
   window._seedFollowupAndOpen = _seedFollowupAndOpen;
@@ -14571,9 +14602,25 @@
     fetch('/api/investigation-run', {
       method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({name: name}),
-    }).then(function(r) { return r.json().then(function(j) { return [r.ok, j]; }); })
+    }).then(function(r) { return r.json().then(function(j) { return [r.ok, j, r.status]; }); })
       .then(function(parts) {
-        var ok = parts[0], j = parts[1];
+        var ok = parts[0], j = parts[1], code = parts[2];
+        // §A5: a v3 investigation is now delegated server-side to the SAME
+        // background job machinery "Run unblocked" uses, so this answers
+        // 202 + job_id instead of blocking until every simulation finishes.
+        // Hand it to the existing progress poll rather than inventing a second
+        // async UX — that poll already renders items, resolves Batch dispatches
+        // and drives the prerequisite re-drive.
+        //
+        // This is also what makes the button usable on a gateway-fronted
+        // deployment at all: the synchronous shape could not outlive the ALB's
+        // idle timeout regardless of where the work ran.
+        if (code === 202 && j && j.job_id) {
+          if (typeof _vivPollRunProgress === 'function') _vivPollRunProgress(j.job_id);
+          if (btn) { btn.disabled = false; btn.textContent = 'Run'; }
+          _openInvestigation(name);
+          return;
+        }
         if (!ok) { alert('Run failed: ' + (j.error || 'unknown')); }
         // Refresh both the list (status update) and the detail panel
         window._investigationsLoaded = false;
