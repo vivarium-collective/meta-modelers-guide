@@ -13,8 +13,8 @@ The composition diagrams in the paper are generated from these specifications.
 
 Two investigations carry the argument:
 
-- **[Executable Figures](https://vivarium-collective.github.io/meta-modelers-guide/investigations/paper-figures.html)** — the eleven figures, each a runnable composite behind its diagram, checked against its caption.
-- **[From Draft to Living Cell](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html)** — the composition patterns as 2-D spatial models: Cellular Potts cells, dynamic FBA, diffusing fields, a Turing pattern, an emergent membrane.
+- **[Executable Figures](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/?investigation=paper-figures)** — the eleven figures, each a runnable composite behind its diagram, checked against its caption.
+- **[From Draft to Living Cell](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/?investigation=draft-to-living-cell)** — the composition patterns as 2-D spatial models: Cellular Potts cells, dynamic FBA, diffusing fields, a Turing pattern, an emergent membrane.
 
 <!-- BEGIN dashboard -->
 > ## 📊 [**Live dashboard →**](https://vivarium-collective.github.io/meta-modelers-guide/dashboard/)
