@@ -25,6 +25,8 @@
     
     <button type="button" id="study-reproduce" class="btn-mini" title="Replay this study's most recent run's RECORDED manifest verbatim (POST /api/study-reproduce) — ignores any study.yaml edits made since">↻ Reproduce</button>
     <button type="button" id="study-run-current-spec" class="btn-mini" title="Run this study's CURRENT baseline spec (POST /api/study-run-baseline) as a brand-new run">▶ Run current spec</button>
+    
+    <button type="button" id="study-run-composite" class="btn-mini" title="Dispatch a specific process-bigraph composite_id to the remote compute backend (pbg-native multi_node/mbp, or the Nextflow campaign path) — advanced, independent of this study's own pinned baseline">⚙ Dispatch composite</button>
   </span>
   </div>
   <div class="study-status-row" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
@@ -686,6 +688,9 @@ through one typed process.
       
       
       
+      
+      
+      
       <div class="finding-card finding-kind-biological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
@@ -737,6 +742,10 @@ runs dynamic-FBA at its own footprint and grows both biologically (biomass) and 
           </div>
         </details>
       </div>
+      
+      
+      
+      
       
       
       
@@ -808,6 +817,10 @@ claim (local depletion happens and is sharply local) stands.</span>
       
       
       
+      
+      
+      
+      
       <div class="finding-card finding-kind-biological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
@@ -862,6 +875,10 @@ secretion side of the coupling is as real as the uptake side. Confirmed: field-w
       
       
       
+      
+      
+      
+      
       <div class="finding-card finding-kind-methodological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
@@ -911,6 +928,10 @@ capped 0 -&gt; ~47.0 vs uncapped 0 -&gt; 0.0 (exactly); uncapped biomass ~2.35 v
           </div>
         </details>
       </div>
+      
+      
+      
+      
       
       
       
@@ -1001,6 +1022,10 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
       
       
       
+      
+      
+      
+      
       <div class="finding-card finding-kind-methodological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
@@ -1046,6 +1071,10 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
           </div>
         </details>
       </div>
+      
+      
+      
+      
       
       
       
@@ -1101,6 +1130,10 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
       
       
       
+      
+      
+      
+      
       <div class="finding-card finding-kind-biological finding-status-confirms">
         <details class="finding-details">
           <summary class="finding-row">
@@ -1147,6 +1180,7 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
         </details>
       </div>
       
+      
     </div>
     
       
@@ -1182,7 +1216,9 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
   </div>
 
   
-  <div id="model-composite-cards" class="model-composite-cards" data-study="cell-environment-coupling">
+  
+  <div id="model-composite-cards" class="model-composite-cards" data-study="cell-environment-coupling"
+       data-study-config="">
     <p class="muted" style="font-size:0.85em;margin:0">Loading composite card(s)…</p>
   </div>
 
@@ -1258,7 +1294,7 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
 
 <div class="overview-section" id="simulations-section">
   <h2>Simulations</h2>
-  <div id="study-sim-table" style="overflow-x:auto"><p class="muted" style="margin:0">Loading simulations…</p></div>
+  <div id="study-sim-table" style="overflow-x:auto"><p class="muted" style="margin:0">Loading…</p></div>
   <div id="study-run-detail" style="margin-top:14px"></div>
 </div>
 
@@ -2188,7 +2224,7 @@ separate machinery this composite does not use.</li><li style="margin:2px 0">Gro
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "bb6fb6094410ce1d8833e608e70500f04e454c94", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/bb6fb6094410ce1d8833e608e70500f04e454c94", "branch": "main", "lockfile": "uv.lock@a24cf7281771", "generated_at": "2026-08-31 01:08 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "cfef277e2ad8dfb843232d94c6618f3c1886f331", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/cfef277e2ad8dfb843232d94c6618f3c1886f331", "branch": "main", "lockfile": "uv.lock@ea1f756c4c70", "generated_at": "2026-09-21 00:32 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "cell-environment-coupling";
@@ -2217,10 +2253,10 @@ function _saveExpertInput(studyName, eiName, btn) {
   flash.className = 'cond-ei-flash';
   flash.style.display = '';
   flash.textContent = 'saving…';
-  fetch('/api/study-expert-input-set', {
-    method: 'POST',
+  fetch('/api/study/' + encodeURIComponent(studyName), {
+    method: 'PATCH',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({study: studyName, name: eiName, current: val}),
+    body: JSON.stringify({expert_input: {name: eiName, current: val}}),
   }).then(function(r) {
     return r.text().then(function(t) { return {ok: r.ok, status: r.status, body: t}; });
   }).then(function(res) {
