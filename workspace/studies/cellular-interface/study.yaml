@@ -248,6 +248,12 @@ limitations:
 - Law 1 has a native impostor for this figure — `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler` installs `NonConformingCellularInterface` (conforming inputs, but it drops the required `viability` and `objective` output ports) and the compiler rejects it with a CompileError naming those two ports. Conformance is structural only — port names, types, and wiring, not units or runtime behavior.
 falsifiability: Overturned if the compiled cell's port set differs from the declared Fig 3 interface, if installing the handler leaves shape flat (no growth) or the objective unchanged, or if a non-conforming handler is found to compile without error against any declared interface (Law 1 not enforced).
 visualizations:
+- name: cellular-interface-response
+  address: image:visualizations/cellular-interface-response.svg
+  description: 'The response the contract demands -- the compiled fig03b-executable driven across the inputs its draft senses, graphing exactly the relations Fig 3b prints, every curve measured off the running engine. (1) Monod growth: sweeping external substrate and fitting the executable curve recovers the figure''s own printed constants, mu_max = 0.60 hr^-1 and K_s = 0.50. (2) First-order uptake: chemical flux is linear in [S] with slope -0.80 (= -uptake_rate). (3) One interface, two mechanisms (law 4): the Monod/Arrhenius handler and the independent Hill/Q10 twin agree to 10.4% across the operating range [0.2, 2.5]. (4) Arrhenius thermal death: viability V(t) at 37-60 degC. (5) D-value vs temperature, executable points on the analytic Arrhenius curve -- ~1 min at 55 degC, 0.2 min at 60 degC, >15 min at 37/45 degC (the figure''s printed E_a = 300 kJ/mol). (6) Goal-directed accretion of shape and objective. Nothing is invented outside the fixed figure -- each panel is a relation the draft prints, exercised through the compiled executable.'
+  config:
+    chart: image
+    caption: 'The cellular interface, exercised: each panel is a relation the Fig 3b contract prints, measured off the compiled executable -- Monod mu_max=0.60 / K_s=0.50, first-order uptake -0.80, Arrhenius D~1 min @ 55 degC, and two conforming mechanisms agreeing to 10.4%.'
 - name: cellular-interface-spatial
   address: image:viz/cellular-interface-spatial.gif
   description: 'The same-interface, spatial composition: the UNCHANGED CellularInterfaceHandler

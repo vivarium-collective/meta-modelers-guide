@@ -1178,6 +1178,12 @@ falsifiability: Overturned if the cell's biomass or CPM lattice volume never ris
   the field store), or if net field-wide glucose does not fall (the cell failing to act as a
   genuine sink on the shared field).
 visualizations:
+- name: cell-environment-coupling-response
+  address: image:visualizations/cell-environment-coupling-response.svg
+  description: 'The response the contract demands -- the compiled single-cell-in-a-field executable and its two ablation arms run to completion, every trajectory measured off the engine. (1) Metabolism drives growth: real dynamic-FBA at the cell''s CPM footprint grows biomass to 0.369 and CPM volume to 110 px over 20 ticks. (2) O2 cap forces acetate overflow: with the respiratory-capacity (O2) cap the cell overflows carbon to field-wide acetate 47.0, but removing the cap (control) gives 0.0 -- the overflow phenotype is caused by the finite-O2 constraint, not assumed. (3) One interface, two mechanisms (law 4): swapping the dFBA metabolism for a Michaelis-Menten surrogate behind identical ports still tracks biomass to within 7.5%. (4) The FBA law it rides on: growth vs glucose-uptake bound straight from the real e_coli_core LP -- mu = 0.79 hr^-1 at the operating uptake, and an essential-TCA (ICDHyr) knockout collapses growth to 0. Nothing invented; each panel is a relation the cell-environment contract demands, exercised through the compiled executable + its real cobra metabolism.'
+  config:
+    chart: image
+    caption: 'Cell-environment coupling, exercised: metabolism drives growth (biomass 0.369, volume 110 px), the O2 cap forces acetate overflow (47.0 vs 0.0 uncapped), a Michaelis-Menten surrogate tracks the dFBA interface to 7.5%, and the underlying real e_coli_core FBA law gives mu~0.79/h with an ICDHyr knockout collapsing growth to 0.'
 - name: single-cell-in-a-field-movie
   address: image:viz/single-cell-in-a-field.gif
   description: 'Animated GIF of the 20-tick flagship run, three synced panels sharing the same

@@ -648,6 +648,12 @@ falsifiability: Overturned if the population never steps up past 1 cell within t
   appears), or if max_generation never compounds past 1-2 (the lineage never becomes a genuine
   multi-generation tree).
 visualizations:
+- name: growth-and-division-response
+  address: image:visualizations/growth-and-division-response.svg
+  description: 'Response of the Growth-and-division contract, measured off the real running growth-division-spatial executable (not a re-plot of the movie): the composite stepped one tick at a time, its own obs state read each tick. (A) n_cells staircase over 36 ticks -> 18 cells, monotonic non-decreasing (1,2,2,2,4,4,5,8,8,11,14,18), with the 2^floor(log2 n) lockstep reference overlaid and the departure from clean powers of two marked at tick 21 (5 cells; then 11,14,18) -- sibling division timing desynchronizing under shared-field competition. (B) every cell''s CPM volume sawtooth, bounded 27-79 px, growing toward vol_threshold=80 -> halved by the native divide_cells toward reset_target=40 -> resuming, no runaway and no zero-volume phantom. (C) lineage composition: stacked per-generation cell counts reaching 5 coexisting generations (max_generation=4; gen0:1, gen1:4, gen2:7, gen3:4, gen4:2). (D) the shared glucose field depletes only ~3.2% over the run (43194 -> 41826 units) -- the staircase is bounded by lattice crowding, not starvation.'
+  config:
+    chart: image
+    caption: 'Growth and division exercised on the real executable: one founder compounds into an 18-cell, 5-generation lineage over 36 ticks; the staircase (1,2,2,2,4,4,5,8,8,11,14,18) departs from powers of two at tick 21 as siblings desynchronize, per-cell volume sawtooths in a bounded 27-79 px band, and the shared glucose field depletes only ~3% -- crowding-bounded, not starvation-bounded.'
 - name: growth-division-spatial-movie
   address: image:viz/growth-division-spatial.gif
   description: 'Animated GIF of the 36-tick growth-division run: every live CPM cell on a shared
