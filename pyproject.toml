@@ -2,7 +2,7 @@
 name = "meta-modelers-guide"
 version = "0.0.0"
 description = "Process-bigraph research workspace"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "viva-compiler @ git+https://github.com/vivarium-collective/viva-compiler.git@main",
     "process-bigraph",
@@ -27,10 +27,17 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7.4"]
-# Real external-simulator handlers (Phase 2). Optional: the Fig 6 FBAMetabolism
-# handler bridges COBRApy; without it the coarse/kinetic handlers still run and the
-# FBA tests skip. Install with `pip install -e .[simulators]`.
-simulators = ["cobra>=0.29"]
+# Real external-simulator backends behind the executable composites. The compiled
+# executables bridge COBRApy (dynamic-FBA metabolism), spatio-flux (diffusion /
+# advection chemical fields) and pbg-cpm (Cellular-Potts cells) — e.g.
+# cell-environment-coupling, cell-cell-coupling, growth-and-division,
+# disintegration, molecular-interfaces. Install with `uv sync --extra simulators`
+# (or `pip install -e .[simulators]`) to build and run the executables; without
+# them the draft composites + coarse/kinetic handlers still run and the
+# simulator-backed tests skip. Serving the workspace and the read-only dashboard
+# do NOT need this extra (they use the committed composite JSON + renders).
+# NOTE: pbg-cpm is the dist name of the viva-cpm repo (see [tool.uv.sources]).
+simulators = ["cobra>=0.29", "spatio-flux", "pbg-cpm"]
 
 [build-system]
 requires = ["hatchling"]
@@ -51,3 +58,12 @@ packages = ["meta_modelers_guide"]
 [tool.uv.sources]
 vivarium-workbench = { git = "https://github.com/vivarium-collective/vivarium-workbench.git", branch = "main" }
 viva-superpowers = { git = "https://github.com/vivarium-collective/viva-superpowers.git", branch = "main" }
+# Simulator backends for the executable composites (the `simulators` extra).
+spatio-flux = { git = "https://github.com/vivarium-collective/spatio-flux.git", branch = "main" }
+# pbg-cpm is the dist name the viva-cpm repo published BEFORE its cpm -> viva_cpm
+# package rename (#75, commit c5528d1). This workspace's CPM adapters still
+# `from cpm.schema import load_world` (meta_modelers_guide/cpm/*), so it is pinned
+# to the last pre-rename commit (6d13620), which still ships the `cpm` package as
+# dist `pbg-cpm`. Migrating meta_modelers_guide/cpm/* to `viva_cpm` and moving this
+# to `viva-cpm @ main` is a follow-up.
+pbg-cpm = { git = "https://github.com/vivarium-collective/viva-cpm.git", rev = "6d13620d6a6f29b9b4cbbe38f6c6c05344c4d514" }
