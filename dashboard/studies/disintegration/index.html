@@ -903,6 +903,8 @@ BrownianMovement.</span>
   </div>
 
   
+
+  
   
   
 
@@ -927,9 +929,13 @@ BrownianMovement.</span>
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="disintegration-spatial"
-               value="meta_modelers_guide.composites.disintegration-spatial" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
+        
+        <select class="baseline-composite-input" data-baseline-name="disintegration-spatial"
+                data-current="meta_modelers_guide.composites.disintegration-spatial"
+                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px">
+          <option value="meta_modelers_guide.composites.disintegration-spatial" selected>meta_modelers_guide.composites.disintegration-spatial</option>
+          
+        </select>
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
                 data-baseline-name="disintegration-spatial">Set composite</button>
       </div>
@@ -1005,6 +1011,18 @@ BrownianMovement.</span>
 
 
 <section class="study-tab-panel" data-kind="analyses" id="panel-analyses" hidden>
+
+  
+  <div class="overview-section" id="study-analyses-section">
+    <h3>Analyses to run <span class="muted" style="font-size:0.85em;font-weight:normal">— which of the workspace's <code>ANALYSIS_REGISTRY</code> entries to compute on dispatch</span></h3>
+    <div id="study-analyses-list" data-study="disintegration">
+      <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading analyses…</span></div>
+    </div>
+    <div style="margin-top:8px">
+      <button class="action-btn" type="button" onclick="_saveStudyAnalyses()">Save analyses</button>
+      <span id="study-analyses-status" style="margin-left:8px;font-size:0.9em;color:#555"></span>
+    </div>
+  </div>
 
 <div class="overview-section" id="analyses-results-section">
   <h2>Analyses</h2>
@@ -1704,7 +1722,7 @@ the two for the same disintegration claim at two very different mechanistic reso
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "cfef277e2ad8dfb843232d94c6618f3c1886f331", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/cfef277e2ad8dfb843232d94c6618f3c1886f331", "branch": "main", "lockfile": "uv.lock@0c3c56711e96", "generated_at": "2026-09-21 01:14 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "96e088095ae78977173bdc0e82fc0ebaddc86af7", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/96e088095ae78977173bdc0e82fc0ebaddc86af7", "branch": "main", "lockfile": "uv.lock@47e7ce438dd3", "generated_at": "2026-09-27 00:22 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "disintegration";
@@ -1831,6 +1849,7 @@ window._seedFollowupProposal = _seedFollowupProposal;
      Model card stays stuck on "Resolving composite…". -->
 <script src="/meta-modelers-guide/dashboard/assets/loom-embed.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/composite-card.js"></script>
+<script src="/meta-modelers-guide/dashboard/assets/checklist-select.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/study-detail.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which

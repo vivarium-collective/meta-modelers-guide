@@ -850,6 +850,8 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
   </div>
 
   
+
+  
   
   
 
@@ -874,9 +876,13 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="protocell-autopoietic"
-               value="meta_modelers_guide.composites.protocell-autopoietic" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
+        
+        <select class="baseline-composite-input" data-baseline-name="protocell-autopoietic"
+                data-current="meta_modelers_guide.composites.protocell-autopoietic"
+                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px">
+          <option value="meta_modelers_guide.composites.protocell-autopoietic" selected>meta_modelers_guide.composites.protocell-autopoietic</option>
+          
+        </select>
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
                 data-baseline-name="protocell-autopoietic">Set composite</button>
       </div>
@@ -909,9 +915,13 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="protocell-vesicle-control"
-               value="meta_modelers_guide.composites.protocell-vesicle-control" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
+        
+        <select class="baseline-composite-input" data-baseline-name="protocell-vesicle-control"
+                data-current="meta_modelers_guide.composites.protocell-vesicle-control"
+                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px">
+          <option value="meta_modelers_guide.composites.protocell-vesicle-control" selected>meta_modelers_guide.composites.protocell-vesicle-control</option>
+          
+        </select>
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
                 data-baseline-name="protocell-vesicle-control">Set composite</button>
       </div>
@@ -944,9 +954,13 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="protocell-autopoietic-v2"
-               value="meta_modelers_guide.composites.protocell-autopoietic-v2" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
+        
+        <select class="baseline-composite-input" data-baseline-name="protocell-autopoietic-v2"
+                data-current="meta_modelers_guide.composites.protocell-autopoietic-v2"
+                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px">
+          <option value="meta_modelers_guide.composites.protocell-autopoietic-v2" selected>meta_modelers_guide.composites.protocell-autopoietic-v2</option>
+          
+        </select>
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
                 data-baseline-name="protocell-autopoietic-v2">Set composite</button>
       </div>
@@ -979,9 +993,13 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       </div>
       
       <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-        <input type="text" class="baseline-composite-input" data-baseline-name="protocell-autopoietic-v2-open"
-               value="meta_modelers_guide.composites.protocell-autopoietic-v2-open" placeholder="pkg.composites.name"
-               style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px" />
+        
+        <select class="baseline-composite-input" data-baseline-name="protocell-autopoietic-v2-open"
+                data-current="meta_modelers_guide.composites.protocell-autopoietic-v2-open"
+                style="flex:1;min-width:200px;font-family:monospace;font-size:0.82em;padding:3px 6px">
+          <option value="meta_modelers_guide.composites.protocell-autopoietic-v2-open" selected>meta_modelers_guide.composites.protocell-autopoietic-v2-open</option>
+          
+        </select>
         <button type="button" class="action-btn baseline-composite-set" style="font-size:0.8em"
                 data-baseline-name="protocell-autopoietic-v2-open">Set composite</button>
       </div>
@@ -1057,6 +1075,18 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
 
 
 <section class="study-tab-panel" data-kind="analyses" id="panel-analyses" hidden>
+
+  
+  <div class="overview-section" id="study-analyses-section">
+    <h3>Analyses to run <span class="muted" style="font-size:0.85em;font-weight:normal">— which of the workspace's <code>ANALYSIS_REGISTRY</code> entries to compute on dispatch</span></h3>
+    <div id="study-analyses-list" data-study="autopoiesis">
+      <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading analyses…</span></div>
+    </div>
+    <div style="margin-top:8px">
+      <button class="action-btn" type="button" onclick="_saveStudyAnalyses()">Save analyses</button>
+      <span id="study-analyses-status" style="margin-left:8px;font-size:0.9em;color:#555"></span>
+    </div>
+  </div>
 
 <div class="overview-section" id="analyses-results-section">
   <h2>Analyses</h2>
@@ -2002,7 +2032,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "cfef277e2ad8dfb843232d94c6618f3c1886f331", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/cfef277e2ad8dfb843232d94c6618f3c1886f331", "branch": "main", "lockfile": "uv.lock@0c3c56711e96", "generated_at": "2026-09-21 01:14 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "96e088095ae78977173bdc0e82fc0ebaddc86af7", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/96e088095ae78977173bdc0e82fc0ebaddc86af7", "branch": "main", "lockfile": "uv.lock@47e7ce438dd3", "generated_at": "2026-09-27 00:22 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script>
 window._studyName = "autopoiesis";
@@ -2129,6 +2159,7 @@ window._seedFollowupProposal = _seedFollowupProposal;
      Model card stays stuck on "Resolving composite…". -->
 <script src="/meta-modelers-guide/dashboard/assets/loom-embed.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/composite-card.js"></script>
+<script src="/meta-modelers-guide/dashboard/assets/checklist-select.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/study-detail.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
