@@ -322,7 +322,7 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
-# **cellular-interface-spatial**
+# **cellular-interface-response**
 
 def _save_viz(study, slug, html):
     d = REPO / 'reports/notebooks/figures' / study
@@ -331,6 +331,11 @@ def _save_viz(study, slug, html):
     out.write_text(html, encoding='utf-8')
     print('  wrote', out)
 
+
+# cellular-interface-response
+_save_viz('cellular-interface', 'cellular-interface-response', _render_one('image:visualizations/cellular-interface-response.svg', {'chart': 'image', 'caption': 'The cellular interface, exercised: each panel is a relation the Fig 3b contract prints, measured off the compiled executable -- Monod mu_max=0.60 / K_s=0.50, first-order uptake -0.80, Arrhenius D~1 min @ 55 degC, and two conforming mechanisms agreeing to 10.4%.'}, RUNS_DB, STUDY_YAML))
+
+# **cellular-interface-spatial**
 
 # cellular-interface-spatial
 _save_viz('cellular-interface', 'cellular-interface-spatial', _render_one('image:viz/cellular-interface-spatial.gif', {'chart': 'image', 'caption': "The unchanged Fig 3b handler composed over a real 2D chemical field -- the adapter senses the local footprint concentration and deposits the handler's uptake back into the field, depleting it where the cell feeds."}, RUNS_DB, STUDY_YAML))
@@ -462,6 +467,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 # ### Visualizations
 #
 # _Results are shown by the figures below, produced by the run above._
+
+# **cell-environment-coupling-response**
+
+# cell-environment-coupling-response
+_save_viz('cell-environment-coupling', 'cell-environment-coupling-response', _render_one('image:visualizations/cell-environment-coupling-response.svg', {'chart': 'image', 'caption': 'Cell-environment coupling, exercised: metabolism drives growth (biomass 0.369, volume 110 px), the O2 cap forces acetate overflow (47.0 vs 0.0 uncapped), a Michaelis-Menten surrogate tracks the dFBA interface to 7.5%, and the underlying real e_coli_core FBA law gives mu~0.79/h with an ICDHyr knockout collapsing growth to 0.'}, RUNS_DB, STUDY_YAML))
 
 # **single-cell-in-a-field-movie**
 
@@ -675,6 +685,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **cell-cell-coupling-response**
+
+# cell-cell-coupling-response
+_save_viz('cell-cell-coupling', 'cell-cell-coupling-response', _render_one('image:visualizations/cell-cell-coupling-response.svg', {'chart': 'image', 'caption': 'Cell-cell coupling exercised: competition (3.69x margin, 3511 vs 81 px), cross-feeding on the acetate plume (1.25 -> 3.79) with its secretor-knockout control, and dFBA vs MM colony substitutability (3.69x vs 3.47x).'}, RUNS_DB, STUDY_YAML))
+
 # **cellcell-compete-movie**
 
 # cellcell-compete-movie
@@ -808,6 +823,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **disintegration-response**
+
+# disintegration-response
+_save_viz('disintegration', 'disintegration-response', _render_one('image:visualizations/disintegration-response.svg', {'chart': 'image', 'caption': 'Disintegration exercised on the real executable -- cell holds coherent below the viability bound, crosses at released_tick 7, resorbs to area 0 by tick 16 shedding 63 debris particles, and the debris cloud keeps scattering (RMS 5.7 -> 8.0).'}, RUNS_DB, STUDY_YAML))
+
 # **disintegration-spatial-movie**
 
 # disintegration-spatial-movie
@@ -938,6 +958,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **molecular-interfaces-response**
+
+# molecular-interfaces-response
+_save_viz('molecular-interfaces', 'molecular-interfaces-response', _render_one('image:visualizations/molecular-interfaces-response.svg', {'chart': 'image', 'caption': 'Diffusion-driven instability, exercised: differential diffusion (Du > Dv) is the CAUSE of spatial structure -- the equal-diffusion control (Du/Dv = 1) sits at zero amplitude, pattern onsets at Du/Dv ~= 1.41, and a temperature parameter grades (~12 -> ~2 domains) without collapsing it. Every curve measured off the real compiled executable.'}, RUNS_DB, STUDY_YAML))
+
 # **molecular-turing-pattern-movie**
 
 # molecular-turing-pattern-movie
@@ -1053,6 +1078,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 # ### Visualizations
 #
 # _Results are shown by the figures below, produced by the run above._
+
+# **biomolecular-complementarity-response**
+
+# biomolecular-complementarity-response
+_save_viz('biomolecular-complementarity', 'biomolecular-complementarity-response', _render_one('image:visualizations/biomolecular-complementarity-response.svg', {'chart': 'image', 'caption': 'Biomolecular complementarity, spatialized -- differential adhesion sorts two cell types (hetero_frac 0.64 -> 0.12) while a neutral-J control stays mixed (0.61), and a near-critical field phase-separates (phi_var 7e-5 -> 0.38, mass conserved); every curve measured off the real compiled executable.'}, RUNS_DB, STUDY_YAML))
 
 # **cell-sorting-spatial-movie**
 
@@ -1224,6 +1254,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 #
 # _Results are shown by the figures below, produced by the run above._
 
+# **autopoiesis-response**
+
+# autopoiesis-response
+_save_viz('autopoiesis', 'autopoiesis-response', _render_one('image:visualizations/autopoiesis-response.svg', {'chart': 'image', 'caption': 'Autopoiesis, exercised: a boundary that maintains itself (baseline plateau ~149 px, persists) and the ablations that break it (k_prod=0 knockout -> collapse by step 96; open drive -> runaway fill, closure lost ~step 592).'}, RUNS_DB, STUDY_YAML))
+
 # **protocell-autopoietic-movie**
 
 # protocell-autopoietic-movie
@@ -1332,6 +1367,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 # ### Visualizations
 #
 # _Results are shown by the figures below, produced by the run above._
+
+# **growth-and-division-response**
+
+# growth-and-division-response
+_save_viz('growth-and-division', 'growth-and-division-response', _render_one('image:visualizations/growth-and-division-response.svg', {'chart': 'image', 'caption': 'Growth and division exercised on the real executable: one founder compounds into an 18-cell, 5-generation lineage over 36 ticks; the staircase (1,2,2,2,4,4,5,8,8,11,14,18) departs from powers of two at tick 21 as siblings desynchronize, per-cell volume sawtooths in a bounded 27-79 px band, and the shared glucose field depletes only ~3% -- crowding-bounded, not starvation-bounded.'}, RUNS_DB, STUDY_YAML))
 
 # **growth-division-spatial-movie**
 
@@ -1531,6 +1571,11 @@ print("No recorded runs for this study; nothing to reproduce.")
 # ### Visualizations
 #
 # _Results are shown by the figures below, produced by the run above._
+
+# **development-and-evolution-response**
+
+# development-and-evolution-response
+_save_viz('development-and-evolution', 'development-and-evolution-response', _render_one('image:visualizations/development-and-evolution-response.svg', {'chart': 'image', 'caption': 'Development and evolution exercised on the real executables: mean trait climbs under selection (+0.233) but drifts without it (-0.026) and cannot move without mutation (0.000, var 0); Mann-Whitney p=5.3e-4 across N=30 seeds; rim/core develops to 1.283 -- a directed evolutionary response plus an emergent collective interface, one colony.'}, RUNS_DB, STUDY_YAML))
 
 # **development-evolution-spatial-movie**
 
