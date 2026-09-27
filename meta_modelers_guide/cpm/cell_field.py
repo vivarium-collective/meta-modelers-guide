@@ -127,7 +127,7 @@ class CpmCellField(Process):
 
     def __init__(self, config=None, core=None):
         super().__init__(config, core=core)
-        from cpm.schema import load_world
+        from viva_cpm.schema import load_world
         c = self.config
         nx, ny = int(c["nx"]), int(c["ny"])
         self._nx, self._ny = nx, ny

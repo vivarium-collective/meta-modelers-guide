@@ -75,7 +75,7 @@ class CpmCompeteDivision(CpmGrowthDivision):
         # the base's short world-construction body for N founders, threading
         # `seed` into the potts spec. update()/_fba/division are NOT duplicated.
         Process.__init__(self, config, core=core)
-        from cpm.schema import load_world
+        from viva_cpm.schema import load_world
         try:
             from cobra.io import load_model
         except Exception as exc:  # pragma: no cover - exercised only without cobra

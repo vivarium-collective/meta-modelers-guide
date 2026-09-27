@@ -99,7 +99,7 @@ class CpmGrowthDivision(Process):
 
     def __init__(self, config=None, core=None):
         super().__init__(config, core=core)
-        from cpm.schema import load_world
+        from viva_cpm.schema import load_world
         try:
             from cobra.io import load_model
         except Exception as exc:  # pragma: no cover - exercised only without cobra

@@ -36,8 +36,7 @@ dev = ["pytest>=7.4"]
 # them the draft composites + coarse/kinetic handlers still run and the
 # simulator-backed tests skip. Serving the workspace and the read-only dashboard
 # do NOT need this extra (they use the committed composite JSON + renders).
-# NOTE: pbg-cpm is the dist name of the viva-cpm repo (see [tool.uv.sources]).
-simulators = ["cobra>=0.29", "spatio-flux", "pbg-cpm"]
+simulators = ["cobra>=0.29", "spatio-flux", "viva-cpm"]
 
 [build-system]
 requires = ["hatchling"]
@@ -60,10 +59,4 @@ vivarium-workbench = { git = "https://github.com/vivarium-collective/vivarium-wo
 viva-superpowers = { git = "https://github.com/vivarium-collective/viva-superpowers.git", branch = "main" }
 # Simulator backends for the executable composites (the `simulators` extra).
 spatio-flux = { git = "https://github.com/vivarium-collective/spatio-flux.git", branch = "main" }
-# pbg-cpm is the dist name the viva-cpm repo published BEFORE its cpm -> viva_cpm
-# package rename (#75, commit c5528d1). This workspace's CPM adapters still
-# `from cpm.schema import load_world` (meta_modelers_guide/cpm/*), so it is pinned
-# to the last pre-rename commit (6d13620), which still ships the `cpm` package as
-# dist `pbg-cpm`. Migrating meta_modelers_guide/cpm/* to `viva_cpm` and moving this
-# to `viva-cpm @ main` is a follow-up.
-pbg-cpm = { git = "https://github.com/vivarium-collective/viva-cpm.git", rev = "6d13620d6a6f29b9b4cbbe38f6c6c05344c4d514" }
+viva-cpm = { git = "https://github.com/vivarium-collective/viva-cpm.git", branch = "main" }

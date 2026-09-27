@@ -82,7 +82,7 @@ class CpmEvolution(CpmGrowthDivision):
         # reaches the potts spec too. `update()`/`_fba`/division logic are
         # NOT duplicated -- those are reused unchanged via the base's hooks.
         Process.__init__(self, config, core=core)
-        from cpm.schema import load_world
+        from viva_cpm.schema import load_world
         try:
             from cobra.io import load_model
         except Exception as exc:  # pragma: no cover - exercised only without cobra
