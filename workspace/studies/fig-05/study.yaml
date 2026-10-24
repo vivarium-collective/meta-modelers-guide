@@ -6,14 +6,15 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
+confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the viability-driven grain swap is robustly demonstrated on a deterministic run (no RNG) -- the coarse->fine flip tracks the threshold crossing within one tick and the biomass/energy turn-over is exact and reproducible -- and the companion grain-comparison executables add a second measured line of evidence; held at Medium, not High, because the stress rate, threshold, yields, and decay rates are hand-tuned toy-real magnitudes, not calibrated to a named stressor or rate.'
 question: 'Does the paper''s §Disintegration Fig 5b grain swap hold as a runnable composite -- a viability signal driving a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface, so that crossing the viability bound replaces the coarse description with the finer one? Concretely: as an external stress ramp slides viability across a threshold, does a GrainSelector flip the active grain coarse->fine at the crossing, and does the shared biomass output turn over from growth (coarse, alive) to decay (fine, dying) at the switch?'
 biological_summary: 'This is the toy-real runnable realization of Fig 5b''s grain swap. The paper''s §Disintegration describes viability as the region of state space in which a given cellular description is valid: while viability holds, the interface (inflow, biomass, energy, secretions) can be treated as a coarse-grained cellular process; once environmental stress pushes interface variables outside the viable bounds, that coarse description fails and the finer molecular mechanism must be re-exposed. Fig 5b renders this as "a grain selector switches the active level of description: a viability signal drives a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface. Crossing viability bounds replaces the coarse description with the finer one."
 
   The `fig05-grain-runnable` composite makes exactly that toggle executable and plays it forward in time. A `StressRamp` process drives `viability` steadily down (a clean, controllable driver, not a calibrated stressor). A `GrainSelector` watches that signal and SETS a shared `active_grain` control string: "coarse" while viability >= threshold, "fine" once it drops below. Two gated processes act on the SAME `biomass`/`energy` interface at different grains -- a `CoarseGrainProcess` that grows biomass by a linear yield on inflow (the alive, cheap lumped regime) and a `FineGrainProcess` that decays biomass first-order (the dying, resolved regime the coarse model cannot capture) -- and each is a no-op unless it is the active grain, so exactly one runs per tick. As viability slides across the threshold the biomass trajectory therefore turns over from growth to decline on-screen: growth -> arrest -> decay. This is the level shift of §Disintegration in miniature -- when the assumptions supporting the coarse cellular process fail, the model is replaced by a description that resolves the mechanism responsible for the failure (here, the death/ decay regime).
 
   Observed over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23; it first drops below the 0.5 threshold at t=12 (v=0.46); the active grain flips coarse->fine at t=13 -- a one-tick handover lag behind the crossing, the composite''s scheduling latency, not a modeled delay. Biomass grows linearly 0 -> 3.9 through the flip (0.3/tick), PEAKS at 3.9 exactly at the flip tick (t=13), then decays first-order to ~1.14 by t=26; energy mirrors it (peak 2.6, draining to ~0.76). No process draws randomness, so the whole viability/grain/biomass/energy trajectory is bit-reproducible run to run.'
-claim: 'Composing a `StressRamp`, a `GrainSelector`, and two gated grain processes (`CoarseGrainProcess`, `FineGrainProcess`) sharing one biomass/energy interface reproduces Fig 5b''s viability-driven grain swap as a runnable temporal study: over a deterministic 26-step run, viability declines monotonically across the 0.5 threshold, the GrainSelector flips the active grain coarse->fine at the crossing (t=13, one tick after viability first reads below threshold at t=12), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26). This is a didactic, uncalibrated realization of the level shift the paper draws -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound.'
+claim: 'Composing a `StressRamp`, a `GrainSelector`, and two gated grain processes (`CoarseGrainProcess`, `FineGrainProcess`) sharing one biomass/energy interface reproduces Fig 5b''s viability-driven grain swap as a runnable temporal study: over a deterministic 26-step run, viability declines monotonically across the 0.5 threshold, the GrainSelector flips the active grain coarse->fine at the crossing (t=13, one tick after viability first reads below threshold at t=12), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26). This is a didactic, uncalibrated realization of the level shift the paper draws -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound. A companion line of evidence quantifies why the swap matters: three executables (`fig05-executable-coarse`, `-kinetic`, `-fba`) realize the SAME coarse-metabolism interface at three different model grains and report measurably different biomass through byte-identical ports -- 4.0 (coarse linear) / 2.6667 (kinetic saturating) / 6.2936 (FBA), the FBA grain additionally secreting 30.4478 of acetate (overflow) against 1.6 for coarse (workbench 0.4.1). Fig 5b''s selector -- switching the active level of description -- is therefore a substantive modeling act, not a redraw.'
 baseline:
 - name: fig05-grain-runnable
   composite: meta_modelers_guide.composites.fig05-grain-runnable
@@ -175,6 +176,20 @@ runs:
     TRAJECTORY-IS-DETERMINISTIC:
       result: PASS
       detail: two independent builds emit identical viability/grain/biomass sequences
+- name: fig05-executable-grain-comparison
+  composite: fig05-executable-coarse / fig05-executable-kinetic / fig05-executable-fba
+  emitter: RAMEmitter
+  id: fig05-executable-grain-comparison
+  status: completed
+  provenance: 'Companion executables meta_modelers_guide/composites/fig05-executable-{coarse,kinetic,fba}.composite.json, each realizing the SAME coarse-metabolism interface (coarse.biomass/energy/entropy/secretions over a fixed nutrient + substrate supply) at a different model grain. Built in-memory from the committed composite.json and run through the process-bigraph engine to the standard executable horizon, readouts via gather_emitter_results (workbench 0.4.1). Refreshed from the authoritative scripts/_catalog/measured_readouts.json; the prior-HEAD fig05-executable-fba biomass was 3.2 / secretions 1.28, now 6.2936 / 30.4478.'
+  params: {}
+  outcomes:
+    GRAIN-SWAP-CHANGES-THE-MEASURED-BIOMASS:
+      result: PASS
+      detail: final coarse.biomass 4.0 (coarse linear) / 2.6667 (kinetic saturating) / 6.2936 (FBA) through byte-identical ports -- a 2.4x spread across grains
+    FBA-GRAIN-SHOWS-OVERFLOW-SECRETION:
+      result: PASS
+      detail: fig05-executable-fba secretes 30.4478 (acetate overflow) vs 1.6 for coarse; energy 144.0 vs 2.4; entropy 151.2761 vs 0.8
 - name: meta_modelers_guide.composites.fig05-grain-runnable__1787799780__641657
   status: complete
   timestamp: 1787799780.434656
@@ -218,6 +233,31 @@ findings:
   provenance:
     run_ids:
     - fig05-grain-runnable
+- id: F-04
+  kind: computational
+  tier: mechanism
+  status: novel
+  statement: 'Fig 5b''s grain swap is not cosmetic: realizing the SAME coarse-metabolism interface at three different model grains gives measurably different biomass through byte-identical ports. The companion executables fig05-executable-{coarse,kinetic,fba} install three internal mechanisms behind one shared interface (biomass, energy, entropy, secretions over a fixed supply) -- a linear coarse law, a saturating kinetic (Michaelis-Menten) law, and a flux-balance (FBA) law. Measured in-memory over the standard executable run (workbench 0.4.1): final biomass is 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA) -- a 2.4x spread -- with the FBA grain additionally secreting 30.4478 of acetate (overflow metabolism) against 1.6 for coarse, and energy 144.0 / entropy 151.2761 far above the coarse grain''s 2.4 / 0.8. Choosing the grain changes the quantitative readout the shared interface reports, which is exactly why switching the active level of description (Fig 5b''s selector) is a substantive modeling act. These are toy-real magnitudes; the point is the measurable grain-dependence, not a calibrated biomass yield.'
+  evidence:
+    from_run: fig05-executable-grain-comparison
+    observed: final biomass coarse 4.0 / kinetic 2.6667 / FBA 6.2936; FBA secretions 30.4478 (vs 1.6 coarse), energy 144.0 (vs 2.4), entropy 151.2761 (vs 0.8)
+  provenance:
+    run_ids:
+    - fig05-executable-coarse
+    - fig05-executable-kinetic
+    - fig05-executable-fba
+    analysis_script: in-memory Composite build from fig05-executable-*.composite.json + gather_emitter_results; cross-checked against scripts/_catalog/measured_readouts.json (workbench 0.4.1)
+ontology_provenance:
+  note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kinds -- a MIRIAM-style annotation map, not ontology reasoning.'
+  interface_quantities:
+    biomass: 'PATO:0000125 mass (QUANTITY_TERMS["mass"])'
+    energy: 'PATO:0001021 energy (QUANTITY_TERMS["energy"])'
+    entropy: 'PATO:entropy (QUANTITY_TERMS["entropy"])'
+    secretions (acetate overflow flux): 'UO:flux (mol per second) (QUANTITY_TERMS["chemical_flux"])'
+    viability: 'CBO:cell viability (QUANTITY_TERMS["viability"])'
+  process_kinds:
+    CoarseGrainProcess / kinetic / FBA metabolism grains: 'GO:0008152 metabolic process (PROCESS_KEYWORDS "metabolism")'
+    FineGrainProcess (first-order decay): 'GO:0009056 catabolic process (PROCESS_KEYWORDS "degradation")'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
@@ -252,6 +292,8 @@ conclusion: '## Claims
   - **VIABILITY-DECLINES-MONOTONICALLY** -- 1.0 monotone down to 0.0 by t=23, below 0.5 from t=12
 
   - **TRAJECTORY-IS-DETERMINISTIC** -- two independent builds emit identical trajectories
+
+  - **GRAIN-SWAP-CHANGES-THE-MEASURED-BIOMASS** (companion executables, workbench 0.4.1) -- the same coarse-metabolism interface realized at three grains reports final biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate vs 1.6 for coarse -- the grain swap is quantitatively substantive, not a redraw
 
 
   ## Limitations
@@ -305,4 +347,4 @@ parent_studies:
 - study: disintegration
   condition: tests-passed
 experiment: 'Run the `fig05-grain-runnable` composite (StressRamp -> GrainSelector -> gated CoarseGrainProcess / FineGrainProcess sharing one biomass/energy interface) to completion over 26 steps through the process-bigraph engine, and measure whether a monotonically declining viability signal crossing a threshold is enough to flip the active grain coarse->fine at the crossing and turn the shared biomass output over from growth to decay.'
-result: 'Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse->fine at t=13 -- exactly one flip, one tick after the crossing (the composite''s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -> 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -> ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b''s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.'
+result: 'Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse->fine at t=13 -- exactly one flip, one tick after the crossing (the composite''s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -> 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -> ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b''s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. A companion grain-comparison quantifies the swap''s consequence: the same coarse-metabolism interface realized at three grains reports biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate overflow vs 1.6 for coarse (workbench 0.4.1). The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.'

@@ -245,7 +245,7 @@ ENV = {
     "ReactionDiffusion": {
         "handler": "SpatialDiffusion",
         "config": {"diffusivity": 0.2},
-        "refine": {"environment.chemical_field": _GRID_REFINE},
+        "refine": {"environment.fields.chemical_field": _GRID_REFINE},
     },
     "ProductionDegradation": {
         "handler": "ProductionDegradationField",

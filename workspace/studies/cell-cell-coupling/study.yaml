@@ -849,6 +849,13 @@ findings:
   provenance:
     run_ids:
     - cellcell-compete
+    tests:
+    - competition-excludes-the-slower-cell
+    ontology:
+    - 'GO:0008152 -- metabolic process (each cell''s independent dFBA solve on the shared field; PROCESS_KEYWORDS "metabolism")'
+    - 'GO:0031667 -- response to nutrient levels (the glucose-uptake-capacity asymmetry driving preemption; PROCESS_KEYWORDS "nutrient")'
+    - 'GO:0040007 -- growth (the biomass and CPM-volume split; QUANTITY_TERMS growth_rate)'
+    ontology_note: 'Terms from meta_modelers_guide/ontology.py -- a curated keyword->term label map (QUANTITY_TERMS / PROCESS_KEYWORDS), not an ontology reasoner: it labels the interface quantities and process kinds, it does not resolve or verify them against an ontology service. Cross-references re-confirmed against workbench 0.4.1.'
 - id: F-04
   kind: biological
   tier: mechanism
@@ -872,6 +879,11 @@ findings:
   provenance:
     run_ids:
     - cellcell-compete
+    tests:
+    - competition-loser-displaced-not-excluded
+    ontology:
+    - 'CBO:cell viability -- the loser stays viable (displaced, not driven below a viability bound); QUANTITY_TERMS viability'
+    - 'GO:0040007 -- growth (the loser''s biomass still grows ~51.6x from its seed; QUANTITY_TERMS growth_rate)'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -891,6 +903,12 @@ findings:
   provenance:
     run_ids:
     - cellcell-crossfeed
+    tests:
+    - crossfeeding-consumer-grows-on-acetate-alone
+    ontology:
+    - 'GO:0008152 -- metabolic process (the consumer''s dFBA on acetate as sole carbon; PROCESS_KEYWORDS "metabolism")'
+    - 'GO:0006810 -- transport (acetate diffusing secretor->consumer via DiffusionAdvection; PROCESS_KEYWORDS "diffusion")'
+    - 'GO:0031667 -- response to nutrient levels (the same acetate as waste-and-food, meaning set relationally; PROCESS_KEYWORDS "nutrient")'
 - id: F-05
   kind: biological
   tier: mechanism
@@ -911,6 +929,11 @@ findings:
   provenance:
     run_ids:
     - cellcell-crossfeed-knockout
+    tests:
+    - crossfeeding-secretor-knockout-consumer-fails-to-grow
+    ontology:
+    - 'GO:0006810 -- transport (no acetate produced anywhere, so none diffuses to the consumer; PROCESS_KEYWORDS "diffusion")'
+    - 'GO:0008152 -- metabolic process (the consumer cannot grow absent the acetate handoff; PROCESS_KEYWORDS "metabolism")'
 - id: F-03
   kind: computational
   tier: mechanism
@@ -929,6 +952,10 @@ findings:
   provenance:
     run_ids:
     - cellcell-compete
+    tests:
+    - two-writer-additivity-conserves-mass
+    ontology:
+    - 'PATO:0000125 -- mass (the additive two-writer field update conserves mass across disjoint footprints; QUANTITY_TERMS mass)'
 - id: F-06
   kind: methodological
   tier: mechanism
@@ -994,6 +1021,11 @@ findings:
     run_ids:
     - cellcell-compete
     - cellcell-compete-mm
+    tests:
+    - colony-substitutable-pre-saturation
+    ontology:
+    - 'GO:0008152 -- metabolic process (the per-cell dFBA vs Michaelis-Menten metabolism swap behind the colony interface; PROCESS_KEYWORDS "metabolism")'
+    - 'UO:flux (mol per second) -- the colony<->field interface observables compared across mechanisms (QUANTITY_TERMS chemical_flux)'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

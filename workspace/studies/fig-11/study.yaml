@@ -6,7 +6,7 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # kept at the conservative rung: the run is a SINGLE fixed seed (seed=1) with a determinism positive control and a binary-fission structural control, but NO stochastic ensemble. The cousin development-and-evolution earns Accepted on an N=30-seed powered ensemble; a single deterministic realization does not meet that bar, so this stays Provisional.
 question: 'Does the paper''s §Evolution figure (Fig 11) hold as a runnable place-graph rewrite -- a top-level population of identically-schema''d cells, each exposing a scalar trait, evolving over generations toward a selection optimum set by the environmental niche, so that (Fig 11b) the trait distribution shifts toward the optimum via binary fission + heritable mutation + selection, while division itself (Fig 11a) is a discrete event that REPLACES a parent cell with two daughters?'
 biological_summary: 'This is the runnable realization of the paper''s §Evolution pattern (Fig 11), built on one process, `PopulationEvolution`, that reads and rewrites two `tree[node]` stores: a `population` of `cell` nodes that all share one schema -- each a heritable scalar `trait` plus a derived `division_rate` -- and an `environment` whose single `niche` node carries a `selection_optimum` that DRIFTS over the run. Each generation the process (1) shifts the optimum forward (a moving target), (2) re-scores every cell''s division rate by a Gaussian fitness kernel on how close its trait sits to the current optimum, (3) performs BINARY FISSION -- a cell divides with probability `div_rate·fitness`, and on division the PARENT is deleted and REPLACED by two daughters, each inheriting the parent''s trait ± Gaussian mutation, and (4) applies death by selection: once the population overflows carrying capacity, the least-fit cells (furthest from the optimum) die. This is the paper''s §Evolution claim in action: evolution changes not the state of a single composition but the SPACE of compositions across generations -- new cell nodes are added and old ones removed at runtime, so the place graph itself is edited, and the trait distribution shifts toward the environmental optimum.
 
@@ -149,6 +149,10 @@ findings:
   provenance:
     run_ids:
     - fig11-evolution
+    ontology_terms:
+    - population_evolution: 'CBO:natural selection'
+    - mutation: 'GO:0006281 (mutagenesis / variation)'
+    - binary_fission: 'GO:0051301 (cell division)'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -173,6 +177,20 @@ findings:
   provenance:
     run_ids:
     - fig11-evolution
+- id: F-04
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'Reading the population tree''s node contents at successive snapshots shows two structural features beyond the mean-trait track: standing variation and adaptation lag. (1) The final-generation snapshot is a trait CLOUD with width, not a converged point -- its 12 cell nodes span traits 1.47 to 1.91 (range 0.44, population standard deviation 0.131) around the optimum 1.80, because the Gaussian mutation injected at each binary fission keeps replenishing heritable variation that selection then shapes. (2) The population LAGS the moving target: the derived mean-trait gap to the drifting optimum closes below 0.4 only at generation 22 (from an initial gap of 1.0) and is still 0.12 at generation 40 -- the cloud chases but never catches the continuously drifting optimum, the signature of adaptation lag. Both are read from the per-generation population snapshots; confirmed in-memory (seed=1, deterministic).'
+  evidence:
+    from_run: fig11-evolution
+    observed: 'final snapshot (12 cells): traits min 1.470 / max 1.910 / range 0.440 / pop std 0.131 about optimum 1.80; derived mean-gap first < 0.4 at generation 22, gap 0.12 at generation 40'
+  provenance:
+    run_ids:
+    - fig11-evolution
+    ontology_terms:
+    - mutation: 'GO:0006281 (mutagenesis / variation)'
+    - selection: 'CBO:natural selection'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

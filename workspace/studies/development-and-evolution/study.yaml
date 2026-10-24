@@ -6,7 +6,7 @@ created: '2026-08-22'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # robustness stage met (N=30-seed ensemble; evolution shift Mann-Whitney p=5.3e-4, drift-null Wilcoxon p=1.2e-5, dual no-mutation/no-selection controls; development an ensemble band over all 30 seeds); held at Provisional per the rev11 reconciliation (Accepted awaits the deferred scientific-validation gate) -- promotion is the owner's call.
 units_and_time:
   tick: 1 tick = unspecified physical time (dimensionless model time); the runs are 45 ticks.
   quantities: rim_core_ratio, mean_vmax, var_vmax, n_cells, and the shared glucose field are dimensionless model units on a 60x60 lattice. vmax0=1.5, mut_sigma=0.3, vol_threshold=80, reset_target=40 are dimensionless model magnitudes -- not calibrated mM or physical rates.
@@ -415,6 +415,9 @@ findings:
   provenance:
     run_ids:
     - development-evolution-spatial
+    ontology_terms:
+    - 'response to nutrient levels (emergent core/rim glucose gradient): GO:0031667'
+    - 'rim-core glucose ratio: UO:dimensionless fraction'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -443,6 +446,10 @@ findings:
     - development-evolution-spatial
     - development-evolution-no-mutation
     - development-evolution-no-selection
+    ontology_terms:
+    - 'natural selection (differential division on the shared field): CBO:natural selection'
+    - 'mutagenesis / variation (heritable vmax mutation): GO:0006281'
+    - 'cell division (selection acting through division rate): GO:0051301'
 - id: F-03
   kind: biological
   tier: mechanism
@@ -462,6 +469,10 @@ findings:
   provenance:
     run_ids:
     - development-evolution-spatial
+    ontology_terms:
+    - 'transmembrane transport (vmax IS the glucose-uptake parameter): GO:0055085'
+    - 'cell division (trait inherited through the division pairing): GO:0051301'
+    - 'mutagenesis / variation (Gaussian trait mutation on division): GO:0006281'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

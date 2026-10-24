@@ -6,7 +6,7 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # self-maintenance isolated by two independent process-knockout controls (metabolism KO; gene-expression KO), deterministic (reproduces exactly), all pools strictly positive/bounded over 40 ticks; kept Provisional -- toy-real and uncalibrated (no literature flux, no spatial membrane), so no promotion without the scientific-validation gate.
 question: 'Is the paper''s Fig. self_organized_process (§Composition of the cellular interface) executable rather than merely drawn -- does the `fig08-runnable` composite actually demonstrate that a cellular interface EMERGES when molecular processes are compositionally coupled so they maintain one another (metabolism synthesizes the components the membrane and replication need, containment/expression maintain the pools metabolism needs), so that the coupled system holds a sustained, far-from-equilibrium balance rather than each process running down independently?'
 biological_summary: 'This study makes Fig. self_organized_process runnable. The paper''s §Composition of the cellular interface asks how molecular processes give rise to a cellular interface: at the molecular level, reactions, transport, and template-directed synthesis act on shared variables, and "a cellular interface emerges when these processes are compositionally coupled so that they maintain one another" -- membrane structure depends on metabolism that synthesizes lipids, metabolism depends on containment to maintain concentrations, and template-directed synthesis maintains the molecular components that realize these processes over time (caption a: self-organized processes -- autocatalysis, membrane formation, template replication -- combine into a self-maintaining organization; caption b: a minimal cell composition diagram -- metabolism, containment, replication supporting each other through shared components).
 
@@ -15,6 +15,9 @@ biological_summary: 'This study makes Fig. self_organized_process runnable. The 
 
 
   Run 40 ticks through the process-bigraph engine (deterministic ODE handlers, no RNG), the coupling holds: every one of the observed pools stays strictly positive and bounded (nothing collapses to zero, nothing explodes -- the largest pool, membrane, reaches only 2.2). The catalytic/template pools hold a sustained steady balance (genes 1.00 -> 1.07, energy 0.50 -> 0.58, metabolites 0.30 -> 0.33, nucleic_acids 0.30 -> 0.29; each drifts < 25% over the second half of the run) while the cell''s structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). That the balance is MAINTAINED by the coupling, not intrinsic to any one pool, is shown by opening the loop: knock metabolism out and its downstream metabolite pool collapses toward zero (0.33 -> 0.011) while energy, whose only source is metabolism, freezes exactly at its 0.5 seed; knock gene expression out and the enzyme pool metabolism depends on freezes exactly at its 0.3 seed, dragging metabolism''s own metabolite output down (0.33 -> 0.23). The sustained balance is the composite maintaining one another''s inputs, not each process coasting on its own reserves.
+
+
+  The workbench 0.4.1 rebuild also makes the figure''s minimal-cell panel runnable as a nested-store executable (`fig08b-executable`, carried in `scripts/_catalog/measured_readouts.json`): where an earlier build of that panel was inert, over its 8-step catalog window the minimal cell now GROWS across its coupled stores -- membrane.area 0.2 -> 1.4, proteins.enzymes 0.3 -> 0.975, proteins.pool 0.3 -> 1.572, energy 0.5 -> 0.869, genes 1.0 -> 1.28, and metabolites.amino_acids 1.0 -> 1.146 (nucleic_acids holds ~0.30) -- the coupled minimal cell building structure and expression off its catalytic pools rather than sitting still. Confirmed in-memory.
 
 
   This is a didactic, toy-real realization: the pools, rate constants, and yields are hand-chosen so the coupled balance is legible over a 40-tick run, NOT calibrated to a named organism, metabolite, or literature flux. Its rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation, which realizes the same self-maintenance claim at higher fidelity; this study''s job is only to show that the figure''s specific caption -- coupled processes maintaining one another into a self-sustaining whole -- runs and holds under test.'
@@ -169,6 +172,17 @@ runs:
   emitter:
     kind: unknown
   params: '{}'
+- name: fig08b-executable
+  composite: fig08b-executable
+  emitter: RAMEmitter
+  id: fig08b-executable
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig08b-executable.composite.json -- the figure''s minimal-cell panel b as a nested-store executable (membrane.area, proteins.enzymes/pool, metabolites.amino_acids/nucleic_acids, genes, energy), run over the workbench 0.4.1 catalog''s 8-step window and summarized in scripts/_catalog/measured_readouts.json. Confirmed in-memory via process_bigraph.Composite + gather_emitter_results; deterministic.'
+  params: {}
+  outcomes:
+    MINIMAL-CELL-NOW-GROWS:
+      result: PASS
+      detail: membrane.area 0.2 -> 1.4, proteins.enzymes 0.3 -> 0.975, proteins.pool 0.3 -> 1.572, energy 0.5 -> 0.869, genes 1.0 -> 1.28, amino_acids 1.0 -> 1.146 (previously inert)
 findings:
 - id: F-01
   kind: biological
@@ -182,6 +196,15 @@ findings:
   provenance:
     run_ids:
     - fig08-runnable
+    ontology_terms:
+    - containment: 'GO:0016044 (membrane organization)'
+    - metabolism: 'GO:0008152 (metabolic process)'
+    - gene_expression: 'GO:0010467 (gene expression)'
+    - replication: 'GO:0006260 (DNA replication)'
+    - diffusion: 'GO:0006810 (transport)'
+    - reactions: 'SBO:biochemical reaction'
+    - membrane: 'PATO:0001323 (area)'
+    - energy: 'PATO:0001021 (energy)'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -194,6 +217,22 @@ findings:
   provenance:
     run_ids:
     - fig08-runnable
+- id: F-03
+  kind: biological
+  tier: mechanism
+  status: confirms
+  statement: 'The workbench 0.4.1 rebuild turns the figure''s minimal-cell panel into a RUNNING nested-store executable (`fig08b-executable`). An earlier build of that panel was inert; over its 8-step catalog window the minimal cell now grows across its coupled stores -- membrane.area 0.2 -> 1.4, proteins.enzymes 0.3 -> 0.975, proteins.pool 0.3 -> 1.572, energy 0.5 -> 0.869, genes 1.0 -> 1.28, metabolites.amino_acids 1.0 -> 1.146, with nucleic_acids holding ~0.30. Structure (membrane, protein pool) and expression (enzymes, genes) are net-built off the catalytic/energy pools rather than frozen -- the same self-maintaining-into-growth story as the flat-pool fig08-runnable baseline, now visible in the committed catalog readout. Confirmed in-memory (deterministic).'
+  evidence:
+    from_run: fig08b-executable
+    observed: '8-step run (t_end == 8.0): membrane.area 0.2 -> 1.4, proteins.enzymes 0.3 -> 0.9751, proteins.pool 0.3 -> 1.572, energy 0.5 -> 0.8686, genes 1.0 -> 1.28, metabolites.amino_acids 1.0 -> 1.1464, metabolites.nucleic_acids 0.3 -> 0.3304 -- matches scripts/_catalog/measured_readouts.json (fig08b-executable) under workbench 0.4.1'
+  provenance:
+    run_ids:
+    - fig08b-executable
+    ontology_terms:
+    - membrane.area: 'PATO:0001323 (area)'
+    - proteins: 'GO:0010467 (gene expression)'
+    - energy: 'PATO:0001021 (energy)'
+    - metabolites: 'PATO:0000033 (concentration)'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

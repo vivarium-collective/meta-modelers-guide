@@ -6,7 +6,8 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
+confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the full sense->act->feedback control loop is robustly demonstrated on measured readouts from a deterministic run -- uptake tracks the local field at correlation 1.0, the mass<->uptake ledger closes exactly, and a zero-field negative control establishes causality -- but held at Medium, not High, because the lattice, cell, and rate constants are didactic/toy-real and uncalibrated to any named nutrient or chemotactic velocity.'
 question: 'Is the paper''s §Cell-environment coupling figure (Fig cell_environment) executable — does a runnable process-bigraph composite actually close the control loop the caption asserts, where an environmental chemical field DRIVES the cell''s interface ports (sensing, uptake, growth, motility) and the cell acts back on that shared field? Concretely: does a real diffusing nutrient gradient, sensed locally at an interior grid index, drive uptake that tracks the sensed field, grow the cell''s mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake → mass gain, plus up-gradient drift — all as measured simulation output, not a drawn diagram?'
 biological_summary: 'This is the runnable realization of the paper''s §Cell-environment coupling figure (Fig cell_environment). The section frames coupling as closing a loop: "cellular outputs modify the environmental state, environmental processes update it further, and that state feeds back to the cellular interface as inputs -- the minimal structure required for control." Panel **a** shows a cell interacting with environmental fields (chemical, electrical, mechanical) and physical barriers; panel **b** shows a composition diagram wiring internal cell state to those environmental fields through exchange processes and shared stores, alongside environmental processes such as diffusion and mechanical relaxation.
 
@@ -177,6 +178,29 @@ findings:
   provenance:
     run_ids:
     - fig04-runnable
+- id: F-03
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The loop''s environmental-modification leg is measurable: the cell draws down the very gradient it climbs. The local chemical field the cell senses at its grid index falls from 0.5 at the start to 0.2407 by the end of the 24-tick run -- a net drawdown driven by diffusion smoothing the seeded 0->1 gradient and by the cell''s own uptake removing mass at its footprint. Yet per-step uptake still tracks that falling local field at correlation 1.0 throughout, so the coupling holds even as the driver relaxes. This is the half of the control loop that distinguishes it from a one-way driver: cellular output modifies the shared environmental state (panel b), confirmed in-memory on fig04-runnable.'
+  evidence:
+    from_test: control-loop-closes-through-shared-store
+    from_run: fig04-runnable
+    observed: local sensed field 0.5 -> 0.2407 over the run (diffusion + uptake drawdown); per-step uptake <-> local field correlation 1.0 throughout
+  provenance:
+    run_ids:
+    - fig04-runnable
+    analysis_script: in-memory Composite build from fig04-runnable.composite.json + gather_emitter_results, local-field drawdown check (workbench 0.4.1)
+ontology_provenance:
+  note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kinds -- a MIRIAM-style annotation map, not ontology reasoning.'
+  interface_quantities:
+    chemical_field (grid concentration): 'PATO:0000033 concentration (QUANTITY_TERMS["concentration"])'
+    uptake_flux: 'UO:flux (mol per second) (QUANTITY_TERMS["chemical_flux"])'
+    mass: 'PATO:0000125 mass (QUANTITY_TERMS["mass"])'
+    traction (force): 'PATO:force (QUANTITY_TERMS["force"])'
+  process_kinds:
+    SingleCellSpatial (senses, takes up, grows, drifts up-gradient): 'GO:0055085 transmembrane transport (PROCESS_KEYWORDS "uptake")'
+    SpatialDiffusion (relaxes the field): 'GO:0006810 transport (PROCESS_KEYWORDS "diffusion")'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

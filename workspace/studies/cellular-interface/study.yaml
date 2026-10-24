@@ -127,6 +127,13 @@ findings:
   provenance:
     run_ids:
     - cellular-interface
+    tests:
+    - shape-growth
+    ontology:
+    - 'GO:0040007 -- growth (the installed handler''s Monod growth driving shape; QUANTITY_TERMS growth_rate)'
+    - 'PATO:0000918 -- volume (shape is the cell''s volume proxy; QUANTITY_TERMS volume)'
+    - 'CBO:cellular interface -- the CellularInterfaceHandler process kind (PROCESS_KEYWORDS "interface")'
+    ontology_note: 'Terms from meta_modelers_guide/ontology.py -- a curated keyword->term label map (QUANTITY_TERMS / PROCESS_KEYWORDS), not an ontology reasoner: it labels the interface quantities and process kinds, it does not resolve or verify them against an ontology service. The fig03b-executable readouts cited here (shape 1.0->4.2, chemical 0.0->-0.8, objective 0.0->1.6) are unchanged in the workbench 0.4.1 readout catalog (scripts/_catalog/measured_readouts.json).'
 - id: F-02
   kind: biological
   tier: observation
@@ -139,6 +146,11 @@ findings:
   provenance:
     run_ids:
     - cellular-interface
+    tests:
+    - chemical-uptake
+    ontology:
+    - 'UO:flux (mol per second) -- the chemical exchange port going net-negative (uptake); QUANTITY_TERMS chemical_flux'
+    - 'GO:0055085 -- transmembrane transport (first-order uptake across the interface; PROCESS_KEYWORDS "uptake")'
 - id: F-03
   kind: biological
   tier: mechanism
@@ -151,6 +163,11 @@ findings:
   provenance:
     run_ids:
     - cellular-interface
+    tests:
+    - objective-climbs
+    ontology:
+    - 'CBO:cell objective / fitness -- the higher-level objective port the cell pursues (QUANTITY_TERMS objective)'
+    - 'GO:0040007 -- growth (the biomass-proxy objective accreting as growth proceeds; QUANTITY_TERMS growth_rate)'
 - id: F-04
   kind: computational
   tier: mechanism
@@ -164,6 +181,12 @@ findings:
     summary: Law 1 conformance predicts any handler whose ports diverge from the declared signature is refused at compile time.
   provenance:
     run_ids: []
+    tests:
+    - tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler
+    ontology:
+    - 'CBO:cellular interface -- the declared interface the conformance check protects (PROCESS_KEYWORDS "interface")'
+    - 'CBO:cell viability -- one of the two output ports the impostor drops and the compiler names (QUANTITY_TERMS viability)'
+    - 'CBO:cell objective / fitness -- the other dropped output port the compiler names (QUANTITY_TERMS objective)'
 - id: F-05
   kind: computational
   tier: mechanism
@@ -177,6 +200,12 @@ findings:
     summary: If the interface is genuinely substrate-independent, the unchanged handler should run against a spatial field with the same ports, sensing a spatially-varying concentration and depleting the local field where it feeds.
   provenance:
     run_ids: []
+    tests:
+    - tests/test_cellular_interface_spatial.py
+    ontology:
+    - 'UO:flux (mol per second) -- the unchanged chemical port writing uptake back into the field (QUANTITY_TERMS chemical_flux)'
+    - 'GO:0006810 -- transport (the spatio-flux DiffusionAdvection field composed behind the port; PROCESS_KEYWORDS "diffusion")'
+    - 'GO:0040007 -- growth (growth_rate following the local field concentration; QUANTITY_TERMS growth_rate)'
 - id: F-06
   kind: computational
   tier: mechanism
@@ -190,6 +219,12 @@ findings:
     summary: A second handler with a different internal mechanism but identical ports, its ~4 free params tuned to the interface observables, should reproduce them across the chemical operating range within tolerance (surrogate calibration). Mechanism-independence proper would require agreement on a held-out sub-range neither handler was tuned on — the named next step.
   provenance:
     run_ids: []
+    tests:
+    - tests/test_cellular_interface_substitutability.py
+    ontology:
+    - 'UO:flux (mol per second) -- the chemical interface observable compared across the two handlers (QUANTITY_TERMS chemical_flux)'
+    - 'GO:0040007 -- growth (the growth_rate observable, Monod vs cooperative Moser/Hill; QUANTITY_TERMS growth_rate)'
+    - 'CBO:cellular interface -- the byte-identical interface both handlers sit behind (PROCESS_KEYWORDS "interface")'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

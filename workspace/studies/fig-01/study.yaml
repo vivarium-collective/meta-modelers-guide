@@ -6,7 +6,8 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
+confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the executable/determinism claim is robustly supported -- every behavior test passes on measured readouts from a deterministic run, with exact pins (store_a[n] == 0.85^n to 1e-12) that reproduce run to run -- but held at Medium rather than High because the composite is didactic/toy-real and uncalibrated to any literature magnitude.'
 question: 'Is the paper''s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) executable rather than merely drawn -- does the smallest honest process bigraph, one typed process wired through ports to two nested place-graph stores, actually run and move quantity from a source store to a sink store while conserving the total?'
 biological_summary: 'This study puts runnable dynamics behind the paper''s definitional figure. §Interfaces and composition introduces process bigraphs as the notation for multiscale biology: a *process* is a mechanism that generates change, reading and writing *shared variables* held in *stores* through typed input/output *ports*; the *wiring* W connects each (process, port) to a store path; stores nest into a *place graph* of containment (molecules within compartments within a cell); and the *process graph* over that place graph is what makes the whole structure a process bigraph (Fig composition_framework caption: "A process reads and writes data through typed input and output ports. Those ports wire to stores ... Wiring the two together -- a process graph that links processes to the stores they read and write, overlaid on a place graph that nests those stores into a hierarchy -- is what makes the structure a process bigraph"). The published figure draws this structure statically. The `fig01-runnable` composite supplies the smallest honest bit of dynamics behind it: ONE real process, `StoreTransfer`, wired to TWO scalar place-graph nodes -- source `store_a` (seeded 1.0) and sink `store_b` (seeded 0.0). The process reads `store_a` through its `source` input port and writes both stores through its `source` and `sink` output ports, under a first-order transfer dA/dt = -k*A, dB/dt = +k*A with k=0.15 over interval 1.0. Running it demonstrates the core vocabulary of Table box:compositional in miniature -- paths, types, and values (two typed `float` locations with concrete seeded values); state/stores (the two shared variables); process/mechanism (the transfer rule); interface/ports (the read/write wiring W); and composition (a process coupled to stores in one typed system). Over a 20-tick run the source drains geometrically (store_a[n] = 0.85^n, from 1.0 to ~0.0388), the sink fills as its complement (store_b[n] = 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off every tick. The figure''s claim -- that a process bigraph is an *executable* place-graph-plus-processes, not merely a static diagram -- is code-verified: give a process an update rule wired through ports and the connected stores evolve.'
 claim: 'The paper''s definitional Fig 1 is executable, not merely drawn: the minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- runs forward under the process-bigraph engine and moves quantity from source `store_a` to sink `store_b` while conserving the total. Because the transfer is fixed-rate deterministic (k=0.15, interval 1.0), the trajectory is exact: store_a[n] == 0.85^n (draining from 1.0 to ~0.0388 over 20 ticks), store_b[n] == 1 - 0.85^n (filling as its complement), the sink overtakes the source at tick 5, and store_a + store_b == 1.0 to round-off at every tick. This is the dynamics behind the figure''s static signature -- a process reading and writing shared variables through ports wired to stores in a place graph -- shown to actually run.'
@@ -154,6 +155,26 @@ findings:
   provenance:
     run_ids:
     - fig01-runnable
+- id: F-03
+  kind: computational
+  tier: mechanism
+  status: novel
+  statement: 'The fixed-rate transfer has an exact geometric half-life that pins the crossover: the analytic half-life is n½ = ln2 / ln(1/0.85) = 4.265 ticks, so the source first falls to or below half the seeded total (0.5) at tick 5 -- which is exactly the tick at which the sink overtakes the source. The two landmarks (half-drained source, sink/source crossover) coincide because store_b = 1 - store_a, so store_b > store_a precisely when store_a < 0.5. Confirmed in-memory on fig01-runnable (store_a first <= 0.5 at tick 5, value 0.4437 == 0.85^5; interior exactness store_a[10] == 0.85^10 == 0.196874), so the crossover is not a tuned coincidence but a deterministic consequence of the single rate constant.'
+  evidence:
+    from_test: sink-overtakes-source-at-the-crossover-tick
+    from_run: fig01-runnable
+    observed: store_a first <= 0.5 at tick 5 (0.4437 == 0.85^5); half-life n½ == ln2/ln(1/0.85) == 4.265; store_a[10] == 0.85^10 == 0.196874
+  provenance:
+    run_ids:
+    - fig01-runnable
+    analysis_script: in-memory Composite build from fig01-runnable.composite.json + gather_emitter_results (workbench 0.4.1)
+ontology_provenance:
+  note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kind -- a MIRIAM-style annotation map, not ontology reasoning (it records which curated term each quantity is labelled with, it does not verify the labelling against an ontology service).'
+  interface_quantities:
+    store_a / store_b (transferred amount): 'PATO:amount (QUANTITY_TERMS["quantity"])'
+    k (per-tick fractional transfer): 'UO:dimensionless fraction (QUANTITY_TERMS["fraction"])'
+  process_kinds:
+    StoreTransfer (conservative port-to-port transfer): 'no dedicated keyword in ontology.py PROCESS_KEYWORDS (process_term returns None); honestly unmapped -- the nearest curated kind would be transport (GO:0006810), but the toy transfer is not a modeled transmembrane/diffusion mechanism.'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
