@@ -6,7 +6,8 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
+confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the orchestration mechanism is robustly demonstrated -- the fast/slow interleaving, sawtooth pool, biomass staircase, and cross-timescale mass conservation all pass on measured readouts from a deterministic run (no RNG) with exact pins that reproduce run to run -- but held at Medium, not High, because the rates/intervals are didactic and uncalibrated to any biological magnitude.'
 question: 'Is the paper''s orchestration claim (Fig orchestration, panel a) executable rather than merely drawn -- does a runnable process-bigraph composite in which two processes update at DIFFERENT rates through ONE shared store actually reproduce multi-timescale coordination: the fast process filling the shared pool far more often than the slow one converts it, the two rates coordinated through the shared store, and the combined trajectory reflecting both timescales while conserving mass?'
 biological_summary: 'This is the runnable realization of the paper''s §Composition-vs-orchestration distinction (main.tex §composition vs orchestration; Fig orchestration, panel a). The paper defines orchestration as *when* processes act and *how* their updates are combined across timescales -- distinct from composition, which is *how* processes are coupled through shared variables. Panel (a) states it directly: "Multi-timescale orchestration coordinates processes that update at different rates through a shared store and discrete-event scheduling." (Panels (b) workflow-DAG and (c) event-driven graph rewrites are structural/schematic and are deliberately NOT part of this runnable demonstration -- only panel (a), the piece a minimal run can show honestly.)
 
@@ -182,6 +183,27 @@ findings:
   provenance:
     run_ids:
     - fig02-runnable
+- id: F-03
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The cross-timescale conservation invariant holds at EVERY one of the 21 emitted ticks, not merely at the four sampled slow-firing landmarks: re-run in-memory, molecules + biomass == elapsed time to within 1e-9 for all ticks 0..20 (checked exhaustively, not spot-checked). Each slow firing converts exactly yield_frac (0.6) of the pool sampled at the start of its 5-tick window -- molecules at t=5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 0.6x5.0=3.0, 0.6x7.0=4.2, 0.6x7.8=4.68 and the staircase levels [0.0, 3.0, 7.2, 11.88]. The invariant and the increment rule are therefore properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled.'
+  evidence:
+    from_test: mass-conserved-across-timescales
+    from_run: fig02-runnable
+    observed: molecules + biomass == elapsed time for all 21 ticks (exhaustive, to 1e-9); biomass increments 3.0/4.2/4.68 == 0.6 x window-start pool (5.0/7.0/7.8); final split 8.12 + 11.88 == 20.0
+  provenance:
+    run_ids:
+    - fig02-runnable
+    analysis_script: in-memory Composite build from fig02-runnable.composite.json + gather_emitter_results, all-ticks conservation check (workbench 0.4.1)
+ontology_provenance:
+  note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kinds -- a MIRIAM-style annotation map, not ontology reasoning.'
+  interface_quantities:
+    molecules (shared pool amount): 'PATO:amount (QUANTITY_TERMS["quantity"])'
+    biomass (slow-clock product): 'PATO:0000125 mass (QUANTITY_TERMS["mass"])'
+  process_kinds:
+    FastProduction (fills the pool each tick): 'GO:0009058 biosynthetic process (PROCESS_KEYWORDS "production")'
+    SlowConversion (moves pool -> biomass): 'GO:0008152 metabolic process (PROCESS_KEYWORDS "metabolism"); the conversion itself is an SBO:biochemical reaction'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

@@ -6,7 +6,8 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
+confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): each typed interface port is robustly shown to respond to its driver on measured readouts from a deterministic run, with paired optimum/above-optimum controls isolating temperature and exact pins that reproduce run to run -- but held at Medium, not High, because the response-law and Arrhenius constants are hand-chosen toy-real values (the death form pinned to an E. coli reference D-value, not fitted).'
 question: 'The paper''s §Cellular interface (Fig cell_interface) defines a cell as an organization that senses and acts on its environment through typed PORTS -- "each port is a typed connection from the cell to a single variable in the shared state, with a type that fixes the units of what crosses it." Fig cell_interface a. shows interaction modalities as ports (nutrient exchange, motile force, growth, electrical signaling); Fig cell_interface b. shows a minimal interface combining physical exchange ports with higher-level cellular variables (growth, shape, objectives, viability bounds). Is that interface EXECUTABLE rather than merely drawn -- i.e. does a runnable process-bigraph composite exercise those typed ports so that each port''s value RESPONDS to its driving environmental input, demonstrating the typed cell -> shared-variable connection the caption asserts?'
 biological_summary: 'This study makes Fig cell_interface runnable. The `fig03-runnable` composite (`meta_modelers_guide.composites.fig03-runnable`) wires ONE bounded cell (`CellularInterfaceHandler`, a conforming process-bigraph Process) to an environment that supplies four typed drivers -- a chemical concentration, a mechanical force, an electrical voltage, and a thermal temperature -- and reads back the cell''s typed interface ports: the physical exchange ports (chemical flux, mechanical force, electrical current, thermal heat flux) plus the higher-level cellular variables the caption names -- growth_rate, shape (volume), signaling, objective, and viability.
 
@@ -178,6 +179,33 @@ findings:
   provenance:
     run_ids:
     - fig03-runnable
+- id: F-03
+  kind: computational
+  tier: mechanism
+  status: novel
+  statement: 'The two measured growth-rate points jointly recover the handler''s Monod constants exactly, so the growth port is a genuine saturating response, not a linear proxy. Growth at chemical supply 0.2 is 0.17143 and at supply 1.0 is 0.40000; both satisfy mu = growth_max * S / (S + km) with growth_max = 0.6 and km = 0.5 to 1e-5 (0.6*0.2/0.7 = 0.17143; 0.6*1.0/1.5 = 0.40000). Because growth saturates while uptake flux stays strictly linear in supply (ratio exactly 5.0 across the same 0.2->1.0 change), the growth and uptake ports are measurably different functional forms driven by the one chemical input -- the interface exposes two distinct, recoverable response laws, confirmed in-memory on a fresh CellularInterfaceHandler.'
+  evidence:
+    from_test: higher-chemical-drives-uptake-and-growth
+    from_run: fig03-runnable
+    observed: growth 0.17143 (S=0.2) and 0.40000 (S=1.0) both == 0.6*S/(S+0.5); uptake-flux ratio exactly 5.0 (linear) over the same change
+  provenance:
+    run_ids:
+    - fig03-runnable
+    analysis_script: in-memory CellularInterfaceHandler driven at paired supplies 0.2 vs 1.0 (workbench 0.4.1)
+ontology_provenance:
+  note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kind -- a MIRIAM-style annotation map, not ontology reasoning.'
+  interface_quantities:
+    chemical (uptake flux): 'UO:flux (mol per second) (QUANTITY_TERMS["chemical_flux"])'
+    growth_rate: 'GO:0040007 growth (QUANTITY_TERMS["growth_rate"])'
+    shape (volume): 'PATO:0000918 volume (QUANTITY_TERMS["volume"])'
+    mechanical (force): 'PATO:force (QUANTITY_TERMS["force"])'
+    electrical (current): 'UO:electric current (ampere) (QUANTITY_TERMS["current"])'
+    thermal (heat flux): 'UO:power (watt) (QUANTITY_TERMS["heat_flux"])'
+    viability: 'CBO:cell viability (QUANTITY_TERMS["viability"])'
+    objective: 'CBO:cell objective / fitness (QUANTITY_TERMS["objective"])'
+    temperature: 'PATO:0000146 temperature (QUANTITY_TERMS["temperature"])'
+  process_kinds:
+    CellularInterfaceHandler (one bounded cell exposing typed ports): 'CBO:cellular interface (PROCESS_KEYWORDS "interface"); the Arrhenius thermal-death leg is GO:0006950 response to stress (PROCESS_KEYWORDS "stress")'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

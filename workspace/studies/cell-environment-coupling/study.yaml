@@ -747,6 +747,14 @@ findings:
   provenance:
     run_ids:
     - single-cell-in-a-field
+    tests:
+    - cell-metabolizes-and-grows
+    - cpm-volume-grows
+    ontology:
+    - 'GO:0008152 -- metabolic process (dynamic-FBA solved at the cell''s own footprint; PROCESS_KEYWORDS "metabolism")'
+    - 'GO:0040007 -- growth (biomass driving CPM target-volume growth; QUANTITY_TERMS growth_rate)'
+    - 'PATO:0000918 -- volume (the CPM lattice-pixel volume, 32 -> 110 px; QUANTITY_TERMS volume)'
+    ontology_note: 'Terms from meta_modelers_guide/ontology.py -- a curated keyword->term label map (QUANTITY_TERMS / PROCESS_KEYWORDS), not an ontology reasoner: it labels the interface quantities and process kinds, it does not resolve or verify them against an ontology service. Cross-references re-confirmed against workbench 0.4.1.'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -792,6 +800,12 @@ findings:
   provenance:
     run_ids:
     - single-cell-in-a-field
+    tests:
+    - net-glucose-consumed
+    ontology:
+    - 'UO:flux (mol per second) -- the glucose-uptake flux depleting the local footprint (QUANTITY_TERMS chemical_flux)'
+    - 'GO:0031667 -- response to nutrient levels (the cell sensing and drawing down local glucose; PROCESS_KEYWORDS "nutrient")'
+    - 'GO:0055085 -- transmembrane transport (footprint uptake; PROCESS_KEYWORDS "uptake")'
 - id: F-03
   kind: biological
   tier: mechanism
@@ -812,6 +826,12 @@ findings:
   provenance:
     run_ids:
     - single-cell-in-a-field
+    tests:
+    - acetate-secreted-and-diffuses
+    ontology:
+    - 'UO:flux (mol per second) -- the acetate secretion flux written back into the field (QUANTITY_TERMS chemical_flux)'
+    - 'GO:0009058 -- biosynthetic process (the O2-cap-driven mixed-acid overflow producing acetate; PROCESS_KEYWORDS "production")'
+    - 'GO:0006810 -- transport (spatio-flux DiffusionAdvection spreading the acetate plume; PROCESS_KEYWORDS "diffusion")'
 - id: F-04
   kind: methodological
   tier: mechanism
@@ -833,6 +853,11 @@ findings:
     run_ids:
     - single-cell-in-a-field
     - single-cell-in-a-field-o2uncapped
+    tests:
+    - o2-cap-forces-acetate-overflow
+    ontology:
+    - 'GO:0008152 -- metabolic process (O2-capped overflow vs uncapped full respiration in e_coli_core dFBA; PROCESS_KEYWORDS "metabolism")'
+    - 'UO:flux (mol per second) -- the acetate-secretion flux that collapses to ~0 when the O2 cap is lifted (QUANTITY_TERMS chemical_flux)'
 - id: F-05
   kind: methodological
   tier: mechanism
@@ -917,6 +942,12 @@ findings:
     run_ids:
     - single-cell-in-a-field
     - single-cell-in-a-field-mm
+    tests:
+    - interface-substitutable-held-out
+    - interface-substitutable-across-mechanisms
+    ontology:
+    - 'GO:0008152 -- metabolic process (dFBA vs lumped Michaelis-Menten internal metabolism behind the same ports; PROCESS_KEYWORDS "metabolism")'
+    - 'UO:flux (mol per second) -- the cell<->field interface observables compared across mechanisms (QUANTITY_TERMS chemical_flux)'
 - id: F-06
   kind: methodological
   tier: mechanism
@@ -945,6 +976,11 @@ findings:
   provenance:
     run_ids:
     - single-cell-in-a-field-steadystate
+    tests:
+    - steadystate-flux-equilibrium
+    ontology:
+    - 'GO:0008152 -- metabolic process (the cell metabolizing at maintenance at the flux fixed point; PROCESS_KEYWORDS "metabolism")'
+    - 'UO:flux (mol per second) -- the glucose/acetate field fluxes driven to steady state by source/decay/logistic-cap terms (QUANTITY_TERMS chemical_flux)'
 - id: F-07
   kind: methodological
   tier: mechanism
@@ -1004,6 +1040,12 @@ findings:
     run_ids:
     - single-cell-in-a-field
     - single-cell-in-a-field-chemotaxis
+    tests:
+    - chemotaxis-moves-cell-up-gradient-and-helps
+    ontology:
+    - 'GO:0031667 -- response to nutrient levels (directed migration up the sensed glucose gradient; PROCESS_KEYWORDS "nutrient")'
+    - 'GO:0040007 -- growth (the nutrient advantage carried into biomass and CPM-volume growth; QUANTITY_TERMS growth_rate)'
+    - 'UO:flux (mol per second) -- the extra glucose acquired by reaching the richer region (QUANTITY_TERMS chemical_flux)'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

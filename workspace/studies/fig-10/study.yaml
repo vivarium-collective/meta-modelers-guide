@@ -6,7 +6,7 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # kept at the conservative rung: the rewrites are deterministic and the structural claims (re-parenting depth 1 -> 2, ECM only after maturation, true chromosome partition, bounded sweep) are all test-backed, but attachment/maturation fire at SCHEDULED ticks (config attach_at/mature_at) -- the composite demonstrates the structure of the reorganization, not an emergent decision, and nothing is calibrated. No controls isolate the coupling the way fig-08's knockouts do.
 question: 'Is the paper''s §Development figure (Fig development) executable -- can a runnable process-bigraph composite demonstrate, under test, that development is "a hierarchical reorganization where individual cells become part of a collective composite" rather than merely more cells? Concretely: does running the `fig10-emergence` composite turn a set of free motile bacteria (top-level place-graph siblings) into a nested biofilm microcolony that then secretes an extracellular matrix -- surface attachment, ECM secretion, growth of a structured community (caption a) realized as a genuine runtime place-graph rewrite (caption b)?
 
   '
@@ -175,6 +175,10 @@ findings:
   provenance:
     run_ids:
     - fig10-emergence
+    ontology_terms:
+    - biofilm_emergence: 'GO:0042710 (biofilm formation)'
+    - attachment: 'GO:0007155 (cell adhesion)'
+    - ecm: 'GO:0030198 (extracellular matrix organization)'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -200,6 +204,21 @@ findings:
     run_ids:
     - fig10-cell-cycle
     - fig10-collectives
+- id: F-04
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The attachment rewrite is cell-CONSERVING and structure-preserving, not a copy or a relabelling. Over the deterministic 16-step run exactly four free top-level cells become exactly four biofilm-nested cells at t=6 -- none created, none dropped -- each cell''s biomass is carried across the re-parenting unchanged (1.0 before -> 1.0 after), and the environment''s `surface` node persists intact through all 17 emitted frames. Aggregation moves nodes into the new collective composite without duplicating or losing them: the hierarchical reorganization edits the place graph''s topology while conserving its contents. Confirmed in-memory.'
+  evidence:
+    from_run: fig10-emergence
+    observed: 'free cells 4 (t=0..5) -> 0 (t>=6); biofilm-nested cells 0 -> 4 at t=6; per-cell biomass [1.0, 1.0, 1.0, 1.0] free at t=0 == [1.0, 1.0, 1.0, 1.0] nested at t=6; surface node present at every frame t=0..16'
+  provenance:
+    run_ids:
+    - fig10-emergence
+    ontology_terms:
+    - attachment: 'GO:0007155 (cell adhesion)'
+    - biofilm: 'GO:0042710 (biofilm formation)'
+    - biomass: 'PATO:0000125 (mass)'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

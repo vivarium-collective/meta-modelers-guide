@@ -138,9 +138,22 @@ def _run(stem):
     return gather_emitter_results(sim)[("vizemitter",)]
 
 
+def _coerce(x):
+    """Best-effort float; None if the value isn't a plain number (e.g. a nested
+    map leaf emits {_type,_value} dicts on the current workbench)."""
+    if isinstance(x, bool):
+        return float(x)
+    if isinstance(x, (int, float)):
+        return float(x)
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return None
+
+
 def _series(rows):
     """Flatten rows into {label: [values]} + times, expanding map fields; drop
-    non-finite / constant series."""
+    non-finite / constant / non-numeric series (robust to dict-valued leaves)."""
     import math
     times = [r.get("time", i) for i, r in enumerate(rows)]
     out = {}
@@ -150,9 +163,14 @@ def _series(rows):
         v0 = rows[0][key]
         if isinstance(v0, dict):
             for ck in list(v0)[:9]:
-                out[f"{key}[{ck}]"] = [float(r[key].get(ck, 0.0)) for r in rows]
+                vals = [_coerce(r[key].get(ck)) if isinstance(r.get(key), dict) else None
+                        for r in rows]
+                if all(v is not None for v in vals):
+                    out[f"{key}[{ck}]"] = vals
         else:
-            out[key] = [float(r[key]) for r in rows]
+            vals = [_coerce(r.get(key)) for r in rows]
+            if all(v is not None for v in vals):
+                out[key] = vals
     clean = {}
     for lab, ys in out.items():
         if all(math.isfinite(y) for y in ys) and (max(ys) - min(ys)) > 1e-9:

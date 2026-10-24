@@ -476,6 +476,14 @@ findings:
   provenance:
     run_ids:
     - disintegration-spatial
+    tests:
+    - stressor-crosses-viability-bound
+    ontology:
+    - 'CBO:cell disintegration / death -- the viability-collapse trigger this coupling process realizes (ontology.py PROCESS_KEYWORDS "disintegr")'
+    - 'CBO:cell viability -- the latched viability bound crossed at released_tick (QUANTITY_TERMS viability)'
+    - 'PATO:0001323 -- area (the CPM footprint-area trajectory read each tick; QUANTITY_TERMS area)'
+    - 'GO:0006950 -- response to stress (the footprint-local acetate stressor field; PROCESS_KEYWORDS "stress")'
+    ontology_note: 'Terms from meta_modelers_guide/ontology.py -- a curated keyword->term label map (QUANTITY_TERMS / PROCESS_KEYWORDS), not an ontology reasoner: it labels the interface quantities and process kinds, it does not resolve or verify them against an ontology service. Cross-references re-confirmed against workbench 0.4.1.'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -518,6 +526,13 @@ findings:
   provenance:
     run_ids:
     - disintegration-spatial
+    tests:
+    - cpm-particle-mass-ledger-closes
+    - shed-material-becomes-debris-particles
+    ontology:
+    - 'PATO:0000125 -- mass (the CPM->particle mass ledger: shed pixels conserved, not manufactured; QUANTITY_TERMS mass)'
+    - 'PATO:0001323 -- area (footprint area resorbing as pixels are vacated; QUANTITY_TERMS area)'
+    - 'GO:0006810 -- transport (the shed debris scattering under spatio-flux BrownianMovement; PROCESS_KEYWORDS "diffusion")'
 - id: F-03
   kind: computational
   tier: mechanism
@@ -542,6 +557,11 @@ findings:
   provenance:
     run_ids:
     - disintegration-spatial
+    tests:
+    - particle-bridge-emits-then-scatters
+    ontology:
+    - 'GO:0006810 -- transport (the synthetic emitter''s particles moved by a stock BrownianMovement process; PROCESS_KEYWORDS "diffusion")'
+    - 'UO:count -- the conserved particle count (3 in, 3 out; QUANTITY_TERMS count)'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

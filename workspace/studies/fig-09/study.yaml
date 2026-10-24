@@ -6,7 +6,7 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
-confidence: Provisional
+confidence: Provisional  # division backed by an exact conservation + equipartition law verified at every event (total DNA conserved, each daughter == half of parent) and fully deterministic (exact run-to-run pin); kept Provisional -- toy-real and uncalibrated (discrete cell-cycle clock, not a biomass threshold; nothing fitted to an organism).
 question: 'Does the paper''s §Growth-and-division claim (Fig. division) hold as a runnable composite -- that division is a compositional rewrite in which "one maintained boundary becomes two, with stores partitioned across daughters and interface ports duplicated" (caption a: DNA replication, elongation, septum, separation; caption b: "division ... partitions state variables such as DNA and biomass into two cells") -- when realized as a genuine place-graph rewrite over a colony `tree[node]` store driven through the process-bigraph engine?'
 biological_summary: 'This is the executable realization of the paper''s §Growth, division, development, evolution section and its Fig. division. The paper frames division as the more radical of the transformations a self-maintaining cellular interface undergoes: "a compositional rewrite in which one maintained boundary becomes two, with stores $x$ partitioned across daughters and interface ports $W$ duplicated and re-established" -- each daughter inheriting a subset of stores and reconstructing a viable interface. Caption a walks the prokaryotic sequence (DNA replication, elongation, septum formation, separation into daughters); caption b abstracts it to "a compositional rewrite that partitions state variables such as DNA and biomass into two cells."
 
@@ -151,6 +151,25 @@ findings:
   provenance:
     run_ids:
     - fig09-rewrite
+    ontology_terms:
+    - cell_cycle_division: 'GO:0051301 (cell division)'
+    - replication: 'GO:0006260 (DNA replication)'
+    - chromosome_partition: 'GO:0007059 (chromosome segregation)'
+    - dna: 'SO:copy number'
+- id: F-03
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'The per-cell DNA content follows a strict replicate-then-halve invariant across the whole cell cycle, sharper than the aggregate conservation claim. Over the deterministic 12-tick run the per-cell DNA vector cycles [1.0] -> [2.0] -> [1.0, 1.0] -> [2.0, 2.0] -> [1.0, 1.0, 1.0, 1.0]: each cell doubles its chromosome to dna 2.0 at replication, then splits into two daughters of exactly dna 1.0 at division. So immediately after each division every cell carries exactly one chromosome at the 1.0 founder set point and the total DNA store exactly equals the cell count -- the "one chromosome, dna == 1.0 per daughter" invariant holds identically at both division events. Confirmed in-memory via build_fig10_division(cycle=3).'
+  evidence:
+    from_run: fig09-rewrite
+    observed: 'per-cell DNA by tick: t=0 [1.0]; t=3 [2.0]; t=6 [1.0, 1.0]; t=9 [2.0, 2.0]; t=12 [1.0, 1.0, 1.0, 1.0] -- total DNA == cell count at every post-division state'
+  provenance:
+    run_ids:
+    - fig09-rewrite
+    ontology_terms:
+    - replication: 'GO:0006260 (DNA replication)'
+    - cell_cycle_division: 'GO:0051301 (cell division)'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

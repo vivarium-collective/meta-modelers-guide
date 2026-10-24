@@ -165,8 +165,16 @@ class DiffusionRelax(Process):
         return {"metabolites": "concentration"}
 
     def update(self, state, interval):
-        metabolites = float(state.get("metabolites", 0.0))
-        return {"metabolites": -self.config["turnover_rate"] * metabolites * interval}
+        rate = self.config["turnover_rate"]
+        metabolites = state.get("metabolites", 0.0)
+        # `metabolites` is wired to the metabolite store GROUP (nutrients /
+        # amino_acids / nucleic_acids), so the current workbench delivers it as a
+        # dict; apply the first-order turnover element-wise. Stay back-compatible
+        # with a lumped scalar store.
+        if isinstance(metabolites, dict):
+            return {"metabolites": {k: -rate * float(v) * interval
+                                    for k, v in metabolites.items()}}
+        return {"metabolites": -rate * float(metabolites) * interval}
 
 
 # ── reactions · amino_acids + nucleic_acids → proteins + nucleic_acids ────────
@@ -212,13 +220,22 @@ ENV: dict[str, dict] = {
     "MinimalCellContainment": {
         "handler": "ContainmentODE",
         "config": {"assembly_rate": 0.15},
+        # Seed the cell's component stores at the figure's declared initial values
+        # (the semantic composite carries these as ``_value``; the new workbench's
+        # realize reads ``_default``, so init sets them there). Paths are the ACTUAL
+        # store paths in composites/fig08b-minimal-cell (metabolites is a store group
+        # of nutrients/amino_acids/nucleic_acids; lipids live under membrane; enzymes
+        # under proteins) — mirrors fig04's env, which also seeds via init.
         "init": {
-            # driver pools (env-supplied); products start at 0 and must be MADE
-            "nutrients.concentration": 1.0,
-            "genes.concentration": 1.0,
-            "lipids.concentration": 1.0,
-            "amino_acids.concentration": 1.0,
-            "energy.energy": 1.0,
+            "membrane.lipids": 1.0,
+            "membrane.area": 0.2,
+            "metabolites.nutrients": 1.0,
+            "metabolites.amino_acids": 1.0,
+            "metabolites.nucleic_acids": 0.3,
+            "genes": 1.0,
+            "energy": 0.5,
+            "proteins.enzymes": 0.3,
+            "proteins.pool": 0.3,
         },
     },
     "MinimalCellMetabolism": {

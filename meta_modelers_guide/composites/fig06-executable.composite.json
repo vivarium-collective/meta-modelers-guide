@@ -28,7 +28,40 @@
         "c_ring": 10.0,
         "efficiency": 0.75,
         "proton_charge": 1.602e-19,
-        "interval": 1.0
+        "interval": 1.0,
+        "summary": "F₁Fₒ ATP synthase — a four-channel molecular transducer",
+        "contract": {
+          "status": "draft — typed physical channels + behavior contract; no update dynamics yet",
+          "summary": "F₁Fₒ ATP synthase — a four-channel molecular transducer",
+          "description": "A molecular mechanism as a process with typed physical channels, defined over molecular structure (PDB/SMILES) with no cell-level boundary. The F₁Fₒ ATP synthase couples a transmembrane proton flux to rotary torque and ATP synthesis, conserving matter, charge, angular momentum (rotary work), and energy across its four channels. The chemical channel refines into substrates, cofactors, catalysts, and products.",
+          "math": [
+            "J_{\\text{H}^+} = g\\,\\Delta p,\\qquad \\Delta p = \\Delta\\psi - \\tfrac{RT}{F}\\ln 10\\,\\Delta\\text{pH}",
+            "\\tau = \\frac{n_{\\text{turn}}\\,e\\,\\Delta p}{2\\pi},\\qquad J_{\\text{ATP}} = \\frac{J_{\\text{H}^+}}{n_{\\text{H}^+/\\text{ATP}}}",
+            "\\dot Q = J_{\\text{H}^+} F\\,\\Delta p \\;-\\; \\tau\\,\\omega \\;-\\; \\Delta G_{\\text{ATP}}\\,J_{\\text{ATP}}"
+          ],
+          "symbols": {
+            "Δp": "proton-motive force (mV)",
+            "Δψ, ΔpH": "membrane potential & trans-membrane pH gradient",
+            "g": "proton conductance",
+            "R, T, F": "gas constant, absolute temperature, Faraday constant",
+            "e": "elementary charge (per-molecule torque uses e, not F)",
+            "n_turn": "protons translocated per full rotation (c-ring stoichiometry, ≈ 10)",
+            "n_H⁺/ATP": "protons consumed per ATP (c-ring ÷ 3 sites ≈ 3.3)",
+            "τ, ω": "rotary torque (N·m) & angular velocity (rad·s⁻¹)",
+            "ΔG_ATP": "Gibbs free energy of ATP synthesis (J·mol⁻¹)"
+          },
+          "ports": {
+            "chemical_in": "proton / substrate inflow  (mol·s⁻¹)",
+            "electrical_in": "transmembrane proton current  (A)",
+            "mechanical_in": "applied rotary load  — torque  (N·m)",
+            "thermal_in": "heat inflow  (W)",
+            "structure": "molecular structure  (PDB / SMILES)",
+            "chemical_out": "ATP synthesis flux  (mol·s⁻¹)",
+            "electrical_out": "net charge translocated  (A)",
+            "mechanical_out": "γ-shaft torque delivered  (N·m)",
+            "thermal_out": "dissipated heat  (W)"
+          }
+        }
       },
       "inputs": {
         "chemical_in": [
@@ -70,7 +103,54 @@
           "thermal_out"
         ]
       },
-      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"12\" r=\"3\"/><circle cx=\"9\" cy=\"12\" r=\"1\"/><path d=\"M9 8.2V6.6M9 17.4v-1.6M5.2 12H3.6M13 12h1.6M6.4 9.4L5.2 8.2M11.6 9.4l1.2-1.2\"/><circle cx=\"17\" cy=\"15\" r=\"2\"/><path d=\"M17 12.4v-1M17 18v-1\"/></svg>"
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"9\" cy=\"12\" r=\"3\"/><circle cx=\"9\" cy=\"12\" r=\"1\"/><path d=\"M9 8.2V6.6M9 17.4v-1.6M5.2 12H3.6M13 12h1.6M6.4 9.4L5.2 8.2M11.6 9.4l1.2-1.2\"/><circle cx=\"17\" cy=\"15\" r=\"2\"/><path d=\"M17 12.4v-1M17 18v-1\"/></svg>",
+      "_inputs": {
+        "chemical_in": "chemical_flux",
+        "electrical_in": "current",
+        "mechanical_in": "torque",
+        "thermal_in": "heat_flux",
+        "structure": "structure"
+      },
+      "_outputs": {
+        "chemical_out": "chemical_flux",
+        "electrical_out": "current",
+        "mechanical_out": "torque",
+        "thermal_out": "heat_flux"
+      },
+      "_contract": {
+        "summary": "F₁Fₒ ATP synthase — a four-channel molecular transducer",
+        "description": "A molecular mechanism as a process with typed physical channels, defined over molecular structure (PDB/SMILES) with no cell-level boundary. The F₁Fₒ ATP synthase couples a transmembrane proton flux to rotary torque and ATP synthesis, conserving matter, charge, angular momentum (rotary work), and energy across its four channels. The chemical channel refines into substrates, cofactors, catalysts, and products.",
+        "status": "draft — typed physical channels + behavior contract; no update dynamics yet",
+        "math": [
+          "J_{\\text{H}^+} = g\\,\\Delta p,\\qquad \\Delta p = \\Delta\\psi - \\tfrac{RT}{F}\\ln 10\\,\\Delta\\text{pH}",
+          "\\tau = \\frac{n_{\\text{turn}}\\,e\\,\\Delta p}{2\\pi},\\qquad J_{\\text{ATP}} = \\frac{J_{\\text{H}^+}}{n_{\\text{H}^+/\\text{ATP}}}",
+          "\\dot Q = J_{\\text{H}^+} F\\,\\Delta p \\;-\\; \\tau\\,\\omega \\;-\\; \\Delta G_{\\text{ATP}}\\,J_{\\text{ATP}}"
+        ],
+        "symbols": {
+          "Δp": "proton-motive force (mV)",
+          "Δψ, ΔpH": "membrane potential & trans-membrane pH gradient",
+          "g": "proton conductance",
+          "R, T, F": "gas constant, absolute temperature, Faraday constant",
+          "e": "elementary charge (per-molecule torque uses e, not F)",
+          "n_turn": "protons translocated per full rotation (c-ring stoichiometry, ≈ 10)",
+          "n_H⁺/ATP": "protons consumed per ATP (c-ring ÷ 3 sites ≈ 3.3)",
+          "τ, ω": "rotary torque (N·m) & angular velocity (rad·s⁻¹)",
+          "ΔG_ATP": "Gibbs free energy of ATP synthesis (J·mol⁻¹)"
+        },
+        "inputs": {
+          "chemical_in": "proton / substrate inflow  (mol·s⁻¹)",
+          "electrical_in": "transmembrane proton current  (A)",
+          "mechanical_in": "applied rotary load  — torque  (N·m)",
+          "thermal_in": "heat inflow  (W)",
+          "structure": "molecular structure  (PDB / SMILES)"
+        },
+        "outputs": {
+          "chemical_out": "ATP synthesis flux  (mol·s⁻¹)",
+          "electrical_out": "net charge translocated  (A)",
+          "mechanical_out": "γ-shaft torque delivered  (N·m)",
+          "thermal_out": "dissipated heat  (W)"
+        }
+      }
     },
     "ports": {
       "chemical_in": {
@@ -145,52 +225,6 @@
         "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"9.5\" r=\"2\"/><circle cx=\"15\" cy=\"13.5\" r=\"2\"/><path d=\"M9.7 10.7l3.6 2.1M15 11.7V8.5M15 8.5l1.8-1\"/></svg>"
       },
       "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"6\" cy=\"12\" r=\"2\"/><path d=\"M8 12h9\"/><path d=\"M17 9.5v5\"/></svg>"
-    },
-    "dynamics_viz": {
-      "_type": "step",
-      "address": "local:DynamicsPlot",
-      "config": {
-        "title": "ATP synthase — a proton-motive-force-driven rotary motor",
-        "observables": {
-          "chemical_out": "float",
-          "electrical_out": "float",
-          "mechanical_out": "float",
-          "thermal_out": "float"
-        },
-        "subtitle": "Fig 6 — one proton flux drives four coupled channels",
-        "secondary_y": [
-          "electrical_out",
-          "mechanical_out",
-          "thermal_out"
-        ]
-      },
-      "inputs": {
-        "chemical_out": [
-          "ports",
-          "chemical_out"
-        ],
-        "electrical_out": [
-          "ports",
-          "electrical_out"
-        ],
-        "mechanical_out": [
-          "ports",
-          "mechanical_out"
-        ],
-        "thermal_out": [
-          "ports",
-          "thermal_out"
-        ],
-        "time": [
-          "global_time"
-        ]
-      },
-      "outputs": {
-        "html": [
-          "_viz",
-          "dynamicsplot"
-        ]
-      }
     }
   }
 }

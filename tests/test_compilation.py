@@ -42,10 +42,11 @@ def _semantic(stem):
 #   fig04 — SpatialDiffusion refines chemical_field concentration→map[float]; the
 #           refine-conformance path rejects it (Pilot A ships fig04-runnable instead).
 #   fig07 — a contract unit string ('·m⁻²') the equation parser can't consume.
-#   fig08b — the figure nests metabolites/proteins into container stores, which the
-#            scalar-pool handlers (DiffusionRelax, MassActionReactions, …) can't run;
-#            the executable is rebuilt for the nested structure in the fig-8 rollout.
-XFAIL_PENDING_ROLLOUT = {"fig04-executable", "fig07-executable", "fig08b-executable"}
+# (fig08b — previously nested metabolites/proteins/membrane into container stores
+#  whose bulk quantity had no leaf, so scalar-pool handlers couldn't write them. The
+#  semantic composite now carries those bulk leaves (membrane.area, proteins.pool) as
+#  group children and wires the bulk outputs to them, so the nested executable runs.)
+XFAIL_PENDING_ROLLOUT = {"fig04-executable", "fig07-executable"}
 
 
 @pytest.mark.parametrize("env_name,sem_stem,out_stem", CASES,

@@ -24,7 +24,7 @@ gate_class_note: >-
   DESTABILISES it into faster runaway filling (closure lost ~step 591 at the canonical drive vs ~2451
   undriven), so EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady
   self-maintenance.
-confidence: Provisional
+confidence: Provisional  # robustness stage met (deterministic RD, seed-invariant across seeds 1-5, dual knockout + fatal-puncture controls, ~80-point open-drive/seed-geometry sweep); held at Provisional per the rev11 investigation-review reconciliation (Accepted awaits the deferred scientific-validation gate) -- promotion is the owner's call.
 units_and_time:
   tick: 1 tick = unspecified physical time (dimensionless model time); the run is 36 ticks = 1800 internal reaction-diffusion steps (50 steps_per_tick).
   quantities: membrane density phi, enclosed_area (in lattice pixels), and membrane_mass are dimensionless model units on a 64x64 lattice -- not calibrated to a physical membrane. D=0.02, k_decay=0.01, k_prod=0.03, thr=0.30 are dimensionless model constants, not fitted physical rates.
@@ -641,6 +641,11 @@ findings:
   provenance:
     run_ids:
     - protocell-autopoietic
+    ontology_terms:
+    - 'membrane organization (closure-gated self-maintenance): GO:0016044'
+    - 'production (closure-gated biosynthesis): GO:0009058'
+    - 'enclosed interior area: PATO:0001323'
+    - 'membrane mass: PATO:0000125'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -661,6 +666,10 @@ findings:
     run_ids:
     - protocell-vesicle-control
     - puncture-viability-bound
+    ontology_terms:
+    - 'membrane organization (knockout/puncture loss of closure): GO:0016044'
+    - 'viability bound (beer2024deriving): CBO:cell viability'
+    - 'enclosed interior area: PATO:0001323'
 - id: F-03
   kind: biological
   tier: mechanism
@@ -687,6 +696,10 @@ findings:
   provenance:
     run_ids:
     - protocell-autopoietic-v2
+    ontology_terms:
+    - 'membrane organization (emergent local-mechanism closure, no global observer): GO:0016044'
+    - 'production (local-precursor-dependent biosynthesis): GO:0009058'
+    - 'interior precursor confinement/transport: GO:0006810'
 - id: F-04
   kind: biological
   tier: mechanism
@@ -716,6 +729,10 @@ findings:
   provenance:
     run_ids:
     - protocell-autopoietic-v2-open
+    ontology_terms:
+    - 'membrane organization (closure under external drive, no global observer): GO:0016044'
+    - 'open dissipative throughflow (uniform feed + washout): GO:0006810'
+    - 'membrane mass (runaway autocatalytic fill): PATO:0000125'
 conclusion_verdicts:
   regression_compatibility:
     result: PASS

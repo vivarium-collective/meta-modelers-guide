@@ -36,7 +36,42 @@
         "membrane_conductance": 0.05,
         "thermal_conductance": 0.02,
         "signaling_gain": 0.4,
-        "interval": 1.0
+        "interval": 1.0,
+        "summary": "The cell as a bounded interface — senses environment, exposes exchange + goal ports",
+        "contract": {
+          "status": "draft — typed interface; dynamics supplied by an executable handler",
+          "summary": "The cell as a bounded interface — senses environment, exposes exchange + goal ports",
+          "description": "The minimal cellular interface: a bounded, goal-directed cell that reads its environmental drivers and exposes physical exchange ports (chemical, mechanical, electrical, thermal) plus higher-level cellular ports (growth rate, shape, signaling, objective, viability). Chemical/mechanical exchange refine into subports. All ports carry biological units.",
+          "math": [
+            "\\text{chemical} = -\\,k_{\\text{up}}\\,[S]\\qquad(\\text{first-order, dilute limit})",
+            "\\mu = \\mu_{\\max}\\,\\frac{[S]}{K_s + [S]}",
+            "\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/(R\\,T)}\\,\\text{viability}"
+          ],
+          "symbols": {
+            "[S]": "external substrate concentration [chemical_ext] (mol·L⁻¹)",
+            "k_up": "first-order uptake clearance (L·s⁻¹); a saturable carrier substitutes within a few % over the physiological range",
+            "μ_max": "maximum specific growth rate (hr⁻¹)",
+            "K_s": "half-saturation constant for growth (mol·L⁻¹)",
+            "A, E_a": "Arrhenius prefactor & activation energy (E_a ≈ 300 kJ·mol⁻¹)",
+            "R": "gas constant (8.314 J·mol⁻¹·K⁻¹)",
+            "T": "absolute temperature (K); thermal_ext is °C, so T = °C + 273.15"
+          },
+          "ports": {
+            "chemical_ext": "external nutrient concentration  (mol·L⁻¹)",
+            "mechanical_ext": "external force / stress  (N)",
+            "electrical_ext": "membrane driving potential  (mV)",
+            "thermal_ext": "environmental temperature  (°C; converted to K in the death law)",
+            "chemical": "net nutrient uptake flux  (mol·s⁻¹)",
+            "mechanical": "force exerted / felt  (N)",
+            "electrical": "transmembrane current  (A)",
+            "thermal": "heat flux  (W)",
+            "growth_rate": "specific growth rate  (hr⁻¹)",
+            "shape": "cell size — volume  (µm³)",
+            "signaling": "signaling activity  (bits·s⁻¹)",
+            "objective": "fitness objective  (dimensionless)",
+            "viability": "survival probability  (0–1)"
+          }
+        }
       },
       "inputs": {
         "chemical_ext": [
@@ -94,7 +129,60 @@
           "viability"
         ]
       },
-      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3.5a8.5 8 0 1 0 .1 0z\"/><circle cx=\"13\" cy=\"13\" r=\"2.4\"/></svg>"
+      "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#4b5bd6\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 3.5a8.5 8 0 1 0 .1 0z\"/><circle cx=\"13\" cy=\"13\" r=\"2.4\"/></svg>",
+      "_inputs": {
+        "chemical_ext": "concentration",
+        "mechanical_ext": "force",
+        "electrical_ext": "voltage",
+        "thermal_ext": "temperature"
+      },
+      "_outputs": {
+        "chemical": "chemical_flux",
+        "mechanical": "force",
+        "electrical": "current",
+        "thermal": "heat_flux",
+        "growth_rate": "growth_rate",
+        "shape": "volume",
+        "signaling": "signaling_rate",
+        "objective": "objective",
+        "viability": "viability"
+      },
+      "_contract": {
+        "summary": "The cell as a bounded interface — senses environment, exposes exchange + goal ports",
+        "description": "The minimal cellular interface: a bounded, goal-directed cell that reads its environmental drivers and exposes physical exchange ports (chemical, mechanical, electrical, thermal) plus higher-level cellular ports (growth rate, shape, signaling, objective, viability). Chemical/mechanical exchange refine into subports. All ports carry biological units.",
+        "status": "draft — typed interface; dynamics supplied by an executable handler",
+        "math": [
+          "\\text{chemical} = -\\,k_{\\text{up}}\\,[S]\\qquad(\\text{first-order, dilute limit})",
+          "\\mu = \\mu_{\\max}\\,\\frac{[S]}{K_s + [S]}",
+          "\\frac{d\\,\\text{viability}}{dt} = -A\\,e^{-E_a/(R\\,T)}\\,\\text{viability}"
+        ],
+        "symbols": {
+          "[S]": "external substrate concentration [chemical_ext] (mol·L⁻¹)",
+          "k_up": "first-order uptake clearance (L·s⁻¹); a saturable carrier substitutes within a few % over the physiological range",
+          "μ_max": "maximum specific growth rate (hr⁻¹)",
+          "K_s": "half-saturation constant for growth (mol·L⁻¹)",
+          "A, E_a": "Arrhenius prefactor & activation energy (E_a ≈ 300 kJ·mol⁻¹)",
+          "R": "gas constant (8.314 J·mol⁻¹·K⁻¹)",
+          "T": "absolute temperature (K); thermal_ext is °C, so T = °C + 273.15"
+        },
+        "inputs": {
+          "chemical_ext": "external nutrient concentration  (mol·L⁻¹)",
+          "mechanical_ext": "external force / stress  (N)",
+          "electrical_ext": "membrane driving potential  (mV)",
+          "thermal_ext": "environmental temperature  (°C; converted to K in the death law)"
+        },
+        "outputs": {
+          "chemical": "net nutrient uptake flux  (mol·s⁻¹)",
+          "mechanical": "force exerted / felt  (N)",
+          "electrical": "transmembrane current  (A)",
+          "thermal": "heat flux  (W)",
+          "growth_rate": "specific growth rate  (hr⁻¹)",
+          "shape": "cell size — volume  (µm³)",
+          "signaling": "signaling activity  (bits·s⁻¹)",
+          "objective": "fitness objective  (dimensionless)",
+          "viability": "survival probability  (0–1)"
+        }
+      }
     },
     "environment": {
       "chemical": {
@@ -172,65 +260,6 @@
         "_default": 1.0
       },
       "_figure": "<svg viewBox=\"0 0 24 24\" width=\"26\" height=\"26\" fill=\"none\" stroke=\"#0b7a75\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"6\" cy=\"12\" r=\"2\"/><path d=\"M8 12h9\"/><path d=\"M17 9.5v5\"/></svg>"
-    },
-    "dynamics_viz": {
-      "_type": "step",
-      "address": "local:DynamicsPlot",
-      "config": {
-        "title": "The cellular interface, made to run",
-        "observables": {
-          "chemical": "float",
-          "chemical_2": "float",
-          "growth_rate": "float",
-          "shape": "float",
-          "objective": "float",
-          "viability": "float"
-        },
-        "subtitle": "Fig 3 — a typed contract compiled to a bounded cell",
-        "phases": [
-          {
-            "x0": 0,
-            "x1": 8,
-            "label": "viable",
-            "color": "#1c7a77"
-          }
-        ]
-      },
-      "inputs": {
-        "chemical": [
-          "environment",
-          "chemical"
-        ],
-        "chemical_2": [
-          "interface",
-          "chemical"
-        ],
-        "growth_rate": [
-          "interface",
-          "growth_rate"
-        ],
-        "shape": [
-          "interface",
-          "shape"
-        ],
-        "objective": [
-          "interface",
-          "objective"
-        ],
-        "viability": [
-          "interface",
-          "viability"
-        ],
-        "time": [
-          "global_time"
-        ]
-      },
-      "outputs": {
-        "html": [
-          "_viz",
-          "dynamicsplot"
-        ]
-      }
     }
   }
 }

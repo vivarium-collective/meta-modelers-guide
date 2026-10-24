@@ -388,6 +388,14 @@ findings:
   provenance:
     run_ids:
     - molecular-turing-pattern
+    tests:
+    - pattern-forms
+    - pattern-has-multiple-domains
+    ontology:
+    - 'UO:flux (mol per second) -- the chemical channel realized spatially as reaction-diffusion (QUANTITY_TERMS chemical_flux)'
+    - 'GO:0003824 -- catalytic activity (the autocatalytic step U + 2V -> 3V; PROCESS_KEYWORDS "autocatalysis")'
+    - 'GO:0006810 -- transport (the differential diffusion Dv < Du that destabilizes the seed; PROCESS_KEYWORDS "diffusion")'
+    ontology_note: 'Terms from meta_modelers_guide/ontology.py -- a curated keyword->term label map (QUANTITY_TERMS / PROCESS_KEYWORDS), not an ontology reasoner: it labels the interface quantities and process kinds, it does not resolve or verify them against an ontology service. These are the same ChEBI/Reactome-style illustrative typings the study already describes, not a resolved database mapping. Cross-references re-confirmed against workbench 0.4.1.'
 - id: F-02
   kind: biological
   tier: mechanism
@@ -405,6 +413,11 @@ findings:
   provenance:
     run_ids:
     - molecular-equal-diffusion-control
+    tests:
+    - equal-diffusion-control-uniform
+    ontology:
+    - 'GO:0006810 -- transport (the differential-diffusion asymmetry removed in this single-variable control; PROCESS_KEYWORDS "diffusion")'
+    - 'SBO:biochemical reaction -- the chemistry (F, k) held byte-identical to the flagship (PROCESS_KEYWORDS "reaction")'
 - id: F-03
   kind: biological
   tier: mechanism
@@ -425,6 +438,12 @@ findings:
   provenance:
     run_ids:
     - molecular-thermal-graded
+    tests:
+    - thermal-channel-coarsens
+    - thermal-channel-still-patterns
+    ontology:
+    - 'PATO:0000146 -- temperature (the static uniform field acting as an Arrhenius rate multiplier; QUANTITY_TERMS temperature)'
+    - 'SBO:biochemical reaction -- the reaction term the temperature parameter scales elementwise (PROCESS_KEYWORDS "reaction")'
 - id: F-05
   kind: biological
   tier: observation
