@@ -567,7 +567,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig03-runnable</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">6 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">11 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -586,32 +586,27 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">HIGHER-CHEMICAL-DRIVES-UPTAKE-AND-GROWTH</div>
+          <div class="ov-metric-k">MECH-HEAT-SHOCK-CASCADES-THROUGH-SHARED-STATE</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">PHYSICAL-PORTS-RESPOND-TO-THEIR-DRIVERS</div>
+          <div class="ov-metric-k">MECH-NUTRIENT-STARVATION-PROPAGATES</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">SHAPE-ACCRETES-WITH-GROWTH</div>
+          <div class="ov-metric-k">MECH-DISABLED-METABOLISM-BREAKS-PROPAGATION</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">ABOVE-OPTIMUM-DRIVES-VIABILITY-DOWN</div>
+          <div class="ov-metric-k">MECH-STATE-BOUNDED-AND-ENERGY-CONSISTENT</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">AT-OPTIMUM-VIABILITY-HOLDS</div>
-        </div>
-        
-        <div class="ov-metric ov-metric-pass">
-          <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">HOTTER-KILLS-FASTER-THAN-OPTIMUM</div>
+          <div class="ov-metric-k">MECH-UPTAKE-SATURATES-FORMULA</div>
         </div>
         
       </div>
@@ -775,6 +770,114 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = flux ratio == 5.0 (high -0.80 / low -0.16); growth 0.171 -&gt; 0.400</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The interface ports are genuinely COUPLED through shared internal state, fixing the review&#39;s objection that the baseline&#39;s ports each respond only to their own driver. In the mechanistic variant a single perturbation propagates: a 37→48 °C heat shock drops enzyme activity 1.00→0.22, which cascades through uptake and ATP to collapse growth 0.43→0.07 AND erode viability 1.00→0.43 — one input moving every downstream port. A nutrient step-down propagates the same way (growth→0.07, ATP→0, viability→0.24). The cross-port response matrix is dense (a temperature perturbation moves all four measured outputs), not diagonal. This is physiological coupling, not nine independent driver responses.</span>
+            
+            <span class="finding-chip">via <code>mech-heat-shock-cascades-through-shared-state</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> heat shock → enzyme 1.00→0.22, growth 0.43→0.07, viability 1.00→0.43; starvation → growth→0.07, ATP→0, viability→0.24 · 
+              
+              via test <a href="#bt-mech-heat-shock-cascades-through-shared-state" onclick="_gotoStudyTab('audit','bt-mech-heat-shock-cascades-through-shared-state');return false;"><code>mech-heat-shock-cascades-through-shared-state</code></a> · 
+              in run <a href="#run-fig03-mechanistic"><code>fig03-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig03-mechanistic"><code>fig03-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: cascade enzyme[13] &lt; 0.4·enzyme[11]; growth[16] &lt; 0.4·growth[11]; viability declines</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The coupling is demonstrably THROUGH the shared ATP node, not direct wiring — shown by a matched-null ablation. With metabolism disabled (catalytic_capacity = ε, not 0.0), the cell cannot turn nutrient into ATP, so growth stays ~0 and biomass stays flat regardless of nutrient supply: the propagation breaks exactly where the shared energy currency is removed. Growth is paid out of ATP (it collapses when the ATP pool is depleted), and the shared state stays well-posed (ATP ≥ 0, viability ∈ [0,1], biomass monotone). Honest scope: typed-interface CORRECTNESS (each port responds) was already shown by the baseline; what the variant adds is genuine multi-process physiological COUPLING — but the rate laws and constants remain didactic/toy-real (one lumped ATP pool, a Gaussian enzyme window, a basal maintenance drain), not fitted to a measured respiration or growth-rate curve.</span>
+            
+            <span class="finding-chip">via <code>mech-disabled-metabolism-breaks-propagation</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> disabled cell growth ≈ 0, biomass flat 1.0, nutrient change moves biomass &lt;1e-3; growth→0 at ATP minimum · 
+              
+              via test <a href="#bt-mech-disabled-metabolism-breaks-propagation" onclick="_gotoStudyTab('audit','bt-mech-disabled-metabolism-breaks-propagation');return false;"><code>mech-disabled-metabolism-breaks-propagation</code></a> · 
+              in run <a href="#run-fig03-mechanistic"><code>fig03-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig03-mechanistic"><code>fig03-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: breaks max growth &lt; 1e-3; |biomass_end − biomass_0| &lt; 1e-3; nutrient-response ≈ 0</code></div>
             
             
             
@@ -1304,6 +1407,201 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-heat-shock-cascades-through-shared-state"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-heat-shock-cascades-through-shared-state"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-heat-shock-cascades-through-shared-state</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig03-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">A single temperature step (37→48 °C at t=12) propagates through the SHARED enzyme/ATP state to EVERY downstream port — enzyme activity, uptake, ATP, growth AND viability all drop together — not just the thermal port. Physiological coupling, not nine independent driver responses.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "enzyme, growth drop sharply and viability declines after one heat step", "kind": "derived", "path": "obs.enzyme_activity, obs.uptake, obs.growth_rate, obs.viability around t=12"}
+pass_if: {"kind": "mechanistic_ablation", "op": "cascade", "provenance": "MECHANISTIC_ABLATION. Observed on the live run: enzyme 1.00\u21920.22, growth 0.43\u21920.07, ATP drains to 0, viability 1.00\u21920.43 \u2014 one input perturbation hitting every downstream port through the shared state (tests/test_fig03_mechanistic.py::test_heat_shock_cascades_through_shared_state)", "value": "enzyme[13] \u003c 0.4\u00b7enzyme[11]; growth[16] \u003c 0.4\u00b7growth[11]; viability declines"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-nutrient-starvation-propagates"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-nutrient-starvation-propagates"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-nutrient-starvation-propagates</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig03-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">A nutrient step-down (2.0→0.03 at t=12) propagates through uptake → ATP → growth AND, as ATP starves below the maintenance demand, to viability. The nutrient perturbation moves MULTIPLE ports via shared state, not just the chemical port.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "growth and ATP collapse, viability declines after the nutrient step", "kind": "derived", "path": "obs.growth_rate, obs.atp, obs.viability"}
+pass_if: {"kind": "mechanistic_ablation", "op": "propagates", "provenance": "MECHANISTIC_ABLATION. Observed growth 0.43\u21920.07, ATP pool 2.56\u21920, viability\u21920.24 under starvation (tests/test_fig03_mechanistic.py::test_nutrient_starvation_propagates_to_growth_and_viability)", "value": "growth[16] \u003c 0.4\u00b7growth[11]; atp[16] \u003c 0.3\u00b7atp[11]; viability declines"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-disabled-metabolism-breaks-propagation"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-disabled-metabolism-breaks-propagation"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-disabled-metabolism-breaks-propagation</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig03-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Matched-null control (catalytic_capacity = ε): with metabolism disabled the cell cannot turn nutrient into ATP, so NOTHING propagates — growth stays ~0 and biomass stays flat regardless of the nutrient supply. Proves the coupling runs through the shared ATP node, not direct wires.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "growth ~0 and biomass flat; nutrient changes do not move biomass", "kind": "derived", "path": "obs.growth_rate, obs.biomass with catalytic_capacity=\u03b5"}
+pass_if: {"kind": "mechanistic_ablation", "op": "breaks", "provenance": "MECHANISTIC_ABLATION (matched null, \u03b5 not 0.0). Observed disabled cell: growth \u2248 0, biomass flat at 1.0, and a nutrient change moves biomass by \u003c1e-3 \u2014 the off-diagonal coupling is the shared state (tests/test_fig03_mechanistic.py::test_disabled_metabolism_breaks_propagation, ::test_cross_port_coupling_off_diagonal)", "value": "max growth \u003c 1e-3; |biomass_end \u2212 biomass_0| \u003c 1e-3; nutrient-response \u2248 0"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-state-bounded-and-energy-consistent"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-state-bounded-and-energy-consistent"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-state-bounded-and-energy-consistent</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig03-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The shared state stays well-posed and growth is paid out of ATP: the ATP pool stays ≥ 0, viability stays in [0,1], biomass is non-decreasing, and when the ATP pool is depleted the growth rate collapses toward zero (anabolism cannot run without the shared energy currency).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "atp\u22650; viability\u2208[0,1]; biomass monotone; growth\u21920 at min ATP", "kind": "derived", "path": "obs.atp, obs.viability, obs.biomass, obs.growth_rate"}
+pass_if: {"kind": "invariant", "op": "bounded_and_consistent", "provenance": "INVARIANT. Observed over the run: ATP \u2265 0, viability \u2208 [0,1], biomass monotone, and growth falls below a quarter of its peak at the ATP minimum \u2014 growth consumes the shared ATP pool (tests/test_fig03_mechanistic.py::test_state_variables_stay_bounded, ::test_growth_requires_atp_energy_consistency)", "value": "atp\u22650, viability\u2208[0,1], biomass non-decreasing, growth\u003c0.25\u00b7max at min ATP"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-uptake-saturates-formula"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-uptake-saturates-formula"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-uptake-saturates-formula</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig03-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The uptake transporter saturates (Michaelis–Menten in nutrient at full enzyme activity). This is kept as a FORMULA VERIFICATION of the rate law only — NOT evidence of physiology (per the review); the physiology claim rests on the propagation gates above.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "uptake(c=100)\u2192vmax; uptake(c\u226aKm) \u226a vmax", "kind": "observable", "path": "uptake at c far above vs far below Km"}
+pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPIRICAL_COMPARISON / formula verification (Michaelis\u2013Menten). Kept explicitly as a rate-law check, not a physiology claim (tests/test_fig03_mechanistic.py::test_uptake_saturates_formula_only)", "value": "uptake(100) \u003e 0.98\u00b7vmax; uptake(0.05) \u003c 0.2\u00b7uptake(100)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1432,7 +1730,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All six primary behavior tests pass on measured readouts. The chemical, mechanical, electrical, and thermal exchange ports each respond to their own driver; the higher-level shape and viability ports respond to sustained uptake and to temperature; and paired optimum/above-optimum runs isolate temperature as the cause of the viability decline. Every readout is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig03-runnable): all six primary behavior tests pass — each typed port responds to its own driver, with paired optimum/above-optimum runs isolating temperature for the viability decline. This establishes typed-interface CORRECTNESS, but the ports are independent, so it is NOT evidence of coherent physiology. MECHANISTIC (variant fig03-mechanistic): the ports are coupled through a shared ATP pool + enzyme activity, so a single perturbation propagates to every downstream port (mechanistic_ablation), the cross-port response matrix is dense, the state stays bounded and growth is paid out of ATP (invariant), and a metabolically-disabled matched-null control breaks the propagation. This is genuine multi-process physiological coupling. NOT yet empirical validation against a measured respiration/maintenance/growth curve — that is the stated next step.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1461,7 +1759,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/6 passed</span>
+        <span class="muted small">0/11 passed</span>
       </div>
       
     </div>
@@ -1558,7 +1856,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">The `fig03-runnable` composite is didactic / toy-real: the response-law constants (uptake_rate 0.8, growth_max 0.6, km 0.5, elasticity 0.1, membrane_conductance 0.05, thermal_conductance 0.02, signaling_gain 0.4) are plausible, hand-chosen magnitudes chosen to make each port&#39;s response legible in a 24-step run, not calibrated to a named cell type or literature dataset.</li><li style="margin:2px 0">The Arrhenius thermal-death form is genuine but its constants are pinned to a reference, not fitted: A is set so the D-value is ~1 min at the 55 C E. coli thermal-death reference (negligible near 37 C, severe above it), and the 45 C driver is chosen so viability visibly falls within the run.</li><li style="margin:2px 0">It is one lumped cell with no space, membrane geometry, or molecular detail -- the paper&#39;s coarse-grained interface, internal processes represented only through their effects on the shared typed variables.</li><li style="margin:2px 0">The instantaneous ports use &#34;set&#34; semantics over accumulate-by-default stores, so the emitter&#39;s first row (tick 0) reads 0 for those ports before the first update -- a recording artifact of the initial state, not a dynamical fact.</li><li style="margin:2px 0">This study demonstrates only that the caption&#39;s ports RESPOND, runnably. The rigorous cousin that specifies the interface as typed unit-bearing ports and MEASURES that two different internal mechanisms realize the same interface relation to within tolerance is `cellular-interface` in the `draft-to-living-cell` investigation; its numbers are not restated here as this study&#39;s own.</li>
+        <li style="margin:2px 0">The `fig03-runnable` composite is didactic / toy-real: the response-law constants (uptake_rate 0.8, growth_max 0.6, km 0.5, elasticity 0.1, membrane_conductance 0.05, thermal_conductance 0.02, signaling_gain 0.4) are plausible, hand-chosen magnitudes chosen to make each port&#39;s response legible in a 24-step run, not calibrated to a named cell type or literature dataset.</li><li style="margin:2px 0">The Arrhenius thermal-death form is genuine but its constants are pinned to a reference, not fitted: A is set so the D-value is ~1 min at the 55 C E. coli thermal-death reference (negligible near 37 C, severe above it), and the 45 C driver is chosen so viability visibly falls within the run.</li><li style="margin:2px 0">It is one lumped cell with no space, membrane geometry, or molecular detail -- the paper&#39;s coarse-grained interface, internal processes represented only through their effects on the shared typed variables.</li><li style="margin:2px 0">The instantaneous ports use &#34;set&#34; semantics over accumulate-by-default stores, so the emitter&#39;s first row (tick 0) reads 0 for those ports before the first update -- a recording artifact of the initial state, not a dynamical fact.</li><li style="margin:2px 0">This study demonstrates only that the caption&#39;s ports RESPOND, runnably. The rigorous cousin that specifies the interface as typed unit-bearing ports and MEASURES that two different internal mechanisms realize the same interface relation to within tolerance is `cellular-interface` in the `draft-to-living-cell` investigation; its numbers are not restated here as this study&#39;s own.</li><li style="margin:2px 0">Mechanistic variant (fig03-mechanistic) — scope and honest limits: it adds genuine multi-process coupling (shared ATP pool + enzyme activity, propagation, matched-null control), fixing the baseline&#39;s independent-port limitation. But it is still ONE lumped cell with no space/membrane geometry/molecular detail; the ATP pool, the Gaussian enzyme-activity window, the basal maintenance drain, and the viability stress law are didactic/toy-real forms, NOT fitted to a measured respiration rate, maintenance coefficient (m_ATP), growth yield, or thermal-inactivation curve. The cross-port response matrix&#39;s nutrient row is an instantaneous one-step proxy (growth responds over ticks, not in one step), so it understates the nutrient→growth coupling that the time-series clearly shows. Empirical calibration remains the sibling investigation&#39;s job.</li>
       </ul>
     </div>
     
@@ -1620,7 +1918,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>

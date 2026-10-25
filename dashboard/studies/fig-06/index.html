@@ -567,7 +567,7 @@ The literature constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig06-runnable</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">6 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">12 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -586,32 +586,32 @@ The literature constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">ATP-FLUX-SCALES-WITH-THE-PROTON-DRIVE</div>
+          <div class="ov-metric-k">MECH-POWER-BUDGET-CLOSES</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">FOUR-CHANNELS-DERIVE-FROM-ONE-PROTON-FLUX</div>
+          <div class="ov-metric-k">MECH-TORQUE-DERIVED-MATCHES-LITERATURE</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">ATP-PROTON-STOICHIOMETRY-CONSERVED</div>
+          <div class="ov-metric-k">MECH-LOAD-INDUCES-STALL-AND-REVERSAL</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">ROTARY-TORQUE-HOLDS-NEAR-CONSTANT</div>
+          <div class="ov-metric-k">MECH-PROTON-GRADIENT-SETS-DIRECTION</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">ELECTRICAL-ENERGY-BALANCE-CLOSES</div>
+          <div class="ov-metric-k">MECH-EFFICIENCY-IS-DERIVED-NOT-IMPOSED</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">NO-DRIVE-NO-SPONTANEOUS-FLUX</div>
+          <div class="ov-metric-k">MECH-ATP-BACKPRESSURE-SLOWS-ROTOR</div>
         </div>
         
       </div>
@@ -773,6 +773,222 @@ The literature constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈
             </div>
             
             
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The baseline&#39;s TWO imposed constants become DERIVED, validated outcomes in the mechanistic variant. The rotary drive torque is τ_drive = n_c·e·Δp/2π — a consequence of n_c protons each delivering e·Δp of work per revolution — and at Δp = 150 mV it equals 38.2 pN·nm, reproducing the measured ~40 pN·nm Fₒ stall torque (Junge &amp; Nelson 2015) that fig06-runnable merely set by hand. It scales linearly with the proton-motive force (τ(2Δp)/τ(Δp) = 2.000), so it is a derived function of Δp, not a leaf value. This directly answers the review&#39;s &#34;fixed torque is imposed&#34; objection: the number is now predicted from the gradient and matches experiment.</span>
+            
+            <span class="finding-chip">via <code>mech-torque-derived-matches-literature</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> τ_drive = 38.2 pN·nm at 150 mV = n_c·e·Δp/2π exactly; linear-in-Δp ratio 2.000 · 
+              
+              via test <a href="#bt-mech-torque-derived-matches-literature" onclick="_gotoStudyTab('audit','bt-mech-torque-derived-matches-literature');return false;"><code>mech-torque-derived-matches-literature</code></a> · 
+              in run <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: approx 38.2e-21 N·m (35–42 pN·nm literature band); linear-in-Δp ratio = 2.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">Stall and reversal are EMERGENT outcomes of the torque balance, not scripted events. Ramping the external shaft load drives the rotor forward (synthesis), through a stall where τ_ext = τ_drive − τ_chem (≈ tick 11), and into reversal (ω &lt; 0) where it runs backward as an ATP-driven proton pump — J_ATP and the proton current both flip sign with ω. Throughout, the full power budget P_in = P_ATP + P_ext + P_heat closes to 3.1e-33 W (machine precision), with viscous dissipation P_heat = ζω² ≥ 0 — so the machine is thermodynamically reversible and energy-conserving by construction, not by an imposed efficiency. The baseline could not represent stall, reversal, or load at all.</span>
+            
+            <span class="finding-chip">via <code>mech-load-induces-stall-and-reversal</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> forward ω +654 → stall tick 11 → reversal ω −597; J_ATP&lt;0 &amp; J_H&lt;0 in reversal; power residual ≤ 3.1e-33 W · 
+              
+              via test <a href="#bt-mech-load-induces-stall-and-reversal" onclick="_gotoStudyTab('audit','bt-mech-load-induces-stall-and-reversal');return false;"><code>mech-load-induces-stall-and-reversal</code></a> · 
+              in run <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: stall_then_reversal ω crosses 0 at ~tick 11 and goes &lt; −100; in reversal J_ATP &lt; 0 and J_H &lt; 0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The model makes a genuine prospective prediction and passes it. Synthesis proceeds iff n_c·e·Δp &gt; n_ATP·ΔG_ATP, so the stall gradient Δp* = n_ATP·ΔG_ATP/(n_c·e) = 125 mV can be computed BEFORE any run. Sweeping the proton-motive force then confirms it: ω &lt; 0 (hydrolysis) below Δp*, ω ≈ 0 at Δp*, ω &gt; 0 (synthesis) above. Direction is set by the proton gradient relative to the ATP free energy — the thermodynamic directionality the review asked for — demonstrated as a predicted threshold, not a fitted curve.</span>
+            
+            <span class="finding-chip">via <code>mech-proton-gradient-sets-direction</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-06</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> Δp* = 125 mV predicted from pool thermodynamics; sweep ω&lt;0 at 95 mV, ≈0 at 125 mV, &gt;0 at 155 mV · 
+              
+              via test <a href="#bt-mech-proton-gradient-sets-direction" onclick="_gotoStudyTab('audit','bt-mech-proton-gradient-sets-direction');return false;"><code>mech-proton-gradient-sets-direction</code></a> · 
+              in run <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: threshold_predicted Δp* ≈ 125 mV; ω&lt;0 below, ω≈0 at, ω&gt;0 above</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">The efficiency is a derived, operating-point-dependent outcome, and the pools provide real back-pressure — with the limits stated honestly. η = P_ATP/P_in = τ_chem/τ_drive = 0.833 at 150 mV and falls as Δp rises (more proton power spent as rotation/viscous loss), so it is not the baseline&#39;s imposed 0.75. With the ADP/ATP/Pi pools unbuffered, accumulating ATP raises ΔG_ATP and slows the rotor monotonically (product inhibition) — a feedback the strictly-linear baseline lacks entirely. Honest scope: this is still a reduced one-degree-of-freedom model (no explicit c-ring half-channels, no elastic power-stroke, overdamped, pool_coupling is a convenience scale), and the back-pressure slows but does not fully stall the rotor over the tested window.</span>
+            
+            <span class="finding-chip">via <code>mech-efficiency-is-derived-not-imposed</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-07</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> η 0.833 at 150 mV, lower at 300 mV, ≠ 0.75; ω monotone-decreasing as [ATP]/ΔG_ATP rise (unbuffered) · 
+              
+              via test <a href="#bt-mech-efficiency-is-derived-not-imposed" onclick="_gotoStudyTab('audit','bt-mech-efficiency-is-derived-not-imposed');return false;"><code>mech-efficiency-is-derived-not-imposed</code></a> · 
+              in run <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig06-mechanistic"><code>fig06-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: varies_with_operating_point 0 &lt; η(300mV) &lt; η(150mV) &lt; 1 and |η − 0.75| &gt; 0.02</code></div>
             
             
             
@@ -1302,6 +1518,240 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-power-budget-closes"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-power-budget-closes"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-power-budget-closes</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig06-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The full power budget closes exactly on every step: the proton-motive input power equals the chemical power stored in ATP plus the mechanical work done against the load plus the viscous heat, P_in = P_ATP + P_ext + P_heat. Energy is conserved across the rotary interface by construction (multiply the torque balance by ω), not asserted by an imposed efficiency.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |P_in \u2212 (P_ATP + P_ext + P_heat)| over the 20-tick run", "kind": "derived", "path": "obs.power_in, obs.power_atp, obs.power_ext, obs.power_heat"}
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed max residual 3.1e-33 W over the live 20-tick fig06-mechanistic run \u2014 machine precision. Unlike the baseline\u0027s imposed 75/25 split, here the useful fraction is an outcome of the operating point (tests/test_fig06_mechanistic.py::test_power_budget_closes_every_step, ::test_dissipated_heat_is_nonnegative, ::test_charge_current_identity_holds_every_step)", "value": 1e-30}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-torque-derived-matches-literature"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-torque-derived-matches-literature"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-torque-derived-matches-literature</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig06-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The rotary drive torque is DERIVED from the proton-motive force, τ_drive = n_c·e·Δp/2π, and at Δp = 150 mV lands at ≈ 38 pN·nm — reproducing the ~40 pN·nm the baseline merely imposed as a fixed leaf. It scales linearly with Δp (doubling the pmf doubles the torque), proving it is a derived quantity, not a constant.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03c4_drive at \u0394p = 150 mV vs the n_c\u00b7e\u00b7\u0394p/2\u03c0 prediction, and the \u03c4(2\u0394p)/\u03c4(\u0394p) ratio", "kind": "observable", "path": "obs.drive_torque"}
+pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRICAL_COMPARISON against the measured F\u2092 stall torque of the bacterial/chloroplast synthase (~40 pN\u00b7nm; Junge \u0026 Nelson 2015). Observed 38.2 pN\u00b7nm exactly equal to n_c\u00b7e\u00b7\u0394p/2\u03c0, and \u03c4(0.2V)/\u03c4(0.1V) = 2.000 (tests/test_fig06_mechanistic.py::test_drive_torque_derived_matches_literature, ::test_drive_torque_scales_with_pmf_not_fixed)", "value": "38.2e-21 N\u00b7m (35\u201342 pN\u00b7nm literature band); linear-in-\u0394p ratio = 2.0"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-load-induces-stall-and-reversal"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-load-induces-stall-and-reversal"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-load-induces-stall-and-reversal</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig06-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">As the external load ramps, the rotor turns forward (synthesising ATP), slows, STALLS when τ_ext = τ_drive − τ_chem (≈ tick 11), then REVERSES (ω &lt; 0) — running as an ATP-driven proton pump. ω and J_ATP flip sign together; past stall the proton current also reverses (protons pumped against the gradient). Direction is an outcome of the load, not a scripted schedule.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sign(\u03c9) over the load ramp; co-sign of \u03c9 and J_ATP; reversal pumps J_H \u003c 0", "kind": "derived", "path": "obs.omega, obs.atp_flux, obs.proton_current"}
+pass_if: {"kind": "mechanistic_ablation", "op": "stall_then_reversal", "provenance": "MECHANISTIC_ABLATION (counterfactual on the shaft load). Observed forward \u03c9 peak +654, stall at tick 11, reversal to \u03c9 \u2212597 by tick 20; at \u03c4_ext = 1.2e-20 N\u00b7m the rotor runs backward with J_ATP \u003c 0 (hydrolysis) and proton current \u003c 0 (pumping) together (tests/test_fig06_mechanistic.py::test_load_ramp_drives_forward_stall_reversal, ::test_reversal_pumps_protons_and_hydrolyses_atp)", "value": "\u03c9 crosses 0 at ~tick 11 and goes \u003c \u2212100; in reversal J_ATP \u003c 0 and J_H \u003c 0"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-proton-gradient-sets-direction"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-proton-gradient-sets-direction"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-proton-gradient-sets-direction</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig06-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">A first-principles prediction: synthesis proceeds iff n_c·e·Δp &gt; n_ATP·ΔG_ATP, so the stall gradient Δp* = n_ATP·ΔG_ATP/(n_c·e) can be computed BEFORE running. Verified by sweeping Δp: below Δp* the motor reverses (hydrolysis), at Δp* it stalls, above it synthesises. The sensitivity is to the proton gradient itself, not merely to a driver ramp.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sign(\u03c9) vs the predicted threshold \u0394p* = n_ATP\u00b7\u0394G_ATP/(n_c\u00b7e)", "kind": "derived", "path": "obs.omega over a \u0394p sweep (20\u2013300 mV)"}
+pass_if: {"kind": "prospective_prediction", "op": "threshold_predicted", "provenance": "PROSPECTIVE_PREDICTION. \u0394p* = 125 mV computed from the pool thermodynamics before the run; the \u0394p sweep then shows \u03c9 \u003c 0 at 95 mV, |\u03c9| \u003c 1 at 125 mV, \u03c9 \u003e 0 at 155 mV \u2014 direction set by the gradient, as predicted (tests/test_fig06_mechanistic.py::test_pmf_threshold_sets_direction)", "value": "\u0394p* \u2248 125 mV; \u03c9\u003c0 below, \u03c9\u22480 at, \u03c9\u003e0 above"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-efficiency-is-derived-not-imposed"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-efficiency-is-derived-not-imposed"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-efficiency-is-derived-not-imposed</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig06-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The chemical efficiency η = P_ATP/P_in = τ_chem/τ_drive is a DERIVED outcome that varies with the operating point — a higher proton-motive force gives a lower chemical-storage fraction — and is not the baseline&#39;s imposed 0.75. This is the direct answer to the review&#39;s point that the baseline&#39;s 75 % efficiency is prescribed.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03b7(\u0394p=150mV) vs \u03b7(\u0394p=300mV); distance from the imposed 0.75", "kind": "derived", "path": "obs.efficiency at two \u0394p values"}
+pass_if: {"kind": "mechanistic_ablation", "op": "varies_with_operating_point", "provenance": "MECHANISTIC_ABLATION. Observed \u03b7 = 0.833 at 150 mV, falling at 300 mV (more of the proton power spent as kinetic/viscous rather than stored) \u2014 bounded, operating-point dependent, and distinct from the imposed 0.75 baseline constant (tests/test_fig06_mechanistic.py::test_efficiency_is_derived_and_varies_with_pmf)", "value": "0 \u003c \u03b7(300mV) \u003c \u03b7(150mV) \u003c 1 and |\u03b7 \u2212 0.75| \u003e 0.02"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-atp-backpressure-slows-rotor"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-atp-backpressure-slows-rotor"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-atp-backpressure-slows-rotor</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig06-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">With the ADP/ATP/Pi pools unbuffered, synthesised ATP accumulates, the reaction quotient and ΔG_ATP climb, and the rotor slows monotonically under its own product back-pressure — no external load applied. Honest scope: it slows, it does not reach a full static head over the window (ΔG rises only logarithmically with [ATP]); the baseline&#39;s strictly-linear J_ATP has no such feedback at all.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03c9 monotone non-increasing while \u0394G_ATP and [ATP] rise", "kind": "derived", "path": "obs.omega, obs.dg_atp over an 80-tick unbuffered run"}
+pass_if: {"kind": "mechanistic_ablation", "op": "monotone_slowdown", "provenance": "MECHANISTIC_ABLATION (product inhibition). Observed \u03c9 falling monotonically as ATP accumulates and \u0394G_ATP rises across an 80-tick unbuffered run \u2014 real thermodynamic back-pressure, absent from the algebraic baseline (tests/test_fig06_mechanistic.py::test_atp_backpressure_slows_rotor)", "value": "\u03c9[-1] \u003c \u03c9[0], \u0394G_ATP rises, [ATP] accumulates, \u03c9 non-increasing"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1430,7 +1880,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All five primary behavior tests plus the negative control pass on measured readouts from a real 20-tick run -- the ATP flux scales linearly with the drive, the four channels are one coupled quantity (matter⇒charge⇒energy identities exact to 1e-30), the ATP:H⁺ stoichiometry holds at 1/3.3 on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m, the energy balance closes at a 75/25 split, and a zero drive produces zero flux. Every readout is a deterministic function of the ramped drive and reproduces exactly run to run.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig06-runnable): all five primary behavior tests plus the negative control pass on measured readouts from a real 20-tick run -- the ATP flux scales linearly with the drive, the four channels are one coupled quantity (matter⇒charge⇒energy identities exact to 1e-30), the ATP:H⁺ stoichiometry holds at 1/3.3 on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m, the energy balance closes at a 75/25 split, and a zero drive produces zero flux. These establish that the figure is executable and self-consistent -- behavioral verification, not yet biological validation. MECHANISTIC (variant fig06-mechanistic): torque is derived from Δp and matches the measured ~40 pN·nm (empirical_comparison); stall and reversal emerge from the torque balance with the power identity P_in=P_ATP+P_ext+P_heat closing to 1e-33 W (invariant + mechanistic_ablation); the proton-gradient directionality threshold Δp*=125 mV is predicted from first principles and verified by a sweep (prospective_prediction); efficiency is a derived operating-point-dependent outcome, not the imposed 0.75. This is genuine mechanistic support for the coupled-physical-channels claim. NOT yet empirical validation against a specific enzyme&#39;s measured load-velocity curve -- that is the stated next step.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1459,7 +1909,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/6 passed</span>
+        <span class="muted small">0/12 passed</span>
       </div>
       
     </div>
@@ -1557,7 +2007,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">This `fig06-runnable` composite is a didactic / toy-real transducer, not a calibrated biophysical model of ATP synthase. Its constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈ 150 mV, Fₒ torque ≈ 40 pN·nm, η ≈ 75 %) are literature-plausible order-of-magnitude values in `config`, chosen to make the four-channel coupling legible over a 20-tick run -- not fitted to a specific enzyme, membrane potential, or measured turnover curve.</li><li style="margin:2px 0">The transduction law is algebraic, not a mechanistic rotary-kinetics model -- J_ATP = k_cat·activity is strictly linear (no Michaelis–Menten saturation, no proton-motive-force back-pressure), the ATP:H⁺ ratio is a fixed constant, and the torque is a fixed leaf value. This renders the paper&#39;&#39;s typed-coupled-channels point minimally, not the enzyme&#39;&#39;s true rate law.</li><li style="margin:2px 0">The mechanical channel deliberately carries torque (N·m), not force (N) or power (W) -- the drive sets the rotor&#39;s speed, not its torque. The caption&#39;s &#34;mechanical forces&#34; is realized here specifically as rotary torque, matching the draft&#39;s declared `mechanical_out` torque port (N·m).</li><li style="margin:2px 0">The `ProtonMotiveRamp` is a scripted monotonic driver (drive_rate 0.06/tick), standing in for a real, self-consistently maintained proton-motive force. The environment→transducer coupling it makes legible is real; the ramp shape itself is scripted, not emergent.</li><li style="margin:2px 0">The `structure` port is a read-only string identifier and does not enter the dynamics -- it stands for the molecular structure the interface is defined over, not a simulated conformation.</li><li style="margin:2px 0">The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell` investigation, which treats the molecular interface at higher fidelity; this study is the deliberately minimal, runnable figure-carrier and does not restate that study&#39;s numbers as its own.</li>
+        <li style="margin:2px 0">This `fig06-runnable` composite is a didactic / toy-real transducer, not a calibrated biophysical model of ATP synthase. Its constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈ 150 mV, Fₒ torque ≈ 40 pN·nm, η ≈ 75 %) are literature-plausible order-of-magnitude values in `config`, chosen to make the four-channel coupling legible over a 20-tick run -- not fitted to a specific enzyme, membrane potential, or measured turnover curve.</li><li style="margin:2px 0">The transduction law is algebraic, not a mechanistic rotary-kinetics model -- J_ATP = k_cat·activity is strictly linear (no Michaelis–Menten saturation, no proton-motive-force back-pressure), the ATP:H⁺ ratio is a fixed constant, and the torque is a fixed leaf value. This renders the paper&#39;&#39;s typed-coupled-channels point minimally, not the enzyme&#39;&#39;s true rate law.</li><li style="margin:2px 0">The mechanical channel deliberately carries torque (N·m), not force (N) or power (W) -- the drive sets the rotor&#39;s speed, not its torque. The caption&#39;s &#34;mechanical forces&#34; is realized here specifically as rotary torque, matching the draft&#39;s declared `mechanical_out` torque port (N·m).</li><li style="margin:2px 0">The `ProtonMotiveRamp` is a scripted monotonic driver (drive_rate 0.06/tick), standing in for a real, self-consistently maintained proton-motive force. The environment→transducer coupling it makes legible is real; the ramp shape itself is scripted, not emergent.</li><li style="margin:2px 0">The `structure` port is a read-only string identifier and does not enter the dynamics -- it stands for the molecular structure the interface is defined over, not a simulated conformation.</li><li style="margin:2px 0">The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell` investigation, which treats the molecular interface at higher fidelity; this study is the deliberately minimal, runnable figure-carrier and does not restate that study&#39;s numbers as its own.</li><li style="margin:2px 0">Mechanistic variant (fig06-mechanistic) — scope and honest limits: it is a REDUCED one-rotational-degree-of-freedom overdamped model (ω = net_torque/ζ), not a full rotary-kinetics simulation. It does not resolve the c-ring half-channel proton-binding steps, the elastic power-stroke, rotational substeps, or thermal/Brownian ratcheting; the rotational drag ζ and the pool_coupling scale are chosen for legibility, not fitted. The derived torque matches the literature stall torque, but the model is NOT yet calibrated to a specific enzyme&#39;s measured speed-vs-load (torque-velocity) curve — that empirical_comparison is the next step. The ATP back-pressure slows the rotor but does not reach a full static head over the tested window.</li>
       </ul>
     </div>
     
@@ -1619,7 +2069,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>

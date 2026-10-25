@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-08" data-study-kind="biological" title="fig-08">fig-08: Self-organized processes</span>
+    <span class="study-name" id="study-name" data-slug="fig-08" data-study-kind="computational" title="fig-08">fig-08: Self-organized processes</span>
     
   </h1>
     
@@ -573,7 +573,7 @@ This is a didactic, toy-real realization: the pools, rate constants, and yields 
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig08-runnable</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">7 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">12 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -592,7 +592,27 @@ This is a didactic, toy-real realization: the pools, rate constants, and yields 
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MINIMAL-CELL-NOW-GROWS</div>
+          <div class="ov-metric-k">MECH-PERSISTS-AND-POOLS-BOUNDED</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-TURNOVER-REQUIRES-REPLACEMENT</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-RECOVERS-AFTER-INJURY</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-CLOSURE-BREAK-COLLAPSES-VIABILITY</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-DEPENDS-ON-EXTERNAL-INPUT</div>
         </div>
         
       </div>
@@ -754,6 +774,168 @@ This is a didactic, toy-real realization: the pools, rate constants, and yields 
             </div>
             
             
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The mechanistic variant shows the properties that make self-maintenance meaningful, which the accumulating baseline could not. (1) PERSISTENCE: the cell grows to a far-from-equilibrium STEADY STATE and holds it (all pools positive and bounded, second-half drift &lt; 0.1). (2) COMPONENT REPLACEMENT: the steady-state membrane is held by repair balancing first-order degradation — turn repair off and it decays to zero, so the maintained level is an active dynamic balance, not an inert store. (3) RECOVERY: a one-time membrane injury (−60% at tick 45) is repaired and viability recovers from a dip of 0.71 back to 0.92, and recovery requires active repair. These are dynamical outcomes of the coupled balance, not scripted.</span>
+            
+            <span class="finding-chip">via <code>mech-recovers-after-injury</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> steady-state drift &lt; 0.1; membrane held 3.8 (repair on) vs →0 (repair off); injury 3.75→1.50→recover 3.70, viability dip 0.71→0.92 · 
+              
+              via test <a href="#bt-mech-recovers-after-injury" onclick="_gotoStudyTab('audit','bt-mech-recovers-after-injury');return false;"><code>mech-recovers-after-injury</code></a> · 
+              in run <a href="#run-fig08-mechanistic"><code>fig08-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig08-mechanistic"><code>fig08-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: recovers mem[45] &lt; 0.6·mem[44]; viability dips; mem[end] &gt; 0.9·mem[44]; repair-off stays collapsed</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">OPERATIONAL CLOSURE is defined and demonstrated. Closure here = each component the cell needs is produced by processes that themselves depend on that component: the membrane gates import, import feeds metabolism (which needs enzymes), metabolism makes ATP + precursors, and ATP + precursors are spent to repair the membrane and make enzymes. Breaking ANY edge — knock out import, metabolism, enzyme-synthesis, or repair (epsilon), or stop replenishing the medium — collapses the membrane and drives viability to 0. So every edge of the loop is load-bearing, and the self-maintenance is of ORGANIZATION on a required external throughput (matched external-input accounting), not a violation of matter/energy conservation.</span>
+            
+            <span class="finding-chip">via <code>mech-closure-break-collapses-viability</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> final viability 0.00 for each of KO transport/met/expr/repair and for a non-replenished medium; full = 0.92 · 
+              
+              via test <a href="#bt-mech-closure-break-collapses-viability" onclick="_gotoStudyTab('audit','bt-mech-closure-break-collapses-viability');return false;"><code>mech-closure-break-collapses-viability</code></a> · 
+              in run <a href="#run-fig08-mechanistic"><code>fig08-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig08-mechanistic"><code>fig08-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: closure_required final viability &lt; 0.1 and membrane &lt; 0.5 for KO transport/met/expr/repair</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">What this does and does NOT establish (stated explicitly, per the review). It DOES establish operational closure, homeostasis and recovery — i.e. DEPENDENCE (every coupling edge is required) and self-maintenance in the organizational sense, as dynamical outcomes rather than scripted trajectories. It does NOT establish autopoiesis in the strong sense: the boundary is a scalar `area` variable, not a spatially self-produced bilayer; the cell does not synthesise its own membrane components from first principles nor divide; and the viability TARGET function (health = boundary adequacy × energy charge) and all rate constants are scripted parameters. The non-scripted global properties that ARE demonstrated are the existence and stability of the steady state and the recovery trajectory; their VALUES, however, follow from chosen rates. The rigorous higher-fidelity cousin remains the `autopoiesis` study in draft-to-living-cell, whose numbers are not restated here.</span>
+            
+            <span class="finding-chip">via <code>mech-persists-and-pools-bounded</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-06</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> steady state + recovery are emergent; boundary is a scalar area and the viability target is a scripted parameter · 
+              
+              via test <a href="#bt-mech-persists-and-pools-bounded" onclick="_gotoStudyTab('audit','bt-mech-persists-and-pools-bounded');return false;"><code>mech-persists-and-pools-bounded</code></a> · 
+              in run <a href="#run-fig08-mechanistic"><code>fig08-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig08-mechanistic"><code>fig08-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: persists all pools &gt; 0 and bounded; steady-state drift &lt; 0.1</code></div>
             
             
             
@@ -1322,6 +1504,201 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-persists-and-pools-bounded"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-persists-and-pools-bounded"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-persists-and-pools-bounded</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig08-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Every component stays strictly positive and bounded, and with no injury the cell grows to a far-from-equilibrium STEADY STATE and holds it (small second-half drift) — persistence through continuous replacement, not the baseline&#39;s monotonic accumulation.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "min(pool) \u003e 0, max(pool) bounded; |s[-1]-s[60]|/s[60] small", "kind": "observable", "path": "min/max of each pool; second-half relative drift"}
+pass_if: {"kind": "invariant", "op": "persists", "provenance": "INVARIANT. Observed all pools strictly positive and bounded over 90 ticks; with perturbation off, membrane/enzymes/energy second-half drift \u003c 0.1 \u2014 a maintained steady state, not accumulation (tests/test_fig08_mechanistic.py::test_all_pools_positive_and_bounded, ::test_persists_at_a_steady_state)", "value": "all pools \u003e 0 and bounded; steady-state drift \u003c 0.1"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-turnover-requires-replacement"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-turnover-requires-replacement"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-turnover-requires-replacement</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig08-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The steady-state membrane is HELD by repair balancing first-order degradation — active component REPLACEMENT. Knock out repair and the membrane decays away, so the maintained level is a dynamic balance, not an inert store.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "membrane(repair on) held; membrane(repair off) \u2192 ~0", "kind": "derived", "path": "membrane end-state, repair on vs off"}
+pass_if: {"kind": "mechanistic_ablation", "op": "replacement_required", "provenance": "MECHANISTIC_ABLATION. Observed membrane held at ~3.8 with repair on, decaying toward 0 with repair off (epsilon) \u2014 turnover unopposed; the steady level requires continuous replacement (tests/test_fig08_mechanistic.py::test_turnover_requires_active_replacement)", "value": "membrane(repair on) \u003e 2.0 and membrane(repair off) \u003c 0.3\u00d7 that"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-recovers-after-injury"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-recovers-after-injury"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-recovers-after-injury</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig08-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">A one-time membrane injury at tick 45 (−60%) drops the boundary and depresses viability; the cell then REPAIRS the membrane and viability RECOVERS to its pre-injury steady state. Self-repair, not a scripted bounce — with repair off there is no recovery, and an early injury (tick 25) is also recovered.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "injury drop; viability dip; end recovers to pre-injury; no recovery if repair off", "kind": "derived", "path": "membrane, viability around the injury; recovery vs repair-off"}
+pass_if: {"kind": "mechanistic_ablation", "op": "recovers", "provenance": "MECHANISTIC_ABLATION. Observed injury membrane 3.75\u21921.50, viability dip to 0.71, recovery to membrane 3.70 / viability 0.92 by tick 90; recovery requires active repair (repair-off stays collapsed), and an early injury at tick 25 is also recovered (tests/test_fig08_mechanistic.py::test_recovers_after_membrane_injury, ::test_repeated_perturbation_persists)", "value": "mem[45] \u003c 0.6\u00b7mem[44]; viability dips; mem[end] \u003e 0.9\u00b7mem[44]; repair-off stays collapsed"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-closure-break-collapses-viability"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-closure-break-collapses-viability"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-closure-break-collapses-viability</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig08-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Operational closure means every edge of the loop is required. Knocking out import, metabolism, enzyme-synthesis, or repair (epsilon, not 0.0) each collapses the membrane and drives viability to ~0 — dependence on every coupling edge, demonstrated.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability \u2192 ~0 and membrane \u2192 ~0 for each of the four knockouts", "kind": "derived", "path": "final viability + membrane under each single knockout"}
+pass_if: {"kind": "mechanistic_ablation", "op": "closure_required", "provenance": "MECHANISTIC_ABLATION (four single knockouts, epsilon). Observed final viability 0.00 and membrane collapsed for each of k_transport / k_met / k_expr / k_repair \u2014 every edge of the operational-closure loop is load-bearing (tests/test_fig08_mechanistic.py::test_knockout_collapses_viability[*])", "value": "final viability \u003c 0.1 and membrane \u003c 0.5 for KO transport/met/expr/repair"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-depends-on-external-input"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-depends-on-external-input"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-depends-on-external-input</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig08-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Matched external-input accounting: on a non-replenished (closed) medium the external nutrient is drawn down and the cell cannot self-maintain — viability collapses. The self-maintenance is of ORGANIZATION, not of matter/energy; it runs on a throughput the medium must supply.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "nutrient_ext \u2192 ~0 and viability \u2192 ~0", "kind": "derived", "path": "external nutrient + viability under no replenishment"}
+pass_if: {"kind": "mechanistic_ablation", "op": "throughput_required", "provenance": "MECHANISTIC_ABLATION. Observed the medium depletes and viability collapses to 0.00 with replenishment off (epsilon) \u2014 the cell maintains organization on a required external throughput, it does not create matter/energy (tests/test_fig08_mechanistic.py::test_depends_on_external_input)", "value": "nutrient_ext \u003c 0.2 and viability \u003c 0.3 without replenishment"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1450,7 +1827,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on readouts from a real 40-tick run -- every pool stays positive and bounded, the template pools hold a steady balance while structural material is net-produced, and two independent process knockouts confirm the balance is a property of the coupling (metabolism KO starves metabolites and freezes energy; gene-expression KO freezes enzymes and lowers metabolites). The demonstration is deterministic and reproduces exactly.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig08-runnable): all primary tests pass on a 40-tick run -- pools positive and bounded, template pools steady while structural material is net-produced, two knockouts confirm the balance is a property of the coupling. But the baseline pools only ACCUMULATE and have no boundary, turnover, repair or failure, so this is behavioral verification of compositional dependence, not of self-maintenance. MECHANISTIC (variant fig08-mechanistic): a self-maintaining cell with a membrane boundary, first-order turnover, ATP-costed repair and viability shows PERSISTENCE at a steady state (invariant), COMPONENT REPLACEMENT against turnover and RECOVERY after a membrane injury (mechanistic_ablation), and viability COLLAPSE when any edge of the operational-closure loop is broken or the medium is not replenished (mechanistic_ablation). Operational closure and boundary maintenance are defined before the term autopoiesis is used. This is genuine mechanistic support for self-maintenance in the ORGANIZATIONAL sense (dependence + homeostasis + recovery). It is explicitly NOT autopoiesis in the strong sense, and NOT empirical validation against a named organism -- see findings F-06 and the limitations.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1479,7 +1856,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/7 passed</span>
+        <span class="muted small">0/12 passed</span>
       </div>
       
     </div>
@@ -1577,7 +1954,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">`fig08-runnable` is a didactic, toy-real composite -- the ten building-block pools, the six processes&#39; rate constants (assembly_rate 0.05, k_cat 0.1, k_expr 0.08, k_rep 0.015, turnover_rate 0.08, k_react 0.06), and the yields are hand-chosen so the coupled balance is legible over a 40-tick run, NOT calibrated to a named organism, metabolite, enzyme, or literature flux.</li><li style="margin:2px 0">The composite integrates over flat scalar pools, not spatially resolved fields or a real membrane geometry; &#34;containment&#34; is a scalar membrane-assembly ODE rather than a diffusion barrier maintaining a spatial gradient. The self-maintenance demonstrated is compositional (shared-pool coupling), not spatial.</li><li style="margin:2px 0">The handlers are deterministic ODEs with no random seed, so the numbers are exact and reproducible but carry no stochastic-robustness claim; there is no ensemble to average over.</li><li style="margin:2px 0">The mutual-maintenance loop is demonstrated by process knockout (deleting a process from the composite state), a structural intervention that zeroes a process&#39;s contribution to its shared pools -- it isolates each coupling edge cleanly but is not a physical rate perturbation.</li><li style="margin:2px 0">The rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation, which realizes the same self-maintenance claim at higher fidelity. This study demonstrates only that this figure&#39;s specific caption runs and holds under test; it does not restate the cousin&#39;s numbers or fidelity as its own.</li>
+        <li style="margin:2px 0">`fig08-runnable` is a didactic, toy-real composite -- the ten building-block pools, the six processes&#39; rate constants (assembly_rate 0.05, k_cat 0.1, k_expr 0.08, k_rep 0.015, turnover_rate 0.08, k_react 0.06), and the yields are hand-chosen so the coupled balance is legible over a 40-tick run, NOT calibrated to a named organism, metabolite, enzyme, or literature flux.</li><li style="margin:2px 0">The composite integrates over flat scalar pools, not spatially resolved fields or a real membrane geometry; &#34;containment&#34; is a scalar membrane-assembly ODE rather than a diffusion barrier maintaining a spatial gradient. The self-maintenance demonstrated is compositional (shared-pool coupling), not spatial.</li><li style="margin:2px 0">The handlers are deterministic ODEs with no random seed, so the numbers are exact and reproducible but carry no stochastic-robustness claim; there is no ensemble to average over.</li><li style="margin:2px 0">The mutual-maintenance loop is demonstrated by process knockout (deleting a process from the composite state), a structural intervention that zeroes a process&#39;s contribution to its shared pools -- it isolates each coupling edge cleanly but is not a physical rate perturbation.</li><li style="margin:2px 0">The rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation, which realizes the same self-maintenance claim at higher fidelity. This study demonstrates only that this figure&#39;s specific caption runs and holds under test; it does not restate the cousin&#39;s numbers or fidelity as its own.</li><li style="margin:2px 0">Mechanistic variant (fig08-mechanistic) — scope and honest limits: it adds a real boundary, turnover, ATP-costed repair and viability, and demonstrates persistence, component replacement, recovery and closure-break collapse. But it is a WELL-MIXED cell: the &#34;membrane&#34; is a scalar `area` variable, NOT a spatially resolved bilayer the cell produces for itself, and there is no cell division. The viability target function and every rate constant are scripted parameters (the steady state and recovery trajectory are emergent, but their values follow from chosen rates). So it demonstrates operational closure, homeostasis and recovery — self-maintenance in the ORGANIZATIONAL sense — and explicitly NOT autopoiesis in the strong (self-producing-boundary-in-space) sense; it is not calibrated to a named organism, membrane lipid, or measured turnover/repair rate. See finding F-06.</li>
       </ul>
     </div>
     
@@ -1639,7 +2016,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>

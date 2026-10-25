@@ -567,7 +567,7 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig05-grain-runnable</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">8 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">14 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -586,12 +586,32 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">GRAIN-SWAP-CHANGES-THE-MEASURED-BIOMASS</div>
+          <div class="ov-metric-k">MECH-ONE-ACTIVE-GRAIN</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">FBA-GRAIN-SHOWS-OVERFLOW-SECRETION</div>
+          <div class="ov-metric-k">MECH-BIOLOGY-SEPARATE-FROM-GRAIN</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-CONSERVING-HANDOVER-NO-JUMP</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-INADEQUACY-TRIGGERS-REFINEMENT</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-REFINEMENT-PREDICTS-PHENOTYPE-COARSE-MISSES</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-DETERMINISTIC-RERUN-IS-REPRODUCIBILITY</div>
         </div>
         
       </div>
@@ -807,6 +827,168 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
             </div>
             
             
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The mechanistic variant SEPARATES the biology from the grain, fixing the review&#39;s central objection. The biological damage state (soluble + autocatalytically-aggregating misfolded protein) evolves continuously and grain-independently (stress forcing identical across modes to 1e-12; coarse and adaptive coincide before the switch). The grain is then chosen by a COMPUTABLE inadequacy estimator — the fraction of the damage dynamics carried by the neglected aggregation term — which refines coarse→fine when it crosses tolerance. This is a quantified, state-dependent error indicator: raising the tolerance delays the switch and lowering it advances it, which a wall-clock t=13 could not do.</span>
+            
+            <span class="finding-chip">via <code>mech-inadequacy-triggers-refinement</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> stress identical across modes (1e-12); switch time moves with inadequacy_tol; default switch t=11 · 
+              
+              via test <a href="#bt-mech-inadequacy-triggers-refinement" onclick="_gotoStudyTab('audit','bt-mech-inadequacy-triggers-refinement');return false;"><code>mech-inadequacy-triggers-refinement</code></a> · 
+              in run <a href="#run-fig05-mechanistic"><code>fig05-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig05-mechanistic"><code>fig05-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: threshold_moves_switch higher tol delays, lower tol advances the switch</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">Refinement BUYS a real prediction the coarse grain structurally cannot make. The fine grain resolves an autocatalytic aggregation runaway that collapses viability (final viability → 0.00 with aggregate m_agg = 0.63); the always-coarse model never forms aggregates and stays viable (0.74), missing the collapse entirely. The adaptive run recovers the always-fine trajectory at a fraction of the cost — biomass divergence from the fine reference is 0.023 (adaptive) versus 1.09 (always-coarse). And the coarse→fine map conserves state: biomass and total damage are continuous across the switch (step 0.98× typical) with handover_error = 0 — no artificial jump.</span>
+            
+            <span class="finding-chip">via <code>mech-refinement-predicts-phenotype-coarse-misses</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> final viability coarse 0.74 vs fine/adaptive 0.00; m_agg coarse 0 vs fine 0.63; |adaptive−fine| 0.023 vs |coarse−fine| 1.09; handover_error 0 · 
+              
+              via test <a href="#bt-mech-refinement-predicts-phenotype-coarse-misses" onclick="_gotoStudyTab('audit','bt-mech-refinement-predicts-phenotype-coarse-misses');return false;"><code>mech-refinement-predicts-phenotype-coarse-misses</code></a> · 
+              in run <a href="#run-fig05-mechanistic"><code>fig05-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig05-mechanistic"><code>fig05-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: phenotype_and_tracking fine/adaptive viab&lt;0.1, coarse viab&gt;0.5; |adaptive−fine| &lt; 0.2·|coarse−fine|</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">Honest scope. The t=13 switch in the baseline is a PROGRAMMED resolution change, and a byte-identical deterministic rerun is REPRODUCIBILITY, not mechanistic support — the mechanistic evidence here comes from the ablations (phenotype the coarse grain misses, tolerance-moved refinement time, conserving handover), not from a run matching itself. Limits: this is still a reduced lumped model (one soluble + one aggregate pool, constant repair energy, a single autocatalytic nonlinearity); the aggregation and repair rates are didactic, not fitted to a named proteostasis stressor or measured aggregation kinetics; and &#34;viability&#34; is a weighted damage score, not a measured survival probability. The rigorous cousin is `disintegration` in draft-to-living-cell.</span>
+            
+            <span class="finding-chip">via <code>mech-deterministic-rerun-is-reproducibility</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-06</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> two identical runs match to 1e-15 (reproducibility); mechanistic support is from the ablations, not the rerun · 
+              
+              via test <a href="#bt-mech-deterministic-rerun-is-reproducibility" onclick="_gotoStudyTab('audit','bt-mech-deterministic-rerun-is-reproducibility');return false;"><code>mech-deterministic-rerun-is-reproducibility</code></a> · 
+              in run <a href="#run-fig05-mechanistic"><code>fig05-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig05-mechanistic"><code>fig05-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 1e-15</code></div>
             
             
             
@@ -1414,6 +1596,240 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-one-active-grain"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-one-active-grain"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-one-active-grain</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig05-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Exactly one grain is active per step — the grain indicator only ever takes the values 0 (coarse) or 1 (fine), never both or neither. The structural invariant of a grain switch.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "set of active_grain values over the run \u2286 {0, 1}", "kind": "observable", "path": "obs.active_grain"}
+pass_if: {"kind": "invariant", "op": "in_set", "provenance": "INVARIANT. active_grain \u2208 {0,1} on every step of the live run (tests/test_fig05_mechanistic.py::test_one_active_grain_at_a_time)", "value": "{0, 1}"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-biology-separate-from-grain"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-biology-separate-from-grain"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-biology-separate-from-grain</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig05-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The biological forcing (stress) is identical across all three modes — the grain is an algorithmic choice layered on the SAME physiology, not a different biology — and before the adaptive switch the coarse and adaptive damage trajectories coincide (the coarse approximation is valid there). Directly answers the review&#39;s ask to show the biological damage state independently of the grain change.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "stress identical across modes; coarse\u2261adaptive damage before the switch", "kind": "derived", "path": "obs.stress, obs.m_sol across modes"}
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Stress trajectory identical across adaptive/coarse/fine to 1e-12; coarse and adaptive m_sol coincide to 1e-12 before the switch (tests/test_fig05_mechanistic.py::test_biological_forcing_is_grain_independent)", "value": 1e-12}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-conserving-handover-no-jump"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-conserving-handover-no-jump"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-conserving-handover-no-jump</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig05-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The coarse→fine map conserves the mapped state: prolongation is identity on the shared damage pools, so neither biomass nor total damage jumps at the switch (the step at the switch is within the normal per-tick change) and handover_error = 0. The baseline&#39;s bare grain flip has no such guarantee.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "|\u0394biomass| at switch \u003c 1.5\u00d7 typical; handover_error = 0", "kind": "derived", "path": "obs.biomass, obs.damage, obs.handover_error at the switch tick"}
+pass_if: {"kind": "invariant", "op": "no_jump", "provenance": "INVARIANT. Observed biomass step at the switch 0.98\u00d7 the typical per-tick step (no artificial jump) and handover_error = 0 exactly; total damage continuous too (tests/test_fig05_mechanistic.py::test_no_artificial_jump_at_the_switch)", "value": "biomass step ratio \u003c 1.5 and handover_error \u003c 1e-12"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-inadequacy-triggers-refinement"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-inadequacy-triggers-refinement"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-inadequacy-triggers-refinement</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig05-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Refinement fires when the computable inadequacy estimator crosses tolerance — raising the tolerance DELAYS the switch and lowering it ADVANCES it, which a wall-clock trigger could not do. The refinement is a quantified, state-dependent decision, not a scripted time.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "switch(tol=0.45) \u003e switch(tol=0.20) \u003e switch(tol=0.08)", "kind": "derived", "path": "switch time vs inadequacy_tol"}
+pass_if: {"kind": "prospective_prediction", "op": "threshold_moves_switch", "provenance": "PROSPECTIVE_PREDICTION. Observed the switch time moves monotonically with the inadequacy tolerance (default switch t=11; lower tol advances it, higher tol delays/removes it) \u2014 proving the trigger is the quantified signal, not a wall-clock (tests/test_fig05_mechanistic.py::test_inadequacy_signal_triggers_refinement_not_wall_clock)", "value": "higher tol delays, lower tol advances the switch"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-refinement-predicts-phenotype-coarse-misses"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-refinement-predicts-phenotype-coarse-misses"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-refinement-predicts-phenotype-coarse-misses</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig05-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The fine grain resolves an autocatalytic aggregation runaway that collapses viability — a phenotype the always-coarse model structurally cannot produce (it never forms aggregates). Fine and adaptive reach ~zero viability with substantial aggregate; always-coarse stays viable with no aggregate. And the adaptive run tracks the always-fine reference far better than always-coarse does.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "fine/adaptive viability\u21920 with m_agg\u003e0.2; coarse viability\u003e0.5, m_agg=0; |adaptive\u2212fine| \u226a |coarse\u2212fine|", "kind": "derived", "path": "obs.viability, obs.m_agg, obs.biomass across modes"}
+pass_if: {"kind": "mechanistic_ablation", "op": "phenotype_and_tracking", "provenance": "MECHANISTIC_ABLATION. Observed final viability: coarse 0.74 (misses collapse) vs fine 0.00 vs adaptive 0.00; m_agg coarse 0.0 vs fine 0.63; biomass divergence |coarse\u2212fine| 1.09 vs |adaptive\u2212fine| 0.023 (tests/test_fig05_mechanistic.py::test_refinement_predicts_phenotype_coarse_misses, ::test_adaptive_tracks_fine_not_coarse)", "value": "fine/adaptive viab\u003c0.1, coarse viab\u003e0.5; |adaptive\u2212fine| \u003c 0.2\u00b7|coarse\u2212fine|"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-deterministic-rerun-is-reproducibility"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-deterministic-rerun-is-reproducibility"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-deterministic-rerun-is-reproducibility</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig05-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Honesty guard: two identical runs are byte-identical. This is REPRODUCIBILITY, not mechanistic support — the mechanistic evidence comes from the ablations above (phenotype coarse misses, inadequacy-triggered refinement, conserving handover), not from a deterministic rerun matching itself.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |biomass_run1 \u2212 biomass_run2|", "kind": "derived", "path": "two identical adaptive runs"}
+pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "REGRESSION_PIN labelled as reproducibility, not mechanistic support. Two identical runs match to 1e-15 (tests/test_fig05_mechanistic.py::test_deterministic_rerun_is_reproducibility_not_support)", "value": 1e-15}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1542,7 +1958,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a deterministic 26-step run -- the coarse grain holds while viable, the grain flips coarse-&gt;fine at the viability-threshold crossing (within the one-tick handover) and stays fine, the gate hands control so exactly one grain acts per tick, and the shared biomass/energy output turns over from growth to decay at the switch. The composite has no RNG, so every pin is exact and reproducible.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig05-grain-runnable): the grain flips coarse→fine at the viability-threshold crossing, exactly one grain acts per tick, and biomass turns over at the switch — but this is a PROGRAMMED resolution change (behavioral verification), and the deterministic rerun is reproducibility, not mechanistic support. MECHANISTIC (variant fig05-mechanistic): the biology (continuous misfolded-protein + autocatalytic aggregation) is separated from the grain; refinement is triggered by a computable, tolerance-movable inadequacy estimator (prospective_prediction), not a wall-clock; the coarse→fine map conserves state with handover_error=0 and no biomass/damage jump (invariant); and always-coarse/fine/adaptive comparison shows the fine grain resolves an aggregation-driven viability collapse the coarse grain structurally cannot (final viability 0.00 vs 0.74) while adaptive recovers it (divergence 0.023 vs 1.09) (mechanistic_ablation). This is genuine mechanistic support that refinement buys a real prediction. NOT yet empirical validation against measured aggregation/proteostasis kinetics — the stated next step.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1571,7 +1987,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/8 passed</span>
+        <span class="muted small">0/14 passed</span>
       </div>
       
     </div>
@@ -1672,7 +2088,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">This composite is didactic / toy-real -- the stress rate (0.045/tick), viability threshold (0.5), coarse yields (0.3, 0.2), and fine decay rates (0.09, 0.09) are hand-tuned magnitudes chosen to make hold -&gt; cross -&gt; flip -&gt; turn-over legible within a 26-step run, not fitted to a named stressor, molecule, or measured rate.</li><li style="margin:2px 0">The coarse and fine grains are lumped single-term stand-ins (one linear yield, one first-order decay) for &#34;a coarse cellular process&#34; and &#34;a fine molecular one&#34;; they realize the same interface at two levels of description -- the point of the figure -- but neither resolves real molecular mechanism.</li><li style="margin:2px 0">Viability is an abstract scalar driven monotonically down by an external StressRamp, a clean controllable driver rather than an emergent consequence of the cell&#39;&#39;s own metabolism or environment; the trigger is a threshold crossing on that scalar, not a spatial or biochemical collapse.</li><li style="margin:2px 0">The active grain flips one tick after viability first reads below threshold (crossing t=12, flip t=13). This one-tick lag is the composite&#39;&#39;s process-scheduling latency (the GrainSelector&#39;&#39;s set propagating to the grains&#39;&#39; gate on the next tick), not a modeled biological delay -- so the biomass peak coincides with the grain flip and the tests anchor on the flip, not the raw viability cross.</li><li style="margin:2px 0">The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation, where a real CPM cell loses structural viability under a real diffusing acetate field and its shed pixels become scattering debris particles -- a per-pixel realization of the same §Disintegration level shift. This study does not restate that cousin&#39;&#39;s numbers as its own.</li>
+        <li style="margin:2px 0">This composite is didactic / toy-real -- the stress rate (0.045/tick), viability threshold (0.5), coarse yields (0.3, 0.2), and fine decay rates (0.09, 0.09) are hand-tuned magnitudes chosen to make hold -&gt; cross -&gt; flip -&gt; turn-over legible within a 26-step run, not fitted to a named stressor, molecule, or measured rate.</li><li style="margin:2px 0">The coarse and fine grains are lumped single-term stand-ins (one linear yield, one first-order decay) for &#34;a coarse cellular process&#34; and &#34;a fine molecular one&#34;; they realize the same interface at two levels of description -- the point of the figure -- but neither resolves real molecular mechanism.</li><li style="margin:2px 0">Viability is an abstract scalar driven monotonically down by an external StressRamp, a clean controllable driver rather than an emergent consequence of the cell&#39;&#39;s own metabolism or environment; the trigger is a threshold crossing on that scalar, not a spatial or biochemical collapse.</li><li style="margin:2px 0">The active grain flips one tick after viability first reads below threshold (crossing t=12, flip t=13). This one-tick lag is the composite&#39;&#39;s process-scheduling latency (the GrainSelector&#39;&#39;s set propagating to the grains&#39;&#39; gate on the next tick), not a modeled biological delay -- so the biomass peak coincides with the grain flip and the tests anchor on the flip, not the raw viability cross.</li><li style="margin:2px 0">The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation, where a real CPM cell loses structural viability under a real diffusing acetate field and its shed pixels become scattering debris particles -- a per-pixel realization of the same §Disintegration level shift. This study does not restate that cousin&#39;&#39;s numbers as its own.</li><li style="margin:2px 0">Mechanistic variant (fig05-mechanistic) — scope and honest limits: it separates biology from grain, triggers refinement on a quantified inadequacy signal (not wall-clock), conserves state at the handover, and demonstrates a phenotype the coarse grain misses. But it remains a REDUCED lumped model — one soluble and one aggregate misfolded-protein pool, constant repair energy, a single autocatalytic nonlinearity, and a weighted-damage &#34;viability&#34; score (not a measured survival probability). The aggregation, repair, and stress rates are didactic, NOT fitted to a named proteostasis stressor or measured aggregation kinetics, and the inadequacy estimator is one specific (defensible) error indicator, not a certified error bound. The t=11 switch is still a resolution change, now triggered by a computed signal; a byte-identical rerun remains reproducibility, not mechanistic support. The rigorous cousin remains `disintegration` in draft-to-living-cell.</li>
       </ul>
     </div>
     
@@ -1734,7 +2150,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>

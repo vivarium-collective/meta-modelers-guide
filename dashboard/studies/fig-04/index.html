@@ -567,7 +567,7 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig04-runnable</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">6 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">11 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -586,32 +586,27 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">HIGHER-LOCAL-FIELD-DRIVES-LARGER-UPTAKE</div>
+          <div class="ov-metric-k">MECH-MASS-LEDGER-CLOSES</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">ZERO-FIELD-GIVES-NO-DRIVE</div>
+          <div class="ov-metric-k">MECH-CELL-DEPLETES-FIELD-REAL-FEEDBACK</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MASS-INCREASES-MONOTONICALLY-UNDER-NUTRIENT</div>
+          <div class="ov-metric-k">MECH-CONTROLS-ISOLATE-EACH-ARM</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">UPTAKE-TRACKS-THE-LOCAL-SENSED-FIELD</div>
+          <div class="ov-metric-k">MECH-CHEMOTAXIS-CLIMBS-THE-GRADIENT</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">NET-DRIFT-IS-UP-GRADIENT</div>
-        </div>
-        
-        <div class="ov-metric ov-metric-pass">
-          <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">CONTROL-LOOP-CLOSES-THROUGH-SHARED-STORE</div>
+          <div class="ov-metric-k">MECH-UPTAKE-SATURATES</div>
         </div>
         
       </div>
@@ -775,6 +770,168 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: ledger_closes cum_uptake_flux 0.0 → 0.864305 (monotone); Δmass 0.432152 == 0.5 × 0.864305</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The sense/act loop is genuinely CLOSED in the mechanistic variant, fixing the review&#39;s central objection to this figure. In the baseline the cell&#39;s uptake was a scalar output never subtracted from the field, so &#34;uptake ∝ local field at correlation 1.0&#34; was an identity, not feedback. Here the cell&#39;s saturating Michaelis–Menten uptake is a REAL sink: it draws the field down at the cell&#39;s location (a depletion well, max 1.58 field units, that diffuses and follows the cell), and the cell leaves a measurable footprint on the environment (max 1.58). Biomass is paid for out of the field — the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to 8.9e-16 and Δbiomass = yield·Σuptake exactly.</span>
+            
+            <span class="finding-chip">via <code>mech-cell-depletes-field-real-feedback</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> footprint 1.58 and depletion well 1.58 field units; field ledger residual 8.9e-16 · 
+              
+              via test <a href="#bt-mech-cell-depletes-field-real-feedback" onclick="_gotoStudyTab('audit','bt-mech-cell-depletes-field-real-feedback');return false;"><code>mech-cell-depletes-field-real-feedback</code></a> · 
+              in run <a href="#run-fig04-mechanistic"><code>fig04-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig04-mechanistic"><code>fig04-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: footprint_and_well footprint &gt; 0.1 and well depth &gt; 0.1 (field units)</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">Matched-null controls isolate each arm of the loop, so the behaviour is attributable to specific mechanisms rather than to a scripted trajectory. NO-UPTAKE (Vmax=ε) keeps the field intact and biomass flat; NO-MOTILITY (χ=ε) holds position while the cell still eats locally; ZERO-GRADIENT (uniform field, source off) abolishes directed drift. Chemotaxis genuinely climbs the gradient (cell 16→0.6 lattice units, sensed nutrient rising), and vanishes without a gradient. Controls use an epsilon, not 0.0, because bigraph_schema treats a float 0.0 config as empty and restores the schema default — a matched-null-control correctness point.</span>
+            
+            <span class="finding-chip">via <code>mech-controls-isolate-each-arm</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> no-uptake biomass 1.0 flat; no-motility position fixed 16.0; zero-gradient no drift; full climbs 16→0.6 · 
+              
+              via test <a href="#bt-mech-controls-isolate-each-arm" onclick="_gotoStudyTab('audit','bt-mech-controls-isolate-each-arm');return false;"><code>mech-controls-isolate-each-arm</code></a> · 
+              in run <a href="#run-fig04-mechanistic"><code>fig04-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig04-mechanistic"><code>fig04-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: controls_hold Δbiomass&lt;1e-6 (no-uptake); |Δpos|&lt;1e-6 (no-motility); |Δpos|&lt;1 lattice (zero-gradient)</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">Transport saturates (Michaelis–Menten), unlike the baseline&#39;s unbounded proportional uptake — honest scope stated. Uptake approaches Vmax at high concentration and is far below it near/under Km, so the carrier has a real limit. Honest limits: the model is a 1-D lattice (distances in LATTICE units, not calibrated physical microns), diffusion is explicit-Euler (stable at D·dt/dx²=0.4&lt;0.5), the source is a single in-domain cell, and the rate constants are didactic — not fitted to a named nutrient, diffusivity, or measured chemotactic velocity. The rigorous spatial cousin is `cell-environment-coupling` in draft-to-living-cell.</span>
+            
+            <span class="finding-chip">via <code>mech-uptake-saturates</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-06</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> uptake→Vmax=0.45 at c=100; &lt;10% of Vmax at c=0.03 · 
+              
+              via test <a href="#bt-mech-uptake-saturates" onclick="_gotoStudyTab('audit','bt-mech-uptake-saturates');return false;"><code>mech-uptake-saturates</code></a> · 
+              in run <a href="#run-fig04-mechanistic"><code>fig04-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig04-mechanistic"><code>fig04-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: saturates uptake(100) ∈ [0.99·Vmax, Vmax); uptake(0.03) &lt; 0.1·uptake(100)</code></div>
             
             
             
@@ -1304,6 +1461,201 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledg
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-mass-ledger-closes"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-mass-ledger-closes"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-mass-ledger-closes</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig04-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">With Neumann edges the field mass ledger closes exactly: Σfield change = Σsource − Σdecay − Σuptake, and the cell&#39;s biomass change = yield·Σuptake. Nothing is created — the cell&#39;s growth is paid for out of the field. Pure diffusion (cell and source removed) conserves the field total to round-off.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "|\u0394field \u2212 (\u03a3source \u2212 \u03a3decay \u2212 \u03a3uptake)| and |\u0394biomass \u2212 yield\u00b7\u03a3uptake|", "kind": "derived", "path": "obs.source_total, obs.decay_total, obs.uptake_total; \u03a3field"}
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed field ledger residual 8.9e-16 and biomass-vs-uptake residual 0.0 over the live 24-tick run; pure diffusion conserves the total to \u003c1e-9 (tests/test_fig04_mechanistic.py::test_mass_ledger_closes, ::test_diffusion_is_mass_conserving)", "value": 1e-09}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-cell-depletes-field-real-feedback"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-cell-depletes-field-real-feedback"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-cell-depletes-field-real-feedback</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig04-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s uptake is a REAL sink on the shared field: the field under the cell is drawn below the no-uptake control (a depletion well that diffuses), and the cell leaves a measurable footprint on the environment. This is the bidirectional feedback the baseline lacked — its uptake never touched the field, so its &#34;uptake ∝ field&#34; was an identity, not evidence.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max footprint |full \u2212 no-uptake| and max depletion-well depth", "kind": "derived", "path": "field(full) vs field(no-uptake) over space\u00d7time"}
+pass_if: {"kind": "mechanistic_ablation", "op": "footprint_and_well", "provenance": "MECHANISTIC_ABLATION. Observed max footprint 1.58 and well depth 1.58 field units \u2014 the cell visibly imprints a depletion trail that follows its track (tests/test_fig04_mechanistic.py::test_cell_depletes_the_field_real_feedback). Directly refutes the review-flagged spurious correlation=1.0 feedback claim of the baseline.", "value": "footprint \u003e 0.1 and well depth \u003e 0.1 (field units)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-controls-isolate-each-arm"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-controls-isolate-each-arm"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-controls-isolate-each-arm</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig04-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Matched-null controls (set with an epsilon, not 0.0) cleanly isolate each arm of the loop: NO-UPTAKE preserves the field and keeps biomass constant (no sink, no growth); NO-MOTILITY holds the cell&#39;s position but it still eats locally (uptake without displacement); ZERO-GRADIENT (uniform field, source off) abolishes directed chemotactic drift. Each removes exactly one mechanism.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "no-uptake \u0394biomass\u22480; no-motility \u0394position\u22480; zero-gradient \u0394position\u22480", "kind": "derived", "path": "biomass, position under {no-uptake, no-motility, zero-gradient}"}
+pass_if: {"kind": "mechanistic_ablation", "op": "controls_hold", "provenance": "MECHANISTIC_ABLATION (matched nulls, epsilon not 0.0 per the is_empty(Float,0.0)=True gotcha). Observed: no-uptake biomass 1.000 flat; no-motility position fixed at 16.0 with biomass still rising; zero-gradient no directed drift (tests/test_fig04_mechanistic.py::test_no_uptake_preserves_the_field, ::test_no_motility_means_no_displacement, ::test_zero_gradient_abolishes_directed_drift)", "value": "\u0394biomass\u003c1e-6 (no-uptake); |\u0394pos|\u003c1e-6 (no-motility); |\u0394pos|\u003c1 lattice (zero-gradient)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-chemotaxis-climbs-the-gradient"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-chemotaxis-climbs-the-gradient"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-chemotaxis-climbs-the-gradient</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig04-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The full cell moves UP the local gradient toward the in-domain source (lattice position falls 16 → ~1) and the nutrient it senses rises as it climbs. The motion is genuinely gradient-following, not a scripted path — it vanishes on a uniform field.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "position decreases by \u003e5 lattice units; sensed nutrient rises while climbing", "kind": "observable", "path": "obs.position, obs.local_conc"}
+pass_if: {"kind": "mechanistic_ablation", "op": "climbs", "provenance": "MECHANISTIC_ABLATION. Observed cell climbed 16.0 \u2192 0.6 lattice units with sensed nutrient rising 0.27 \u2192 ~2.0; the drift is absent under the zero-gradient control (tests/test_fig04_mechanistic.py::test_chemotaxis_climbs_the_gradient)", "value": "\u0394position \u003c \u22125 lattice units and local_conc rising"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-uptake-saturates"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-uptake-saturates"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-uptake-saturates</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig04-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Uptake follows saturating Michaelis–Menten kinetics v = Vmax·c/(Km+c) — bounded by Vmax at high concentration and ~linear at low concentration — not the baseline&#39;s unbounded proportional draw. Transport cannot exceed the carrier limit.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "uptake(c=100)\u2192Vmax; uptake(c\u226aKm) \u226a Vmax", "kind": "observable", "path": "uptake at c far above vs far below Km"}
+pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPIRICAL_COMPARISON to Michaelis\u2013Menten saturation. Observed uptake approaches Vmax=0.45 at high c and is \u003c10% of saturation far below Km \u2014 a real carrier limit, unlike the baseline\u0027s linear uptake_rate\u00b7local (tests/test_fig04_mechanistic.py::test_uptake_saturates_michaelis_menten)", "value": "uptake(100) \u2208 [0.99\u00b7Vmax, Vmax); uptake(0.03) \u003c 0.1\u00b7uptake(100)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1432,7 +1784,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledg
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a real 24-tick run — uptake is driven by and tracks the local sensed field, mass grows monotonically, the cell drifts up-gradient, the loop closes through the shared env store, and the mass↔uptake ledger balances exactly. A zero-field negative control confirms the environment is the causal driver. All values are deterministic (no RNG in the composite) and reproduce exactly.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig04-runnable): the sense→act legs run — uptake is driven by the local field, mass grows, the cell drifts up-gradient — but the cell&#39;s uptake is a scalar that never touches the field, so the loop is NOT truly closed and the &#34;correlation 1.0&#34; is an identity (behavioral verification, not feedback). MECHANISTIC (variant fig04-mechanistic): the loop is genuinely closed — Michaelis–Menten uptake is a real sink that carves a diffusing depletion well and imprints a footprint on the environment (mechanistic_ablation), the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to 9e-16 (invariant), chemotaxis climbs the gradient and vanishes without one, and matched-null controls isolate each arm. This is genuine mechanistic support for the cell–environment coupling claim. NOT yet empirical validation against a named nutrient&#39;s diffusivity or a measured chemotactic velocity — that is the stated next step.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1461,7 +1813,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledg
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/6 passed</span>
+        <span class="muted small">0/11 passed</span>
       </div>
       
     </div>
@@ -1555,7 +1907,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledg
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">This `fig04-runnable` composite is DIDACTIC / toy-real: a length-9 1-D lattice, a single cell, and hand-picked rate constants (uptake_rate=0.1, biomass_yield=0.5, migration_rate=0.1, traction_coef=0.05, D=0.2) chosen so sense/uptake/grow/drift are all legible within a 24-tick run — not fitted to a named nutrient, a measured chemotactic velocity, or a literature rate.</li><li style="margin:2px 0">The rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation. That study demonstrates the same env→interface coupling at a calibrated spatial resolution; its numbers are NOT restated here as this study&#39;s own.</li><li style="margin:2px 0">The environmental source process is effectively OFF (source_index=99 lies off the length-9 grid, injecting nothing); the gradient the cell responds to is the SEEDED initial condition relaxing under diffusion and being drawn down by uptake, not a maintained steady-state supply.</li><li style="margin:2px 0">Panel a&#39;s chemical/electrical/mechanical/barrier fields are reduced here to one real 1-D chemical grid plus a single scalar mechanical field relaxed toward a barrier equilibrium; the electrical field is not represented.</li><li style="margin:2px 0">`location` is a 1-D lattice index (a drift coordinate, not a physical position in µm) and `shape` is a scalar volume proxy; no 2-D/3-D morphology is represented.</li><li style="margin:2px 0">All numbers are exact regression pins that hold only while the composite spec and rate constants are held fixed; the composite is deterministic (no RNG), so they reproduce exactly run-to-run under that pinning.</li>
+        <li style="margin:2px 0">This `fig04-runnable` composite is DIDACTIC / toy-real: a length-9 1-D lattice, a single cell, and hand-picked rate constants (uptake_rate=0.1, biomass_yield=0.5, migration_rate=0.1, traction_coef=0.05, D=0.2) chosen so sense/uptake/grow/drift are all legible within a 24-tick run — not fitted to a named nutrient, a measured chemotactic velocity, or a literature rate.</li><li style="margin:2px 0">The rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation. That study demonstrates the same env→interface coupling at a calibrated spatial resolution; its numbers are NOT restated here as this study&#39;s own.</li><li style="margin:2px 0">The environmental source process is effectively OFF (source_index=99 lies off the length-9 grid, injecting nothing); the gradient the cell responds to is the SEEDED initial condition relaxing under diffusion and being drawn down by uptake, not a maintained steady-state supply.</li><li style="margin:2px 0">Panel a&#39;s chemical/electrical/mechanical/barrier fields are reduced here to one real 1-D chemical grid plus a single scalar mechanical field relaxed toward a barrier equilibrium; the electrical field is not represented.</li><li style="margin:2px 0">`location` is a 1-D lattice index (a drift coordinate, not a physical position in µm) and `shape` is a scalar volume proxy; no 2-D/3-D morphology is represented.</li><li style="margin:2px 0">All numbers are exact regression pins that hold only while the composite spec and rate constants are held fixed; the composite is deterministic (no RNG), so they reproduce exactly run-to-run under that pinning.</li><li style="margin:2px 0">Mechanistic variant (fig04-mechanistic) — scope and honest limits: it genuinely closes the sense/act loop (real field sink, in-domain source, Michaelis–Menten transport, chemotaxis, mass ledger), fixing the baseline&#39;s open loop and off-grid source. But it remains a 1-D lattice (distances in LATTICE units, dx=1, NOT physical microns), diffusion is explicit-Euler (stable only for D·dt/dx²≤0.5; run at 0.4), the source is a single in-domain cell, there is no 2-D/3-D morphology or multi-field (electrical/mechanical) coupling, and every rate constant is didactic — not fitted to a named nutrient&#39;s diffusivity, uptake Vmax/Km, or a measured chemotactic velocity. The rigorous spatial cousin remains `cell-environment-coupling` in draft-to-living-cell.</li>
       </ul>
     </div>
     
@@ -1617,7 +1969,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledg
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>

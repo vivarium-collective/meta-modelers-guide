@@ -565,7 +565,7 @@
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig01-runnable</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">5 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">10 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -584,27 +584,27 @@
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">PROCESS-READS-AND-WRITES-THROUGH-TYPED-PORTS</div>
+          <div class="ov-metric-k">MECH-TRANSPORT-CONSERVES-TOTAL</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">SOURCE-DRAINS-AND-SINK-FILLS-OVER-THE-RUN</div>
+          <div class="ov-metric-k">MECH-REWIRING-REDIRECTS-FLUX</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">TRAJECTORY-IS-THE-EXACT-GEOMETRIC-DECAY</div>
+          <div class="ov-metric-k">MECH-REVERSIBLE-REACHES-EQUILIBRIUM</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">SINK-OVERTAKES-SOURCE-AT-THE-CROSSOVER-TICK</div>
+          <div class="ov-metric-k">MECH-TYPED-PORTS-REJECT-INCOMPATIBLE</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">TOTAL-IS-CONSERVED</div>
+          <div class="ov-metric-k">MECH-IRREVERSIBLE-LIMIT-RECOVERS-GEOMETRIC-DECAY</div>
         </div>
         
       </div>
@@ -768,6 +768,114 @@
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = 5.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The paper&#39;s composition point is made measurable: ONE reusable, reversible, typed CompartmentTransport class, REWIRED without any code change, produces different dynamics. On a genuinely nested three-compartment place graph the SAME class on two edges gives a linear chain A↔B↔C that drives quantity out to the deep organelle (equilibrium A:B:C = 1:4:16) and a hub A↔B,A↔C that splits it evenly (1:4:4). Conservation of A+B+C holds to 2.2e-16 in both. Topology lives in the WIRING and controls the outcome — the essence of compositional modelling, shown on the engine rather than drawn.</span>
+            
+            <span class="finding-chip">via <code>mech-rewiring-redirects-flux</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> chain final A:B:C = 0.049:0.191:0.760 vs hub 0.111:0.444:0.444; total residual 2.2e-16 · 
+              
+              via test <a href="#bt-mech-rewiring-redirects-flux" onclick="_gotoStudyTab('audit','bt-mech-rewiring-redirects-flux');return false;"><code>mech-rewiring-redirects-flux</code></a> · 
+              in run <a href="#run-fig01-mechanistic"><code>fig01-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig01-mechanistic"><code>fig01-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: topology_controls_dynamics chain C &gt; 2·chain B; hub |C−B| &lt; 0.05; chain C &gt; 1.5·hub C</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">Types are load-bearing, and the baseline&#39;s famous 0.85^n is re-cast honestly. The transport ports are typed `concentration`: core.check accepts a float and REJECTS a structural string, and forcing the incompatible wiring breaks the run — a schema-level negative type-compatibility control. The reversible transport relaxes to its detailed-balance equilibrium (sink/source = k_f/k_r = 4), not a one-way drain. And the exact 0.85^n geometric decay the baseline reported as &#34;novel&#34; is correctly re-labelled: it is the k_reverse→0 limit of this transport (recovered to 5.5e-9) — EQUATION-SPECIFIC solver verification, not a scientific discovery.</span>
+            
+            <span class="finding-chip">via <code>mech-typed-ports-reject-incompatible</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> core.check(concentration, string)=False; hub equilibrium ratio 4.0; 0.85^n recovered to 5.5e-9 in the irreversible limit · 
+              
+              via test <a href="#bt-mech-typed-ports-reject-incompatible" onclick="_gotoStudyTab('audit','bt-mech-typed-ports-reject-incompatible');return false;"><code>mech-typed-ports-reject-incompatible</code></a> · 
+              in run <a href="#run-fig01-mechanistic"><code>fig01-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig01-mechanistic"><code>fig01-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: schema_rejects core.check(concentration, 1.0)=True; core.check(concentration, &#34;PDB:1ABC&#34;)=False; forced wiring raises</code></div>
             
             
             
@@ -1258,6 +1366,201 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-transport-conserves-total"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-transport-conserves-total"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-transport-conserves-total</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig01-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">With no external source/sink, the reversible transport only MOVES quantity: A+B+C is conserved to round-off on every step, in BOTH the chain and the hub topology. Conservation is a property of the equal-and-opposite port writes, demonstrated across a nested three-compartment place graph.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |A+B+C \u2212 total| over the run, both topologies", "kind": "observable", "path": "obs.A, obs.B, obs.C"}
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed max residual 2.2e-16 (machine precision) in both chain and hub (tests/test_fig01_mechanistic.py::test_transport_conserves_total)", "value": 1e-09}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-rewiring-redirects-flux"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-rewiring-redirects-flux"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-rewiring-redirects-flux</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig01-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The SAME CompartmentTransport class with IDENTICAL configs gives DIFFERENT dynamics purely from REWIRING — no change to the process implementation. The chain A↔B↔C drives quantity out to the deep compartment C (C ≫ B; equilibrium 1:4:16); the hub A↔B,A↔C splits it evenly (B ≈ C; 1:4:4). This is the paper&#39;s composition point made measurable: topology lives in the wiring and controls the outcome.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "chain C vs B and vs star C; hub B vs C", "kind": "derived", "path": "final A,B,C for chain vs star composites"}
+pass_if: {"kind": "mechanistic_ablation", "op": "topology_controls_dynamics", "provenance": "MECHANISTIC_ABLATION (topology counterfactual). Observed chain final A:B:C = 0.049:0.191:0.760, hub = 0.111:0.444:0.444 \u2014 same class, different wiring, different distribution (tests/test_fig01_mechanistic.py::test_rewiring_redirects_flux_same_class, ::test_same_class_reused_on_every_edge)", "value": "chain C \u003e 2\u00b7chain B; hub |C\u2212B| \u003c 0.05; chain C \u003e 1.5\u00b7hub C"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-reversible-reaches-equilibrium"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-reversible-reaches-equilibrium"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-reversible-reaches-equilibrium</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig01-mechanistic-star</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The transport is REVERSIBLE: each edge relaxes toward its detailed-balance equilibrium sink/source = k_forward/k_reverse = 4, rather than the baseline&#39;s one-way drain to zero. In the hub both leaves equilibrate at 4:1 against the centre.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "B/A and C/A at the end", "kind": "observable", "path": "obs.A, obs.B, obs.C (hub)"}
+pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRICAL_COMPARISON to the detailed-balance ratio k_f/k_r. Observed hub B/A = 4.0 and C/A = 4.0 (tests/test_fig01_mechanistic.py::test_reversible_reaches_equilibrium_ratio)", "value": "B/A \u2248 4.0 and C/A \u2248 4.0 (= k_forward/k_reverse)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-typed-ports-reject-incompatible"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-typed-ports-reject-incompatible"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-typed-ports-reject-incompatible</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>none</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Negative type-compatibility control: the transport ports are typed `concentration`, so a numeric store is accepted but a structural string is REJECTED by the schema — and forcing the incompatible wiring breaks the run. Types are load-bearing, not decorative.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "core.check(concentration, float)==True, core.check(concentration, string)==False; bad composite raises", "kind": "derived", "path": "core.check + forced bad wiring"}
+pass_if: {"kind": "mechanistic_ablation", "op": "schema_rejects", "provenance": "MECHANISTIC_ABLATION (negative control). core.check rejects a string for a concentration port while accepting a float, and wiring the port to a structure store raises at run (tests/test_fig01_mechanistic.py::test_typed_ports_reject_incompatible_store)", "value": "core.check(concentration, 1.0)=True; core.check(concentration, \"PDB:1ABC\")=False; forced wiring raises"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-irreversible-limit-recovers-geometric-decay"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-irreversible-limit-recovers-geometric-decay"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-irreversible-limit-recovers-geometric-decay</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig01-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Solver verification (NOT a discovery): in the k_reverse→0 limit the reversible transport reduces to the baseline&#39;s first-order decay, so a single edge at k_forward=0.15 reproduces store_a[n] ≈ 0.85^n. This re-casts the baseline&#39;s exact 0.85^n pin as equation-specific numerical verification.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "store_a[n] vs 0.85^n for n in 0..20", "kind": "observable", "path": "obs.store_a (k_reverse=1e-9)"}
+pass_if: {"kind": "numerical_convergence", "op": "converges", "provenance": "NUMERICAL_CONVERGENCE. Observed the irreversible limit recovers 0.85^n to 5.5e-9 \u2014 a solver/equation verification, not a scientific finding (tests/test_fig01_mechanistic.py::test_irreversible_limit_recovers_geometric_decay)", "value": "|store_a[n] \u2212 0.85^n| \u003c 1e-6 for all n"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1386,7 +1689,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All primary behavior tests pass on measured readouts from a real 20-tick run -- the process reads and writes through its typed ports with a conservative transfer, the source drains while the sink fills, the trajectory is the exact geometric decay store_a[n] == 0.85^n, the sink overtakes the source at tick 5, and the total is conserved at 1.0 to round-off every tick. Every pin is deterministic and reproduces run-to-run.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig01-runnable): the process reads/writes through typed ports with a conservative transfer, the source drains while the sink fills, and the exact 0.85^n trajectory reproduces run-to-run — this is implementation verification of a hand-written first-order equation, NOT a mechanism or a discovery. COMPOSITIONAL/MECHANISTIC (variant fig01-mechanistic): the paper&#39;s composition semantics are demonstrated on the engine — one reusable reversible typed CompartmentTransport REWIRED (not reimplemented) gives topology-controlled dynamics (chain 1:4:16 vs hub 1:4:4; mechanistic_ablation), conservation holds to 2.2e-16 (invariant), the typed ports reject an incompatible store (negative control), the reversible edge reaches its detailed-balance ratio (empirical_comparison), and the 0.85^n decay is re-cast as numerical_convergence. NOT a biologically calibrated transport model — fig-01 is a framework illustration with no calibrated cousin.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1415,7 +1718,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/5 passed</span>
+        <span class="muted small">0/10 passed</span>
       </div>
       
     </div>
@@ -1511,7 +1814,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">This is a didactic / toy-real composite -- the smallest honest process bigraph that looks like Fig 1 and plays forward. It is illustrative, NOT calibrated to a measured transport rate, concentration, or literature target. store_a and store_b are dimensionless scalars; k=0.15 and interval 1.0 are hand-chosen for legibility within a 20-tick run.</li><li style="margin:2px 0">The place graph is deliberately minimal -- two sibling scalar stores, not a deep containment hierarchy. It exhibits the process-graph-over-place-graph wiring that DEFINES a process bigraph at the smallest scale that still shows it, but not the paper&#39;s deeper nesting (molecules within compartments within a cell, Fig composition_framework b).</li><li style="margin:2px 0">Conservation is a property of the first-order update rule (the `source` and `sink` port writes are equal-and-opposite by construction), not an emergent balance between independent mechanisms.</li><li style="margin:2px 0">The dynamics are fully deterministic (no seed, no stochastic engine), so the exact geometric trajectory and the tick-5 crossover are pinned exactly rather than asserted by direction only -- honest for this toy, but note the exactness comes from the simplicity, not from calibration.</li><li style="margin:2px 0">fig-01 and fig-02 are figure-only carriers in the paper-figures investigation -- this study has no calibrated spatial cousin in the draft-to-living-cell investigation to cross-link (parent_studies is empty by design).</li>
+        <li style="margin:2px 0">This is a didactic / toy-real composite -- the smallest honest process bigraph that looks like Fig 1 and plays forward. It is illustrative, NOT calibrated to a measured transport rate, concentration, or literature target. store_a and store_b are dimensionless scalars; k=0.15 and interval 1.0 are hand-chosen for legibility within a 20-tick run.</li><li style="margin:2px 0">The place graph is deliberately minimal -- two sibling scalar stores, not a deep containment hierarchy. It exhibits the process-graph-over-place-graph wiring that DEFINES a process bigraph at the smallest scale that still shows it, but not the paper&#39;s deeper nesting (molecules within compartments within a cell, Fig composition_framework b).</li><li style="margin:2px 0">Conservation is a property of the first-order update rule (the `source` and `sink` port writes are equal-and-opposite by construction), not an emergent balance between independent mechanisms.</li><li style="margin:2px 0">The dynamics are fully deterministic (no seed, no stochastic engine), so the exact geometric trajectory and the tick-5 crossover are pinned exactly rather than asserted by direction only -- honest for this toy, but note the exactness comes from the simplicity, not from calibration.</li><li style="margin:2px 0">fig-01 and fig-02 are figure-only carriers in the paper-figures investigation -- this study has no calibrated spatial cousin in the draft-to-living-cell investigation to cross-link (parent_studies is empty by design).</li><li style="margin:2px 0">Mechanistic variant (fig01-mechanistic) — scope and honest limits: it demonstrates COMPOSITIONAL SEMANTICS (reusable + reversible + typed transport, topology-by-wiring, conservation, schema type-rejection), not a calibrated biophysical transport. The compartment quantities are dimensionless `concentration`-typed scalars, the rate constants (k_forward=0.2, k_reverse=0.05) are hand-chosen for a legible equilibrium, and the &#34;nesting&#34; is a three-level place graph for structure, not a physical membrane model. The topology-controlled equilibria (1:4:16 vs 1:4:4) are consequences of detailed balance, not fitted to any system; the point is that one process class, rewired, yields different dynamics — the essence of composition — shown to run.</li>
       </ul>
     </div>
     
@@ -1573,7 +1876,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>

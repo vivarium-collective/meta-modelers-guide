@@ -567,7 +567,7 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig11-evolution</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">5 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">12 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -586,27 +586,37 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">POPULATION-GROWS-TO-CAPACITY-BY-FISSION</div>
+          <div class="ov-metric-k">MECH-SELECTION-BEATS-NEUTRAL-DRIFT</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">SELECTION-OPTIMUM-DRIFTS</div>
+          <div class="ov-metric-k">MECH-HERITABILITY-NEAR-ONE</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MEAN-TRAIT-TRACKS-THE-DRIFTING-OPTIMUM</div>
+          <div class="ov-metric-k">MECH-NO-MUTATION-ERODES-VARIANCE</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">DIVISION-IS-BINARY-FISSION-PLACE-GRAPH-REWRITE</div>
+          <div class="ov-metric-k">MECH-ADAPTATION-FAILS-WHEN-OPTIMUM-TOO-FAST</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">TRAJECTORY-IS-DETERMINISTIC</div>
+          <div class="ov-metric-k">MECH-DEMOGRAPHIC-BOOKKEEPING</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-REPRODUCIBILITY-NOT-ROBUSTNESS</div>
+        </div>
+        
+        <div class="ov-metric ov-metric-pass">
+          <div class="ov-metric-v">PASS</div>
+          <div class="ov-metric-k">MECH-UPTAKE-EXECUTABLE-TRAIT-OPTIMUM</div>
         </div>
         
       </div>
@@ -822,6 +832,168 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
             </div>
             
             
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The §Evolution (Fig 11) adaptation claim is made QUANTITATIVE and distinguished from drift, over many seeds. In a real Wright–Fisher population (N=300), viability selection tracks the drifting optimum with a small bounded lag (0.39±0.04 over 40 seeds), while the matched NEUTRAL control (selection off) drifts away to a lag of 2.38±0.23 — a separation far larger than the across-seed spread. The realized heritability (parent–offspring regression) is 0.998, so the response obeys the breeder&#39;s equation R = h²·S, and a no-mutation control shows the variance eroding (0.21 → 0.001) when the source of variation is removed. This directly answers the review&#39;s point that the baseline&#39;s single-seed mean &#34;tracking an imposed optimum&#34; was expected by design: here the tracking is a statistical, controlled, heritability-grounded result.</span>
+            
+            <span class="finding-chip">via <code>mech-selection-beats-neutral-drift</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> selection lag 0.39±0.04 vs neutral 2.38±0.23 (40 seeds); h²=0.998; no-mutation variance 0.21→0.001 · 
+              
+              via test <a href="#bt-mech-selection-beats-neutral-drift" onclick="_gotoStudyTab('audit','bt-mech-selection-beats-neutral-drift');return false;"><code>mech-selection-beats-neutral-drift</code></a> · 
+              in run <a href="#run-fig11-mechanistic"><code>fig11-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig11-mechanistic"><code>fig11-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; mean(lag_sel) &lt; 0.4·mean(lag_neutral); separation &gt; 3·(σ_sel+σ_neu)</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">A first-principles failure prediction is stated and passes: because the per-generation response is bounded (R = h²·S, limited by standing variance), the tracking lag must grow with the optimum&#39;s drift rate and run away once drift exceeds what selection can supply (an adaptation-failure / evolutionary-rescue threshold). A 20-seed drift sweep confirms the lag rising monotonically 0.11 → 11.2 as drift rises 0.02 → 0.55. Honest caveats, per the review: the mean trait moving toward the optimum is EXPECTED BY DESIGN — the content is the quantitative conditions (heritability, mutation supply, drift rate) under which adaptation succeeds or fails, the stochastic spread across seeds, and the explicit failure regime. At the baseline&#39;s small N=12 the across-seed drift is large; this variant uses N=300 and many replicates precisely to separate signal from drift.</span>
+            
+            <span class="finding-chip">via <code>mech-adaptation-fails-when-optimum-too-fast</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-06</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> final lag 0.11 (drift 0.02) → 11.2 (drift 0.55), monotone runaway; single-seed = reproducibility only · 
+              
+              via test <a href="#bt-mech-adaptation-fails-when-optimum-too-fast" onclick="_gotoStudyTab('audit','bt-mech-adaptation-fails-when-optimum-too-fast');return false;"><code>mech-adaptation-fails-when-optimum-too-fast</code></a> · 
+              in run <a href="#run-fig11-mechanistic"><code>fig11-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig11-mechanistic"><code>fig11-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: monotone_runaway lag(drift) strictly increasing; lag(0.55) &gt; 5·lag(0.02)</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-confirms">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">✓</span>
+            <span class="finding-claim finding-statement">Fitness can be DERIVED from an executable metabolic trait rather than prescribed. In the uptake mode each individual&#39;s trait is an uptake investment a; growth is a saturating Michaelis–Menten uptake of a drifting resource minus a quadratic cost, g(a) = Vmax·a·R/(Km+a) − cost·a², whose interior optimum a* drifts endogenously with the resource. The evolved mean trait climbs and tracks a* at correlation &gt; 0.95 — the moving target is a consequence of a metabolic tradeoff, not an imposed Gaussian. Honest limits: still a single-locus asexual clonal model (no genome, recombination, epistasis), overdamped selection, and didactic rate constants; the quantitative lag in the uptake mode reflects a fast resource drift relative to the mutational supply.</span>
+            
+            <span class="finding-chip">via <code>mech-uptake-executable-trait-optimum</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-07</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">confirms literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> evolved mean tracks derived a* at corr &gt; 0.95 over 50 generations (25 seeds) · 
+              
+              via test <a href="#bt-mech-uptake-executable-trait-optimum" onclick="_gotoStudyTab('audit','bt-mech-uptake-executable-trait-optimum');return false;"><code>mech-uptake-executable-trait-optimum</code></a> · 
+              in run <a href="#run-fig11-mechanistic"><code>fig11-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig11-mechanistic"><code>fig11-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: tracks_derived_optimum Δmean &gt; 0.3 and corr(mean, a*) &gt; 0.95</code></div>
             
             
             
@@ -1312,6 +1484,279 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-selection-beats-neutral-drift"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-selection-beats-neutral-drift"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-selection-beats-neutral-drift</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig11-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Over 40 independent seeds, selection tracks the drifting optimum with a small bounded lag while the matched NEUTRAL control (sel→0, pure drift) wanders far away. The separation exceeds the across-seed spread — a statistical result, not a single-seed anecdote. This is the §Evolution (Fig 11) adaptation claim made quantitative.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mean(lag_selection) vs mean(lag_neutral); separation vs pooled spread", "kind": "derived", "path": "final lag |mean \u2212 optimum| across 40 seeds, selection vs neutral"}
+pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANISTIC_ABLATION (matched neutral null) over 40 seeds. Observed selection final lag 0.39\u00b10.04 vs neutral 2.38\u00b10.23 \u2014 selection clearly tracks, neutral drifts away (tests/test_fig11_mechanistic.py::test_selection_beats_neutral_drift_many_seeds)", "value": "mean(lag_sel) \u003c 0.4\u00b7mean(lag_neutral); separation \u003e 3\u00b7(\u03c3_sel+\u03c3_neu)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-heritability-near-one"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-heritability-near-one"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-heritability-near-one</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig11-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Under clonal inheritance plus Gaussian mutation the realized narrow-sense heritability — the parent–offspring regression slope — is ≈ 1, as quantitative-genetics theory predicts. This makes the response-to-selection quantitative (R = h²·S).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "slope \u2248 1", "kind": "derived", "path": "parent\u2013offspring trait regression slope (mean over 10 seeds)"}
+pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRICAL_COMPARISON to quantitative-genetics theory (clonal + mutation \u21d2 h\u00b2\u22481). Observed parent\u2013offspring slope 0.998 (tests/test_fig11_mechanistic.py::test_heritability_is_near_one)", "value": "|h\u00b2 \u2212 1| \u003c 0.05"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-no-mutation-erodes-variance"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-no-mutation-erodes-variance"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-no-mutation-erodes-variance</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig11-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Matched null (no-mutation): with mutation off, no new variation enters, so selection and drift erode the heritable variance toward zero and the population loses its capacity to respond. Isolates the role of mutation as the source of variation.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "var[-1] \u226a var[0]", "kind": "observable", "path": "trait variance over 30 generations, no-mutation control"}
+pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANISTIC_ABLATION (matched null, mutation off). Observed variance eroding 0.21 \u2192 0.001 over 30 generations without mutation (tests/test_fig11_mechanistic.py::test_no_mutation_erodes_variance)", "value": "var_final \u003c 0.1\u00b7var_initial"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-adaptation-fails-when-optimum-too-fast"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-adaptation-fails-when-optimum-too-fast"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-adaptation-fails-when-optimum-too-fast</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig11-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">A first-principles prediction: the per-generation response is bounded (R = h²·S, limited by standing variance), so the tracking lag must GROW with the optimum&#39;s drift rate and run away once drift exceeds what selection can supply — an adaptation-failure / evolutionary-rescue threshold. Predicted before running; verified by a drift sweep over many seeds.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "lag monotone increasing in drift; runs away at high drift", "kind": "derived", "path": "final lag vs optimum drift rate (20 seeds each)"}
+pass_if: {"kind": "prospective_prediction", "op": "monotone_runaway", "provenance": "PROSPECTIVE_PREDICTION. Observed final lag rising 0.11 (drift 0.02) \u2192 0.65 \u2192 3.9 \u2192 11.2 (drift 0.55) over 20-seed ensembles \u2014 monotone, with runaway at high drift (tests/test_fig11_mechanistic.py::test_adaptation_fails_when_optimum_moves_too_fast)", "value": "lag(drift) strictly increasing; lag(0.55) \u003e 5\u00b7lag(0.02)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-demographic-bookkeeping"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-demographic-bookkeeping"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-demographic-bookkeeping</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig11-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Newborn topology and demographics are well-formed: every generation holds exactly N individuals, and every offspring&#39;s parent index is a valid member of the previous generation (no phantom ancestors, no id reuse).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "size == N every generation; 0 \u2264 parent idx \u003c N", "kind": "derived", "path": "population size and parent-index validity each generation"}
+pass_if: {"kind": "invariant", "op": "bookkeeping_valid", "provenance": "INVARIANT. Observed population size conserved at N and all ancestry parent indices in range across 25 generations (tests/test_fig11_mechanistic.py::test_demographic_bookkeeping_conserved)", "value": "size==N each gen; all parent indices in [0,N)"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-reproducibility-not-robustness"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-reproducibility-not-robustness"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-reproducibility-not-robustness</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig11-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The same seed reproduces an identical trajectory (reproducibility), but DIFFERENT seeds give different realizations whose across-seed spread is non-trivial — so a single seeded rerun verifies reproducibility, NOT robustness. This directly answers the review&#39;s point about the baseline&#39;s single-seed determinism control.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "same seed identical; std across 20 seeds \u003e 0", "kind": "derived", "path": "same-seed trajectory equality; across-seed spread of final mean"}
+pass_if: {"kind": "invariant", "op": "reproducible_but_variable", "provenance": "INVARIANT + robustness note. Same seed reproduces exactly; across-seed spread of the final mean is non-trivial \u2014 reproducibility \u2260 robustness (tests/test_fig11_mechanistic.py::test_same_seed_reproduces_exactly_but_seeds_differ)", "value": "same-seed allclose; std(final mean over 20 seeds) \u003e 1e-3"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-uptake-executable-trait-optimum"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-uptake-executable-trait-optimum"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-uptake-executable-trait-optimum</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig11-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Optional executable-trait fitness: when fitness is DERIVED from a Michaelis–Menten uptake minus a quadratic cost, the optimal uptake investment a* is an EMERGENT consequence of the drifting resource (not an imposed Gaussian), and the evolved mean trait climbs with it (correlation &gt; 0.95 over generations).</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mean trait climbs; corr(mean, a*) \u003e 0.95", "kind": "derived", "path": "evolved mean trait vs derived metabolic optimum a* over 50 generations (25 seeds)"}
+pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "provenance": "MECHANISTIC_ABLATION (fitness from an executable metabolic tradeoff). Observed the evolved mean climbing and tracking the endogenous optimum a* at correlation \u003e 0.95 (tests/test_fig11_mechanistic.py::test_uptake_mode_tracks_derived_optimum)", "value": "\u0394mean \u003e 0.3 and corr(mean, a*) \u003e 0.95"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1440,7 +1885,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All four primary behavior tests pass on measured readouts from a real 40-generation run -- the population grows to capacity by binary fission and never exceeds it, the selection optimum drifts forward, the mean trait closes on the drifting optimum, and division replaces each parent with two fresh daughters. The composite is fixed-seed (seed=1), so the trajectory and its pinned integers reproduce exactly; the positive determinism control confirms it.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig11-evolution): all four primary tests pass on a real 40-generation run — the population grows to capacity by binary fission and never exceeds it, the optimum drifts, the mean trait closes on it, and division replaces each parent with two fresh daughters. But this is a SINGLE seed at N=12, where drift dominates and mean-tracking is expected by design — behavioral verification / reproducibility, not robustness. MECHANISTIC (variant fig11-mechanistic): a real Wright–Fisher population (N=300) quantifies the claim over MANY seeds — selection tracks the optimum (lag 0.39±0.04) where the matched neutral control drifts away (2.38±0.23); realized heritability ≈ 1 so the response obeys R=h²S; a no-mutation control erodes the variance; adaptation fails predictably when drift outruns the response (lag 0.11→11.2 over a drift sweep); and fitness can be derived from an executable metabolic tradeoff. This is genuine, controlled, statistical mechanistic support. NOT yet empirical validation against a named organism&#39;s mutation rate, selection coefficient, or measured heritability — that is the stated next step.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1469,7 +1914,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/5 passed</span>
+        <span class="muted small">0/12 passed</span>
       </div>
       
     </div>
@@ -1564,7 +2009,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">This `fig11-evolution` composite is didactic / toy-real -- a minimal Darwinian loop built to look like Fig 11 and play forward, NOT calibrated to any literature population-genetics target. The selection strength (0.6), mutation size (0.28), division probability (0.35), carrying capacity (12), optimum start (1.0) and drift (0.02/generation) are plausible hand-tuned magnitudes chosen to make variation -&gt; selection -&gt; adaptation legible within a 40-generation run, not fitted to a named organism, trait, or fitness landscape.</li><li style="margin:2px 0">The trait is a single abstract heritable scalar and fitness a single Gaussian kernel on trait&lt;-&gt;optimum distance -- no genotype, genome, recombination, epistasis, or standing variation beyond what mutation injects at each division. One locus, asexual binary fission.</li><li style="margin:2px 0">Division is binary fission with parent replacement (a dividing cell is deleted and replaced by two mutated daughters); the founder does not persist once it divides. This is a deliberate modeling choice (each division edits the place graph), not a budding/overlapping-generations scheme.</li><li style="margin:2px 0">Population size is bounded by a hard carrying capacity (12) with purely selective, capacity-triggered death -- no age, no random death, no resource-depletion feedback (the niche `resource` field is carried but not consumed).</li><li style="margin:2px 0">The composite is fixed-seed (seed=1), so the entire trajectory -- sizes, mean trait, optimum, and daughter-node ids -- is deterministic and reproduces exactly; the pinned integers are true regression pins under that seed.</li><li style="margin:2px 0">The rigorous cousin of this figure is `development-and-evolution` in the `draft-to-living-cell` investigation; this study does NOT restate that cousin&#39;s numbers as its own.</li>
+        <li style="margin:2px 0">This `fig11-evolution` composite is didactic / toy-real -- a minimal Darwinian loop built to look like Fig 11 and play forward, NOT calibrated to any literature population-genetics target. The selection strength (0.6), mutation size (0.28), division probability (0.35), carrying capacity (12), optimum start (1.0) and drift (0.02/generation) are plausible hand-tuned magnitudes chosen to make variation -&gt; selection -&gt; adaptation legible within a 40-generation run, not fitted to a named organism, trait, or fitness landscape.</li><li style="margin:2px 0">The trait is a single abstract heritable scalar and fitness a single Gaussian kernel on trait&lt;-&gt;optimum distance -- no genotype, genome, recombination, epistasis, or standing variation beyond what mutation injects at each division. One locus, asexual binary fission.</li><li style="margin:2px 0">Division is binary fission with parent replacement (a dividing cell is deleted and replaced by two mutated daughters); the founder does not persist once it divides. This is a deliberate modeling choice (each division edits the place graph), not a budding/overlapping-generations scheme.</li><li style="margin:2px 0">Population size is bounded by a hard carrying capacity (12) with purely selective, capacity-triggered death -- no age, no random death, no resource-depletion feedback (the niche `resource` field is carried but not consumed).</li><li style="margin:2px 0">The composite is fixed-seed (seed=1), so the entire trajectory -- sizes, mean trait, optimum, and daughter-node ids -- is deterministic and reproduces exactly; the pinned integers are true regression pins under that seed.</li><li style="margin:2px 0">The rigorous cousin of this figure is `development-and-evolution` in the `draft-to-living-cell` investigation; this study does NOT restate that cousin&#39;s numbers as its own.</li><li style="margin:2px 0">Mechanistic variant (fig11-mechanistic) — scope and honest limits: it adds the quantitative, many-seed population genetics the baseline lacked (real Wright–Fisher at N=300, neutral and no-mutation controls, realized heritability, a drift-rate adaptation-failure sweep, and an optional executable-trait fitness), directly addressing the single-seed/N=12/expected-by-design critique. But it is a SINGLE-LOCUS, ASEXUAL, CLONAL model: one abstract heritable scalar, no genome/recombination/epistasis/linkage, viability selection only (no explicit demography beyond fixed N), and all rate constants (mutation σ, selection strength, drift, cost) are didactic — NOT fitted to a named organism&#39;s mutation rate, selection coefficient, or measured heritability. The mean trait tracking the optimum is expected by model design; the evidence is the controlled, many-seed quantification of WHEN and HOW WELL it does so, not that it does so at all. Empirical calibration remains the stated next step.</li>
       </ul>
     </div>
     
@@ -1591,8 +2036,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>5</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">5 PASS</span> ·
+        <strong>7</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">7 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('audit')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests (in Audit) →</a>.
@@ -1626,7 +2071,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>

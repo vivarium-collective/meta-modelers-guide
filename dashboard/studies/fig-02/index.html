@@ -571,7 +571,7 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
       <div class="ctr-meta">
         <div class="ctr-meta-row"><span class="ctr-meta-k">Model</span> <code>fig02-runnable</code><a class="ov-tablink" href="#" onclick="_setStudyTab('compose');return false;">model →</a></div>
         
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">6 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Measures</span> <span class="ctr-meta-item">10 behavior tests</span><a class="ov-tablink" href="#" onclick="_setStudyTab('audit');return false;">see Tests →</a></div>
         
       </div>
     </div>
@@ -590,32 +590,22 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">FAST-CLOCK-OUTPACES-SLOW-CLOCK</div>
+          <div class="ov-metric-k">MECH-INPUT-OUTPUT-LEDGER-CLOSES</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">FAST-POOL-IS-A-SAWTOOTH</div>
+          <div class="ov-metric-k">MECH-EULER-CONVERGENCE</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">BIOMASS-ADVANCES-MONOTONICALLY-ON-SLOW-CLOCK</div>
+          <div class="ov-metric-k">MECH-MULTIRATE-IS-NOT-ACCURACY</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MASS-CONSERVED-ACROSS-TIMESCALES</div>
-        </div>
-        
-        <div class="ov-metric ov-metric-pass">
-          <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">FAST-PROCESS-ADDS-EACH-TICK</div>
-        </div>
-        
-        <div class="ov-metric ov-metric-pass">
-          <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">SLOW-CONVERSION-CONSERVES-WHAT-IT-MOVES</div>
+          <div class="ov-metric-k">MECH-SCHEDULE-ORDER-INVARIANT</div>
         </div>
         
       </div>
@@ -779,6 +769,114 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
             
             
             <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: = molecules + biomass == time at every tick; final 8.12 + 11.88 == 20.0</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">The baseline&#39;s &#34;molecules + biomass == elapsed time&#34; is a CUMULATIVE EXTERNAL-INPUT budget, not closed-system mass conservation — the mechanistic variant makes this explicit and honest. With a genuine first-order turnover routing mass to a waste sink, the full ledger cumulative_input = ΔpoolMetabolite + Δbiomass + Δwaste closes to 1.8e-15 on every step, while pool+biomass reaches only ~2.2 of the 20.0 input (waste carries ~17.8). So the quantity that &#34;equals time&#34; in the baseline is the input, not a conserved internal total; biomass is merely the yield-fraction of throughput.</span>
+            
+            <span class="finding-chip">via <code>mech-input-output-ledger-closes</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-04</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> ledger residual ≤1.8e-15; final pool+biomass ≈2.2 vs cumulative input 20.0; waste ~17.8 · 
+              
+              via test <a href="#bt-mech-input-output-ledger-closes" onclick="_gotoStudyTab('audit','bt-mech-input-output-ledger-closes');return false;"><code>mech-input-output-ledger-closes</code></a> · 
+              in run <a href="#run-fig02-mechanistic"><code>fig02-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig02-mechanistic"><code>fig02-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: &lt; 1e-09</code></div>
+            
+            
+            
+            
+            
+            
+          </div>
+        </details>
+      </div>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="finding-card finding-kind-computational finding-status-novel">
+        <details class="finding-details">
+          <summary class="finding-row">
+            <span class="finding-status-glyph">◆</span>
+            <span class="finding-claim finding-statement">Multirate SCHEDULING and numerical ACCURACY are distinct axes — the baseline conflated them. Refining the whole scheme converges in the stiff metabolite pool with L1 error 2.27→0.011 as Δt halves (~O(Δt), first-order Euler): accuracy is a measurable convergence property. Separately, the pool error is controlled by the FAST clock — a coarse fast clock (r·Δt=1.5) overshoots the quasi-steady pool in the transient while a fine fast clock tracks the reference, independent of the slow clock. That is exactly the value of multirate: a stiff process resolved on its own fast clock stays accurate even while a smooth process uses a coarse clock. The scheduler is also well-posed: swapping the process firing order leaves the trajectory identical (&lt;1e-12), because both read the pool at the tick boundary and return summed, commuting deltas.</span>
+            
+            <span class="finding-chip">via <code>mech-euler-convergence</code></span>
+            
+          </summary>
+          <div class="finding-drawer">
+            <div class="finding-header">
+              <span class="finding-id">F-05</span>
+              <span class="finding-kind">computational</span>
+              <span class="finding-status-text">novel literature</span>
+            </div>
+            
+            
+            <div class="finding-evidence">
+              <strong>observed:</strong> L1 pool error 2.27→0.011 as Δt halves; fast-clock refinement cuts transient error; order-swap identical &lt;1e-12 · 
+              
+              via test <a href="#bt-mech-euler-convergence" onclick="_gotoStudyTab('audit','bt-mech-euler-convergence');return false;"><code>mech-euler-convergence</code></a> · 
+              in run <a href="#run-fig02-mechanistic"><code>fig02-mechanistic</code></a>
+              
+              
+            </div>
+            
+            
+            <div class="finding-traceability" style="font-size:0.84em;color:#475569;padding:4px 10px;margin:4px 0">
+              
+              
+              runs: <a href="#run-fig02-mechanistic"><code>fig02-mechanistic</code></a>
+            </div>
+            
+            
+            
+            <div class="pass_if-band muted small" style="font-size:0.82em;padding:2px 10px">judged against <code>pass_if: monotone_decrease error falls monotonically and by &gt;20× from coarsest to finest</code></div>
             
             
             
@@ -1308,6 +1406,162 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       
     </li>
     
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-input-output-ledger-closes"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-input-output-ledger-closes"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-input-output-ledger-closes</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig02-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">The explicit input-output ledger closes exactly on every step: cumulative_input = ΔmetabolitePool + Δbiomass + Δwaste. This is the honest replacement for the baseline&#39;s &#34;molecules + biomass == time&#34; — biomass is only the yield-fraction of throughput, and the waste sink (turnover + conversion loss) carries the balance, so pool+biomass is NOT the budget and NOT closed-system conservation.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |cumulative_input \u2212 (\u0394M + \u0394biomass + \u0394waste)| over the run; and (M+biomass) \u226a cumulative_input", "kind": "derived", "path": "obs.cumulative_input, obs.metabolite, obs.biomass, obs.waste"}
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed ledger residual \u2264 1.8e-15 over the 20-time-unit run; final M+biomass \u2248 2.2 vs cumulative input 20.0 (waste carries ~17.8). The baseline \"pool+biomass==time\" is an input-budget artefact, not conservation (tests/test_fig02_mechanistic.py::test_input_output_ledger_closes_every_step, ::test_pool_plus_biomass_is_not_closed_conservation, ::test_no_mass_created_at_coincident_event_boundaries)", "value": 1e-09}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-euler-convergence"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-euler-convergence"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-euler-convergence</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig02-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Refining the whole scheme (both clocks scaled together) converges to a fine-step reference: the stiff metabolite pool&#39;s L1 trajectory error falls monotonically toward zero, ~O(Δt) (first-order explicit Euler). Numerical ACCURACY is thus a distinct, measurable axis from multirate scheduling.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "L1 pool error at integer times vs \u0394t, over \u0394t \u2208 {1.0, 0.5, 0.25, 0.125, 0.0625}", "kind": "derived", "path": "metabolite trajectory vs fine reference (\u0394t=0.01)"}
+pass_if: {"kind": "numerical_convergence", "op": "monotone_decrease", "provenance": "NUMERICAL_CONVERGENCE. Observed L1 pool error 2.27 \u2192 0.10 \u2192 0.052 \u2192 0.025 \u2192 0.011 as \u0394t halves (roughly slope-1 O(\u0394t)) (tests/test_fig02_mechanistic.py::test_euler_convergence_when_both_clocks_refined)", "value": "error falls monotonically and by \u003e20\u00d7 from coarsest to finest"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-multirate-is-not-accuracy"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-multirate-is-not-accuracy"
+        data-classification="primary"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-primary">primary</span>
+        <strong style="font-size: 0.9em;">mech-multirate-is-not-accuracy</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig02-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Multirate scheduling (which clock fires when) is NOT the same as numerical accuracy. The pool error is controlled by the FAST clock (the stiff turnover): with a coarse fast clock (r·Δt=1.5) the pool overshoots in the transient; refining only the fast clock cuts the error even at a fixed coarse slow clock. A coarse schedule can still be accurate if the stiff process is resolved on its own clock — the point of multirate.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "|M(\u0394t_fast=1.0) \u2212 M_ref| vs |M(\u0394t_fast=0.1) \u2212 M_ref|, slow clock fixed", "kind": "observable", "path": "obs.metabolite at an early transient time (t\u22482)"}
+pass_if: {"kind": "mechanistic_ablation", "op": "fast_clock_improves", "provenance": "MECHANISTIC_ABLATION. Observed the fast clock controls the stiff-transient pool error independently of the slow clock, demonstrating scheduling \u2260 accuracy (tests/test_fig02_mechanistic.py::test_resolving_fast_clock_improves_pool_accuracy)", "value": "refining the fast clock reduces the transient pool error at fixed \u0394t_slow"}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="expected-behavior-item" id="bt-mech-schedule-order-invariant"
+        data-test-kind="behavioral"
+        
+        data-pytest-node="mech-schedule-order-invariant"
+        data-classification="diagnostic"
+        data-result="pending"
+        style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
+      
+        
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="classification-pill classification-diagnostic">diagnostic</span>
+        <strong style="font-size: 0.9em;">mech-schedule-order-invariant</strong>
+        
+        <span class="muted" style="font-size:0.78em">requires: <code>fig02-mechanistic</code></span>
+        
+      </div>
+      <div style="margin-top: 6px; font-size: 0.95em;">Both processes read the shared pool at the tick boundary and return summed deltas, so coincident fast/slow updates are SYNCHRONOUS: swapping their order in the schedule leaves the trajectory identical to machine precision. A well-posed scheduler, not an order-sensitive artefact.</div>
+      
+      
+      <details style="margin-top: 6px; font-size: 0.82em;">
+        <summary class="muted" style="cursor: pointer;">Assertion</summary>
+        
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |traj(order A) \u2212 traj(order B)| over metabolite/biomass/waste", "kind": "derived", "path": "trajectory with fast/slow node order swapped"}
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed identical trajectories (\u003c 1e-12) under swapped process order \u2014 synchronous summed deltas commute (tests/test_fig02_mechanistic.py::test_schedule_order_is_invariant)", "value": 1e-12}</pre>
+      </details>
+      
+      
+      
+      
+    </li>
+    
   </ul>
   
   </div>
@@ -1436,7 +1690,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
           <span class="narrative-label">Empirical basis</span>
           <textarea class="narrative-input narrative-textarea" rows="2"
                     data-narrative-path="conclusion_verdicts.biological_validation.basis"
-                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">All four primary behavior tests pass on measured readouts from the 20-tick run -- the fast clock outpaces the slow clock (20 vs 3 changes), the fast pool is a sawtooth, biomass advances monotonically in a coarse staircase, and mass is conserved through the shared store across both timescales (molecules + biomass == elapsed time at every tick). The two unit controls (fast adds each tick, slow conversion conserves what it moves) pass independently. Every value is fixed and deterministic -- no RNG -- so all pins reproduce exactly run to run. &#34;Biological validation&#34; here is didactic -- the composite demonstrates the orchestration MECHANISM, not a calibrated biological magnitude.</textarea>
+                    placeholder="e.g. atp_fraction = 0.997, outside Boesen 2024 band [0.2, 0.5].">Reported in two layers, per the review. BEHAVIORAL (baseline fig02-runnable): the multirate signature runs — fast clock outpaces slow (20 vs 3 changes), sawtooth pool, coarse biomass staircase. BUT its &#34;molecules + biomass == elapsed time&#34; is a cumulative-input artefact, not conservation — behavioral verification, and the conservation phrasing was overstated. MECHANISTIC (variant fig02-mechanistic): the honest input-output ledger cumulative_input = ΔM + Δbiomass + Δwaste closes to 1.8e-15 with waste carrying most throughput (invariant); numerical accuracy is a measured O(Δt) convergence of the stiff pool, distinct from scheduling (numerical_convergence + mechanistic_ablation); and the scheduler is order-invariant (invariant). This supplies genuine mechanistic support for the orchestration claim and corrects the conservation overstatement. NOT biological calibration — the rates/intervals are didactic.</textarea>
         </label>
         <label class="narrative-row">
           <span class="narrative-label">Explanatory gain</span>
@@ -1465,7 +1719,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/6 passed</span>
+        <span class="muted small">0/10 passed</span>
       </div>
       
     </div>
@@ -1559,7 +1813,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">This composite is didactic / toy-real -- FastProduction (rate 1.0), SlowConversion (yield_frac 0.6), the intervals (1.0 and 5.0), and the 20-tick run length are hand-picked magnitudes chosen to make the two timescales legible in one short run, not fitted to any named biological process, rate, or measurement. molecules and biomass are abstract shared-store amounts, not calibrated concentrations or masses. It demonstrates the orchestration MECHANISM, not a biological magnitude.</li><li style="margin:2px 0">Only panel (a) -- multi-timestepping through a shared store -- is demonstrated at runtime. Panel (b) (workflow orchestration as a dependency DAG) and panel (c) (event-driven graph rewrites -- division, engulfment, bursting) are structural / schematic in the paper and are deliberately NOT part of this runnable composite. This study makes no runtime claim about (b) or (c).</li><li style="margin:2px 0">The exact numeric values pinned here (final split 8.12 + 11.88, biomass levels 3.0 / 7.2 / 11.88, the 20-vs-3 change counts) are regression pins over the current process configs and intervals; changing rate, yield_frac, or either interval would shift them. The DIRECTIONAL claims -- fast outpaces slow, sawtooth, monotone staircase, and conservation (molecules + biomass == elapsed time) -- are the robust, a-priori predictions that hold for any such fast/slow pair through one shared store.</li><li style="margin:2px 0">This study is figure-only -- it has no calibrated spatial or biological cousin in the sibling `draft-to-living-cell` investigation. It stands as a minimal executable demonstration of the orchestration figure&#39;&#39;s panel (a), not a scaled-up model.</li>
+        <li style="margin:2px 0">This composite is didactic / toy-real -- FastProduction (rate 1.0), SlowConversion (yield_frac 0.6), the intervals (1.0 and 5.0), and the 20-tick run length are hand-picked magnitudes chosen to make the two timescales legible in one short run, not fitted to any named biological process, rate, or measurement. molecules and biomass are abstract shared-store amounts, not calibrated concentrations or masses. It demonstrates the orchestration MECHANISM, not a biological magnitude.</li><li style="margin:2px 0">Only panel (a) -- multi-timestepping through a shared store -- is demonstrated at runtime. Panel (b) (workflow orchestration as a dependency DAG) and panel (c) (event-driven graph rewrites -- division, engulfment, bursting) are structural / schematic in the paper and are deliberately NOT part of this runnable composite. This study makes no runtime claim about (b) or (c).</li><li style="margin:2px 0">The exact numeric values pinned here (final split 8.12 + 11.88, biomass levels 3.0 / 7.2 / 11.88, the 20-vs-3 change counts) are regression pins over the current process configs and intervals; changing rate, yield_frac, or either interval would shift them. The DIRECTIONAL claims -- fast outpaces slow, sawtooth, monotone staircase, and conservation (molecules + biomass == elapsed time) -- are the robust, a-priori predictions that hold for any such fast/slow pair through one shared store.</li><li style="margin:2px 0">This study is figure-only -- it has no calibrated spatial or biological cousin in the sibling `draft-to-living-cell` investigation. It stands as a minimal executable demonstration of the orchestration figure&#39;&#39;s panel (a), not a scaled-up model.</li><li style="margin:2px 0">Mechanistic variant (fig02-mechanistic) — scope and honest limits: it corrects the baseline&#39;s conservation overstatement (the ledger shows pool+biomass is only part of the input budget) and separates scheduling from accuracy, but it is still a 2-process linear ODE system integrated by explicit Euler on a 1-D abstract pool. The turnover/biomass rates, yields, and intervals are didactic (not a named metabolic timescale); the convergence is only first-order O(Δt); and panels (b) workflow-DAG and (c) event rewrites remain out of scope. &#34;Waste&#34; is an abstract loss sink, not a specified byproduct.</li>
       </ul>
     </div>
     
@@ -1621,7 +1875,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1eb3c59f3ae5fa0ff2af57ca12aed6089e22da8d", "branch": "main", "lockfile": "uv.lock@584148cbfbdd", "generated_at": "2026-10-24 16:34 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/dashboard", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "dd9eae187bceea4a513013616341d0e59544c639", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/dd9eae187bceea4a513013616341d0e59544c639", "branch": "main", "lockfile": "uv.lock@a0412da03595", "generated_at": "2026-10-25 13:18 UTC"} };</script>
 <script src="/meta-modelers-guide/dashboard/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/dashboard/assets/toast.js"></script>
 <script>
