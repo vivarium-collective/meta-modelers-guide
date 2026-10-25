@@ -58,6 +58,9 @@ UNITS: dict[str, str] = {
     "information":     "bits",
     "length":          "m",
     "time":            "s",
+    # mechanistic rotary / power quantities (Fig 6 mechanistic variant)
+    "power":           "W (J·s⁻¹)",
+    "angle":           "rad",
 }
 
 # structural/string interface variables (no numeric unit).

@@ -1,0 +1,49 @@
+{
+  "name": "Disintegration — Adaptive Grain Refinement on a Quantified Inadequacy Signal",
+  "description": "Fig 5 mechanistic variant. The cell's biological damage state (soluble + aggregated misfolded protein) evolves continuously and independently of the grain. A StressRamp5 drives stress up; GrainAdaptiveCell runs the cheap COARSE grain (linear, aggregation neglected) while a computable inadequacy estimator — the fraction of the damage dynamics carried by the neglected autocatalytic aggregation term — stays below tolerance, then REFINES to the FINE grain (resolving soluble vs aggregated protein, capturing the viability collapse the coarse model cannot see). The coarse→fine map is conserving (prolongation is identity on the shared damage pools), so neither total damage nor biomass jumps at the switch (handover_error=0). mode=adaptive here; mode=coarse / mode=fine are the control arms. This is the mechanistic variant of fig05-grain-runnable (kept as the didactic baseline).",
+  "default_n_steps": 36,
+  "requires": {"processes": ["StressRamp5", "GrainAdaptiveCell"]},
+  "provenance": {"figure": "fig05-disintegration", "environment": "fig05-mechanistic"},
+  "state": {
+    "stressor": {
+      "_type": "process", "address": "local:StressRamp5", "interval": 1.0,
+      "config": {"stress0": 0.15, "stress_rate": 0.03, "stress_max": 1.0},
+      "inputs": {},
+      "outputs": {"stress": ["physiology", "stress"]}
+    },
+    "cell": {
+      "_type": "process", "address": "local:GrainAdaptiveCell", "interval": 1.0,
+      "config": {"mode": "adaptive", "k_stress": 0.045, "k_repair": 0.030, "energy": 1.0,
+                 "k_agg": 0.55, "w_sol": 0.35, "w_agg": 1.7, "mu": 0.12, "inadequacy_tol": 0.20},
+      "inputs": {"stress": ["physiology", "stress"], "m_sol": ["damage", "m_sol"],
+                 "m_agg": ["damage", "m_agg"], "biomass": ["cell_state", "biomass"]},
+      "outputs": {"m_sol": ["damage", "m_sol"], "m_agg": ["damage", "m_agg"],
+                  "biomass": ["cell_state", "biomass"], "damage": ["signals", "damage"],
+                  "viability": ["signals", "viability"], "active_grain": ["signals", "active_grain"],
+                  "inadequacy": ["signals", "inadequacy"], "handover_error": ["signals", "handover_error"]}
+    },
+    "physiology": {"stress": {"_type": "concentration", "_default": 0.0}},
+    "damage": {"m_sol": {"_type": "concentration", "_default": 0.0},
+               "m_agg": {"_type": "concentration", "_default": 0.0}},
+    "cell_state": {"biomass": {"_type": "mass", "_default": 1.0}},
+    "signals": {
+      "damage": {"_type": "concentration", "_default": 0.0},
+      "viability": {"_type": "viability", "_default": 0.0},
+      "active_grain": {"_type": "fraction", "_default": 0.0},
+      "inadequacy": {"_type": "fraction", "_default": 0.0},
+      "handover_error": {"_type": "concentration", "_default": 0.0}
+    },
+    "emitter": {
+      "_type": "step", "address": "local:RAMEmitter",
+      "config": {"emit": {"stress": "concentration", "m_sol": "concentration", "m_agg": "concentration",
+                          "damage": "concentration", "viability": "viability", "biomass": "mass",
+                          "active_grain": "fraction", "inadequacy": "fraction",
+                          "handover_error": "concentration", "time": "float"}},
+      "inputs": {"stress": ["physiology", "stress"], "m_sol": ["damage", "m_sol"],
+                 "m_agg": ["damage", "m_agg"], "damage": ["signals", "damage"],
+                 "viability": ["signals", "viability"], "biomass": ["cell_state", "biomass"],
+                 "active_grain": ["signals", "active_grain"], "inadequacy": ["signals", "inadequacy"],
+                 "handover_error": ["signals", "handover_error"], "time": ["global_time"]}
+    }
+  }
+}

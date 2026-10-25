@@ -7,6 +7,7 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Provisional  # self-maintenance isolated by two independent process-knockout controls (metabolism KO; gene-expression KO), deterministic (reproduces exactly), all pools strictly positive/bounded over 40 ticks; kept Provisional -- toy-real and uncalibrated (no literature flux, no spatial membrane), so no promotion without the scientific-validation gate.
+confidence_basis: 'Calibrated off Provisional. BASELINE (fig08-runnable): compositional dependence is demonstrated by knockout, but the flat pools only accumulate -- behavioral verification, held at Medium. MECHANISTIC VARIANT (fig08-mechanistic, scientific-review revision) materially raises mechanistic support: a cell with a membrane boundary, first-order turnover, ATP-costed repair and viability shows persistence at a steady state, component replacement, recovery from a membrane injury (viability dip 0.71 -> 0.92), and viability collapse to 0 when any one of import/metabolism/expression/repair is knocked out or the medium is not replenished. The study is still held at Provisional because the membrane is a scalar area (not a spatial self-produced boundary), the viability target and rate constants are scripted, and nothing is calibrated to a named organism or measured turnover/repair rate -- so this is organizational self-maintenance, not autopoiesis in the strong sense (finding F-06).'
 question: 'Is the paper''s Fig. self_organized_process (§Composition of the cellular interface) executable rather than merely drawn -- does the `fig08-runnable` composite actually demonstrate that a cellular interface EMERGES when molecular processes are compositionally coupled so they maintain one another (metabolism synthesizes the components the membrane and replication need, containment/expression maintain the pools metabolism needs), so that the coupled system holds a sustained, far-from-equilibrium balance rather than each process running down independently?'
 biological_summary: 'This study makes Fig. self_organized_process runnable. The paper''s §Composition of the cellular interface asks how molecular processes give rise to a cellular interface: at the molecular level, reactions, transport, and template-directed synthesis act on shared variables, and "a cellular interface emerges when these processes are compositionally coupled so that they maintain one another" -- membrane structure depends on metabolism that synthesizes lipids, metabolism depends on containment to maintain concentrations, and template-directed synthesis maintains the molecular components that realize these processes over time (caption a: self-organized processes -- autocatalysis, membrane formation, template replication -- combine into a self-maintaining organization; caption b: a minimal cell composition diagram -- metabolism, containment, replication supporting each other through shared components).
 
@@ -26,7 +27,11 @@ baseline:
 - name: fig08-runnable
   composite: meta_modelers_guide.composites.fig08-runnable
   params: {}
-variants: []
+variants:
+- name: fig08-mechanistic
+  composite: meta_modelers_guide.composites.fig08-mechanistic
+  params: {}
+  rationale: 'Real-mechanism upgrade (scientific-review revision, Oct 2026). The baseline fig08-runnable shows DEPENDENCE via process knockout, but its flat pools only ACCUMULATE — there is no membrane that gates anything, no turnover, no repair, no failure, so it cannot show the properties that make "self-maintenance" meaningful. This variant builds a self-maintaining cell (SelfMaintainingCell on a replenished NutrientReservoir) with: a membrane that GATES nutrient import; metabolism that makes ATP + precursors (needs enzymes); ATP-COSTED synthesis of enzymes and REPAIR of the membrane; first-order DEGRADATION of every component (so persistence requires continuous replacement); and VIABILITY dynamics. It grows to a far-from-equilibrium STEADY STATE, a one-time membrane injury at tick 45 is REPAIRED and viability RECOVERS, and breaking any edge of the operational-closure loop (knock out import/metabolism/expression/repair, or stop replenishing the medium) collapses viability. Operational closure and boundary maintenance are DEFINED before the word autopoiesis is used, and the honest finding is that this shows operational closure + homeostasis + recovery (DEPENDENCE and self-maintenance in the organizational sense) but NOT autopoiesis in the strong sense (the boundary is a scalar area; the viability target is scripted). Baseline kept intact as the didactic smoke test.'
 key_assumptions:
 - 'The `fig08-runnable` composite is a **didactic, toy-real** realization of the figure -- small, illustrative, built to look like Fig. self_organized_process b and play forward. The ten building-block pools, the six processes'' rate constants (assembly_rate 0.05, k_cat 0.1, k_expr 0.08, k_rep 0.015, turnover_rate 0.08, k_react 0.06), and the yields are hand-chosen so the coupled balance is legible over 40 ticks. They are NOT calibrated to a named organism, metabolite, enzyme, or literature flux.'
 - 'The composite integrates over FLAT scalar pools (membrane, lipids, metabolites, ...), not spatially resolved fields or a real membrane geometry. "Containment" here is a scalar membrane-assembly ODE, not a diffusion barrier maintaining a concentration gradient in space. The self-maintenance shown is compositional (shared-pool coupling), not spatial.'
@@ -136,6 +141,79 @@ behavior_tests:
     value: 41.0
     provenance: 'the composite declares default_n_steps == 40 and emits 41 rows (including the t=0 emit); an exact count pin, exact while the composite horizon is pinned (tests/test_fig08_autopoiesis.py::test_runs_default_n_steps)'
   requires_simulation: fig08-runnable
+# ── mechanistic variant (fig08-mechanistic) — scientific-review revision ──────
+# A self-maintaining cell with a boundary, turnover, repair and viability.
+# Classified by the reviewer's evidence taxonomy (pass_if.kind).
+- name: mech-persists-and-pools-bounded
+  classification: primary
+  variant: fig08-mechanistic
+  description: 'Every component stays strictly positive and bounded, and with no injury the cell grows to a far-from-equilibrium STEADY STATE and holds it (small second-half drift) — persistence through continuous replacement, not the baseline''s monotonic accumulation.'
+  measure:
+    kind: observable
+    path: min/max of each pool; second-half relative drift
+    expr: min(pool) > 0, max(pool) bounded; |s[-1]-s[60]|/s[60] small
+  pass_if:
+    op: persists
+    kind: invariant
+    value: all pools > 0 and bounded; steady-state drift < 0.1
+    provenance: 'INVARIANT. Observed all pools strictly positive and bounded over 90 ticks; with perturbation off, membrane/enzymes/energy second-half drift < 0.1 — a maintained steady state, not accumulation (tests/test_fig08_mechanistic.py::test_all_pools_positive_and_bounded, ::test_persists_at_a_steady_state)'
+  requires_simulation: fig08-mechanistic
+- name: mech-turnover-requires-replacement
+  classification: primary
+  variant: fig08-mechanistic
+  description: 'The steady-state membrane is HELD by repair balancing first-order degradation — active component REPLACEMENT. Knock out repair and the membrane decays away, so the maintained level is a dynamic balance, not an inert store.'
+  measure:
+    kind: derived
+    path: membrane end-state, repair on vs off
+    expr: membrane(repair on) held; membrane(repair off) → ~0
+  pass_if:
+    op: replacement_required
+    kind: mechanistic_ablation
+    value: membrane(repair on) > 2.0 and membrane(repair off) < 0.3× that
+    provenance: 'MECHANISTIC_ABLATION. Observed membrane held at ~3.8 with repair on, decaying toward 0 with repair off (epsilon) — turnover unopposed; the steady level requires continuous replacement (tests/test_fig08_mechanistic.py::test_turnover_requires_active_replacement)'
+  requires_simulation: fig08-mechanistic
+- name: mech-recovers-after-injury
+  classification: primary
+  variant: fig08-mechanistic
+  description: 'A one-time membrane injury at tick 45 (−60%) drops the boundary and depresses viability; the cell then REPAIRS the membrane and viability RECOVERS to its pre-injury steady state. Self-repair, not a scripted bounce — with repair off there is no recovery, and an early injury (tick 25) is also recovered.'
+  measure:
+    kind: derived
+    path: membrane, viability around the injury; recovery vs repair-off
+    expr: injury drop; viability dip; end recovers to pre-injury; no recovery if repair off
+  pass_if:
+    op: recovers
+    kind: mechanistic_ablation
+    value: mem[45] < 0.6·mem[44]; viability dips; mem[end] > 0.9·mem[44]; repair-off stays collapsed
+    provenance: 'MECHANISTIC_ABLATION. Observed injury membrane 3.75→1.50, viability dip to 0.71, recovery to membrane 3.70 / viability 0.92 by tick 90; recovery requires active repair (repair-off stays collapsed), and an early injury at tick 25 is also recovered (tests/test_fig08_mechanistic.py::test_recovers_after_membrane_injury, ::test_repeated_perturbation_persists)'
+  requires_simulation: fig08-mechanistic
+- name: mech-closure-break-collapses-viability
+  classification: primary
+  variant: fig08-mechanistic
+  description: 'Operational closure means every edge of the loop is required. Knocking out import, metabolism, enzyme-synthesis, or repair (epsilon, not 0.0) each collapses the membrane and drives viability to ~0 — dependence on every coupling edge, demonstrated.'
+  measure:
+    kind: derived
+    path: final viability + membrane under each single knockout
+    expr: viability → ~0 and membrane → ~0 for each of the four knockouts
+  pass_if:
+    op: closure_required
+    kind: mechanistic_ablation
+    value: final viability < 0.1 and membrane < 0.5 for KO transport/met/expr/repair
+    provenance: 'MECHANISTIC_ABLATION (four single knockouts, epsilon). Observed final viability 0.00 and membrane collapsed for each of k_transport / k_met / k_expr / k_repair — every edge of the operational-closure loop is load-bearing (tests/test_fig08_mechanistic.py::test_knockout_collapses_viability[*])'
+  requires_simulation: fig08-mechanistic
+- name: mech-depends-on-external-input
+  classification: diagnostic
+  variant: fig08-mechanistic
+  description: 'Matched external-input accounting: on a non-replenished (closed) medium the external nutrient is drawn down and the cell cannot self-maintain — viability collapses. The self-maintenance is of ORGANIZATION, not of matter/energy; it runs on a throughput the medium must supply.'
+  measure:
+    kind: derived
+    path: external nutrient + viability under no replenishment
+    expr: nutrient_ext → ~0 and viability → ~0
+  pass_if:
+    op: throughput_required
+    kind: mechanistic_ablation
+    value: nutrient_ext < 0.2 and viability < 0.3 without replenishment
+    provenance: 'MECHANISTIC_ABLATION. Observed the medium depletes and viability collapses to 0.00 with replenishment off (epsilon) — the cell maintains organization on a required external throughput, it does not create matter/energy (tests/test_fig08_mechanistic.py::test_depends_on_external_input)'
+  requires_simulation: fig08-mechanistic
 runs:
 - name: fig08-runnable
   composite: fig08-runnable
@@ -183,6 +261,29 @@ runs:
     MINIMAL-CELL-NOW-GROWS:
       result: PASS
       detail: membrane.area 0.2 -> 1.4, proteins.enzymes 0.3 -> 0.975, proteins.pool 0.3 -> 1.572, energy 0.5 -> 0.869, genes 1.0 -> 1.28, amino_acids 1.0 -> 1.146 (previously inert)
+- name: fig08-mechanistic
+  composite: fig08-mechanistic
+  emitter: RAMEmitter
+  id: fig08-mechanistic
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig08-mechanistic.composite.json (NutrientReservoir replenish=0.6 + SelfMaintainingCell: membrane-gated import, enzyme-catalysed metabolism, ATP-costed enzyme synthesis + membrane repair, first-order turnover, viability; membrane injured −60% at tick 45) run 90 ticks through the engine. fig08-mechanistic-dynamics.png (cell cartoons + state curves + fluxes + repair-on/off + closure graph + knockout/closed-medium controls) baked over the same run + controls via scripts/build_fig08_mechanistic.py.'
+  params: {}
+  outcomes:
+    MECH-PERSISTS-AND-POOLS-BOUNDED:
+      result: PASS
+      detail: 'all pools strictly positive and bounded; no-injury second-half drift < 0.1 — a maintained steady state'
+    MECH-TURNOVER-REQUIRES-REPLACEMENT:
+      result: PASS
+      detail: 'membrane held ~3.8 with repair on; decays toward 0 with repair off — replacement required'
+    MECH-RECOVERS-AFTER-INJURY:
+      result: PASS
+      detail: 'injury 3.75→1.50, viability dip 0.71, recovery to 3.70/0.92 by tick 90; no recovery without repair'
+    MECH-CLOSURE-BREAK-COLLAPSES-VIABILITY:
+      result: PASS
+      detail: 'final viability 0.00 for each of KO transport/met/expr/repair — every closure edge load-bearing'
+    MECH-DEPENDS-ON-EXTERNAL-INPUT:
+      result: PASS
+      detail: 'closed (non-replenished) medium depletes; viability collapses to 0.00 — organization maintained on external throughput'
 findings:
 - id: F-01
   kind: biological
@@ -233,13 +334,51 @@ findings:
     - proteins: 'GO:0010467 (gene expression)'
     - energy: 'PATO:0001021 (energy)'
     - metabolites: 'PATO:0000033 (concentration)'
+- id: F-04
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig08-mechanistic
+  statement: 'The mechanistic variant shows the properties that make self-maintenance meaningful, which the accumulating baseline could not. (1) PERSISTENCE: the cell grows to a far-from-equilibrium STEADY STATE and holds it (all pools positive and bounded, second-half drift < 0.1). (2) COMPONENT REPLACEMENT: the steady-state membrane is held by repair balancing first-order degradation — turn repair off and it decays to zero, so the maintained level is an active dynamic balance, not an inert store. (3) RECOVERY: a one-time membrane injury (−60% at tick 45) is repaired and viability recovers from a dip of 0.71 back to 0.92, and recovery requires active repair. These are dynamical outcomes of the coupled balance, not scripted.'
+  evidence:
+    from_test: mech-recovers-after-injury
+    from_run: fig08-mechanistic
+    observed: steady-state drift < 0.1; membrane held 3.8 (repair on) vs →0 (repair off); injury 3.75→1.50→recover 3.70, viability dip 0.71→0.92
+  provenance:
+    run_ids:
+    - fig08-mechanistic
+- id: F-05
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig08-mechanistic
+  statement: 'OPERATIONAL CLOSURE is defined and demonstrated. Closure here = each component the cell needs is produced by processes that themselves depend on that component: the membrane gates import, import feeds metabolism (which needs enzymes), metabolism makes ATP + precursors, and ATP + precursors are spent to repair the membrane and make enzymes. Breaking ANY edge — knock out import, metabolism, enzyme-synthesis, or repair (epsilon), or stop replenishing the medium — collapses the membrane and drives viability to 0. So every edge of the loop is load-bearing, and the self-maintenance is of ORGANIZATION on a required external throughput (matched external-input accounting), not a violation of matter/energy conservation.'
+  evidence:
+    from_test: mech-closure-break-collapses-viability
+    from_run: fig08-mechanistic
+    observed: final viability 0.00 for each of KO transport/met/expr/repair and for a non-replenished medium; full = 0.92
+  provenance:
+    run_ids:
+    - fig08-mechanistic
+- id: F-06
+  kind: computational
+  tier: mechanism
+  status: confirms
+  statement: 'What this does and does NOT establish (stated explicitly, per the review). It DOES establish operational closure, homeostasis and recovery — i.e. DEPENDENCE (every coupling edge is required) and self-maintenance in the organizational sense, as dynamical outcomes rather than scripted trajectories. It does NOT establish autopoiesis in the strong sense: the boundary is a scalar `area` variable, not a spatially self-produced bilayer; the cell does not synthesise its own membrane components from first principles nor divide; and the viability TARGET function (health = boundary adequacy × energy charge) and all rate constants are scripted parameters. The non-scripted global properties that ARE demonstrated are the existence and stability of the steady state and the recovery trajectory; their VALUES, however, follow from chosen rates. The rigorous higher-fidelity cousin remains the `autopoiesis` study in draft-to-living-cell, whose numbers are not restated here.'
+  evidence:
+    from_test: mech-persists-and-pools-bounded
+    from_run: fig08-mechanistic
+    observed: steady state + recovery are emergent; boundary is a scalar area and the viability target is a scripted parameter
+  provenance:
+    run_ids:
+    - fig08-mechanistic
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
     basis: 'fig08-runnable.composite.json builds and runs its declared 40-tick horizon through the process-bigraph engine, emitting 41 rows (tests/test_fig08_autopoiesis.py). All seven behavior tests pass on measured readouts.'
   biological_validation:
     result: PASS
-    basis: All primary behavior tests pass on readouts from a real 40-tick run -- every pool stays positive and bounded, the template pools hold a steady balance while structural material is net-produced, and two independent process knockouts confirm the balance is a property of the coupling (metabolism KO starves metabolites and freezes energy; gene-expression KO freezes enzymes and lowers metabolites). The demonstration is deterministic and reproduces exactly.
+    basis: 'Reported in two layers, per the review. BEHAVIORAL (baseline fig08-runnable): all primary tests pass on a 40-tick run -- pools positive and bounded, template pools steady while structural material is net-produced, two knockouts confirm the balance is a property of the coupling. But the baseline pools only ACCUMULATE and have no boundary, turnover, repair or failure, so this is behavioral verification of compositional dependence, not of self-maintenance. MECHANISTIC (variant fig08-mechanistic): a self-maintaining cell with a membrane boundary, first-order turnover, ATP-costed repair and viability shows PERSISTENCE at a steady state (invariant), COMPONENT REPLACEMENT against turnover and RECOVERY after a membrane injury (mechanistic_ablation), and viability COLLAPSE when any edge of the operational-closure loop is broken or the medium is not replenished (mechanistic_ablation). Operational closure and boundary maintenance are defined before the term autopoiesis is used. This is genuine mechanistic support for self-maintenance in the ORGANIZATIONAL sense (dependence + homeostasis + recovery). It is explicitly NOT autopoiesis in the strong sense, and NOT empirical validation against a named organism -- see findings F-06 and the limitations.'
   explanatory_gain:
     result: POSITIVE
     basis: 'Turning Fig. self_organized_process b from a static composition diagram into a composite that runs and holds under test shows the caption''s claim is executable, not merely asserted: coupled processes maintaining one another into a self-sustaining balance is demonstrated, and the knockouts make the "maintain one another" edges concrete rather than illustrative.'
@@ -301,18 +440,32 @@ limitations:
 - The handlers are deterministic ODEs with no random seed, so the numbers are exact and reproducible but carry no stochastic-robustness claim; there is no ensemble to average over.
 - The mutual-maintenance loop is demonstrated by process knockout (deleting a process from the composite state), a structural intervention that zeroes a process's contribution to its shared pools -- it isolates each coupling edge cleanly but is not a physical rate perturbation.
 - 'The rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation, which realizes the same self-maintenance claim at higher fidelity. This study demonstrates only that this figure''s specific caption runs and holds under test; it does not restate the cousin''s numbers or fidelity as its own.'
+- 'Mechanistic variant (fig08-mechanistic) — scope and honest limits: it adds a real boundary, turnover, ATP-costed repair and viability, and demonstrates persistence, component replacement, recovery and closure-break collapse. But it is a WELL-MIXED cell: the "membrane" is a scalar `area` variable, NOT a spatially resolved bilayer the cell produces for itself, and there is no cell division. The viability target function and every rate constant are scripted parameters (the steady state and recovery trajectory are emergent, but their values follow from chosen rates). So it demonstrates operational closure, homeostasis and recovery — self-maintenance in the ORGANIZATIONAL sense — and explicitly NOT autopoiesis in the strong (self-producing-boundary-in-space) sense; it is not calibrated to a named organism, membrane lipid, or measured turnover/repair rate. See finding F-06.'
 falsifiability: Overturned if any observed pool collapses to zero or blows up over the run, if the template/catalytic pools fail to hold a steady balance (second-half drift >= 25%), if the structural pools are not net-produced, or if either process knockout fails to move its downstream shared pool (metabolism KO not starving metabolites / not freezing energy, or gene-expression KO not freezing enzymes / not lowering metabolites) -- any of which would mean the processes are not actually coupled into a mutually maintaining whole.
 visualizations:
-- name: Figure 8
+- name: 'Figure 8 · the paper''s process-bigraph diagram (panel b)'
   address: svg:visualizations/figure_8.svg
   config:
-    caption: 'Autopoiesis and the minimal cell: coarse-grained containment/metabolism/replication refine into molecular self-organized mechanisms.'
-- name: The minimal cell sustains itself (autopoietic closure)
+    caption: 'The paper''s panel-b diagram — coarse-grained containment/metabolism/replication refining into molecular self-organized mechanisms (autopoiesis and the minimal cell).'
+- name: 'Baseline dynamics · didactic smoke test (fig08-runnable)'
   address: image:visualizations/fig08-dynamics.png
   config:
     chart: image
-    caption: 'Time series of the runnable fig08 minimal cell (fig08-runnable): the six coupled processes — containment, metabolism, gene-expression, replication, diffusion and reactions — wired over flat scalar building-block pools. Because they share those pools they mutually produce the components that sustain each other: the catalytic/template pools (genes, energy, metabolites, nucleic acids) hold a SUSTAINED steady balance while the cell''s structural material (membrane, proteins, enzymes) is net-produced — nothing collapses to zero, nothing explodes. This is autopoietic closure made runnable. From scripts/build_fig08_dynamics.py.'
+    caption: 'Baseline (didactic smoke test): the simpler pre-revision minimal cell (fig08-runnable), kept as the executable baseline. Six coupled processes (containment, metabolism, gene-expression, replication, diffusion, reactions) over flat scalar pools mutually produce the components that sustain each other — catalytic/template pools hold a sustained balance while structural material is net-produced, nothing collapsing to zero or exploding. What to look for: every pool staying bounded and positive. NOTE — these are hand-set accumulating pools; the mechanistic figure below adds real turnover, injury/repair, and closure-break collapse, and is explicit that this establishes dependence + homeostasis, NOT strong autopoiesis.'
+- name: 'Mechanistic · decisive model-driven figure (fig08-mechanistic)'
+  address: image:visualizations/fig08-mechanistic-dynamics.png
+  config:
+    chart: image
+    decisive: true
+    variant: fig08-mechanistic
+    caption: 'Mechanistic (the decisive figure): a self-maintaining cell showing persistence, component replacement, repair and recovery after injury, and collapse when operational closure is broken. (A) the cell at three times — healthy, injured (membrane ring shrunk, viability dipped), recovered — membrane ring ∝ area, fill ∝ viability. (B) aligned state curves: the cell grows to a far-from-equilibrium STEADY STATE, a −60% membrane injury at tick 45 drops the boundary, then membrane, enzymes, energy and viability RECOVER. (C) maintenance throughput (import, metabolism, repair) — repair re-engages to rebuild after injury. (D) component REPLACEMENT: the membrane is held at its steady level by repair balancing first-order turnover; with repair off it decays to zero — the maintained level is active, not inert. (E) the operational-closure / dependency graph: each component is produced by processes that depend on it; break any edge and it collapses. (F) controls: final viability is 0.92 for the full cell but 0.00 for every single mechanism knockout (import/metabolism/expression/repair) and for a non-replenished medium — operational closure and external throughput are both required. This demonstrates organizational self-maintenance (dependence + homeostasis + recovery), NOT autopoiesis in the strong sense. From scripts/build_fig08_mechanistic.py.'
+# Spine edge fig-06 → fig-08 (relation: builds-on) added per the scientific-review
+# revision: fig-08 composes the molecular interfaces of fig-06 (and fig-03/fig-07)
+# into a cell whose coupled processes maintain one another (the edge relation/rationale
+# is carried in the investigation spine; parent_studies schema allows only study+condition).
 parent_studies:
+- study: fig-06
+  condition: tests-passed
 - study: autopoiesis
   condition: tests-passed
 experiment: 'Run the `fig08-runnable` composite (six coupled processes -- containment, metabolism, gene expression, replication, diffusion, mass-action reactions -- over ten shared flat scalar building-block pools) for its declared 40 ticks through the process-bigraph engine, and measure whether the coupled processes maintain one another into a sustained, far-from-equilibrium balance: every pool positive and bounded, the catalytic/template pools holding steady while structural material is net-produced. Then open the maintenance loop with two process knockouts (metabolism; gene expression) and measure whether the downstream shared pools each depend on collapse -- showing the balance is a property of the coupling, not of any pool in isolation.'

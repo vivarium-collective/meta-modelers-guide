@@ -1,0 +1,65 @@
+{
+  "name": "Nested Cellular Hierarchy — Permeable Boundaries Gate a Deep Observable",
+  "description": "Fig 7 mechanistic variant. A genuinely nested place graph (environment ⊃ cell ⊃ cytoplasm ⊃ nucleus) in which the nesting INFLUENCES FUNCTION, not just routes a scalar. Two PermeableBoundary processes (plasma membrane: environment↔cytoplasm; nuclear envelope: cytoplasm↔nucleus) gate passive, conservative transport of a substrate inward. A locally-restricted LocalMetabolism consumes substrate only in the cytoplasm; a RegulatedReporter in the nucleus turns the substrate that reaches it into a reporter (regulatory dependence). Because the nuclear substrate depends on BOTH permeabilities in series, lowering either boundary's permeability shuts the deep reporter down — a boundary-level cause with a deep functional effect. Transport is conservative, so with the reactions off the total substrate across all compartments is invariant.",
+  "default_n_steps": 40,
+  "requires": {"processes": ["PermeableBoundary", "LocalMetabolism", "RegulatedReporter"]},
+  "provenance": {"figure": "fig07-nested-hierarchy", "environment": "fig07-mechanistic"},
+  "state": {
+    "membrane": {
+      "_type": "process",
+      "address": "local:PermeableBoundary",
+      "interval": 1.0,
+      "config": {"permeability": 0.3},
+      "inputs": {"outer": ["environment", "substrate"], "inner": ["environment", "cell", "cytoplasm", "substrate"]},
+      "outputs": {"outer": ["environment", "substrate"], "inner": ["environment", "cell", "cytoplasm", "substrate"]}
+    },
+    "nuclear_envelope": {
+      "_type": "process",
+      "address": "local:PermeableBoundary",
+      "interval": 1.0,
+      "config": {"permeability": 0.3},
+      "inputs": {"outer": ["environment", "cell", "cytoplasm", "substrate"], "inner": ["environment", "cell", "cytoplasm", "nucleus", "substrate"]},
+      "outputs": {"outer": ["environment", "cell", "cytoplasm", "substrate"], "inner": ["environment", "cell", "cytoplasm", "nucleus", "substrate"]}
+    },
+    "cytoplasmic_metabolism": {
+      "_type": "process",
+      "address": "local:LocalMetabolism",
+      "interval": 1.0,
+      "config": {"k": 0.05},
+      "inputs": {"substrate": ["environment", "cell", "cytoplasm", "substrate"]},
+      "outputs": {"substrate": ["environment", "cell", "cytoplasm", "substrate"]}
+    },
+    "nuclear_reporter": {
+      "_type": "process",
+      "address": "local:RegulatedReporter",
+      "interval": 1.0,
+      "config": {"k_prod": 0.4, "k_deg": 0.1},
+      "inputs": {"substrate": ["environment", "cell", "cytoplasm", "nucleus", "substrate"]},
+      "outputs": {"reporter": ["environment", "cell", "cytoplasm", "nucleus", "reporter"]}
+    },
+    "environment": {
+      "substrate": {"_type": "concentration", "_default": 10.0},
+      "cell": {
+        "cytoplasm": {
+          "substrate": {"_type": "concentration", "_default": 0.0},
+          "nucleus": {
+            "substrate": {"_type": "concentration", "_default": 0.0},
+            "reporter": {"_type": "concentration", "_default": 0.0}
+          }
+        }
+      }
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {"emit": {"env_substrate": "concentration", "cyto_substrate": "concentration", "nuc_substrate": "concentration", "reporter": "concentration", "time": "float"}},
+      "inputs": {
+        "env_substrate": ["environment", "substrate"],
+        "cyto_substrate": ["environment", "cell", "cytoplasm", "substrate"],
+        "nuc_substrate": ["environment", "cell", "cytoplasm", "nucleus", "substrate"],
+        "reporter": ["environment", "cell", "cytoplasm", "nucleus", "reporter"],
+        "time": ["global_time"]
+      }
+    }
+  }
+}
