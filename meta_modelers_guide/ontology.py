@@ -36,6 +36,8 @@ QUANTITY_TERMS: dict[str, dict] = {
     "current":        {"ontology": "UO",   "label": "electric current (ampere)"},
     "voltage":        {"ontology": "PATO", "label": "electric potential"},
     "heat_flux":      {"ontology": "UO",   "label": "power (watt)"},
+    "power":          {"ontology": "UO",   "label": "power (watt)", "id": "UO:0000114"},
+    "angle":          {"ontology": "UO",   "label": "angle (radian)", "id": "UO:0000185"},
     "temperature":    {"ontology": "PATO", "label": "temperature", "id": "PATO:0000146"},
     "energy":         {"ontology": "PATO", "label": "energy", "id": "PATO:0001021"},
     "ph":             {"ontology": "PATO", "label": "acidity", "id": "PATO:0001842"},

@@ -1,0 +1,245 @@
+{
+  "name": "Cell\u2013Environment Coupling \u2014 Reaction\u2013Diffusion Field with a Depleting, Chemotactic Cell",
+  "description": "Fig 4 (paper Fig 5) mechanistic variant. A 1-D reaction\u2013diffusion nutrient field (25-cell lattice, dx = 1 lattice unit) carries an explicit in-domain exponential gradient kept replenished by a FieldSource at cell 0. A MotileCell takes up nutrient with saturating Michaelis\u2013Menten kinetics, REMOVES that uptake from the field at its location (a real depletion well that diffuses), grows biomass out of it, and chemotaxes up the local gradient toward the source. Closes the sense/act loop the baseline left open. Mass ledger: \u03a3field change = \u03a3source \u2212 \u03a3decay \u2212 \u03a3uptake; biomass change = yield\u00b7\u03a3uptake. Distances in lattice units.",
+  "default_n_steps": 24,
+  "requires": {
+    "processes": [
+      "DiffusionField",
+      "FieldSource",
+      "MotileCell"
+    ]
+  },
+  "provenance": {
+    "figure": "fig04-cell-environment",
+    "environment": "fig04-mechanistic"
+  },
+  "state": {
+    "diffusion": {
+      "_type": "process",
+      "address": "local:DiffusionField",
+      "interval": 1.0,
+      "config": {
+        "diffusivity": 0.4
+      },
+      "inputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ]
+      },
+      "outputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ]
+      }
+    },
+    "source": {
+      "_type": "process",
+      "address": "local:FieldSource",
+      "interval": 1.0,
+      "config": {
+        "source_index": 0,
+        "source_rate": 0.25,
+        "decay_rate": 0.004
+      },
+      "inputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ]
+      },
+      "outputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ],
+        "source_total": [
+          "ledger",
+          "source_total"
+        ],
+        "decay_total": [
+          "ledger",
+          "decay_total"
+        ]
+      }
+    },
+    "cell": {
+      "_type": "process",
+      "address": "local:MotileCell",
+      "interval": 1.0,
+      "config": {
+        "vmax": 0.45,
+        "km": 0.3,
+        "yield_coef": 0.6,
+        "chemotaxis": 9.0,
+        "max_step": 1.0
+      },
+      "inputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ],
+        "position": [
+          "cell_state",
+          "position"
+        ],
+        "biomass": [
+          "cell_state",
+          "biomass"
+        ]
+      },
+      "outputs": {
+        "chemical_field": [
+          "environment",
+          "chemical_field"
+        ],
+        "position": [
+          "cell_state",
+          "position"
+        ],
+        "biomass": [
+          "cell_state",
+          "biomass"
+        ],
+        "uptake": [
+          "cell_state",
+          "uptake"
+        ],
+        "uptake_total": [
+          "ledger",
+          "uptake_total"
+        ],
+        "local_conc": [
+          "cell_state",
+          "local_conc"
+        ],
+        "gradient": [
+          "cell_state",
+          "gradient"
+        ]
+      }
+    },
+    "environment": {
+      "chemical_field": {
+        "_type": "map",
+        "_value": "float",
+        "0": 2.0,
+        "1": 1.764994,
+        "2": 1.557602,
+        "3": 1.374579,
+        "4": 1.213061,
+        "5": 1.070523,
+        "6": 0.944733,
+        "7": 0.833724,
+        "8": 0.735759,
+        "9": 0.649305,
+        "10": 0.57301,
+        "11": 0.505679,
+        "12": 0.44626,
+        "13": 0.393823,
+        "14": 0.347548,
+        "15": 0.30671,
+        "16": 0.270671,
+        "17": 0.238866,
+        "18": 0.210798,
+        "19": 0.186029,
+        "20": 0.16417,
+        "21": 0.14488,
+        "22": 0.127856,
+        "23": 0.112832,
+        "24": 0.099574
+      }
+    },
+    "cell_state": {
+      "position": {
+        "_type": "length",
+        "_default": 16.0
+      },
+      "biomass": {
+        "_type": "mass",
+        "_default": 1.0
+      },
+      "uptake": {
+        "_type": "chemical_flux",
+        "_default": 0.0
+      },
+      "local_conc": {
+        "_type": "concentration",
+        "_default": 0.0
+      },
+      "gradient": {
+        "_type": "concentration",
+        "_default": 0.0
+      }
+    },
+    "ledger": {
+      "source_total": {
+        "_type": "chemical_flux",
+        "_default": 0.0
+      },
+      "decay_total": {
+        "_type": "chemical_flux",
+        "_default": 0.0
+      },
+      "uptake_total": {
+        "_type": "chemical_flux",
+        "_default": 0.0
+      }
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "position": "length",
+          "biomass": "mass",
+          "uptake": "chemical_flux",
+          "local_conc": "concentration",
+          "gradient": "concentration",
+          "source_total": "chemical_flux",
+          "decay_total": "chemical_flux",
+          "uptake_total": "chemical_flux",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "position": [
+          "cell_state",
+          "position"
+        ],
+        "biomass": [
+          "cell_state",
+          "biomass"
+        ],
+        "uptake": [
+          "cell_state",
+          "uptake"
+        ],
+        "local_conc": [
+          "cell_state",
+          "local_conc"
+        ],
+        "gradient": [
+          "cell_state",
+          "gradient"
+        ],
+        "source_total": [
+          "ledger",
+          "source_total"
+        ],
+        "decay_total": [
+          "ledger",
+          "decay_total"
+        ],
+        "uptake_total": [
+          "ledger",
+          "uptake_total"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    }
+  }
+}

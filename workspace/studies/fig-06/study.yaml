@@ -7,7 +7,7 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
-confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the four-channel coupling is robustly demonstrated on a deterministic 20-tick run -- the matter=>charge=>energy identities hold to 1e-30, the ATP:H+ stoichiometry and rotary torque are exact pins, and a zero-drive negative control plus the bare-draft contrast confirm the ramp is the driver -- but held at Medium, not High, because the constants are literature-plausible order-of-magnitude values and the transduction law is algebraic (no saturation/back-pressure), not a calibrated biophysical model.'
+confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the four-channel coupling is robustly demonstrated on a deterministic 20-tick run -- the matter=>charge=>energy identities hold to 1e-30, the ATP:H+ stoichiometry and rotary torque are exact pins, and a zero-drive negative control plus the bare-draft contrast confirm the ramp is the driver -- but the BASELINE (fig06-runnable) is held at Medium, not High, because its constants are literature-plausible order-of-magnitude values and its transduction law is algebraic (no saturation/back-pressure), not a calibrated biophysical model. The MECHANISTIC VARIANT (fig06-mechanistic, scientific-review revision) materially raises the mechanistic support: torque and efficiency are now DERIVED rather than imposed (the derived τ_drive = n_c·e·Δp/2π = 38 pN·nm independently reproduces the measured ~40 pN·nm), stall and reversal are emergent outcomes of the torque balance with the full power budget closing to 1e-33 W, and a first-principles stall-gradient prediction (Δp* = 125 mV) is stated before the run and verified by a Δp sweep. The study is still held at Provisional overall because the mechanistic model is a reduced one-degree-of-freedom overdamped rotor (no explicit c-ring half-channels or elastic power-stroke) and is not yet fitted to a single enzyme''s measured speed-vs-load curve.'
 question: 'Does the paper''s §Molecular interfaces figure (Fig molecular_interface) hold as a runnable process -- a molecular mechanism (F₁Fₒ ATP synthase) that exchanges matter and energy through a small set of TYPED physical channels (chemical mol·s⁻¹, electrical C·s⁻¹, mechanical torque N·m, thermal J·s⁻¹) with NO cell-level boundary, all four channels driven from ONE coupled proton flux so matter, charge, angular momentum, and energy are conserved across the interface?'
 biological_summary: 'This is the executable realization of the paper''s §Molecular interfaces figure (Fig molecular_interface). The paper''s point is that at the molecular level interactions are governed directly by molecular processes rather than by a maintained cell-level boundary: molecules exchange matter, energy, and momentum through a small set of physical channels -- chemical exchange, electrostatics, mechanical forces, and thermal fluctuations (Fig molecular_interface a) -- and a molecular interface must expose exactly these as typed ports over molecular structure (Fig molecular_interface b), with no cell boundary.
 
@@ -19,7 +19,11 @@ baseline:
 - name: fig06-runnable
   composite: meta_modelers_guide.composites.fig06-runnable
   params: {}
-variants: []
+variants:
+- name: fig06-mechanistic
+  composite: meta_modelers_guide.composites.fig06-mechanistic
+  params: {}
+  rationale: 'Real-mechanism upgrade (scientific-review revision, Oct 2026). Where the fig06-runnable baseline *imposes* a 40 pN·nm torque and a 75 % efficiency as fixed constants, this variant builds a genuine reduced rotary-motor model (AtpSynthaseRotor, handlers_fig06_mech.py): a single overdamped rotational degree of freedom driven by the proton-motive force Δp against the ATP back-torque τ_chem = n_ATP·ΔG_ATP/2π and an external load τ_ext. Torque, speed, proton/ATP flux, the power split, efficiency, stall and reversal are all DERIVED outcomes, not settings. Notably the derived drive torque τ_drive = n_c·e·Δp/2π = 38 pN·nm at Δp = 150 mV REPRODUCES the ~40 pN·nm the baseline merely imposed, and the power budget P_in = P_ATP + P_ext + P_heat closes to 1e-33 W on every step. The baseline fig06-runnable is kept intact as the algebraic didactic smoke test (software baseline), per the review''s additive-variant mandate.'
 key_assumptions:
 - 'This `fig06-runnable` composite is a **didactic / toy-real** transducer, not a calibrated biophysical model of ATP synthase. Its constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈ 150 mV, Fₒ torque ≈ 40 pN·nm, η ≈ 75 %) are literature-plausible order-of-magnitude values placed in `config`, chosen to make the four-channel coupling legible over a 20-tick run -- NOT fitted to a specific enzyme, membrane potential, or measured turnover curve.'
 - 'The four output channels are computed by an algebraic transduction law, not a mechanistic rotary kinetics model: `J_ATP = k_cat·activity` is strictly linear (no saturation / Michaelis–Menten rollover, no back-pressure from a proton-motive force that depletes), the ATP:H⁺ ratio is a fixed constant, and the torque is a fixed leaf value. This is the paper''s point (a molecular interface exposes typed coupled channels) rendered minimally, not a claim about the enzyme''s true rate law.'
@@ -122,6 +126,94 @@ behavior_tests:
     value: 0.0
     provenance: 'driving the handler at zero activity yields chemical_out == electrical_out == thermal_out == 0.0 exactly -- a driven transducer, not a spontaneous source; the constant mechanical torque leaf is a fixed port property and is deliberately excluded (tests/test_fig06_atp_synthase.py::test_zero_drive_yields_zero_flux_on_every_channel)'
   requires_simulation: none
+# ── mechanistic variant (fig06-mechanistic) — scientific-review revision ──────
+# These gates test the real rotary model, classified by the reviewer's evidence
+# taxonomy (pass_if.kind). The baseline's five primary tests above remain the
+# software/behavioral baseline; these establish mechanistic support.
+- name: mech-power-budget-closes
+  classification: primary
+  variant: fig06-mechanistic
+  description: 'The full power budget closes exactly on every step: the proton-motive input power equals the chemical power stored in ATP plus the mechanical work done against the load plus the viscous heat, P_in = P_ATP + P_ext + P_heat. Energy is conserved across the rotary interface by construction (multiply the torque balance by ω), not asserted by an imposed efficiency.'
+  measure:
+    kind: derived
+    path: obs.power_in, obs.power_atp, obs.power_ext, obs.power_heat
+    expr: max |P_in − (P_ATP + P_ext + P_heat)| over the 20-tick run
+  pass_if:
+    op: '<'
+    kind: invariant
+    value: 1.0e-30
+    provenance: 'INVARIANT. Observed max residual 3.1e-33 W over the live 20-tick fig06-mechanistic run — machine precision. Unlike the baseline''s imposed 75/25 split, here the useful fraction is an outcome of the operating point (tests/test_fig06_mechanistic.py::test_power_budget_closes_every_step, ::test_dissipated_heat_is_nonnegative, ::test_charge_current_identity_holds_every_step)'
+  requires_simulation: fig06-mechanistic
+- name: mech-torque-derived-matches-literature
+  classification: primary
+  variant: fig06-mechanistic
+  description: 'The rotary drive torque is DERIVED from the proton-motive force, τ_drive = n_c·e·Δp/2π, and at Δp = 150 mV lands at ≈ 38 pN·nm — reproducing the ~40 pN·nm the baseline merely imposed as a fixed leaf. It scales linearly with Δp (doubling the pmf doubles the torque), proving it is a derived quantity, not a constant.'
+  measure:
+    kind: observable
+    path: obs.drive_torque
+    expr: τ_drive at Δp = 150 mV vs the n_c·e·Δp/2π prediction, and the τ(2Δp)/τ(Δp) ratio
+  pass_if:
+    op: approx
+    kind: empirical_comparison
+    value: 38.2e-21 N·m (35–42 pN·nm literature band); linear-in-Δp ratio = 2.0
+    provenance: 'EMPIRICAL_COMPARISON against the measured Fₒ stall torque of the bacterial/chloroplast synthase (~40 pN·nm; Junge & Nelson 2015). Observed 38.2 pN·nm exactly equal to n_c·e·Δp/2π, and τ(0.2V)/τ(0.1V) = 2.000 (tests/test_fig06_mechanistic.py::test_drive_torque_derived_matches_literature, ::test_drive_torque_scales_with_pmf_not_fixed)'
+  requires_simulation: fig06-mechanistic
+- name: mech-load-induces-stall-and-reversal
+  classification: primary
+  variant: fig06-mechanistic
+  description: 'As the external load ramps, the rotor turns forward (synthesising ATP), slows, STALLS when τ_ext = τ_drive − τ_chem (≈ tick 11), then REVERSES (ω < 0) — running as an ATP-driven proton pump. ω and J_ATP flip sign together; past stall the proton current also reverses (protons pumped against the gradient). Direction is an outcome of the load, not a scripted schedule.'
+  measure:
+    kind: derived
+    path: obs.omega, obs.atp_flux, obs.proton_current
+    expr: sign(ω) over the load ramp; co-sign of ω and J_ATP; reversal pumps J_H < 0
+  pass_if:
+    op: stall_then_reversal
+    kind: mechanistic_ablation
+    value: ω crosses 0 at ~tick 11 and goes < −100; in reversal J_ATP < 0 and J_H < 0
+    provenance: 'MECHANISTIC_ABLATION (counterfactual on the shaft load). Observed forward ω peak +654, stall at tick 11, reversal to ω −597 by tick 20; at τ_ext = 1.2e-20 N·m the rotor runs backward with J_ATP < 0 (hydrolysis) and proton current < 0 (pumping) together (tests/test_fig06_mechanistic.py::test_load_ramp_drives_forward_stall_reversal, ::test_reversal_pumps_protons_and_hydrolyses_atp)'
+  requires_simulation: fig06-mechanistic
+- name: mech-proton-gradient-sets-direction
+  classification: primary
+  variant: fig06-mechanistic
+  description: 'A first-principles prediction: synthesis proceeds iff n_c·e·Δp > n_ATP·ΔG_ATP, so the stall gradient Δp* = n_ATP·ΔG_ATP/(n_c·e) can be computed BEFORE running. Verified by sweeping Δp: below Δp* the motor reverses (hydrolysis), at Δp* it stalls, above it synthesises. The sensitivity is to the proton gradient itself, not merely to a driver ramp.'
+  measure:
+    kind: derived
+    path: obs.omega over a Δp sweep (20–300 mV)
+    expr: sign(ω) vs the predicted threshold Δp* = n_ATP·ΔG_ATP/(n_c·e)
+  pass_if:
+    op: threshold_predicted
+    kind: prospective_prediction
+    value: Δp* ≈ 125 mV; ω<0 below, ω≈0 at, ω>0 above
+    provenance: 'PROSPECTIVE_PREDICTION. Δp* = 125 mV computed from the pool thermodynamics before the run; the Δp sweep then shows ω < 0 at 95 mV, |ω| < 1 at 125 mV, ω > 0 at 155 mV — direction set by the gradient, as predicted (tests/test_fig06_mechanistic.py::test_pmf_threshold_sets_direction)'
+  requires_simulation: fig06-mechanistic
+- name: mech-efficiency-is-derived-not-imposed
+  classification: diagnostic
+  variant: fig06-mechanistic
+  description: 'The chemical efficiency η = P_ATP/P_in = τ_chem/τ_drive is a DERIVED outcome that varies with the operating point — a higher proton-motive force gives a lower chemical-storage fraction — and is not the baseline''s imposed 0.75. This is the direct answer to the review''s point that the baseline''s 75 % efficiency is prescribed.'
+  measure:
+    kind: derived
+    path: obs.efficiency at two Δp values
+    expr: η(Δp=150mV) vs η(Δp=300mV); distance from the imposed 0.75
+  pass_if:
+    op: varies_with_operating_point
+    kind: mechanistic_ablation
+    value: 0 < η(300mV) < η(150mV) < 1 and |η − 0.75| > 0.02
+    provenance: 'MECHANISTIC_ABLATION. Observed η = 0.833 at 150 mV, falling at 300 mV (more of the proton power spent as kinetic/viscous rather than stored) — bounded, operating-point dependent, and distinct from the imposed 0.75 baseline constant (tests/test_fig06_mechanistic.py::test_efficiency_is_derived_and_varies_with_pmf)'
+  requires_simulation: fig06-mechanistic
+- name: mech-atp-backpressure-slows-rotor
+  classification: diagnostic
+  variant: fig06-mechanistic
+  description: 'With the ADP/ATP/Pi pools unbuffered, synthesised ATP accumulates, the reaction quotient and ΔG_ATP climb, and the rotor slows monotonically under its own product back-pressure — no external load applied. Honest scope: it slows, it does not reach a full static head over the window (ΔG rises only logarithmically with [ATP]); the baseline''s strictly-linear J_ATP has no such feedback at all.'
+  measure:
+    kind: derived
+    path: obs.omega, obs.dg_atp over an 80-tick unbuffered run
+    expr: ω monotone non-increasing while ΔG_ATP and [ATP] rise
+  pass_if:
+    op: monotone_slowdown
+    kind: mechanistic_ablation
+    value: ω[-1] < ω[0], ΔG_ATP rises, [ATP] accumulates, ω non-increasing
+    provenance: 'MECHANISTIC_ABLATION (product inhibition). Observed ω falling monotonically as ATP accumulates and ΔG_ATP rises across an 80-tick unbuffered run — real thermodynamic back-pressure, absent from the algebraic baseline (tests/test_fig06_mechanistic.py::test_atp_backpressure_slows_rotor)'
+  requires_simulation: fig06-mechanistic
 runs:
 - name: fig06-runnable
   composite: fig06-runnable
@@ -155,6 +247,32 @@ runs:
   emitter:
     kind: unknown
   params: '{}'
+- name: fig06-mechanistic
+  composite: fig06-mechanistic
+  emitter: RAMEmitter
+  id: fig06-mechanistic
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig06-mechanistic.composite.json (AtpSynthaseRotor + MembranePMF + MechanicalLoad; n_c=10, atp_per_rev=3, drag=1e-23 N·m·s, dg0=30.5 kJ/mol, Δp=150 mV fixed, load_rate=6.5e-22 N·m/tick) run 20 ticks (21 rows) through the process-bigraph engine. The fig06-mechanistic-dynamics.png six-panel figure was baked over the same run plus a fresh-rotor Δp sweep via scripts/build_fig06_mechanistic.py.'
+  params: {}
+  outcomes:
+    MECH-POWER-BUDGET-CLOSES:
+      result: PASS
+      detail: 'max |P_in − (P_ATP+P_ext+P_heat)| = 3.1e-33 W over the run (machine precision); P_heat ≥ 0; I = J_H·e exactly'
+    MECH-TORQUE-DERIVED-MATCHES-LITERATURE:
+      result: PASS
+      detail: 'τ_drive = n_c·e·Δp/2π = 38.2 pN·nm at 150 mV (literature ~40); τ(0.2V)/τ(0.1V) = 2.000'
+    MECH-LOAD-INDUCES-STALL-AND-REVERSAL:
+      result: PASS
+      detail: 'forward ω +654 → stall tick 11 → reversal ω −597; in reversal J_ATP<0 and J_H<0 together'
+    MECH-PROTON-GRADIENT-SETS-DIRECTION:
+      result: PASS
+      detail: 'predicted Δp* = 125 mV; sweep gives ω<0 below, ω≈0 at, ω>0 above'
+    MECH-EFFICIENCY-IS-DERIVED-NOT-IMPOSED:
+      result: PASS
+      detail: 'η = 0.833 at 150 mV, varies with Δp, ≠ imposed 0.75'
+    MECH-ATP-BACKPRESSURE-SLOWS-ROTOR:
+      result: PASS
+      detail: 'ω monotone-decreasing as [ATP] and ΔG_ATP rise (product back-pressure)'
 findings:
 - id: F-01
   kind: computational
@@ -193,6 +311,58 @@ findings:
     - fig06-executable
     - fig06-runnable
     analysis_script: in-memory Composite build from fig06-executable.composite.json and fig06-runnable.composite.json + gather_emitter_results; cross-checked against scripts/_catalog/measured_readouts.json (workbench 0.4.1)
+- id: F-04
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig06-mechanistic
+  statement: 'The baseline''s TWO imposed constants become DERIVED, validated outcomes in the mechanistic variant. The rotary drive torque is τ_drive = n_c·e·Δp/2π — a consequence of n_c protons each delivering e·Δp of work per revolution — and at Δp = 150 mV it equals 38.2 pN·nm, reproducing the measured ~40 pN·nm Fₒ stall torque (Junge & Nelson 2015) that fig06-runnable merely set by hand. It scales linearly with the proton-motive force (τ(2Δp)/τ(Δp) = 2.000), so it is a derived function of Δp, not a leaf value. This directly answers the review''s "fixed torque is imposed" objection: the number is now predicted from the gradient and matches experiment.'
+  evidence:
+    from_test: mech-torque-derived-matches-literature
+    from_run: fig06-mechanistic
+    observed: τ_drive = 38.2 pN·nm at 150 mV = n_c·e·Δp/2π exactly; linear-in-Δp ratio 2.000
+  provenance:
+    run_ids:
+    - fig06-mechanistic
+- id: F-05
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig06-mechanistic
+  statement: 'Stall and reversal are EMERGENT outcomes of the torque balance, not scripted events. Ramping the external shaft load drives the rotor forward (synthesis), through a stall where τ_ext = τ_drive − τ_chem (≈ tick 11), and into reversal (ω < 0) where it runs backward as an ATP-driven proton pump — J_ATP and the proton current both flip sign with ω. Throughout, the full power budget P_in = P_ATP + P_ext + P_heat closes to 3.1e-33 W (machine precision), with viscous dissipation P_heat = ζω² ≥ 0 — so the machine is thermodynamically reversible and energy-conserving by construction, not by an imposed efficiency. The baseline could not represent stall, reversal, or load at all.'
+  evidence:
+    from_test: mech-load-induces-stall-and-reversal
+    from_run: fig06-mechanistic
+    observed: forward ω +654 → stall tick 11 → reversal ω −597; J_ATP<0 & J_H<0 in reversal; power residual ≤ 3.1e-33 W
+  provenance:
+    run_ids:
+    - fig06-mechanistic
+- id: F-06
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig06-mechanistic
+  statement: 'The model makes a genuine prospective prediction and passes it. Synthesis proceeds iff n_c·e·Δp > n_ATP·ΔG_ATP, so the stall gradient Δp* = n_ATP·ΔG_ATP/(n_c·e) = 125 mV can be computed BEFORE any run. Sweeping the proton-motive force then confirms it: ω < 0 (hydrolysis) below Δp*, ω ≈ 0 at Δp*, ω > 0 (synthesis) above. Direction is set by the proton gradient relative to the ATP free energy — the thermodynamic directionality the review asked for — demonstrated as a predicted threshold, not a fitted curve.'
+  evidence:
+    from_test: mech-proton-gradient-sets-direction
+    from_run: fig06-mechanistic
+    observed: Δp* = 125 mV predicted from pool thermodynamics; sweep ω<0 at 95 mV, ≈0 at 125 mV, >0 at 155 mV
+  provenance:
+    run_ids:
+    - fig06-mechanistic
+- id: F-07
+  kind: computational
+  tier: mechanism
+  status: confirms
+  variant: fig06-mechanistic
+  statement: 'The efficiency is a derived, operating-point-dependent outcome, and the pools provide real back-pressure — with the limits stated honestly. η = P_ATP/P_in = τ_chem/τ_drive = 0.833 at 150 mV and falls as Δp rises (more proton power spent as rotation/viscous loss), so it is not the baseline''s imposed 0.75. With the ADP/ATP/Pi pools unbuffered, accumulating ATP raises ΔG_ATP and slows the rotor monotonically (product inhibition) — a feedback the strictly-linear baseline lacks entirely. Honest scope: this is still a reduced one-degree-of-freedom model (no explicit c-ring half-channels, no elastic power-stroke, overdamped, pool_coupling is a convenience scale), and the back-pressure slows but does not fully stall the rotor over the tested window.'
+  evidence:
+    from_test: mech-efficiency-is-derived-not-imposed
+    from_run: fig06-mechanistic
+    observed: η 0.833 at 150 mV, lower at 300 mV, ≠ 0.75; ω monotone-decreasing as [ATP]/ΔG_ATP rise (unbuffered)
+  provenance:
+    run_ids:
+    - fig06-mechanistic
 ontology_provenance:
   note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s four typed channels and the molecular mechanism -- a MIRIAM-style annotation map, not ontology reasoning.'
   interface_quantities:
@@ -209,7 +379,7 @@ conclusion_verdicts:
     basis: 'fig06-runnable.composite.json builds and runs to completion (20 ticks) through the process-bigraph engine, and the MolecularMechanismHandler conforms + compiles (tests/test_fig06_atp_synthase.py, tests/test_compilation.py).'
   biological_validation:
     result: PASS
-    basis: All five primary behavior tests plus the negative control pass on measured readouts from a real 20-tick run -- the ATP flux scales linearly with the drive, the four channels are one coupled quantity (matter⇒charge⇒energy identities exact to 1e-30), the ATP:H⁺ stoichiometry holds at 1/3.3 on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m, the energy balance closes at a 75/25 split, and a zero drive produces zero flux. Every readout is a deterministic function of the ramped drive and reproduces exactly run to run.
+    basis: 'Reported in two layers, per the review. BEHAVIORAL (baseline fig06-runnable): all five primary behavior tests plus the negative control pass on measured readouts from a real 20-tick run -- the ATP flux scales linearly with the drive, the four channels are one coupled quantity (matter⇒charge⇒energy identities exact to 1e-30), the ATP:H⁺ stoichiometry holds at 1/3.3 on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m, the energy balance closes at a 75/25 split, and a zero drive produces zero flux. These establish that the figure is executable and self-consistent -- behavioral verification, not yet biological validation. MECHANISTIC (variant fig06-mechanistic): torque is derived from Δp and matches the measured ~40 pN·nm (empirical_comparison); stall and reversal emerge from the torque balance with the power identity P_in=P_ATP+P_ext+P_heat closing to 1e-33 W (invariant + mechanistic_ablation); the proton-gradient directionality threshold Δp*=125 mV is predicted from first principles and verified by a sweep (prospective_prediction); efficiency is a derived operating-point-dependent outcome, not the imposed 0.75. This is genuine mechanistic support for the coupled-physical-channels claim. NOT yet empirical validation against a specific enzyme''s measured load-velocity curve -- that is the stated next step.'
   explanatory_gain:
     result: POSITIVE
     basis: 'Rendering the paper''s §Molecular interfaces figure as a runnable transducer makes its central claim concrete and checkable: a molecular mechanism exposes a small set of TYPED physical channels (chemical, electrical, mechanical torque, thermal) over molecular structure with no cell-level boundary, and those channels are coupled -- one proton flux drives all four with matter, charge, angular momentum, and energy conserved. The figure is executable, not merely drawn.'
@@ -273,18 +443,32 @@ limitations:
 - The `ProtonMotiveRamp` is a scripted monotonic driver (drive_rate 0.06/tick), standing in for a real, self-consistently maintained proton-motive force. The environment→transducer coupling it makes legible is real; the ramp shape itself is scripted, not emergent.
 - The `structure` port is a read-only string identifier and does not enter the dynamics -- it stands for the molecular structure the interface is defined over, not a simulated conformation.
 - The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell` investigation, which treats the molecular interface at higher fidelity; this study is the deliberately minimal, runnable figure-carrier and does not restate that study's numbers as its own.
+- 'Mechanistic variant (fig06-mechanistic) — scope and honest limits: it is a REDUCED one-rotational-degree-of-freedom overdamped model (ω = net_torque/ζ), not a full rotary-kinetics simulation. It does not resolve the c-ring half-channel proton-binding steps, the elastic power-stroke, rotational substeps, or thermal/Brownian ratcheting; the rotational drag ζ and the pool_coupling scale are chosen for legibility, not fitted. The derived torque matches the literature stall torque, but the model is NOT yet calibrated to a specific enzyme''s measured speed-vs-load (torque-velocity) curve — that empirical_comparison is the next step. The ATP back-pressure slows the rotor but does not reach a full static head over the tested window.'
 falsifiability: Overturned if the ATP flux fails to scale linearly with the proton drive, if any of the coupling identities (I = J_ATP·n·e, Q = (1−η)·I·pmf) fails on the live run, if the ATP:H⁺ stoichiometry drifts off 1/3.3, if the rotary torque is not constant or begins scaling with the drive (implying a force/power channel rather than torque), if the energy balance fails to close at the (η, 1−η) split, or if a zero drive produces a non-zero flux on any of the three driven channels.
 visualizations:
-- name: Figure 6
+- name: 'Figure 6 · the paper''s process-bigraph diagram (panel b)'
   address: svg:visualizations/figure_6.svg
   config:
-    caption: A molecular mechanism exposes physical ports (chemical, electrical, mechanical, thermal, structural) with molecular subports.
-- name: A molecular transducer couples a proton-motive force across four channels
+    caption: 'The paper''s panel-b diagram — a molecular mechanism exposing physical ports (chemical, electrical, mechanical, thermal, structural) with molecular subports.'
+- name: 'Baseline dynamics · didactic smoke test (fig06-runnable)'
   address: image:visualizations/fig06-dynamics.png
   config:
     chart: image
-    caption: 'Time series of the runnable fig06 transducer (fig06-runnable): the F₁Fₒ ATP synthase driven by a proton-motive-force ramp. From the ONE coupled proton flux (drive, dashed) the mechanism produces four TYPED physical channels — ATP synthesis flux (chemical), proton current (electrical), a near-constant rotary torque on the Fₒ rotor (mechanical), and dissipated heat (thermal). ATP flux scales with the drive at the fixed ATP:H⁺ = 1/3.3 stoichiometry, and the electrical energy balance holds (heat = (1−η)·input power, η = 0.75) — matter, charge, angular momentum and energy conserved. From scripts/build_fig06_dynamics.py.'
+    caption: 'Baseline (didactic smoke test): the simpler pre-revision transducer (fig06-runnable), kept as the executable baseline. The F₁Fₒ ATP synthase driven by a proton-motive-force ramp — from the ONE coupled proton flux (drive, dashed) it produces four TYPED physical channels: ATP synthesis flux (chemical), proton current (electrical), a near-constant rotary torque on the Fₒ rotor (mechanical), and dissipated heat (thermal). What to look for: ATP flux scaling with the drive at the fixed ATP:H⁺ = 1/3.3 stoichiometry, and the energy balance holding (heat = (1−η)·input power). NOTE — here torque (≈40 pN·nm) and efficiency (η = 0.75) are IMPOSED constants; the mechanistic figure below derives them from the physics.'
+- name: 'Mechanistic · decisive model-driven figure (fig06-mechanistic)'
+  address: image:visualizations/fig06-mechanistic-dynamics.png
+  config:
+    chart: image
+    decisive: true
+    variant: fig06-mechanistic
+    caption: 'Mechanistic (the decisive figure): a real reduced rotary F₁Fₒ motor in which every physical quantity is DERIVED from the proton-motive force Δp, the ATP free energy ΔG_ATP, and the shaft load. (A) the rotor shaft turns — cumulative revolutions rise under synthesis, peak at stall, then fall as it reverses. (B) angular velocity ω and ATP flux J_ATP cross zero together at the stall (tick 11) and go negative (reversal/hydrolysis). (C) torque balance: the derived drive torque τ_drive = n_c·e·Δp/2π ≈ 38 pN·nm (matching the measured ~40) against the ATP back-torque and the ramped external load; τ_net crosses zero at stall. (D) the power budget closes exactly, P_in = P_ATP + P_ext + P_heat (the dotted sum overlies P_in). (E) sweeping the proton-motive force sets direction about the first-principles stall gradient Δp* = n_ATP·ΔG_ATP/(n_c·e) = 125 mV — synthesis above, hydrolysis below. (F) the external load throttles the ATP flux relative to the unloaded motor. From scripts/build_fig06_mechanistic.py.'
+# Spine edge fig-01 → fig-06 (relation: builds-on) added per the scientific-review
+# revision: fig-06 instantiates fig-01's typed source→store→sink wiring and
+# conservation discipline with real physical quantities (the edge relation/rationale
+# is carried in the investigation spine; parent_studies schema allows only study+condition).
 parent_studies:
+- study: fig-01
+  condition: tests-passed
 - study: molecular-interfaces
   condition: tests-passed
 experiment: 'Run the `fig06-runnable` composite (MolecularMechanismHandler -- the F₁Fₒ ATP synthase as a four-channel transducer -- driven by a ProtonMotiveRamp charging the substrate/proton drive linearly) to completion over 20 ticks through the process-bigraph engine, and measure whether one coupled proton flux drives four TYPED physical channels (chemical ATP flux, electrical proton current, mechanical rotary torque, thermal heat) with matter, charge, angular momentum, and energy conserved across a molecular interface that has no cell-level boundary.'

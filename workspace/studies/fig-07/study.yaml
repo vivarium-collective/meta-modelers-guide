@@ -7,6 +7,7 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Provisional  # toy-real / uncalibrated illustrative cascade: deterministic and test-backed (8 passing tests) but no process knockouts or literature calibration -- the conservative rung for an executable-figure demonstration.
+confidence_basis: 'Held at Provisional. BASELINE (fig07-runnable) demonstrates nested routing through a deep place graph (behavioral verification). The MECHANISTIC VARIANT (fig07-mechanistic, scientific-review revision) adds the thing that makes nesting functional: permeable boundaries that causally gate a deep nuclear reporter (closing either boundary → reporter 0, series gating), conservative cross-compartment transport (Σsubstrate invariant to 1.3e-7), a verified first-principles prediction (higher permeability fills the deep compartment faster), and a locally-restricted cytoplasmic reaction that starves the nucleus — genuine mechanistic_ablation + prospective_prediction evidence that hierarchy influences function. Still Provisional because "depth" is a modeling choice (number of permeability barriers, not a physical length), the variant has four containment levels rather than the baseline''s six place-graph depths, and no constant is calibrated to a measured compartment permeability or transport rate.'
 question: 'Does the paper''s §Biomolecular compositions figure (Fig molecular_compositions) hold as an executable composite -- can molecular structures organized hierarchically across scales (proteins to complexes, organelles, ECM) be represented as a NESTED place graph, with processes that interact with those nested states corresponding to cellular compartments and structures, such that a process acting at one nesting level actually moves quantity in a deeply-nested store while the place-graph containment is preserved as the whole cell evolves as one coupled system?'
 biological_summary: 'This is the runnable realization of the paper''s §Biomolecular compositions figure (Fig molecular_compositions), whose two panels are: **a.** molecular structures organized hierarchically across scales -- from proteins to complexes, organelles, and extracellular matrix; and **b.** a composite process diagram in which processes interact with nested states corresponding to cellular compartments and structures. The paper''s point is that complementarity organizes molecules into complexes and higher-level assemblies, and that as organization increases the model must carry the containment -- membranes, compartments, organelles -- as structure, not flatten it into a bag of species.
 
@@ -29,7 +30,11 @@ baseline:
 - name: fig07-runnable
   composite: meta_modelers_guide.composites.fig07-runnable
   params: {}
-variants: []
+variants:
+- name: fig07-mechanistic
+  composite: meta_modelers_guide.composites.fig07-mechanistic
+  params: {}
+  rationale: 'Real-mechanism upgrade (scientific-review revision, Oct 2026). The baseline fig07-runnable runs a cascade through a deep place graph, but — as the review notes — a deep scalar changing establishes nested ROUTING, not multilevel biological ORGANIZATION, and nothing makes the nesting FUNCTIONAL. This variant adds that: a genuinely nested place graph (environment ⊃ cell ⊃ cytoplasm ⊃ nucleus) with two PermeableBoundary processes (plasma membrane, nuclear envelope) that gate conservative passive transport, a locally-restricted cytoplasmic metabolism, and a nuclear reporter whose production depends on the substrate that reaches it. It makes the three hierarchical relations explicit (containment = nesting; part-of = the boundary that defines a compartment; regulatory = the reporter depends on its signal), defines depth biologically (the number of permeability barriers a signal must cross), and shows a boundary-level knob causally controlling a deep observable — lowering EITHER boundary''s permeability shuts the nuclear reporter down (series gating). The baseline is kept intact as the didactic routing demonstration.'
 key_assumptions:
 - 'This `fig07-runnable` composite is **didactic / toy-real**: a small, illustrative composite built to look like Fig molecular_compositions and play forward as a coupled nested cascade -- NOT calibrated to a named cell type, organism, or literature target. The ODE rate constants (transport k=0.3, metabolism k=0.25 with metabolite_yield=0.6 / energy_yield=0.4, assembly k=0.2), the transcription / translation kinetics (elongation rates, half-lives, Michaelis constants), and the initial pool seeds are hand-chosen so the whole hierarchy is legible within a 30-step run, not fitted values.'
 - 'The processes are ODE handlers over dimensionless concentration / count / energy stores; "levels" here are place-graph nesting depths (compartment containment), not physical length scales. The six-level DNA path and four-level ribosome path are the load-bearing nesting the figure asserts; the exact depths are a modeling choice that mirrors the biological compartment hierarchy (cytoplasm > nucleus > chromosome > chromatin > nucleosome > DNA).'
@@ -154,6 +159,79 @@ behavior_tests:
     value: ribosome grew and final store == emitted last frame; DNA == 1.0 set point throughout
     provenance: 'read the four-levels-deep ribosome store and six-levels-deep DNA store from the final place graph: ribosome grew 0.5 -> ~0.88 and its final nested-store value == the last emitted ribosome frame (same store); DNA held at its set point (dna_init == 1.0) at every emitted frame, within 1e-6, and its final nested-store value == the last emitted dna frame; deterministic (tests/test_fig07_nested_dynamics.py::test_process_at_a_deep_level_moves_quantity_in_its_nested_store)'
   requires_simulation: fig07-runnable
+# ── mechanistic variant (fig07-mechanistic) — scientific-review revision ──────
+# The nesting INFLUENCES FUNCTION: permeable boundaries gate a deep observable.
+# Classified by the reviewer's evidence taxonomy (pass_if.kind).
+- name: mech-transport-conserves-substrate
+  classification: primary
+  variant: fig07-mechanistic
+  description: 'Passive transport across the nested boundaries is CONSERVATIVE — with the reactions off, the total substrate across environment + cytoplasm + nucleus is invariant. Containment neither creates nor loses mass as substrate crosses levels.'
+  measure:
+    kind: derived
+    path: Σ(env, cyto, nuc substrate)
+    expr: max |Σsubstrate(t) − Σsubstrate(0)| over the run
+  pass_if:
+    op: '<'
+    kind: invariant
+    value: 1.0e-6
+    provenance: 'INVARIANT. Observed total substrate 10.0→10.0, residual 1.3e-7 over the 40-tick pure-transport run (tests/test_fig07_mechanistic.py::test_transport_conserves_substrate_across_compartments)'
+  requires_simulation: fig07-mechanistic
+- name: mech-boundary-permeability-gates-deep-reporter
+  classification: primary
+  variant: fig07-mechanistic
+  description: 'The deep (nuclear) reporter is CAUSALLY gated by boundary permeability — a boundary-level cause with a deep functional effect, not mere routing. With both boundaries open the reporter is produced; closing the plasma membrane (ε) isolates the whole interior and the reporter goes to zero.'
+  measure:
+    kind: derived
+    path: obs.reporter at full vs membrane-closed
+    expr: reporter(both open) > 1 and reporter(membrane ε) ≈ 0
+  pass_if:
+    op: gates
+    kind: mechanistic_ablation
+    value: reporter_open > 1.0 and reporter_membrane_closed < 1e-6
+    provenance: 'MECHANISTIC_ABLATION. Observed reporter 8.23 (open) vs 0.0 (membrane ε) — the boundary permeability causally controls the deep observable (tests/test_fig07_mechanistic.py::test_boundary_permeability_gates_the_deep_reporter)'
+  requires_simulation: fig07-mechanistic
+- name: mech-both-boundaries-gate-in-series
+  classification: primary
+  variant: fig07-mechanistic
+  description: 'Depth = number of permeability barriers in series. The nuclear reporter sits behind TWO boundaries; closing EITHER one (at a different depth) independently zeroes it, while both-open produces it — each level is a functional gate, distinguishing hierarchy-influences-function from nested routing.'
+  measure:
+    kind: derived
+    path: reporter at {both open, membrane ε, nucleus ε}
+    expr: both-open > 1; membrane-ε ≈ 0; nucleus-ε ≈ 0
+  pass_if:
+    op: series_gating
+    kind: mechanistic_ablation
+    value: reporter > 1 both-open; < 1e-6 when either boundary ε
+    provenance: 'MECHANISTIC_ABLATION. Observed reporter 8.23 both-open, 0.0 with membrane ε, 0.0 with nuclear envelope ε — each depth gates independently (tests/test_fig07_mechanistic.py::test_both_boundaries_gate_in_series)'
+  requires_simulation: fig07-mechanistic
+- name: mech-higher-permeability-fills-deeper-faster
+  classification: primary
+  variant: fig07-mechanistic
+  description: 'A first-principles prediction: a more permeable boundary fills the deep compartment faster. Predicted before running — in pure transport, the nuclear substrate at a fixed early time is monotone increasing in the membrane permeability.'
+  measure:
+    kind: observable
+    path: nuclear substrate @ t=8 over a P_mem sweep
+    expr: monotone increasing in P_mem
+  pass_if:
+    op: monotone
+    kind: prospective_prediction
+    value: nuc_substrate(t=8) monotone ↑ in P_mem (0.05→0.8)
+    provenance: 'PROSPECTIVE_PREDICTION. Observed nuclear substrate at t=8 rising 1.26→2.03→2.77→3.16→3.42 across P_mem 0.05→0.8 (tests/test_fig07_mechanistic.py::test_higher_permeability_fills_deeper_compartment_faster)'
+  requires_simulation: fig07-mechanistic
+- name: mech-local-metabolism-is-compartment-restricted
+  classification: diagnostic
+  variant: fig07-mechanistic
+  description: 'The cytoplasmic reaction is LOCALLY RESTRICTED — it consumes substrate only in the cytoplasm, so it starves the downstream nucleus. Compartments do functionally different things (cytoplasm metabolises, nucleus reports); turning cytoplasmic metabolism off raises the deep reporter.'
+  measure:
+    kind: derived
+    path: reporter with cyto metabolism ON vs OFF
+    expr: reporter(OFF) > reporter(ON)
+  pass_if:
+    op: '>'
+    kind: mechanistic_ablation
+    value: reporter_off − reporter_on > 1.0
+    provenance: 'MECHANISTIC_ABLATION. Observed nuclear reporter 13.0 (cyto metabolism OFF) vs 1.49 (ON) — compartment-restricted consumption controls the deep observable (tests/test_fig07_mechanistic.py::test_local_metabolism_is_compartment_restricted)'
+  requires_simulation: fig07-mechanistic
 runs:
 - name: fig07-runnable
   composite: fig07-runnable
@@ -193,6 +271,29 @@ runs:
   emitter:
     kind: unknown
   params: '{}'
+- name: fig07-mechanistic
+  composite: fig07-mechanistic
+  emitter: RAMEmitter
+  id: fig07-mechanistic
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig07-mechanistic.composite.json (PermeableBoundary ×2 [membrane + nuclear envelope, permeability 0.3], LocalMetabolism k=0.05 in cytoplasm, RegulatedReporter k_prod=0.4/k_deg=0.1 in nucleus; nested place graph environment⊃cell⊃cytoplasm⊃nucleus) run 40 ticks through the engine. fig07-mechanistic-dynamics.png (6-panel: nested compartments + port path, inward propagation, graded prediction, series gating, local-metabolism starvation, localized perturbation) baked over the same run + sweeps + a mid-run cytoplasmic pulse via scripts/build_fig07_mechanistic.py.'
+  params: {}
+  outcomes:
+    MECH-TRANSPORT-CONSERVES-SUBSTRATE:
+      result: PASS
+      detail: 'Σsubstrate 10.0→10.0, residual 1.3e-7 (pure transport is conservative across levels)'
+    MECH-BOUNDARY-PERMEABILITY-GATES-DEEP-REPORTER:
+      result: PASS
+      detail: 'reporter 8.23 (open) vs 0.0 (membrane ε) — boundary-level cause, deep effect'
+    MECH-BOTH-BOUNDARIES-GATE-IN-SERIES:
+      result: PASS
+      detail: 'either boundary ε (membrane OR nuclear envelope) zeroes the deep reporter; both open → 8.23'
+    MECH-HIGHER-PERMEABILITY-FILLS-DEEPER-FASTER:
+      result: PASS
+      detail: 'nuclear substrate @ t=8 monotone 1.26→3.42 across P_mem 0.05→0.8'
+    MECH-LOCAL-METABOLISM-IS-COMPARTMENT-RESTRICTED:
+      result: PASS
+      detail: 'reporter 13.0 (cyto metabolism OFF) vs 1.49 (ON) — compartment-restricted consumption'
 findings:
 - id: F-01
   kind: computational
@@ -240,13 +341,39 @@ findings:
     - nutrients: 'GO:0031667 (response to nutrient levels)'
     - energy: 'PATO:0001021 (energy)'
     - metabolites: 'PATO:0000033 (concentration)'
+- id: F-04
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig07-mechanistic
+  statement: 'The nesting is made FUNCTIONAL, answering the review''s objection that a deep scalar changing is only nested routing. In the mechanistic variant, permeable compartment boundaries causally gate a deep nuclear reporter: with both boundaries open the reporter reaches 8.23, but closing EITHER the plasma membrane OR the nuclear envelope (permeability → ε) drives it to exactly 0. Because the deep observable sits behind two boundaries in series, each level of the hierarchy is an independent functional gate — a boundary-level cause with a deep effect, not a redrawn container. Passive transport across the boundaries is conservative (Σsubstrate invariant to 1.3e-7), and a first-principles prediction holds: a more permeable boundary fills the deep compartment faster (nuclear substrate at t=8 monotone 1.26→3.42 across P_mem 0.05→0.8).'
+  evidence:
+    from_test: mech-both-boundaries-gate-in-series
+    from_run: fig07-mechanistic
+    observed: reporter 8.23 both-open, 0.0 with either boundary ε; Σsubstrate residual 1.3e-7; deep-fill monotone in P_mem
+  provenance:
+    run_ids:
+    - fig07-mechanistic
+- id: F-05
+  kind: computational
+  tier: mechanism
+  status: confirms
+  variant: fig07-mechanistic
+  statement: 'The three hierarchical relations are explicit and distinct, and compartments do functionally different things. CONTAINMENT is the place-graph nesting (environment⊃cell⊃cytoplasm⊃nucleus); PART-OF is each boundary that defines a compartment (membrane/envelope); REGULATORY is the reporter depending on the signal that reaches it. A LOCALLY-RESTRICTED cytoplasmic metabolism consumes substrate only in the cytoplasm and thereby starves the downstream nucleus (reporter 13.0 with it off vs 1.49 on), and a localized cytoplasmic perturbation reaches the nucleus only when the envelope is open. Honest scope: this remains a didactic, uncalibrated model — "depth" means the number of permeability barriers crossed, not a physical length scale, and the variant has four containment levels (not the baseline''s six place-graph depths); it demonstrates that hierarchy CAN influence function, not a validated multiscale organism. The calibrated cousin remains `biomolecular-complementarity` in draft-to-living-cell.'
+  evidence:
+    from_test: mech-local-metabolism-is-compartment-restricted
+    from_run: fig07-mechanistic
+    observed: reporter 13.0 (cyto metabolism OFF) vs 1.49 (ON); localized pulse reaches nucleus only with envelope open
+  provenance:
+    run_ids:
+    - fig07-mechanistic
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
     basis: 'fig07-runnable.composite.json builds and runs its default 30 steps to completion through the process-bigraph engine (tests/test_fig07_nested_dynamics.py, 8 tests), matching this investigation''s convention for runnable figure composites.'
   biological_validation:
     result: PASS
-    basis: All primary behavior tests pass on measured readouts from a real 30-step run -- a process acting at each nesting level moves quantity in its store, the cascade propagates across all five levels, the place-graph containment is preserved after the run, and a process acting on a deeply-nested store moves the quantity in that nested store (ribosome grown four levels deep, DNA held at set point six levels deep). Every value is deterministic and reproduces exactly. The composite is toy-real (uncalibrated), so the exact endpoints are regression pins while the per-level direction and the containment claim are the a-priori structural predictions.
+    basis: 'Reported in two layers, per the review. BEHAVIORAL / STRUCTURAL (baseline fig07-runnable): a process acting at each nesting level moves quantity in its store, the cascade propagates across all levels, and the place-graph containment is preserved after the run. These establish nested ROUTING — a deep scalar changing — which is implementation verification, NOT evidence that hierarchy influences function. MECHANISTIC (variant fig07-mechanistic): permeable boundaries causally gate a deep nuclear reporter (closing EITHER boundary → reporter 0; series gating; mechanistic_ablation), transport is conservative (invariant), a more permeable boundary fills the deep compartment faster (prospective_prediction), and a locally-restricted cytoplasmic reaction starves the nucleus. This is genuine evidence that the hierarchy INFLUENCES FUNCTION. NOT yet biological validation of a multiscale organism — the depths are a modeling choice and the constants are uncalibrated; that rigor is the sibling `biomolecular-complementarity` in draft-to-living-cell.'
   explanatory_gain:
     result: POSITIVE
     basis: 'Realizing Fig molecular_compositions as a runnable composite -- six real processes acting on stores buried up to six levels deep in a preserved place graph -- makes the paper''s nested-hierarchy-of-composites claim concrete and executable: the figure''s two panels (hierarchical molecular structures; a composite process diagram over nested compartment states) are not merely drawn but run forward as one coupled cell, with the compartment containment load-bearing rather than flattened.'
@@ -307,18 +434,32 @@ limitations:
 - The processes are ODE handlers over dimensionless concentration / count / energy stores; no quantity carries a calibrated physical unit, and there is no spatial, stochastic, or rule-based molecular detail -- the figure''s molecular-structure panel is represented by named nested stores, not by explicit binding sites or conformations.
 - 'Two run horizons appear in this study and must not be conflated: the behavior tests and the dynamics figure exercise the composite''s default 30-step horizon (the full cascade: nutrients 9.0, metabolites ~20.5, ribosome ~0.88), while the workbench 0.4.1 catalog readout (`fig07-executable`) is a short 8-step window that catches the same cascade in its slow early phase (nutrients 2.4, rna 0.18, proteins 0.008, ribosome ~0.50). The small downstream values at 8 steps are the short window, not a broken or collapsing cascade.'
 - The rigorous molecular-complementarity cousin is `biomolecular-complementarity` in the `draft-to-living-cell` investigation; this study is the executable-figure counterpart and does not restate that cousin''s numbers as its own.
+- 'Mechanistic variant (fig07-mechanistic) — scope and honest limits: it demonstrates that hierarchy CAN influence function (permeable boundaries gate a deep observable, series gating, conservative transport, compartment-restricted metabolism), fixing the baseline''s routing-only limitation. But "depth" here means the number of permeability barriers a signal crosses, NOT a physical length scale; the variant has four containment levels (environment/cell/cytoplasm/nucleus), not the baseline''s six place-graph depths; the boundary is passive diffusion (no active transport, channels, or gating kinetics); and every constant (permeability, metabolism rate, reporter kinetics) is didactic — not calibrated to a measured membrane permeability or transport rate. It shows a mechanism, not a validated multiscale cell.'
 falsifiability: Overturned if the composite fails to run its default step count to completion, if any level fails to change over the run (a mis-wired process), if protein leads RNA or the ribosome pool fails to grow past its seed, if the DNA set point drifts away from 1.0, if the run is not deterministic across repeated runs of the same composite, or if the place-graph containment is not preserved after the run (a nested path flattened, or a deep store no longer reachable at full depth).
 visualizations:
-- name: Figure 7
+- name: 'Figure 7 · the paper''s process-bigraph diagram (panel b)'
   address: svg:visualizations/figure_7.svg
   config:
-    caption: The cell's structural composition as a place graph — extracellular matrix, membrane, cytoplasm, nucleus, organelles — with the processes that act across levels.
-- name: The nested hierarchy in motion
+    caption: 'The paper''s panel-b diagram — the cell''s structural composition as a place graph (extracellular matrix, membrane, cytoplasm, nucleus, organelles) with the processes that act across levels.'
+- name: 'Baseline dynamics · didactic smoke test (fig07-runnable)'
   address: image:visualizations/fig07-dynamics.png
   config:
     chart: image
-    caption: 'Time series of the runnable fig07 hierarchy (fig07-runnable): six ODE processes act on stores up to SIX levels deep in one place graph and feed each other, so the whole cell evolves as one coupled system. Transmembrane transport fills the cytoplasmic nutrient pool; metabolism makes metabolites + energy; transcription reads the deeply-nested DNA into RNA; translation makes protein; subunit assembly grows the ribosome pool (closing the loop); replication holds DNA at its genome set point. The cascade propagates across every level — the nested hierarchy of coupled processes running together. From scripts/build_fig07_dynamics.py.'
+    caption: 'Baseline (didactic smoke test): the simpler pre-revision hierarchy (fig07-runnable), kept as the executable baseline. Six ODE processes act on stores up to SIX levels deep in one place graph and feed each other, so the whole cell evolves as one coupled system — transmembrane transport fills the cytoplasmic nutrient pool, metabolism makes metabolites + energy, transcription reads the deeply-nested DNA into RNA, translation makes protein, subunit assembly grows the ribosome pool, replication holds DNA at its set point. What to look for: the cascade propagating across every level. (This baseline shows depth exists and couples; the mechanistic figure below shows depth INFLUENCES FUNCTION via permeable boundaries.)'
+- name: 'Mechanistic · decisive model-driven figure (fig07-mechanistic)'
+  address: image:visualizations/fig07-mechanistic-dynamics.png
+  config:
+    chart: image
+    decisive: true
+    variant: fig07-mechanistic
+    caption: 'Mechanistic (the decisive figure): a nested hierarchy whose permeable boundaries gate a deep observable, so depth influences function rather than merely routing a scalar. (A) the nested compartments (environment ⊃ cell ⊃ cytoplasm ⊃ nucleus) with the substrate port path crossing the plasma membrane and nuclear envelope — containment = nesting, boundary = part-of, reporter-depends-on-signal = regulatory. (B) substrate propagates inward level by level and the deep nuclear reporter rises. (C) a first-principles prediction: a more permeable membrane fills the deep compartment faster (nuclear substrate at t=8 monotone in P_mem). (D) series gating — closing EITHER boundary (ε) zeroes the deep reporter, so each depth is a functional gate. (E) the locally-restricted cytoplasmic metabolism starves the nucleus. (F) a localized cytoplasmic pulse reaches the nucleus only if the envelope is open. Hierarchy here INFLUENCES FUNCTION, not merely routes a scalar. From scripts/build_fig07_mechanistic.py.'
+# Spine edge fig-01 → fig-07 (relation: builds-on) per the scientific-review revision:
+# fig-07 instantiates fig-01's typed source→store→sink wiring + conservation in a genuinely
+# nested place graph. (parent_studies schema allows only study+condition; relation/rationale
+# live in the investigation spine_edges.)
 parent_studies:
+- study: fig-01
+  condition: tests-passed
 - study: biomolecular-complementarity
   condition: tests-passed
 experiment: 'Run the `fig07-runnable` composite (six ODE handlers -- transmembrane transport, metabolism, transcription, translation, subunit assembly, replication / repair -- over one place graph nesting up to six levels deep) to completion over its default 30 steps through the process-bigraph engine, and measure whether a process acting at each nesting level moves quantity in its nested store, whether the cascade propagates across every level as one coupled cell, and whether the place-graph containment is preserved as the dynamics run.'

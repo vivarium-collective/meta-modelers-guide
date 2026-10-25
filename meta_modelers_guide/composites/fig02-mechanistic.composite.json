@@ -1,0 +1,127 @@
+{
+  "name": "Orchestration across timescales \u2014 multirate metabolism/biomass (mechanistic)",
+  "description": "Fig 2 mechanistic variant. A stiff FastMetabolism process (influx I minus first-order turnover r\u00b7M, relaxing to M*=I/r) on a short clock shares one metabolite pool with a SlowBiomass process (converts k_b\u00b7M, yield y to biomass, 1\u2212y to waste) on a long clock. Explicit input-output ledger: cumulative_input = \u0394M + \u0394biomass + \u0394waste (biomass is only the y-fraction; M+B is NOT conserved). Both read the pool at the tick boundary and return summed deltas, so coincident updates are synchronous/order-independent. Multirate scheduling (which clock fires when) is separated from numerical accuracy (convergence to a fine-step reference).",
+  "default_n_steps": 20,
+  "requires": {
+    "processes": [
+      "FastMetabolism",
+      "SlowBiomass"
+    ]
+  },
+  "provenance": {
+    "figure": "fig02-orchestration",
+    "environment": "fig02-mechanistic"
+  },
+  "state": {
+    "fast": {
+      "_type": "process",
+      "address": "local:FastMetabolism",
+      "interval": 0.25,
+      "config": {
+        "influx": 1.0,
+        "turnover": 1.5
+      },
+      "inputs": {
+        "metabolite": [
+          "pool",
+          "metabolite"
+        ]
+      },
+      "outputs": {
+        "metabolite": [
+          "pool",
+          "metabolite"
+        ],
+        "waste": [
+          "pool",
+          "waste"
+        ],
+        "cumulative_input": [
+          "pool",
+          "cumulative_input"
+        ]
+      }
+    },
+    "slow": {
+      "_type": "process",
+      "address": "local:SlowBiomass",
+      "interval": 1.0,
+      "config": {
+        "k_bio": 0.3,
+        "yield_frac": 0.6
+      },
+      "inputs": {
+        "metabolite": [
+          "pool",
+          "metabolite"
+        ]
+      },
+      "outputs": {
+        "metabolite": [
+          "pool",
+          "metabolite"
+        ],
+        "biomass": [
+          "pool",
+          "biomass"
+        ],
+        "waste": [
+          "pool",
+          "waste"
+        ]
+      }
+    },
+    "pool": {
+      "metabolite": {
+        "_type": "float",
+        "_default": 0.0
+      },
+      "biomass": {
+        "_type": "float",
+        "_default": 0.0
+      },
+      "waste": {
+        "_type": "float",
+        "_default": 0.0
+      },
+      "cumulative_input": {
+        "_type": "float",
+        "_default": 0.0
+      }
+    },
+    "emitter": {
+      "_type": "step",
+      "address": "local:RAMEmitter",
+      "config": {
+        "emit": {
+          "metabolite": "float",
+          "biomass": "float",
+          "waste": "float",
+          "cumulative_input": "float",
+          "time": "float"
+        }
+      },
+      "inputs": {
+        "metabolite": [
+          "pool",
+          "metabolite"
+        ],
+        "biomass": [
+          "pool",
+          "biomass"
+        ],
+        "waste": [
+          "pool",
+          "waste"
+        ],
+        "cumulative_input": [
+          "pool",
+          "cumulative_input"
+        ],
+        "time": [
+          "global_time"
+        ]
+      }
+    }
+  }
+}

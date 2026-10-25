@@ -1,0 +1,34 @@
+{
+  "name": "Interfaces & Composition — Same Process, Rewired to a Hub (star A↔B, A↔C)",
+  "description": "The SAME reusable CompartmentTransport class as fig01-mechanistic, with IDENTICAL configs and the SAME nested place graph — but rewired into a HUB topology: A↔B and A↔C (A is central), instead of the chain A↔B↔C. Nothing in the process implementation changed; only the wiring did. The equilibrium is therefore different: each leaf equilibrates to sink/source = k_f/k_r = 4 against the hub, giving A:B:C = 1:4:4 (vs the chain's 1:4:16). This is the paper's composition point made measurable — topology is set by wiring, and topology controls dynamics. Runnable (default_n_steps + RAMEmitter).",
+  "default_n_steps": 40,
+  "requires": {"processes": ["CompartmentTransport"]},
+  "provenance": {"figure": "fig01-process-bigraph", "environment": "fig01-mechanistic", "topology": "star"},
+  "state": {
+    "cell": {
+      "outer": {"A": {"_type": "concentration", "_default": 1.0}},
+      "inner": {
+        "B": {"_type": "concentration", "_default": 0.0},
+        "organelle": {"C": {"_type": "concentration", "_default": 0.0}}
+      }
+    },
+    "transport_ab": {
+      "_type": "process", "address": "local:CompartmentTransport", "interval": 1.0,
+      "config": {"k_forward": 0.2, "k_reverse": 0.05},
+      "inputs": {"source": ["cell", "outer", "A"], "sink": ["cell", "inner", "B"]},
+      "outputs": {"source": ["cell", "outer", "A"], "sink": ["cell", "inner", "B"]}
+    },
+    "transport_ac": {
+      "_type": "process", "address": "local:CompartmentTransport", "interval": 1.0,
+      "config": {"k_forward": 0.2, "k_reverse": 0.05},
+      "inputs": {"source": ["cell", "outer", "A"], "sink": ["cell", "inner", "organelle", "C"]},
+      "outputs": {"source": ["cell", "outer", "A"], "sink": ["cell", "inner", "organelle", "C"]}
+    },
+    "emitter": {
+      "_type": "step", "address": "local:RAMEmitter",
+      "config": {"emit": {"A": "concentration", "B": "concentration", "C": "concentration", "time": "float"}},
+      "inputs": {"A": ["cell", "outer", "A"], "B": ["cell", "inner", "B"],
+                 "C": ["cell", "inner", "organelle", "C"], "time": ["global_time"]}
+    }
+  }
+}

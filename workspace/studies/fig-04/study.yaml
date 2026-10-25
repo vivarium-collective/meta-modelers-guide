@@ -7,7 +7,7 @@ status: complete
 phase: Decide
 gate_status: passed
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
-confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the full sense->act->feedback control loop is robustly demonstrated on measured readouts from a deterministic run -- uptake tracks the local field at correlation 1.0, the mass<->uptake ledger closes exactly, and a zero-field negative control establishes causality -- but held at Medium, not High, because the lattice, cell, and rate constants are didactic/toy-real and uncalibrated to any named nutrient or chemotactic velocity.'
+confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig04-runnable): the sense→act loop is demonstrated, BUT — as the scientific review flags — the cell''s uptake is never subtracted from the field, so its "uptake tracks the local field at correlation 1.0" is an identity, not feedback; this is behavioral verification only, and is held at Medium. MECHANISTIC VARIANT (fig04-mechanistic, scientific-review revision) genuinely closes the loop: saturating Michaelis–Menten uptake is a REAL sink that carves a diffusing depletion well (footprint 1.58 field units), biomass is paid for out of the field with the mass ledger closing to 9e-16, chemotaxis climbs the gradient, and matched-null controls (uptake/motility/gradient off, via epsilon) isolate each arm. The study is still held at Provisional because the model is a 1-D lattice in LATTICE units with didactic rate constants — not calibrated to a named nutrient, physical diffusivity, or measured chemotactic velocity.'
 question: 'Is the paper''s §Cell-environment coupling figure (Fig cell_environment) executable — does a runnable process-bigraph composite actually close the control loop the caption asserts, where an environmental chemical field DRIVES the cell''s interface ports (sensing, uptake, growth, motility) and the cell acts back on that shared field? Concretely: does a real diffusing nutrient gradient, sensed locally at an interior grid index, drive uptake that tracks the sensed field, grow the cell''s mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake → mass gain, plus up-gradient drift — all as measured simulation output, not a drawn diagram?'
 biological_summary: 'This is the runnable realization of the paper''s §Cell-environment coupling figure (Fig cell_environment). The section frames coupling as closing a loop: "cellular outputs modify the environmental state, environmental processes update it further, and that state feeds back to the cellular interface as inputs -- the minimal structure required for control." Panel **a** shows a cell interacting with environmental fields (chemical, electrical, mechanical) and physical barriers; panel **b** shows a composition diagram wiring internal cell state to those environmental fields through exchange processes and shared stores, alongside environmental processes such as diffusion and mechanical relaxation.
 
@@ -19,7 +19,11 @@ baseline:
 - name: fig04-runnable
   composite: meta_modelers_guide.composites.fig04-runnable
   params: {}
-variants: []
+variants:
+- name: fig04-mechanistic
+  composite: meta_modelers_guide.composites.fig04-mechanistic
+  params: {}
+  rationale: 'Real-mechanism upgrade (scientific-review revision, Oct 2026). The baseline fig04-runnable wires a real diffusion field, but the cell''s uptake is a SCALAR output that is never subtracted from the field — so there is no genuine cell→field feedback, and the "uptake ∝ local field at correlation 1.0" readout is true by construction, not evidence of coupling (the review''s central objection to this figure). This variant CLOSES the loop on a 25-cell lattice (distances in lattice units, dx=1): a MotileCell takes up nutrient with SATURATING Michaelis–Menten kinetics, REMOVES that uptake from the field at its location (a real depletion well that diffuses), grows biomass paid out of the field, and chemotaxes up the local gradient toward an explicit IN-DOMAIN source. Matched-null controls (uptake off, motility off, zero gradient — via epsilon, since float 0.0 config is silently restored to default) isolate each arm, and the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to machine precision. The baseline is kept intact as the didactic smoke test.'
 key_assumptions:
 - 'This `fig04-runnable` composite is DIDACTIC / toy-real: a length-9 1-D lattice, a single cell, and hand-picked rate constants (uptake_rate=0.1, biomass_yield=0.5, migration_rate=0.1, traction_coef=0.05, diffusivity D=0.2) chosen so every leg of the control loop — sense, uptake, grow, drift — is legible within a 24-step run. It is built to look like the figure and play the coupling forward, NOT calibrated to a named nutrient, a measured chemotactic velocity, or a literature metabolic rate.'
 - 'The cell''s interface is intentionally minimal-but-real. The chemical field is a genuine process-bigraph `map[float]` grid store with real neighbour coupling under a finite-difference diffusion step (not a scalar stand-in and not a list-of-floats fallback); the cell reads its LOCAL grid value at its own lattice index. But mass, location, uptake, traction, and shape are SCALAR cell outputs, and the mechanical field is a single scalar relaxed toward a barrier equilibrium — a 1-D reduction of panel a''s chemical/electrical/mechanical/barrier fields.'
@@ -120,6 +124,79 @@ behavior_tests:
     value: cum_uptake_flux 0.0 → 0.864305 (monotone); Δmass 0.432152 == 0.5 × 0.864305
     provenance: 'prior: the cell writes uptake back to the shared env store and every unit of biomass is biomass_yield (0.5) × a unit of uptake booked to the env, so the ledger must close. Observed: cumulative uptake_flux 0.0 → 0.864305, monotone; Δmass 0.432152 == 0.5 × 0.864305 to <1e-9 (deterministic) (tests/test_fig04_env_drives_interface.py::test_control_loop_closes_output_written_back_to_shared_env)'
   requires_simulation: fig04-runnable
+# ── mechanistic variant (fig04-mechanistic) — scientific-review revision ──────
+# Real cell↔field feedback, saturating transport, chemotaxis, and matched-null
+# controls, classified by the reviewer's evidence taxonomy (pass_if.kind).
+- name: mech-mass-ledger-closes
+  classification: primary
+  variant: fig04-mechanistic
+  description: 'With Neumann edges the field mass ledger closes exactly: Σfield change = Σsource − Σdecay − Σuptake, and the cell''s biomass change = yield·Σuptake. Nothing is created — the cell''s growth is paid for out of the field. Pure diffusion (cell and source removed) conserves the field total to round-off.'
+  measure:
+    kind: derived
+    path: obs.source_total, obs.decay_total, obs.uptake_total; Σfield
+    expr: '|Δfield − (Σsource − Σdecay − Σuptake)| and |Δbiomass − yield·Σuptake|'
+  pass_if:
+    op: '<'
+    kind: invariant
+    value: 1.0e-9
+    provenance: 'INVARIANT. Observed field ledger residual 8.9e-16 and biomass-vs-uptake residual 0.0 over the live 24-tick run; pure diffusion conserves the total to <1e-9 (tests/test_fig04_mechanistic.py::test_mass_ledger_closes, ::test_diffusion_is_mass_conserving)'
+  requires_simulation: fig04-mechanistic
+- name: mech-cell-depletes-field-real-feedback
+  classification: primary
+  variant: fig04-mechanistic
+  description: 'The cell''s uptake is a REAL sink on the shared field: the field under the cell is drawn below the no-uptake control (a depletion well that diffuses), and the cell leaves a measurable footprint on the environment. This is the bidirectional feedback the baseline lacked — its uptake never touched the field, so its "uptake ∝ field" was an identity, not evidence.'
+  measure:
+    kind: derived
+    path: field(full) vs field(no-uptake) over space×time
+    expr: max footprint |full − no-uptake| and max depletion-well depth
+  pass_if:
+    op: footprint_and_well
+    kind: mechanistic_ablation
+    value: footprint > 0.1 and well depth > 0.1 (field units)
+    provenance: 'MECHANISTIC_ABLATION. Observed max footprint 1.58 and well depth 1.58 field units — the cell visibly imprints a depletion trail that follows its track (tests/test_fig04_mechanistic.py::test_cell_depletes_the_field_real_feedback). Directly refutes the review-flagged spurious correlation=1.0 feedback claim of the baseline.'
+  requires_simulation: fig04-mechanistic
+- name: mech-controls-isolate-each-arm
+  classification: primary
+  variant: fig04-mechanistic
+  description: 'Matched-null controls (set with an epsilon, not 0.0) cleanly isolate each arm of the loop: NO-UPTAKE preserves the field and keeps biomass constant (no sink, no growth); NO-MOTILITY holds the cell''s position but it still eats locally (uptake without displacement); ZERO-GRADIENT (uniform field, source off) abolishes directed chemotactic drift. Each removes exactly one mechanism.'
+  measure:
+    kind: derived
+    path: biomass, position under {no-uptake, no-motility, zero-gradient}
+    expr: no-uptake Δbiomass≈0; no-motility Δposition≈0; zero-gradient Δposition≈0
+  pass_if:
+    op: controls_hold
+    kind: mechanistic_ablation
+    value: 'Δbiomass<1e-6 (no-uptake); |Δpos|<1e-6 (no-motility); |Δpos|<1 lattice (zero-gradient)'
+    provenance: 'MECHANISTIC_ABLATION (matched nulls, epsilon not 0.0 per the is_empty(Float,0.0)=True gotcha). Observed: no-uptake biomass 1.000 flat; no-motility position fixed at 16.0 with biomass still rising; zero-gradient no directed drift (tests/test_fig04_mechanistic.py::test_no_uptake_preserves_the_field, ::test_no_motility_means_no_displacement, ::test_zero_gradient_abolishes_directed_drift)'
+  requires_simulation: fig04-mechanistic
+- name: mech-chemotaxis-climbs-the-gradient
+  classification: primary
+  variant: fig04-mechanistic
+  description: 'The full cell moves UP the local gradient toward the in-domain source (lattice position falls 16 → ~1) and the nutrient it senses rises as it climbs. The motion is genuinely gradient-following, not a scripted path — it vanishes on a uniform field.'
+  measure:
+    kind: observable
+    path: obs.position, obs.local_conc
+    expr: position decreases by >5 lattice units; sensed nutrient rises while climbing
+  pass_if:
+    op: climbs
+    kind: mechanistic_ablation
+    value: Δposition < −5 lattice units and local_conc rising
+    provenance: 'MECHANISTIC_ABLATION. Observed cell climbed 16.0 → 0.6 lattice units with sensed nutrient rising 0.27 → ~2.0; the drift is absent under the zero-gradient control (tests/test_fig04_mechanistic.py::test_chemotaxis_climbs_the_gradient)'
+  requires_simulation: fig04-mechanistic
+- name: mech-uptake-saturates
+  classification: diagnostic
+  variant: fig04-mechanistic
+  description: 'Uptake follows saturating Michaelis–Menten kinetics v = Vmax·c/(Km+c) — bounded by Vmax at high concentration and ~linear at low concentration — not the baseline''s unbounded proportional draw. Transport cannot exceed the carrier limit.'
+  measure:
+    kind: observable
+    path: uptake at c far above vs far below Km
+    expr: uptake(c=100)→Vmax; uptake(c≪Km) ≪ Vmax
+  pass_if:
+    op: saturates
+    kind: empirical_comparison
+    value: uptake(100) ∈ [0.99·Vmax, Vmax); uptake(0.03) < 0.1·uptake(100)
+    provenance: 'EMPIRICAL_COMPARISON to Michaelis–Menten saturation. Observed uptake approaches Vmax=0.45 at high c and is <10% of saturation far below Km — a real carrier limit, unlike the baseline''s linear uptake_rate·local (tests/test_fig04_mechanistic.py::test_uptake_saturates_michaelis_menten)'
+  requires_simulation: fig04-mechanistic
 runs:
 - name: fig04-runnable
   composite: fig04-runnable
@@ -153,6 +230,29 @@ runs:
   emitter:
     kind: unknown
   params: '{}'
+- name: fig04-mechanistic
+  composite: fig04-mechanistic
+  emitter: RAMEmitter
+  id: fig04-mechanistic
+  status: completed
+  provenance: 'meta_modelers_guide/composites/fig04-mechanistic.composite.json (DiffusionField D=0.4 lattice²·tick⁻¹ with D·dt/dx²=0.4<0.5 stable; FieldSource at cell 0 rate 0.25, decay 0.004; MotileCell Vmax=0.45, Km=0.30, yield 0.6, chemotaxis 9.0 on a 25-cell lattice with an in-domain exponential gradient) run 24 ticks through the engine. fig04-mechanistic-dynamics.png (6-panel spatiotemporal figure + matched-null controls) baked over the same run + controls via scripts/build_fig04_mechanistic.py.'
+  params: {}
+  outcomes:
+    MECH-MASS-LEDGER-CLOSES:
+      result: PASS
+      detail: 'field ledger residual 8.9e-16; biomass = yield·Σuptake exactly; pure diffusion conserves total'
+    MECH-CELL-DEPLETES-FIELD-REAL-FEEDBACK:
+      result: PASS
+      detail: 'footprint 1.58, depletion well 1.58 field units — real cell→field feedback (refutes the baseline correlation=1.0 artefact)'
+    MECH-CONTROLS-ISOLATE-EACH-ARM:
+      result: PASS
+      detail: 'no-uptake: biomass flat 1.0; no-motility: position fixed 16.0; zero-gradient: no drift'
+    MECH-CHEMOTAXIS-CLIMBS-THE-GRADIENT:
+      result: PASS
+      detail: 'cell 16.0 → 0.6 lattice units up-gradient; sensed nutrient 0.27 → ~2.0'
+    MECH-UPTAKE-SATURATES:
+      result: PASS
+      detail: 'uptake→Vmax=0.45 at high c, ≪ at low c (Michaelis–Menten, bounded)'
 findings:
 - id: F-01
   kind: computational
@@ -191,6 +291,45 @@ findings:
     run_ids:
     - fig04-runnable
     analysis_script: in-memory Composite build from fig04-runnable.composite.json + gather_emitter_results, local-field drawdown check (workbench 0.4.1)
+- id: F-04
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig04-mechanistic
+  statement: 'The sense/act loop is genuinely CLOSED in the mechanistic variant, fixing the review''s central objection to this figure. In the baseline the cell''s uptake was a scalar output never subtracted from the field, so "uptake ∝ local field at correlation 1.0" was an identity, not feedback. Here the cell''s saturating Michaelis–Menten uptake is a REAL sink: it draws the field down at the cell''s location (a depletion well, max 1.58 field units, that diffuses and follows the cell), and the cell leaves a measurable footprint on the environment (max 1.58). Biomass is paid for out of the field — the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to 8.9e-16 and Δbiomass = yield·Σuptake exactly.'
+  evidence:
+    from_test: mech-cell-depletes-field-real-feedback
+    from_run: fig04-mechanistic
+    observed: footprint 1.58 and depletion well 1.58 field units; field ledger residual 8.9e-16
+  provenance:
+    run_ids:
+    - fig04-mechanistic
+- id: F-05
+  kind: computational
+  tier: mechanism
+  status: novel
+  variant: fig04-mechanistic
+  statement: 'Matched-null controls isolate each arm of the loop, so the behaviour is attributable to specific mechanisms rather than to a scripted trajectory. NO-UPTAKE (Vmax=ε) keeps the field intact and biomass flat; NO-MOTILITY (χ=ε) holds position while the cell still eats locally; ZERO-GRADIENT (uniform field, source off) abolishes directed drift. Chemotaxis genuinely climbs the gradient (cell 16→0.6 lattice units, sensed nutrient rising), and vanishes without a gradient. Controls use an epsilon, not 0.0, because bigraph_schema treats a float 0.0 config as empty and restores the schema default — a matched-null-control correctness point.'
+  evidence:
+    from_test: mech-controls-isolate-each-arm
+    from_run: fig04-mechanistic
+    observed: no-uptake biomass 1.0 flat; no-motility position fixed 16.0; zero-gradient no drift; full climbs 16→0.6
+  provenance:
+    run_ids:
+    - fig04-mechanistic
+- id: F-06
+  kind: computational
+  tier: mechanism
+  status: confirms
+  variant: fig04-mechanistic
+  statement: 'Transport saturates (Michaelis–Menten), unlike the baseline''s unbounded proportional uptake — honest scope stated. Uptake approaches Vmax at high concentration and is far below it near/under Km, so the carrier has a real limit. Honest limits: the model is a 1-D lattice (distances in LATTICE units, not calibrated physical microns), diffusion is explicit-Euler (stable at D·dt/dx²=0.4<0.5), the source is a single in-domain cell, and the rate constants are didactic — not fitted to a named nutrient, diffusivity, or measured chemotactic velocity. The rigorous spatial cousin is `cell-environment-coupling` in draft-to-living-cell.'
+  evidence:
+    from_test: mech-uptake-saturates
+    from_run: fig04-mechanistic
+    observed: uptake→Vmax=0.45 at c=100; <10% of Vmax at c=0.03
+  provenance:
+    run_ids:
+    - fig04-mechanistic
 ontology_provenance:
   note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kinds -- a MIRIAM-style annotation map, not ontology reasoning.'
   interface_quantities:
@@ -207,7 +346,7 @@ conclusion_verdicts:
     basis: 'fig04-runnable.composite.json builds and runs to completion (24 ticks) through the process-bigraph engine (tests/test_fig04_env_drives_interface.py); guarded by the same optional-dependency conventions as the rest of this investigation.'
   biological_validation:
     result: PASS
-    basis: All primary behavior tests pass on measured readouts from a real 24-tick run — uptake is driven by and tracks the local sensed field, mass grows monotonically, the cell drifts up-gradient, the loop closes through the shared env store, and the mass↔uptake ledger balances exactly. A zero-field negative control confirms the environment is the causal driver. All values are deterministic (no RNG in the composite) and reproduce exactly.
+    basis: 'Reported in two layers, per the review. BEHAVIORAL (baseline fig04-runnable): the sense→act legs run — uptake is driven by the local field, mass grows, the cell drifts up-gradient — but the cell''s uptake is a scalar that never touches the field, so the loop is NOT truly closed and the "correlation 1.0" is an identity (behavioral verification, not feedback). MECHANISTIC (variant fig04-mechanistic): the loop is genuinely closed — Michaelis–Menten uptake is a real sink that carves a diffusing depletion well and imprints a footprint on the environment (mechanistic_ablation), the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to 9e-16 (invariant), chemotaxis climbs the gradient and vanishes without one, and matched-null controls isolate each arm. This is genuine mechanistic support for the cell–environment coupling claim. NOT yet empirical validation against a named nutrient''s diffusivity or a measured chemotactic velocity — that is the stated next step.'
   explanatory_gain:
     result: POSITIVE
     basis: 'Making Fig cell_environment executable — a real diffusing gradient driving a real typed interface that acts back on the shared store — turns the caption''s "minimal structure required for control" from a drawn diagram into a runnable, testable control loop: env field → sensed value → uptake → mass gain, plus up-gradient drift, with the cell''s output written back to the field it depends on.'
@@ -266,18 +405,33 @@ limitations:
 - Panel a's chemical/electrical/mechanical/barrier fields are reduced here to one real 1-D chemical grid plus a single scalar mechanical field relaxed toward a barrier equilibrium; the electrical field is not represented.
 - '`location` is a 1-D lattice index (a drift coordinate, not a physical position in µm) and `shape` is a scalar volume proxy; no 2-D/3-D morphology is represented.'
 - All numbers are exact regression pins that hold only while the composite spec and rate constants are held fixed; the composite is deterministic (no RNG), so they reproduce exactly run-to-run under that pinning.
+- 'Mechanistic variant (fig04-mechanistic) — scope and honest limits: it genuinely closes the sense/act loop (real field sink, in-domain source, Michaelis–Menten transport, chemotaxis, mass ledger), fixing the baseline''s open loop and off-grid source. But it remains a 1-D lattice (distances in LATTICE units, dx=1, NOT physical microns), diffusion is explicit-Euler (stable only for D·dt/dx²≤0.5; run at 0.4), the source is a single in-domain cell, there is no 2-D/3-D morphology or multi-field (electrical/mechanical) coupling, and every rate constant is didactic — not fitted to a named nutrient''s diffusivity, uptake Vmax/Km, or a measured chemotactic velocity. The rigorous spatial cousin remains `cell-environment-coupling` in draft-to-living-cell.'
 falsifiability: Overturned if a higher local field fails to produce larger uptake, if per-step uptake stops tracking the local sensed field, if mass fails to grow monotonically while nutrient is present, if net location drift is not up-gradient, if the cell's uptake is not written back into the shared environment store or the mass↔uptake ledger fails to close, or if a flat zero field produces any non-zero drive on the interface ports.
 visualizations:
-- name: Figure 4
+- name: 'Figure 4 · the paper''s process-bigraph diagram (panel b)'
   address: svg:visualizations/figure_4.svg
   config:
-    caption: A cell couples to a spatio-flux nutrient field through one typed process — sensing, metabolizing, growing, and secreting.
-- name: Environment drives the interface ports
+    caption: 'The paper''s panel-b diagram for Fig 4 (cell–environment coupling): a cell couples to a spatial nutrient field through one typed process — sensing, metabolizing, growing, and secreting.'
+- name: 'Baseline dynamics · didactic smoke test (fig04-runnable)'
   address: image:visualizations/fig04-dynamics.png
   config:
     chart: image
-    caption: 'Time series of the runnable fig04 coupling (fig04-runnable): a real diffusing chemical grid seeded as a nutrient gradient drives the cell''s interface ports. The cell at interior grid index 4 senses its LOCAL field; uptake flux tracks that field, mass accumulates on uptake, and the cell drifts up-gradient (chemotaxis) — env→port coupling made runnable. From scripts/build_fig04_dynamics.py.'
+    caption: 'Baseline (didactic smoke test): the simpler pre-revision model — a diffusing chemical grid seeded as a nutrient gradient drives the cell''s interface ports. The cell senses its LOCAL field, uptake tracks that field, mass accumulates, and the cell drifts up-gradient. Kept as the executable baseline; NOTE its uptake never fed back on the field (so "uptake tracks field at correlation 1.0" was an identity, not feedback) — the mechanistic figure below closes that loop with a real depletion sink. From scripts/build_fig04_dynamics.py.'
+- name: 'Mechanistic · decisive model-driven figure (fig04-mechanistic)'
+  address: image:visualizations/fig04-mechanistic-dynamics.png
+  config:
+    chart: image
+    decisive: true
+    variant: fig04-mechanistic
+    caption: 'Mechanistic (the decisive figure): a reaction–diffusion field with a depleting, chemotactic cell — the sense/act loop CLOSED, on a 25-cell lattice (distances in LATTICE units, dx=1). What to look for: (A) the nutrient field as a space×time heatmap with the cell''s track overlaid — the cell descends from cell 16 toward the in-domain source at cell 0, leaving a darker depletion wake; (B) the cell''s FOOTPRINT on the environment, field(with cell) − field(no uptake): a red depletion trail following the track — the real cell→field feedback the baseline lacked; (C) the cell climbs the gradient while the nutrient it senses rises; (D) saturating Michaelis–Menten uptake grows biomass; (E) the mass ledger closes: Σsource − Σdecay − Σuptake = Δfield (residual 9e-16), biomass = yield·Σuptake; (F) matched-null controls (uptake off, motility off, zero gradient — set with an epsilon) isolate each arm. From scripts/build_fig04_mechanistic.py.'
+# Spine edge fig-03 → fig-04 (relation: builds-on) added per the scientific-review
+# revision: fig-04 places fig-03's typed cell interface in a spatial environment where
+# the driver is a diffusing nutrient field the cell both senses and depletes (the edge
+# relation/rationale is carried in the investigation spine; parent_studies schema allows
+# only study+condition).
 parent_studies:
+- study: fig-03
+  condition: tests-passed
 - study: cell-environment-coupling
   condition: tests-passed
 experiment: 'Run the `fig04-runnable` composite (SpatialDiffusion on a length-9 map[float] chemical grid seeded as a 0→1 nutrient gradient, a MechanicalRelax field, and a single SingleCellSpatial cell at interior index 4 wired to the shared environment store) for 24 ticks through the process-bigraph engine, and measure whether the environmental field drives the cell''s interface ports and the cell acts back on the shared field — env field → sensed value → uptake → mass gain, plus up-gradient chemotactic drift, with the loop closing through a shared store. Drive the SingleCellSpatial handler directly at two field levels and at a flat zero field to establish the causal env→port relationship.'

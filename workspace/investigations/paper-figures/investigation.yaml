@@ -2,7 +2,7 @@ schema_version: 2
 name: paper-figures
 title: Executable Figures
 created: '2026-08-26'
-status: complete
+status: running  # scientific-review revision underway: H1 (executable) met for all 11; H2 (mechanistic) being established variant by variant
 object_of_evaluation: figure-as-executable
 runtime:
   default_emitter: sqlite
@@ -20,19 +20,29 @@ question: >-
   reorganizing into a collective (Fig 10), and a population evolving toward a selection optimum
   (Fig 11)? The subject is the figure; the claim is that the paper's diagrams run.
 hypothesis: >-
-  Every panel-b diagram in the paper denotes a real, runnable composition, and each figure's stated
-  principle holds when that composition is executed. For each of the eleven figures there is a
-  didactic `figNN-runnable` composite whose dynamics demonstrate the caption's claim on genuine
-  simulation output — a store drains while another fills and total is conserved, a fast process
-  outpaces a slow one through a shared store, a port tracks its driving input, a diffusing field
-  drives uptake and up-gradient drift, viability crossing flips coarse→fine so biomass grows then
-  decays, a proton-motive force drives torque drives ATP, a process moves quantity in a nested store,
-  coupled processes mutually maintain a shared steady state, a division rewrite partitions stores into
-  two daughters, cells nest into a collective composite, and a population's mean trait shifts toward a
-  drifting niche optimum. These are illustrative, toy-real compositions built to make each figure
-  playable; the calibrated, spatially-resolved counterparts live in the sibling investigation
-  `draft-to-living-cell`, which each figure cross-links as its rigorous cousin. The narrow, honest
-  claim is that the paper's figures are executable, not that they are quantitatively validated models.
+  A TWO-LEVEL hypothesis, with separate verdicts (rewritten per the Oct-2026 scientific review, which
+  asked us to stop conflating structural executability with mechanistic emergence).
+
+  H1 (structural executability) — every panel-b diagram in the paper denotes a real, runnable,
+  typed process-bigraph composition: for each of the eleven figures there is a `figNN-runnable`
+  composite that builds through the workspace `build_core`, runs to completion through the engine, and
+  reproduces the caption's stated principle under a behavior-gated test on genuine simulation output.
+  REFUTED IF any figure's composite fails to build/run, or its behavior gate fails, or the readout it
+  reports is not actually produced by the composition (e.g. a value hard-wired rather than computed).
+
+  H2 (mechanistic emergence) — SELECTED figures additionally exhibit behaviour that ARISES from
+  mechanistic coupling (shared internal state, conservation, feedback, derived rather than imposed
+  quantities), not solely from imposed rules or a scripted schedule. This is tested only by the
+  `figNN-mechanistic` variants (scientific-review revision), each with counterfactual/ablation
+  controls and quantitative diagnostics. REFUTED FOR A FIGURE IF, under matched-null controls, the
+  claimed behaviour persists when the proposed mechanism is removed (so the behaviour was scripted),
+  or if a conservation/identity the mechanism should enforce fails, or if a quantity presented as
+  derived is in fact an imposed constant.
+
+  The two levels get SEPARATE verdicts: H1 is a software/behavioral claim (currently met for all
+  eleven); H2 is a scientific claim met only where a mechanistic variant demonstrates it (in progress
+  — fig-06 and fig-04 established, the rest under revision). The calibrated, spatially-resolved
+  counterparts of these patterns live in the sibling investigation `draft-to-living-cell`.
 lead: >-
   This investigation makes the meta-modeler's guide's own figures runnable. Where `draft-to-living-cell`
   takes the paper's composition patterns to calibrated, spatially-resolved rigor, this one takes the
@@ -43,12 +53,15 @@ lead: >-
   output. Fig 1's process moves a conserved quantity between wired stores; Fig 4's cell senses a
   diffusing nutrient gradient and drifts up it; Fig 5's grain selector flips coarse→fine as viability
   crosses its bound, biomass growing then decaying; Fig 9 divides one cell into two with stores
-  partitioned; Fig 11's population evolves toward a shifting selection optimum. Seven of the eleven
-  figures have a rigorous cousin in `draft-to-living-cell` and cross-link to it via `parent_studies`;
-  the other four (interfaces & composition, orchestration, nested hierarchy) stand on their own
-  didactic composite. These are toy-real demonstrations — small, illustrative, built to look like the
-  figure and play forward — not fitted models, and every study states that plainly. The point is
-  modest and load-bearing: the paper's figures are not just drawn, they run.
+  partitioned; Fig 11's population evolves toward a shifting selection optimum. Figures fig-03 through
+  fig-11 cross-link a rigorous spatially-resolved cousin in `draft-to-living-cell` via `parent_studies`;
+  only fig-01 (interfaces & composition) and fig-02 (orchestration) stand on their didactic composite
+  alone, being framework illustrations rather than cellular composition patterns. The baseline
+  composites are toy-real demonstrations — small, illustrative, built to look like the figure and play
+  forward — not fitted models, and every study states that plainly; the scientific-review revision adds
+  `figNN-mechanistic` variants where the behaviour must arise from real coupling. The point is
+  load-bearing but carefully scoped: the paper's figures are not just drawn, they run (H1), and selected
+  figures run on genuine mechanism rather than scripted rules (H2).
 executive:
   what_is_this: >-
     The publication figures for the meta-modeler's guide, upgraded from a figure bundle into a full
@@ -57,9 +70,11 @@ executive:
     behind that diagram: a runnable `figNN-runnable` process-bigraph composite plus a behavior-gated
     principle test that demonstrates the figure's caption on genuine simulation output. The organizing
     claim is that the paper's eleven figures are executable — every panel-b diagram denotes a real
-    composition that runs and reproduces its stated principle, not a hand-drawn schematic. The figures
-    remain downloadable as a bundle under `final/`; the investigation adds the runnable models, tests,
-    and per-figure verdicts on top of them.
+    composition that runs and reproduces its stated principle, not a hand-drawn schematic. The
+    investigation adds the runnable models, tests, and per-figure verdicts on top of the published
+    panels. (The scientific-review revision additionally adds, for selected figures, a
+    `figNN-mechanistic` variant whose behaviour arises from real coupling rather than imposed rules —
+    see the two-level hypothesis and the per-study variants.)
 
 
     These are DIDACTIC, TOY-REAL compositions: small, illustrative, built to resemble the figure and
@@ -71,39 +86,51 @@ executive:
     via `parent_studies`. Read this investigation as "the paper's figures execute their captions," and
     `draft-to-living-cell` as "the paper's patterns hold under calibrated spatial rigor."
   verdict: >-
-    The claim holds: all eleven of the paper's figures are executable. Every figure now carries a
-    runnable `figNN-runnable` process-bigraph composite and a behavior-gated principle test that
-    reproduces its caption on genuine simulation output — Fig 1 moves a conserved quantity between
-    wired stores (total invariant to <1e-9, exact geometric decay); Fig 2 runs two timescales through
-    a shared store with `molecules + biomass == time` conserved and a 3-step slow staircase; Fig 3's
-    typed physical ports each respond linearly to their own driver and viability collapses at 45 °C;
-    Fig 4's cell senses a diffusing gradient, the sense→act loop closes through the shared store (exact
-    mass↔uptake ledger), and it drifts up-gradient; Fig 5's grain selector flips coarse→fine at the
-    viability crossing so biomass grows then decays; Fig 6's single proton flux drives four typed
-    channels with the matter⇒charge⇒energy identities closing to 1e-30 (torque N·m, not force); Fig 7
-    preserves 6-level place-graph containment while deep processes move quantity in nested stores;
-    Fig 8's coupled processes mutually maintain a bounded steady state (two reciprocal knockouts each
-    freeze the other's input); Fig 9 divides one cell into two with total DNA conserved and
-    equipartitioned; Fig 10 re-parents free cells one level deeper into a new biofilm collective node;
-    Fig 11's population mean trait tracks a drifting niche optimum while binary fission replaces each
-    parent with two fresh daughters (`appeared == 2·vanished`). Ten of eleven composites are fully
-    deterministic; every behavior gate passes. These are didactic, toy-real demonstrations — the paper's
-    figures made to run, not calibrated cell models — with seven of eleven cross-linking their
-    calibrated cousin in `draft-to-living-cell`. The narrow claim is proven: the paper's figures are
-    executable, not merely drawn.
-  verdict_status: accepted
+    TWO SEPARATE VERDICTS (the scientific review asked that these not be conflated):
+
+    SOFTWARE / STRUCTURAL (H1) — MET for all eleven figures. Every figure carries a runnable
+    `figNN-runnable` composite and a behavior-gated principle test that builds, runs through the
+    engine, and reproduces its caption on genuine simulation output: Fig 1 conserves a transferred
+    quantity to <1e-9; Fig 2 runs two timescales through a shared store; Fig 3's typed ports each
+    respond to their driver; Fig 4's cell senses a gradient and the sense→act loop closes; Fig 5's
+    grain selector flips coarse→fine at the viability crossing; Fig 6's single proton flux drives four
+    typed channels; Fig 7 preserves 6-level containment; Fig 8's coupled processes maintain a bounded
+    pool set; Fig 9 divides one cell into two with DNA conserved; Fig 10 re-parents cells into a
+    biofilm node; Fig 11's mean trait tracks a drifting optimum. All eleven behavior gates pass
+    (verified by the committed test suite; NO independent rerun was performed as part of the scientific
+    review — this verdict rests on the recorded gates, not a fresh re-execution by the reviewer).
+
+    SCIENTIFIC / MECHANISTIC (H2) — IN PROGRESS, and varies by figure. Many baseline gates reproduce
+    ENCODED behaviour (regression pins, algebraic/prescribed responses) and cannot by themselves
+    establish biological emergence or causal mechanism. The `figNN-mechanistic` variants supply that
+    evidence where present: fig-06 (torque, efficiency, stall and reversal DERIVED from Δp/ΔG/load;
+    power identity closes; first-principles Δp* threshold predicted and verified) and fig-04 (real
+    cell↔field feedback via a Michaelis–Menten sink carving a diffusing depletion well; mass ledger
+    closes; matched-null controls isolate each arm) are established. The remaining priority figures
+    (5, 8, 10, 11) and the accuracy/compositional figures (2, 3, 9, 1, 7) are under the same upgrade.
+    Until a figure has a passing mechanistic variant with counterfactual controls, its scientific
+    verdict is "executable and self-consistent, mechanism not yet demonstrated" — NOT biological
+    validation, which remains the job of the sibling investigation `draft-to-living-cell`.
+  verdict_status: in-progress
   key_figures:
+  - fig-06
   - fig-04
   - fig-05
-  - fig-11
   decisions_needed:
   - >-
-    Every figure is realized by a didactic toy-real composite, not a calibrated model; the honest
-    depth gap is owned per study and the rigorous cousin is cross-linked in `draft-to-living-cell`.
+    H1 (all figures executable) is met; H2 (mechanistic emergence) is being established variant by
+    variant. Each figure's scientific verdict should be read from its mechanistic variant (where one
+    exists) and its two-layer `conclusion_verdicts`, not from the software-gate pass alone.
   - >-
-    Four figures (fig-01 interfaces & composition, fig-02 orchestration, fig-07 nested hierarchy) have
-    no calibrated cousin — they stand on their didactic composite alone by design, being framework
-    illustrations rather than cellular composition patterns.
+    Baseline gates that reproduce algebraic or prescribed responses are IMPLEMENTATION VERIFICATION,
+    not mechanistic evidence; where a figure's claim is "emergence" (fig-05/08/09/10/11) the competing
+    programmed-vs-emergent interpretation (see `competing_interpretations`) must be resolved by the
+    mechanistic variant's ablations before any emergence claim stands.
+  - >-
+    Two figures (fig-01 interfaces & composition, fig-02 orchestration) have no calibrated cousin in
+    `draft-to-living-cell` — they stand on their didactic/mechanistic composite alone by design, being
+    framework illustrations rather than cellular composition patterns. (fig-07 nested hierarchy DOES
+    participate in the spine via its interface dependency; it is not standalone.)
 scientific_argument:
   main_claim: >-
     The eleven figures of the meta-modeler's guide are executable artifacts, not
@@ -164,10 +191,10 @@ scientific_argument:
     physical interface modalities stay unrealized where they appear); per-study
     confidence is held at Provisional throughout — the figures execute, but their
     scientific validation is the sibling investigation's job.
-  key_figures:
+  key_figures:   # aligned with executive.key_figures (reconciled per review): the mechanistic exemplars
+  - fig-06
+  - fig-04
   - fig-05
-  - fig-01
-  - fig-08
   caveats:
   - >-
     Executable is not the same as validated: this investigation's claim is narrow —
@@ -188,6 +215,58 @@ competing_frameworks:
     process-bigraph composite that runs through the workspace core and reproduces
     its figure's stated principle under a behavior-gated test, so the eleven
     diagrams are executable specifications, not pictures of one.
+# ── Study-graph spine (scientific-review revision) ────────────────────────────
+# The 11 figures were previously edgeless (no fig→fig dependencies). These edges
+# record justified compositional/conceptual dependencies WITHOUT claiming model-level
+# code reuse that does not exist (a figNN composite does not import figMM's code).
+# relation ∈ {builds-on, tests, motivates, methodological-branch}. The per-study
+# parent_studies carry the same edges in the {study, condition} form the schema allows;
+# this block carries the relation + rationale the schema cannot.
+spine_edges:
+- from: fig-01
+  to: [fig-02, fig-03, fig-06, fig-07]
+  relation: builds-on
+  rationale: 'fig-01 defines the typed source→store→sink wiring + conservation discipline every later composition instantiates (orchestration, the cellular interface, the molecular interface, nesting).'
+- from: fig-03
+  to: fig-04
+  relation: builds-on
+  rationale: "fig-04 places fig-03's typed cell interface in a spatial environment whose driver is a diffusing field the cell senses AND depletes."
+- from: [fig-03, fig-06, fig-07]
+  to: fig-08
+  relation: builds-on
+  rationale: 'self-maintenance (fig-08) composes the cellular interface (fig-03), molecular energetics (fig-06), and nested containment (fig-07) into a coupled whole.'
+- from: fig-08
+  to: fig-09
+  relation: builds-on
+  rationale: 'division (fig-09) acts on a self-maintaining cell (fig-08): a maintained interior is what gets partitioned.'
+- from: fig-09
+  to: [fig-10, fig-11]
+  relation: builds-on
+  rationale: 'development (fig-10) and evolution (fig-11) both require reproduction (fig-09): a collective forms from dividing cells; a population evolves through heritable division.'
+- from: fig-05
+  to: null
+  relation: methodological-branch
+  rationale: 'fig-05 (grain switch) is a METHODOLOGICAL branch about changing model resolution, not a biological stage in the geometry→…→population chain; it is deliberately off the linear spine.'
+# ── Competing causal interpretations (scientific-review "contradictions") ─────
+# For each figure whose baseline could be read as "emergence", the explicit rival
+# reading, and how the mechanistic variant discriminates (via ablation/derivation).
+competing_interpretations:
+- figures: [fig-05, fig-09, fig-10]
+  programmed_reading: 'a scheduled/scripted event — a grain switch at a fixed tick (5), a division at a set size (9), an attachment/ECM rewrite on a wall clock (10).'
+  emergent_reading: 'a state-triggered transition — grain refinement driven by quantified model inadequacy (5), division gated by a physiological size/resource condition (9), aggregation from local adhesion + proximity (10).'
+  discriminator: "the mechanistic variant's matched-null controls: remove the proposed driver (inadequacy signal / size gate / adhesion) and the transition must NOT fire. A transition that still fires on the clock alone is programmed, not emergent."
+- figures: [fig-08]
+  programmed_reading: 'forced constitutive positive pools — the "self-maintenance" is just hand-set source terms keeping every pool positive.'
+  emergent_reading: 'operational closure — pools are maintained by mutual production/turnover, recover after perturbation, and collapse under closure-breaking ablations.'
+  discriminator: 'define operational closure + boundary maintenance first; then test persistence across repeated perturbation and loss of viability after closure-breaking knockouts, against matched external-input/open-loop controls.'
+- figures: [fig-11]
+  programmed_reading: 'a preselected Gaussian fitness kernel with a linearly drifting optimum — the mean trait moving toward the optimum is expected BY DESIGN.'
+  emergent_reading: 'discovered adaptation — selection response exceeds neutral drift over many seeds, fails when the optimum moves too fast, and tracks heritability/mutation.'
+  discriminator: 'many-seed selection-vs-neutral comparison with a no-mutation/neutral control and an adaptation-failure regime; a single seeded rerun is reproducibility, not robustness.'
+- figures: [fig-03, fig-04, fig-06]
+  programmed_reading: 'fitted/proportional port mappings — each output port is an independent linear function of its own driver (no shared internal state).'
+  emergent_reading: 'mechanistic physical transduction — outputs derive from shared internal state with conservation/feedback (fig-06 power identity + derived torque; fig-04 real field sink + depletion feedback; fig-03 shared energy/metabolism store coupling the ports).'
+  discriminator: 'the mechanistic variant must show a conserved/derived coupling (identity closes, quantity is derived not imposed, perturbing one port propagates through shared state to others) that the proportional baseline cannot.'
 what_this_does_not_demonstrate: >-
   These are the paper's FIGURES made executable, not validated cell models. Each `figNN-runnable`
   composite is a small didactic composition with toy-real, uncalibrated constants, chosen to make the
@@ -269,11 +348,19 @@ limitations:
   claim about biological calibration, which is out of scope for the figure-as-executable object.
 acceptance_criteria:
   note: >-
-    Each figure study carries behavior tests tagged by kind — regression_pin (a numeric threshold set
-    after observing the run, a rerun-guard) versus acceptance_criterion (a directional prior stateable
-    before the run). The investigation-level bar is qualitative: for every one of the paper's eleven
-    figures, a runnable composite reproduces the caption's stated principle under a passing behavior
-    gate on real simulation output.
+    Behavior tests are classified by EVIDENCE KIND (scientific-review taxonomy), because a passing gate
+    means very different things depending on its kind. The kinds, weakest-to-strongest as scientific
+    evidence: regression_pin (a numeric threshold set after observing the run — a rerun-guard, proves
+    reproducibility only); invariant (a conservation/identity that must hold every step — proves
+    self-consistency); numerical_convergence (a solver converges to a reference as dt/dx→0);
+    empirical_comparison (a derived number checked against a literature/measured value);
+    mechanistic_ablation (a counterfactual: remove a proposed mechanism and the behaviour must change);
+    prospective_prediction (a threshold/outcome stated from first principles BEFORE the run, then
+    verified). Baseline `figNN-runnable` gates are mostly regression_pin / acceptance_criterion
+    (implementation verification); the `figNN-mechanistic` variants add invariant / empirical_comparison
+    / mechanistic_ablation / prospective_prediction (mechanistic evidence). The investigation-level H1
+    bar is qualitative (every figure's composite reproduces its caption under a passing gate); the H2
+    bar is met per figure only when its mechanistic variant passes its ablation/derivation gates.
   prior_predictions:
   - >-
     Executable-figure prior — for each of the eleven figures there exists a `figNN-runnable` composite
@@ -284,9 +371,21 @@ acceptance_criteria:
     (Fig 1 transfer conserves total; Fig 4 environment drives the interface port; Fig 9 division
     partitions stores across daughters), the runnable composite exhibits it on measured output.
   status_reconciliation: >-
-    Per-figure confidence is Provisional (principle gates pass as behavior tests, most as regression
-    pins; these are didactic demonstrations, not calibrated models). All eleven studies are built and
-    green (70 principle-test assertions across the eleven test files, all passing), so the investigation
-    status is complete and the executive verdict_status is accepted — one consistent signal. "Accepted"
-    means the narrow figure-as-executable claim is proven, NOT that the underlying biology is
-    calibrated; that rigor is the sibling investigation `draft-to-living-cell`.
+    Reconciling the counts the review flagged. There are TWO distinct count-bases, previously conflated:
+    (1) BEHAVIOR-TEST ASSERTIONS — the ~70 pytest assertions across the eleven baseline test files
+    (software gates; all green per the committed suite). (2) ACCEPTANCE CRITERIA — the qualitative
+    investigation-level priors in this block (H1 executability + conservation/coupling). A validation
+    summary reading "0 acceptance criteria examined" refers to count-base (2): the investigation does
+    not encode machine-checkable acceptance_criterion gate objects, only the qualitative priors here —
+    so an automated examiner finds zero AC objects even though all ~70 behavior assertions pass. The
+    executive's "assertions" figure is count-base (1). Both are now stated explicitly so the two numbers
+    no longer look contradictory.
+
+    Status is in-progress, not complete/accepted, and the verdict is split (see executive): H1
+    (all eleven executable) is met on the recorded behavior gates — NO independent re-execution was
+    performed as part of the Oct-2026 scientific review, so this rests on the committed suite, not a
+    fresh rerun. H2 (mechanistic emergence) is established only where a `figNN-mechanistic` variant
+    passes its ablation/derivation gates (fig-06, fig-04 to date), and in progress elsewhere. Per-figure
+    confidence stays Provisional: executable and (for the mechanistic variants) mechanistically
+    supported, but not biologically calibrated — that rigor remains the sibling investigation
+    `draft-to-living-cell`.
