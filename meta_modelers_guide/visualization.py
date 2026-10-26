@@ -113,10 +113,23 @@ class DynamicsPlot(_ObservableStep):
       render as a translucent fill-to-zero instead of a bare line, useful for
       an accumulating quantity like debris.
 
-    These are plain dict/list config values, not part of ``config_schema`` —
-    ``Edge.__init__`` fills declared keys and passes undeclared ones through
-    unchanged, so adding them costs nothing for composites that never set them.
+    These are DECLARED in ``config_schema`` (below) so ``Edge.__init__`` /
+    bigraph-schema ``fill`` retain a composite's supplied value. (They used to
+    ride through as undeclared pass-through keys; bigraph-schema ≥ 1.8 drops
+    undeclared config keys, which silently stripped the subtitle/phases/events
+    annotations from every narrative plot — hence the explicit declarations.)
+    Each defaults to empty, so a composite that sets none reproduces the plain
+    multi-line chart exactly.
     """
+
+    config_schema = {
+        **_ObservableStep.config_schema,
+        "subtitle": {"_type": "string", "_default": ""},
+        "phases": {"_type": "list", "_default": []},
+        "events": {"_type": "list", "_default": []},
+        "secondary_y": {"_type": "list", "_default": []},
+        "area": {"_type": "list", "_default": []},
+    }
 
     def render(self) -> str:
         times, series = self._series()
