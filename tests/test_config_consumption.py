@@ -3,15 +3,25 @@
 Every scalar a composite pins in a process's ``config`` block is a published
 parameter value. The reviewer's worry (Q5): does that value actually *reach*
 the process, or does something between the JSON and the running Process
-silently drop it? There is a real, documented failure mode here --
-bigraph-schema's ``core.fill`` treats a Float/Integer ``0`` (and other
-"empty" values) as absent and refills it from the schema ``_default``, so a
-deliberately-pinned ``mut_sigma: 0.0`` (or any legitimate 0) can be clobbered
-back to a non-zero default without any error. Several workspace processes
-carry an explicit ``__init__`` restore-guard against exactly this
-(``GrayScott``, ``Protocell``, ``CpmSorting`` ...); this test is the gate that
-proves the guards hold and that no *un*-guarded process is quietly discarding
-a published value.
+silently drop it? Two documented ``fill`` failure modes motivate the gate:
+
+1. (historical, fixed in bigraph-schema 1.8) ``core.fill`` treated a
+   Float/Integer ``0`` as "empty" and refilled it from the schema ``_default``,
+   so a deliberately-pinned ``mut_sigma: 0.0`` could be clobbered to a non-zero
+   default silently. Several processes carry an ``__init__`` restore-guard
+   against exactly this (``GrayScott``, ``Protocell``, ``CpmSorting`` ...); the
+   guards are now belt-and-braces but kept so the workspace still behaves on an
+   older ``fill``.
+2. (current) bigraph-schema ≥ 1.8 *drops* any config key a process does not
+   declare in ``config_schema``. A process that reads an undeclared key from
+   ``self.config`` therefore loses it silently -- which is a real bug (it bit
+   ``DynamicsPlot``'s narrative annotations, since fixed by declaring them).
+
+This test is the gate that proves no process is quietly discarding a value it
+consumes. Keys that are *not* consumed parameters -- ``describe()`` metadata,
+engine-level ``interval``, and the illustrative values pinned on dynamics-less
+``DraftProcess`` interfaces -- are outside its remit (see ``_NON_PARAMETER_KEYS``
+and the ``DraftProcess`` skip below).
 
 Mechanism: for every ``*.composite.json``, resolve and instantiate each
 ``process``/``step`` node, then assert every key the composite supplied in its
@@ -34,6 +44,7 @@ from pathlib import Path
 
 import pytest
 from process_bigraph import Process
+from process_bigraph.draft_process import DraftProcess
 
 from meta_modelers_guide.core import build_core
 
@@ -47,6 +58,18 @@ SPECS = sorted(COMPOSITE_DIR.glob("*.composite.json"))
 # that documents the intentional drop) only for a genuinely-inert key, never
 # to paper over a real drop.
 ALLOW_DROPPED: set[tuple[str, str]] = set()
+
+# Config keys that are never *published scalar parameters* and so are outside
+# this audit's remit (they carry no value a running process consumes):
+#   - ``contract`` / ``summary``: process-``describe()`` metadata (status, ports,
+#     math, symbols …). The workbench renders these from the composite JSON, not
+#     from the live process; they are documentation, not parameters.
+#   - ``interval``: the engine consumes a node's step interval as node-level
+#     timing, not from ``proc.config`` (bigraph-schema ≥ 1.8 no longer mirrors it
+#     into the instance config).
+# These are retained-or-dropped by framework convention, not by whether a value
+# reached a process, so the audit ignores them regardless of process class.
+_NON_PARAMETER_KEYS: frozenset[str] = frozenset({"contract", "summary", "interval"})
 
 
 def _ids(paths):
@@ -121,6 +144,13 @@ def _dropped_keys_for_composite(spec_path: Path, core):
         cls = _resolve_class(address, core)
         if cls is None:
             continue  # optional dependency absent in this environment
+        if isinstance(cls, type) and issubclass(cls, DraftProcess):
+            # A draft typed-interface declares ports + a contract but supplies no
+            # update dynamics (those live in its executable ``*Handler`` variant,
+            # which DOES declare and retain the parameters). Values it pins are
+            # illustrative, consumed by nothing, so their retention is not a
+            # published-parameter question — skip the whole node.
+            continue
         cls_name = _class_short_name(address)
         try:
             proc = cls(dict(config), core=core)
@@ -131,6 +161,8 @@ def _dropped_keys_for_composite(spec_path: Path, core):
             continue
         effective = getattr(proc, "config", {}) or {}
         for key, supplied in config.items():
+            if key in _NON_PARAMETER_KEYS:
+                continue
             if (cls_name, key) in ALLOW_DROPPED:
                 continue
             if key not in effective:
@@ -163,9 +195,14 @@ def test_config_fully_consumed(spec_path):
 
 
 def test_audit_detects_a_real_drop():
-    """Sensitivity guard: a guard-less process that pins a Float ``0.0`` really
-    does lose it to the schema default, and the audit's value comparison
-    flags that -- so a green suite means the check works, not that it is inert."""
+    """Sensitivity guard: when a published config value genuinely fails to reach
+    the constructed process, the audit's value comparison flags it -- so a green
+    suite means the check works, not that it is inert.
+
+    History: this used to exploit bigraph-schema's Float-``0.0`` clobber (``fill``
+    treated a pinned ``0.0`` as empty and refilled the default). That defect is
+    fixed as of bigraph-schema 1.8, so we no longer depend on it -- we inject a
+    drop directly, which keeps the guard meaningful on any ``fill`` version."""
     core = build_core()
 
     class _NaiveDropper(Process):
@@ -173,6 +210,12 @@ def test_audit_detects_a_real_drop():
             "a": {"_type": "float", "_default": 5.0},
             "b": {"_type": "float", "_default": 7.0},
         }
+
+        def __init__(self, config=None, core=None):
+            super().__init__(config, core=core)
+            # Simulate a real, silent drop of a published value (whatever its
+            # cause -- an un-restored clobber, a rename, a lost key).
+            self.config.pop("a", None)
 
         def inputs(self):
             return {}
@@ -183,13 +226,11 @@ def test_audit_detects_a_real_drop():
         def update(self, state, interval):
             return {}
 
-    proc = _NaiveDropper({"a": 0.0, "b": 3.0}, core=core)
-    # The disease: 0.0 is treated as empty and refilled to the 5.0 default.
-    assert proc.config["a"] != 0.0, (
-        "expected bigraph-schema to clobber a pinned 0.0 in an unguarded "
-        "process; if this no longer holds the disease is gone and the audit's "
-        "premise should be revisited"
+    proc = _NaiveDropper({"a": 3.0, "b": 3.0}, core=core)
+    # A dropped published value must be caught by the audit's comparison...
+    assert "a" not in proc.config, "precondition: the value was dropped"
+    assert not _values_match(3.0, proc.config.get("a")), (
+        "value comparison must flag a published value that did not reach config"
     )
-    assert not _values_match(0.0, proc.config["a"]), "value comparison must flag the clobbered 0.0"
-    # A retained value must NOT be flagged.
+    # ...and a retained value must NOT be flagged.
     assert _values_match(3.0, proc.config["b"])
