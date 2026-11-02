@@ -212,30 +212,24 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig03-runnable.composite.json (CellularInterfaceHandler, one bounded cell wired to a four-driver environment with the chemical supply at 1.0 and the thermal driver held at 45 C above the 37 C optimum) run 24 steps through the process-bigraph engine (tests/test_fig03_interface_responds.py). The baked dynamics PNG in visualizations/ was rendered over the same run via scripts/build_fig03_dynamics.py.'
   params: {}
   outcomes:
-    HIGHER-CHEMICAL-DRIVES-UPTAKE-AND-GROWTH:
+    higher-chemical-drives-uptake-and-growth:
       result: PASS
       detail: supply 0.2 -> flux -0.16, growth 0.171; supply 1.0 -> flux -0.80, growth 0.400; flux ratio exactly 5.0
-    PHYSICAL-PORTS-RESPOND-TO-THEIR-DRIVERS:
+    physical-ports-respond-to-their-drivers:
       result: PASS
       detail: force 0.2, current 0.15, heat flux 0.2 under their drivers; all physical ports 0 at rest; non-driven ports unchanged
-    SHAPE-ACCRETES-WITH-GROWTH:
+    shape-accretes-with-growth:
       result: PASS
       detail: shape strictly increases 1.0 -> 10.6 over 24 steps
-    ABOVE-OPTIMUM-DRIVES-VIABILITY-DOWN:
+    above-optimum-drives-viability-down:
       result: PASS
       detail: thermal held at 45 C; viability falls strictly 1.0 -> 0.175 (< 0.5)
-    AT-OPTIMUM-VIABILITY-HOLDS:
+    at-optimum-viability-holds:
       result: PASS
       detail: at 37 C viability ends 0.911 (> 0.9), decline 0.089 < 0.1
-    HOTTER-KILLS-FASTER-THAN-OPTIMUM:
+    hotter-kills-faster-than-optimum:
       result: PASS
       detail: final viability 0.175 (45 C) vs 0.911 (37 C), gap 0.736 > 0.5
-- name: meta_modelers_guide.composites.fig03-runnable__1787799780__9dd82e
-  status: complete
-  timestamp: 1787799780.395061
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig03-mechanistic
   composite: fig03-mechanistic
   emitter: RAMEmitter
@@ -244,19 +238,19 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig03-mechanistic.composite.json (MetabolicCell with a shared ATP pool + temperature-set enzyme activity, coupled to EnvironmentStep; nutrient 2.0, heat shock 37→48 °C at t=12; atp_yield 1.4, maintenance 0.4) run 24 ticks through the engine. fig03-mechanistic-dynamics.png (heat-shock cascade + membrane cross-section port flows + starvation cascade + cross-port response matrix + disabled control + ATP budget) baked via scripts/build_fig03_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-HEAT-SHOCK-CASCADES-THROUGH-SHARED-STATE:
+    mech-heat-shock-cascades-through-shared-state:
       result: PASS
       detail: 'enzyme 1.00→0.22, growth 0.43→0.07, ATP→0, viability 1.00→0.43 — one input, every downstream port'
-    MECH-NUTRIENT-STARVATION-PROPAGATES:
+    mech-nutrient-starvation-propagates:
       result: PASS
       detail: 'growth 0.43→0.07, ATP 2.56→0, viability→0.24 under starvation'
-    MECH-DISABLED-METABOLISM-BREAKS-PROPAGATION:
+    mech-disabled-metabolism-breaks-propagation:
       result: PASS
       detail: 'catalytic ε: growth ≈ 0, biomass flat 1.0, nutrient change moves biomass <1e-3'
-    MECH-STATE-BOUNDED-AND-ENERGY-CONSISTENT:
+    mech-state-bounded-and-energy-consistent:
       result: PASS
       detail: 'ATP ≥ 0, viability ∈ [0,1], biomass monotone, growth collapses at ATP minimum'
-    MECH-UPTAKE-SATURATES-FORMULA:
+    mech-uptake-saturates-formula:
       result: PASS
       detail: 'uptake→vmax at high c, ≪ at low c (Michaelis–Menten; formula verification only)'
 findings:

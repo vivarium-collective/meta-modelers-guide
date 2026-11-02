@@ -15,7 +15,7 @@ from meta_modelers_guide.cpm import viz
 # Optional frameworks absent from the base CI image; skip rather than fail
 # when the growth-division composite can't be built.
 pytest.importorskip("cobra")
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 
 COMP = (Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"

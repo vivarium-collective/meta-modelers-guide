@@ -229,33 +229,27 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig08-runnable.composite.json (six coupled processes -- ContainmentODE, MetabolismLinear, GeneExpressionODE, ReplicationODE, DiffusionRelax, MassActionReactions -- over ten shared flat scalar building-block pools) run 40 ticks through the process-bigraph engine with a RAMEmitter (tests/test_fig08_autopoiesis.py). Deterministic ODE handlers, no RNG, so every readout reproduces exactly run to run.'
   params: {}
   outcomes:
-    CLOSURE-SUSTAINS-ITSELF-EVERY-POOL-POSITIVE:
+    closure-sustains-itself-every-pool-positive:
       result: PASS
       detail: all seven pool minima > 0 (smallest metabolites 0.267); nothing collapses
-    CLOSURE-IS-BOUNDED-NOTHING-EXPLODES:
+    closure-is-bounded-nothing-explodes:
       result: PASS
       detail: largest pool value over the run is membrane 2.2, far under the 1e3 guard
-    TEMPLATE-POOLS-HOLD-A-STEADY-BALANCE:
+    template-pools-hold-a-steady-balance:
       result: PASS
       detail: second-half relative drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25
-    STRUCTURAL-MATERIAL-IS-NET-PRODUCED:
+    structural-material-is-net-produced:
       result: PASS
       detail: membrane 0.20 -> 2.20, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50
-    METABOLISM-KNOCKOUT-STARVES-DOWNSTREAM-POOLS:
+    metabolism-knockout-starves-downstream-pools:
       result: PASS
       detail: metabolites 0.33 -> 0.011 with metabolism removed; energy frozen exactly at 0.5 (base grows to 0.58)
-    GENE-EXPRESSION-SUSTAINS-THE-ENZYMES-METABOLISM-DEPENDS-ON:
+    gene-expression-sustains-the-enzymes-metabolism-depends-on:
       result: PASS
       detail: enzymes frozen exactly at 0.30 with gene expression removed (base grows to 0.50); metabolites drop 0.33 -> 0.23
-    RUNS-DEFAULT-N-STEPS:
+    runs-default-n-steps:
       result: PASS
       detail: 41 emitted rows == default_n_steps (40) + 1
-- name: meta_modelers_guide.composites.fig08-runnable__1787799780__7ef66e
-  status: complete
-  timestamp: 1787799780.494557
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig08b-executable
   composite: fig08b-executable
   emitter: RAMEmitter
@@ -275,19 +269,19 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig08-mechanistic.composite.json (NutrientReservoir replenish=0.6 + SelfMaintainingCell: membrane-gated import, enzyme-catalysed metabolism, ATP-costed enzyme synthesis + membrane repair, first-order turnover, viability; membrane injured −60% at tick 45) run 90 ticks through the engine. fig08-mechanistic-dynamics.png (cell cartoons + state curves + fluxes + repair-on/off + closure graph + knockout/closed-medium controls) baked over the same run + controls via scripts/build_fig08_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-PERSISTS-AND-POOLS-BOUNDED:
+    mech-persists-and-pools-bounded:
       result: PASS
       detail: 'all pools strictly positive and bounded; no-injury second-half drift < 0.1 — a maintained steady state'
-    MECH-TURNOVER-REQUIRES-REPLACEMENT:
+    mech-turnover-requires-replacement:
       result: PASS
       detail: 'membrane held ~3.8 with repair on; decays toward 0 with repair off — replacement required'
-    MECH-RECOVERS-AFTER-INJURY:
+    mech-recovers-after-injury:
       result: PASS
       detail: 'injury 3.75→1.50, viability dip 0.71, recovery to 3.70/0.92 by tick 90; no recovery without repair'
-    MECH-CLOSURE-BREAK-COLLAPSES-VIABILITY:
+    mech-closure-break-collapses-viability:
       result: PASS
       detail: 'final viability 0.00 for each of KO transport/met/expr/repair — every closure edge load-bearing'
-    MECH-DEPENDS-ON-EXTERNAL-INPUT:
+    mech-depends-on-external-input:
       result: PASS
       detail: 'closed (non-replenished) medium depletes; viability collapses to 0.00 — organization maintained on external throughput'
 findings:

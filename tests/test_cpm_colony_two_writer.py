@@ -6,7 +6,7 @@ import pytest
 from process_bigraph import Composite, Process
 from meta_modelers_guide.core import build_core
 
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 
 NX = NY = 20

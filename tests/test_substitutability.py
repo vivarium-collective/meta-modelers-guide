@@ -30,7 +30,7 @@ import pytest
 from process_bigraph import Composite
 from meta_modelers_guide.core import build_core
 
-pytest.importorskip("cpm")           # the CPM engine (absent from base CI)
+pytest.importorskip("viva_cpm")           # the CPM engine (absent from base CI)
 pytest.importorskip("spatio_flux")   # the diffusion-advection field framework
 
 COMP_DIR = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"

@@ -211,30 +211,24 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig04-runnable.composite.json (SpatialDiffusion D=0.2 on a length-9 map[float] grid seeded as a 0→1 nutrient gradient, ProductionDegradationField source off / decay 0.03, MechanicalRelax relax_rate=0.3, SingleCellSpatial cell_index=4) run 24 ticks (25 emitted rows) through the process-bigraph engine (tests/test_fig04_env_drives_interface.py). The composite is fully deterministic — no RNG — so all numbers reproduce exactly. The baked fig04-dynamics.png in visualizations/ was rendered over the same run (scripts/build_fig04_dynamics.py).'
   params: {}
   outcomes:
-    HIGHER-LOCAL-FIELD-DRIVES-LARGER-UPTAKE:
+    higher-local-field-drives-larger-uptake:
       result: PASS
       detail: uptake(0.2)=0.02, uptake(0.8)=0.08, ratio == 4.0
-    ZERO-FIELD-GIVES-NO-DRIVE:
+    zero-field-gives-no-drive:
       result: PASS
       detail: uptake, traction, drift, mass-gain all == 0.0 at flat zero field
-    MASS-INCREASES-MONOTONICALLY-UNDER-NUTRIENT:
+    mass-increases-monotonically-under-nutrient:
       result: PASS
       detail: mass 1.0 → 1.432152, monotone non-decreasing
-    UPTAKE-TRACKS-THE-LOCAL-SENSED-FIELD:
+    uptake-tracks-the-local-sensed-field:
       result: PASS
       detail: corr(per-step uptake, local sensed field) == 1.0
-    NET-DRIFT-IS-UP-GRADIENT:
+    net-drift-is-up-gradient:
       result: PASS
       detail: location 4.0 → 4.195695, net drift +0.195695 up-gradient
-    CONTROL-LOOP-CLOSES-THROUGH-SHARED-STORE:
+    control-loop-closes-through-shared-store:
       result: PASS
       detail: cum uptake_flux 0.0 → 0.864305; Δmass 0.432152 == 0.5 × 0.864305
-- name: meta_modelers_guide.composites.fig04-runnable__1787799780__c3343d
-  status: complete
-  timestamp: 1787799780.415134
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig04-mechanistic
   composite: fig04-mechanistic
   emitter: RAMEmitter
@@ -243,19 +237,19 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig04-mechanistic.composite.json (DiffusionField D=0.4 lattice²·tick⁻¹ with D·dt/dx²=0.4<0.5 stable; FieldSource at cell 0 rate 0.25, decay 0.004; MotileCell Vmax=0.45, Km=0.30, yield 0.6, chemotaxis 9.0 on a 25-cell lattice with an in-domain exponential gradient) run 24 ticks through the engine. fig04-mechanistic-dynamics.png (6-panel spatiotemporal figure + matched-null controls) baked over the same run + controls via scripts/build_fig04_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-MASS-LEDGER-CLOSES:
+    mech-mass-ledger-closes:
       result: PASS
       detail: 'field ledger residual 8.9e-16; biomass = yield·Σuptake exactly; pure diffusion conserves total'
-    MECH-CELL-DEPLETES-FIELD-REAL-FEEDBACK:
+    mech-cell-depletes-field-real-feedback:
       result: PASS
       detail: 'footprint 1.58, depletion well 1.58 field units — real cell→field feedback (refutes the baseline correlation=1.0 artefact)'
-    MECH-CONTROLS-ISOLATE-EACH-ARM:
+    mech-controls-isolate-each-arm:
       result: PASS
       detail: 'no-uptake: biomass flat 1.0; no-motility: position fixed 16.0; zero-gradient: no drift'
-    MECH-CHEMOTAXIS-CLIMBS-THE-GRADIENT:
+    mech-chemotaxis-climbs-the-gradient:
       result: PASS
       detail: 'cell 16.0 → 0.6 lattice units up-gradient; sensed nutrient 0.27 → ~2.0'
-    MECH-UPTAKE-SATURATES:
+    mech-uptake-saturates:
       result: PASS
       detail: 'uptake→Vmax=0.45 at high c, ≪ at low c (Michaelis–Menten, bounded)'
 findings:

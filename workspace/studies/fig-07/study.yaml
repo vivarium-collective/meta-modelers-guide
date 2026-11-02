@@ -246,36 +246,30 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig07-runnable.composite.json (six ODE handlers -- TransmembraneTransportODE, CellMetabolismODE, TranscriptionODE, TranslationODE, SubunitAssemblyODE, ReplicationAndRepairODE -- over one place graph nesting up to six levels deep, default_n_steps=30) run to completion through the process-bigraph engine (tests/test_fig07_nested_dynamics.py); the fig07-dynamics.png time-series in visualizations/ was rendered from scripts/build_fig07_dynamics.py over the same run.'
   params: {}
   outcomes:
-    COMPOSITE-RUNS-AND-EMITS:
+    composite-runs-and-emits:
       result: PASS
       detail: 31 frames (30 ticks + initial emit), final time == 30.0
-    TRANSPORT-FILLS-CYTOPLASMIC-NUTRIENTS:
+    transport-fills-cytoplasmic-nutrients:
       result: PASS
       detail: nutrients 0.0 -> 9.0, monotonic non-decreasing
-    METABOLISM-MAKES-METABOLITES-AND-ENERGY:
+    metabolism-makes-metabolites-and-energy:
       result: PASS
       detail: metabolites 0.0 -> ~20.5, energy 0.0 -> ~13.1
-    CENTRAL-DOGMA-TRANSCRIPTION-AND-TRANSLATION-RISE:
+    central-dogma-transcription-and-translation-rise:
       result: PASS
       detail: rna 0.0 -> ~0.64, proteins 0.0 -> ~0.24, rna leads protein
-    ASSEMBLY-GROWS-RIBOSOME-POOL-CLOSING-THE-LOOP:
+    assembly-grows-ribosome-pool-closing-the-loop:
       result: PASS
       detail: ribosome 0.5 -> ~0.88 (past bootstrap seed)
-    CASCADE-PROPAGATES-ACROSS-MULTIPLE-LEVELS:
+    cascade-propagates-across-multiple-levels:
       result: PASS
       detail: all five levels {nutrients, metabolites, rna, proteins, ribosome} change
-    PLACE-GRAPH-CONTAINMENT-PRESERVED:
+    place-graph-containment-preserved:
       result: PASS
       detail: six-level DNA chain + four-level ribosome chain intact, DNA nested beside histone
-    PROCESS-MOVES-QUANTITY-IN-DEEP-NESTED-STORE:
+    process-moves-quantity-in-deep-nested-store:
       result: PASS
       detail: deep ribosome grew and == emitted last frame; deep DNA held at set point 1.0
-- name: meta_modelers_guide.composites.fig07-runnable__1787799780__3c0bb2
-  status: complete
-  timestamp: 1787799780.4746208
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig07-mechanistic
   composite: fig07-mechanistic
   emitter: RAMEmitter
@@ -284,19 +278,19 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig07-mechanistic.composite.json (PermeableBoundary ×2 [membrane + nuclear envelope, permeability 0.3], LocalMetabolism k=0.05 in cytoplasm, RegulatedReporter k_prod=0.4/k_deg=0.1 in nucleus; nested place graph environment⊃cell⊃cytoplasm⊃nucleus) run 40 ticks through the engine. fig07-mechanistic-dynamics.png (6-panel: nested compartments + port path, inward propagation, graded prediction, series gating, local-metabolism starvation, localized perturbation) baked over the same run + sweeps + a mid-run cytoplasmic pulse via scripts/build_fig07_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-TRANSPORT-CONSERVES-SUBSTRATE:
+    mech-transport-conserves-substrate:
       result: PASS
       detail: 'Σsubstrate 10.0→10.0, residual 1.3e-7 (pure transport is conservative across levels)'
-    MECH-BOUNDARY-PERMEABILITY-GATES-DEEP-REPORTER:
+    mech-boundary-permeability-gates-deep-reporter:
       result: PASS
       detail: 'reporter 8.23 (open) vs 0.0 (membrane ε) — boundary-level cause, deep effect'
-    MECH-BOTH-BOUNDARIES-GATE-IN-SERIES:
+    mech-both-boundaries-gate-in-series:
       result: PASS
       detail: 'either boundary ε (membrane OR nuclear envelope) zeroes the deep reporter; both open → 8.23'
-    MECH-HIGHER-PERMEABILITY-FILLS-DEEPER-FASTER:
+    mech-higher-permeability-fills-deeper-faster:
       result: PASS
       detail: 'nuclear substrate @ t=8 monotone 1.26→3.42 across P_mem 0.05→0.8'
-    MECH-LOCAL-METABOLISM-IS-COMPARTMENT-RESTRICTED:
+    mech-local-metabolism-is-compartment-restricted:
       result: PASS
       detail: 'reporter 13.0 (cyto metabolism OFF) vs 1.49 (ON) — compartment-restricted consumption'
 findings:

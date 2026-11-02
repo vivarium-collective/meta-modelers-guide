@@ -202,30 +202,24 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig02-runnable.composite.json (FastProduction interval 1.0 rate 1.0 and SlowConversion interval 5.0 yield_frac 0.6 wired to one shared pool store, molecules + biomass) run 20 steps to completion through the process-bigraph engine and gathered via RAMEmitter (tests/test_fig02_runs.py). Fully deterministic -- no RNG -- so the trajectory reproduces exactly run to run.'
   params: {}
   outcomes:
-    FAST-CLOCK-OUTPACES-SLOW-CLOCK:
+    fast-clock-outpaces-slow-clock:
       result: PASS
       detail: fast pool changes 20 times, slow store 3 times (20 > 3*3)
-    FAST-POOL-IS-A-SAWTOOTH:
+    fast-pool-is-a-sawtooth:
       result: PASS
       detail: molecules rises +1/tick and drops at t=10, 15, 20
-    BIOMASS-ADVANCES-MONOTONICALLY-ON-SLOW-CLOCK:
+    biomass-advances-monotonically-on-slow-clock:
       result: PASS
       detail: biomass staircase 0 -> 3.0 -> 7.2 -> 11.88, monotone, 3 conversions
-    MASS-CONSERVED-ACROSS-TIMESCALES:
+    mass-conserved-across-timescales:
       result: PASS
       detail: molecules + biomass == time at every tick; final 8.12 + 11.88 == 20.0
-    FAST-PROCESS-ADDS-EACH-TICK:
+    fast-process-adds-each-tick:
       result: PASS
       detail: unit control -- FastProduction adds +1.0 per unit interval
-    SLOW-CONVERSION-CONSERVES-WHAT-IT-MOVES:
+    slow-conversion-conserves-what-it-moves:
       result: PASS
       detail: unit control -- delta biomass + delta molecules == 0
-- name: meta_modelers_guide.composites.fig02-runnable__1787799780__5a11fd
-  status: complete
-  timestamp: 1787799780.37654
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig02-mechanistic
   composite: fig02-mechanistic
   emitter: RAMEmitter
@@ -234,16 +228,16 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig02-mechanistic.composite.json (FastMetabolism influx=1.0 turnover=1.5 at Δt=0.25; SlowBiomass k_bio=0.3 yield=0.6 at Δt=1.0; one shared pool) run 20 time-units through the engine. fig02-mechanistic-dynamics.png (event raster + trajectories-vs-fine-reference + convergence + ledger) baked via scripts/build_fig02_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-INPUT-OUTPUT-LEDGER-CLOSES:
+    mech-input-output-ledger-closes:
       result: PASS
       detail: 'cumulative_input = ΔM+Δbiomass+Δwaste to ≤1.8e-15; final M+biomass≈2.2 vs input 20.0 (waste ~17.8) — pool+biomass is NOT the budget'
-    MECH-EULER-CONVERGENCE:
+    mech-euler-convergence:
       result: PASS
       detail: 'stiff-pool L1 error 2.27→0.011 as Δt halves, ~O(Δt)'
-    MECH-MULTIRATE-IS-NOT-ACCURACY:
+    mech-multirate-is-not-accuracy:
       result: PASS
       detail: 'fast clock controls the transient pool error independent of the slow clock — scheduling ≠ accuracy'
-    MECH-SCHEDULE-ORDER-INVARIANT:
+    mech-schedule-order-invariant:
       result: PASS
       detail: 'swapped process order gives identical trajectory (<1e-12) — synchronous summed deltas'
 findings:

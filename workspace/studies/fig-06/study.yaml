@@ -228,30 +228,24 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig06-runnable.composite.json (MolecularMechanismHandler + ProtonMotiveRamp, k_cat_atp=100, n_protons_per_atp=3.3, pmf_volts=0.15, torque_pn_nm=40, efficiency=0.75, proton_charge=1.602e-19, drive_rate=0.06) run 20 ticks (21 emitted rows) to completion through the process-bigraph engine (tests/test_fig06_atp_synthase.py). The fig06-dynamics.png time-series in visualizations/ was baked over the same run via scripts/build_fig06_dynamics.py.'
   params: {}
   outcomes:
-    ATP-FLUX-SCALES-WITH-THE-PROTON-DRIVE:
+    atp-flux-scales-with-the-proton-drive:
       result: PASS
       detail: J_ATP = k_cat·activity exactly (30.0 at 0.3, 120.0 at 1.2 -- ratio 4.0); rises monotonically 20.0 (tick 1) → 128.0 (tick 19)
-    FOUR-CHANNELS-DERIVE-FROM-ONE-PROTON-FLUX:
+    four-channels-derive-from-one-proton-flux:
       result: PASS
       detail: I == J_ATP·3.3·e and heat == 0.25·(I·pmf) exactly (1e-30) every step; all four channels co-fire under drive
-    ATP-PROTON-STOICHIOMETRY-CONSERVED:
+    atp-proton-stoichiometry-conserved:
       result: PASS
       detail: J_ATP/J_H == 1/3.3 == 0.30303 exactly on every active step
-    ROTARY-TORQUE-HOLDS-NEAR-CONSTANT:
+    rotary-torque-holds-near-constant:
       result: PASS
       detail: mechanical_out == 4.0×10⁻²⁰ N·m exactly, constant while other channels scale
-    ELECTRICAL-ENERGY-BALANCE-CLOSES:
+    electrical-energy-balance-closes:
       result: PASS
       detail: heat == 25 % of input PMF power, useful == 75 %, both ≥ 0 every step
-    NO-DRIVE-NO-SPONTANEOUS-FLUX:
+    no-drive-no-spontaneous-flux:
       result: PASS
       detail: chemical_out == electrical_out == thermal_out == 0.0 at zero drive
-- name: meta_modelers_guide.composites.fig06-runnable__1787799780__2771eb
-  status: complete
-  timestamp: 1787799780.452064
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig06-mechanistic
   composite: fig06-mechanistic
   emitter: RAMEmitter
@@ -260,22 +254,22 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig06-mechanistic.composite.json (AtpSynthaseRotor + MembranePMF + MechanicalLoad; n_c=10, atp_per_rev=3, drag=1e-23 N·m·s, dg0=30.5 kJ/mol, Δp=150 mV fixed, load_rate=6.5e-22 N·m/tick) run 20 ticks (21 rows) through the process-bigraph engine. The fig06-mechanistic-dynamics.png six-panel figure was baked over the same run plus a fresh-rotor Δp sweep via scripts/build_fig06_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-POWER-BUDGET-CLOSES:
+    mech-power-budget-closes:
       result: PASS
       detail: 'max |P_in − (P_ATP+P_ext+P_heat)| = 3.1e-33 W over the run (machine precision); P_heat ≥ 0; I = J_H·e exactly'
-    MECH-TORQUE-DERIVED-MATCHES-LITERATURE:
+    mech-torque-derived-matches-literature:
       result: PASS
       detail: 'τ_drive = n_c·e·Δp/2π = 38.2 pN·nm at 150 mV (literature ~40); τ(0.2V)/τ(0.1V) = 2.000'
-    MECH-LOAD-INDUCES-STALL-AND-REVERSAL:
+    mech-load-induces-stall-and-reversal:
       result: PASS
       detail: 'forward ω +654 → stall tick 11 → reversal ω −597; in reversal J_ATP<0 and J_H<0 together'
-    MECH-PROTON-GRADIENT-SETS-DIRECTION:
+    mech-proton-gradient-sets-direction:
       result: PASS
       detail: 'predicted Δp* = 125 mV; sweep gives ω<0 below, ω≈0 at, ω>0 above'
-    MECH-EFFICIENCY-IS-DERIVED-NOT-IMPOSED:
+    mech-efficiency-is-derived-not-imposed:
       result: PASS
       detail: 'η = 0.833 at 150 mV, varies with Δp, ≠ imposed 0.75'
-    MECH-ATP-BACKPRESSURE-SLOWS-ROTOR:
+    mech-atp-backpressure-slows-rotor:
       result: PASS
       detail: 'ω monotone-decreasing as [ATP] and ΔG_ATP rise (product back-pressure)'
 findings:

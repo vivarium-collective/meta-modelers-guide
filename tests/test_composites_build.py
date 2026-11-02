@@ -54,7 +54,7 @@ def test_composite_builds(spec_path):
     if "spatio_flux" in raw:
         pytest.importorskip("spatio_flux")
     if "CpmCellField" in raw or "CpmColonyField" in raw:
-        pytest.importorskip("cpm")
+        pytest.importorskip("viva_cpm")
         # CpmCellField loads a cobra model at construction ONLY for its default
         # dFBA mechanism; the Michaelis-Menten mechanism ("mechanism": "mm") is
         # cobra-free (the interface-substitutability twin), so require cobra only
@@ -62,15 +62,15 @@ def test_composite_builds(spec_path):
         if '"mechanism": "mm"' not in raw and '"mechanism":"mm"' not in raw:
             pytest.importorskip("cobra")
     if "CpmDisintegration" in raw:
-        pytest.importorskip("cpm")           # no cobra — disintegration is metabolism-free
+        pytest.importorskip("viva_cpm")           # no cobra — disintegration is metabolism-free
     if "CpmGrowthDivision" in raw:
-        pytest.importorskip("cpm")
+        pytest.importorskip("viva_cpm")
         pytest.importorskip("cobra")  # dFBA-driven growth
     if "CpmEvolution" in raw:
-        pytest.importorskip("cpm")
+        pytest.importorskip("viva_cpm")
         pytest.importorskip("cobra")  # dFBA-driven growth
     if "CpmSorting" in raw:
-        pytest.importorskip("cpm")           # no cobra — sorting is metabolism-free too
+        pytest.importorskip("viva_cpm")           # no cobra — sorting is metabolism-free too
     spec = json.loads(raw)
     assert spec.get("name"), f"{spec_path.name}: missing 'name'"
     assert spec.get("state"), f"{spec_path.name}: missing 'state'"

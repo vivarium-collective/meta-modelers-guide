@@ -197,27 +197,21 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig01-runnable.composite.json (StoreTransfer, rate k=0.15, interval 1.0, source store_a seeded 1.0, sink store_b seeded 0.0) run for default_n_steps=20 to completion through the process-bigraph engine (tests/test_fig01_runs.py). Fully deterministic -- no seed -- so the emitted trajectory reproduces exactly run-to-run.'
   params: {}
   outcomes:
-    PROCESS-READS-AND-WRITES-THROUGH-TYPED-PORTS:
+    process-reads-and-writes-through-typed-ports:
       result: PASS
       detail: delta[source] == -0.15, delta[sink] == +0.15, sum 0 (conservative transfer through the ports)
-    SOURCE-DRAINS-AND-SINK-FILLS-OVER-THE-RUN:
+    source-drains-and-sink-fills-over-the-run:
       result: PASS
       detail: store_a 1.0 -> 0.03876 (strictly decreasing), store_b 0.0 -> 0.96124 (strictly increasing) over ticks 0..20
-    TRAJECTORY-IS-THE-EXACT-GEOMETRIC-DECAY:
+    trajectory-is-the-exact-geometric-decay:
       result: PASS
       detail: store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 for every tick 0..20
-    SINK-OVERTAKES-SOURCE-AT-THE-CROSSOVER-TICK:
+    sink-overtakes-source-at-the-crossover-tick:
       result: PASS
       detail: store_b first exceeds store_a at tick 5 (0.556 vs 0.444)
-    TOTAL-IS-CONSERVED:
+    total-is-conserved:
       result: PASS
       detail: store_a + store_b == 1.0 to within 1e-9 at every tick
-- name: meta_modelers_guide.composites.fig01-runnable__1787799653__fa2aab
-  status: complete
-  timestamp: 1787799653.275527
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig01-mechanistic
   composite: fig01-mechanistic
   emitter: RAMEmitter
@@ -226,19 +220,19 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig01-mechanistic.composite.json (chain A↔B↔C) and fig01-mechanistic-star.composite.json (hub A↔B,A↔C): the SAME CompartmentTransport class (k_forward=0.2, k_reverse=0.05) on two edges of a nested three-compartment place graph, run 40 ticks through the engine. fig01-mechanistic-dynamics.png baked over both runs + the k_reverse→0 solver check via scripts/build_fig01_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-TRANSPORT-CONSERVES-TOTAL:
+    mech-transport-conserves-total:
       result: PASS
       detail: 'A+B+C conserved to 2.2e-16 in both chain and hub'
-    MECH-REWIRING-REDIRECTS-FLUX:
+    mech-rewiring-redirects-flux:
       result: PASS
       detail: 'same class, different wiring: chain 0.049:0.191:0.760 vs hub 0.111:0.444:0.444'
-    MECH-REVERSIBLE-REACHES-EQUILIBRIUM:
+    mech-reversible-reaches-equilibrium:
       result: PASS
       detail: 'hub B/A = C/A = 4.0 = k_forward/k_reverse (reversible detailed balance)'
-    MECH-TYPED-PORTS-REJECT-INCOMPATIBLE:
+    mech-typed-ports-reject-incompatible:
       result: PASS
       detail: 'core.check(concentration, string)=False; forced bad wiring raises'
-    MECH-IRREVERSIBLE-LIMIT-RECOVERS-GEOMETRIC-DECAY:
+    mech-irreversible-limit-recovers-geometric-decay:
       result: PASS
       detail: 'k_reverse→0 recovers store_a[n]=0.85^n to 5.5e-9 (solver verification)'
 findings:

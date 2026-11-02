@@ -5,8 +5,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-pytest.importorskip("cpm"); pytest.importorskip("spatio_flux")
-from cpm.schema import load_world
+pytest.importorskip("viva_cpm"); pytest.importorskip("spatio_flux")
+from viva_cpm.schema import load_world
 
 NX = NY = 40
 

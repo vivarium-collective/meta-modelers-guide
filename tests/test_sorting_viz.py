@@ -15,7 +15,7 @@ from meta_modelers_guide.cpm import viz
 
 # CpmSorting needs the `cpm` Rust/maturin build, absent from the base CI
 # image; skip rather than fail when neither composite can be built.
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 
 SORTING_COMP = (Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"
                 / "cell-sorting-spatial.composite.json")

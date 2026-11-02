@@ -229,27 +229,21 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig11-evolution.composite.json (PopulationEvolution over a population tree[node] + an environment niche; optimum0=1.0, drift=0.02, sel_strength=0.6, mut_sigma=0.28, div_rate=0.35, capacity=12, seed=1) run 40 generations (41 emitted rows) through the process-bigraph engine (tests/test_fig11_dynamics.py).'
   params: {}
   outcomes:
-    POPULATION-GROWS-TO-CAPACITY-BY-FISSION:
+    population-grows-to-capacity-by-fission:
       result: PASS
       detail: size 1 (t=0) -> 12 by generation 14, held at 12 through t=40, max == 12
-    SELECTION-OPTIMUM-DRIFTS:
+    selection-optimum-drifts:
       result: PASS
       detail: optimum 1.0 (t=0) -> 1.80 (t=40), monotone at drift 0.02/generation
-    MEAN-TRAIT-TRACKS-THE-DRIFTING-OPTIMUM:
+    mean-trait-tracks-the-drifting-optimum:
       result: PASS
       detail: mean trait 0.0 (gap 1.0) -> ~1.68 (gap ~0.12); mean climbs by > 1.0
-    DIVISION-IS-BINARY-FISSION-PLACE-GRAPH-REWRITE:
+    division-is-binary-fission-place-graph-rewrite:
       result: PASS
       detail: cell_0 -> cell_1, cell_2 at first division; appeared == 2*vanished below capacity; no id reused
-    TRAJECTORY-IS-DETERMINISTIC:
+    trajectory-is-deterministic:
       result: PASS
       detail: two independent builds emit identical trajectories and daughter ids (seed=1)
-- name: meta_modelers_guide.composites.fig11-evolution__1787799780__ff8b62
-  status: complete
-  timestamp: 1787799780.584349
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig11-mechanistic
   composite: fig11-mechanistic
   emitter: RAMEmitter
@@ -258,25 +252,25 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig11-mechanistic.composite.json (PopulationGeneticsProcess wrapping a Wright–Fisher EvolvingPopulation, capacity 300, drift 0.06, sel_strength 1.0, mut_sigma 0.12, seed 0) run 40 generations through the engine. The many-seed ensembles (40 seeds for selection-vs-neutral, 20 per drift for the failure sweep, 25 for the uptake mode), the trait-density heatmap, the lineage genealogy, and the parameter sweep in fig11-mechanistic-dynamics.png were produced directly on the EvolvingPopulation engine via scripts/build_fig11_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-SELECTION-BEATS-NEUTRAL-DRIFT:
+    mech-selection-beats-neutral-drift:
       result: PASS
       detail: 'selection final lag 0.39±0.04 vs neutral 2.38±0.23 over 40 seeds'
-    MECH-HERITABILITY-NEAR-ONE:
+    mech-heritability-near-one:
       result: PASS
       detail: 'parent–offspring regression slope h² = 0.998'
-    MECH-NO-MUTATION-ERODES-VARIANCE:
+    mech-no-mutation-erodes-variance:
       result: PASS
       detail: 'variance 0.21 → 0.001 over 30 generations without mutation'
-    MECH-ADAPTATION-FAILS-WHEN-OPTIMUM-TOO-FAST:
+    mech-adaptation-fails-when-optimum-too-fast:
       result: PASS
       detail: 'final lag 0.11 → 11.2 as drift rises 0.02 → 0.55 (runaway)'
-    MECH-DEMOGRAPHIC-BOOKKEEPING:
+    mech-demographic-bookkeeping:
       result: PASS
       detail: 'size==N each generation; all parent indices in range (no id reuse)'
-    MECH-REPRODUCIBILITY-NOT-ROBUSTNESS:
+    mech-reproducibility-not-robustness:
       result: PASS
       detail: 'same seed identical; non-trivial across-seed spread (reproducibility ≠ robustness)'
-    MECH-UPTAKE-EXECUTABLE-TRAIT-OPTIMUM:
+    mech-uptake-executable-trait-optimum:
       result: PASS
       detail: 'evolved mean tracks the derived metabolic optimum a* at correlation > 0.95'
 findings:

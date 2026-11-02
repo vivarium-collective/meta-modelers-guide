@@ -324,10 +324,10 @@ runs:
     (tests/test_gray_scott_viz.py).
   params: {}
   outcomes:
-    PATTERN-FORMS:
+    pattern-forms:
       result: PASS
       detail: patterned == 1.0; v_var ~0.0011 -> ~0.0119 over 8000 steps -- emergent Gray-Scott spot pattern
-    PATTERN-HAS-MULTIPLE-DOMAINS:
+    pattern-has-multiple-domains:
       result: PASS
       detail: n_domains ~= 12 connected v-domains (multi-seed band [8, 12]) -- genuine spatial structure
 - name: molecular-equal-diffusion-control
@@ -341,7 +341,7 @@ runs:
     (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform).
   params: {}
   outcomes:
-    EQUAL-DIFFUSION-CONTROL-UNIFORM:
+    equal-diffusion-control-uniform:
       result: PASS
       detail: 'Du=Dv=0.12 (only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0) -- no
         diffusion-driven instability, the causal control'
@@ -357,10 +357,10 @@ runs:
     the baked GIF in viz/ shows the thermal contrast against the flagship.
   params: {}
   outcomes:
-    THERMAL-CHANNEL-STILL-PATTERNS:
+    thermal-channel-still-patterns:
       result: PASS
       detail: patterned == 1.0, v_var ~= 0.0096 (still above the floor) -- graded, not collapsed
-    THERMAL-CHANNEL-COARSENS:
+    thermal-channel-coarsens:
       result: PASS
       detail: n_domains ~12 -> ~2, v_var ~0.0119 -> ~0.0096 -- the thermal channel coarsens the chemical pattern
 - name: molecular-turing-pattern-multiseed
@@ -373,7 +373,7 @@ runs:
     condition), each 16 ticks through the engine (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust).
   params: {}
   outcomes:
-    PATTERN-IS-MULTISEED-ROBUST:
+    pattern-is-multiseed-robust:
       result: PASS
       detail: v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5 -- patterns for every seed, reported as a range
 findings:

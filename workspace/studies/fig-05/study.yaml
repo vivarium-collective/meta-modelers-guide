@@ -248,28 +248,28 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig05-grain-runnable.composite.json (StressRamp stress_rate=0.045, GrainSelector threshold=0.5, CoarseGrainProcess biomass_yield=0.3/ energy_yield=0.2, FineGrainProcess decay_rate=0.09/energy_decay=0.09) run 26 steps (27 emitted frames) to completion through the process-bigraph engine (tests/test_fig05_grain_swap.py). Deterministic -- no RNG anywhere in the composite.'
   params: {}
   outcomes:
-    COARSE-GRAIN-WHILE-VIABLE:
+    coarse-grain-while-viable:
       result: PASS
       detail: active_grain == "coarse" for every frame with viability >= 0.5 (t=0..12)
-    FLIPS-TO-FINE-AND-STAYS:
+    flips-to-fine-and-stays:
       result: PASS
       detail: exactly one flip, coarse->fine at t=13, fine through t=26
-    SWITCH-AT-THRESHOLD-CROSSING:
+    switch-at-threshold-crossing:
       result: PASS
       detail: viability first < 0.5 at t=12, flip at t=13, |13-12| == 1
-    GATE-HANDS-CONTROL-TO-THE-ACTIVE-GRAIN:
+    gate-hands-control-to-the-active-grain:
       result: PASS
       detail: coarse grows (+), fine decays (-), each inert when not selected
-    BIOMASS-TURNS-OVER-AT-THE-SWITCH:
+    biomass-turns-over-at-the-switch:
       result: PASS
       detail: biomass 0 -> 3.9 (peak at t=13) -> ~1.14 by t=26
-    ENERGY-MIRRORS-BIOMASS:
+    energy-mirrors-biomass:
       result: PASS
       detail: energy 0 -> 2.6 (peak at t=13) -> ~0.76 by t=26
-    VIABILITY-DECLINES-MONOTONICALLY:
+    viability-declines-monotonically:
       result: PASS
       detail: 1.0 monotone down to 0.0 by t=23, below 0.5 from t=12
-    TRAJECTORY-IS-DETERMINISTIC:
+    trajectory-is-deterministic:
       result: PASS
       detail: two independent builds emit identical viability/grain/biomass sequences
 - name: fig05-executable-grain-comparison
@@ -286,12 +286,6 @@ runs:
     FBA-GRAIN-SHOWS-OVERFLOW-SECRETION:
       result: PASS
       detail: fig05-executable-fba secretes 30.4478 (acetate overflow) vs 1.6 for coarse; energy 144.0 vs 2.4; entropy 151.2761 vs 0.8
-- name: meta_modelers_guide.composites.fig05-grain-runnable__1787799780__641657
-  status: complete
-  timestamp: 1787799780.434656
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig05-mechanistic
   composite: fig05-mechanistic
   emitter: RAMEmitter
@@ -300,22 +294,22 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig05-mechanistic.composite.json (StressRamp5 + GrainAdaptiveCell, mode=adaptive, k_stress=0.045, k_repair=0.030, k_agg=0.55, w_sol=0.35, w_agg=1.7, mu=0.12, inadequacy_tol=0.20) run 36 ticks through the engine, plus always-coarse and always-fine control arms (mode override). fig05-mechanistic-dynamics.png (6-panel decisive figure) baked over the three runs via scripts/build_fig05_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-ONE-ACTIVE-GRAIN:
+    mech-one-active-grain:
       result: PASS
       detail: 'active_grain ∈ {0,1} every step'
-    MECH-BIOLOGY-SEPARATE-FROM-GRAIN:
+    mech-biology-separate-from-grain:
       result: PASS
       detail: 'stress identical across modes (1e-12); coarse≡adaptive damage before switch'
-    MECH-CONSERVING-HANDOVER-NO-JUMP:
+    mech-conserving-handover-no-jump:
       result: PASS
       detail: 'biomass step at switch 0.98× typical; handover_error=0; total damage continuous'
-    MECH-INADEQUACY-TRIGGERS-REFINEMENT:
+    mech-inadequacy-triggers-refinement:
       result: PASS
       detail: 'switch time moves with inadequacy_tol (quantified trigger, not wall-clock); default switch t=11'
-    MECH-REFINEMENT-PREDICTS-PHENOTYPE-COARSE-MISSES:
+    mech-refinement-predicts-phenotype-coarse-misses:
       result: PASS
       detail: 'final viability coarse 0.74 vs fine/adaptive 0.00; m_agg coarse 0 vs fine 0.63; divergence |coarse−fine| 1.09 vs |adaptive−fine| 0.023'
-    MECH-DETERMINISTIC-RERUN-IS-REPRODUCIBILITY:
+    mech-deterministic-rerun-is-reproducibility:
       result: PASS
       detail: 'two identical runs match to 1e-15 — reproducibility, NOT mechanistic support'
 findings:

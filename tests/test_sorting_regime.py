@@ -24,7 +24,7 @@ from meta_modelers_guide.core import build_core
 
 COMPOSITES = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"
 
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 
 
 def _load(name):

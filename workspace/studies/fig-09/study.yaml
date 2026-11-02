@@ -178,24 +178,18 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig09-rewrite.composite.json (CellCycleDivision over a colony tree[node] store, cycle=3, capacity=16, built via meta_modelers_guide.fig10_rewrite.build_fig10_division) run 12 ticks to completion through the process-bigraph engine; the whole colony subtree is captured each tick by a RAMEmitter, so new nested place-graph nodes appear in the trajectory automatically (tests/test_fig09_dynamics.py). Deterministic -- no randomness in the composite, so every value reproduces exactly run to run.'
   params: {}
   outcomes:
-    CELL-COUNT-INCREASES-DIVISION-HAPPENED:
+    cell-count-increases-division-happened:
       result: PASS
       detail: cells 1 (t=0-5) -> 2 (t=6-11) -> 4 (t=12), monotone non-decreasing
-    REPLICATION-PRECEDES-DIVISION:
+    replication-precedes-division:
       result: PASS
       detail: chromosome count doubles at t=3 (cells still 1); cells first double at t=6
-    TOTAL-DNA-DOUBLES-AT-REPLICATION:
+    total-dna-doubles-at-replication:
       result: PASS
       detail: total DNA 1.0 -> 2.0 (t=3) -> 4.0 (t=9)
-    DIVISION-CONSERVES-AND-EQUIPARTITIONS-DNA:
+    division-conserves-and-equipartitions-dna:
       result: PASS
       detail: t=6 (1->2, DNA 2.0 conserved, 1.0 each) and t=12 (2->4, DNA 4.0 conserved, 1.0 each); boundary count doubles, each daughter = half of parent
-- name: meta_modelers_guide.composites.fig09-rewrite__1787799780__9a19a9
-  status: complete
-  timestamp: 1787799780.5104032
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig09-mechanistic
   composite: fig09-mechanistic
   emitter: RAMEmitter
@@ -204,16 +198,16 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig09-mechanistic.composite.json (GrowthDivisionColony over a colony tree[node]; MM uptake vmax=0.6/km=5.0 of a shared finite substrate=200; v_rep=1.4, v_div=1.8; replication draws DNA from a nucleotide pool at atp_per_dna=0.1; div_cost=0.1; capacity=16) run 20 ticks through the engine. fig09-mechanistic-dynamics.png (6-panel: gated division vs starved, lineage tree, conserved ledger, nucleotide accounting, one-lineage trajectory, founder cell cycle) baked via scripts/build_fig09_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-DIVISION-GATED-BY-GROWTH:
+    mech-division-gated-by-growth:
       result: PASS
       detail: 'full 1→2→4→8→16 over 20 ticks; starved (substrate 1e-9) stays 1 cell, 0 divisions over 40 ticks'
-    MECH-DIVISION-REQUIRES-ENERGY-AND-REPLICATION:
+    mech-division-requires-energy-and-replication:
       result: PASS
       detail: 'no division when energy<div_cost; no division when nucleotides absent (replication blocked)'
-    MECH-REPLICATION-DRAWS-DNA-FROM-NUCLEOTIDES:
+    mech-replication-draws-dna-from-nucleotides:
       result: PASS
       detail: 'Δ(DNA) == −Δ(nucleotides) to <1e-9; ΣNuc drawn down at each replication as ΣDNA rises'
-    MECH-DIVISION-CONSERVES-EVERY-PARTITION:
+    mech-division-conserves-every-partition:
       result: PASS
       detail: 'volume/nuc/biomass/DNA conserved across rewrite <1e-9; energy = parent − div_cost; equal chromosomes; distinct lineage ids'
 findings:

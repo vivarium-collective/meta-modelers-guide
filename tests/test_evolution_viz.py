@@ -16,7 +16,7 @@ from meta_modelers_guide.cpm import viz
 
 # Optional frameworks absent from the base CI image; skip rather than fail
 # when the development-evolution composite can't be built.
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 pytest.importorskip("cobra")
 
