@@ -6,6 +6,11 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Molecular energetics runs with a conserved power identity and derived (not imposed) torque (gate
+  passed), but toy-real and uncalibrated, held at Provisional pending the scientific-validation
+  gate — qualified.
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the four-channel coupling is robustly demonstrated on a deterministic 20-tick run -- the matter=>charge=>energy identities hold to 1e-30, the ATP:H+ stoichiometry and rotary torque are exact pins, and a zero-drive negative control plus the bare-draft contrast confirm the ramp is the driver -- but the BASELINE (fig06-runnable) is held at Medium, not High, because its constants are literature-plausible order-of-magnitude values and its transduction law is algebraic (no saturation/back-pressure), not a calibrated biophysical model. The MECHANISTIC VARIANT (fig06-mechanistic, scientific-review revision) materially raises the mechanistic support: torque and efficiency are now DERIVED rather than imposed (the derived τ_drive = n_c·e·Δp/2π = 38 pN·nm independently reproduces the measured ~40 pN·nm), stall and reversal are emergent outcomes of the torque balance with the full power budget closing to 1e-33 W, and a first-principles stall-gradient prediction (Δp* = 125 mV) is stated before the run and verified by a Δp sweep. The study is still held at Provisional overall because the mechanistic model is a reduced one-degree-of-freedom overdamped rotor (no explicit c-ring half-channels or elastic power-stroke) and is not yet fitted to a single enzyme''s measured speed-vs-load curve.'
 question: 'Does the paper''s §Molecular interfaces figure (Fig molecular_interface) hold as a runnable process -- a molecular mechanism (F₁Fₒ ATP synthase) that exchanges matter and energy through a small set of TYPED physical channels (chemical mol·s⁻¹, electrical C·s⁻¹, mechanical torque N·m, thermal J·s⁻¹) with NO cell-level boundary, all four channels driven from ONE coupled proton flux so matter, charge, angular momentum, and energy are conserved across the interface?'
@@ -469,7 +474,15 @@ visualizations:
 parent_studies:
 - study: fig-01
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Molecular energetics instantiates fig-01's typed wiring and conservation discipline at the
+    molecular scale.
 - study: molecular-interfaces
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The figure's reaction/energetics mechanism is the lumped counterpart of
+    draft-to-living-cell's spatial molecular-interfaces reaction-diffusion result.
 experiment: 'Run the `fig06-runnable` composite (MolecularMechanismHandler -- the F₁Fₒ ATP synthase as a four-channel transducer -- driven by a ProtonMotiveRamp charging the substrate/proton drive linearly) to completion over 20 ticks through the process-bigraph engine, and measure whether one coupled proton flux drives four TYPED physical channels (chemical ATP flux, electrical proton current, mechanical rotary torque, thermal heat) with matter, charge, angular momentum, and energy conserved across a molecular interface that has no cell-level boundary.'
 result: 'Over a deterministic 20-tick run, the F₁Fₒ ATP synthase transducer drives four TYPED physical channels from ONE ramped proton flux, with no cell-level boundary in the state. The chemical channel (ATP synthesis flux) scales linearly with the drive -- 4× activity gives exactly 4× flux (30.0 at activity 0.3, 120.0 at 1.2), rising monotonically 20.0 → 128.0 over the run. The four channels are one coupled quantity: the proton current is the ATP flux carried as charge (I = J_ATP·n·e), the ATP:H⁺ stoichiometry holds at 1/3.3 exactly on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m (torque, not force/power -- the drive sets speed, not torque), and the dissipated heat equals (1−η)·PMF power = 25 % of input, useful work 75 %, both non-negative. All coupling identities hold to 1e-30 on the live run and every readout reproduces exactly. A zero drive produces zero flux on all three driven channels (negative control), and the un-driven bare draft fig06-executable reports a flat chemical_out of 100.0 (= k_cat) whereas the ramp-driven fig06-runnable sweeps 20.0 -> 128.0 -- confirming the sweep is the drive coupling, not the rate law (workbench 0.4.1). The paper''s §Molecular interfaces figure (Fig molecular_interface) holds as a runnable process: a molecular mechanism exposing typed, coupled chemical/electrical/mechanical/thermal channels over molecular structure, matter/charge/ angular-momentum/energy conserved across the interface, with no cell boundary -- executable, not merely drawn. The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell` investigation.'

@@ -6,6 +6,12 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Self-maintenance is isolated by two independent process-knockout controls (metabolism KO;
+  gene-expression KO), deterministic, with all pools strictly positive/bounded over 40 ticks (gate
+  passed) — a strong result, but toy-real and uncalibrated (no literature flux, no spatial membrane),
+  held at Provisional pending the scientific-validation gate — qualified rather than supported.
 confidence: Provisional  # self-maintenance isolated by two independent process-knockout controls (metabolism KO; gene-expression KO), deterministic (reproduces exactly), all pools strictly positive/bounded over 40 ticks; kept Provisional -- toy-real and uncalibrated (no literature flux, no spatial membrane), so no promotion without the scientific-validation gate.
 confidence_basis: 'Calibrated off Provisional. BASELINE (fig08-runnable): compositional dependence is demonstrated by knockout, but the flat pools only accumulate -- behavioral verification, held at Medium. MECHANISTIC VARIANT (fig08-mechanistic, scientific-review revision) materially raises mechanistic support: a cell with a membrane boundary, first-order turnover, ATP-costed repair and viability shows persistence at a steady state, component replacement, recovery from a membrane injury (viability dip 0.71 -> 0.92), and viability collapse to 0 when any one of import/metabolism/expression/repair is knocked out or the medium is not replenished. The study is still held at Provisional because the membrane is a scalar area (not a spatial self-produced boundary), the viability target and rate constants are scripted, and nothing is calibrated to a named organism or measured turnover/repair rate -- so this is organizational self-maintenance, not autopoiesis in the strong sense (finding F-06).'
 question: 'Is the paper''s Fig. self_organized_process (§Composition of the cellular interface) executable rather than merely drawn -- does the `fig08-runnable` composite actually demonstrate that a cellular interface EMERGES when molecular processes are compositionally coupled so they maintain one another (metabolism synthesizes the components the membrane and replication need, containment/expression maintain the pools metabolism needs), so that the coupled system holds a sustained, far-from-equilibrium balance rather than each process running down independently?'
@@ -466,7 +472,15 @@ visualizations:
 parent_studies:
 - study: fig-06
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Self-maintenance composes the cellular interface, molecular energetics (fig-06), and nested
+    containment into a coupled whole — closure presupposes the energetics fig-06 establishes.
 - study: autopoiesis
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The lumped operational-closure figure is the non-spatial counterpart of autopoiesis's spatial
+    self-maintained membrane — same self-production claim, different level of composition.
 experiment: 'Run the `fig08-runnable` composite (six coupled processes -- containment, metabolism, gene expression, replication, diffusion, mass-action reactions -- over ten shared flat scalar building-block pools) for its declared 40 ticks through the process-bigraph engine, and measure whether the coupled processes maintain one another into a sustained, far-from-equilibrium balance: every pool positive and bounded, the catalytic/template pools holding steady while structural material is net-produced. Then open the maintenance loop with two process knockouts (metabolism; gene expression) and measure whether the downstream shared pools each depend on collapse -- showing the balance is a property of the coupling, not of any pool in isolation.'
 result: 'Over a deterministic 40-tick run the `fig08-runnable` composite holds the coupled balance: every observed pool stays strictly positive (smallest minimum metabolites 0.267) and bounded (largest value membrane 2.2), the catalytic/template pools hold a sustained steady balance (second-half drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25), and the structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). Two process knockouts confirm the balance is a property of the coupling: removing metabolism starves its downstream metabolite pool (0.33 -> 0.011) and freezes energy exactly at its 0.5 seed, and removing gene expression freezes the enzyme pool metabolism depends on exactly at its 0.3 seed and drops metabolism''s metabolite output (0.33 -> 0.23). Fig. self_organized_process is executable -- the caption''s self-maintaining composition runs and holds under test. This is a toy-real didactic demonstration; its rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation.'

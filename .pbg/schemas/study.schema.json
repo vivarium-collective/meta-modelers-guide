@@ -309,7 +309,7 @@
     },
     "parent_studies": {
       "type": "array",
-      "description": "Studies that must reach a given condition before this one runs. Each item is either a bare slug string (legacy form; normalized to {study: <slug>, condition: tests-passed}) or an object {study, condition: tests-passed | ran | complete}. Read by the dashboard's /api/investigations to compute `blocked` + `blocked_by` per study and to topologically sort the Studies tab.",
+      "description": "Studies this one depends on. Each item is either a bare slug string (legacy form; normalized to {study: <slug>, condition: tests-passed}) or an object {study, condition, relation?, rationale?, provides?, artifact?}. The organizational facet (condition) gates DAG unblocking (read by the dashboard's /api/investigations to compute `blocked` + `blocked_by` and to sort the Studies tab); the epistemic facet (relation + rationale) is the scientific edge the discovery engine's argument graph reads (RFC-0006 unified relations).",
       "items": {
         "oneOf": [
           {
@@ -331,6 +331,23 @@
                 "enum": ["tests-passed", "ran", "complete"],
                 "default": "tests-passed",
                 "description": "When the parent satisfies this condition, this study is unblocked. tests-passed = parent.tests.last_results.passed > 0 AND failed == 0. ran = parent.status in {ran, complete}. complete = parent.status == complete."
+              },
+              "relation": {
+                "type": "string",
+                "enum": ["builds-on", "tests", "refutes", "motivates", "alternative-to"],
+                "description": "Epistemic (scientific) edge to the parent, read by the discovery engine's argument graph (RFC-0006). builds-on = this study extends/presupposes the parent's result; tests = this study tests the parent's claim; refutes = this study's evidence contradicts it; motivates = the parent raises the question this study answers; alternative-to = competing explanation."
+              },
+              "rationale": {
+                "type": "string",
+                "description": "Why the epistemic relation holds — the one-line scientific justification shown on the argument-graph edge."
+              },
+              "provides": {
+                "type": "string",
+                "description": "Optional: what the parent provides to this study (e.g. a calibrated parameter, a baseline composite)."
+              },
+              "artifact": {
+                "type": "string",
+                "description": "Optional: the specific parent artifact this edge consumes (e.g. a study#finding reference)."
               }
             },
             "additionalProperties": false

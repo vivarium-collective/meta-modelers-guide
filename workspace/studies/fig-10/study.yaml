@@ -6,6 +6,12 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The structural reorganization is test-backed and deterministic (re-parenting depth 1->2, ECM only
+  after maturation, true chromosome partition, bounded sweep; gate passed), but attachment/maturation
+  fire at scheduled ticks and no controls isolate the coupling the way fig-08's knockouts do — the
+  structure of the reorganization is demonstrated, not an emergent decision, so qualified.
 confidence: Provisional  # kept at the conservative rung: the rewrites are deterministic and the structural claims (re-parenting depth 1 -> 2, ECM only after maturation, true chromosome partition, bounded sweep) are all test-backed, but attachment/maturation fire at SCHEDULED ticks (config attach_at/mature_at) -- the composite demonstrates the structure of the reorganization, not an emergent decision, and nothing is calibrated. No controls isolate the coupling the way fig-08's knockouts do.
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig10-emergence): the place-graph rewrite is demonstrated, BUT — as the scientific review flags — attachment and ECM fire at SCHEDULED ticks (config attach_at/mature_at), so this is a software/behavioral demonstration of the reorganization structure, not an emergent decision, and there are no controls. MECHANISTIC VARIANT (fig10-mechanistic, scientific-review revision) makes attachment EMERGE from spatial state: six motile cells aggregate by local adhesion and the biofilm forms only once a quorum sits in proximity for several sustained ticks — so the formation TIME varies with adhesion strength (0.25→t7, 0.35→t6, 0.55→t5) and with density, which a wall clock cannot do. Matched-null controls isolate each arm (no adhesion ⇒ never forms; no ECM ⇒ forms then disperses), cell identity and biomass are preserved on reparenting, and the collective cohesion port is inert until organization. Held at Provisional overall because it is a reduced 2-D aggregation model in LATTICE units with didactic adhesion/ECM rates — not calibrated to measured adhesion forces, ECM secretion rates, or a named organism.'
 question: 'Is the paper''s §Development figure (Fig development) executable -- can a runnable process-bigraph composite demonstrate, under test, that development is "a hierarchical reorganization where individual cells become part of a collective composite" rather than merely more cells? Concretely: does running the `fig10-emergence` composite turn a set of free motile bacteria (top-level place-graph siblings) into a nested biofilm microcolony that then secretes an extracellular matrix -- surface attachment, ECM secretion, growth of a structured community (caption a) realized as a genuine runtime place-graph rewrite (caption b)?
@@ -468,8 +474,16 @@ visualizations:
 parent_studies:
 - study: fig-09
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Development requires reproduction: a collective forms from dividing cells, so the
+    multicellular reorganization is only meaningful over fig-09's division machinery.
 - study: development-and-evolution
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The figure's development/collective-formation is the lumped counterpart of
+    draft-to-living-cell's spatial development-and-evolution result.
 experiment: 'Run the `fig10-emergence` composite (BiofilmEmergence over an env tree[node] of a surface and four free motile bacteria; attach_at=6, mature_at=12, ecm_count=3) 16 steps to completion through the process-bigraph engine, and measure whether it performs a genuine place-graph rewrite: free top-level cells re-parenting into a new nested biofilm collective node at attachment (depth 1 -> 2), then that matured community secreting an extracellular matrix. Cross-check the section''s principle with the companion cell-cycle (build_fig10_division) and collectives (build_fig10_biofilm, build_fig10_evolution) rewrites exercised by the same fig-10 test suite.
 
   '

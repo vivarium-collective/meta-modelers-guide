@@ -6,6 +6,11 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Orchestration runs as an executable figure, instantiating fig-01's wiring (gate passed), but
+  toy-real and uncalibrated, held at Provisional pending the scientific-validation gate — qualified
+  rather than supported.
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig02-runnable): the fast/slow interleaving, sawtooth pool, and biomass staircase are robustly demonstrated — but its "cross-timescale mass conservation" (molecules + biomass == time) is actually a cumulative external-INPUT budget, not closed-system conservation; held at Medium. MECHANISTIC VARIANT (fig02-mechanistic, scientific-review revision): adds a stiff fast process + slow biomass with an explicit input-output ledger that closes to 1.8e-15 (and shows pool+biomass is NOT the budget), separates multirate scheduling from numerical accuracy (clean O(Δt) convergence of the stiff pool; fast-clock-controlled transient error), and verifies the scheduler is order-invariant. Held at Provisional overall because the rates/intervals are didactic and uncalibrated to a named metabolic timescale.'
 question: 'Is the paper''s orchestration claim (Fig orchestration, panel a) executable rather than merely drawn -- does a runnable process-bigraph composite in which two processes update at DIFFERENT rates through ONE shared store actually reproduce multi-timescale coordination: the fast process filling the shared pool far more often than the slow one converts it, the two rates coordinated through the shared store, and the combined trajectory reflecting both timescales while conserving mass?'
@@ -398,5 +403,10 @@ visualizations:
 parent_studies:
 - study: fig-01
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Orchestration instantiates fig-01's typed source->store->sink wiring and conservation
+    discipline — the scheduling layer is only meaningful over the interface contract fig-01
+    defines.
 experiment: 'Run the `fig02-runnable` composite (FastProduction interval 1.0 rate 1.0 and SlowConversion interval 5.0 yield_frac 0.6 wired to one shared pool store) to completion over 20 ticks through the process-bigraph engine, and measure whether two processes updating at different rates through a single shared store reproduce Fig orchestration panel (a): the fast clock outpacing the slow clock, a sawtooth fast pool, a coarse monotone biomass staircase, and mass conserved through the shared store across the two timescales.'
 result: 'Over the deterministic 20-tick run, the fast process updates the shared store on every tick (20 changes) while the slow process converts only 3 times (at t=10, 15, 20), so the fast clock visibly outpaces the slow clock. `molecules` is a sawtooth -- it ramps +1/tick and is drawn down at each slow firing (9->7 at t=10, 11->7.8 at t=15, 11.8->8.12 at t=20) -- while `biomass` advances monotonically in a coarse staircase on the slow clock (0 -> 3.0 -> 7.2 -> 11.88), never returning to the pool. The two rates are coordinated through the ONE shared store and mass is conserved across the timescales: at every emitted tick `molecules + biomass` equals the cumulative fast injection (== elapsed time), ending 8.12 + 11.88 = 20.0. Every value is fixed and deterministic (no RNG), so the whole trajectory reproduces exactly run to run. The paper''s multi-timescale orchestration claim (Fig orchestration, panel a) is thus executable, not merely drawn -- demonstrated here at the didactic (uncalibrated) level for the orchestration mechanism, with panels (b) workflow-DAG and (c) event rewrites left schematic.'

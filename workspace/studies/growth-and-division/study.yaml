@@ -6,6 +6,11 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  CPM volume gain and fission run on real spatial machinery (gate passed), with toy-real
+  constants and a division criterion set by a target-volume threshold — growth and
+  division demonstrated in executable form, qualified on calibration.
 confidence: Provisional
 units_and_time:
   tick: 1 tick = unspecified physical time (dimensionless model time); the run is 36 ticks sampled every 3.
@@ -707,6 +712,11 @@ visualizations:
 parent_studies:
 - study: disintegration
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Runs the CPM cell's viability dynamics in the constructive direction (volume gain
+    then fission) on the spatial machinery disintegration established — the counterpart
+    that lets a cell persist and reproduce rather than dissolve.
 experiment: 'Run the `growth-division-spatial` composite (`CpmGrowthDivision`, a single CPM cell
   seeded on a uniform abundant 60x60 glucose field, glucose_vmax=1.5, vol_threshold=80,
   reset_target=40) to completion over 36 ticks through the process-bigraph engine, and measure

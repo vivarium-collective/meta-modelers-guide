@@ -6,6 +6,11 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The grain-switch (coarse<->fine resolution change) runs as an executable methodological figure
+  (gate passed) — a deliberate off-spine branch about model resolution, not a biological stage;
+  toy-real and uncalibrated, held at Provisional — qualified.
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig05-grain-runnable): the viability-driven grain swap is demonstrated deterministically, BUT — as the review flags — the t=13-style flip is a PROGRAMMED resolution change presented as if disintegration required the fine grain, and a byte-identical rerun is reproducibility, not mechanistic support; behavioral verification only, held at Medium. MECHANISTIC VARIANT (fig05-mechanistic, scientific-review revision) separates the biology (continuous misfolded-protein + aggregation dynamics) from the algorithmic grain (refined on a computable inadequacy estimator, tolerance-movable, not wall-clock), conserves state at the handover (handover_error=0, no biomass/damage jump), and shows via always-coarse/fine/adaptive comparison that the fine grain resolves an aggregation-driven viability collapse the coarse grain structurally misses (final viability 0.00 vs 0.74) while adaptive recovers the fine prediction (divergence 0.023 vs 1.09). The study is still held at Provisional because it is a reduced lumped model with didactic aggregation/repair rates, not fitted to a named proteostasis stressor or measured aggregation kinetics.'
 question: 'Does the paper''s §Disintegration Fig 5b grain swap hold as a runnable composite -- a viability signal driving a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface, so that crossing the viability bound replaces the coarse description with the finer one? Concretely: as an external stress ramp slides viability across a threshold, does a GrainSelector flip the active grain coarse->fine at the crossing, and does the shared biomass output turn over from growth (coarse, alive) to decay (fine, dying) at the switch?'
@@ -513,5 +518,10 @@ visualizations:
 parent_studies:
 - study: disintegration
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The grain-switch (coarse<->fine resolution change) is demonstrated on the spatial
+    dissolution scenario disintegration establishes — a methodological branch about model
+    resolution layered on an existing biological composition.
 experiment: 'Run the `fig05-grain-runnable` composite (StressRamp -> GrainSelector -> gated CoarseGrainProcess / FineGrainProcess sharing one biomass/energy interface) to completion over 26 steps through the process-bigraph engine, and measure whether a monotonically declining viability signal crossing a threshold is enough to flip the active grain coarse->fine at the crossing and turn the shared biomass output over from growth to decay.'
 result: 'Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse->fine at t=13 -- exactly one flip, one tick after the crossing (the composite''s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -> 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -> ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b''s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. A companion grain-comparison quantifies the swap''s consequence: the same coarse-metabolism interface realized at three grains reports biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate overflow vs 1.6 for coarse (workbench 0.4.1). The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.'

@@ -6,6 +6,13 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Exact conservation and equipartition are verified at every division (gate passed); the mechanistic
+  variant (fig09-mechanistic) gates division on growth/energy/size and draws replication DNA from a
+  conserved nucleotide pool — genuine mechanistic support. Still a reduced model (lumped MM growth,
+  hand-set checkpoints, symmetric deterministic partition), not calibrated to a cell-cycle time or
+  genome, so qualified rather than supported.
 confidence: Provisional  # BASELINE: exact conservation + equipartition verified at every division (bookkeeping), but division is clock-driven and the duplicated DNA is free. MECHANISTIC VARIANT (fig09-mechanistic, scientific-review revision): division is now gated by growth/energy/size (starvation delays it indefinitely), replication draws DNA from a nucleotide pool (DNA+nucleotides conserved), and every partition is conserved across the rewrite -- genuine mechanistic support. Kept Provisional overall: still a reduced model (lumped MM growth, hand-set checkpoints, symmetric deterministic partition), not calibrated to a cell-cycle time, growth rate, or genome.
 question: 'Does the paper''s §Growth-and-division claim (Fig. division) hold as a runnable composite -- that division is a compositional rewrite in which "one maintained boundary becomes two, with stores partitioned across daughters and interface ports duplicated" (caption a: DNA replication, elongation, septum, separation; caption b: "division ... partitions state variables such as DNA and biomass into two cells") -- when realized as a genuine place-graph rewrite over a colony `tree[node]` store driven through the process-bigraph engine?'
 biological_summary: 'This is the executable realization of the paper''s §Growth, division, development, evolution section and its Fig. division. The paper frames division as the more radical of the transformations a self-maintaining cellular interface undergoes: "a compositional rewrite in which one maintained boundary becomes two, with stores $x$ partitioned across daughters and interface ports $W$ duplicated and re-established" -- each daughter inheriting a subset of stores and reconstructing a viable interface. Caption a walks the prokaryotic sequence (DNA replication, elongation, septum formation, separation into daughters); caption b abstracts it to "a compositional rewrite that partitions state variables such as DNA and biomass into two cells."
@@ -351,6 +358,10 @@ parent_studies:
 # fig-09 is in turn parent of fig-10/fig-11. (parent_studies schema allows only study+condition.)
 - study: fig-08
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Division (fig-09) acts on a self-maintaining cell (fig-08): a maintained interior is what gets
+    partitioned.
 - study: growth-and-division
   condition: tests-passed
 experiment: 'Run the `fig09-rewrite` composite (`CellCycleDivision` over a colony `tree[node]` store, cycle=3, built via build_fig10_division) to completion over 12 ticks through the process-bigraph engine, capturing the whole colony subtree each tick, and measure whether a genuine place-graph rewrite realizes the paper''s Fig. division caption b -- whether the boundary count doubles at each division while the DNA store is copied at replication and then conserved and equipartitioned across each division.'

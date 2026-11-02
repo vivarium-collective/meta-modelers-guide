@@ -6,6 +6,13 @@ created: '2026-08-22'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Selection shifts the population mean trait with statistical support (N=30-seed ensemble;
+  evolution shift Mann-Whitney p=5.3e-4, drift-null Wilcoxon p=1.2e-5; dual
+  no-mutation / no-selection controls) — the strongest evidentiary study in the arc, but
+  run on toy-real constants and held at Provisional pending scientific validation, so
+  qualified rather than supported.
 confidence: Provisional  # robustness stage met (N=30-seed ensemble; evolution shift Mann-Whitney p=5.3e-4, drift-null Wilcoxon p=1.2e-5, dual no-mutation/no-selection controls; development an ensemble band over all 30 seeds); held at Provisional per the rev11 reconciliation (Accepted awaits the deferred scientific-validation gate) -- promotion is the owner's call.
 units_and_time:
   tick: 1 tick = unspecified physical time (dimensionless model time); the runs are 45 ticks.
@@ -694,6 +701,11 @@ visualizations:
 parent_studies:
 - study: growth-and-division
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Closes the arc: selection acts over the dividing population from
+    growth-and-division, so a heritable-trait shift is measurable only once division
+    produces a lineage to select over.
 experiment: 'Run three development-evolution composites to completion through the process-bigraph
   engine directly from their JSON specs, each a growing CPM colony (CpmEvolution, study 8''s
   CpmGrowthDivision reused unchanged) on a shared 60x60 glucose field with a heritable per-cell
@@ -732,3 +744,19 @@ result: 'DEVELOPMENT holds spatially -- the growing colony forms emergent core-v
   NOT morphogenesis; evolution = one scalar trait under resource selection, NOT genome evolution;
   kirschner2005 facilitated variation -- evolving the ports/couplings themselves -- is a named
   deferral).'
+
+discovery_implications:
+  followup_study_proposals:
+  - id: fu-learning-adaptive-regulation
+    title: 'Learning: within-lifetime regulation that improves viability'
+    study_type: mechanism
+    builds_on: development-and-evolution
+    motivation: >-
+      The arc stops at a self-maintaining, evolving agent; the named next rung is a cell whose
+      past interactions change its future regulation in a way that measurably improves its
+      capacity to stay viable — the executable bridge from an adaptive population (selection
+      across generations, demonstrated here) to an adaptive individual (within-lifetime
+      plasticity). Build a composite where a regulatory state integrates the cell's own sense
+      history and feeds back on an uptake or motility parameter, and measure whether a trained
+      cell outlives a naive control under a novel stressor. This is the single open rung named in
+      executive.decisions_needed.

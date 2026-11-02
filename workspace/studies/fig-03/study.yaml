@@ -6,6 +6,11 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The cellular interface runs with real shared-state coupling (ports derive from a shared
+  energy/metabolism store, not independent proportional mappings; gate passed), but toy-real and
+  uncalibrated, held at Provisional pending the scientific-validation gate — qualified.
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig03-runnable): each typed interface port responds to its own driver — but the review correctly notes the ports are INDEPENDENT (each a separate function of its driver), so this is typed-interface correctness, not coherent physiology, and is held at Medium. MECHANISTIC VARIANT (fig03-mechanistic, scientific-review revision) adds genuine multi-process coupling through a shared ATP pool + temperature-set enzyme activity: a single perturbation (heat shock or starvation) propagates to every downstream port (enzyme→uptake→ATP→growth→viability), the cross-port response matrix is dense, and a metabolically-disabled matched-null control breaks the propagation. The study stays Provisional because the coupling is demonstrated with didactic/toy-real rate laws (one lumped ATP pool, a Gaussian enzyme window, a basal maintenance drain) — not fitted to a measured respiration, maintenance coefficient, or growth-rate curve.'
 question: 'The paper''s §Cellular interface (Fig cell_interface) defines a cell as an organization that senses and acts on its environment through typed PORTS -- "each port is a typed connection from the cell to a single variable in the shared state, with a type that fixes the units of what crosses it." Fig cell_interface a. shows interaction modalities as ports (nutrient exchange, motile force, growth, electrical signaling); Fig cell_interface b. shows a minimal interface combining physical exchange ports with higher-level cellular variables (growth, shape, objectives, viability bounds). Is that interface EXECUTABLE rather than merely drawn -- i.e. does a runnable process-bigraph composite exercise those typed ports so that each port''s value RESPONDS to its driving environmental input, demonstrating the typed cell -> shared-variable connection the caption asserts?'
@@ -423,6 +428,10 @@ parent_studies:
 # now with real shared-state coupling. (parent_studies schema allows only study+condition.)
 - study: fig-01
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    fig-03's cellular interface instantiates fig-01's typed-port wiring + conservation discipline,
+    now with real shared-state coupling.
 - study: cellular-interface
   condition: tests-passed
 experiment: 'Run the `fig03-runnable` composite (`CellularInterfaceHandler`, one bounded cell wired to a four-driver environment: chemical supply 1.0, thermal driver 45 C above the 37 C optimum) for 24 steps through the process-bigraph engine, and additionally drive a fresh handler at paired chemical supplies (0.2 vs 1.0) and paired temperatures (45 C vs 37 C), to measure whether each typed interface port''s value responds to its driving environmental input as Fig cell_interface asserts.'

@@ -6,6 +6,13 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Multicellular viability-negotiation and resource preemption are demonstrated on real
+  N-cell spatial composition (gate passed), but with toy-real constants and competitive
+  exclusion only stochastic (earned per-seed, not deterministic), plus a finite-lattice
+  saturation artifact at high occupancy — the pattern holds as demonstrated, qualified on
+  calibration and determinism.
 confidence: Provisional
 question: 'Does the paper''s §Cell–cell coupling viability-negotiation pattern (no dedicated
 
@@ -1315,6 +1322,11 @@ visualizations:
 parent_studies:
 - study: cell-environment-coupling
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Extends the single-cell sense/act loop to N cells over the same coupling process
+    (CpmColonyField reuses CpmCellField's port contract), so multicellular
+    viability-negotiation is only testable once the single-cell flagship closes.
 experiment: 'Run two `CpmColonyField` composites -- `cellcell-compete` (two glucose competitors,
   glucose_vmax 10.0 vs 4.0, one shared uniform glucose field) and `cellcell-crossfeed` (a
   glucose-to-acetate secretor plus an acetate-consuming cell, a localized glucose depot, and a

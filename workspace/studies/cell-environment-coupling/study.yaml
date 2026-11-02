@@ -6,6 +6,13 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The outward sense/act loop closes on genuine simulation output (gate passed), but the
+  stronger mechanism-independence reading is bounded: the tuned Michaelis-Menten
+  surrogate holds within the glucose-limited/fixed-O2 regime (~13%) and diverges ~74% on
+  a held-out O2 cap it has no variable for, and the constants are toy-real — supported
+  within the calibrated regime, qualified beyond it.
 confidence: Provisional
 question: 'When a single cell metabolizes at its own location, does it measurably reshape the very
 
@@ -1281,6 +1288,12 @@ visualizations:
 parent_studies:
 - study: cellular-interface
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Instantiates the inert interface contract from cellular-interface as a running
+    composition — the CpmCellField coupling process IS the Fig-3 contract with a real
+    mechanism installed behind it, so the flagship's sense/act loop is only meaningful
+    once the contract it conforms to is established.
 experiment: 'Run `single-cell-in-a-field.composite.json` — a real CPM cell (viva-cpm) coupled via
 
   `CpmCellField` to a real spatio-flux glucose/acetate field running `DiffusionAdvection` — to
@@ -1313,3 +1326,36 @@ result: 'Over 20 ticks the cell grows ~3.4x in CPM volume (32 -> 110 px, ~3% of 
   through one typed process.
 
   '
+
+discovery_implications:
+  followup_study_proposals:
+  - id: fu-mechanical-tension-channel
+    title: Mechanical interface modality — a CPM force/tension/pressure port
+    study_type: mechanism
+    builds_on: cell-environment-coupling
+    motivation: >-
+      Two of the paper's four physical interface modalities are unrealized investigation-wide;
+      the mechanical channel is the higher-leverage of the two. Build a viva-cpm
+      force/tension/pressure port that couples a neighbour's volume pressure or an
+      adhesion-tension field into the Metropolis energy, and measure a mechanically-driven shape
+      or sorting response the chemical port alone cannot produce. Closes half of the standing
+      modality gap named in executive.decisions_needed.
+  - id: fu-electrical-electrostatic-channel
+    title: Electrical interface modality — an electrostatic / membrane-potential port
+    study_type: mechanism
+    builds_on: cell-environment-coupling
+    motivation: >-
+      The second unrealized modality. Couple a membrane-potential or ion-gradient field through a
+      typed port and measure a voltage-dependent behaviour (e.g. gated uptake or electrotaxis),
+      completing the paper's four-modality claim (chemical and thermal are already realized).
+  - id: fu-held-out-o2-calibration
+    title: Close the surrogate's O2-axis divergence with a held-out O2 calibration
+    study_type: calibration
+    builds_on: cell-environment-coupling
+    motivation: >-
+      The tuned Michaelis-Menten surrogate diverges ~74% on a held-out O2 cap because the lumped
+      box has no oxygen variable. Add an oxygen term to the surrogate, re-fit on the calibrated
+      regime, then measure agreement on the held-out O2 condition to test whether
+      mechanism-independence extends across the O2 axis or the structural gap is irreducible. This
+      is the named next step that would promote the SWAP result from surrogate calibration to a
+      held-out mechanism-independence finding.

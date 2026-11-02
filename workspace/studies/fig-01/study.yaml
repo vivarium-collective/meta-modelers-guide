@@ -6,6 +6,12 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Interfaces and composition run as an executable figure with the typed source->store->sink
+  wiring and conservation discipline every later figure instantiates (gate passed, evidence
+  deepened under workbench 0.4.1) — but toy-real and uncalibrated, held at Provisional pending the
+  scientific-validation gate, so qualified rather than supported.
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig01-runnable): the executable/determinism claim is supported — every behavior test passes, with exact pins (store_a[n] == 0.85^n) — but this is implementation verification of a hand-written equation, not a mechanism; held at Medium. MECHANISTIC VARIANT (fig01-mechanistic, scientific-review revision): the paper''s composition point is demonstrated — ONE reusable reversible typed CompartmentTransport, REWIRED without code change, gives different topology-controlled dynamics (chain 1:4:16 vs hub 1:4:4), conservation holds to 2.2e-16 in both, the ports reject an incompatible type (schema negative control), and the 0.85^n decay is correctly re-cast as a numerical_convergence solver check. Held at Provisional overall because the compartments are dimensionless didactic quantities and the rate constants are uncalibrated — the point is the compositional semantics (reuse, rewiring, typing, conservation), not a fitted transport model.'
 question: 'Is the paper''s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) executable rather than merely drawn -- does the smallest honest process bigraph, one typed process wired through ports to two nested place-graph stores, actually run and move quantity from a source store to a sink store while conserving the total?'

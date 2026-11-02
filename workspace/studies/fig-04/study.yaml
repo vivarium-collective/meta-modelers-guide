@@ -6,6 +6,11 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The cellular interface runs in a real spatial field it both senses and depletes (real field sink
+  + depletion feedback, gate passed), but toy-real and uncalibrated, held at Provisional pending the
+  scientific-validation gate — qualified.
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig04-runnable): the sense→act loop is demonstrated, BUT — as the scientific review flags — the cell''s uptake is never subtracted from the field, so its "uptake tracks the local field at correlation 1.0" is an identity, not feedback; this is behavioral verification only, and is held at Medium. MECHANISTIC VARIANT (fig04-mechanistic, scientific-review revision) genuinely closes the loop: saturating Michaelis–Menten uptake is a REAL sink that carves a diffusing depletion well (footprint 1.58 field units), biomass is paid for out of the field with the mass ledger closing to 9e-16, chemotaxis climbs the gradient, and matched-null controls (uptake/motility/gradient off, via epsilon) isolate each arm. The study is still held at Provisional because the model is a 1-D lattice in LATTICE units with didactic rate constants — not calibrated to a named nutrient, physical diffusivity, or measured chemotactic velocity.'
 question: 'Is the paper''s §Cell-environment coupling figure (Fig cell_environment) executable — does a runnable process-bigraph composite actually close the control loop the caption asserts, where an environmental chemical field DRIVES the cell''s interface ports (sensing, uptake, growth, motility) and the cell acts back on that shared field? Concretely: does a real diffusing nutrient gradient, sensed locally at an interior grid index, drive uptake that tracks the sensed field, grow the cell''s mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake → mass gain, plus up-gradient drift — all as measured simulation output, not a drawn diagram?'
@@ -432,7 +437,17 @@ visualizations:
 parent_studies:
 - study: fig-03
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Places fig-03's typed cell interface in a spatial environment whose driver is a diffusing
+    field the cell senses AND depletes — the spatial coupling is only testable once the interface
+    exists.
 - study: cell-environment-coupling
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The figure realizes, at reduced resolution, the same outward sense/act loop the
+    draft-to-living-cell flagship (cell-environment-coupling) demonstrates at full CPM + dFBA
+    resolution.
 experiment: 'Run the `fig04-runnable` composite (SpatialDiffusion on a length-9 map[float] chemical grid seeded as a 0→1 nutrient gradient, a MechanicalRelax field, and a single SingleCellSpatial cell at interior index 4 wired to the shared environment store) for 24 ticks through the process-bigraph engine, and measure whether the environmental field drives the cell''s interface ports and the cell acts back on the shared field — env field → sensed value → uptake → mass gain, plus up-gradient chemotactic drift, with the loop closing through a shared store. Drive the SingleCellSpatial handler directly at two field levels and at a flat zero field to establish the causal env→port relationship.'
 result: 'Over a deterministic 24-tick run, the environmental field drives every leg of the control loop and the cell acts back on the shared field. Uptake is linear in the local sensed field (uptake(0.8)/uptake(0.2) == 4.0) and per-step uptake tracks the local sensed field at correlation 1.0; a flat zero field gives exactly zero drive on every port (the environment is the causal driver). Mass grows monotonically 1.0 → 1.432152, the cell drifts up-gradient from index 4.0 to 4.195695 (chemotaxis), and the cell''s uptake is written back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone) with the mass↔uptake ledger closing exactly (Δmass 0.432152 == 0.5 × 0.864305). The paper''s §Cell-environment coupling figure (Fig cell_environment) is thus executable, not merely drawn — the caption''s "minimal structure required for control" runs as measured simulation output. These are toy-real, uncalibrated magnitudes; the rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.'

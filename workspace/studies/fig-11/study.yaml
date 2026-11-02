@@ -6,6 +6,14 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The mechanistic variant (fig11-mechanistic) adds the powered many-seed ensemble the baseline
+  lacked (40 seeds selection-vs-neutral, 20/point drift sweep, N=300) with a neutral control, a
+  no-mutation control, realized heritability ~1, and a predicted adaptation-failure threshold —
+  materially strong mechanistic support. Held at Provisional because the model is a single-locus
+  asexual clonal Wright-Fisher with didactic rate constants, not calibrated to a named organism's
+  mutation rate / selection coefficient — qualified rather than supported.
 confidence: Provisional  # BASELINE (fig11-evolution): single fixed seed, N=12, no ensemble — kept conservative. The MECHANISTIC VARIANT (fig11-mechanistic, scientific-review revision) adds the powered many-seed ensemble the baseline lacked (40 seeds selection-vs-neutral, 20/point drift sweep, N=300), with a neutral control, a no-mutation control, realized heritability ≈ 1, and a predicted adaptation-failure threshold — materially stronger mechanistic support. Held at Provisional overall only because the model is a single-locus asexual clonal Wright–Fisher with didactic rate constants, not calibrated to a named organism's mutation rate / selection coefficient / measured heritability.
 question: 'Does the paper''s §Evolution figure (Fig 11) hold as a runnable place-graph rewrite -- a top-level population of identically-schema''d cells, each exposing a scalar trait, evolving over generations toward a selection optimum set by the environmental niche, so that (Fig 11b) the trait distribution shifts toward the optimum via binary fission + heritable mutation + selection, while division itself (Fig 11a) is a discrete event that REPLACES a parent cell with two daughters?'
 biological_summary: 'This is the runnable realization of the paper''s §Evolution pattern (Fig 11), built on one process, `PopulationEvolution`, that reads and rewrites two `tree[node]` stores: a `population` of `cell` nodes that all share one schema -- each a heritable scalar `trait` plus a derived `division_rate` -- and an `environment` whose single `niche` node carries a `selection_optimum` that DRIFTS over the run. Each generation the process (1) shifts the optimum forward (a moving target), (2) re-scores every cell''s division rate by a Gaussian fitness kernel on how close its trait sits to the current optimum, (3) performs BINARY FISSION -- a cell divides with probability `div_rate·fitness`, and on division the PARENT is deleted and REPLACED by two daughters, each inheriting the parent''s trait ± Gaussian mutation, and (4) applies death by selection: once the population overflows carrying capacity, the least-fit cells (furthest from the optimum) die. This is the paper''s §Evolution claim in action: evolution changes not the state of a single composition but the SPACE of compositions across generations -- new cell nodes are added and old ones removed at runtime, so the place graph itself is edited, and the trait distribution shifts toward the environmental optimum.
@@ -452,7 +460,15 @@ visualizations:
 parent_studies:
 - study: fig-09
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Evolution requires heritable reproduction: a population evolves through dividing cells, so
+    selection response is only measurable over fig-09's division machinery.
 - study: development-and-evolution
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The figure's single-locus Wright-Fisher selection is the reduced counterpart of
+    draft-to-living-cell's spatial development-and-evolution selection result.
 experiment: 'Run the `fig11-evolution` composite (`PopulationEvolution` over a population tree[node] of identically-schema''d cell nodes + an environment niche whose selection optimum drifts) to completion over 40 generations through the process-bigraph engine, and measure whether variation (heritable mutation at binary fission) + selection (a Gaussian fitness kernel on trait<->optimum distance, with death-by-selection at carrying capacity) is enough to shift the population''s trait distribution toward a drifting environmental optimum, while division genuinely edits the place graph (parent replaced by two daughters).'
 result: 'Over a fixed-seed (seed=1) 40-generation run, the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- cell_0 replaced by two daughters cell_1, cell_2 -- and the lineage grows to carrying capacity (12 by generation 14) and never exceeds it. The selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02/generation) and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12: the trait distribution shifts toward the environmental optimum via variation + heritability + selection. Division is a genuine place-graph rewrite throughout -- below capacity every topology change adds exactly two fresh daughters per vanished parent, ids are never reused, and death-by-selection culls the least-fit cells at capacity. The whole trajectory (sizes, mean trait, optimum, daughter ids) is deterministic and reproduces exactly across independent builds. The paper''s §Evolution pattern (Fig 11) holds as a runnable place-graph rewrite at the toy-real (uncalibrated) level: evolution changes the space of compositions across generations, not the state of a single composition. The rigorous cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.'

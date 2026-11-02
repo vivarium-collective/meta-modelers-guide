@@ -6,6 +6,11 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The nested-containment cascade runs deterministically with 8 passing tests (gate passed), but with
+  no process knockouts or literature calibration — the conservative rung for an executable-figure
+  demonstration, held at Provisional — qualified.
 confidence: Provisional  # toy-real / uncalibrated illustrative cascade: deterministic and test-backed (8 passing tests) but no process knockouts or literature calibration -- the conservative rung for an executable-figure demonstration.
 confidence_basis: 'Held at Provisional. BASELINE (fig07-runnable) demonstrates nested routing through a deep place graph (behavioral verification). The MECHANISTIC VARIANT (fig07-mechanistic, scientific-review revision) adds the thing that makes nesting functional: permeable boundaries that causally gate a deep nuclear reporter (closing either boundary → reporter 0, series gating), conservative cross-compartment transport (Σsubstrate invariant to 1.3e-7), a verified first-principles prediction (higher permeability fills the deep compartment faster), and a locally-restricted cytoplasmic reaction that starves the nucleus — genuine mechanistic_ablation + prospective_prediction evidence that hierarchy influences function. Still Provisional because "depth" is a modeling choice (number of permeability barriers, not a physical length), the variant has four containment levels rather than the baseline''s six place-graph depths, and no constant is calibrated to a measured compartment permeability or transport rate.'
 question: 'Does the paper''s §Biomolecular compositions figure (Fig molecular_compositions) hold as an executable composite -- can molecular structures organized hierarchically across scales (proteins to complexes, organelles, ECM) be represented as a NESTED place graph, with processes that interact with those nested states corresponding to cellular compartments and structures, such that a process acting at one nesting level actually moves quantity in a deeply-nested store while the place-graph containment is preserved as the whole cell evolves as one coupled system?'
@@ -460,7 +465,15 @@ visualizations:
 parent_studies:
 - study: fig-01
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Nested containment instantiates fig-01's typed wiring recursively — a composite inside a
+    composite behind the same interface discipline.
 - study: biomolecular-complementarity
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The nesting/cascade figure reuses the complementarity-at-an-interface idea that
+    draft-to-living-cell's biomolecular-complementarity realizes spatially.
 experiment: 'Run the `fig07-runnable` composite (six ODE handlers -- transmembrane transport, metabolism, transcription, translation, subunit assembly, replication / repair -- over one place graph nesting up to six levels deep) to completion over its default 30 steps through the process-bigraph engine, and measure whether a process acting at each nesting level moves quantity in its nested store, whether the cascade propagates across every level as one coupled cell, and whether the place-graph containment is preserved as the dynamics run.'
 result: 'Over a deterministic 30-step run (31 emitted frames), a process acting at each nesting level moves quantity in its store: transmembrane transport fills the cytoplasmic nutrient pool 0 -> 9.0 (monotonic), metabolism makes metabolites 0 -> ~20.5 and energy 0 -> ~13.1, transcription of the six-levels-deep DNA makes RNA 0 -> ~0.64, translation makes protein 0 -> ~0.24 (trailing RNA, as it is downstream), and subunit assembly grows the four-levels-deep ribosome pool 0.5 -> ~0.88, closing the loop back to translation. All five levels change in one coupled run. The place-graph containment is preserved as the dynamics run: after the run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store -- the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair. Every value reproduces exactly run to run. The paper''s §Biomolecular compositions figure (Fig molecular_compositions) is thus executable, not merely drawn -- its nested hierarchy of composites runs forward as one coupled cell. This is a didactic / toy-real composite; the calibrated molecular-complementarity cousin is `biomolecular-complementarity` in the `draft-to-living-cell` investigation.'
