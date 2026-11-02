@@ -6,6 +6,11 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Molecular energetics runs with a conserved power identity and derived (not imposed) torque (gate
+  passed), but toy-real and uncalibrated, held at Provisional pending the scientific-validation
+  gate — qualified.
 confidence: Provisional  # evidence deepened (workbench 0.4.1); kept at the repo's established Provisional pending the scientific-validation gate
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1): the four-channel coupling is robustly demonstrated on a deterministic 20-tick run -- the matter=>charge=>energy identities hold to 1e-30, the ATP:H+ stoichiometry and rotary torque are exact pins, and a zero-drive negative control plus the bare-draft contrast confirm the ramp is the driver -- but the BASELINE (fig06-runnable) is held at Medium, not High, because its constants are literature-plausible order-of-magnitude values and its transduction law is algebraic (no saturation/back-pressure), not a calibrated biophysical model. The MECHANISTIC VARIANT (fig06-mechanistic, scientific-review revision) materially raises the mechanistic support: torque and efficiency are now DERIVED rather than imposed (the derived τ_drive = n_c·e·Δp/2π = 38 pN·nm independently reproduces the measured ~40 pN·nm), stall and reversal are emergent outcomes of the torque balance with the full power budget closing to 1e-33 W, and a first-principles stall-gradient prediction (Δp* = 125 mV) is stated before the run and verified by a Δp sweep. The study is still held at Provisional overall because the mechanistic model is a reduced one-degree-of-freedom overdamped rotor (no explicit c-ring half-channels or elastic power-stroke) and is not yet fitted to a single enzyme''s measured speed-vs-load curve.'
 question: 'Does the paper''s §Molecular interfaces figure (Fig molecular_interface) hold as a runnable process -- a molecular mechanism (F₁Fₒ ATP synthase) that exchanges matter and energy through a small set of TYPED physical channels (chemical mol·s⁻¹, electrical C·s⁻¹, mechanical torque N·m, thermal J·s⁻¹) with NO cell-level boundary, all four channels driven from ONE coupled proton flux so matter, charge, angular momentum, and energy are conserved across the interface?'
@@ -223,30 +228,24 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig06-runnable.composite.json (MolecularMechanismHandler + ProtonMotiveRamp, k_cat_atp=100, n_protons_per_atp=3.3, pmf_volts=0.15, torque_pn_nm=40, efficiency=0.75, proton_charge=1.602e-19, drive_rate=0.06) run 20 ticks (21 emitted rows) to completion through the process-bigraph engine (tests/test_fig06_atp_synthase.py). The fig06-dynamics.png time-series in visualizations/ was baked over the same run via scripts/build_fig06_dynamics.py.'
   params: {}
   outcomes:
-    ATP-FLUX-SCALES-WITH-THE-PROTON-DRIVE:
+    atp-flux-scales-with-the-proton-drive:
       result: PASS
       detail: J_ATP = k_cat·activity exactly (30.0 at 0.3, 120.0 at 1.2 -- ratio 4.0); rises monotonically 20.0 (tick 1) → 128.0 (tick 19)
-    FOUR-CHANNELS-DERIVE-FROM-ONE-PROTON-FLUX:
+    four-channels-derive-from-one-proton-flux:
       result: PASS
       detail: I == J_ATP·3.3·e and heat == 0.25·(I·pmf) exactly (1e-30) every step; all four channels co-fire under drive
-    ATP-PROTON-STOICHIOMETRY-CONSERVED:
+    atp-proton-stoichiometry-conserved:
       result: PASS
       detail: J_ATP/J_H == 1/3.3 == 0.30303 exactly on every active step
-    ROTARY-TORQUE-HOLDS-NEAR-CONSTANT:
+    rotary-torque-holds-near-constant:
       result: PASS
       detail: mechanical_out == 4.0×10⁻²⁰ N·m exactly, constant while other channels scale
-    ELECTRICAL-ENERGY-BALANCE-CLOSES:
+    electrical-energy-balance-closes:
       result: PASS
       detail: heat == 25 % of input PMF power, useful == 75 %, both ≥ 0 every step
-    NO-DRIVE-NO-SPONTANEOUS-FLUX:
+    no-drive-no-spontaneous-flux:
       result: PASS
       detail: chemical_out == electrical_out == thermal_out == 0.0 at zero drive
-- name: meta_modelers_guide.composites.fig06-runnable__1787799780__2771eb
-  status: complete
-  timestamp: 1787799780.452064
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig06-mechanistic
   composite: fig06-mechanistic
   emitter: RAMEmitter
@@ -255,22 +254,22 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig06-mechanistic.composite.json (AtpSynthaseRotor + MembranePMF + MechanicalLoad; n_c=10, atp_per_rev=3, drag=1e-23 N·m·s, dg0=30.5 kJ/mol, Δp=150 mV fixed, load_rate=6.5e-22 N·m/tick) run 20 ticks (21 rows) through the process-bigraph engine. The fig06-mechanistic-dynamics.png six-panel figure was baked over the same run plus a fresh-rotor Δp sweep via scripts/build_fig06_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-POWER-BUDGET-CLOSES:
+    mech-power-budget-closes:
       result: PASS
       detail: 'max |P_in − (P_ATP+P_ext+P_heat)| = 3.1e-33 W over the run (machine precision); P_heat ≥ 0; I = J_H·e exactly'
-    MECH-TORQUE-DERIVED-MATCHES-LITERATURE:
+    mech-torque-derived-matches-literature:
       result: PASS
       detail: 'τ_drive = n_c·e·Δp/2π = 38.2 pN·nm at 150 mV (literature ~40); τ(0.2V)/τ(0.1V) = 2.000'
-    MECH-LOAD-INDUCES-STALL-AND-REVERSAL:
+    mech-load-induces-stall-and-reversal:
       result: PASS
       detail: 'forward ω +654 → stall tick 11 → reversal ω −597; in reversal J_ATP<0 and J_H<0 together'
-    MECH-PROTON-GRADIENT-SETS-DIRECTION:
+    mech-proton-gradient-sets-direction:
       result: PASS
       detail: 'predicted Δp* = 125 mV; sweep gives ω<0 below, ω≈0 at, ω>0 above'
-    MECH-EFFICIENCY-IS-DERIVED-NOT-IMPOSED:
+    mech-efficiency-is-derived-not-imposed:
       result: PASS
       detail: 'η = 0.833 at 150 mV, varies with Δp, ≠ imposed 0.75'
-    MECH-ATP-BACKPRESSURE-SLOWS-ROTOR:
+    mech-atp-backpressure-slows-rotor:
       result: PASS
       detail: 'ω monotone-decreasing as [ATP] and ΔG_ATP rise (product back-pressure)'
 findings:
@@ -469,7 +468,15 @@ visualizations:
 parent_studies:
 - study: fig-01
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Molecular energetics instantiates fig-01's typed wiring and conservation discipline at the
+    molecular scale.
 - study: molecular-interfaces
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The figure's reaction/energetics mechanism is the lumped counterpart of
+    draft-to-living-cell's spatial molecular-interfaces reaction-diffusion result.
 experiment: 'Run the `fig06-runnable` composite (MolecularMechanismHandler -- the F₁Fₒ ATP synthase as a four-channel transducer -- driven by a ProtonMotiveRamp charging the substrate/proton drive linearly) to completion over 20 ticks through the process-bigraph engine, and measure whether one coupled proton flux drives four TYPED physical channels (chemical ATP flux, electrical proton current, mechanical rotary torque, thermal heat) with matter, charge, angular momentum, and energy conserved across a molecular interface that has no cell-level boundary.'
 result: 'Over a deterministic 20-tick run, the F₁Fₒ ATP synthase transducer drives four TYPED physical channels from ONE ramped proton flux, with no cell-level boundary in the state. The chemical channel (ATP synthesis flux) scales linearly with the drive -- 4× activity gives exactly 4× flux (30.0 at activity 0.3, 120.0 at 1.2), rising monotonically 20.0 → 128.0 over the run. The four channels are one coupled quantity: the proton current is the ATP flux carried as charge (I = J_ATP·n·e), the ATP:H⁺ stoichiometry holds at 1/3.3 exactly on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m (torque, not force/power -- the drive sets speed, not torque), and the dissipated heat equals (1−η)·PMF power = 25 % of input, useful work 75 %, both non-negative. All coupling identities hold to 1e-30 on the live run and every readout reproduces exactly. A zero drive produces zero flux on all three driven channels (negative control), and the un-driven bare draft fig06-executable reports a flat chemical_out of 100.0 (= k_cat) whereas the ramp-driven fig06-runnable sweeps 20.0 -> 128.0 -- confirming the sweep is the drive coupling, not the rate law (workbench 0.4.1). The paper''s §Molecular interfaces figure (Fig molecular_interface) holds as a runnable process: a molecular mechanism exposing typed, coupled chemical/electrical/mechanical/thermal channels over molecular structure, matter/charge/ angular-momentum/energy conserved across the interface, with no cell boundary -- executable, not merely drawn. The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell` investigation.'

@@ -16,7 +16,7 @@ import numpy as np
 import pytest
 from process_bigraph import Composite
 
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 
 from meta_modelers_guide.core import build_core  # noqa: E402

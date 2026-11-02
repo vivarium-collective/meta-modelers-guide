@@ -33,7 +33,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 pytest.importorskip("cobra")
 
@@ -84,7 +84,7 @@ class CpmEvolution(CpmGrowthDivision):
         # the rest of `CpmGrowthDivision.__init__` ourselves so the `seed`
         # config value can reach the potts spec.
         Process.__init__(self, config, core=core)
-        from cpm.schema import load_world
+        from viva_cpm.schema import load_world
         try:
             from cobra.io import load_model
         except Exception as exc:  # pragma: no cover

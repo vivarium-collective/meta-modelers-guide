@@ -6,6 +6,13 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Membrane self-maintenance is genuinely emergent from local physics (Protocell v2:
+  closure sustained ~2451 steps, precursor knockout collapses ~26x faster, deterministic
+  and seed-invariant across seeds 1-5 with dual knockout + fatal-puncture controls) — a
+  strong result, but run on toy-real reaction-diffusion constants and held at Provisional
+  pending the deferred scientific-validation gate, so qualified rather than supported.
 gate_class: genuinely-emergent
 gate_class_note: >-
   Two realizations at two mechanistic grains. v1 (protocell-autopoietic) is the SPECIFICATION-level
@@ -527,13 +534,13 @@ runs:
     viz/ were re-rendered over the same run for this study.
   params: {}
   outcomes:
-    CLOSED-LOOP-PERSISTS:
+    closed-loop-persists:
       result: PASS
       detail: persists == 1.0 with membrane_mass > 0 over 1800 steps -- self-maintenance inside the plateau
-    CLOSED-LOOP-ENCLOSES-INTERIOR:
+    closed-loop-encloses-interior:
       result: PASS
       detail: enclosed_area plateaus at ~149 px (seed ~465 px) -- homeostasis, throttled by closure, not runaway growth
-    CLOSED-LOOP-NEVER-COLLAPSES:
+    closed-loop-never-collapses:
       result: PASS
       detail: collapse_tick == -1.0 -- never lost closure within the window
 - name: protocell-autopoietic-v2
@@ -551,16 +558,16 @@ runs:
     (tests/test_protocell_v2.py::test_puncture_starves_locally_and_does_not_heal).
   params: {}
   outcomes:
-    V2-EMERGENT-CLOSURE-SUSTAINS:
+    v2-emergent-closure-sustains:
       result: PASS
       detail: persists == 1.0, enclosed_area ~293 px, collapse_tick == -1.0, precursor_mass pooled ~72 -- local-mechanism closure, no global observer in the loop
-    V2-UPDATE-HAS-NO-GLOBAL-OBSERVER:
+    v2-update-has-no-global-observer:
       result: PASS
       detail: rd_step_v2 references no binary_fill_holes/enclosed_area (co_names) -- closure-dependence is emergent, not authored
-    V2-PRECURSOR-KNOCKOUT-COLLAPSES:
+    v2-precursor-knockout-collapses:
       result: PASS
       detail: 's_p=0 (only differing variable): persists == 0.0, enclosed_area -> 0 by ~step 95 -- the local precursor loop is load-bearing'
-    V2-PUNCTURE-STARVES-LOCALLY:
+    v2-puncture-starves-locally:
       result: PASS
       detail: after wedge puncture, precursor bleeds through the gap and wedge membrane stays ~2 vs ~79 intact -- local starvation, no self-heal
 - name: protocell-autopoietic-v2-open
@@ -579,13 +586,13 @@ runs:
     scratchpad regime search (feed, washout, feed+washout+turnover, saturable export, substrate feed).
   params: {}
   outcomes:
-    V2-OPEN-DRIVE-DOES-NOT-SUSTAIN:
+    v2-open-drive-does-not-sustain:
       result: PASS
       detail: canonical drive collapses at ~step 591 (vs undriven ~2451) via runaway fill, membrane_mass ~3092 (seed ~624), persists == 0.0 -- external drive destabilises, does NOT reach a steady state
-    V2-OPEN-DRIVE-OFF-RECOVERS-V2:
+    v2-open-drive-off-recovers-v2:
       result: PASS
       detail: with f_in=k_wash=0 the same open composite persists == 1.0 at 1000 steps (collapse_tick == -1.0) -- the destabilisation is caused by the drive alone
-    V2-OPEN-CONTROLS-STILL-LOAD-BEARING:
+    v2-open-controls-still-load-bearing:
       result: PASS
       detail: under drive, s_p=0 still loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0) -- the drive does not rescue closure
 - name: protocell-vesicle-control
@@ -600,10 +607,10 @@ runs:
     tests/test_protocell.py); the baked GIF in viz/ was re-rendered over the same run for this study.
   params: {}
   outcomes:
-    VESICLE-CONTROL-COLLAPSES:
+    vesicle-control-collapses:
       result: PASS
       detail: 'k_prod=0 (only differing variable): persists == 0.0 -- the knockout flips persist -> collapse'
-    VESICLE-CONTROL-LOSES-ENCLOSURE:
+    vesicle-control-loses-enclosure:
       result: PASS
       detail: enclosed_area -> 0 by step ~96 (collapse_tick ~96) -- topological closure lost
 - name: puncture-viability-bound
@@ -619,7 +626,7 @@ runs:
     none.
   params: {}
   outcomes:
-    PUNCTURE-IS-FATAL:
+    puncture-is-fatal:
       result: PASS
       detail: after wedge puncture, enclosed_area stays 0 for 1500 steps, phi -> ~0 -- viability bound, no recovery
 findings:
@@ -1016,6 +1023,11 @@ visualizations:
 parent_studies:
 - study: biomolecular-complementarity
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Turns the molecular-interface machinery inward to produce and maintain a membrane
+    from local physics — self-maintenance presupposes the molecular complementarity that
+    forms the boundary in the first place.
 experiment: 'Run reaction-diffusion protocell composites to completion through the process-bigraph
   engine directly from their JSON specs, at TWO mechanistic grains. SPECIFICATION-level (v1):
   protocell-autopoietic (Protocell, a 64x64 Gaussian-annulus membrane field with production gated on a

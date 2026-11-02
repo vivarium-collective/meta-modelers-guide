@@ -31,7 +31,7 @@ from pathlib import Path
 
 import pytest
 
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 pytest.importorskip("cobra")
 

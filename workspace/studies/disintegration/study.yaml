@@ -6,6 +6,12 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The viability-collapse level-shift is simulation-triggered (footprint-local acetate
+  crossing a viability bound), but the resorption ramp itself is a scripted schedule
+  (resorb_per_tick) and constants are toy-real — the trigger is earned, the dissolution
+  dynamics are qualified as partly scripted.
 confidence: Provisional
 question: 'Does the paper''s §Disintegration level-shift (Fig 5) hold spatially -- a coherent CPM cell that loses structural
 
@@ -425,26 +431,26 @@ runs:
     same run for this study.'
   params: {}
   outcomes:
-    CELL-HOLDS-COHERENT-BEFORE-CROSSING:
+    cell-holds-coherent-before-crossing:
       result: PASS
       detail: area 61-66 through tick 6, released False, 0 particles
-    STRESSOR-CROSSES-VIABILITY-BOUND:
+    stressor-crosses-viability-bound:
       result: PASS
       detail: released_tick == 7.0, deterministic
-    DOMAIN-RESORBS-TO-ZERO:
+    domain-resorbs-to-zero:
       result: PASS
       detail: area falls from 56 (tick 7) to 0 by tick 16
-    SHED-MATERIAL-BECOMES-DEBRIS-PARTICLES:
+    shed-material-becomes-debris-particles:
       result: PASS
       detail: 63 debris particles shed by tick 16 (each a distinct vacated pixel)
-    CPM-PARTICLE-MASS-LEDGER-CLOSES:
+    cpm-particle-mass-ledger-closes:
       result: PASS
       detail: 63 shed == 63 distinct vacated pixels <= 69 unique vacated; a pre-fix double-count of 6
         re-vacated pixels found and fixed
-    DEBRIS-CLOUD-KEEPS-SCATTERING:
+    debris-cloud-keeps-scattering:
       result: PASS
       detail: RMS spread grows from ~5.3 (tick 16) to ~7.6 (tick 24)
-    PARTICLE-BRIDGE-EMITS-THEN-SCATTERS:
+    particle-bridge-emits-then-scatters:
       result: PASS
       detail: 3 synthetic particles emitted then scattered, bridge verified independently
 findings:
@@ -817,6 +823,11 @@ visualizations:
 parent_studies:
 - study: cell-cell-coupling
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Drives the spatially-resolved CPM cell established upstream past a viability bound;
+    disintegration is only meaningful against a cell first shown to live and compete in
+    the field.
 experiment: 'Run the `disintegration-spatial` composite (`CpmDisintegration`, a single CPM cell
   on a shared 60x60 field grid inside a radial acetate gradient, coupled to a stock
   `BrownianMovement` particle-scatter process) to completion over 20-24 ticks through the

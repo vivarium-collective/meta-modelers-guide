@@ -6,6 +6,12 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  Self-maintenance is isolated by two independent process-knockout controls (metabolism KO;
+  gene-expression KO), deterministic, with all pools strictly positive/bounded over 40 ticks (gate
+  passed) — a strong result, but toy-real and uncalibrated (no literature flux, no spatial membrane),
+  held at Provisional pending the scientific-validation gate — qualified rather than supported.
 confidence: Provisional  # self-maintenance isolated by two independent process-knockout controls (metabolism KO; gene-expression KO), deterministic (reproduces exactly), all pools strictly positive/bounded over 40 ticks; kept Provisional -- toy-real and uncalibrated (no literature flux, no spatial membrane), so no promotion without the scientific-validation gate.
 confidence_basis: 'Calibrated off Provisional. BASELINE (fig08-runnable): compositional dependence is demonstrated by knockout, but the flat pools only accumulate -- behavioral verification, held at Medium. MECHANISTIC VARIANT (fig08-mechanistic, scientific-review revision) materially raises mechanistic support: a cell with a membrane boundary, first-order turnover, ATP-costed repair and viability shows persistence at a steady state, component replacement, recovery from a membrane injury (viability dip 0.71 -> 0.92), and viability collapse to 0 when any one of import/metabolism/expression/repair is knocked out or the medium is not replenished. The study is still held at Provisional because the membrane is a scalar area (not a spatial self-produced boundary), the viability target and rate constants are scripted, and nothing is calibrated to a named organism or measured turnover/repair rate -- so this is organizational self-maintenance, not autopoiesis in the strong sense (finding F-06).'
 question: 'Is the paper''s Fig. self_organized_process (§Composition of the cellular interface) executable rather than merely drawn -- does the `fig08-runnable` composite actually demonstrate that a cellular interface EMERGES when molecular processes are compositionally coupled so they maintain one another (metabolism synthesizes the components the membrane and replication need, containment/expression maintain the pools metabolism needs), so that the coupled system holds a sustained, far-from-equilibrium balance rather than each process running down independently?'
@@ -223,33 +229,27 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig08-runnable.composite.json (six coupled processes -- ContainmentODE, MetabolismLinear, GeneExpressionODE, ReplicationODE, DiffusionRelax, MassActionReactions -- over ten shared flat scalar building-block pools) run 40 ticks through the process-bigraph engine with a RAMEmitter (tests/test_fig08_autopoiesis.py). Deterministic ODE handlers, no RNG, so every readout reproduces exactly run to run.'
   params: {}
   outcomes:
-    CLOSURE-SUSTAINS-ITSELF-EVERY-POOL-POSITIVE:
+    closure-sustains-itself-every-pool-positive:
       result: PASS
       detail: all seven pool minima > 0 (smallest metabolites 0.267); nothing collapses
-    CLOSURE-IS-BOUNDED-NOTHING-EXPLODES:
+    closure-is-bounded-nothing-explodes:
       result: PASS
       detail: largest pool value over the run is membrane 2.2, far under the 1e3 guard
-    TEMPLATE-POOLS-HOLD-A-STEADY-BALANCE:
+    template-pools-hold-a-steady-balance:
       result: PASS
       detail: second-half relative drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25
-    STRUCTURAL-MATERIAL-IS-NET-PRODUCED:
+    structural-material-is-net-produced:
       result: PASS
       detail: membrane 0.20 -> 2.20, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50
-    METABOLISM-KNOCKOUT-STARVES-DOWNSTREAM-POOLS:
+    metabolism-knockout-starves-downstream-pools:
       result: PASS
       detail: metabolites 0.33 -> 0.011 with metabolism removed; energy frozen exactly at 0.5 (base grows to 0.58)
-    GENE-EXPRESSION-SUSTAINS-THE-ENZYMES-METABOLISM-DEPENDS-ON:
+    gene-expression-sustains-the-enzymes-metabolism-depends-on:
       result: PASS
       detail: enzymes frozen exactly at 0.30 with gene expression removed (base grows to 0.50); metabolites drop 0.33 -> 0.23
-    RUNS-DEFAULT-N-STEPS:
+    runs-default-n-steps:
       result: PASS
       detail: 41 emitted rows == default_n_steps (40) + 1
-- name: meta_modelers_guide.composites.fig08-runnable__1787799780__7ef66e
-  status: complete
-  timestamp: 1787799780.494557
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig08b-executable
   composite: fig08b-executable
   emitter: RAMEmitter
@@ -269,19 +269,19 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig08-mechanistic.composite.json (NutrientReservoir replenish=0.6 + SelfMaintainingCell: membrane-gated import, enzyme-catalysed metabolism, ATP-costed enzyme synthesis + membrane repair, first-order turnover, viability; membrane injured −60% at tick 45) run 90 ticks through the engine. fig08-mechanistic-dynamics.png (cell cartoons + state curves + fluxes + repair-on/off + closure graph + knockout/closed-medium controls) baked over the same run + controls via scripts/build_fig08_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-PERSISTS-AND-POOLS-BOUNDED:
+    mech-persists-and-pools-bounded:
       result: PASS
       detail: 'all pools strictly positive and bounded; no-injury second-half drift < 0.1 — a maintained steady state'
-    MECH-TURNOVER-REQUIRES-REPLACEMENT:
+    mech-turnover-requires-replacement:
       result: PASS
       detail: 'membrane held ~3.8 with repair on; decays toward 0 with repair off — replacement required'
-    MECH-RECOVERS-AFTER-INJURY:
+    mech-recovers-after-injury:
       result: PASS
       detail: 'injury 3.75→1.50, viability dip 0.71, recovery to 3.70/0.92 by tick 90; no recovery without repair'
-    MECH-CLOSURE-BREAK-COLLAPSES-VIABILITY:
+    mech-closure-break-collapses-viability:
       result: PASS
       detail: 'final viability 0.00 for each of KO transport/met/expr/repair — every closure edge load-bearing'
-    MECH-DEPENDS-ON-EXTERNAL-INPUT:
+    mech-depends-on-external-input:
       result: PASS
       detail: 'closed (non-replenished) medium depletes; viability collapses to 0.00 — organization maintained on external throughput'
 findings:
@@ -466,7 +466,15 @@ visualizations:
 parent_studies:
 - study: fig-06
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Self-maintenance composes the cellular interface, molecular energetics (fig-06), and nested
+    containment into a coupled whole — closure presupposes the energetics fig-06 establishes.
 - study: autopoiesis
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The lumped operational-closure figure is the non-spatial counterpart of autopoiesis's spatial
+    self-maintained membrane — same self-production claim, different level of composition.
 experiment: 'Run the `fig08-runnable` composite (six coupled processes -- containment, metabolism, gene expression, replication, diffusion, mass-action reactions -- over ten shared flat scalar building-block pools) for its declared 40 ticks through the process-bigraph engine, and measure whether the coupled processes maintain one another into a sustained, far-from-equilibrium balance: every pool positive and bounded, the catalytic/template pools holding steady while structural material is net-produced. Then open the maintenance loop with two process knockouts (metabolism; gene expression) and measure whether the downstream shared pools each depend on collapse -- showing the balance is a property of the coupling, not of any pool in isolation.'
 result: 'Over a deterministic 40-tick run the `fig08-runnable` composite holds the coupled balance: every observed pool stays strictly positive (smallest minimum metabolites 0.267) and bounded (largest value membrane 2.2), the catalytic/template pools hold a sustained steady balance (second-half drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25), and the structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). Two process knockouts confirm the balance is a property of the coupling: removing metabolism starves its downstream metabolite pool (0.33 -> 0.011) and freezes energy exactly at its 0.5 seed, and removing gene expression freezes the enzyme pool metabolism depends on exactly at its 0.3 seed and drops metabolism''s metabolite output (0.33 -> 0.23). Fig. self_organized_process is executable -- the caption''s self-maintaining composition runs and holds under test. This is a toy-real didactic demonstration; its rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation.'

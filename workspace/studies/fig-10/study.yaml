@@ -6,6 +6,12 @@ created: '2026-08-26'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The structural reorganization is test-backed and deterministic (re-parenting depth 1->2, ECM only
+  after maturation, true chromosome partition, bounded sweep; gate passed), but attachment/maturation
+  fire at scheduled ticks and no controls isolate the coupling the way fig-08's knockouts do — the
+  structure of the reorganization is demonstrated, not an emergent decision, so qualified.
 confidence: Provisional  # kept at the conservative rung: the rewrites are deterministic and the structural claims (re-parenting depth 1 -> 2, ECM only after maturation, true chromosome partition, bounded sweep) are all test-backed, but attachment/maturation fire at SCHEDULED ticks (config attach_at/mature_at) -- the composite demonstrates the structure of the reorganization, not an emergent decision, and nothing is calibrated. No controls isolate the coupling the way fig-08's knockouts do.
 confidence_basis: 'Calibrated off Provisional (workbench 0.4.1). BASELINE (fig10-emergence): the place-graph rewrite is demonstrated, BUT — as the scientific review flags — attachment and ECM fire at SCHEDULED ticks (config attach_at/mature_at), so this is a software/behavioral demonstration of the reorganization structure, not an emergent decision, and there are no controls. MECHANISTIC VARIANT (fig10-mechanistic, scientific-review revision) makes attachment EMERGE from spatial state: six motile cells aggregate by local adhesion and the biofilm forms only once a quorum sits in proximity for several sustained ticks — so the formation TIME varies with adhesion strength (0.25→t7, 0.35→t6, 0.55→t5) and with density, which a wall clock cannot do. Matched-null controls isolate each arm (no adhesion ⇒ never forms; no ECM ⇒ forms then disperses), cell identity and biomass are preserved on reparenting, and the collective cohesion port is inert until organization. Held at Provisional overall because it is a reduced 2-D aggregation model in LATTICE units with didactic adhesion/ECM rates — not calibrated to measured adhesion forces, ECM secretion rates, or a named organism.'
 question: 'Is the paper''s §Development figure (Fig development) executable -- can a runnable process-bigraph composite demonstrate, under test, that development is "a hierarchical reorganization where individual cells become part of a collective composite" rather than merely more cells? Concretely: does running the `fig10-emergence` composite turn a set of free motile bacteria (top-level place-graph siblings) into a nested biofilm microcolony that then secretes an extracellular matrix -- surface attachment, ECM secretion, growth of a structured community (caption a) realized as a genuine runtime place-graph rewrite (caption b)?
@@ -217,13 +223,13 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig10-emergence.composite.json (BiofilmEmergence over an env tree[node] of a surface + 4 free motile cells; attach_at=6, mature_at=12, ecm_count=3) run 16 steps to completion through the process-bigraph engine, deterministic (no RNG) (tests/test_fig10_dynamics.py).'
   params: {}
   outcomes:
-    FREE-CELLS-ATTACH-INTO-A-NESTED-BIOFILM:
+    free-cells-attach-into-a-nested-biofilm:
       result: PASS
       detail: free 4 -> 0 at t=6, biofilm node appears holding all 4 nested cells, free stays 0
-    ATTACHMENT-NESTS-CELLS-ONE-LEVEL-DEEPER:
+    attachment-nests-cells-one-level-deeper:
       result: PASS
       detail: cell place-graph depth 1 -> 2 at t=6, new biofilm collective node, never reverts
-    ECM-SECRETED-ONLY-AFTER-MATURATION:
+    ecm-secreted-only-after-maturation:
       result: PASS
       detail: ECM 0 through t=11, then 1/2/3 at t=12/13/14, only while 4 nested cells present
 - name: fig10-cell-cycle
@@ -234,7 +240,7 @@ runs:
   provenance: 'meta_modelers_guide.fig10_rewrite.build_fig10_division (cycle=3.0, interval=1.0), run 8-20 steps through the process-bigraph engine; deterministic scheduled rewrite (tests/test_fig10_rewrite.py).'
   params: {}
   outcomes:
-    DIVISION-REWRITES-AND-PARTITIONS-THE-PLACE-GRAPH:
+    division-rewrites-and-partitions-the-place-graph:
       result: PASS
       detail: chrom 1 -> 2 while 1 cell, then 2 daughters each 1 chromosome dna==1.0; 1 -> 2 -> 4 -> 8 over 20 steps; capacity caps
 - name: fig10-collectives
@@ -245,15 +251,9 @@ runs:
   provenance: 'meta_modelers_guide.fig10_topology.build_fig10_biofilm (grow_every=2.0, capacity=5.0) and build_fig10_evolution (generation=2.0, mutate_at=4.0, founders=3.0, capacity=6.0), run 14-16 steps through the process-bigraph engine; deterministic scheduled rewrites (tests/test_fig10_topology.py).'
   params: {}
   outcomes:
-    COLLECTIVES-COLONIZE-AND-A-LINEAGE-SWEEPS:
+    collectives-colonize-and-a-lineage-sweeps:
       result: PASS
       detail: biofilm 1 -> 5 then ECM 1/2/3 at 5 cells; mutant arises at t=4, sweeps to 3, wildtype -> 0, total <= 6
-- name: meta_modelers_guide.composites.fig10-emergence__1787799780__abaab6
-  status: complete
-  timestamp: 1787799780.529705
-  emitter:
-    kind: unknown
-  params: '{}'
 - name: fig10-mechanistic
   composite: fig10-mechanistic
   emitter: RAMEmitter
@@ -262,22 +262,22 @@ runs:
   provenance: 'meta_modelers_guide/composites/fig10-mechanistic.composite.json (BiofilmColony: 6 motile cells on a ring in a 2-D box, adhesion 0.35, form_radius 2.2, quorum 4, sustain_ticks 3, ecm_rate 0.6, decay 0.05, spread_rate 0.5) run 24 ticks through the engine. fig10-mechanistic-dynamics.png (spatial snapshots/trajectories + aggregation/persistence + ECM/cohesion + bigraph rewrite + controls) baked over the same run + matched-null controls via scripts/build_fig10_mechanistic.py.'
   params: {}
   outcomes:
-    MECH-IDENTITY-PRESERVED-ON-REPARENTING:
+    mech-identity-preserved-on-reparenting:
       result: PASS
       detail: '6 cells nested under the biofilm node, per-cell biomass preserved'
-    MECH-FORMATION-IS-EMERGENT-NOT-CLOCKED:
+    mech-formation-is-emergent-not-clocked:
       result: PASS
       detail: 'formation t=7,6,5 for adhesion 0.25,0.35,0.55 — geometry-driven, not a clock'
-    MECH-DENSITY-HASTENS-FORMATION:
+    mech-density-hastens-formation:
       result: PASS
       detail: 'denser start forms sooner; no formation when spread beyond sensing radius'
-    MECH-NO-ADHESION-PREVENTS-AGGREGATE:
+    mech-no-adhesion-prevents-aggregate:
       result: PASS
       detail: 'adhesion=eps: never forms, cluster radius stays ~4.2'
-    MECH-BLOCKED-ECM-CHANGES-PERSISTENCE:
+    mech-blocked-ecm-changes-persistence:
       result: PASS
       detail: 'full persists (r=3.0, cohesion 0.95); no-ECM disperses (r=11.3, cohesion 0)'
-    MECH-COLLECTIVE-PORT-ONLY-AFTER-ORGANIZATION:
+    mech-collective-port-only-after-organization:
       result: PASS
       detail: 'cohesion 0 before formation, 0.95 after; biofilm node created at formation'
 findings:
@@ -468,8 +468,16 @@ visualizations:
 parent_studies:
 - study: fig-09
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Development requires reproduction: a collective forms from dividing cells, so the
+    multicellular reorganization is only meaningful over fig-09's division machinery.
 - study: development-and-evolution
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    The figure's development/collective-formation is the lumped counterpart of
+    draft-to-living-cell's spatial development-and-evolution result.
 experiment: 'Run the `fig10-emergence` composite (BiofilmEmergence over an env tree[node] of a surface and four free motile bacteria; attach_at=6, mature_at=12, ecm_count=3) 16 steps to completion through the process-bigraph engine, and measure whether it performs a genuine place-graph rewrite: free top-level cells re-parenting into a new nested biofilm collective node at attachment (depth 1 -> 2), then that matured community secreting an extracellular matrix. Cross-check the section''s principle with the companion cell-cycle (build_fig10_division) and collectives (build_fig10_biofilm, build_fig10_evolution) rewrites exercised by the same fig-10 test suite.
 
   '

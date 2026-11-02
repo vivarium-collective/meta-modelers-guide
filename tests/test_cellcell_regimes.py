@@ -36,7 +36,7 @@ import pytest
 from process_bigraph import Composite
 from meta_modelers_guide.core import build_core
 
-pytest.importorskip("cobra"); pytest.importorskip("cpm"); pytest.importorskip("spatio_flux")
+pytest.importorskip("cobra"); pytest.importorskip("viva_cpm"); pytest.importorskip("spatio_flux")
 COMPOSITES = Path(__file__).resolve().parent.parent / "meta_modelers_guide" / "composites"
 
 

@@ -10,8 +10,8 @@ Composite, as a fast raw-API regression check."""
 from __future__ import annotations
 import numpy as np
 import pytest
-pytest.importorskip("cpm")
-from cpm.schema import load_world
+pytest.importorskip("viva_cpm")
+from viva_cpm.schema import load_world
 from meta_modelers_guide.cpm.sorting import checkerboard_cells, hetero_frac, cell_pixels
 
 NX = NY = 70

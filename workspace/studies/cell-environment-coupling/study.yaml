@@ -6,6 +6,13 @@ created: '2026-08-21'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: qualified
+verdict_rationale: >-
+  The outward sense/act loop closes on genuine simulation output (gate passed), but the
+  stronger mechanism-independence reading is bounded: the tuned Michaelis-Menten
+  surrogate holds within the glucose-limited/fixed-O2 regime (~13%) and diverges ~74% on
+  a held-out O2 cap it has no variable for, and the constants are toy-real — supported
+  within the calibrated regime, qualified beyond it.
 confidence: Provisional
 question: 'When a single cell metabolizes at its own location, does it measurably reshape the very
 
@@ -593,19 +600,25 @@ runs:
     20-tick run for this study.'
   params: {}
   outcomes:
-    CELL-METABOLIZES-AND-GROWS:
+    cell-metabolizes-and-grows:
       result: PASS
       detail: biomass 0.1 -> ~0.37 via dynamic-FBA at the cell's own footprint
-    CPM-VOLUME-GROWS:
+    cpm-volume-grows:
       result: PASS
       detail: CPM volume 32 -> 110 px (~3.4x), ~3% of the 60x60 lattice
-    ACETATE-SECRETED-AND-DIFFUSES:
+    acetate-secreted-and-diffuses:
       result: PASS
       detail: field-wide acetate 0 -> ~47.0 as the plume spreads
-    NET-GLUCOSE-CONSUMED:
+    net-glucose-consumed:
       result: PASS
       detail: field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown ~18% peak-to-trough
         (~6% from initial)
+    field-mass-balance-closes:
+      result: PASS
+      detail: 'both glucose and acetate ledgers close to < 1e-6 (|final_mass - (initial_mass + Σ
+        writer_net_exchange)|) over the run; cell net glucose < 0 (sink), net acetate > 0 (source)
+        — verified by tests/test_mass_balance.py::test_flagship_field_mass_balance_closes (now runs
+        under the viva_cpm guard; previously skipped)'
 - name: single-cell-in-a-field-o2uncapped
   composite: single-cell-in-a-field-o2uncapped
   emitter: RAMEmitter
@@ -618,7 +631,7 @@ runs:
     the capped flagship.'
   params: {}
   outcomes:
-    O2-CAP-FORCES-ACETATE-OVERFLOW:
+    o2-cap-forces-acetate-overflow:
       result: PASS
       detail: 'uncapped field-wide acetate 0 -> 0.0 (exactly) vs capped 0 -> ~47.0; uncapped
         biomass ~2.35 vs capped ~0.37 — full respiration, no overflow'
@@ -641,12 +654,12 @@ runs:
     mm_yield: 0.024
     mm_overflow: 1.4
   outcomes:
-    INTERFACE-SUBSTITUTABLE-ACROSS-MECHANISMS:
+    interface-substitutable-across-mechanisms:
       result: PASS
       detail: 'dFBA vs MM over 20 ticks (tuned condition): biomass 0.370 vs 0.342 (7.5%), CPM volume
         110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6
         (6.2%) — a tuned surrogate reproduces the coarse-grained interface'
-    INTERFACE-SUBSTITUTABLE-HELD-OUT:
+    interface-substitutable-held-out:
       result: PASS
       detail: 'HELD-OUT, MM params frozen — flat-3.0 glucose field within 11.9%, 40-tick run within
         12.5% (mechanism-independent in-regime); but a held-out O2 cap 2.5→5.0 diverges ~74% —
@@ -669,7 +682,7 @@ runs:
     acetate_decay_rate: 0.2
     biomass_capacity: 0.5
   outcomes:
-    STEADYSTATE-FLUX-EQUILIBRIUM:
+    steadystate-flux-equilibrium:
       result: PASS
       detail: 'verified steady state by ~t=100-120 — per-tick relative change biomass
         0.0015%, glucose 0.0001%, acetate 0.014% (all < 0.1%); standing values biomass
@@ -691,7 +704,7 @@ runs:
     - 0.5
     - 0.25
   outcomes:
-    CADENCE-CONVERGENCE:
+    cadence-convergence:
       result: PASS
       detail: 'integrated observables converge within the 10% band (biomass 1.6%, volume
         2.6%, net glucose 1.8%, acetate 1.7% between cadence 0.25 and 0.5); but instantaneous
@@ -712,13 +725,13 @@ runs:
   params:
     chemotaxis_strength: 50.0
   outcomes:
-    CHEMOTAXIS-MOVES-CELL-UP-GRADIENT-AND-HELPS:
+    chemotaxis-moves-cell-up-gradient-and-helps:
       result: PASS
       detail: 'directed up-gradient motion achieved and it helps — COM x 18.5 → 39.3 (+20.8 px)
         vs flagship control +0.2 px (~90×); sensed local glucose 1.95 vs 0.94 (~2.1×); net
         glucose acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs
         110 px (+36%)'
-    CHEMOTAXIS-OFF-IS-BYTE-IDENTICAL-TO-FLAGSHIP:
+    chemotaxis-off-is-byte-identical-to-flagship:
       result: PASS
       detail: 'chemotaxis_strength 0.0 is a bit-exact no-op — flag-absent and flag-explicitly-0.0
         runs are identical; the flagship trajectory (biomass ~0.369, volume 110) is unchanged'
@@ -1281,6 +1294,12 @@ visualizations:
 parent_studies:
 - study: cellular-interface
   condition: tests-passed
+  relation: builds-on
+  rationale: >-
+    Instantiates the inert interface contract from cellular-interface as a running
+    composition — the CpmCellField coupling process IS the Fig-3 contract with a real
+    mechanism installed behind it, so the flagship's sense/act loop is only meaningful
+    once the contract it conforms to is established.
 experiment: 'Run `single-cell-in-a-field.composite.json` — a real CPM cell (viva-cpm) coupled via
 
   `CpmCellField` to a real spatio-flux glucose/acetate field running `DiffusionAdvection` — to
@@ -1313,3 +1332,36 @@ result: 'Over 20 ticks the cell grows ~3.4x in CPM volume (32 -> 110 px, ~3% of 
   through one typed process.
 
   '
+
+discovery_implications:
+  followup_study_proposals:
+  - id: fu-mechanical-tension-channel
+    title: Mechanical interface modality — a CPM force/tension/pressure port
+    study_type: mechanism
+    builds_on: cell-environment-coupling
+    motivation: >-
+      Two of the paper's four physical interface modalities are unrealized investigation-wide;
+      the mechanical channel is the higher-leverage of the two. Build a viva-cpm
+      force/tension/pressure port that couples a neighbour's volume pressure or an
+      adhesion-tension field into the Metropolis energy, and measure a mechanically-driven shape
+      or sorting response the chemical port alone cannot produce. Closes half of the standing
+      modality gap named in executive.decisions_needed.
+  - id: fu-electrical-electrostatic-channel
+    title: Electrical interface modality — an electrostatic / membrane-potential port
+    study_type: mechanism
+    builds_on: cell-environment-coupling
+    motivation: >-
+      The second unrealized modality. Couple a membrane-potential or ion-gradient field through a
+      typed port and measure a voltage-dependent behaviour (e.g. gated uptake or electrotaxis),
+      completing the paper's four-modality claim (chemical and thermal are already realized).
+  - id: fu-held-out-o2-calibration
+    title: Close the surrogate's O2-axis divergence with a held-out O2 calibration
+    study_type: calibration
+    builds_on: cell-environment-coupling
+    motivation: >-
+      The tuned Michaelis-Menten surrogate diverges ~74% on a held-out O2 cap because the lumped
+      box has no oxygen variable. Add an oxygen term to the surrogate, re-fit on the calibrated
+      regime, then measure agreement on the held-out O2 condition to test whether
+      mechanism-independence extends across the O2 axis or the structural gap is irreducible. This
+      is the named next step that would promote the SWAP result from surrogate calibration to a
+      held-out mechanism-independence finding.

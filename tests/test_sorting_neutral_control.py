@@ -30,7 +30,7 @@ from process_bigraph import Composite
 
 from meta_modelers_guide.core import build_core
 
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 
 NX = NY = 70
 NEUTRAL_J = 8.0

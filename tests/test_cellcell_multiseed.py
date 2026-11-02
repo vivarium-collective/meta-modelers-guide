@@ -31,7 +31,7 @@ from pathlib import Path
 import pytest
 
 pytest.importorskip("cobra")
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 
 from process_bigraph import Composite  # noqa: E402
@@ -58,20 +58,24 @@ def _compete_ratio(seed: int) -> tuple[float, dict]:
     return ratio, obs
 
 
-def test_competition_margin_holds_as_a_range_across_seeds():
-    """The competition headline (id-1 / id-2 biomass ratio) is a seed-sensitive
-    number. Assert the QUALITATIVE claim -- the faster competitor (id 1) excludes
-    the slower one -- for every seed, and pin the numeric RANGE with margin, so the
-    single-seed 3.69x headline is reported as the top of a band, not as the result."""
+def test_competition_is_deterministic_and_seed_invariant():
+    """The NON-DIVIDING two-cell competition (`cellcell-compete`) is DETERMINISTIC:
+    the id-1/id-2 biomass ratio is set by the deterministic uptake-capacity asymmetry
+    (glucose_vmax 10 vs 4), which dominates any CPM boundary fluctuation, so the ratio
+    is byte-identical across CPM seeds (~3.69x). Assert the qualitative exclusion (the
+    faster competitor wins on biomass AND volume, every seed) and that the margin is
+    seed-INVARIANT, i.e. perfectly reproducible — a stronger property than a noisy band.
+    (Genuine per-seed variation lives in the DIVIDING variant `cellcell-compete-div`,
+    which exposes `temperature`+`seed`; see tests/test_cellcell_m7.py.)"""
     ratios = []
     for s in SEEDS:
         ratio, obs = _compete_ratio(s)
         ratios.append(ratio)
         # the faster competitor (id 1, glucose_vmax 10) wins on both biomass AND
-        # lattice volume, EVERY seed -- the exclusion direction is seed-robust.
+        # lattice volume, EVERY seed -- the exclusion direction is robust.
         assert obs["biomass"]["1"] > obs["biomass"]["2"], f"winner flipped at seed {s}"
         assert obs["volume"]["1"] > obs["volume"]["2"], f"volume winner flipped at seed {s}"
-        # the study's own pass threshold (> 1.5x) holds for every seed, not just seed 1.
+        # the study's own pass threshold (> 1.5x) holds for every seed.
         assert ratio > 1.5, f"margin collapsed below 1.5x at seed {s}: {ratio:.2f}"
 
     lo, hi, mean = min(ratios), max(ratios), sum(ratios) / len(ratios)
@@ -81,16 +85,14 @@ def test_competition_margin_holds_as_a_range_across_seeds():
         f"range=[{lo:.2f}x, {hi:.2f}x] mean={mean:.2f}x"
     )
 
-    # RANGE assertions, set with margin (not at the observed edge) so the test is a
-    # robustness gate, not a brittle golden-value check. The observed band is
-    # [2.89, 3.69]; the loose band below tolerates cross-platform CPM-RNG drift.
-    assert 2.0 < lo, f"lower end of the band too low: {lo:.2f}"
-    assert hi < 4.5, f"upper end of the band too high: {hi:.2f}"
-    assert 2.5 < mean < 4.0, f"mean margin outside expected band: {mean:.2f}"
-    # the headline single-seed number (3.69x) must NOT be representative of the
-    # whole band -- at least one seed comes in materially lower, which is the entire
-    # point of reporting a range rather than the one hard-coded seed.
-    assert lo < 3.4, (
-        "every seed matched the 3.69x headline -- the range is suspiciously tight; "
-        "the multi-seed convention exists precisely because it usually is not."
+    # Seed-invariance: the ratio is deterministic, so the whole band collapses to a
+    # point (tolerate only float noise). This is the honest, verified property —
+    # replacing an earlier assertion of a seed-sensitive band that this composite,
+    # being deterministic, never actually produced.
+    assert hi - lo < 1e-3, (
+        f"expected a seed-invariant (deterministic) ratio, got a spread: "
+        f"{[round(r, 4) for r in ratios]}"
     )
+    # pin the deterministic value in a sane band (not a brittle golden check), so a
+    # real regression in the competition outcome is still caught.
+    assert 3.0 < mean < 4.2, f"competition margin outside expected band: {mean:.2f}"

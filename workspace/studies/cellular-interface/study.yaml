@@ -6,6 +6,12 @@ created: '2026-08-20'
 status: complete
 phase: Decide
 gate_status: passed
+verdict: supported
+verdict_rationale: >-
+  The claim is structural, not quantitative: the compiler preserves the declared Fig-3
+  interface exactly and rejects any non-conforming handler at compile time (Law 1). The
+  behavior gate passes with no calibration dependency, so conformance is supported
+  outright.
 confidence: Provisional
 question: Can the cellular boundary be specified as nothing but typed, unit-bearing exchange ports (chemical mol·s⁻¹, mechanical N, electrical C·s⁻¹, thermal J·s⁻¹) plus higher-level variables (growth, shape, objective, viability) — with no committed mechanism — and compiled, by installing one conforming handler, into a bounded, goal-directed cell whose interface is exactly the one declared?
 biological_summary: 'A cell, viewed from the outside, is a small alphabet of exchange variables: fluxes of matter (chemical, mol·s⁻¹), forces (mechanical, N), currents (electrical, C·s⁻¹) and heat (thermal, J·s⁻¹), together with higher-level cellular quantities — growth rate (hr⁻¹), shape, an objective the cell pursues, and a viability that says whether the cellular description still holds. Fig 3 is that alphabet: Fig 3a draws four interaction-modality cards (nutrient exchange, motile force, growth rate, electrical signaling) as inert draft processes — unit-bearing ports and a behavior contract, no update dynamics. Fig 3b assembles the minimal cellular interface itself: one cell (draft process) that senses environmental drivers and exposes its physical exchange ports plus the higher-level cellular ports, all carrying declared units. Installing one conforming handler (`CellularInterfaceHandler`) turns the inert draft into a bounded, goal-directed cell with genuine toy-real dynamics while the ports and their wiring are preserved unchanged: chemical is taken up by Monod kinetics and drives Monod growth, growth accretes both shape (a volume proxy) and a biomass-proxy objective, viability follows a first-order Arrhenius thermal-death law (holds near 37 degC, collapses within minutes at 55 degC — the E. coli D-value reference), and the remaining physical ports (mechanical, electrical, thermal, signaling) carry small, physically-plausible linear responses to their drivers. Measured on the compiled fig03b-executable: chemical flux goes 0.0 to -0.8 (net uptake) and drives shape 1.0 to 4.2 and objective 0.0 to 1.6. This is the base cell contract that Law 1 (conformance) protects: the compiler checks a candidate handler''s declared ports against the draft''s signature before it will install it, and rejects a handler that renames or drops a port with a CompileError naming what is missing. A native impostor for this figure, `NonConformingCellularInterface` (in `handlers_fig03b.py`, exercised by `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler`), supplies conforming inputs but drops the required `viability` and `objective` output ports, and the compiler rejects it with a CompileError naming exactly those two missing ports — the mechanical proof that Law 1 rejects any handler that breaks this study''s own declared port contract, structurally, at compile time.'
@@ -102,16 +108,16 @@ runs:
   provenance: scripts/render_study_evidence.py — fig03b-executable compiled from the Fig 3 draft, run to completion through the engine.
   params: {}
   outcomes:
-    SHAPE-GROWTH:
+    shape-growth:
       result: PASS
       detail: shape 1.0 → 4.2 (growth well above seed)
-    CHEMICAL-UPTAKE:
+    chemical-uptake:
       result: PASS
       detail: chemical flux 0.0 → -0.8 (net uptake across the interface)
-    OBJECTIVE-CLIMBS:
+    objective-climbs:
       result: PASS
       detail: objective 0.0 → 1.6 (goal-directed progress)
-    DRAFT-IS-INERT:
+    draft-is-inert:
       result: PASS
       detail: 'expected-fail control: the inert draft (empty update) keeps shape at 1.0 — it fails the ≥2.0 threshold by design, confirming a draft is inert'
 findings:

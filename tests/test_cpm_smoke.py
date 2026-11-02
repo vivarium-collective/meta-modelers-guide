@@ -10,7 +10,7 @@ from meta_modelers_guide.core import build_core
 # The flagship composition depends on optional frameworks that are editable-installed
 # locally but absent from the base CI image (cpm needs a Rust/maturin build); skip
 # rather than fail when they are unavailable.
-pytest.importorskip("cpm")
+pytest.importorskip("viva_cpm")
 pytest.importorskip("spatio_flux")
 
 NX = NY = 40
@@ -26,7 +26,7 @@ def _cpm_spec(nx=NX, ny=NY):
     }
 
 def test_cpm_world_runs_and_lattice_readable():
-    from cpm.schema import load_world
+    from viva_cpm.schema import load_world
     world = load_world(_cpm_spec())
     world.step(5)
     lattice = np.array(world.snapshot()).reshape(NY, NX)
