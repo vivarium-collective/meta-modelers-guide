@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-03" data-study-kind="computational" title="fig-03">fig-03: The cellular interface</span>
+    <span class="study-name" id="study-name" data-slug="fig-03" data-study-kind="computational" title="fig-03" data-edit-kind="study" data-edit-field="title" data-edit-value="fig-03: The cellular interface" data-edit-label="Title">fig-03: The cellular interface</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Fig cell_interface is executable: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so that each port&#39;s value responds to its driving input, demonstrating the typed cell -&gt; shared-variable connection the paper asserts. Deterministically: a 5x higher chemical supply (0.2 -&gt; 1.0) produces exactly a 5x larger uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; the cell accretes shape (volume 1.0 -&gt; 10.6) as it grows over the 24-step run; and with the thermal driver held at 45 C (above the 37 C optimum) viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the 37 C optimum it barely moves (1.0 -&gt; 0.911, a decline &lt; 0.1) -- isolating temperature as the cause. Every number is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="Fig cell_interface is executable: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so that each port&#39;s value responds to its driving input, demonstrating the typed cell -&gt; shared-variable connection the paper asserts. Deterministically: a 5x higher chemical supply (0.2 -&gt; 1.0) produces exactly a 5x larger uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; the cell accretes shape (volume 1.0 -&gt; 10.6) as it grows over the 24-step run; and with the thermal driver held at 45 C (above the 37 C optimum) viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the 37 C optimum it barely moves (1.0 -&gt; 0.911, a decline &lt; 0.1) -- isolating temperature as the cause. Every number is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run." data-edit-multiline data-edit-label="Claim">Fig cell_interface is executable: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so that each port&#39;s value responds to its driving input, demonstrating the typed cell -&gt; shared-variable connection the paper asserts. Deterministically: a 5x higher chemical supply (0.2 -&gt; 1.0) produces exactly a 5x larger uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; the cell accretes shape (volume 1.0 -&gt; 10.6) as it grows over the 24-step run; and with the thermal driver held at 45 C (above the 37 C optimum) viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the 37 C optimum it barely moves (1.0 -&gt; 0.911, a decline &lt; 0.1) -- isolating temperature as the cause. Every number is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run.</p>
       
       <div class="ctr-context">This study makes Fig cell_interface runnable. The `fig03-runnable` composite (`meta_modelers_guide.composites.fig03-runnable`) wires ONE bounded cell (`CellularInterfaceHandler`, a conforming process-bigraph Process) to an environment that supplies four typed drivers -- a chemical concentration, a mechanical force, an electrical voltage, and a thermal temperature -- and reads back the cell&#39;s typed interface ports: the physical exchange ports (chemical flux, mechanical force, electrical current, thermal heat flux) plus the higher-level cellular variables the caption names -- growth_rate, shape (volume), signaling, objective, and viability.
 Each port is a typed connection from the cell to a single shared variable (paper: W(cell,q)=p with type Sigma(p)), and the demonstration is that the ports RESPOND: a higher chemical supply drives a proportionally larger uptake flux and (via Monod) a larger growth rate; the mechanical, electrical, and thermal exchange ports each track their own driver through a plausible linear response law (elastic force, Ohmic current, Fourier heat flux) and stay put when their driver is off; the cell accretes shape (volume) as it grows; and viability -- the higher-level variable that says whether the cellular description still holds -- declines by first-order Arrhenius thermal death when the environment is held ABOVE the cell&#39;s 37 C optimum. The runnable composite seeds the thermal driver at 45 C (above optimum) so viability visibly falls over the run, the cell taking up chemical and growing while its viability bound is being pushed toward collapse. This is Fig cell_interface b. in action: the environment&#39;s drivers drive the cell&#39;s typed interface ports, over time, through the process-bigraph engine.
@@ -555,7 +558,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">The paper&#39;s §Cellular interface (Fig cell_interface) defines a cell as an organization that senses and acts on its environment through typed PORTS -- &#34;each port is a typed connection from the cell to a single variable in the shared state, with a type that fixes the units of what crosses it.&#34; Fig cell_interface a. shows interaction modalities as ports (nutrient exchange, motile force, growth, electrical signaling); Fig cell_interface b. shows a minimal interface combining physical exchange ports with higher-level cellular variables (growth, shape, objectives, viability bounds). Is that interface EXECUTABLE rather than merely drawn -- i.e. does a runnable process-bigraph composite exercise those typed ports so that each port&#39;s value RESPONDS to its driving environmental input, demonstrating the typed cell -&gt; shared-variable connection the caption asserts?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="The paper&#39;s §Cellular interface (Fig cell_interface) defines a cell as an organization that senses and acts on its environment through typed PORTS -- &#34;each port is a typed connection from the cell to a single variable in the shared state, with a type that fixes the units of what crosses it.&#34; Fig cell_interface a. shows interaction modalities as ports (nutrient exchange, motile force, growth, electrical signaling); Fig cell_interface b. shows a minimal interface combining physical exchange ports with higher-level cellular variables (growth, shape, objectives, viability bounds). Is that interface EXECUTABLE rather than merely drawn -- i.e. does a runnable process-bigraph composite exercise those typed ports so that each port&#39;s value RESPONDS to its driving environmental input, demonstrating the typed cell -&gt; shared-variable connection the caption asserts?" data-edit-multiline data-edit-label="Question">The paper&#39;s §Cellular interface (Fig cell_interface) defines a cell as an organization that senses and acts on its environment through typed PORTS -- &#34;each port is a typed connection from the cell to a single variable in the shared state, with a type that fixes the units of what crosses it.&#34; Fig cell_interface a. shows interaction modalities as ports (nutrient exchange, motile force, growth, electrical signaling); Fig cell_interface b. shows a minimal interface combining physical exchange ports with higher-level cellular variables (growth, shape, objectives, viability bounds). Is that interface EXECUTABLE rather than merely drawn -- i.e. does a runnable process-bigraph composite exercise those typed ports so that each port&#39;s value RESPONDS to its driving environmental input, demonstrating the typed cell -&gt; shared-variable connection the caption asserts?</span></div>
         
       </div>
     </div>
@@ -579,34 +582,35 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Fig cell_interface is executable. A 5x chemical supply (0.2 -&gt; 1.0) gives exactly a 5x uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run; and with the thermal driver held at 45 C above the 37 C optimum, viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the optimum it barely moves (ends 0.911, decline &lt; 0.1) -- a 0.736 gap in final viability isolating temperature as the cause. Every number is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run. The composite is didactic / toy-real (uncalibrated); the rigorous, mechanism-independent treatment of this same interface is the cousin `cellular-interface` in the `draft-to-living-cell` investigation.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Fig cell_interface is executable. A 5x chemical supply (0.2 -&gt; 1.0) gives exactly a 5x uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run; and with the thermal driver held at 45 C above the 37 C optimum, viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the optimum it barely moves (ends 0.911, decline &lt; 0.1) -- a 0.736 gap in final viability isolating temperature as the cause. Every number is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run. The composite is didactic / toy-real (uncalibrated); the rigorous, mechanism-independent treatment of this same interface is the cousin `cellular-interface` in the `draft-to-living-cell` investigation." data-edit-multiline data-edit-label="Result">Fig cell_interface is executable. A 5x chemical supply (0.2 -&gt; 1.0) gives exactly a 5x uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run; and with the thermal driver held at 45 C above the 37 C optimum, viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the optimum it barely moves (ends 0.911, decline &lt; 0.1) -- a 0.736 gap in final viability isolating temperature as the cause. Every number is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run. The composite is didactic / toy-real (uncalibrated); the rigorous, mechanism-independent treatment of this same interface is the cousin `cellular-interface` in the `draft-to-living-cell` investigation.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-HEAT-SHOCK-CASCADES-THROUGH-SHARED-STATE</div>
+          <div class="ov-metric-k">mech-heat-shock-cascades-through-shared-state</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-NUTRIENT-STARVATION-PROPAGATES</div>
+          <div class="ov-metric-k">mech-nutrient-starvation-propagates</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-DISABLED-METABOLISM-BREAKS-PROPAGATION</div>
+          <div class="ov-metric-k">mech-disabled-metabolism-breaks-propagation</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-STATE-BOUNDED-AND-ENERGY-CONSISTENT</div>
+          <div class="ov-metric-k">mech-state-bounded-and-energy-consistent</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-UPTAKE-SATURATES-FORMULA</div>
+          <div class="ov-metric-k">mech-uptake-saturates-formula</div>
         </div>
         
       </div>
@@ -626,11 +630,11 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Fig cell_interface is executable, not merely drawn: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so each responds to its driving input. The chemical exchange port and the growth port respond to chemical supply (a 5x supply gives exactly 5x uptake flux and a strictly larger Monod growth rate); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; and the higher-level shape (volume) port accretes strictly (1.0 -&gt; 10.6) as the cell grows. Each is a deterministic typed cell -&gt; shared-variable connection.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="Fig cell_interface is executable, not merely drawn: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so each responds to its driving input. The chemical exchange port and the growth port respond to chemical supply (a 5x supply gives exactly 5x uptake flux and a strictly larger Monod growth rate); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; and the higher-level shape (volume) port accretes strictly (1.0 -&gt; 10.6) as the cell grows. Each is a deterministic typed cell -&gt; shared-variable connection." data-edit-multiline data-edit-label="Finding F-01">Fig cell_interface is executable, not merely drawn: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so each responds to its driving input. The chemical exchange port and the growth port respond to chemical supply (a 5x supply gives exactly 5x uptake flux and a strictly larger Monod growth rate); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; and the higher-level shape (volume) port accretes strictly (1.0 -&gt; 10.6) as the cell grows. Each is a deterministic typed cell -&gt; shared-variable connection.</span>
             
             <span class="finding-chip">via <code>physical-ports-respond-to-their-drivers</code></span>
             
@@ -680,11 +684,11 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The higher-level viability-bound variable of Fig cell_interface b. responds to its thermal driver: with the temperature held above the 37 C optimum (45 C) viability falls strictly monotonically by first-order Arrhenius thermal death from 1.0 to 0.175, whereas at the 37 C optimum it barely moves (ends 0.911, decline &lt; 0.1). The paired runs isolate temperature as the cause -- final viability differs by 0.736 between the two -- demonstrating the interface&#39;s viability bound as a runnable, driver-responsive port rather than a drawn label. Toy-real: the death constants are pinned to an E. coli reference D-value, not fitted.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="The higher-level viability-bound variable of Fig cell_interface b. responds to its thermal driver: with the temperature held above the 37 C optimum (45 C) viability falls strictly monotonically by first-order Arrhenius thermal death from 1.0 to 0.175, whereas at the 37 C optimum it barely moves (ends 0.911, decline &lt; 0.1). The paired runs isolate temperature as the cause -- final viability differs by 0.736 between the two -- demonstrating the interface&#39;s viability bound as a runnable, driver-responsive port rather than a drawn label. Toy-real: the death constants are pinned to an E. coli reference D-value, not fitted." data-edit-multiline data-edit-label="Finding F-02">The higher-level viability-bound variable of Fig cell_interface b. responds to its thermal driver: with the temperature held above the 37 C optimum (45 C) viability falls strictly monotonically by first-order Arrhenius thermal death from 1.0 to 0.175, whereas at the 37 C optimum it barely moves (ends 0.911, decline &lt; 0.1). The paired runs isolate temperature as the cause -- final viability differs by 0.736 between the two -- demonstrating the interface&#39;s viability bound as a runnable, driver-responsive port rather than a drawn label. Toy-real: the death constants are pinned to an E. coli reference D-value, not fitted.</span>
             
             <span class="finding-chip">via <code>hotter-kills-faster-than-optimum</code></span>
             
@@ -734,11 +738,11 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The two measured growth-rate points jointly recover the handler&#39;s Monod constants exactly, so the growth port is a genuine saturating response, not a linear proxy. Growth at chemical supply 0.2 is 0.17143 and at supply 1.0 is 0.40000; both satisfy mu = growth_max * S / (S + km) with growth_max = 0.6 and km = 0.5 to 1e-5 (0.6*0.2/0.7 = 0.17143; 0.6*1.0/1.5 = 0.40000). Because growth saturates while uptake flux stays strictly linear in supply (ratio exactly 5.0 across the same 0.2-&gt;1.0 change), the growth and uptake ports are measurably different functional forms driven by the one chemical input -- the interface exposes two distinct, recoverable response laws, confirmed in-memory on a fresh CellularInterfaceHandler.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The two measured growth-rate points jointly recover the handler&#39;s Monod constants exactly, so the growth port is a genuine saturating response, not a linear proxy. Growth at chemical supply 0.2 is 0.17143 and at supply 1.0 is 0.40000; both satisfy mu = growth_max * S / (S + km) with growth_max = 0.6 and km = 0.5 to 1e-5 (0.6*0.2/0.7 = 0.17143; 0.6*1.0/1.5 = 0.40000). Because growth saturates while uptake flux stays strictly linear in supply (ratio exactly 5.0 across the same 0.2-&gt;1.0 change), the growth and uptake ports are measurably different functional forms driven by the one chemical input -- the interface exposes two distinct, recoverable response laws, confirmed in-memory on a fresh CellularInterfaceHandler." data-edit-multiline data-edit-label="Finding F-03">The two measured growth-rate points jointly recover the handler&#39;s Monod constants exactly, so the growth port is a genuine saturating response, not a linear proxy. Growth at chemical supply 0.2 is 0.17143 and at supply 1.0 is 0.40000; both satisfy mu = growth_max * S / (S + km) with growth_max = 0.6 and km = 0.5 to 1e-5 (0.6*0.2/0.7 = 0.17143; 0.6*1.0/1.5 = 0.40000). Because growth saturates while uptake flux stays strictly linear in supply (ratio exactly 5.0 across the same 0.2-&gt;1.0 change), the growth and uptake ports are measurably different functional forms driven by the one chemical input -- the interface exposes two distinct, recoverable response laws, confirmed in-memory on a fresh CellularInterfaceHandler.</span>
             
             <span class="finding-chip">via <code>higher-chemical-drives-uptake-and-growth</code></span>
             
@@ -788,11 +792,11 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The interface ports are genuinely COUPLED through shared internal state, fixing the review&#39;s objection that the baseline&#39;s ports each respond only to their own driver. In the mechanistic variant a single perturbation propagates: a 37→48 °C heat shock drops enzyme activity 1.00→0.22, which cascades through uptake and ATP to collapse growth 0.43→0.07 AND erode viability 1.00→0.43 — one input moving every downstream port. A nutrient step-down propagates the same way (growth→0.07, ATP→0, viability→0.24). The cross-port response matrix is dense (a temperature perturbation moves all four measured outputs), not diagonal. This is physiological coupling, not nine independent driver responses.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The interface ports are genuinely COUPLED through shared internal state, fixing the review&#39;s objection that the baseline&#39;s ports each respond only to their own driver. In the mechanistic variant a single perturbation propagates: a 37→48 °C heat shock drops enzyme activity 1.00→0.22, which cascades through uptake and ATP to collapse growth 0.43→0.07 AND erode viability 1.00→0.43 — one input moving every downstream port. A nutrient step-down propagates the same way (growth→0.07, ATP→0, viability→0.24). The cross-port response matrix is dense (a temperature perturbation moves all four measured outputs), not diagonal. This is physiological coupling, not nine independent driver responses." data-edit-multiline data-edit-label="Finding F-04">The interface ports are genuinely COUPLED through shared internal state, fixing the review&#39;s objection that the baseline&#39;s ports each respond only to their own driver. In the mechanistic variant a single perturbation propagates: a 37→48 °C heat shock drops enzyme activity 1.00→0.22, which cascades through uptake and ATP to collapse growth 0.43→0.07 AND erode viability 1.00→0.43 — one input moving every downstream port. A nutrient step-down propagates the same way (growth→0.07, ATP→0, viability→0.24). The cross-port response matrix is dense (a temperature perturbation moves all four measured outputs), not diagonal. This is physiological coupling, not nine independent driver responses.</span>
             
             <span class="finding-chip">via <code>mech-heat-shock-cascades-through-shared-state</code></span>
             
@@ -842,11 +846,11 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The coupling is demonstrably THROUGH the shared ATP node, not direct wiring — shown by a matched-null ablation. With metabolism disabled (catalytic_capacity = ε, not 0.0), the cell cannot turn nutrient into ATP, so growth stays ~0 and biomass stays flat regardless of nutrient supply: the propagation breaks exactly where the shared energy currency is removed. Growth is paid out of ATP (it collapses when the ATP pool is depleted), and the shared state stays well-posed (ATP ≥ 0, viability ∈ [0,1], biomass monotone). Honest scope: typed-interface CORRECTNESS (each port responds) was already shown by the baseline; what the variant adds is genuine multi-process physiological COUPLING — but the rate laws and constants remain didactic/toy-real (one lumped ATP pool, a Gaussian enzyme window, a basal maintenance drain), not fitted to a measured respiration or growth-rate curve.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="The coupling is demonstrably THROUGH the shared ATP node, not direct wiring — shown by a matched-null ablation. With metabolism disabled (catalytic_capacity = ε, not 0.0), the cell cannot turn nutrient into ATP, so growth stays ~0 and biomass stays flat regardless of nutrient supply: the propagation breaks exactly where the shared energy currency is removed. Growth is paid out of ATP (it collapses when the ATP pool is depleted), and the shared state stays well-posed (ATP ≥ 0, viability ∈ [0,1], biomass monotone). Honest scope: typed-interface CORRECTNESS (each port responds) was already shown by the baseline; what the variant adds is genuine multi-process physiological COUPLING — but the rate laws and constants remain didactic/toy-real (one lumped ATP pool, a Gaussian enzyme window, a basal maintenance drain), not fitted to a measured respiration or growth-rate curve." data-edit-multiline data-edit-label="Finding F-05">The coupling is demonstrably THROUGH the shared ATP node, not direct wiring — shown by a matched-null ablation. With metabolism disabled (catalytic_capacity = ε, not 0.0), the cell cannot turn nutrient into ATP, so growth stays ~0 and biomass stays flat regardless of nutrient supply: the propagation breaks exactly where the shared energy currency is removed. Growth is paid out of ATP (it collapses when the ATP pool is depleted), and the shared state stays well-posed (ATP ≥ 0, viability ∈ [0,1], biomass monotone). Honest scope: typed-interface CORRECTNESS (each port responds) was already shown by the baseline; what the variant adds is genuine multi-process physiological COUPLING — but the rate laws and constants remain didactic/toy-real (one lumped ATP pool, a Gaussian enzyme window, a basal maintenance drain), not fitted to a measured respiration or growth-rate curve.</span>
             
             <span class="finding-chip">via <code>mech-disabled-metabolism-breaks-propagation</code></span>
             
@@ -1003,7 +1007,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
         
         
         
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=complete</span>
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
       </div>
       
     </div>
@@ -1078,6 +1082,12 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
 <div class="overview-section" id="results-section">
   
   <div id="results-summary" data-study="fig-03" style="margin:0 0 16px"></div>
+
+  
+  <div id="gate-results-section" data-study="fig-03" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
 
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="fig-03">
@@ -1185,12 +1195,12 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
         
         data-pytest-node="higher-chemical-drives-uptake-and-growth"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">higher-chemical-drives-uptake-and-growth</strong>
         
@@ -1198,6 +1208,16 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">A higher chemical supply drives a proportionally larger uptake flux and a strictly larger Monod growth rate -- the chemical exchange port and the growth port respond to their driving input (Fig cell_interface a. nutrient exchange + growth).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: supply 0.2 -&gt; flux -0.16, growth 0.171; supply 1.0 -&gt; flux -0.80, growth 0.400; flux ratio exactly 5.0</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1224,12 +1244,12 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
         data-pytest-node="physical-ports-respond-to-their-drivers"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">physical-ports-respond-to-their-drivers</strong>
         
@@ -1237,6 +1257,16 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Each typed physical exchange port (mechanical force, electrical current, thermal heat flux) responds to its OWN driver linearly and in isolation, and reads zero when that driver is off -- the typed cell -&gt; shared-variable connection of Fig cell_interface a.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: force 0.2, current 0.15, heat flux 0.2 under their drivers; all physical ports 0 at rest; non-driven ports unchanged</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1263,12 +1293,12 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
         data-pytest-node="shape-accretes-with-growth"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">shape-accretes-with-growth</strong>
         
@@ -1276,6 +1306,16 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The higher-level `shape` (volume) port accretes strictly monotonically as the cell takes up chemical and grows over the run -- a higher-level cellular variable of Fig cell_interface b. responding to sustained uptake.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: shape strictly increases 1.0 -&gt; 10.6 over 24 steps</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1302,12 +1342,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
         data-pytest-node="above-optimum-drives-viability-down"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">above-optimum-drives-viability-down</strong>
         
@@ -1315,6 +1355,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">With the thermal driver held ABOVE the 37 C optimum (45 C in the runnable composite), the `viability` port falls strictly monotonically by first-order Arrhenius thermal death -- the viability-bound variable of Fig cell_interface b. responding to its driver.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: thermal held at 45 C; viability falls strictly 1.0 -&gt; 0.175 (&lt; 0.5)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1341,12 +1391,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
         data-pytest-node="at-optimum-viability-holds"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">at-optimum-viability-holds</strong>
         
@@ -1354,6 +1404,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Holding the thermal driver AT the 37 C optimum, the viability port barely changes over the same run -- isolating temperature as the cause of the decline above optimum (the negative control for the viability claim).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: at 37 C viability ends 0.911 (&gt; 0.9), decline 0.089 &lt; 0.1</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1380,12 +1440,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
         data-pytest-node="hotter-kills-faster-than-optimum"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">hotter-kills-faster-than-optimum</strong>
         
@@ -1393,6 +1453,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Direct contrast of the two temperatures -- after the run, viability at 45 C is far below viability at the 37 C optimum, confirming the temperature driver, not the run length or the uptake, causes the viability decline.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: final viability 0.175 (45 C) vs 0.911 (37 C), gap 0.736 &gt; 0.5</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1662,7 +1732,7 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1757,9 +1827,9 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/11 passed</span>
+        <span class="muted small">6/11 passed</span>
       </div>
       
     </div>
@@ -1803,7 +1873,27 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+- Fig cell_interface is executable: the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so each responds to its driving input. A 5x chemical supply gives exactly 5x uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports respond linearly to their own driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run.
+- The viability-bound variable responds to temperature: held at 45 C (above the 37 C optimum) viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, while at the optimum it barely changes (ends 0.911, decline &lt; 0.1). Paired runs isolate temperature as the cause -- a 0.736 gap in final viability.
+- Every number is a deterministic function of the handler&#39;s response laws and reproduces exactly run to run.
+
+## Evidence
+- **HIGHER-CHEMICAL-DRIVES-UPTAKE-AND-GROWTH** -- flux ratio exactly 5.0; growth 0.171 -&gt; 0.400
+- **PHYSICAL-PORTS-RESPOND-TO-THEIR-DRIVERS** -- force 0.2, current 0.15, heat flux 0.2; all 0 at rest
+- **SHAPE-ACCRETES-WITH-GROWTH** -- shape 1.0 -&gt; 10.6, strictly increasing
+- **ABOVE-OPTIMUM-DRIVES-VIABILITY-DOWN** -- viability 1.0 -&gt; 0.175 (&lt; 0.5), strictly decreasing
+- **AT-OPTIMUM-VIABILITY-HOLDS** -- viability ends 0.911 (&gt; 0.9), decline 0.089
+- **HOTTER-KILLS-FASTER-THAN-OPTIMUM** -- final gap 0.736 (0.911 vs 0.175)
+
+## Limitations
+- The `fig03-runnable` composite is didactic / toy-real: the response-law constants and the Arrhenius thermal-death constants are plausible, hand-chosen magnitudes (the death form pinned to an E. coli reference D-value), not calibrated to a named cell type or literature dataset.
+- It is one lumped cell with no space, membrane geometry, or molecular detail -- exactly the paper&#39;s coarse-grained interface, internal processes represented only through their effects on the shared typed variables.
+- This study demonstrates only that the caption&#39;s ports RESPOND, runnably; it does not claim mechanism-independence or calibration. The rigorous cousin that specifies the interface as typed unit-bearing ports and measures that two different internal mechanisms realize the same interface relation is `cellular-interface` in the `draft-to-living-cell` investigation.
+
+## Next steps
+- Read this alongside the calibrated cousin `cellular-interface` to compare the same interface at didactic vs mechanism-independent rigor.
+- Fan out to the next figure&#39;s runnable study in the `paper-figures` investigation." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>Fig cell_interface is executable: the <code>fig03-runnable</code> composite exercises the caption's typed interface ports so each responds to its driving input. A 5x chemical supply gives exactly 5x uptake flux (-0.16 -&gt; -0.80) and a strictly larger Monod growth rate (0.171 -&gt; 0.400); the mechanical, electrical, and thermal exchange ports respond linearly to their own driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run.</li>
 <li>The viability-bound variable responds to temperature: held at 45 C (above the 37 C optimum) viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, while at the optimum it barely changes (ends 0.911, decline &lt; 0.1). Paired runs isolate temperature as the cause -- a 0.736 gap in final viability.</li>
@@ -1918,11 +2008,12 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "fig-03";
+window.__STUDY_INVESTIGATION__ = "paper-figures";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2051,6 +2142,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

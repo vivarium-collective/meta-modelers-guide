@@ -273,7 +273,7 @@ def _render_one(address, config, runs_db, study_yaml, overrides=None):
 
 # **Composite `meta_modelers_guide.composites.fig03a-interaction-modalities`** — `spec_meta_modelers_guide_composites_fig03a_interaction_modalities` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig03a_interaction_modalities = load_spec(REPO / 'meta_modelers_guide/composites/fig03a-interaction-modalities.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig03a_interaction_modalities)
 
@@ -295,7 +295,7 @@ spec_meta_modelers_guide_composites_fig03a_interaction_modalities['state']['elec
 
 # **Composite `meta_modelers_guide.composites.fig03b-cellular-interface`** — `spec_meta_modelers_guide_composites_fig03b_cellular_interface` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig03b_cellular_interface = load_spec(REPO / 'meta_modelers_guide/composites/fig03b-cellular-interface.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig03b_cellular_interface)
 
@@ -339,7 +339,7 @@ spec_meta_modelers_guide_composites_fig03b_cellular_interface['state']['cell']['
 
 # **Composite `meta_modelers_guide.composites.fig03b-executable`** — `spec_meta_modelers_guide_composites_fig03b_executable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig03b_executable = load_spec(REPO / 'meta_modelers_guide/composites/fig03b-executable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig03b_executable)
 
@@ -392,7 +392,7 @@ spec_meta_modelers_guide_composites_fig03b_executable['state']['cell']['config']
 
 # **Composite `meta_modelers_guide.composites.cellular-interface-spatial`** — `spec_meta_modelers_guide_composites_cellular_interface_spatial` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_cellular_interface_spatial = load_spec(REPO / 'meta_modelers_guide/composites/cellular-interface-spatial.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_cellular_interface_spatial)
 
@@ -458,7 +458,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig03a_interaction_modalities, {'interval': INTERVAL_interaction_modalities}, core=core)
             _comp.run(STEPS_interaction_modalities)
         print('ran', 'interaction-modalities', f'(meta_modelers_guide.composites.fig03a-interaction-modalities) for', STEPS_interaction_modalities, 'steps')
@@ -466,7 +466,7 @@ if RERUN:
         print(f"interaction-modalities not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig03b_cellular_interface, {'interval': INTERVAL_cellular_interface}, core=core)
             _comp.run(STEPS_cellular_interface)
         print('ran', 'cellular-interface', f'(meta_modelers_guide.composites.fig03b-cellular-interface) for', STEPS_cellular_interface, 'steps')
@@ -474,7 +474,7 @@ if RERUN:
         print(f"cellular-interface not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig03b_executable, {'interval': INTERVAL_cellular_interface_executable}, core=core)
             _comp.run(STEPS_cellular_interface_executable)
         print('ran', 'cellular-interface-executable', f'(meta_modelers_guide.composites.fig03b-executable) for', STEPS_cellular_interface_executable, 'steps')
@@ -482,7 +482,7 @@ if RERUN:
         print(f"cellular-interface-executable not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_cellular_interface_spatial, {'interval': INTERVAL_cellular_interface_spatial}, core=core)
             _comp.run(STEPS_cellular_interface_spatial)
         print('ran', 'cellular-interface-spatial', f'(meta_modelers_guide.composites.cellular-interface-spatial) for', STEPS_cellular_interface_spatial, 'steps')
@@ -594,7 +594,7 @@ _save_viz('cellular-interface', 'fig03-illustration', _render_one('image:visuali
 
 # **Composite `meta_modelers_guide.composites.single-cell-in-a-field`** — `spec_meta_modelers_guide_composites_single_cell_in_a_field` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_single_cell_in_a_field = load_spec(REPO / 'meta_modelers_guide/composites/single-cell-in-a-field.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_single_cell_in_a_field)
 
@@ -645,7 +645,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_single_cell_in_a_field, {'interval': INTERVAL_single_cell_in_a_field}, core=core)
             _comp.run(STEPS_single_cell_in_a_field)
         print('ran', 'single-cell-in-a-field', f'(meta_modelers_guide.composites.single-cell-in-a-field) for', STEPS_single_cell_in_a_field, 'steps')
@@ -706,8 +706,8 @@ _save_viz('cell-environment-coupling', 'single-cell-in-a-field-metrics', _render
 # viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
 # scripted or lumped stand-in for it: over
 # 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric
-# growth via resource preemption between the two cells (biomass ratio 2.9-3.7x across 5 seeds,
-# 3.69x on the flagship seed; volume 3511 vs 81
+# growth via resource preemption between the two cells (biomass ratio 3.69x, deterministic and
+# seed-invariant; volume 3511 vs 81
 # px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
 # bound; the dividing-population lift (M7b, `cellcell-compete-div`) turns this into robust competitive DOMINANCE — fast lineage ~9x the slow's biomass, monoculture-controlled — with full exclusion only stochastic, so exclusion is earned only as a seed-dependent outcome, not deterministically, and the winner's ~97.5%-lattice swell without division is a saturation artifact), while a
 # different composite over the same coupling process — a localized glucose depot, a fast-diffusing
@@ -738,7 +738,7 @@ _save_viz('cell-environment-coupling', 'single-cell-in-a-field-metrics', _render
 
 # **Composite `meta_modelers_guide.composites.cellcell-compete`** — `spec_meta_modelers_guide_composites_cellcell_compete` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_cellcell_compete = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-compete.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_cellcell_compete)
 
@@ -781,7 +781,7 @@ spec_meta_modelers_guide_composites_cellcell_compete['state']['colony']['config'
 
 # **Composite `meta_modelers_guide.composites.cellcell-crossfeed`** — `spec_meta_modelers_guide_composites_cellcell_crossfeed` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_cellcell_crossfeed = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-crossfeed.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed)
 
@@ -824,7 +824,7 @@ spec_meta_modelers_guide_composites_cellcell_crossfeed['state']['colony']['confi
 
 # **Composite `meta_modelers_guide.composites.cellcell-crossfeed-knockout`** — `spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout = load_spec(REPO / 'meta_modelers_guide/composites/cellcell-crossfeed-knockout.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout)
 
@@ -883,7 +883,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_cellcell_compete, {'interval': INTERVAL_cellcell_compete}, core=core)
             _comp.run(STEPS_cellcell_compete)
         print('ran', 'cellcell-compete', f'(meta_modelers_guide.composites.cellcell-compete) for', STEPS_cellcell_compete, 'steps')
@@ -891,7 +891,7 @@ if RERUN:
         print(f"cellcell-compete not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed, {'interval': INTERVAL_cellcell_crossfeed}, core=core)
             _comp.run(STEPS_cellcell_crossfeed)
         print('ran', 'cellcell-crossfeed', f'(meta_modelers_guide.composites.cellcell-crossfeed) for', STEPS_cellcell_crossfeed, 'steps')
@@ -899,7 +899,7 @@ if RERUN:
         print(f"cellcell-crossfeed not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_cellcell_crossfeed_knockout, {'interval': INTERVAL_cellcell_crossfeed_knockout}, core=core)
             _comp.run(STEPS_cellcell_crossfeed_knockout)
         print('ran', 'cellcell-crossfeed-knockout', f'(meta_modelers_guide.composites.cellcell-crossfeed-knockout) for', STEPS_cellcell_crossfeed_knockout, 'steps')
@@ -943,7 +943,7 @@ _save_viz('cell-cell-coupling', 'cellcell-crossfeed-metrics', _render_one('html:
 #
 # | test | measures | passes if |
 # | --- | --- | --- |
-# | competition-excludes-the-slower-cell _(primary)_ | kind=observable path=obs.biomass expr=last(obs.biomass["1"]) / last(obs.biomass["2"]) | kind acceptance_criterion op > value 1.5 provenance prior: the higher-uptake-capacity cell (glucose_vmax 10) should end with more biomass than the lower-capacity cell (vmax 4) → expect ratio > 1 (pin floor 1.5). Observed: multi-seed band 2.9-3.7x (3.69x on the flagship seed; biomass 237.9 vs 64.5) over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly; tests/test_cellcell_multiseed.py for the 5-seed band) |
+# | competition-excludes-the-slower-cell _(primary)_ | kind=observable path=obs.biomass expr=last(obs.biomass["1"]) / last(obs.biomass["2"]) | kind acceptance_criterion op > value 1.5 provenance prior: the higher-uptake-capacity cell (glucose_vmax 10) should end with more biomass than the lower-capacity cell (vmax 4) → expect ratio > 1 (pin floor 1.5). Observed: deterministic 3.69x (seed-invariant; biomass 237.9 vs 64.5) over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly; tests/test_cellcell_multiseed.py for the 5-seed band) |
 # | competition-volume-tracks-biomass _(primary)_ | kind=observable path=obs.volume expr=last(obs.volume["1"]) > last(obs.volume["2"]) | kind acceptance_criterion op > value 0.0 provenance prior: the biomass winner should also hold more lattice volume → expect volume(id1) > volume(id2). Observed: 3511 px (id 1) vs 81 px (id 2) over 20 ticks; the winner's 3511 px is ~97.5% of the 3600-px lattice, a finite-size saturation endpoint rather than unbounded dominance (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell) |
 # | competition-loser-displaced-not-excluded _(diagnostic)_ | kind=observable path=obs.biomass expr=last(obs.biomass["2"])   # loser final biomass, vs the 1.25 viable-biomass floor | kind acceptance_criterion op > value 1.25 provenance prior: this study couples shared state but imposes no viability constraint, so the loser should stay above its 1.25 seed (displaced, not excluded). Observed: loser (id 2) ends at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits far above the viable-biomass floor, while holding only 81 px against the winner's 3511 px (~97.5% of the 3600-px lattice): spatially displaced, not excluded. Extending the run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation) (tests/test_cellcell_regimes.py::test_competition_loser_is_displaced_not_excluded) |
 # | crossfeeding-consumer-blind-to-glucose _(primary)_ | kind=observable path=obs.local_glucose expr=last(obs.local_glucose["2"]) | kind regression_pin op < value 0.5 provenance by construction the consumer is seeded outside the localized glucose depot; consumer (id 2) local_glucose == 0.0 over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable) |
@@ -996,7 +996,7 @@ _save_viz('cell-cell-coupling', 'cellcell-crossfeed-metrics', _render_one('html:
 
 # **Composite `meta_modelers_guide.composites.disintegration-spatial`** — `spec_meta_modelers_guide_composites_disintegration_spatial` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_disintegration_spatial = load_spec(REPO / 'meta_modelers_guide/composites/disintegration-spatial.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_disintegration_spatial)
 
@@ -1054,7 +1054,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_disintegration_spatial, {'interval': INTERVAL_disintegration_spatial}, core=core)
             _comp.run(STEPS_disintegration_spatial)
         print('ran', 'disintegration-spatial', f'(meta_modelers_guide.composites.disintegration-spatial) for', STEPS_disintegration_spatial, 'steps')
@@ -1116,7 +1116,7 @@ _save_viz('disintegration', 'disintegration-metrics', _render_one('html:viz/disi
 
 # **Composite `meta_modelers_guide.composites.molecular-turing-pattern`** — `spec_meta_modelers_guide_composites_molecular_turing_pattern` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_molecular_turing_pattern = load_spec(REPO / 'meta_modelers_guide/composites/molecular-turing-pattern.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_molecular_turing_pattern)
 
@@ -1140,7 +1140,7 @@ spec_meta_modelers_guide_composites_molecular_turing_pattern['state']['gs']['con
 
 # **Composite `meta_modelers_guide.composites.molecular-equal-diffusion-control`** — `spec_meta_modelers_guide_composites_molecular_equal_diffusion_control` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_molecular_equal_diffusion_control = load_spec(REPO / 'meta_modelers_guide/composites/molecular-equal-diffusion-control.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_molecular_equal_diffusion_control)
 
@@ -1164,7 +1164,7 @@ spec_meta_modelers_guide_composites_molecular_equal_diffusion_control['state']['
 
 # **Composite `meta_modelers_guide.composites.molecular-thermal-graded`** — `spec_meta_modelers_guide_composites_molecular_thermal_graded` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_molecular_thermal_graded = load_spec(REPO / 'meta_modelers_guide/composites/molecular-thermal-graded.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_molecular_thermal_graded)
 
@@ -1210,7 +1210,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_molecular_turing_pattern, {'interval': INTERVAL_molecular_turing_pattern}, core=core)
             _comp.run(STEPS_molecular_turing_pattern)
         print('ran', 'molecular-turing-pattern', f'(meta_modelers_guide.composites.molecular-turing-pattern) for', STEPS_molecular_turing_pattern, 'steps')
@@ -1218,7 +1218,7 @@ if RERUN:
         print(f"molecular-turing-pattern not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_molecular_equal_diffusion_control, {'interval': INTERVAL_molecular_equal_diffusion_control}, core=core)
             _comp.run(STEPS_molecular_equal_diffusion_control)
         print('ran', 'molecular-equal-diffusion-control', f'(meta_modelers_guide.composites.molecular-equal-diffusion-control) for', STEPS_molecular_equal_diffusion_control, 'steps')
@@ -1226,7 +1226,7 @@ if RERUN:
         print(f"molecular-equal-diffusion-control not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_molecular_thermal_graded, {'interval': INTERVAL_molecular_thermal_graded}, core=core)
             _comp.run(STEPS_molecular_thermal_graded)
         print('ran', 'molecular-thermal-graded', f'(meta_modelers_guide.composites.molecular-thermal-graded) for', STEPS_molecular_thermal_graded, 'steps')
@@ -1291,7 +1291,7 @@ _save_viz('molecular-interfaces', 'molecular-metrics', _render_one('html:viz/mol
 
 # **Composite `meta_modelers_guide.composites.cell-sorting-spatial`** — `spec_meta_modelers_guide_composites_cell_sorting_spatial` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_cell_sorting_spatial = load_spec(REPO / 'meta_modelers_guide/composites/cell-sorting-spatial.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_cell_sorting_spatial)
 
@@ -1328,7 +1328,7 @@ spec_meta_modelers_guide_composites_cell_sorting_spatial['state']['cell']['confi
 
 # **Composite `meta_modelers_guide.composites.condensate-cahn-hilliard`** — `spec_meta_modelers_guide_composites_condensate_cahn_hilliard` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_condensate_cahn_hilliard = load_spec(REPO / 'meta_modelers_guide/composites/condensate-cahn-hilliard.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_condensate_cahn_hilliard)
 
@@ -1366,7 +1366,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_cell_sorting_spatial, {'interval': INTERVAL_cell_sorting_spatial}, core=core)
             _comp.run(STEPS_cell_sorting_spatial)
         print('ran', 'cell-sorting-spatial', f'(meta_modelers_guide.composites.cell-sorting-spatial) for', STEPS_cell_sorting_spatial, 'steps')
@@ -1374,7 +1374,7 @@ if RERUN:
         print(f"cell-sorting-spatial not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_condensate_cahn_hilliard, {'interval': INTERVAL_condensate_cahn_hilliard}, core=core)
             _comp.run(STEPS_condensate_cahn_hilliard)
         print('ran', 'condensate-cahn-hilliard', f'(meta_modelers_guide.composites.condensate-cahn-hilliard) for', STEPS_condensate_cahn_hilliard, 'steps')
@@ -1449,7 +1449,7 @@ _save_viz('biomolecular-complementarity', 'condensate-metrics', _render_one('htm
 
 # **Composite `meta_modelers_guide.composites.protocell-autopoietic`** — `spec_meta_modelers_guide_composites_protocell_autopoietic` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_protocell_autopoietic = load_spec(REPO / 'meta_modelers_guide/composites/protocell-autopoietic.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_protocell_autopoietic)
 
@@ -1470,7 +1470,7 @@ spec_meta_modelers_guide_composites_protocell_autopoietic['state']['protocell'][
 
 # **Composite `meta_modelers_guide.composites.protocell-vesicle-control`** — `spec_meta_modelers_guide_composites_protocell_vesicle_control` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_protocell_vesicle_control = load_spec(REPO / 'meta_modelers_guide/composites/protocell-vesicle-control.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_protocell_vesicle_control)
 
@@ -1491,7 +1491,7 @@ spec_meta_modelers_guide_composites_protocell_vesicle_control['state']['protocel
 
 # **Composite `meta_modelers_guide.composites.protocell-autopoietic-v2`** — `spec_meta_modelers_guide_composites_protocell_autopoietic_v2` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_protocell_autopoietic_v2 = load_spec(REPO / 'meta_modelers_guide/composites/protocell-autopoietic-v2.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_protocell_autopoietic_v2)
 
@@ -1518,7 +1518,7 @@ spec_meta_modelers_guide_composites_protocell_autopoietic_v2['state']['protocell
 
 # **Composite `meta_modelers_guide.composites.protocell-autopoietic-v2-open`** — `spec_meta_modelers_guide_composites_protocell_autopoietic_v2_open` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_protocell_autopoietic_v2_open = load_spec(REPO / 'meta_modelers_guide/composites/protocell-autopoietic-v2-open.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_protocell_autopoietic_v2_open)
 
@@ -1572,7 +1572,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_protocell_autopoietic, {'interval': INTERVAL_protocell_autopoietic}, core=core)
             _comp.run(STEPS_protocell_autopoietic)
         print('ran', 'protocell-autopoietic', f'(meta_modelers_guide.composites.protocell-autopoietic) for', STEPS_protocell_autopoietic, 'steps')
@@ -1580,7 +1580,7 @@ if RERUN:
         print(f"protocell-autopoietic not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_protocell_vesicle_control, {'interval': INTERVAL_protocell_vesicle_control}, core=core)
             _comp.run(STEPS_protocell_vesicle_control)
         print('ran', 'protocell-vesicle-control', f'(meta_modelers_guide.composites.protocell-vesicle-control) for', STEPS_protocell_vesicle_control, 'steps')
@@ -1588,7 +1588,7 @@ if RERUN:
         print(f"protocell-vesicle-control not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_protocell_autopoietic_v2, {'interval': INTERVAL_protocell_autopoietic_v2}, core=core)
             _comp.run(STEPS_protocell_autopoietic_v2)
         print('ran', 'protocell-autopoietic-v2', f'(meta_modelers_guide.composites.protocell-autopoietic-v2) for', STEPS_protocell_autopoietic_v2, 'steps')
@@ -1596,7 +1596,7 @@ if RERUN:
         print(f"protocell-autopoietic-v2 not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_protocell_autopoietic_v2_open, {'interval': INTERVAL_protocell_autopoietic_v2_open}, core=core)
             _comp.run(STEPS_protocell_autopoietic_v2_open)
         print('ran', 'protocell-autopoietic-v2-open', f'(meta_modelers_guide.composites.protocell-autopoietic-v2-open) for', STEPS_protocell_autopoietic_v2_open, 'steps')
@@ -1668,7 +1668,7 @@ _save_viz('autopoiesis', 'autopoiesis-metrics', _render_one('html:viz/autopoiesi
 
 # **Composite `meta_modelers_guide.composites.growth-division-spatial`** — `spec_meta_modelers_guide_composites_growth_division_spatial` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_growth_division_spatial = load_spec(REPO / 'meta_modelers_guide/composites/growth-division-spatial.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_growth_division_spatial)
 
@@ -1727,7 +1727,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_growth_division_spatial, {'interval': INTERVAL_growth_division_spatial}, core=core)
             _comp.run(STEPS_growth_division_spatial)
         print('ran', 'growth-division-spatial', f'(meta_modelers_guide.composites.growth-division-spatial) for', STEPS_growth_division_spatial, 'steps')
@@ -1789,7 +1789,7 @@ _save_viz('growth-and-division', 'growth-division-metrics', _render_one('html:vi
 
 # **Composite `meta_modelers_guide.composites.development-evolution-spatial`** — `spec_meta_modelers_guide_composites_development_evolution_spatial` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_development_evolution_spatial = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-spatial.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_development_evolution_spatial)
 
@@ -1836,7 +1836,7 @@ spec_meta_modelers_guide_composites_development_evolution_spatial['state']['evo'
 
 # **Composite `meta_modelers_guide.composites.development-evolution-no-mutation`** — `spec_meta_modelers_guide_composites_development_evolution_no_mutation` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_development_evolution_no_mutation = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-no-mutation.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_development_evolution_no_mutation)
 
@@ -1883,7 +1883,7 @@ spec_meta_modelers_guide_composites_development_evolution_no_mutation['state']['
 
 # **Composite `meta_modelers_guide.composites.development-evolution-no-selection`** — `spec_meta_modelers_guide_composites_development_evolution_no_selection` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_development_evolution_no_selection = load_spec(REPO / 'meta_modelers_guide/composites/development-evolution-no-selection.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_development_evolution_no_selection)
 
@@ -1952,7 +1952,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_development_evolution_spatial, {'interval': INTERVAL_development_evolution_spatial}, core=core)
             _comp.run(STEPS_development_evolution_spatial)
         print('ran', 'development-evolution-spatial', f'(meta_modelers_guide.composites.development-evolution-spatial) for', STEPS_development_evolution_spatial, 'steps')
@@ -1960,7 +1960,7 @@ if RERUN:
         print(f"development-evolution-spatial not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_development_evolution_no_mutation, {'interval': INTERVAL_development_evolution_no_mutation}, core=core)
             _comp.run(STEPS_development_evolution_no_mutation)
         print('ran', 'development-evolution-no-mutation', f'(meta_modelers_guide.composites.development-evolution-no-mutation) for', STEPS_development_evolution_no_mutation, 'steps')
@@ -1968,7 +1968,7 @@ if RERUN:
         print(f"development-evolution-no-mutation not runnable yet: {type(_e).__name__}: {_e}")
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_development_evolution_no_selection, {'interval': INTERVAL_development_evolution_no_selection}, core=core)
             _comp.run(STEPS_development_evolution_no_selection)
         print('ran', 'development-evolution-no-selection', f'(meta_modelers_guide.composites.development-evolution-no-selection) for', STEPS_development_evolution_no_selection, 'steps')
@@ -2012,3 +2012,4 @@ _save_viz('development-and-evolution', 'development-evolution-metrics', _render_
 # - All nine composition patterns now have a study: eight realized as real 2D spatial mechanisms (cell-environment-coupling, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution) plus the foundational cellular-interface contract. The honest frontier is not coverage but depth: each study realizes part of its pattern's full claim and names the rest as a gap.
 # - The arc's open next rung is learning — a cell whose history of interaction changes its future regulation in a way that measurably improves its capacity to stay viable, the executable bridge from a self-maintaining agent to an adaptive one. It is named here but not yet built.
 # - Two of the paper's four physical interface modalities remain unrealized across the whole investigation: mechanical forces and electrical currents. The chemical port is everywhere and the thermal port appears in molecular-interfaces; a mechanical/tension channel and an electrostatic channel are the standing gap.
+# - Evidence-ledger gap (rigor, not science): every study's behavior gate is authored as passed with documented runs and findings, but the machine-readable per-test outcome ledger is empty, so the discovery engine's coded roll-up is BLOCKED and the authored verdict (supported / qualified) diverges from it. The claims rest on documented-but-not-recommitted evidence. The honest next action is to re-run each study's canonical composite and record graded behavior-test outcomes so the coded roll-up confirms the authored verdict on fresh evidence; until then the verdicts are the author's assessment, not a machine-verified certificate.

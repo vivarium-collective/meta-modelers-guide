@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-07" data-study-kind="computational" title="fig-07">fig-07: Nested cellular hierarchy</span>
+    <span class="study-name" id="study-name" data-slug="fig-07" data-study-kind="computational" title="fig-07" data-edit-kind="study" data-edit-field="title" data-edit-value="fig-07: Nested cellular hierarchy" data-edit-label="Title">fig-07: Nested cellular hierarchy</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Wiring six ODE processes over one place graph whose stores nest up to six levels deep -- WITHOUT flattening the compartment hierarchy -- reproduces the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) as a runnable nested cascade: over a deterministic 30-step run, a process acting at each nesting level moves quantity in its nested store (transport fills cytoplasmic nutrients 0 -&gt; 9.0; metabolism makes metabolites 0 -&gt; ~20.5 and energy 0 -&gt; ~13.1; transcription reads the six-levels-deep DNA to make RNA 0 -&gt; ~0.64; translation makes protein 0 -&gt; ~0.24; subunit assembly grows the four-levels-deep ribosome pool 0.5 -&gt; ~0.88, closing the loop; replication / repair holds the six-levels-deep genome at DNA == 1.0), and the place-graph containment is preserved as the dynamics run -- the deep stores stay nested inside their parents, reachable only at full depth, alongside their untouched siblings. The whole hierarchy evolves as one coupled cell; every value reproduces exactly run to run.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="Wiring six ODE processes over one place graph whose stores nest up to six levels deep -- WITHOUT flattening the compartment hierarchy -- reproduces the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) as a runnable nested cascade: over a deterministic 30-step run, a process acting at each nesting level moves quantity in its nested store (transport fills cytoplasmic nutrients 0 -&gt; 9.0; metabolism makes metabolites 0 -&gt; ~20.5 and energy 0 -&gt; ~13.1; transcription reads the six-levels-deep DNA to make RNA 0 -&gt; ~0.64; translation makes protein 0 -&gt; ~0.24; subunit assembly grows the four-levels-deep ribosome pool 0.5 -&gt; ~0.88, closing the loop; replication / repair holds the six-levels-deep genome at DNA == 1.0), and the place-graph containment is preserved as the dynamics run -- the deep stores stay nested inside their parents, reachable only at full depth, alongside their untouched siblings. The whole hierarchy evolves as one coupled cell; every value reproduces exactly run to run." data-edit-multiline data-edit-label="Claim">Wiring six ODE processes over one place graph whose stores nest up to six levels deep -- WITHOUT flattening the compartment hierarchy -- reproduces the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) as a runnable nested cascade: over a deterministic 30-step run, a process acting at each nesting level moves quantity in its nested store (transport fills cytoplasmic nutrients 0 -&gt; 9.0; metabolism makes metabolites 0 -&gt; ~20.5 and energy 0 -&gt; ~13.1; transcription reads the six-levels-deep DNA to make RNA 0 -&gt; ~0.64; translation makes protein 0 -&gt; ~0.24; subunit assembly grows the four-levels-deep ribosome pool 0.5 -&gt; ~0.88, closing the loop; replication / repair holds the six-levels-deep genome at DNA == 1.0), and the place-graph containment is preserved as the dynamics run -- the deep stores stay nested inside their parents, reachable only at full depth, alongside their untouched siblings. The whole hierarchy evolves as one coupled cell; every value reproduces exactly run to run.</p>
       
       <div class="ctr-context">This is the runnable realization of the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions), whose two panels are: **a.** molecular structures organized hierarchically across scales -- from proteins to complexes, organelles, and extracellular matrix; and **b.** a composite process diagram in which processes interact with nested states corresponding to cellular compartments and structures. The paper&#39;s point is that complementarity organizes molecules into complexes and higher-level assemblies, and that as organization increases the model must carry the containment -- membranes, compartments, organelles -- as structure, not flatten it into a bag of species.
 
@@ -563,7 +566,7 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Does the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) hold as an executable composite -- can molecular structures organized hierarchically across scales (proteins to complexes, organelles, ECM) be represented as a NESTED place graph, with processes that interact with those nested states corresponding to cellular compartments and structures, such that a process acting at one nesting level actually moves quantity in a deeply-nested store while the place-graph containment is preserved as the whole cell evolves as one coupled system?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Does the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) hold as an executable composite -- can molecular structures organized hierarchically across scales (proteins to complexes, organelles, ECM) be represented as a NESTED place graph, with processes that interact with those nested states corresponding to cellular compartments and structures, such that a process acting at one nesting level actually moves quantity in a deeply-nested store while the place-graph containment is preserved as the whole cell evolves as one coupled system?" data-edit-multiline data-edit-label="Question">Does the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) hold as an executable composite -- can molecular structures organized hierarchically across scales (proteins to complexes, organelles, ECM) be represented as a NESTED place graph, with processes that interact with those nested states corresponding to cellular compartments and structures, such that a process acting at one nesting level actually moves quantity in a deeply-nested store while the place-graph containment is preserved as the whole cell evolves as one coupled system?</span></div>
         
       </div>
     </div>
@@ -587,34 +590,35 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a deterministic 30-step run (31 emitted frames), a process acting at each nesting level moves quantity in its store: transmembrane transport fills the cytoplasmic nutrient pool 0 -&gt; 9.0 (monotonic), metabolism makes metabolites 0 -&gt; ~20.5 and energy 0 -&gt; ~13.1, transcription of the six-levels-deep DNA makes RNA 0 -&gt; ~0.64, translation makes protein 0 -&gt; ~0.24 (trailing RNA, as it is downstream), and subunit assembly grows the four-levels-deep ribosome pool 0.5 -&gt; ~0.88, closing the loop back to translation. All five levels change in one coupled run. The place-graph containment is preserved as the dynamics run: after the run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store -- the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair. Every value reproduces exactly run to run. The paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) is thus executable, not merely drawn -- its nested hierarchy of composites runs forward as one coupled cell. This is a didactic / toy-real composite; the calibrated molecular-complementarity cousin is `biomolecular-complementarity` in the `draft-to-living-cell` investigation.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Over a deterministic 30-step run (31 emitted frames), a process acting at each nesting level moves quantity in its store: transmembrane transport fills the cytoplasmic nutrient pool 0 -&gt; 9.0 (monotonic), metabolism makes metabolites 0 -&gt; ~20.5 and energy 0 -&gt; ~13.1, transcription of the six-levels-deep DNA makes RNA 0 -&gt; ~0.64, translation makes protein 0 -&gt; ~0.24 (trailing RNA, as it is downstream), and subunit assembly grows the four-levels-deep ribosome pool 0.5 -&gt; ~0.88, closing the loop back to translation. All five levels change in one coupled run. The place-graph containment is preserved as the dynamics run: after the run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store -- the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair. Every value reproduces exactly run to run. The paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) is thus executable, not merely drawn -- its nested hierarchy of composites runs forward as one coupled cell. This is a didactic / toy-real composite; the calibrated molecular-complementarity cousin is `biomolecular-complementarity` in the `draft-to-living-cell` investigation." data-edit-multiline data-edit-label="Result">Over a deterministic 30-step run (31 emitted frames), a process acting at each nesting level moves quantity in its store: transmembrane transport fills the cytoplasmic nutrient pool 0 -&gt; 9.0 (monotonic), metabolism makes metabolites 0 -&gt; ~20.5 and energy 0 -&gt; ~13.1, transcription of the six-levels-deep DNA makes RNA 0 -&gt; ~0.64, translation makes protein 0 -&gt; ~0.24 (trailing RNA, as it is downstream), and subunit assembly grows the four-levels-deep ribosome pool 0.5 -&gt; ~0.88, closing the loop back to translation. All five levels change in one coupled run. The place-graph containment is preserved as the dynamics run: after the run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store -- the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair. Every value reproduces exactly run to run. The paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) is thus executable, not merely drawn -- its nested hierarchy of composites runs forward as one coupled cell. This is a didactic / toy-real composite; the calibrated molecular-complementarity cousin is `biomolecular-complementarity` in the `draft-to-living-cell` investigation.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-TRANSPORT-CONSERVES-SUBSTRATE</div>
+          <div class="ov-metric-k">mech-transport-conserves-substrate</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-BOUNDARY-PERMEABILITY-GATES-DEEP-REPORTER</div>
+          <div class="ov-metric-k">mech-boundary-permeability-gates-deep-reporter</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-BOTH-BOUNDARIES-GATE-IN-SERIES</div>
+          <div class="ov-metric-k">mech-both-boundaries-gate-in-series</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-HIGHER-PERMEABILITY-FILLS-DEEPER-FASTER</div>
+          <div class="ov-metric-k">mech-higher-permeability-fills-deeper-faster</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-LOCAL-METABOLISM-IS-COMPARTMENT-RESTRICTED</div>
+          <div class="ov-metric-k">mech-local-metabolism-is-compartment-restricted</div>
         </div>
         
       </div>
@@ -634,11 +638,11 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Six ODE processes wired over one place graph nesting up to six levels deep -- WITHOUT flattening the compartment hierarchy -- run to completion as one coupled cell and drive a non-trivial change at EVERY level of the nested hierarchy. A process acting at each level moves quantity in its store: transport fills cytoplasmic nutrients (0 -&gt; 9.0, monotonic), metabolism makes metabolites (0 -&gt; ~20.5) and energy (0 -&gt; ~13.1), transcription of the six-levels-deep DNA makes RNA (0 -&gt; ~0.64), translation makes protein (0 -&gt; ~0.24, trailing RNA), and subunit assembly grows the four-levels-deep ribosome pool (0.5 -&gt; ~0.88, closing the loop). All five levels change; every value is deterministic and reproduces exactly run to run.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="Six ODE processes wired over one place graph nesting up to six levels deep -- WITHOUT flattening the compartment hierarchy -- run to completion as one coupled cell and drive a non-trivial change at EVERY level of the nested hierarchy. A process acting at each level moves quantity in its store: transport fills cytoplasmic nutrients (0 -&gt; 9.0, monotonic), metabolism makes metabolites (0 -&gt; ~20.5) and energy (0 -&gt; ~13.1), transcription of the six-levels-deep DNA makes RNA (0 -&gt; ~0.64), translation makes protein (0 -&gt; ~0.24, trailing RNA), and subunit assembly grows the four-levels-deep ribosome pool (0.5 -&gt; ~0.88, closing the loop). All five levels change; every value is deterministic and reproduces exactly run to run." data-edit-multiline data-edit-label="Finding F-01">Six ODE processes wired over one place graph nesting up to six levels deep -- WITHOUT flattening the compartment hierarchy -- run to completion as one coupled cell and drive a non-trivial change at EVERY level of the nested hierarchy. A process acting at each level moves quantity in its store: transport fills cytoplasmic nutrients (0 -&gt; 9.0, monotonic), metabolism makes metabolites (0 -&gt; ~20.5) and energy (0 -&gt; ~13.1), transcription of the six-levels-deep DNA makes RNA (0 -&gt; ~0.64), translation makes protein (0 -&gt; ~0.24, trailing RNA), and subunit assembly grows the four-levels-deep ribosome pool (0.5 -&gt; ~0.88, closing the loop). All five levels change; every value is deterministic and reproduces exactly run to run.</span>
             
             <span class="finding-chip">via <code>cascade-propagates-across-multiple-levels</code></span>
             
@@ -688,11 +692,11 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The place-graph containment is PRESERVED as the dynamics run -- the figure&#39;s core structural claim. After a full 30-step run every intermediate container along the six-level DNA chain (cytoplasm &gt; nucleus &gt; chromosome &gt; chromatin &gt; nucleosome &gt; DNA) is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling -- containment, not a flattened bag of species. A process acting on a deeply-nested store moves the quantity IN that store: the four-levels-deep ribosome pool grew and its final place-graph value equals the last emitted frame (same store), while the six-levels-deep genome was held at its set point (DNA == 1.0 within 1e-6 at every frame) by replication / repair -- a homeostatic hold, not drift.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="The place-graph containment is PRESERVED as the dynamics run -- the figure&#39;s core structural claim. After a full 30-step run every intermediate container along the six-level DNA chain (cytoplasm &gt; nucleus &gt; chromosome &gt; chromatin &gt; nucleosome &gt; DNA) is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling -- containment, not a flattened bag of species. A process acting on a deeply-nested store moves the quantity IN that store: the four-levels-deep ribosome pool grew and its final place-graph value equals the last emitted frame (same store), while the six-levels-deep genome was held at its set point (DNA == 1.0 within 1e-6 at every frame) by replication / repair -- a homeostatic hold, not drift." data-edit-multiline data-edit-label="Finding F-02">The place-graph containment is PRESERVED as the dynamics run -- the figure&#39;s core structural claim. After a full 30-step run every intermediate container along the six-level DNA chain (cytoplasm &gt; nucleus &gt; chromosome &gt; chromatin &gt; nucleosome &gt; DNA) is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling -- containment, not a flattened bag of species. A process acting on a deeply-nested store moves the quantity IN that store: the four-levels-deep ribosome pool grew and its final place-graph value equals the last emitted frame (same store), while the six-levels-deep genome was held at its set point (DNA == 1.0 within 1e-6 at every frame) by replication / repair -- a homeostatic hold, not drift.</span>
             
             <span class="finding-chip">via <code>process-moves-quantity-in-deep-nested-store</code></span>
             
@@ -742,11 +746,11 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">On the workbench 0.4.1 catalog run -- the short 8-step window carried in `scripts/_catalog/measured_readouts.json` (fig07-executable, the standalone-emitter sibling of fig07-runnable that shares the same six processes and the same nested place graph) -- the cascade is caught in its slow early phase, NOT a collapse. Transport has filled cytoplasmic nutrients to 2.4 and metabolism has made metabolites 1.5 and energy 0.84; the downstream gene-expression products are still ramping (rna 0 -&gt; 0.18, proteins 0 -&gt; 0.008) and subunit assembly has only moved the ribosome pool off its 0.50 bootstrap seed (0.5000 -&gt; 0.5007), while the six-levels-deep DNA is held flat at its 1.0 set point. Every downstream level is already moving in the correct direction; the larger endpoints develop over the composite&#39;s default 30-step horizon. Confirmed in-memory (deterministic, reproduced exactly), and matches the committed catalog readout.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="On the workbench 0.4.1 catalog run -- the short 8-step window carried in `scripts/_catalog/measured_readouts.json` (fig07-executable, the standalone-emitter sibling of fig07-runnable that shares the same six processes and the same nested place graph) -- the cascade is caught in its slow early phase, NOT a collapse. Transport has filled cytoplasmic nutrients to 2.4 and metabolism has made metabolites 1.5 and energy 0.84; the downstream gene-expression products are still ramping (rna 0 -&gt; 0.18, proteins 0 -&gt; 0.008) and subunit assembly has only moved the ribosome pool off its 0.50 bootstrap seed (0.5000 -&gt; 0.5007), while the six-levels-deep DNA is held flat at its 1.0 set point. Every downstream level is already moving in the correct direction; the larger endpoints develop over the composite&#39;s default 30-step horizon. Confirmed in-memory (deterministic, reproduced exactly), and matches the committed catalog readout." data-edit-multiline data-edit-label="Finding F-03">On the workbench 0.4.1 catalog run -- the short 8-step window carried in `scripts/_catalog/measured_readouts.json` (fig07-executable, the standalone-emitter sibling of fig07-runnable that shares the same six processes and the same nested place graph) -- the cascade is caught in its slow early phase, NOT a collapse. Transport has filled cytoplasmic nutrients to 2.4 and metabolism has made metabolites 1.5 and energy 0.84; the downstream gene-expression products are still ramping (rna 0 -&gt; 0.18, proteins 0 -&gt; 0.008) and subunit assembly has only moved the ribosome pool off its 0.50 bootstrap seed (0.5000 -&gt; 0.5007), while the six-levels-deep DNA is held flat at its 1.0 set point. Every downstream level is already moving in the correct direction; the larger endpoints develop over the composite&#39;s default 30-step horizon. Confirmed in-memory (deterministic, reproduced exactly), and matches the committed catalog readout.</span>
             
             <span class="finding-chip">in run <code>fig07-runnable</code></span>
             
@@ -794,11 +798,11 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The nesting is made FUNCTIONAL, answering the review&#39;s objection that a deep scalar changing is only nested routing. In the mechanistic variant, permeable compartment boundaries causally gate a deep nuclear reporter: with both boundaries open the reporter reaches 8.23, but closing EITHER the plasma membrane OR the nuclear envelope (permeability → ε) drives it to exactly 0. Because the deep observable sits behind two boundaries in series, each level of the hierarchy is an independent functional gate — a boundary-level cause with a deep effect, not a redrawn container. Passive transport across the boundaries is conservative (Σsubstrate invariant to 1.3e-7), and a first-principles prediction holds: a more permeable boundary fills the deep compartment faster (nuclear substrate at t=8 monotone 1.26→3.42 across P_mem 0.05→0.8).</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The nesting is made FUNCTIONAL, answering the review&#39;s objection that a deep scalar changing is only nested routing. In the mechanistic variant, permeable compartment boundaries causally gate a deep nuclear reporter: with both boundaries open the reporter reaches 8.23, but closing EITHER the plasma membrane OR the nuclear envelope (permeability → ε) drives it to exactly 0. Because the deep observable sits behind two boundaries in series, each level of the hierarchy is an independent functional gate — a boundary-level cause with a deep effect, not a redrawn container. Passive transport across the boundaries is conservative (Σsubstrate invariant to 1.3e-7), and a first-principles prediction holds: a more permeable boundary fills the deep compartment faster (nuclear substrate at t=8 monotone 1.26→3.42 across P_mem 0.05→0.8)." data-edit-multiline data-edit-label="Finding F-04">The nesting is made FUNCTIONAL, answering the review&#39;s objection that a deep scalar changing is only nested routing. In the mechanistic variant, permeable compartment boundaries causally gate a deep nuclear reporter: with both boundaries open the reporter reaches 8.23, but closing EITHER the plasma membrane OR the nuclear envelope (permeability → ε) drives it to exactly 0. Because the deep observable sits behind two boundaries in series, each level of the hierarchy is an independent functional gate — a boundary-level cause with a deep effect, not a redrawn container. Passive transport across the boundaries is conservative (Σsubstrate invariant to 1.3e-7), and a first-principles prediction holds: a more permeable boundary fills the deep compartment faster (nuclear substrate at t=8 monotone 1.26→3.42 across P_mem 0.05→0.8).</span>
             
             <span class="finding-chip">via <code>mech-both-boundaries-gate-in-series</code></span>
             
@@ -848,11 +852,11 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The three hierarchical relations are explicit and distinct, and compartments do functionally different things. CONTAINMENT is the place-graph nesting (environment⊃cell⊃cytoplasm⊃nucleus); PART-OF is each boundary that defines a compartment (membrane/envelope); REGULATORY is the reporter depending on the signal that reaches it. A LOCALLY-RESTRICTED cytoplasmic metabolism consumes substrate only in the cytoplasm and thereby starves the downstream nucleus (reporter 13.0 with it off vs 1.49 on), and a localized cytoplasmic perturbation reaches the nucleus only when the envelope is open. Honest scope: this remains a didactic, uncalibrated model — &#34;depth&#34; means the number of permeability barriers crossed, not a physical length scale, and the variant has four containment levels (not the baseline&#39;s six place-graph depths); it demonstrates that hierarchy CAN influence function, not a validated multiscale organism. The calibrated cousin remains `biomolecular-complementarity` in draft-to-living-cell.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="The three hierarchical relations are explicit and distinct, and compartments do functionally different things. CONTAINMENT is the place-graph nesting (environment⊃cell⊃cytoplasm⊃nucleus); PART-OF is each boundary that defines a compartment (membrane/envelope); REGULATORY is the reporter depending on the signal that reaches it. A LOCALLY-RESTRICTED cytoplasmic metabolism consumes substrate only in the cytoplasm and thereby starves the downstream nucleus (reporter 13.0 with it off vs 1.49 on), and a localized cytoplasmic perturbation reaches the nucleus only when the envelope is open. Honest scope: this remains a didactic, uncalibrated model — &#34;depth&#34; means the number of permeability barriers crossed, not a physical length scale, and the variant has four containment levels (not the baseline&#39;s six place-graph depths); it demonstrates that hierarchy CAN influence function, not a validated multiscale organism. The calibrated cousin remains `biomolecular-complementarity` in draft-to-living-cell." data-edit-multiline data-edit-label="Finding F-05">The three hierarchical relations are explicit and distinct, and compartments do functionally different things. CONTAINMENT is the place-graph nesting (environment⊃cell⊃cytoplasm⊃nucleus); PART-OF is each boundary that defines a compartment (membrane/envelope); REGULATORY is the reporter depending on the signal that reaches it. A LOCALLY-RESTRICTED cytoplasmic metabolism consumes substrate only in the cytoplasm and thereby starves the downstream nucleus (reporter 13.0 with it off vs 1.49 on), and a localized cytoplasmic perturbation reaches the nucleus only when the envelope is open. Honest scope: this remains a didactic, uncalibrated model — &#34;depth&#34; means the number of permeability barriers crossed, not a physical length scale, and the variant has four containment levels (not the baseline&#39;s six place-graph depths); it demonstrates that hierarchy CAN influence function, not a validated multiscale organism. The calibrated cousin remains `biomolecular-complementarity` in draft-to-living-cell.</span>
             
             <span class="finding-chip">via <code>mech-local-metabolism-is-compartment-restricted</code></span>
             
@@ -1009,7 +1013,7 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
         
         
         
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=complete</span>
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
       </div>
       
     </div>
@@ -1084,6 +1088,12 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
 <div class="overview-section" id="results-section">
   
   <div id="results-summary" data-study="fig-07" style="margin:0 0 16px"></div>
+
+  
+  <div id="gate-results-section" data-study="fig-07" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
 
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="fig-07">
@@ -1191,12 +1201,12 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
         
         data-pytest-node="composite-runs-and-emits"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">composite-runs-and-emits</strong>
         
@@ -1204,6 +1214,16 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The fig07-runnable composite runs its default step count to completion and emits a clean trajectory of the expected length -- the figure is executable.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: 31 frames (30 ticks + initial emit), final time == 30.0</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1230,12 +1250,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
         data-pytest-node="transport-fills-cytoplasmic-nutrients"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">transport-fills-cytoplasmic-nutrients</strong>
         
@@ -1243,6 +1263,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Level 1 -- the membrane transporter imports nutrients across the membrane into the cytoplasm; the pool starts empty and fills monotonically because supply is on.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: nutrients 0.0 -&gt; 9.0, monotonic non-decreasing</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1269,12 +1299,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="metabolism-makes-metabolites-and-energy"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">metabolism-makes-metabolites-and-energy</strong>
         
@@ -1282,6 +1312,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Level 2 -- metabolism converts imported nutrients (+ enzymes) into metabolites and energy in the cytoplasm; both rise well past their empty start.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: metabolites 0.0 -&gt; ~20.5, energy 0.0 -&gt; ~13.1</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1308,12 +1348,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="central-dogma-transcription-and-translation-rise"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">central-dogma-transcription-and-translation-rise</strong>
         
@@ -1321,6 +1361,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Levels 3-4 -- transcription of the six-levels-deep nested DNA makes RNA, which translation turns into protein; both downstream products rise, and protein trails RNA because translation is downstream of transcription.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: rna 0.0 -&gt; ~0.64, proteins 0.0 -&gt; ~0.24, rna leads protein</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1347,12 +1397,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="assembly-grows-ribosome-pool-closing-the-loop"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">assembly-grows-ribosome-pool-closing-the-loop</strong>
         
@@ -1360,6 +1410,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Level 5 -- subunit assembly consumes protein + subunits to grow the four-levels-deep ribosome pool past its bootstrap seed, the downstream observable that closes the loop back to translation.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: ribosome 0.5 -&gt; ~0.88 (past bootstrap seed)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1386,12 +1446,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="cascade-propagates-across-multiple-levels"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">cascade-propagates-across-multiple-levels</strong>
         
@@ -1399,6 +1459,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The whole point -- a non-trivial change occurs at MULTIPLE levels of the nested hierarchy in one coupled run (transport, metabolism, transcription, translation, assembly), not just at the seeded input.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: all five levels {nutrients, metabolites, rna, proteins, ribosome} change</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1425,12 +1495,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
         data-pytest-node="place-graph-containment-preserved"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">place-graph-containment-preserved</strong>
         
@@ -1438,6 +1508,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The figure&#39;s core structural claim -- processes act on stores buried deep in the place graph WITHOUT flattening it. After a full run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: six-level DNA chain + four-level ribosome chain intact, DNA nested beside histone</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1464,12 +1544,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "cont
         
         data-pytest-node="process-moves-quantity-in-deep-nested-store"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">process-moves-quantity-in-deep-nested-store</strong>
         
@@ -1477,6 +1557,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "cont
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The anchor -- a process acting at ONE nesting level moves quantity in a nested store. Subunit assembly grows the four-levels-deep ribosome pool (final place-graph value == last emitted frame, same store); replication / repair holds the six-levels-deep genome at its set point (conserved within tolerance).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: deep ribosome grew and == emitted last frame; deep DNA held at set point 1.0</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1746,7 +1836,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANI
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1841,9 +1931,9 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANI
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/13 passed</span>
+        <span class="muted small">8/13 passed</span>
       </div>
       
     </div>
@@ -1887,7 +1977,27 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANI
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+- Wiring six ODE processes over one place graph nesting up to six levels deep -- WITHOUT flattening the compartment hierarchy -- reproduces the paper&#39;s §Biomolecular compositions figure (Fig molecular_compositions) as a runnable nested cascade. Over a deterministic 30-step run, a process acting at each nesting level moves quantity in its store (transport 0 -&gt; 9.0 nutrients; metabolism 0 -&gt; ~20.5 metabolites and 0 -&gt; ~13.1 energy; transcription of the six-levels-deep DNA 0 -&gt; ~0.64 RNA; translation 0 -&gt; ~0.24 protein, trailing RNA; assembly 0.5 -&gt; ~0.88 on the four-levels-deep ribosome pool, closing the loop). All five levels change; every value reproduces exactly.
+- The place-graph containment is PRESERVED as the dynamics run -- after the run the six-level DNA chain and four-level ribosome chain are still nested stores reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store: the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair.
+
+## Evidence
+- **COMPOSITE-RUNS-AND-EMITS** -- 31 frames (30 ticks + initial emit), final time == 30.0
+- **TRANSPORT-FILLS-CYTOPLASMIC-NUTRIENTS** -- nutrients 0.0 -&gt; 9.0, monotonic
+- **METABOLISM-MAKES-METABOLITES-AND-ENERGY** -- metabolites 0.0 -&gt; ~20.5, energy 0.0 -&gt; ~13.1
+- **CENTRAL-DOGMA-TRANSCRIPTION-AND-TRANSLATION-RISE** -- rna 0.0 -&gt; ~0.64, proteins 0.0 -&gt; ~0.24, rna leads protein
+- **ASSEMBLY-GROWS-RIBOSOME-POOL-CLOSING-THE-LOOP** -- ribosome 0.5 -&gt; ~0.88 past its seed
+- **CASCADE-PROPAGATES-ACROSS-MULTIPLE-LEVELS** -- all five levels change
+- **PLACE-GRAPH-CONTAINMENT-PRESERVED** -- six-level DNA chain + four-level ribosome chain intact, DNA nested beside histone
+- **PROCESS-MOVES-QUANTITY-IN-DEEP-NESTED-STORE** -- deep ribosome grew and == emitted last frame; deep DNA held at set point 1.0
+
+## Limitations
+- This fig07-runnable composite is didactic / toy-real -- the ODE rate constants, yields, and pool seeds are hand-chosen so the whole nested cascade is legible within 30 steps, not calibrated to a named cell type, organism, or literature target.
+- &#34;Levels&#34; are place-graph nesting depths (compartment containment), not physical length scales; the exact depths mirror the biological compartment hierarchy but are a modeling choice.
+- The calibrated cousin for the molecular-complementarity narrative is `biomolecular-complementarity` in the `draft-to-living-cell` investigation; this study does not restate its numbers.
+
+## Next steps
+- Fan out to the remaining runnable figure composites in the paper-figures investigation." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>Wiring six ODE processes over one place graph nesting up to six levels deep -- WITHOUT flattening the compartment hierarchy -- reproduces the paper's §Biomolecular compositions figure (Fig molecular_compositions) as a runnable nested cascade. Over a deterministic 30-step run, a process acting at each nesting level moves quantity in its store (transport 0 -&gt; 9.0 nutrients; metabolism 0 -&gt; ~20.5 metabolites and 0 -&gt; ~13.1 energy; transcription of the six-levels-deep DNA 0 -&gt; ~0.64 RNA; translation 0 -&gt; ~0.24 protein, trailing RNA; assembly 0.5 -&gt; ~0.88 on the four-levels-deep ribosome pool, closing the loop). All five levels change; every value reproduces exactly.</li>
 <li>The place-graph containment is PRESERVED as the dynamics run -- after the run the six-level DNA chain and four-level ribosome chain are still nested stores reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store: the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair.</li>
@@ -2002,11 +2112,12 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANI
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "fig-07";
+window.__STUDY_INVESTIGATION__ = "paper-figures";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2135,6 +2246,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

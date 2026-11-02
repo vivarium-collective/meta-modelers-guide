@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-05" data-study-kind="computational" title="fig-05">fig-05: Disintegration</span>
+    <span class="study-name" id="study-name" data-slug="fig-05" data-study-kind="computational" title="fig-05" data-edit-kind="study" data-edit-field="title" data-edit-value="fig-05: Disintegration" data-edit-label="Title">fig-05: Disintegration</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Composing a `StressRamp`, a `GrainSelector`, and two gated grain processes (`CoarseGrainProcess`, `FineGrainProcess`) sharing one biomass/energy interface reproduces Fig 5b&#39;s viability-driven grain swap as a runnable temporal study: over a deterministic 26-step run, viability declines monotonically across the 0.5 threshold, the GrainSelector flips the active grain coarse-&gt;fine at the crossing (t=13, one tick after viability first reads below threshold at t=12), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26). This is a didactic, uncalibrated realization of the level shift the paper draws -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound. A companion line of evidence quantifies why the swap matters: three executables (`fig05-executable-coarse`, `-kinetic`, `-fba`) realize the SAME coarse-metabolism interface at three different model grains and report measurably different biomass through byte-identical ports -- 4.0 (coarse linear) / 2.6667 (kinetic saturating) / 6.2936 (FBA), the FBA grain additionally secreting 30.4478 of acetate (overflow) against 1.6 for coarse (workbench 0.4.1). Fig 5b&#39;s selector -- switching the active level of description -- is therefore a substantive modeling act, not a redraw.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="Composing a `StressRamp`, a `GrainSelector`, and two gated grain processes (`CoarseGrainProcess`, `FineGrainProcess`) sharing one biomass/energy interface reproduces Fig 5b&#39;s viability-driven grain swap as a runnable temporal study: over a deterministic 26-step run, viability declines monotonically across the 0.5 threshold, the GrainSelector flips the active grain coarse-&gt;fine at the crossing (t=13, one tick after viability first reads below threshold at t=12), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26). This is a didactic, uncalibrated realization of the level shift the paper draws -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound. A companion line of evidence quantifies why the swap matters: three executables (`fig05-executable-coarse`, `-kinetic`, `-fba`) realize the SAME coarse-metabolism interface at three different model grains and report measurably different biomass through byte-identical ports -- 4.0 (coarse linear) / 2.6667 (kinetic saturating) / 6.2936 (FBA), the FBA grain additionally secreting 30.4478 of acetate (overflow) against 1.6 for coarse (workbench 0.4.1). Fig 5b&#39;s selector -- switching the active level of description -- is therefore a substantive modeling act, not a redraw." data-edit-multiline data-edit-label="Claim">Composing a `StressRamp`, a `GrainSelector`, and two gated grain processes (`CoarseGrainProcess`, `FineGrainProcess`) sharing one biomass/energy interface reproduces Fig 5b&#39;s viability-driven grain swap as a runnable temporal study: over a deterministic 26-step run, viability declines monotonically across the 0.5 threshold, the GrainSelector flips the active grain coarse-&gt;fine at the crossing (t=13, one tick after viability first reads below threshold at t=12), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26). This is a didactic, uncalibrated realization of the level shift the paper draws -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound. A companion line of evidence quantifies why the swap matters: three executables (`fig05-executable-coarse`, `-kinetic`, `-fba`) realize the SAME coarse-metabolism interface at three different model grains and report measurably different biomass through byte-identical ports -- 4.0 (coarse linear) / 2.6667 (kinetic saturating) / 6.2936 (FBA), the FBA grain additionally secreting 30.4478 of acetate (overflow) against 1.6 for coarse (workbench 0.4.1). Fig 5b&#39;s selector -- switching the active level of description -- is therefore a substantive modeling act, not a redraw.</p>
       
       <div class="ctr-context">This is the toy-real runnable realization of Fig 5b&#39;s grain swap. The paper&#39;s §Disintegration describes viability as the region of state space in which a given cellular description is valid: while viability holds, the interface (inflow, biomass, energy, secretions) can be treated as a coarse-grained cellular process; once environmental stress pushes interface variables outside the viable bounds, that coarse description fails and the finer molecular mechanism must be re-exposed. Fig 5b renders this as &#34;a grain selector switches the active level of description: a viability signal drives a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface. Crossing viability bounds replaces the coarse description with the finer one.&#34;
 The `fig05-grain-runnable` composite makes exactly that toggle executable and plays it forward in time. A `StressRamp` process drives `viability` steadily down (a clean, controllable driver, not a calibrated stressor). A `GrainSelector` watches that signal and SETS a shared `active_grain` control string: &#34;coarse&#34; while viability &gt;= threshold, &#34;fine&#34; once it drops below. Two gated processes act on the SAME `biomass`/`energy` interface at different grains -- a `CoarseGrainProcess` that grows biomass by a linear yield on inflow (the alive, cheap lumped regime) and a `FineGrainProcess` that decays biomass first-order (the dying, resolved regime the coarse model cannot capture) -- and each is a no-op unless it is the active grain, so exactly one runs per tick. As viability slides across the threshold the biomass trajectory therefore turns over from growth to decline on-screen: growth -&gt; arrest -&gt; decay. This is the level shift of §Disintegration in miniature -- when the assumptions supporting the coarse cellular process fail, the model is replaced by a description that resolves the mechanism responsible for the failure (here, the death/ decay regime).
@@ -555,7 +558,7 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Does the paper&#39;s §Disintegration Fig 5b grain swap hold as a runnable composite -- a viability signal driving a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface, so that crossing the viability bound replaces the coarse description with the finer one? Concretely: as an external stress ramp slides viability across a threshold, does a GrainSelector flip the active grain coarse-&gt;fine at the crossing, and does the shared biomass output turn over from growth (coarse, alive) to decay (fine, dying) at the switch?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Does the paper&#39;s §Disintegration Fig 5b grain swap hold as a runnable composite -- a viability signal driving a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface, so that crossing the viability bound replaces the coarse description with the finer one? Concretely: as an external stress ramp slides viability across a threshold, does a GrainSelector flip the active grain coarse-&gt;fine at the crossing, and does the shared biomass output turn over from growth (coarse, alive) to decay (fine, dying) at the switch?" data-edit-multiline data-edit-label="Question">Does the paper&#39;s §Disintegration Fig 5b grain swap hold as a runnable composite -- a viability signal driving a control that toggles between a coarse cellular process and a fine molecular one realizing the same interface, so that crossing the viability bound replaces the coarse description with the finer one? Concretely: as an external stress ramp slides viability across a threshold, does a GrainSelector flip the active grain coarse-&gt;fine at the crossing, and does the shared biomass output turn over from growth (coarse, alive) to decay (fine, dying) at the switch?</span></div>
         
       </div>
     </div>
@@ -579,39 +582,40 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse-&gt;fine at t=13 -- exactly one flip, one tick after the crossing (the composite&#39;s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -&gt; 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -&gt; ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b&#39;s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. A companion grain-comparison quantifies the swap&#39;s consequence: the same coarse-metabolism interface realized at three grains reports biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate overflow vs 1.6 for coarse (workbench 0.4.1). The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse-&gt;fine at t=13 -- exactly one flip, one tick after the crossing (the composite&#39;s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -&gt; 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -&gt; ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b&#39;s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. A companion grain-comparison quantifies the swap&#39;s consequence: the same coarse-metabolism interface realized at three grains reports biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate overflow vs 1.6 for coarse (workbench 0.4.1). The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation." data-edit-multiline data-edit-label="Result">Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse-&gt;fine at t=13 -- exactly one flip, one tick after the crossing (the composite&#39;s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -&gt; 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -&gt; ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b&#39;s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. A companion grain-comparison quantifies the swap&#39;s consequence: the same coarse-metabolism interface realized at three grains reports biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate overflow vs 1.6 for coarse (workbench 0.4.1). The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-ONE-ACTIVE-GRAIN</div>
+          <div class="ov-metric-k">mech-one-active-grain</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-BIOLOGY-SEPARATE-FROM-GRAIN</div>
+          <div class="ov-metric-k">mech-biology-separate-from-grain</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-CONSERVING-HANDOVER-NO-JUMP</div>
+          <div class="ov-metric-k">mech-conserving-handover-no-jump</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-INADEQUACY-TRIGGERS-REFINEMENT</div>
+          <div class="ov-metric-k">mech-inadequacy-triggers-refinement</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-REFINEMENT-PREDICTS-PHENOTYPE-COARSE-MISSES</div>
+          <div class="ov-metric-k">mech-refinement-predicts-phenotype-coarse-misses</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-DETERMINISTIC-RERUN-IS-REPRODUCIBILITY</div>
+          <div class="ov-metric-k">mech-deterministic-rerun-is-reproducibility</div>
         </div>
         
       </div>
@@ -631,11 +635,11 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A viability signal driving a GrainSelector that toggles a shared control string flips the active grain coarse-&gt;fine exactly at the viability-threshold crossing (within the composite&#39;s one-tick scheduling handover), and stays fine for the rest of the run. This realizes Fig 5b&#39;s central claim -- crossing the viability bound replaces the coarse cellular description with the finer molecular one -- as a runnable, deterministic toggle. Confirmed: exactly one flip, coarse-&gt; fine at t=13, one tick after viability first reads below 0.5 at t=12, fine thereafter.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="A viability signal driving a GrainSelector that toggles a shared control string flips the active grain coarse-&gt;fine exactly at the viability-threshold crossing (within the composite&#39;s one-tick scheduling handover), and stays fine for the rest of the run. This realizes Fig 5b&#39;s central claim -- crossing the viability bound replaces the coarse cellular description with the finer molecular one -- as a runnable, deterministic toggle. Confirmed: exactly one flip, coarse-&gt; fine at t=13, one tick after viability first reads below 0.5 at t=12, fine thereafter." data-edit-multiline data-edit-label="Finding F-01">A viability signal driving a GrainSelector that toggles a shared control string flips the active grain coarse-&gt;fine exactly at the viability-threshold crossing (within the composite&#39;s one-tick scheduling handover), and stays fine for the rest of the run. This realizes Fig 5b&#39;s central claim -- crossing the viability bound replaces the coarse cellular description with the finer molecular one -- as a runnable, deterministic toggle. Confirmed: exactly one flip, coarse-&gt; fine at t=13, one tick after viability first reads below 0.5 at t=12, fine thereafter.</span>
             
             <span class="finding-chip">via <code>flips-to-fine-and-stays</code></span>
             
@@ -685,11 +689,11 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Because exactly one grain acts per tick and the two grains act in opposite directions on the same interface, the shared biomass (and energy) output visibly turns over at the switch -- growing under the coarse (alive) grain, peaking at the flip, then decaying under the fine (dying) grain. This is the on-screen signature of the §Disintegration level shift: the coarse growth model is replaced by the finer decay model the moment its viability assumption fails. Confirmed: biomass 0 -&gt; 3.9 (peak at the flip, t=13) -&gt; ~1.14 by t=26; energy mirrors it (2.6 -&gt; ~0.76). The biomass/energy peaks coincide with the grain flip, so the tests anchor on the flip, not the raw viability cross.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="Because exactly one grain acts per tick and the two grains act in opposite directions on the same interface, the shared biomass (and energy) output visibly turns over at the switch -- growing under the coarse (alive) grain, peaking at the flip, then decaying under the fine (dying) grain. This is the on-screen signature of the §Disintegration level shift: the coarse growth model is replaced by the finer decay model the moment its viability assumption fails. Confirmed: biomass 0 -&gt; 3.9 (peak at the flip, t=13) -&gt; ~1.14 by t=26; energy mirrors it (2.6 -&gt; ~0.76). The biomass/energy peaks coincide with the grain flip, so the tests anchor on the flip, not the raw viability cross." data-edit-multiline data-edit-label="Finding F-02">Because exactly one grain acts per tick and the two grains act in opposite directions on the same interface, the shared biomass (and energy) output visibly turns over at the switch -- growing under the coarse (alive) grain, peaking at the flip, then decaying under the fine (dying) grain. This is the on-screen signature of the §Disintegration level shift: the coarse growth model is replaced by the finer decay model the moment its viability assumption fails. Confirmed: biomass 0 -&gt; 3.9 (peak at the flip, t=13) -&gt; ~1.14 by t=26; energy mirrors it (2.6 -&gt; ~0.76). The biomass/energy peaks coincide with the grain flip, so the tests anchor on the flip, not the raw viability cross.</span>
             
             <span class="finding-chip">via <code>biomass-turns-over-at-the-switch</code></span>
             
@@ -739,11 +743,11 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The whole trajectory is deterministic -- no process draws randomness, so two independent builds emit byte-identical viability/grain/biomass/energy sequences. The exact pins in this study (crossing at t=12, flip at t=13, biomass peak 3.9) are therefore reproducible facts of the composite, not seed-dependent artifacts.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The whole trajectory is deterministic -- no process draws randomness, so two independent builds emit byte-identical viability/grain/biomass/energy sequences. The exact pins in this study (crossing at t=12, flip at t=13, biomass peak 3.9) are therefore reproducible facts of the composite, not seed-dependent artifacts." data-edit-multiline data-edit-label="Finding F-03">The whole trajectory is deterministic -- no process draws randomness, so two independent builds emit byte-identical viability/grain/biomass/energy sequences. The exact pins in this study (crossing at t=12, flip at t=13, biomass peak 3.9) are therefore reproducible facts of the composite, not seed-dependent artifacts.</span>
             
             <span class="finding-chip">via <code>trajectory-is-deterministic</code></span>
             
@@ -793,11 +797,11 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">Fig 5b&#39;s grain swap is not cosmetic: realizing the SAME coarse-metabolism interface at three different model grains gives measurably different biomass through byte-identical ports. The companion executables fig05-executable-{coarse,kinetic,fba} install three internal mechanisms behind one shared interface (biomass, energy, entropy, secretions over a fixed supply) -- a linear coarse law, a saturating kinetic (Michaelis-Menten) law, and a flux-balance (FBA) law. Measured in-memory over the standard executable run (workbench 0.4.1): final biomass is 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA) -- a 2.4x spread -- with the FBA grain additionally secreting 30.4478 of acetate (overflow metabolism) against 1.6 for coarse, and energy 144.0 / entropy 151.2761 far above the coarse grain&#39;s 2.4 / 0.8. Choosing the grain changes the quantitative readout the shared interface reports, which is exactly why switching the active level of description (Fig 5b&#39;s selector) is a substantive modeling act. These are toy-real magnitudes; the point is the measurable grain-dependence, not a calibrated biomass yield.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="Fig 5b&#39;s grain swap is not cosmetic: realizing the SAME coarse-metabolism interface at three different model grains gives measurably different biomass through byte-identical ports. The companion executables fig05-executable-{coarse,kinetic,fba} install three internal mechanisms behind one shared interface (biomass, energy, entropy, secretions over a fixed supply) -- a linear coarse law, a saturating kinetic (Michaelis-Menten) law, and a flux-balance (FBA) law. Measured in-memory over the standard executable run (workbench 0.4.1): final biomass is 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA) -- a 2.4x spread -- with the FBA grain additionally secreting 30.4478 of acetate (overflow metabolism) against 1.6 for coarse, and energy 144.0 / entropy 151.2761 far above the coarse grain&#39;s 2.4 / 0.8. Choosing the grain changes the quantitative readout the shared interface reports, which is exactly why switching the active level of description (Fig 5b&#39;s selector) is a substantive modeling act. These are toy-real magnitudes; the point is the measurable grain-dependence, not a calibrated biomass yield." data-edit-multiline data-edit-label="Finding F-04">Fig 5b&#39;s grain swap is not cosmetic: realizing the SAME coarse-metabolism interface at three different model grains gives measurably different biomass through byte-identical ports. The companion executables fig05-executable-{coarse,kinetic,fba} install three internal mechanisms behind one shared interface (biomass, energy, entropy, secretions over a fixed supply) -- a linear coarse law, a saturating kinetic (Michaelis-Menten) law, and a flux-balance (FBA) law. Measured in-memory over the standard executable run (workbench 0.4.1): final biomass is 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA) -- a 2.4x spread -- with the FBA grain additionally secreting 30.4478 of acetate (overflow metabolism) against 1.6 for coarse, and energy 144.0 / entropy 151.2761 far above the coarse grain&#39;s 2.4 / 0.8. Choosing the grain changes the quantitative readout the shared interface reports, which is exactly why switching the active level of description (Fig 5b&#39;s selector) is a substantive modeling act. These are toy-real magnitudes; the point is the measurable grain-dependence, not a calibrated biomass yield.</span>
             
             <span class="finding-chip">in run <code>fig05-executable-grain-comparison</code></span>
             
@@ -845,11 +849,11 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The mechanistic variant SEPARATES the biology from the grain, fixing the review&#39;s central objection. The biological damage state (soluble + autocatalytically-aggregating misfolded protein) evolves continuously and grain-independently (stress forcing identical across modes to 1e-12; coarse and adaptive coincide before the switch). The grain is then chosen by a COMPUTABLE inadequacy estimator — the fraction of the damage dynamics carried by the neglected aggregation term — which refines coarse→fine when it crosses tolerance. This is a quantified, state-dependent error indicator: raising the tolerance delays the switch and lowering it advances it, which a wall-clock t=13 could not do.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The mechanistic variant SEPARATES the biology from the grain, fixing the review&#39;s central objection. The biological damage state (soluble + autocatalytically-aggregating misfolded protein) evolves continuously and grain-independently (stress forcing identical across modes to 1e-12; coarse and adaptive coincide before the switch). The grain is then chosen by a COMPUTABLE inadequacy estimator — the fraction of the damage dynamics carried by the neglected aggregation term — which refines coarse→fine when it crosses tolerance. This is a quantified, state-dependent error indicator: raising the tolerance delays the switch and lowering it advances it, which a wall-clock t=13 could not do." data-edit-multiline data-edit-label="Finding F-04">The mechanistic variant SEPARATES the biology from the grain, fixing the review&#39;s central objection. The biological damage state (soluble + autocatalytically-aggregating misfolded protein) evolves continuously and grain-independently (stress forcing identical across modes to 1e-12; coarse and adaptive coincide before the switch). The grain is then chosen by a COMPUTABLE inadequacy estimator — the fraction of the damage dynamics carried by the neglected aggregation term — which refines coarse→fine when it crosses tolerance. This is a quantified, state-dependent error indicator: raising the tolerance delays the switch and lowering it advances it, which a wall-clock t=13 could not do.</span>
             
             <span class="finding-chip">via <code>mech-inadequacy-triggers-refinement</code></span>
             
@@ -899,11 +903,11 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">Refinement BUYS a real prediction the coarse grain structurally cannot make. The fine grain resolves an autocatalytic aggregation runaway that collapses viability (final viability → 0.00 with aggregate m_agg = 0.63); the always-coarse model never forms aggregates and stays viable (0.74), missing the collapse entirely. The adaptive run recovers the always-fine trajectory at a fraction of the cost — biomass divergence from the fine reference is 0.023 (adaptive) versus 1.09 (always-coarse). And the coarse→fine map conserves state: biomass and total damage are continuous across the switch (step 0.98× typical) with handover_error = 0 — no artificial jump.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="Refinement BUYS a real prediction the coarse grain structurally cannot make. The fine grain resolves an autocatalytic aggregation runaway that collapses viability (final viability → 0.00 with aggregate m_agg = 0.63); the always-coarse model never forms aggregates and stays viable (0.74), missing the collapse entirely. The adaptive run recovers the always-fine trajectory at a fraction of the cost — biomass divergence from the fine reference is 0.023 (adaptive) versus 1.09 (always-coarse). And the coarse→fine map conserves state: biomass and total damage are continuous across the switch (step 0.98× typical) with handover_error = 0 — no artificial jump." data-edit-multiline data-edit-label="Finding F-05">Refinement BUYS a real prediction the coarse grain structurally cannot make. The fine grain resolves an autocatalytic aggregation runaway that collapses viability (final viability → 0.00 with aggregate m_agg = 0.63); the always-coarse model never forms aggregates and stays viable (0.74), missing the collapse entirely. The adaptive run recovers the always-fine trajectory at a fraction of the cost — biomass divergence from the fine reference is 0.023 (adaptive) versus 1.09 (always-coarse). And the coarse→fine map conserves state: biomass and total damage are continuous across the switch (step 0.98× typical) with handover_error = 0 — no artificial jump.</span>
             
             <span class="finding-chip">via <code>mech-refinement-predicts-phenotype-coarse-misses</code></span>
             
@@ -953,11 +957,11 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-06">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Honest scope. The t=13 switch in the baseline is a PROGRAMMED resolution change, and a byte-identical deterministic rerun is REPRODUCIBILITY, not mechanistic support — the mechanistic evidence here comes from the ablations (phenotype the coarse grain misses, tolerance-moved refinement time, conserving handover), not from a run matching itself. Limits: this is still a reduced lumped model (one soluble + one aggregate pool, constant repair energy, a single autocatalytic nonlinearity); the aggregation and repair rates are didactic, not fitted to a named proteostasis stressor or measured aggregation kinetics; and &#34;viability&#34; is a weighted damage score, not a measured survival probability. The rigorous cousin is `disintegration` in draft-to-living-cell.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="Honest scope. The t=13 switch in the baseline is a PROGRAMMED resolution change, and a byte-identical deterministic rerun is REPRODUCIBILITY, not mechanistic support — the mechanistic evidence here comes from the ablations (phenotype the coarse grain misses, tolerance-moved refinement time, conserving handover), not from a run matching itself. Limits: this is still a reduced lumped model (one soluble + one aggregate pool, constant repair energy, a single autocatalytic nonlinearity); the aggregation and repair rates are didactic, not fitted to a named proteostasis stressor or measured aggregation kinetics; and &#34;viability&#34; is a weighted damage score, not a measured survival probability. The rigorous cousin is `disintegration` in draft-to-living-cell." data-edit-multiline data-edit-label="Finding F-06">Honest scope. The t=13 switch in the baseline is a PROGRAMMED resolution change, and a byte-identical deterministic rerun is REPRODUCIBILITY, not mechanistic support — the mechanistic evidence here comes from the ablations (phenotype the coarse grain misses, tolerance-moved refinement time, conserving handover), not from a run matching itself. Limits: this is still a reduced lumped model (one soluble + one aggregate pool, constant repair energy, a single autocatalytic nonlinearity); the aggregation and repair rates are didactic, not fitted to a named proteostasis stressor or measured aggregation kinetics; and &#34;viability&#34; is a weighted damage score, not a measured survival probability. The rigorous cousin is `disintegration` in draft-to-living-cell.</span>
             
             <span class="finding-chip">via <code>mech-deterministic-rerun-is-reproducibility</code></span>
             
@@ -1114,7 +1118,7 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
         
         
         
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=complete</span>
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
       </div>
       
     </div>
@@ -1189,6 +1193,12 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
 <div class="overview-section" id="results-section">
   
   <div id="results-summary" data-study="fig-05" style="margin:0 0 16px"></div>
+
+  
+  <div id="gate-results-section" data-study="fig-05" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
 
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="fig-05">
@@ -1296,12 +1306,12 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
         
         data-pytest-node="coarse-grain-while-viable"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">coarse-grain-while-viable</strong>
         
@@ -1309,6 +1319,16 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">While viability &gt;= threshold, the active grain is &#34;coarse&#34; -- the coarse cellular process realizes the interface throughout the viable phase (the pre-crossing hold of Fig 5b).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: active_grain == &#34;coarse&#34; for every frame with viability &gt;= 0.5 (t=0..12)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1335,12 +1355,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: whil
         
         data-pytest-node="flips-to-fine-and-stays"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">flips-to-fine-and-stays</strong>
         
@@ -1348,6 +1368,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: whil
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Once viability drops below threshold the active grain flips to &#34;fine&#34; and stays fine for the rest of the run -- exactly one grain switch, coarse-&gt;fine, never reverting. The compositional rewrite of Fig 5b (coarse description replaced by the finer one).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: exactly one flip, coarse-&gt;fine at t=13, fine through t=26</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1374,12 +1404,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: cros
         
         data-pytest-node="switch-at-threshold-crossing"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">switch-at-threshold-crossing</strong>
         
@@ -1387,6 +1417,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: cros
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The grain switch tracks the viability-threshold crossing -- the flip happens within one tick of the tick where viability first drops below threshold (the scheduling handover lag).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: viability first &lt; 0.5 at t=12, flip at t=13, |13-12| == 1</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1413,12 +1453,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior:
         
         data-pytest-node="gate-hands-control-to-the-active-grain"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">gate-hands-control-to-the-active-grain</strong>
         
@@ -1426,6 +1466,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior:
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The control string genuinely gates the two grains -- when coarse is selected only the coarse process acts (grows biomass) and the fine process is inert; when fine is selected only the fine process acts (decays biomass) and the coarse process is inert; the two act in OPPOSITE directions on the shared biomass output. Unit-level test on the process objects, independent of the full run.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: coarse grows (+), fine decays (-), each inert when not selected</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1452,12 +1502,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "opposite_signs_and_gated", "pro
         
         data-pytest-node="biomass-turns-over-at-the-switch"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">biomass-turns-over-at-the-switch</strong>
         
@@ -1465,6 +1515,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "opposite_signs_and_gated", "pro
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The shared biomass output turns over at the grain switch -- growing monotonically while the coarse grain is active, peaking at the flip, then decaying monotonically once the fine grain takes over. The on-screen signature of the level shift.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: biomass 0 -&gt; 3.9 (peak at t=13) -&gt; ~1.14 by t=26</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1491,12 +1551,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "pr
         
         data-pytest-node="energy-mirrors-biomass"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">energy-mirrors-biomass</strong>
         
@@ -1504,6 +1564,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "pr
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Energy is the second shared output the gate hands over -- the coarse grain builds it while viable, the fine grain drains it once dying, so it grows-then-decays with the same turn-over as biomass, confirming the gate acts on the whole interface, not just biomass.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: energy 0 -&gt; 2.6 (peak at t=13) -&gt; ~0.76 by t=26</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1530,12 +1600,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "pr
         
         data-pytest-node="viability-declines-monotonically"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">viability-declines-monotonically</strong>
         
@@ -1543,6 +1613,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "pr
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The StressRamp is the clean driver -- viability only ever falls and is driven below the threshold, all the way to its clamped 0 floor, so the crossing (and thus the grain swap) is guaranteed rather than incidental.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: 1.0 monotone down to 0.0 by t=23, below 0.5 from t=12</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1569,12 +1649,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "monotone_nonincreasing_to_zero"
         
         data-pytest-node="trajectory-is-deterministic"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">trajectory-is-deterministic</strong>
         
@@ -1582,6 +1662,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "monotone_nonincreasing_to_zero"
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">No process in the composite draws randomness, so two independent builds emit an identical viability/grain/biomass trajectory -- the pins in this study are exact, not representative.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: two independent builds emit identical viability/grain/biomass sequences</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1890,7 +1980,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "REGRESSION_PI
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1985,9 +2075,9 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "REGRESSION_PI
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/14 passed</span>
+        <span class="muted small">8/14 passed</span>
       </div>
       
     </div>
@@ -2031,7 +2121,31 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "REGRESSION_PI
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+- Composing a StressRamp, a GrainSelector, and two gated grain processes (CoarseGrainProcess, FineGrainProcess) sharing one biomass/energy interface reproduces Fig 5b&#39;s viability-driven grain swap as a runnable temporal study. Over a deterministic 26-step run: viability declines monotonically across the 0.5 threshold, the grain flips coarse-&gt;fine at t=13 (one tick after viability first reads below threshold at t=12, the scheduling handover), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26), with energy mirroring it (2.6 -&gt; ~0.76).
+- The whole trajectory is bit-reproducible -- no process draws randomness -- so every pin (crossing t=12, flip t=13, biomass peak 3.9) is an exact, deterministic fact of the composite.
+
+## Evidence
+- **COARSE-GRAIN-WHILE-VIABLE** -- active_grain == &#34;coarse&#34; for every frame with viability &gt;= 0.5
+- **FLIPS-TO-FINE-AND-STAYS** -- exactly one flip, coarse-&gt;fine at t=13, fine through t=26
+- **SWITCH-AT-THRESHOLD-CROSSING** -- viability first &lt; 0.5 at t=12, flip at t=13, |13-12| == 1
+- **GATE-HANDS-CONTROL-TO-THE-ACTIVE-GRAIN** -- coarse grows (+), fine decays (-), each inert when not selected; opposite directions on the shared biomass output
+- **BIOMASS-TURNS-OVER-AT-THE-SWITCH** -- biomass 0 -&gt; 3.9 (peak at the flip) -&gt; ~1.14 by t=26
+- **ENERGY-MIRRORS-BIOMASS** -- energy 0 -&gt; 2.6 (peak at the flip) -&gt; ~0.76 by t=26
+- **VIABILITY-DECLINES-MONOTONICALLY** -- 1.0 monotone down to 0.0 by t=23, below 0.5 from t=12
+- **TRAJECTORY-IS-DETERMINISTIC** -- two independent builds emit identical trajectories
+- **GRAIN-SWAP-CHANGES-THE-MEASURED-BIOMASS** (companion executables, workbench 0.4.1) -- the same coarse-metabolism interface realized at three grains reports final biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate vs 1.6 for coarse -- the grain swap is quantitatively substantive, not a redraw
+
+## Limitations
+- This composite is didactic / toy-real: the stress rate, threshold, yields, and decay rates are hand-tuned to make the arc legible in 26 steps, not calibrated to any named stressor, molecule, or measured rate.
+- The coarse and fine grains are lumped single-term stand-ins for &#34;a coarse cellular process&#34; and &#34;a fine molecular one&#34;; neither resolves real molecular mechanism.
+- Viability is an abstract scalar driven down by an external ramp, not an emergent consequence of the cell&#39;s metabolism or environment; the trigger is a threshold crossing on that scalar.
+- The one-tick lag between the viability crossing (t=12) and the grain flip (t=13) is the composite&#39;s process-scheduling latency, not a modeled biological delay.
+- The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation, where a real CPM cell loses structural viability under a real diffusing acetate field and its shed pixels become scattering debris particles -- a per-pixel, calibrated-in-form realization of the same §Disintegration level shift. Do not read that cousin&#39;s numbers as this study&#39;s.
+
+## Next steps
+- Drive viability from an emergent quantity (e.g. an energy or nutrient store) rather than a scripted ramp, so the crossing arises from the cell&#39;s own dynamics.
+- Make the fine grain a genuinely multi-species molecular mechanism rather than a single decay term, to show the coarse-&gt;fine refinement resolving real structure." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>Composing a StressRamp, a GrainSelector, and two gated grain processes (CoarseGrainProcess, FineGrainProcess) sharing one biomass/energy interface reproduces Fig 5b's viability-driven grain swap as a runnable temporal study. Over a deterministic 26-step run: viability declines monotonically across the 0.5 threshold, the grain flips coarse-&gt;fine at t=13 (one tick after viability first reads below threshold at t=12, the scheduling handover), exactly one grain acts per tick, and the shared biomass output turns over from linear growth (coarse, alive; peak 3.9 at the flip) to first-order decay (fine, dying; ~1.14 by t=26), with energy mirroring it (2.6 -&gt; ~0.76).</li>
 <li>The whole trajectory is bit-reproducible -- no process draws randomness -- so every pin (crossing t=12, flip t=13, biomass peak 3.9) is an exact, deterministic fact of the composite.</li>
@@ -2150,11 +2264,12 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "REGRESSION_PI
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "fig-05";
+window.__STUDY_INVESTIGATION__ = "paper-figures";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2283,6 +2398,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="biomolecular-complementarity" data-study-kind="biological" title="biomolecular-complementarity">Biomolecular Complementarity</span>
+    <span class="study-name" id="study-name" data-slug="biomolecular-complementarity" data-study-kind="biological" title="biomolecular-complementarity" data-edit-kind="study" data-edit-field="title" data-edit-value="Biomolecular Complementarity" data-edit-label="Title">Biomolecular Complementarity</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard (heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 Monte Carlo steps) while staying cohesive (live-cell pixels ~1530, &lt;1% drift; per-type counts constant at 32/32) -- like sitting with like is the spatial reading of which interface variables must align for coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it demonstrates a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate. Neither regime computes a binding affinity; both are tuned demonstration primitives, not fitted to a measured tissue or condensate. The two run as independent processes through the process-bigraph engine, with no coupling between them.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard (heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 Monte Carlo steps) while staying cohesive (live-cell pixels ~1530, &lt;1% drift; per-type counts constant at 32/32) -- like sitting with like is the spatial reading of which interface variables must align for coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it demonstrates a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate. Neither regime computes a binding affinity; both are tuned demonstration primitives, not fitted to a measured tissue or condensate. The two run as independent processes through the process-bigraph engine, with no coupling between them." data-edit-multiline data-edit-label="Claim">Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard (heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 Monte Carlo steps) while staying cohesive (live-cell pixels ~1530, &lt;1% drift; per-type counts constant at 32/32) -- like sitting with like is the spatial reading of which interface variables must align for coupling. Independently, a Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp, emergent interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps) with mass conserved to ~4e-18 and the field bounded in [-1, 1]. The honest boundary of the claim is explicit: the condensate forms an interface but does not yet do interface work -- it does not selectively concentrate or exclude a second species -- so it demonstrates a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate. Neither regime computes a binding affinity; both are tuned demonstration primitives, not fitted to a measured tissue or condensate. The two run as independent processes through the process-bigraph engine, with no coupling between them.</p>
       
       <div class="ctr-context">Steinberg&#39;s differential-adhesion sorting is the paper&#39;s §Molecular compositions complementarity (Fig 7) read spatially: molecules bind the partners they recognize and not others, and at the scale of cells that same selectivity shows up as which contacts are cheap and which are costly. Give two cell types a contact-energy matrix in which homotypic contact is favorable and heterotypic contact is expensive, and a well-mixed checkerboard self-organizes -- like cells cluster, unlike cells pull apart, and the heterotypic interface shrinks. That is the question of which interface variables must align for coupling to occur, made mechanical: cells stay adjacent exactly where their adhesion preferences are complementary.
 
@@ -559,7 +562,7 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">The paper&#39;s §Molecular compositions section (Fig 7) frames its subject as a question about interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates? This study puts two spatial primitives of that question on the lattice. Differential-adhesion cell sorting -- Steinberg&#39;s Differential Adhesion Hypothesis -- is complementarity made spatial: a mixed population of two cell types, distinguished only by which contacts they find energetically favorable, demixes so that like sits with like and the heterotypic boundary between them collapses, a direct spatial reading of which interface variables must align for two cells to stay coupled. Biomolecular-condensate phase separation is the diffuse-interface counterpart: a scalar composition field, seeded near-critical, spontaneously separates into two phases divided by a sharp interface -- a boundary forming out of a well-mixed medium, the way a condensate droplet does. Each is a real 2D spatial mechanism run through the process-bigraph engine; the two are independent demonstrations, not one coupled model.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="The paper&#39;s §Molecular compositions section (Fig 7) frames its subject as a question about interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates? This study puts two spatial primitives of that question on the lattice. Differential-adhesion cell sorting -- Steinberg&#39;s Differential Adhesion Hypothesis -- is complementarity made spatial: a mixed population of two cell types, distinguished only by which contacts they find energetically favorable, demixes so that like sits with like and the heterotypic boundary between them collapses, a direct spatial reading of which interface variables must align for two cells to stay coupled. Biomolecular-condensate phase separation is the diffuse-interface counterpart: a scalar composition field, seeded near-critical, spontaneously separates into two phases divided by a sharp interface -- a boundary forming out of a well-mixed medium, the way a condensate droplet does. Each is a real 2D spatial mechanism run through the process-bigraph engine; the two are independent demonstrations, not one coupled model." data-edit-multiline data-edit-label="Question">The paper&#39;s §Molecular compositions section (Fig 7) frames its subject as a question about interfaces, not architecture: which patterns of molecular complementarity give rise to interfaces that behave as functional, regulatable boundaries, and which produce transient or unregulated aggregates? This study puts two spatial primitives of that question on the lattice. Differential-adhesion cell sorting -- Steinberg&#39;s Differential Adhesion Hypothesis -- is complementarity made spatial: a mixed population of two cell types, distinguished only by which contacts they find energetically favorable, demixes so that like sits with like and the heterotypic boundary between them collapses, a direct spatial reading of which interface variables must align for two cells to stay coupled. Biomolecular-condensate phase separation is the diffuse-interface counterpart: a scalar composition field, seeded near-critical, spontaneously separates into two phases divided by a sharp interface -- a boundary forming out of a well-mixed medium, the way a condensate droplet does. Each is a real 2D spatial mechanism run through the process-bigraph engine; the two are independent demonstrations, not one coupled model.</span></div>
         
       </div>
     </div>
@@ -583,24 +586,25 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Differential adhesion alone demixes the mixed checkerboard -- heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS while the clump stays cohesive (pixels ~1530, &lt;1% drift; counts 32/32) and a neutral-J control does not sort -- the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism. Independently, the Cahn-Hilliard field phase-separates into two domains bounded by a sharp interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps), mass conserved to ~4e-18 and bounded in [-1, 1]. The condensate forms a boundary but does not yet do interface work (no selective concentration/exclusion of a second species) -- a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Differential adhesion alone demixes the mixed checkerboard -- heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS while the clump stays cohesive (pixels ~1530, &lt;1% drift; counts 32/32) and a neutral-J control does not sort -- the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism. Independently, the Cahn-Hilliard field phase-separates into two domains bounded by a sharp interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps), mass conserved to ~4e-18 and bounded in [-1, 1]. The condensate forms a boundary but does not yet do interface work (no selective concentration/exclusion of a second species) -- a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate." data-edit-multiline data-edit-label="Result">Differential adhesion alone demixes the mixed checkerboard -- heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS while the clump stays cohesive (pixels ~1530, &lt;1% drift; counts 32/32) and a neutral-J control does not sort -- the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism. Independently, the Cahn-Hilliard field phase-separates into two domains bounded by a sharp interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps), mass conserved to ~4e-18 and bounded in [-1, 1]. The condensate forms a boundary but does not yet do interface work (no selective concentration/exclusion of a second species) -- a boundary forming, not yet the functional, regulatable boundary the paper&#39;s central question distinguishes from a transient aggregate.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">CONDENSATE-PHASE-SEPARATES</div>
+          <div class="ov-metric-k">condensate-phase-separates</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">CONDENSATE-CONSERVES-MASS</div>
+          <div class="ov-metric-k">condensate-conserves-mass</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">CONDENSATE-STAYS-BOUNDED</div>
+          <div class="ov-metric-k">condensate-stays-bounded</div>
         </div>
         
       </div>
@@ -620,11 +624,11 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard so that like sits with like -- the spatial reading of which interface variables must align for coupling. Confirmed: heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS, while the clump stays cohesive (live-cell pixels ~1530, &lt;1% drift) and per-type counts hold at 32/32.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard so that like sits with like -- the spatial reading of which interface variables must align for coupling. Confirmed: heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS, while the clump stays cohesive (live-cell pixels ~1530, &lt;1% drift) and per-type counts hold at 32/32." data-edit-multiline data-edit-label="Finding F-01">Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find energetically favorable demix a well-mixed checkerboard so that like sits with like -- the spatial reading of which interface variables must align for coupling. Confirmed: heterotypic-interface fraction ~0.64 -&gt; ~0.06 over ~600 MCS, while the clump stays cohesive (live-cell pixels ~1530, &lt;1% drift) and per-type counts hold at 32/32.</span>
             
             <span class="finding-chip">via <code>sorting-heterotypic-interface-collapses</code></span>
             
@@ -674,11 +678,11 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017 (§Molecular compositions, Fig 7): weak-interaction-driven phase separation into droplets with an emergent interface. Confirmed as spinodal decomposition: a near-critical field separates into two phases (variance ~7e-5 -&gt; ~0.38 over 10000 steps) bounded by a sharp interface, with total mass conserved to ~4e-18 and the field bounded in [-1, 1]. A boundary forms out of a well-mixed medium, mass-conserved.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="A Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017 (§Molecular compositions, Fig 7): weak-interaction-driven phase separation into droplets with an emergent interface. Confirmed as spinodal decomposition: a near-critical field separates into two phases (variance ~7e-5 -&gt; ~0.38 over 10000 steps) bounded by a sharp interface, with total mass conserved to ~4e-18 and the field bounded in [-1, 1]. A boundary forms out of a well-mixed medium, mass-conserved." data-edit-multiline data-edit-label="Finding F-02">A Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017 (§Molecular compositions, Fig 7): weak-interaction-driven phase separation into droplets with an emergent interface. Confirmed as spinodal decomposition: a near-critical field separates into two phases (variance ~7e-5 -&gt; ~0.38 over 10000 steps) bounded by a sharp interface, with total mass conserved to ~4e-18 and the field bounded in [-1, 1]. A boundary forms out of a well-mixed medium, mass-conserved.</span>
             
             <span class="finding-chip">via <code>condensate-phase-separates</code></span>
             
@@ -728,11 +732,11 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding contact-energy asymmetry as the cause of sorting. Confirmed by a committed pytest (tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort) that runs the neutral-J composite end-to-end: neutral J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding contact-energy asymmetry as the cause of sorting. Confirmed by a committed pytest (tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort) that runs the neutral-J composite end-to-end: neutral J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime." data-edit-multiline data-edit-label="Finding F-04">The demixing is caused by the differential-J regime, not by CPM dynamics per se. Under neutral contact energies (all J=8) the same checkerboard at T=10 stays mixed, isolating the complementarity-encoding contact-energy asymmetry as the cause of sorting. Confirmed by a committed pytest (tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort) that runs the neutral-J composite end-to-end: neutral J holds hetero_frac ~0.52 over 600 MCS vs ~0.06 for the differential-J regime.</span>
             
             <span class="finding-chip">via <code>sorting-neutral-J-does-not-sort</code></span>
             
@@ -1004,6 +1008,12 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
   
   <div id="results-summary" data-study="biomolecular-complementarity" style="margin:0 0 16px"></div>
 
+  
+  <div id="gate-results-section" data-study="biomolecular-complementarity" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
+
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="biomolecular-complementarity">
     <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading results preview…</span></div>
@@ -1110,12 +1120,12 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
         
         data-pytest-node="sorting-heterotypic-interface-collapses"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">sorting-heterotypic-interface-collapses</strong>
         
@@ -1123,6 +1133,16 @@ Honesty point. The condensate study demonstrates a boundary forming -- phase sep
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Under differential adhesion (homotypic J=2, heterotypic J=11, medium J=8, T=10), the mixed checkerboard demixes: the heterotypic-interface fraction collapses from a clearly-mixed start toward a sorted low value.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: hetero_frac ~0.64 -&gt; ~0.06 over ~600 MCS (raw seeded checkerboard ~1.0)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1149,12 +1169,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         
         data-pytest-node="sorting-clump-stays-cohesive"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">sorting-clump-stays-cohesive</strong>
         
@@ -1162,6 +1182,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Cohesion guard: the demixing is real sorting, not dissolution. The total live-cell pixel count is retained (well within a 10% drift bound), so a dissolved clump is not misread as sorted.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: cell_pixels ~1530 held to &lt;1% drift (10% cohesion bound) -- sorted, not dissolved</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1188,12 +1218,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         
         data-pytest-node="sorting-conserves-cell-count"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">sorting-conserves-cell-count</strong>
         
@@ -1201,6 +1231,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Regression check that sorting moves cells rather than creating or destroying them: the per-type cell counts stay exactly 32/32 throughout the run.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: n_type1 == n_type2 == 32 throughout -- cells moved, none created or destroyed</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1227,12 +1267,12 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
         data-pytest-node="sorting-neutral-J-does-not-sort"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">sorting-neutral-J-does-not-sort</strong>
         
@@ -1240,6 +1280,16 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Negative control isolating J-regime causality: under neutral contact energies (all J=8, so heterotypic contact is no more costly than homotypic) the same checkerboard at T=10 does NOT demix -- proving the sorting is driven by the differential-J regime, not by CPM Metropolis dynamics per se.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: neutral J (all=8) stays mixed at hetero_frac ~0.52 (now a committed pytest, tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort) -- J causality control</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1431,7 +1481,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "phi bounded t
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1526,9 +1576,9 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "phi bounded t
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/7 passed</span>
+        <span class="muted small">4/7 passed</span>
       </div>
       
     </div>
@@ -1576,7 +1626,43 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "phi bounded t
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+
+- Differential-adhesion cell sorting reproduces the paper&#39;s §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find favorable demix a well-mixed checkerboard (hetero_frac ~0.64 -&gt; ~0.06 over ~600 MCS) while staying cohesive (pixels ~1530, &lt;1% drift; counts 32/32). A neutral-J control (all J=8) does not sort, isolating the contact-energy asymmetry as the cause.
+
+- A Cahn-Hilliard composition field realizes the condensate mechanism the paper draws from banani2017: a near-critical field phase-separates into two domains bounded by a sharp interface (variance ~7e-5 -&gt; ~0.38 over 10000 steps), mass conserved to ~4e-18, field bounded in [-1, 1].
+
+## Evidence
+
+- **SORTING-HETEROTYPIC-INTERFACE-COLLAPSES** -- hetero_frac ~0.64 -&gt; ~0.06, roughly an order of magnitude
+
+- **SORTING-CLUMP-STAYS-COHESIVE** -- cell_pixels ~1530, &lt;1% drift (cohesion guard, 10% bound)
+
+- **SORTING-CONSERVES-CELL-COUNT** -- n_type1 = n_type2 = 32 throughout
+
+- **SORTING-NEUTRAL-J-DOES-NOT-SORT** -- neutral J holds hetero_frac ~0.52 (J causality control)
+
+- **CONDENSATE-PHASE-SEPARATES** -- phi_var ~7e-5 -&gt; ~0.38, sharp emergent interface
+
+- **CONDENSATE-CONSERVES-MASS** -- phi_mean drift ~4e-18
+
+- **CONDENSATE-STAYS-BOUNDED** -- phi in [-0.989, 0.982], no NaN, at pinned dt=0.002
+
+## Limitations
+
+- The condensate forms a boundary but does not do interface work -- it does not selectively concentrate or exclude a second species, the property that distinguishes a functional, regulatable boundary from a transient aggregate in the paper&#39;s §Molecular compositions central question (Fig 7). Named as the next step, not glossed.
+
+- Neither regime computes a binding affinity; sorting is differential-adhesion demixing, not molecular selectivity, matching how a coarser, specification-stage lumped realization scopes its own selectivity gap.
+
+- Both regimes are tuned, not fitted: the sorting J-triple satisfies Steinberg&#39;s sorting inequality (11 &gt; 1/2*(2+2)) but the magnitudes and T=10 sit in a narrow cohesive-and-mobile window (T=1 freezes, T&gt;=200 dissolves); the Cahn-Hilliard scheme is numerically stiff, dt pinned at 0.002. No fitted literature band is claimed because these are demonstration primitives, not models of a specific tissue or condensate.
+
+- The two demonstrations are independent and uncoupled; phi is not coupled to the CPM cells.
+
+## Next steps
+
+- Make the condensate do interface work: add a second species and a selective-partitioning coupling so a droplet demonstrably concentrates or excludes it -- turning the paper&#39;s central-question discriminator (functional regulatable boundary vs transient aggregate) into a tested pass/fail rather than a narrated one.
+
+- Add a genuine complementarity/selectivity term to the sorting side (a binding-affinity or partner-choice mechanism with a non-cognate binder to reject), closing the gap between complementarity-as-organizing-idea and complementarity-as-tested-mechanism." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>
 <p>Differential-adhesion cell sorting reproduces the paper's §Molecular compositions complementarity (Fig 7) as a spatial mechanism: two cell types differing only in which contacts they find favorable demix a well-mixed checkerboard (hetero_frac ~0.64 -&gt; ~0.06 over ~600 MCS) while staying cohesive (pixels ~1530, &lt;1% drift; counts 32/32). A neutral-J control (all J=8) does not sort, isolating the contact-energy asymmetry as the cause.</p>
@@ -1722,11 +1808,12 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "phi bounded t
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "biomolecular-complementarity";
+window.__STUDY_INVESTIGATION__ = "draft-to-living-cell";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -1855,6 +1942,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

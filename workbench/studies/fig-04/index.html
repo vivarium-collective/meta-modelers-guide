@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-04" data-study-kind="computational" title="fig-04">fig-04: Cell–environment coupling</span>
+    <span class="study-name" id="study-name" data-slug="fig-04" data-study-kind="computational" title="fig-04" data-edit-kind="study" data-edit-field="title" data-edit-value="fig-04: Cell–environment coupling" data-edit-label="Title">fig-04: Cell–environment coupling</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">The paper&#39;s §Cell-environment coupling figure is executable, not merely drawn: the `fig04-runnable` composite closes the caption&#39;s control loop as measured simulation output. A real diffusing nutrient gradient, sensed locally at interior grid index 4, drives the cell&#39;s interface ports — uptake is linear in the local sensed field (exactly 4× the field ⇒ 4× the uptake; per-step uptake tracks the sensed field at correlation 1.0), mass grows monotonically (1.0 → ~1.432 over 24 steps), and the cell drifts up-gradient (index 4.0 → ~4.196, net +0.196). The cell writes its uptake back into the shared environment store, closing the sense→act loop, and the mass↔uptake ledger closes exactly (Δmass == 0.5 × cumulative uptake booked to the env). A zero-field negative control gives zero drive on every port, establishing the field as the causal driver. All values are deterministic run-to-run (no RNG in the composite). These are toy-real, uncalibrated magnitudes — the calibrated spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="The paper&#39;s §Cell-environment coupling figure is executable, not merely drawn: the `fig04-runnable` composite closes the caption&#39;s control loop as measured simulation output. A real diffusing nutrient gradient, sensed locally at interior grid index 4, drives the cell&#39;s interface ports — uptake is linear in the local sensed field (exactly 4× the field ⇒ 4× the uptake; per-step uptake tracks the sensed field at correlation 1.0), mass grows monotonically (1.0 → ~1.432 over 24 steps), and the cell drifts up-gradient (index 4.0 → ~4.196, net +0.196). The cell writes its uptake back into the shared environment store, closing the sense→act loop, and the mass↔uptake ledger closes exactly (Δmass == 0.5 × cumulative uptake booked to the env). A zero-field negative control gives zero drive on every port, establishing the field as the causal driver. All values are deterministic run-to-run (no RNG in the composite). These are toy-real, uncalibrated magnitudes — the calibrated spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation." data-edit-multiline data-edit-label="Claim">The paper&#39;s §Cell-environment coupling figure is executable, not merely drawn: the `fig04-runnable` composite closes the caption&#39;s control loop as measured simulation output. A real diffusing nutrient gradient, sensed locally at interior grid index 4, drives the cell&#39;s interface ports — uptake is linear in the local sensed field (exactly 4× the field ⇒ 4× the uptake; per-step uptake tracks the sensed field at correlation 1.0), mass grows monotonically (1.0 → ~1.432 over 24 steps), and the cell drifts up-gradient (index 4.0 → ~4.196, net +0.196). The cell writes its uptake back into the shared environment store, closing the sense→act loop, and the mass↔uptake ledger closes exactly (Δmass == 0.5 × cumulative uptake booked to the env). A zero-field negative control gives zero drive on every port, establishing the field as the causal driver. All values are deterministic run-to-run (no RNG in the composite). These are toy-real, uncalibrated magnitudes — the calibrated spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.</p>
       
       <div class="ctr-context">This is the runnable realization of the paper&#39;s §Cell-environment coupling figure (Fig cell_environment). The section frames coupling as closing a loop: &#34;cellular outputs modify the environmental state, environmental processes update it further, and that state feeds back to the cellular interface as inputs -- the minimal structure required for control.&#34; Panel **a** shows a cell interacting with environmental fields (chemical, electrical, mechanical) and physical barriers; panel **b** shows a composition diagram wiring internal cell state to those environmental fields through exchange processes and shared stores, alongside environmental processes such as diffusion and mechanical relaxation.
 The `fig04-runnable` composite makes that diagram executable. A real length-9 1-D diffusing chemical grid (a `map[float]` store, keys `&#34;0&#34;`..`&#34;8&#34;`) is seeded as a nutrient GRADIENT — 0.0 at index 0 rising linearly to 1.0 at index 8 — and relaxes under a genuine finite-difference `SpatialDiffusion` step (D=0.2, zero-flux edges, mass-conserving). A single cell (`SingleCellSpatial`) sits at interior index 4 and is wired to that SHARED chemical_field store: each tick it senses its LOCAL field value, takes up chemical linearly in that value (uptake_rate=0.1), grows mass at a biomass yield of 0.5, exerts traction, and drifts up the local concentration gradient (migration_rate=0.1). Its `uptake` and `traction` outputs are written BACK into the shared environment store (`environment.uptake_flux`, `environment.traction`) — the same stores the environmental processes and emitter read — so the sense→act loop closes through a shared store exactly as the caption describes. A `MechanicalRelax` process relaxes the scalar mechanical field toward its barrier-imposed equilibrium, standing in for the mechanical/barrier field of panel a.
@@ -555,7 +558,7 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Is the paper&#39;s §Cell-environment coupling figure (Fig cell_environment) executable — does a runnable process-bigraph composite actually close the control loop the caption asserts, where an environmental chemical field DRIVES the cell&#39;s interface ports (sensing, uptake, growth, motility) and the cell acts back on that shared field? Concretely: does a real diffusing nutrient gradient, sensed locally at an interior grid index, drive uptake that tracks the sensed field, grow the cell&#39;s mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake → mass gain, plus up-gradient drift — all as measured simulation output, not a drawn diagram?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Is the paper&#39;s §Cell-environment coupling figure (Fig cell_environment) executable — does a runnable process-bigraph composite actually close the control loop the caption asserts, where an environmental chemical field DRIVES the cell&#39;s interface ports (sensing, uptake, growth, motility) and the cell acts back on that shared field? Concretely: does a real diffusing nutrient gradient, sensed locally at an interior grid index, drive uptake that tracks the sensed field, grow the cell&#39;s mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake → mass gain, plus up-gradient drift — all as measured simulation output, not a drawn diagram?" data-edit-multiline data-edit-label="Question">Is the paper&#39;s §Cell-environment coupling figure (Fig cell_environment) executable — does a runnable process-bigraph composite actually close the control loop the caption asserts, where an environmental chemical field DRIVES the cell&#39;s interface ports (sensing, uptake, growth, motility) and the cell acts back on that shared field? Concretely: does a real diffusing nutrient gradient, sensed locally at an interior grid index, drive uptake that tracks the sensed field, grow the cell&#39;s mass, and pull it up-gradient (chemotaxis) — env field → sensed value → uptake → mass gain, plus up-gradient drift — all as measured simulation output, not a drawn diagram?</span></div>
         
       </div>
     </div>
@@ -579,34 +582,35 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a deterministic 24-tick run, the environmental field drives every leg of the control loop and the cell acts back on the shared field. Uptake is linear in the local sensed field (uptake(0.8)/uptake(0.2) == 4.0) and per-step uptake tracks the local sensed field at correlation 1.0; a flat zero field gives exactly zero drive on every port (the environment is the causal driver). Mass grows monotonically 1.0 → 1.432152, the cell drifts up-gradient from index 4.0 to 4.195695 (chemotaxis), and the cell&#39;s uptake is written back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone) with the mass↔uptake ledger closing exactly (Δmass 0.432152 == 0.5 × 0.864305). The paper&#39;s §Cell-environment coupling figure (Fig cell_environment) is thus executable, not merely drawn — the caption&#39;s &#34;minimal structure required for control&#34; runs as measured simulation output. These are toy-real, uncalibrated magnitudes; the rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Over a deterministic 24-tick run, the environmental field drives every leg of the control loop and the cell acts back on the shared field. Uptake is linear in the local sensed field (uptake(0.8)/uptake(0.2) == 4.0) and per-step uptake tracks the local sensed field at correlation 1.0; a flat zero field gives exactly zero drive on every port (the environment is the causal driver). Mass grows monotonically 1.0 → 1.432152, the cell drifts up-gradient from index 4.0 to 4.195695 (chemotaxis), and the cell&#39;s uptake is written back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone) with the mass↔uptake ledger closing exactly (Δmass 0.432152 == 0.5 × 0.864305). The paper&#39;s §Cell-environment coupling figure (Fig cell_environment) is thus executable, not merely drawn — the caption&#39;s &#34;minimal structure required for control&#34; runs as measured simulation output. These are toy-real, uncalibrated magnitudes; the rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation." data-edit-multiline data-edit-label="Result">Over a deterministic 24-tick run, the environmental field drives every leg of the control loop and the cell acts back on the shared field. Uptake is linear in the local sensed field (uptake(0.8)/uptake(0.2) == 4.0) and per-step uptake tracks the local sensed field at correlation 1.0; a flat zero field gives exactly zero drive on every port (the environment is the causal driver). Mass grows monotonically 1.0 → 1.432152, the cell drifts up-gradient from index 4.0 to 4.195695 (chemotaxis), and the cell&#39;s uptake is written back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone) with the mass↔uptake ledger closing exactly (Δmass 0.432152 == 0.5 × 0.864305). The paper&#39;s §Cell-environment coupling figure (Fig cell_environment) is thus executable, not merely drawn — the caption&#39;s &#34;minimal structure required for control&#34; runs as measured simulation output. These are toy-real, uncalibrated magnitudes; the rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-MASS-LEDGER-CLOSES</div>
+          <div class="ov-metric-k">mech-mass-ledger-closes</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-CELL-DEPLETES-FIELD-REAL-FEEDBACK</div>
+          <div class="ov-metric-k">mech-cell-depletes-field-real-feedback</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-CONTROLS-ISOLATE-EACH-ARM</div>
+          <div class="ov-metric-k">mech-controls-isolate-each-arm</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-CHEMOTAXIS-CLIMBS-THE-GRADIENT</div>
+          <div class="ov-metric-k">mech-chemotaxis-climbs-the-gradient</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-UPTAKE-SATURATES</div>
+          <div class="ov-metric-k">mech-uptake-saturates</div>
         </div>
         
       </div>
@@ -626,11 +630,11 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The paper&#39;s §Cell-environment coupling figure is executable: a runnable composite closes the caption&#39;s control loop as measured simulation output. A real diffusing nutrient gradient sensed at interior grid index 4 drives the cell&#39;s interface ports — uptake is linear in the local sensed field (4× field ⇒ 4× uptake; per-step uptake tracks the sensed field at correlation 1.0), and a flat zero field gives zero drive on every port, establishing the field as the causal driver. Deterministic (no RNG), so every value reproduces run-to-run.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="The paper&#39;s §Cell-environment coupling figure is executable: a runnable composite closes the caption&#39;s control loop as measured simulation output. A real diffusing nutrient gradient sensed at interior grid index 4 drives the cell&#39;s interface ports — uptake is linear in the local sensed field (4× field ⇒ 4× uptake; per-step uptake tracks the sensed field at correlation 1.0), and a flat zero field gives zero drive on every port, establishing the field as the causal driver. Deterministic (no RNG), so every value reproduces run-to-run." data-edit-multiline data-edit-label="Finding F-01">The paper&#39;s §Cell-environment coupling figure is executable: a runnable composite closes the caption&#39;s control loop as measured simulation output. A real diffusing nutrient gradient sensed at interior grid index 4 drives the cell&#39;s interface ports — uptake is linear in the local sensed field (4× field ⇒ 4× uptake; per-step uptake tracks the sensed field at correlation 1.0), and a flat zero field gives zero drive on every port, establishing the field as the causal driver. Deterministic (no RNG), so every value reproduces run-to-run.</span>
             
             <span class="finding-chip">via <code>uptake-tracks-the-local-sensed-field</code></span>
             
@@ -680,11 +684,11 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The loop closes and its ledger balances: the cell writes its uptake back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone), grows mass monotonically (1.0 → 1.432152), and drifts up-gradient (index 4.0 → 4.196, chemotaxis). The mass↔uptake ledger closes exactly — Δmass 0.432152 == 0.5 × cumulative uptake booked to the environment — so no biomass appears that the shared env store did not account for. The sense→act loop runs through a shared store exactly as panel b diagrams.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="The loop closes and its ledger balances: the cell writes its uptake back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone), grows mass monotonically (1.0 → 1.432152), and drifts up-gradient (index 4.0 → 4.196, chemotaxis). The mass↔uptake ledger closes exactly — Δmass 0.432152 == 0.5 × cumulative uptake booked to the environment — so no biomass appears that the shared env store did not account for. The sense→act loop runs through a shared store exactly as panel b diagrams." data-edit-multiline data-edit-label="Finding F-02">The loop closes and its ledger balances: the cell writes its uptake back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone), grows mass monotonically (1.0 → 1.432152), and drifts up-gradient (index 4.0 → 4.196, chemotaxis). The mass↔uptake ledger closes exactly — Δmass 0.432152 == 0.5 × cumulative uptake booked to the environment — so no biomass appears that the shared env store did not account for. The sense→act loop runs through a shared store exactly as panel b diagrams.</span>
             
             <span class="finding-chip">via <code>control-loop-closes-through-shared-store</code></span>
             
@@ -734,11 +738,11 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The loop&#39;s environmental-modification leg is measurable: the cell draws down the very gradient it climbs. The local chemical field the cell senses at its grid index falls from 0.5 at the start to 0.2407 by the end of the 24-tick run -- a net drawdown driven by diffusion smoothing the seeded 0-&gt;1 gradient and by the cell&#39;s own uptake removing mass at its footprint. Yet per-step uptake still tracks that falling local field at correlation 1.0 throughout, so the coupling holds even as the driver relaxes. This is the half of the control loop that distinguishes it from a one-way driver: cellular output modifies the shared environmental state (panel b), confirmed in-memory on fig04-runnable.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The loop&#39;s environmental-modification leg is measurable: the cell draws down the very gradient it climbs. The local chemical field the cell senses at its grid index falls from 0.5 at the start to 0.2407 by the end of the 24-tick run -- a net drawdown driven by diffusion smoothing the seeded 0-&gt;1 gradient and by the cell&#39;s own uptake removing mass at its footprint. Yet per-step uptake still tracks that falling local field at correlation 1.0 throughout, so the coupling holds even as the driver relaxes. This is the half of the control loop that distinguishes it from a one-way driver: cellular output modifies the shared environmental state (panel b), confirmed in-memory on fig04-runnable." data-edit-multiline data-edit-label="Finding F-03">The loop&#39;s environmental-modification leg is measurable: the cell draws down the very gradient it climbs. The local chemical field the cell senses at its grid index falls from 0.5 at the start to 0.2407 by the end of the 24-tick run -- a net drawdown driven by diffusion smoothing the seeded 0-&gt;1 gradient and by the cell&#39;s own uptake removing mass at its footprint. Yet per-step uptake still tracks that falling local field at correlation 1.0 throughout, so the coupling holds even as the driver relaxes. This is the half of the control loop that distinguishes it from a one-way driver: cellular output modifies the shared environmental state (panel b), confirmed in-memory on fig04-runnable.</span>
             
             <span class="finding-chip">via <code>control-loop-closes-through-shared-store</code></span>
             
@@ -788,11 +792,11 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The sense/act loop is genuinely CLOSED in the mechanistic variant, fixing the review&#39;s central objection to this figure. In the baseline the cell&#39;s uptake was a scalar output never subtracted from the field, so &#34;uptake ∝ local field at correlation 1.0&#34; was an identity, not feedback. Here the cell&#39;s saturating Michaelis–Menten uptake is a REAL sink: it draws the field down at the cell&#39;s location (a depletion well, max 1.58 field units, that diffuses and follows the cell), and the cell leaves a measurable footprint on the environment (max 1.58). Biomass is paid for out of the field — the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to 8.9e-16 and Δbiomass = yield·Σuptake exactly.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The sense/act loop is genuinely CLOSED in the mechanistic variant, fixing the review&#39;s central objection to this figure. In the baseline the cell&#39;s uptake was a scalar output never subtracted from the field, so &#34;uptake ∝ local field at correlation 1.0&#34; was an identity, not feedback. Here the cell&#39;s saturating Michaelis–Menten uptake is a REAL sink: it draws the field down at the cell&#39;s location (a depletion well, max 1.58 field units, that diffuses and follows the cell), and the cell leaves a measurable footprint on the environment (max 1.58). Biomass is paid for out of the field — the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to 8.9e-16 and Δbiomass = yield·Σuptake exactly." data-edit-multiline data-edit-label="Finding F-04">The sense/act loop is genuinely CLOSED in the mechanistic variant, fixing the review&#39;s central objection to this figure. In the baseline the cell&#39;s uptake was a scalar output never subtracted from the field, so &#34;uptake ∝ local field at correlation 1.0&#34; was an identity, not feedback. Here the cell&#39;s saturating Michaelis–Menten uptake is a REAL sink: it draws the field down at the cell&#39;s location (a depletion well, max 1.58 field units, that diffuses and follows the cell), and the cell leaves a measurable footprint on the environment (max 1.58). Biomass is paid for out of the field — the mass ledger Σfield = Σsource − Σdecay − Σuptake closes to 8.9e-16 and Δbiomass = yield·Σuptake exactly.</span>
             
             <span class="finding-chip">via <code>mech-cell-depletes-field-real-feedback</code></span>
             
@@ -842,11 +846,11 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">Matched-null controls isolate each arm of the loop, so the behaviour is attributable to specific mechanisms rather than to a scripted trajectory. NO-UPTAKE (Vmax=ε) keeps the field intact and biomass flat; NO-MOTILITY (χ=ε) holds position while the cell still eats locally; ZERO-GRADIENT (uniform field, source off) abolishes directed drift. Chemotaxis genuinely climbs the gradient (cell 16→0.6 lattice units, sensed nutrient rising), and vanishes without a gradient. Controls use an epsilon, not 0.0, because bigraph_schema treats a float 0.0 config as empty and restores the schema default — a matched-null-control correctness point.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="Matched-null controls isolate each arm of the loop, so the behaviour is attributable to specific mechanisms rather than to a scripted trajectory. NO-UPTAKE (Vmax=ε) keeps the field intact and biomass flat; NO-MOTILITY (χ=ε) holds position while the cell still eats locally; ZERO-GRADIENT (uniform field, source off) abolishes directed drift. Chemotaxis genuinely climbs the gradient (cell 16→0.6 lattice units, sensed nutrient rising), and vanishes without a gradient. Controls use an epsilon, not 0.0, because bigraph_schema treats a float 0.0 config as empty and restores the schema default — a matched-null-control correctness point." data-edit-multiline data-edit-label="Finding F-05">Matched-null controls isolate each arm of the loop, so the behaviour is attributable to specific mechanisms rather than to a scripted trajectory. NO-UPTAKE (Vmax=ε) keeps the field intact and biomass flat; NO-MOTILITY (χ=ε) holds position while the cell still eats locally; ZERO-GRADIENT (uniform field, source off) abolishes directed drift. Chemotaxis genuinely climbs the gradient (cell 16→0.6 lattice units, sensed nutrient rising), and vanishes without a gradient. Controls use an epsilon, not 0.0, because bigraph_schema treats a float 0.0 config as empty and restores the schema default — a matched-null-control correctness point.</span>
             
             <span class="finding-chip">via <code>mech-controls-isolate-each-arm</code></span>
             
@@ -896,11 +900,11 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-06">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Transport saturates (Michaelis–Menten), unlike the baseline&#39;s unbounded proportional uptake — honest scope stated. Uptake approaches Vmax at high concentration and is far below it near/under Km, so the carrier has a real limit. Honest limits: the model is a 1-D lattice (distances in LATTICE units, not calibrated physical microns), diffusion is explicit-Euler (stable at D·dt/dx²=0.4&lt;0.5), the source is a single in-domain cell, and the rate constants are didactic — not fitted to a named nutrient, diffusivity, or measured chemotactic velocity. The rigorous spatial cousin is `cell-environment-coupling` in draft-to-living-cell.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="Transport saturates (Michaelis–Menten), unlike the baseline&#39;s unbounded proportional uptake — honest scope stated. Uptake approaches Vmax at high concentration and is far below it near/under Km, so the carrier has a real limit. Honest limits: the model is a 1-D lattice (distances in LATTICE units, not calibrated physical microns), diffusion is explicit-Euler (stable at D·dt/dx²=0.4&lt;0.5), the source is a single in-domain cell, and the rate constants are didactic — not fitted to a named nutrient, diffusivity, or measured chemotactic velocity. The rigorous spatial cousin is `cell-environment-coupling` in draft-to-living-cell." data-edit-multiline data-edit-label="Finding F-06">Transport saturates (Michaelis–Menten), unlike the baseline&#39;s unbounded proportional uptake — honest scope stated. Uptake approaches Vmax at high concentration and is far below it near/under Km, so the carrier has a real limit. Honest limits: the model is a 1-D lattice (distances in LATTICE units, not calibrated physical microns), diffusion is explicit-Euler (stable at D·dt/dx²=0.4&lt;0.5), the source is a single in-domain cell, and the rate constants are didactic — not fitted to a named nutrient, diffusivity, or measured chemotactic velocity. The rigorous spatial cousin is `cell-environment-coupling` in draft-to-living-cell.</span>
             
             <span class="finding-chip">via <code>mech-uptake-saturates</code></span>
             
@@ -1057,7 +1061,7 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
         
         
         
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=complete</span>
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
       </div>
       
     </div>
@@ -1132,6 +1136,12 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
 <div class="overview-section" id="results-section">
   
   <div id="results-summary" data-study="fig-04" style="margin:0 0 16px"></div>
+
+  
+  <div id="gate-results-section" data-study="fig-04" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
 
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="fig-04">
@@ -1239,12 +1249,12 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
         
         data-pytest-node="higher-local-field-drives-larger-uptake"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">higher-local-field-drives-larger-uptake</strong>
         
@@ -1252,6 +1262,16 @@ Over a 24-step run every leg of the control loop is visible in the emitted trace
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">A higher local chemical field drives a larger `uptake` output, and because uptake is linear in the sensed field, exactly 4× the field gives 4× the uptake — the env→port drive made causal by driving the handler directly at two field levels.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: uptake(0.2)=0.02, uptake(0.8)=0.08, ratio == 4.0</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1278,12 +1298,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
         data-pytest-node="zero-field-gives-no-drive"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">zero-field-gives-no-drive</strong>
         
@@ -1291,6 +1311,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Negative control for the causal claim: with a flat ZERO chemical field the cell&#39;s uptake, traction, chemotactic drift, and mass gain are ALL exactly zero — the interface ports are driven BY the environment, not free-running.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: uptake, traction, drift, mass-gain all == 0.0 at flat zero field</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1317,12 +1347,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
         data-pytest-node="mass-increases-monotonically-under-nutrient"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">mass-increases-monotonically-under-nutrient</strong>
         
@@ -1330,6 +1360,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">With nutrient present throughout, the cell&#39;s mass increases monotonically over the run (net growth, never falling) — the sensed field → uptake → biomass leg of the loop.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: mass 1.0 → 1.432152, monotone non-decreasing</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1356,12 +1396,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="uptake-tracks-the-local-sensed-field"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">uptake-tracks-the-local-sensed-field</strong>
         
@@ -1369,6 +1409,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Per-step uptake rises and falls WITH the local sensed concentration over the actual run — the environment→port coupling, tick by tick, not just at endpoints.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: corr(per-step uptake, local sensed field) == 1.0</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1395,12 +1445,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="net-drift-is-up-gradient"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">net-drift-is-up-gradient</strong>
         
@@ -1408,6 +1458,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The cell drifts UP the concentration gradient over the run (net location displacement positive, toward the higher-field side) — chemotaxis, the cell constructing its own trajectory by climbing the field it senses.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: location 4.0 → 4.195695, net drift +0.195695 up-gradient</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1434,12 +1494,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="control-loop-closes-through-shared-store"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">control-loop-closes-through-shared-store</strong>
         
@@ -1447,6 +1507,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The cell&#39;s `uptake` output is written back into the SHARED `environment.uptake_flux` store (the same store other processes read), accumulates monotonically, and the mass↔uptake ledger closes exactly — the sense→act loop closing through a shared store, as the caption describes.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: cum uptake_flux 0.0 → 0.864305; Δmass 0.432152 == 0.5 × 0.864305</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1716,7 +1786,7 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1811,9 +1881,9 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/11 passed</span>
+        <span class="muted small">6/11 passed</span>
       </div>
       
     </div>
@@ -1857,7 +1927,26 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claim</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claim
+The paper&#39;s §Cell-environment coupling figure (Fig cell_environment) is executable, not merely drawn. The `fig04-runnable` composite closes the caption&#39;s control loop as measured, deterministic simulation output: a real length-9 diffusing chemical grid seeded as a 0→1 nutrient gradient drives a single cell at interior index 4 through one typed interface (`SingleCellSpatial`), and the cell writes its uptake/traction back into the shared environment store — the sense→act loop the caption calls &#34;the minimal structure required for control.&#34;
+
+## Evidence
+- **HIGHER-LOCAL-FIELD-DRIVES-LARGER-UPTAKE** — uptake(0.2)=0.02, uptake(0.8)=0.08, ratio == 4.0 (linear env→port drive)
+- **ZERO-FIELD-GIVES-NO-DRIVE** — flat zero field ⇒ uptake, traction, drift, mass-gain all == 0.0 (the environment is the causal driver)
+- **MASS-INCREASES-MONOTONICALLY-UNDER-NUTRIENT** — mass 1.0 → 1.432152, monotone
+- **UPTAKE-TRACKS-THE-LOCAL-SENSED-FIELD** — per-step uptake ↔ local sensed field correlation == 1.0
+- **NET-DRIFT-IS-UP-GRADIENT** — location 4.0 → 4.195695, net drift +0.196 up-gradient (chemotaxis)
+- **CONTROL-LOOP-CLOSES-THROUGH-SHARED-STORE** — cumulative uptake_flux 0.0 → 0.864305 (monotone); Δmass 0.432152 == 0.5 × 0.864305 (ledger closes)
+
+## Limitations
+- This is a DIDACTIC / toy-real composite — a length-9 1-D lattice, a single cell, and hand-picked rate constants chosen to make the loop legible in 24 ticks, not calibrated to a named nutrient, a measured chemotactic velocity, or a literature metabolic rate.
+- The rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation; its calibrated numbers are NOT restated as this study&#39;s own.
+- The environmental source is effectively OFF (source_index=99 is off-grid); the cell reads and draws down a SEEDED gradient relaxing under diffusion, not a maintained supply.
+- Panel a&#39;s chemical/electrical/mechanical/barrier fields are reduced to one 1-D chemical grid plus a scalar mechanical field; location/shape are lightweight scalar proxies.
+
+## Next steps
+- Turn on a maintained source (a valid on-grid source_index) to show steady-state coupling rather than a relaxing seeded gradient.
+- Compare against the calibrated `cell-environment-coupling` cousin for the same env→interface claim at a rigorous spatial resolution." data-edit-multiline data-edit-label="Conclusion"><h2>Claim</h2>
 <p>The paper's §Cell-environment coupling figure (Fig cell_environment) is executable, not merely drawn. The <code>fig04-runnable</code> composite closes the caption's control loop as measured, deterministic simulation output: a real length-9 diffusing chemical grid seeded as a 0→1 nutrient gradient drives a single cell at interior index 4 through one typed interface (<code>SingleCellSpatial</code>), and the cell writes its uptake/traction back into the shared environment store — the sense→act loop the caption calls &quot;the minimal structure required for control.&quot;</p>
 <h2>Evidence</h2>
 <ul>
@@ -1969,11 +2058,12 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "fig-04";
+window.__STUDY_INVESTIGATION__ = "paper-figures";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2102,6 +2192,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

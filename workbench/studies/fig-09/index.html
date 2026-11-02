@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-09" data-study-kind="computational" title="fig-09">fig-09: Growth &amp; division</span>
+    <span class="study-name" id="study-name" data-slug="fig-09" data-study-kind="computational" title="fig-09" data-edit-kind="study" data-edit-field="title" data-edit-value="fig-09: Growth &amp; division" data-edit-label="Title">fig-09: Growth &amp; division</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Realizing the paper&#39;s Fig. division caption b as a genuine place-graph rewrite over a colony `tree[node]` store (one `CellCycleDivision` process alternating REPLICATE and DIVIDE rewrites, driven through the process-bigraph engine) reproduces &#34;division ... partitions state variables such as DNA ... into two cells&#34;: over a deterministic 12-tick run the founder cell replicates its chromosome (DNA store doubles 1.0 -&gt; 2.0 while the boundary count stays 1) then divides (one cell becomes two, each daughter carrying one chromosome with dna 1.0), and repeats to 4 cells -- and at every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite (2.0 -&gt; 2x1.0; 4.0 -&gt; 4x1.0, nothing created or destroyed), and each daughter inherits exactly half of a parent cell&#39;s DNA. Replication always precedes division. This is a toy-real, uncalibrated didactic composite -- the division trigger is a discrete cell-cycle clock reaching a replicated (two-chromosome) state, not an integrated biomass threshold -- whose point is to make &#34;division is a compositional rewrite&#34; literally executable, not to reproduce division kinetics.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="Realizing the paper&#39;s Fig. division caption b as a genuine place-graph rewrite over a colony `tree[node]` store (one `CellCycleDivision` process alternating REPLICATE and DIVIDE rewrites, driven through the process-bigraph engine) reproduces &#34;division ... partitions state variables such as DNA ... into two cells&#34;: over a deterministic 12-tick run the founder cell replicates its chromosome (DNA store doubles 1.0 -&gt; 2.0 while the boundary count stays 1) then divides (one cell becomes two, each daughter carrying one chromosome with dna 1.0), and repeats to 4 cells -- and at every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite (2.0 -&gt; 2x1.0; 4.0 -&gt; 4x1.0, nothing created or destroyed), and each daughter inherits exactly half of a parent cell&#39;s DNA. Replication always precedes division. This is a toy-real, uncalibrated didactic composite -- the division trigger is a discrete cell-cycle clock reaching a replicated (two-chromosome) state, not an integrated biomass threshold -- whose point is to make &#34;division is a compositional rewrite&#34; literally executable, not to reproduce division kinetics." data-edit-multiline data-edit-label="Claim">Realizing the paper&#39;s Fig. division caption b as a genuine place-graph rewrite over a colony `tree[node]` store (one `CellCycleDivision` process alternating REPLICATE and DIVIDE rewrites, driven through the process-bigraph engine) reproduces &#34;division ... partitions state variables such as DNA ... into two cells&#34;: over a deterministic 12-tick run the founder cell replicates its chromosome (DNA store doubles 1.0 -&gt; 2.0 while the boundary count stays 1) then divides (one cell becomes two, each daughter carrying one chromosome with dna 1.0), and repeats to 4 cells -- and at every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite (2.0 -&gt; 2x1.0; 4.0 -&gt; 4x1.0, nothing created or destroyed), and each daughter inherits exactly half of a parent cell&#39;s DNA. Replication always precedes division. This is a toy-real, uncalibrated didactic composite -- the division trigger is a discrete cell-cycle clock reaching a replicated (two-chromosome) state, not an integrated biomass threshold -- whose point is to make &#34;division is a compositional rewrite&#34; literally executable, not to reproduce division kinetics.</p>
       
       <div class="ctr-context">This is the executable realization of the paper&#39;s §Growth, division, development, evolution section and its Fig. division. The paper frames division as the more radical of the transformations a self-maintaining cellular interface undergoes: &#34;a compositional rewrite in which one maintained boundary becomes two, with stores $x$ partitioned across daughters and interface ports $W$ duplicated and re-established&#34; -- each daughter inheriting a subset of stores and reconstructing a viable interface. Caption a walks the prokaryotic sequence (DNA replication, elongation, septum formation, separation into daughters); caption b abstracts it to &#34;a compositional rewrite that partitions state variables such as DNA and biomass into two cells.&#34;
 
@@ -561,7 +564,7 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Does the paper&#39;s §Growth-and-division claim (Fig. division) hold as a runnable composite -- that division is a compositional rewrite in which &#34;one maintained boundary becomes two, with stores partitioned across daughters and interface ports duplicated&#34; (caption a: DNA replication, elongation, septum, separation; caption b: &#34;division ... partitions state variables such as DNA and biomass into two cells&#34;) -- when realized as a genuine place-graph rewrite over a colony `tree[node]` store driven through the process-bigraph engine?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Does the paper&#39;s §Growth-and-division claim (Fig. division) hold as a runnable composite -- that division is a compositional rewrite in which &#34;one maintained boundary becomes two, with stores partitioned across daughters and interface ports duplicated&#34; (caption a: DNA replication, elongation, septum, separation; caption b: &#34;division ... partitions state variables such as DNA and biomass into two cells&#34;) -- when realized as a genuine place-graph rewrite over a colony `tree[node]` store driven through the process-bigraph engine?" data-edit-multiline data-edit-label="Question">Does the paper&#39;s §Growth-and-division claim (Fig. division) hold as a runnable composite -- that division is a compositional rewrite in which &#34;one maintained boundary becomes two, with stores partitioned across daughters and interface ports duplicated&#34; (caption a: DNA replication, elongation, septum, separation; caption b: &#34;division ... partitions state variables such as DNA and biomass into two cells&#34;) -- when realized as a genuine place-graph rewrite over a colony `tree[node]` store driven through the process-bigraph engine?</span></div>
         
       </div>
     </div>
@@ -585,29 +588,30 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a deterministic 12-tick run the founder cell (1 cell, dna 1.0) replicates its chromosome at t=3 (1 cell, 2 chromosomes, dna 2.0), then divides at t=6 into 2 cells with dna 1.0 each (total conserved at 2.0), replicates again at t=9 (2 cells, 4 chromosomes, dna 4.0), and divides at t=12 into 4 cells with dna 1.0 each (total conserved at 4.0). At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite, and each daughter inherits exactly half of a parent cell&#39;s DNA -- caption b&#39;s &#34;division ... partitions state variables such as DNA ... into two cells.&#34; Replication always precedes division (caption a&#39;s replicate-then-separate ordering). Every value is an exact, run-to-run-reproducible pin because the composite has no randomness. This is a toy-real, uncalibrated didactic realization whose point is to make &#34;division is a compositional rewrite&#34; literally executable at the place-graph level -- one boundary becoming two, its stores partitioned across daughters, steppable frame by frame -- not to reproduce division kinetics; the rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell` investigation.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Over a deterministic 12-tick run the founder cell (1 cell, dna 1.0) replicates its chromosome at t=3 (1 cell, 2 chromosomes, dna 2.0), then divides at t=6 into 2 cells with dna 1.0 each (total conserved at 2.0), replicates again at t=9 (2 cells, 4 chromosomes, dna 4.0), and divides at t=12 into 4 cells with dna 1.0 each (total conserved at 4.0). At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite, and each daughter inherits exactly half of a parent cell&#39;s DNA -- caption b&#39;s &#34;division ... partitions state variables such as DNA ... into two cells.&#34; Replication always precedes division (caption a&#39;s replicate-then-separate ordering). Every value is an exact, run-to-run-reproducible pin because the composite has no randomness. This is a toy-real, uncalibrated didactic realization whose point is to make &#34;division is a compositional rewrite&#34; literally executable at the place-graph level -- one boundary becoming two, its stores partitioned across daughters, steppable frame by frame -- not to reproduce division kinetics; the rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell` investigation." data-edit-multiline data-edit-label="Result">Over a deterministic 12-tick run the founder cell (1 cell, dna 1.0) replicates its chromosome at t=3 (1 cell, 2 chromosomes, dna 2.0), then divides at t=6 into 2 cells with dna 1.0 each (total conserved at 2.0), replicates again at t=9 (2 cells, 4 chromosomes, dna 4.0), and divides at t=12 into 4 cells with dna 1.0 each (total conserved at 4.0). At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite, and each daughter inherits exactly half of a parent cell&#39;s DNA -- caption b&#39;s &#34;division ... partitions state variables such as DNA ... into two cells.&#34; Replication always precedes division (caption a&#39;s replicate-then-separate ordering). Every value is an exact, run-to-run-reproducible pin because the composite has no randomness. This is a toy-real, uncalibrated didactic realization whose point is to make &#34;division is a compositional rewrite&#34; literally executable at the place-graph level -- one boundary becoming two, its stores partitioned across daughters, steppable frame by frame -- not to reproduce division kinetics; the rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell` investigation.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-DIVISION-GATED-BY-GROWTH</div>
+          <div class="ov-metric-k">mech-division-gated-by-growth</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-DIVISION-REQUIRES-ENERGY-AND-REPLICATION</div>
+          <div class="ov-metric-k">mech-division-requires-energy-and-replication</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-REPLICATION-DRAWS-DNA-FROM-NUCLEOTIDES</div>
+          <div class="ov-metric-k">mech-replication-draws-dna-from-nucleotides</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-DIVISION-CONSERVES-EVERY-PARTITION</div>
+          <div class="ov-metric-k">mech-division-conserves-every-partition</div>
         </div>
         
       </div>
@@ -627,11 +631,11 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Division realized as a genuine place-graph rewrite ADDS cell nodes at runtime and orders replication before division, exactly as caption a describes (DNA replication then separation into daughters). Over a deterministic 12-tick run the colony grows 1 -&gt; 2 -&gt; 4 cells, the count never falling, and at each round the chromosome count doubles (replication) a half-cycle before the cell count doubles (division). Confirmed: cells reach 4, monotone non-decreasing; first replication at t=3 strictly precedes first division at t=6.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="Division realized as a genuine place-graph rewrite ADDS cell nodes at runtime and orders replication before division, exactly as caption a describes (DNA replication then separation into daughters). Over a deterministic 12-tick run the colony grows 1 -&gt; 2 -&gt; 4 cells, the count never falling, and at each round the chromosome count doubles (replication) a half-cycle before the cell count doubles (division). Confirmed: cells reach 4, monotone non-decreasing; first replication at t=3 strictly precedes first division at t=6." data-edit-multiline data-edit-label="Finding F-01">Division realized as a genuine place-graph rewrite ADDS cell nodes at runtime and orders replication before division, exactly as caption a describes (DNA replication then separation into daughters). Over a deterministic 12-tick run the colony grows 1 -&gt; 2 -&gt; 4 cells, the count never falling, and at each round the chromosome count doubles (replication) a half-cycle before the cell count doubles (division). Confirmed: cells reach 4, monotone non-decreasing; first replication at t=3 strictly precedes first division at t=6.</span>
             
             <span class="finding-chip">via <code>replication-precedes-division</code></span>
             
@@ -681,11 +685,11 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The composite realizes caption b&#39;s core claim -- &#34;division ... partitions state variables such as DNA ... into two cells&#34; -- as a CONSERVING, EQUIPARTITIONING rewrite. At each replication the total DNA store doubles (1.0 -&gt; 2.0 -&gt; 4.0); at each division the boundary count exactly doubles, the total DNA is conserved across the split (nothing created or destroyed), and each daughter inherits exactly half of a parent cell&#39;s DNA. Confirmed at both division events: t=6 (2.0 conserved, 1.0 per daughter) and t=12 (4.0 conserved, 1.0 per daughter). One maintained boundary becomes two with its stores partitioned across the daughters -- executable, not merely drawn.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="The composite realizes caption b&#39;s core claim -- &#34;division ... partitions state variables such as DNA ... into two cells&#34; -- as a CONSERVING, EQUIPARTITIONING rewrite. At each replication the total DNA store doubles (1.0 -&gt; 2.0 -&gt; 4.0); at each division the boundary count exactly doubles, the total DNA is conserved across the split (nothing created or destroyed), and each daughter inherits exactly half of a parent cell&#39;s DNA. Confirmed at both division events: t=6 (2.0 conserved, 1.0 per daughter) and t=12 (4.0 conserved, 1.0 per daughter). One maintained boundary becomes two with its stores partitioned across the daughters -- executable, not merely drawn." data-edit-multiline data-edit-label="Finding F-02">The composite realizes caption b&#39;s core claim -- &#34;division ... partitions state variables such as DNA ... into two cells&#34; -- as a CONSERVING, EQUIPARTITIONING rewrite. At each replication the total DNA store doubles (1.0 -&gt; 2.0 -&gt; 4.0); at each division the boundary count exactly doubles, the total DNA is conserved across the split (nothing created or destroyed), and each daughter inherits exactly half of a parent cell&#39;s DNA. Confirmed at both division events: t=6 (2.0 conserved, 1.0 per daughter) and t=12 (4.0 conserved, 1.0 per daughter). One maintained boundary becomes two with its stores partitioned across the daughters -- executable, not merely drawn.</span>
             
             <span class="finding-chip">via <code>division-conserves-and-equipartitions-dna</code></span>
             
@@ -735,11 +739,11 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The per-cell DNA content follows a strict replicate-then-halve invariant across the whole cell cycle, sharper than the aggregate conservation claim. Over the deterministic 12-tick run the per-cell DNA vector cycles [1.0] -&gt; [2.0] -&gt; [1.0, 1.0] -&gt; [2.0, 2.0] -&gt; [1.0, 1.0, 1.0, 1.0]: each cell doubles its chromosome to dna 2.0 at replication, then splits into two daughters of exactly dna 1.0 at division. So immediately after each division every cell carries exactly one chromosome at the 1.0 founder set point and the total DNA store exactly equals the cell count -- the &#34;one chromosome, dna == 1.0 per daughter&#34; invariant holds identically at both division events. Confirmed in-memory via build_fig10_division(cycle=3).</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The per-cell DNA content follows a strict replicate-then-halve invariant across the whole cell cycle, sharper than the aggregate conservation claim. Over the deterministic 12-tick run the per-cell DNA vector cycles [1.0] -&gt; [2.0] -&gt; [1.0, 1.0] -&gt; [2.0, 2.0] -&gt; [1.0, 1.0, 1.0, 1.0]: each cell doubles its chromosome to dna 2.0 at replication, then splits into two daughters of exactly dna 1.0 at division. So immediately after each division every cell carries exactly one chromosome at the 1.0 founder set point and the total DNA store exactly equals the cell count -- the &#34;one chromosome, dna == 1.0 per daughter&#34; invariant holds identically at both division events. Confirmed in-memory via build_fig10_division(cycle=3)." data-edit-multiline data-edit-label="Finding F-03">The per-cell DNA content follows a strict replicate-then-halve invariant across the whole cell cycle, sharper than the aggregate conservation claim. Over the deterministic 12-tick run the per-cell DNA vector cycles [1.0] -&gt; [2.0] -&gt; [1.0, 1.0] -&gt; [2.0, 2.0] -&gt; [1.0, 1.0, 1.0, 1.0]: each cell doubles its chromosome to dna 2.0 at replication, then splits into two daughters of exactly dna 1.0 at division. So immediately after each division every cell carries exactly one chromosome at the 1.0 founder set point and the total DNA store exactly equals the cell count -- the &#34;one chromosome, dna == 1.0 per daughter&#34; invariant holds identically at both division events. Confirmed in-memory via build_fig10_division(cycle=3).</span>
             
             <span class="finding-chip">in run <code>fig09-rewrite</code></span>
             
@@ -787,11 +791,11 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">Division becomes an OUTCOME of physiology, not a clock — fixing the review&#39;s objection that the baseline&#39;s 1→2→4 verifies only the graph rewrite. In the mechanistic variant each cell grows by Michaelis–Menten uptake of a shared finite nutrient and divides ONLY when it has grown past a size checkpoint, completed replication, and has the energy for it. The colony grows 1→2→4→8→16 when fed, but under starvation (nutrient ≈ 0) the cell never reaches the checkpoint and division is DELAYED indefinitely (0 divisions over 40 ticks). A grown but under-energised or un-replicated cell also does not divide. So the 1→2→4→8→16 is now caused by growth, with the inter-division interval set by how fast the cell grows.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="Division becomes an OUTCOME of physiology, not a clock — fixing the review&#39;s objection that the baseline&#39;s 1→2→4 verifies only the graph rewrite. In the mechanistic variant each cell grows by Michaelis–Menten uptake of a shared finite nutrient and divides ONLY when it has grown past a size checkpoint, completed replication, and has the energy for it. The colony grows 1→2→4→8→16 when fed, but under starvation (nutrient ≈ 0) the cell never reaches the checkpoint and division is DELAYED indefinitely (0 divisions over 40 ticks). A grown but under-energised or un-replicated cell also does not divide. So the 1→2→4→8→16 is now caused by growth, with the inter-division interval set by how fast the cell grows." data-edit-multiline data-edit-label="Finding F-04">Division becomes an OUTCOME of physiology, not a clock — fixing the review&#39;s objection that the baseline&#39;s 1→2→4 verifies only the graph rewrite. In the mechanistic variant each cell grows by Michaelis–Menten uptake of a shared finite nutrient and divides ONLY when it has grown past a size checkpoint, completed replication, and has the energy for it. The colony grows 1→2→4→8→16 when fed, but under starvation (nutrient ≈ 0) the cell never reaches the checkpoint and division is DELAYED indefinitely (0 divisions over 40 ticks). A grown but under-energised or un-replicated cell also does not divide. So the 1→2→4→8→16 is now caused by growth, with the inter-division interval set by how fast the cell grows.</span>
             
             <span class="finding-chip">via <code>mech-division-gated-by-growth</code></span>
             
@@ -841,11 +845,11 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">DNA replication is now mass-accounted, and every material partition is conserved across the rewrite. The duplicated chromosome&#39;s DNA is drawn FROM a nucleotide precursor pool (Δ DNA = −Δ nucleotides to &lt;1e-9), so DNA is not created from nothing — the review&#39;s &#34;account for nucleotides&#34; point. At division, volume, nucleotides, biomass and DNA sum over the two daughters exactly equals the parent&#39;s, energy equals the parent&#39;s minus the one-time division cost, and each daughter inherits exactly one chromosome of equal DNA as a distinct lineage node. The baseline&#39;s exact 1→2→4 equipartition is preserved, now on top of genuine growth and nucleotide bookkeeping.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="DNA replication is now mass-accounted, and every material partition is conserved across the rewrite. The duplicated chromosome&#39;s DNA is drawn FROM a nucleotide precursor pool (Δ DNA = −Δ nucleotides to &lt;1e-9), so DNA is not created from nothing — the review&#39;s &#34;account for nucleotides&#34; point. At division, volume, nucleotides, biomass and DNA sum over the two daughters exactly equals the parent&#39;s, energy equals the parent&#39;s minus the one-time division cost, and each daughter inherits exactly one chromosome of equal DNA as a distinct lineage node. The baseline&#39;s exact 1→2→4 equipartition is preserved, now on top of genuine growth and nucleotide bookkeeping." data-edit-multiline data-edit-label="Finding F-05">DNA replication is now mass-accounted, and every material partition is conserved across the rewrite. The duplicated chromosome&#39;s DNA is drawn FROM a nucleotide precursor pool (Δ DNA = −Δ nucleotides to &lt;1e-9), so DNA is not created from nothing — the review&#39;s &#34;account for nucleotides&#34; point. At division, volume, nucleotides, biomass and DNA sum over the two daughters exactly equals the parent&#39;s, energy equals the parent&#39;s minus the one-time division cost, and each daughter inherits exactly one chromosome of equal DNA as a distinct lineage node. The baseline&#39;s exact 1→2→4 equipartition is preserved, now on top of genuine growth and nucleotide bookkeeping.</span>
             
             <span class="finding-chip">via <code>mech-replication-draws-dna-from-nucleotides</code></span>
             
@@ -895,11 +899,11 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-06">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Honest scope. The mechanistic variant demonstrates that division can be gated by growth/energy/size with conserved, nucleotide-accounted replication over a lineage — but it is still a reduced model: growth is a single lumped Michaelis–Menten uptake (no explicit metabolic network), the checkpoints are hand-set volume/energy thresholds (not a modelled regulatory circuit), partition is exactly symmetric (no stochastic asymmetry or timing variability), and there is no spatial constriction geometry. The baseline&#39;s exact 1→2→4 + DNA equipartition remains bookkeeping verification; the upgrade is that the TIMING and OCCURRENCE of division are now caused by physiology. The rigorous spatial cousin (a CPM cell growing by per-pixel biomass and dividing spatially) is `growth-and-division` in draft-to-living-cell.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="Honest scope. The mechanistic variant demonstrates that division can be gated by growth/energy/size with conserved, nucleotide-accounted replication over a lineage — but it is still a reduced model: growth is a single lumped Michaelis–Menten uptake (no explicit metabolic network), the checkpoints are hand-set volume/energy thresholds (not a modelled regulatory circuit), partition is exactly symmetric (no stochastic asymmetry or timing variability), and there is no spatial constriction geometry. The baseline&#39;s exact 1→2→4 + DNA equipartition remains bookkeeping verification; the upgrade is that the TIMING and OCCURRENCE of division are now caused by physiology. The rigorous spatial cousin (a CPM cell growing by per-pixel biomass and dividing spatially) is `growth-and-division` in draft-to-living-cell." data-edit-multiline data-edit-label="Finding F-06">Honest scope. The mechanistic variant demonstrates that division can be gated by growth/energy/size with conserved, nucleotide-accounted replication over a lineage — but it is still a reduced model: growth is a single lumped Michaelis–Menten uptake (no explicit metabolic network), the checkpoints are hand-set volume/energy thresholds (not a modelled regulatory circuit), partition is exactly symmetric (no stochastic asymmetry or timing variability), and there is no spatial constriction geometry. The baseline&#39;s exact 1→2→4 + DNA equipartition remains bookkeeping verification; the upgrade is that the TIMING and OCCURRENCE of division are now caused by physiology. The rigorous spatial cousin (a CPM cell growing by per-pixel biomass and dividing spatially) is `growth-and-division` in draft-to-living-cell.</span>
             
             <span class="finding-chip">via <code>mech-division-conserves-every-partition</code></span>
             
@@ -1056,7 +1060,7 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
         
         
         
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=complete</span>
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
       </div>
       
     </div>
@@ -1131,6 +1135,12 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
 <div class="overview-section" id="results-section">
   
   <div id="results-summary" data-study="fig-09" style="margin:0 0 16px"></div>
+
+  
+  <div id="gate-results-section" data-study="fig-09" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
 
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="fig-09">
@@ -1238,12 +1248,12 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
         
         data-pytest-node="cell-count-increases-division-happened"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">cell-count-increases-division-happened</strong>
         
@@ -1251,6 +1261,16 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The colony grows from one founder cell to at least four over the run, and the cell count never falls -- division genuinely adds place-graph nodes at runtime (caption a&#39;s separation into daughters), the boundary count only ever increasing.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: cells 1 (t=0-5) -&gt; 2 (t=6-11) -&gt; 4 (t=12), monotone non-decreasing</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1277,12 +1297,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
         data-pytest-node="replication-precedes-division"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">replication-precedes-division</strong>
         
@@ -1290,6 +1310,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The chromosome (DNA) count doubles while the cell count is still one -- DNA is copied BEFORE the cell partitions it into two daughters, the replicate-then-divide ordering of caption a.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: chromosome count doubles at t=3 (cells still 1); cells first double at t=6</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1316,12 +1346,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
         data-pytest-node="total-dna-doubles-at-replication"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">total-dna-doubles-at-replication</strong>
         
@@ -1329,6 +1359,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The total DNA store doubles at each replication event -- 1.0 -&gt; 2.0 -&gt; 4.0 -- the DNA-copy step of caption a made quantitative.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: total DNA 1.0 -&gt; 2.0 (t=3) -&gt; 4.0 (t=9)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1355,12 +1395,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
         data-pytest-node="division-conserves-and-equipartitions-dna"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">division-conserves-and-equipartitions-dna</strong>
         
@@ -1368,6 +1408,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite (nothing created or destroyed), and each daughter inherits exactly half of a parent cell&#39;s DNA -- caption b&#39;s &#34;division ... partitions state variables such as DNA ... into two cells.&#34;</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: t=6 (1-&gt;2, DNA 2.0 conserved, 1.0 each) and t=12 (2-&gt;4, DNA 4.0 conserved, 1.0 each); boundary count doubles, each daughter = half of parent</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1598,7 +1648,7 @@ pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volu
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1693,9 +1743,9 @@ pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volu
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/8 passed</span>
+        <span class="muted small">4/8 passed</span>
       </div>
       
     </div>
@@ -1739,7 +1789,37 @@ pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volu
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+
+- Realizing the paper&#39;s Fig. division caption b as a genuine place-graph rewrite over a colony `tree[node]` store (one `CellCycleDivision` process alternating REPLICATE and DIVIDE rewrites through the process-bigraph engine) reproduces &#34;division ... partitions state variables such as DNA ... into two cells.&#34; Over a deterministic 12-tick run the founder cell replicates its chromosome (DNA store 1.0 -&gt; 2.0, boundary count still 1) then divides (one cell becomes two, each daughter carrying one chromosome with dna 1.0), repeating to 4 cells.
+
+- At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite (2.0 -&gt; 2x1.0; 4.0 -&gt; 4x1.0), and each daughter inherits exactly half of a parent cell&#39;s DNA -- caption b&#39;s store-partition claim, asserted directly from the emitted trajectory. Replication always precedes division (caption a&#39;s replicate-then-separate ordering).
+
+## Evidence
+
+- **CELL-COUNT-INCREASES-DIVISION-HAPPENED** -- cells 1 (t=0-5) -&gt; 2 (t=6-11) -&gt; 4 (t=12), monotone non-decreasing
+
+- **REPLICATION-PRECEDES-DIVISION** -- chromosome count doubles at t=3 (cells still 1); cells first double at t=6
+
+- **TOTAL-DNA-DOUBLES-AT-REPLICATION** -- total DNA 1.0 -&gt; 2.0 (t=3) -&gt; 4.0 (t=9)
+
+- **DIVISION-CONSERVES-AND-EQUIPARTITIONS-DNA** -- t=6 (1-&gt;2, DNA 2.0 conserved, 1.0 each) and t=12 (2-&gt;4, DNA 4.0 conserved, 1.0 each); boundary count doubles, each daughter = half of parent
+
+## Limitations
+
+- Didactic / toy-real: cycle length, DNA amounts, capacity cap, and run length are illustrative model units, not calibrated to any organism&#39;s replication timing or genome size.
+
+- The division trigger is a discrete cell-cycle clock reaching a replicated (two-chromosome) state, NOT an integrated biomass store crossing a calibrated threshold; the caption&#39;s &#34;biomass&#34; half is not modeled as a continuous store here.
+
+- &#34;Interface ports duplicated&#34; is realized as each daughter re-establishing a cell-&gt;chromosome place-graph subtree, not as re-wiring quantitative interface fluxes to an environment -- this composite has no environment/metabolism coupling.
+
+- The rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell` investigation (a real CPM cell growing and dividing with per-pixel biomass); this study does not restate its numbers.
+
+## Next steps
+
+- Couple a continuous biomass store that integrates to a division threshold, so division timing is emergent rather than clock-driven.
+
+- Add an environment coupling so daughters must re-establish interface fluxes after division, realizing the &#34;interface ports ... re-established&#34; half of the paper&#39;s claim quantitatively." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>
 <p>Realizing the paper's Fig. division caption b as a genuine place-graph rewrite over a colony <code>tree[node]</code> store (one <code>CellCycleDivision</code> process alternating REPLICATE and DIVIDE rewrites through the process-bigraph engine) reproduces &quot;division ... partitions state variables such as DNA ... into two cells.&quot; Over a deterministic 12-tick run the founder cell replicates its chromosome (DNA store 1.0 -&gt; 2.0, boundary count still 1) then divides (one cell becomes two, each daughter carrying one chromosome with dna 1.0), repeating to 4 cells.</p>
@@ -1876,11 +1956,12 @@ pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volu
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "fig-09";
+window.__STUDY_INVESTIGATION__ = "paper-figures";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2009,6 +2090,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

@@ -268,7 +268,7 @@ def _render_one(address, config, runs_db, study_yaml, overrides=None):
 
 # **Composite `meta_modelers_guide.composites.fig01-runnable`** — `spec_meta_modelers_guide_composites_fig01_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig01_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig01-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig01_runnable)
 
@@ -300,7 +300,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig01_runnable, {'interval': INTERVAL_fig01_runnable}, core=core)
             _comp.run(STEPS_fig01_runnable)
         print('ran', 'fig01-runnable', f'(meta_modelers_guide.composites.fig01-runnable) for', STEPS_fig01_runnable, 'steps')
@@ -371,7 +371,7 @@ _save_viz('fig-01', 'Mechanistic_decisive_model-driven_figure_fig01-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig02-runnable`** — `spec_meta_modelers_guide_composites_fig02_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig02_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig02-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig02_runnable)
 
@@ -407,7 +407,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig02_runnable, {'interval': INTERVAL_fig02_runnable}, core=core)
             _comp.run(STEPS_fig02_runnable)
         print('ran', 'fig02-runnable', f'(meta_modelers_guide.composites.fig02-runnable) for', STEPS_fig02_runnable, 'steps')
@@ -470,7 +470,7 @@ _save_viz('fig-02', 'Mechanistic_decisive_model-driven_figure_fig02-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig03-runnable`** — `spec_meta_modelers_guide_composites_fig03_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig03_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig03-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig03_runnable)
 
@@ -516,7 +516,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig03_runnable, {'interval': INTERVAL_fig03_runnable}, core=core)
             _comp.run(STEPS_fig03_runnable)
         print('ran', 'fig03-runnable', f'(meta_modelers_guide.composites.fig03-runnable) for', STEPS_fig03_runnable, 'steps')
@@ -580,7 +580,7 @@ _save_viz('fig-03', 'Mechanistic_decisive_model-driven_figure_fig03-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig04-runnable`** — `spec_meta_modelers_guide_composites_fig04_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig04_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig04-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig04_runnable)
 
@@ -625,7 +625,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig04_runnable, {'interval': INTERVAL_fig04_runnable}, core=core)
             _comp.run(STEPS_fig04_runnable)
         print('ran', 'fig04-runnable', f'(meta_modelers_guide.composites.fig04-runnable) for', STEPS_fig04_runnable, 'steps')
@@ -689,7 +689,7 @@ _save_viz('fig-04', 'Mechanistic_decisive_model-driven_figure_fig04-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig05-grain-runnable`** — `spec_meta_modelers_guide_composites_fig05_grain_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig05_grain_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig05-grain-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig05_grain_runnable)
 
@@ -735,7 +735,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig05_grain_runnable, {'interval': INTERVAL_fig05_grain_runnable}, core=core)
             _comp.run(STEPS_fig05_grain_runnable)
         print('ran', 'fig05-grain-runnable', f'(meta_modelers_guide.composites.fig05-grain-runnable) for', STEPS_fig05_grain_runnable, 'steps')
@@ -802,7 +802,7 @@ _save_viz('fig-05', 'Mechanistic_decisive_model-driven_figure_fig05-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig06-runnable`** — `spec_meta_modelers_guide_composites_fig06_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig06_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig06-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig06_runnable)
 
@@ -844,7 +844,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig06_runnable, {'interval': INTERVAL_fig06_runnable}, core=core)
             _comp.run(STEPS_fig06_runnable)
         print('ran', 'fig06-runnable', f'(meta_modelers_guide.composites.fig06-runnable) for', STEPS_fig06_runnable, 'steps')
@@ -909,7 +909,7 @@ _save_viz('fig-06', 'Mechanistic_decisive_model-driven_figure_fig06-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig07-runnable`** — `spec_meta_modelers_guide_composites_fig07_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig07_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig07-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig07_runnable)
 
@@ -973,7 +973,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig07_runnable, {'interval': INTERVAL_fig07_runnable}, core=core)
             _comp.run(STEPS_fig07_runnable)
         print('ran', 'fig07-runnable', f'(meta_modelers_guide.composites.fig07-runnable) for', STEPS_fig07_runnable, 'steps')
@@ -1039,7 +1039,7 @@ _save_viz('fig-07', 'Mechanistic_decisive_model-driven_figure_fig07-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig08-runnable`** — `spec_meta_modelers_guide_composites_fig08_runnable` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig08_runnable = load_spec(REPO / 'meta_modelers_guide/composites/fig08-runnable.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig08_runnable)
 
@@ -1099,7 +1099,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig08_runnable, {'interval': INTERVAL_fig08_runnable}, core=core)
             _comp.run(STEPS_fig08_runnable)
         print('ran', 'fig08-runnable', f'(meta_modelers_guide.composites.fig08-runnable) for', STEPS_fig08_runnable, 'steps')
@@ -1164,7 +1164,7 @@ _save_viz('fig-08', 'Mechanistic_decisive_model-driven_figure_fig08-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig09-rewrite`** — `spec_meta_modelers_guide_composites_fig09_rewrite` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig09_rewrite = load_spec(REPO / 'meta_modelers_guide/composites/fig09-rewrite.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig09_rewrite)
 
@@ -1199,7 +1199,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig09_rewrite, {'interval': INTERVAL_fig09_rewrite}, core=core)
             _comp.run(STEPS_fig09_rewrite)
         print('ran', 'fig09-rewrite', f'(meta_modelers_guide.composites.fig09-rewrite) for', STEPS_fig09_rewrite, 'steps')
@@ -1265,7 +1265,7 @@ _save_viz('fig-09', 'Mechanistic_decisive_model-driven_figure_fig09-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig10-emergence`** — `spec_meta_modelers_guide_composites_fig10_emergence` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig10_emergence = load_spec(REPO / 'meta_modelers_guide/composites/fig10-emergence.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig10_emergence)
 
@@ -1299,7 +1299,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig10_emergence, {'interval': INTERVAL_fig10_emergence}, core=core)
             _comp.run(STEPS_fig10_emergence)
         print('ran', 'fig10-emergence', f'(meta_modelers_guide.composites.fig10-emergence) for', STEPS_fig10_emergence, 'steps')
@@ -1368,7 +1368,7 @@ _save_viz('fig-10', 'Mechanistic_decisive_model-driven_figure_fig10-mechanistic'
 
 # **Composite `meta_modelers_guide.composites.fig11-evolution`** — `spec_meta_modelers_guide_composites_fig11_evolution` (static spec file, editable dict)
 
-from viva_superpowers.composite_spec import load_spec
+from discovery_engine.composite_spec import load_spec
 spec_meta_modelers_guide_composites_fig11_evolution = load_spec(REPO / 'meta_modelers_guide/composites/fig11-evolution.composite.json')
 describe_spec(spec_meta_modelers_guide_composites_fig11_evolution)
 
@@ -1416,7 +1416,7 @@ if RERUN:
     from process_bigraph import Composite
     try:
         with quiet():  # keep per-step stdout out of the notebook
-            from viva_superpowers.composite_spec import build_composite_from_spec
+            from discovery_engine.composite_spec import build_composite_from_spec
             _comp = build_composite_from_spec(spec_meta_modelers_guide_composites_fig11_evolution, {'interval': INTERVAL_fig11_evolution}, core=core)
             _comp.run(STEPS_fig11_evolution)
         print('ran', 'fig11-evolution', f'(meta_modelers_guide.composites.fig11-evolution) for', STEPS_fig11_evolution, 'steps')
@@ -1467,3 +1467,4 @@ _save_viz('fig-11', 'Mechanistic_decisive_model-driven_figure_fig11-mechanistic'
 # - H1 (all figures executable) is met; H2 (mechanistic emergence) is being established variant by variant. Each figure's scientific verdict should be read from its mechanistic variant (where one exists) and its two-layer `conclusion_verdicts`, not from the software-gate pass alone.
 # - Baseline gates that reproduce algebraic or prescribed responses are IMPLEMENTATION VERIFICATION, not mechanistic evidence; where a figure's claim is "emergence" (fig-05/08/09/10/11) the competing programmed-vs-emergent interpretation (see `competing_interpretations`) must be resolved by the mechanistic variant's ablations before any emergence claim stands.
 # - Two figures (fig-01 interfaces & composition, fig-02 orchestration) have no calibrated cousin in `draft-to-living-cell` — they stand on their didactic/mechanistic composite alone by design, being framework illustrations rather than cellular composition patterns. (fig-07 nested hierarchy DOES participate in the spine via its interface dependency; it is not standalone.)
+# - Evidence-ledger gap (rigor, not science): every figure's behavior gate is authored as passed with a committed test suite, but the per-test outcome ledger the discovery engine reads is empty, so its coded roll-up is BLOCKED and the authored verdict (qualified) diverges from it. This is the machine-readable form of the H1 caveat above — the verdicts rest on recorded gates, not a fresh re-execution. The honest next action is to re-run each figNN-runnable composite and record graded behavior-test outcomes so the coded roll-up confirms the authored verdict on fresh evidence.

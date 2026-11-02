@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="cellular-interface" data-study-kind="computational" title="cellular-interface">The Cellular Interface</span>
+    <span class="study-name" id="study-name" data-slug="cellular-interface" data-study-kind="computational" title="cellular-interface" data-edit-kind="study" data-edit-field="title" data-edit-value="The Cellular Interface" data-edit-label="Title">The Cellular Interface</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">The cell&#39;s interface is authored as an inert typed contract and compiled to a running bounded cell; a non-conforming handler that breaks the port contract is rejected at compile time with a CompileError naming the missing ports (Law 1 conformance).</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="The cell&#39;s interface is authored as an inert typed contract and compiled to a running bounded cell; a non-conforming handler that breaks the port contract is rejected at compile time with a CompileError naming the missing ports (Law 1 conformance)." data-edit-multiline data-edit-label="Claim">The cell&#39;s interface is authored as an inert typed contract and compiled to a running bounded cell; a non-conforming handler that breaks the port contract is rejected at compile time with a CompileError naming the missing ports (Law 1 conformance).</p>
       
       <div class="ctr-context">A cell, viewed from the outside, is a small alphabet of exchange variables: fluxes of matter (chemical, mol·s⁻¹), forces (mechanical, N), currents (electrical, C·s⁻¹) and heat (thermal, J·s⁻¹), together with higher-level cellular quantities — growth rate (hr⁻¹), shape, an objective the cell pursues, and a viability that says whether the cellular description still holds. Fig 3 is that alphabet: Fig 3a draws four interaction-modality cards (nutrient exchange, motile force, growth rate, electrical signaling) as inert draft processes — unit-bearing ports and a behavior contract, no update dynamics. Fig 3b assembles the minimal cellular interface itself: one cell (draft process) that senses environmental drivers and exposes its physical exchange ports plus the higher-level cellular ports, all carrying declared units. Installing one conforming handler (`CellularInterfaceHandler`) turns the inert draft into a bounded, goal-directed cell with genuine toy-real dynamics while the ports and their wiring are preserved unchanged: chemical is taken up by Monod kinetics and drives Monod growth, growth accretes both shape (a volume proxy) and a biomass-proxy objective, viability follows a first-order Arrhenius thermal-death law (holds near 37 degC, collapses within minutes at 55 degC — the E. coli D-value reference), and the remaining physical ports (mechanical, electrical, thermal, signaling) carry small, physically-plausible linear responses to their drivers. Measured on the compiled fig03b-executable: chemical flux goes 0.0 to -0.8 (net uptake) and drives shape 1.0 to 4.2 and objective 0.0 to 1.6. This is the base cell contract that Law 1 (conformance) protects: the compiler checks a candidate handler&#39;s declared ports against the draft&#39;s signature before it will install it, and rejects a handler that renames or drops a port with a CompileError naming what is missing. A native impostor for this figure, `NonConformingCellularInterface` (in `handlers_fig03b.py`, exercised by `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler`), supplies conforming inputs but drops the required `viability` and `objective` output ports, and the compiler rejects it with a CompileError naming exactly those two missing ports — the mechanical proof that Law 1 rejects any handler that breaks this study&#39;s own declared port contract, structurally, at compile time.</div>
       
@@ -553,7 +556,7 @@
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Can the cellular boundary be specified as nothing but typed, unit-bearing exchange ports (chemical mol·s⁻¹, mechanical N, electrical C·s⁻¹, thermal J·s⁻¹) plus higher-level variables (growth, shape, objective, viability) — with no committed mechanism — and compiled, by installing one conforming handler, into a bounded, goal-directed cell whose interface is exactly the one declared?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Can the cellular boundary be specified as nothing but typed, unit-bearing exchange ports (chemical mol·s⁻¹, mechanical N, electrical C·s⁻¹, thermal J·s⁻¹) plus higher-level variables (growth, shape, objective, viability) — with no committed mechanism — and compiled, by installing one conforming handler, into a bounded, goal-directed cell whose interface is exactly the one declared?" data-edit-multiline data-edit-label="Question">Can the cellular boundary be specified as nothing but typed, unit-bearing exchange ports (chemical mol·s⁻¹, mechanical N, electrical C·s⁻¹, thermal J·s⁻¹) plus higher-level variables (growth, shape, objective, viability) — with no committed mechanism — and compiled, by installing one conforming handler, into a bounded, goal-directed cell whose interface is exactly the one declared?</span></div>
         
       </div>
     </div>
@@ -577,29 +580,30 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">The interface is preserved while the installed mechanism produces dynamics: chemical uptake drives growth and progress toward the cell&#39;s objective (shape 1.0→4.2, objective 0.0→1.6). Law 1 conformance is confirmed mechanically by a native impostor for this figure (`NonConformingCellularInterface`, which drops the viability and objective ports), rejected at compile time with a CompileError naming those two ports.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="The interface is preserved while the installed mechanism produces dynamics: chemical uptake drives growth and progress toward the cell&#39;s objective (shape 1.0→4.2, objective 0.0→1.6). Law 1 conformance is confirmed mechanically by a native impostor for this figure (`NonConformingCellularInterface`, which drops the viability and objective ports), rejected at compile time with a CompileError naming those two ports." data-edit-multiline data-edit-label="Result">The interface is preserved while the installed mechanism produces dynamics: chemical uptake drives growth and progress toward the cell&#39;s objective (shape 1.0→4.2, objective 0.0→1.6). Law 1 conformance is confirmed mechanically by a native impostor for this figure (`NonConformingCellularInterface`, which drops the viability and objective ports), rejected at compile time with a CompileError naming those two ports.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">SHAPE-GROWTH</div>
+          <div class="ov-metric-k">shape-growth</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">CHEMICAL-UPTAKE</div>
+          <div class="ov-metric-k">chemical-uptake</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">OBJECTIVE-CLIMBS</div>
+          <div class="ov-metric-k">objective-climbs</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">DRAFT-IS-INERT</div>
+          <div class="ov-metric-k">draft-is-inert</div>
         </div>
         
       </div>
@@ -619,11 +623,11 @@
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Installing one conforming handler grows the cell through its interface. Confirmed: shape 1.0 → 4.2.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="Installing one conforming handler grows the cell through its interface. Confirmed: shape 1.0 → 4.2." data-edit-multiline data-edit-label="Finding F-01">Installing one conforming handler grows the cell through its interface. Confirmed: shape 1.0 → 4.2.</span>
             
             <span class="finding-chip">via <code>shape-growth</code></span>
             
@@ -673,11 +677,11 @@
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The cell takes up chemical across its interface (net negative flux). Confirmed: chemical flux 0.0 → -0.8.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="The cell takes up chemical across its interface (net negative flux). Confirmed: chemical flux 0.0 → -0.8." data-edit-multiline data-edit-label="Finding F-02">The cell takes up chemical across its interface (net negative flux). Confirmed: chemical flux 0.0 → -0.8.</span>
             
             <span class="finding-chip">via <code>chemical-uptake</code></span>
             
@@ -727,11 +731,11 @@
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The cell makes progress toward its declared objective as growth proceeds. Confirmed: objective 0.0 → 1.6.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The cell makes progress toward its declared objective as growth proceeds. Confirmed: objective 0.0 → 1.6." data-edit-multiline data-edit-label="Finding F-03">The cell makes progress toward its declared objective as growth proceeds. Confirmed: objective 0.0 → 1.6.</span>
             
             <span class="finding-chip">via <code>objective-climbs</code></span>
             
@@ -781,11 +785,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Law 1 (conformance) is machine-checked at compile time: a handler whose declared ports do not match the draft signature is rejected with a CompileError naming the missing ports. A native impostor for this figure, `NonConformingCellularInterface`, supplies conforming inputs but drops the required `viability` and `objective` output ports, and the compiler rejects it naming exactly those two — the mechanical proof that the same Law-1 structural check protects this figure&#39;s own interface.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="Law 1 (conformance) is machine-checked at compile time: a handler whose declared ports do not match the draft signature is rejected with a CompileError naming the missing ports. A native impostor for this figure, `NonConformingCellularInterface`, supplies conforming inputs but drops the required `viability` and `objective` output ports, and the compiler rejects it naming exactly those two — the mechanical proof that the same Law-1 structural check protects this figure&#39;s own interface." data-edit-multiline data-edit-label="Finding F-04">Law 1 (conformance) is machine-checked at compile time: a handler whose declared ports do not match the draft signature is rejected with a CompileError naming the missing ports. A native impostor for this figure, `NonConformingCellularInterface`, supplies conforming inputs but drops the required `viability` and `objective` output ports, and the compiler rejects it naming exactly those two — the mechanical proof that the same Law-1 structural check protects this figure&#39;s own interface.</span>
             
             <span class="finding-chip">via <code>tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler</code></span>
             
@@ -834,11 +838,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The same `CellularInterfaceHandler` contract, unchanged, composed with a spatial diffusion field via a field↔point adapter — evidence the interface is substrate-independent. Only the chemical modality is spatialized here; mechanical, electrical, and thermal remain lumped. Taking the byte-identical fig03b handler and composing a spatio-flux `DiffusionAdvection` chemical field behind its chemical port (through the small `FieldPointCoupling` adapter that samples the field over the cell&#39;s footprint and writes the handler&#39;s uptake flux back as a spatial delta) yields a running 2D composite: the field depletes at the footprint (environmental modification — local resource depletion, footprint mean 1.68 → 1.43 over 20 steps) and the concentration the interface senses now varies with position on the gradient — a cell on the low side senses ≈0.74 and grows slower, one on the high side senses ≈2.1 and grows faster — rather than a fixed constant.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="The same `CellularInterfaceHandler` contract, unchanged, composed with a spatial diffusion field via a field↔point adapter — evidence the interface is substrate-independent. Only the chemical modality is spatialized here; mechanical, electrical, and thermal remain lumped. Taking the byte-identical fig03b handler and composing a spatio-flux `DiffusionAdvection` chemical field behind its chemical port (through the small `FieldPointCoupling` adapter that samples the field over the cell&#39;s footprint and writes the handler&#39;s uptake flux back as a spatial delta) yields a running 2D composite: the field depletes at the footprint (environmental modification — local resource depletion, footprint mean 1.68 → 1.43 over 20 steps) and the concentration the interface senses now varies with position on the gradient — a cell on the low side senses ≈0.74 and grows slower, one on the high side senses ≈2.1 and grows faster — rather than a fixed constant." data-edit-multiline data-edit-label="Finding F-05">The same `CellularInterfaceHandler` contract, unchanged, composed with a spatial diffusion field via a field↔point adapter — evidence the interface is substrate-independent. Only the chemical modality is spatialized here; mechanical, electrical, and thermal remain lumped. Taking the byte-identical fig03b handler and composing a spatio-flux `DiffusionAdvection` chemical field behind its chemical port (through the small `FieldPointCoupling` adapter that samples the field over the cell&#39;s footprint and writes the handler&#39;s uptake flux back as a spatial delta) yields a running 2D composite: the field depletes at the footprint (environmental modification — local resource depletion, footprint mean 1.68 → 1.43 over 20 steps) and the concentration the interface senses now varies with position on the gradient — a cell on the low side senses ≈0.74 and grows slower, one on the high side senses ≈2.1 and grows faster — rather than a fixed constant.</span>
             
             <span class="finding-chip">via <code>tests/test_cellular_interface_spatial.py</code></span>
             
@@ -887,11 +891,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-06">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A tuned second handler behind byte-identical cell ports reproduces the interface observables across the chemical operating range — surrogate calibration, not yet mechanism-independence. Two handlers behind byte-identical cell ports — the Monod twin (first-order uptake + independent Monod growth + Arrhenius thermal death) vs a genuinely different box (a saturable Michaelis-Menten membrane-carrier uptake + an independent cooperative Moser/Hill (n=1.3) growth law + Q10 thermal death) — produce interface observables that agree within ~10.5% when chemical supply is SWEPT across chem∈[0.2,2.5]. Measured max relative divergence over the sweep: chemical flux 8.6% (saturable carrier vs first-order line), growth_rate 10.5% (cooperative sigmoid vs Monod hyperbola); driven over a ramp through the whole range the integrated observables diverge at most shape 7.7%, objective 10.5%, viability 0.01% — all under a 15% band across the operating range. This is surrogate calibration — the second handler&#39;s ~4 free parameters (vmax, km, cooperative-growth params, Q10) are tuned to reproduce the same ~4 interface observables (4 knobs fit to ~4 constraints), not yet mechanism-independence. The sweep across chem∈[0.2,2.5] is stronger evidence than a single tuned point, but a held-out condition neither handler was fit on — tune the twin on a sub-range, then test on a disjoint held-out sub-range — is the named next step. Complements the metabolism-level swap (dFBA vs Michaelis-Menten) and the colony-level swap.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="A tuned second handler behind byte-identical cell ports reproduces the interface observables across the chemical operating range — surrogate calibration, not yet mechanism-independence. Two handlers behind byte-identical cell ports — the Monod twin (first-order uptake + independent Monod growth + Arrhenius thermal death) vs a genuinely different box (a saturable Michaelis-Menten membrane-carrier uptake + an independent cooperative Moser/Hill (n=1.3) growth law + Q10 thermal death) — produce interface observables that agree within ~10.5% when chemical supply is SWEPT across chem∈[0.2,2.5]. Measured max relative divergence over the sweep: chemical flux 8.6% (saturable carrier vs first-order line), growth_rate 10.5% (cooperative sigmoid vs Monod hyperbola); driven over a ramp through the whole range the integrated observables diverge at most shape 7.7%, objective 10.5%, viability 0.01% — all under a 15% band across the operating range. This is surrogate calibration — the second handler&#39;s ~4 free parameters (vmax, km, cooperative-growth params, Q10) are tuned to reproduce the same ~4 interface observables (4 knobs fit to ~4 constraints), not yet mechanism-independence. The sweep across chem∈[0.2,2.5] is stronger evidence than a single tuned point, but a held-out condition neither handler was fit on — tune the twin on a sub-range, then test on a disjoint held-out sub-range — is the named next step. Complements the metabolism-level swap (dFBA vs Michaelis-Menten) and the colony-level swap." data-edit-multiline data-edit-label="Finding F-06">A tuned second handler behind byte-identical cell ports reproduces the interface observables across the chemical operating range — surrogate calibration, not yet mechanism-independence. Two handlers behind byte-identical cell ports — the Monod twin (first-order uptake + independent Monod growth + Arrhenius thermal death) vs a genuinely different box (a saturable Michaelis-Menten membrane-carrier uptake + an independent cooperative Moser/Hill (n=1.3) growth law + Q10 thermal death) — produce interface observables that agree within ~10.5% when chemical supply is SWEPT across chem∈[0.2,2.5]. Measured max relative divergence over the sweep: chemical flux 8.6% (saturable carrier vs first-order line), growth_rate 10.5% (cooperative sigmoid vs Monod hyperbola); driven over a ramp through the whole range the integrated observables diverge at most shape 7.7%, objective 10.5%, viability 0.01% — all under a 15% band across the operating range. This is surrogate calibration — the second handler&#39;s ~4 free parameters (vmax, km, cooperative-growth params, Q10) are tuned to reproduce the same ~4 interface observables (4 knobs fit to ~4 constraints), not yet mechanism-independence. The sweep across chem∈[0.2,2.5] is stronger evidence than a single tuned point, but a held-out condition neither handler was fit on — tune the twin on a sub-range, then test on a disjoint held-out sub-range — is the named next step. Complements the metabolism-level swap (dFBA vs Michaelis-Menten) and the colony-level swap.</span>
             
             <span class="finding-chip">via <code>tests/test_cellular_interface_substitutability.py</code></span>
             
@@ -1240,6 +1244,12 @@
   
   <div id="results-summary" data-study="cellular-interface" style="margin:0 0 16px"></div>
 
+  
+  <div id="gate-results-section" data-study="cellular-interface" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
+
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="cellular-interface">
     <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading results preview…</span></div>
@@ -1346,12 +1356,12 @@
         
         data-pytest-node="shape-growth"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">shape-growth</strong>
         
@@ -1359,6 +1369,16 @@
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The conforming handler grows the cell through its interface — shape climbs well above its seed.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: shape 1.0 → 4.2 (growth well above seed)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1385,12 +1405,12 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "executable r
         
         data-pytest-node="chemical-uptake"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">chemical-uptake</strong>
         
@@ -1398,6 +1418,16 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "executable r
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The cell takes up chemical across its interface — net chemical flux goes negative.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: chemical flux 0.0 → -0.8 (net uptake across the interface)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1424,12 +1454,12 @@ pass_if: {"kind": "regression_pin", "op": "\u003c=", "provenance": "chemical flu
         
         data-pytest-node="objective-climbs"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">objective-climbs</strong>
         
@@ -1437,6 +1467,16 @@ pass_if: {"kind": "regression_pin", "op": "\u003c=", "provenance": "chemical flu
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The cell pursues its declared objective — the objective readout climbs from zero.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: objective 0.0 → 1.6 (goal-directed progress)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1463,12 +1503,12 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "objective 0.
         
         data-pytest-node="draft-is-inert"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">draft-is-inert</strong>
         
@@ -1476,6 +1516,16 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "objective 0.
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">One-line sanity check (not the study&#39;s control): the inert draft has empty updates by construction, so shape stays at its 1.0 seed and fails this threshold by design — confirming the framework&#39;s definition of a draft, not a scientific counterfactual.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: expected-fail control: the inert draft (empty update) keeps shape at 1.0 — it fails the ≥2.0 threshold by design, confirming a draft is inert</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1550,7 +1600,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "inert-draft 
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1645,9 +1695,9 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "inert-draft 
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/4 passed</span>
+        <span class="muted small">4/4 passed</span>
       </div>
       
     </div>
@@ -1695,7 +1745,23 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "inert-draft 
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+- Given one conforming handler, the cellular interface becomes a bounded, goal-directed cell: chemical is taken up across the interface (flux 0.0→−0.8) and drives growth, so shape climbs 1.0→4.2 and the objective rises 0.0→1.6, all while the declared port set is preserved unchanged. The compiler enforces this contract structurally (Law 1): a handler that breaks the port names/types/wiring is rejected at compile time with a CompileError naming the missing ports — demonstrated by this figure&#39;s own native impostor, `NonConformingCellularInterface`, which drops the required `viability` and `objective` ports.
+
+## Evidence
+- **SHAPE-GROWTH** — shape 1.0 → 4.2 (growth well above seed)
+- **CHEMICAL-UPTAKE** — chemical flux 0.0 → -0.8 (net uptake across the interface)
+- **OBJECTIVE-CLIMBS** — objective 0.0 → 1.6 (goal-directed progress)
+- **Law 1 (conformance)** — `tests/test_cellular_interface_impostor.py::test_native_impostor_rejected_by_compiler` raises `CompileError` naming the missing `viability`/`objective` ports when the native impostor `NonConformingCellularInterface` is installed behind this figure&#39;s interface
+
+## Limitations
+- Single-handler toy-real model: the rate laws are real in shape (Monod uptake/growth, Arrhenius thermal death) but the constants are illustrative; one mechanism is installed behind the Fig 3 interface.
+- Conformance (Law 1) is checked structurally — port names, types, and wiring — not units, dimensions, or runtime behavior. Units are name-only labels.
+- Law 1 is demonstrated by a native impostor for this figure (`NonConformingCellularInterface`, dropping the viability and objective ports), checked structurally at compile time — port names, types, and wiring, not units, dimensions, or runtime behavior.
+
+## Next steps
+- Install a second, independent handler behind the Fig 3 interface to show mechanism-independence directly at this figure (Law 4 currently lives at disintegration/Fig 5 and autopoiesis/Fig 8).
+- Done — a cellular-interface-specific impostor (`NonConformingCellularInterface`, which drops the viability and objective ports) now gives Law 1 a demonstration native to this figure (`tests/test_cellular_interface_impostor.py`)." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>Given one conforming handler, the cellular interface becomes a bounded, goal-directed cell: chemical is taken up across the interface (flux 0.0→−0.8) and drives growth, so shape climbs 1.0→4.2 and the objective rises 0.0→1.6, all while the declared port set is preserved unchanged. The compiler enforces this contract structurally (Law 1): a handler that breaks the port names/types/wiring is rejected at compile time with a CompileError naming the missing ports — demonstrated by this figure's own native impostor, <code>NonConformingCellularInterface</code>, which drops the required <code>viability</code> and <code>objective</code> ports.</li>
 </ul>
@@ -1806,11 +1872,12 @@ pass_if: {"kind": "regression_pin", "op": "\u003e=", "provenance": "inert-draft 
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "cellular-interface";
+window.__STUDY_INVESTIGATION__ = "draft-to-living-cell";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -1939,6 +2006,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

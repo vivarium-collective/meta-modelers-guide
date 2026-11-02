@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="autopoiesis" data-study-kind="biological" title="autopoiesis">Autopoiesis</span>
+    <span class="study-name" id="study-name" data-slug="autopoiesis" data-study-kind="biological" title="autopoiesis" data-edit-kind="study" data-edit-field="title" data-edit-value="Autopoiesis" data-edit-label="Title">Autopoiesis</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,9 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">The paper&#39;s §Self-organized processes autopoiesis criterion -- a membrane persists because the processes inside the boundary maintain the organization that keeps those processes possible -- is IMPLEMENTED here as an AUTHORED operational-closure criterion and its consequences are tested. The closure-dependence is hand-coded (production is gated by a global binary_fill_holes topological observer), NOT emergent from local physics; the persistence, knockout, and puncture results all follow from that construction, and are worthwhile because the criterion is implemented and its consequences are verified -- not because closure arose on its own. A scalar membrane field under reaction-diffusion, with production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -&gt; 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so within this authored construction the production loop is what maintains the boundary -- confirmed independently by a fatal-puncture viability bound (beer2024deriving): breaking the boundary so nothing is enclosed shuts off the closure-gated production, and the ring cannot rebuild from nothing. The boundaries of the claim are stated as findings: the homeostatic plateau is metastable, not eternal (the physically-correct signature of a closed system with no external influx, not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal self-maintaining boundary, NOT real membrane chemistry or metabolism. The v1 maintenance gate is an authored global topological test, and the mechanistically-local version that removes it is NO LONGER just a named next step -- it is built and measured here as v2 (see below).
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="The paper&#39;s §Self-organized processes autopoiesis criterion -- a membrane persists because the processes inside the boundary maintain the organization that keeps those processes possible -- is IMPLEMENTED here as an AUTHORED operational-closure criterion and its consequences are tested. The closure-dependence is hand-coded (production is gated by a global binary_fill_holes topological observer), NOT emergent from local physics; the persistence, knockout, and puncture results all follow from that construction, and are worthwhile because the criterion is implemented and its consequences are verified -- not because closure arose on its own. A scalar membrane field under reaction-diffusion, with production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -&gt; 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so within this authored construction the production loop is what maintains the boundary -- confirmed independently by a fatal-puncture viability bound (beer2024deriving): breaking the boundary so nothing is enclosed shuts off the closure-gated production, and the ring cannot rebuild from nothing. The boundaries of the claim are stated as findings: the homeostatic plateau is metastable, not eternal (the physically-correct signature of a closed system with no external influx, not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal self-maintaining boundary, NOT real membrane chemistry or metabolism. The v1 maintenance gate is an authored global topological test, and the mechanistically-local version that removes it is NO LONGER just a named next step -- it is built and measured here as v2 (see below).
+
+MECHANISM-LEVEL UPGRADE (v2, ProtocellV2, answering peer-review M4). v2 removes the global observer entirely -- production depends on a LOCAL interior precursor field p, k_prod*phi*p*(1-phi/phi_max), and binary_fill_holes appears ONLY as a passive enclosed_area readout, never in the update (asserted structurally on the update&#39;s referenced names). Closure-dependence EMERGES from geometry -- the membrane secretes precursor (s_p*phi) and is a barrier to it (mobility Mp*(1-alpha*phi) drops inside the membrane), so a CLOSED ring confines the precursor it secretes into the enclosed pocket (measured -- interior precursor pools from ~0 to ~72 by step 1000) and sustains itself, while an OPEN ring bleeds it. MEASURED this build -- the v2 closed loop SUSTAINS topological closure ~2451 internal steps (metastable, the same order as v1&#39;s ~2450-2650 window, but with no global observer in the loop; enclosed_area declines 465 -&gt; 0 as the membrane thickens inward -- a long metastable transient, not an eternal fixed point), while the PRECURSOR knockout s_p=0 (the new mechanistic single-variable control) collapses at ~step 95, ~26x faster, as does k_prod=0. The PUNCTURE is now a genuine local PREDICTION, not a restatement -- zeroing a 60-degree wedge of the steady ring makes the interior precursor bleed out through the gap and the wedge membrane starves LOCALLY (punctured-wedge mass stays ~2 versus ~79 in the intact ring at the same step) and never self-heals. So EMERGE is upgraded from authored-closure to genuinely-emergent local-mechanism closure. What v2 does NOT do -- reach steady self-maintenance: the plateau is still METASTABLE (a closed budget). The open-system driven version (v2-open, ProtocellV2Open) is BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT sustain closure indefinitely -- it DESTABILISES the ring into faster runaway filling (closure lost ~step 591 vs the undriven ~2451; no local drive in an ~80-point sweep reaches a bounded steady enclosed_area), while the controls confirm the drive does not rescue closure. So EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance." data-edit-multiline data-edit-label="Claim">The paper&#39;s §Self-organized processes autopoiesis criterion -- a membrane persists because the processes inside the boundary maintain the organization that keeps those processes possible -- is IMPLEMENTED here as an AUTHORED operational-closure criterion and its consequences are tested. The closure-dependence is hand-coded (production is gated by a global binary_fill_holes topological observer), NOT emergent from local physics; the persistence, knockout, and puncture results all follow from that construction, and are worthwhile because the criterion is implemented and its consequences are verified -- not because closure arose on its own. A scalar membrane field under reaction-diffusion, with production gated on the boundary staying topologically closed and self-limited by enclosed area, PERSISTS: enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and no collapse within a ~1800-step window. The single-variable negative control (k_prod=0, the production loop knocked out, identical seed and wiring) COLLAPSES: closure is lost by step ~96, enclosed_area -&gt; 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation, so within this authored construction the production loop is what maintains the boundary -- confirmed independently by a fatal-puncture viability bound (beer2024deriving): breaking the boundary so nothing is enclosed shuts off the closure-gated production, and the ring cannot rebuild from nothing. The boundaries of the claim are stated as findings: the homeostatic plateau is metastable, not eternal (the physically-correct signature of a closed system with no external influx, not a defect); the reaction-diffusion physics has no RNG, so persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point); and this is a minimal self-maintaining boundary, NOT real membrane chemistry or metabolism. The v1 maintenance gate is an authored global topological test, and the mechanistically-local version that removes it is NO LONGER just a named next step -- it is built and measured here as v2 (see below).
 
 MECHANISM-LEVEL UPGRADE (v2, ProtocellV2, answering peer-review M4). v2 removes the global observer entirely -- production depends on a LOCAL interior precursor field p, k_prod*phi*p*(1-phi/phi_max), and binary_fill_holes appears ONLY as a passive enclosed_area readout, never in the update (asserted structurally on the update&#39;s referenced names). Closure-dependence EMERGES from geometry -- the membrane secretes precursor (s_p*phi) and is a barrier to it (mobility Mp*(1-alpha*phi) drops inside the membrane), so a CLOSED ring confines the precursor it secretes into the enclosed pocket (measured -- interior precursor pools from ~0 to ~72 by step 1000) and sustains itself, while an OPEN ring bleeds it. MEASURED this build -- the v2 closed loop SUSTAINS topological closure ~2451 internal steps (metastable, the same order as v1&#39;s ~2450-2650 window, but with no global observer in the loop; enclosed_area declines 465 -&gt; 0 as the membrane thickens inward -- a long metastable transient, not an eternal fixed point), while the PRECURSOR knockout s_p=0 (the new mechanistic single-variable control) collapses at ~step 95, ~26x faster, as does k_prod=0. The PUNCTURE is now a genuine local PREDICTION, not a restatement -- zeroing a 60-degree wedge of the steady ring makes the interior precursor bleed out through the gap and the wedge membrane starves LOCALLY (punctured-wedge mass stays ~2 versus ~79 in the intact ring at the same step) and never self-heals. So EMERGE is upgraded from authored-closure to genuinely-emergent local-mechanism closure. What v2 does NOT do -- reach steady self-maintenance: the plateau is still METASTABLE (a closed budget). The open-system driven version (v2-open, ProtocellV2Open) is BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT sustain closure indefinitely -- it DESTABILISES the ring into faster runaway filling (closure lost ~step 591 vs the undriven ~2451; no local drive in an ~80-point sweep reaches a bounded steady enclosed_area), while the controls confirm the drive does not rescue closure. So EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance.</p>
       
@@ -561,7 +566,7 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">The paper&#39;s §Self-organized processes section states the autopoiesis criterion as a boundary problem, not a bookkeeping one: &#34;A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible.&#34; This study puts that criterion on a 2D lattice and asks the discriminating question directly: does a membrane PERSIST because an internal production loop -- gated on the boundary itself staying topologically closed -- replenishes the membrane against decay, and does a mere vesicle with no such loop, from the identical seed, DISSIPATE? The two composites differ in exactly one variable (the production rate constant k_prod), so the contrast between persistence and collapse is the finding. beer2024deriving&#39;s viability bounds -- constraints on a shared state that must be maintained for the composition to persist -- are the frame: closure here is that the membrane&#39;s own maintenance is conditioned on the boundary it maintains, so break the boundary and the maintenance cannot fire.</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="The paper&#39;s §Self-organized processes section states the autopoiesis criterion as a boundary problem, not a bookkeeping one: &#34;A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible.&#34; This study puts that criterion on a 2D lattice and asks the discriminating question directly: does a membrane PERSIST because an internal production loop -- gated on the boundary itself staying topologically closed -- replenishes the membrane against decay, and does a mere vesicle with no such loop, from the identical seed, DISSIPATE? The two composites differ in exactly one variable (the production rate constant k_prod), so the contrast between persistence and collapse is the finding. beer2024deriving&#39;s viability bounds -- constraints on a shared state that must be maintained for the composition to persist -- are the frame: closure here is that the membrane&#39;s own maintenance is conditioned on the boundary it maintains, so break the boundary and the maintenance cannot fire." data-edit-multiline data-edit-label="Question">The paper&#39;s §Self-organized processes section states the autopoiesis criterion as a boundary problem, not a bookkeeping one: &#34;A membrane alone is insufficient: a vesicle may form a boundary without constituting a living system. A stronger criterion is that the processes inside the boundary collectively contribute to maintaining the organization that, in turn, keeps those processes possible.&#34; This study puts that criterion on a 2D lattice and asks the discriminating question directly: does a membrane PERSIST because an internal production loop -- gated on the boundary itself staying topologically closed -- replenishes the membrane against decay, and does a mere vesicle with no such loop, from the identical seed, DISSIPATE? The two composites differ in exactly one variable (the production rate constant k_prod), so the contrast between persistence and collapse is the finding. beer2024deriving&#39;s viability bounds -- constraints on a shared state that must be maintained for the composition to persist -- are the frame: closure here is that the membrane&#39;s own maintenance is conditioned on the boundary it maintains, so break the boundary and the maintenance cannot fire.</span></div>
         
       </div>
     </div>
@@ -585,14 +590,15 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">The autopoietic closed loop persists -- enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 over 1800 steps -- while the single-variable k_prod=0 vesicle control collapses (enclosed_area -&gt; 0 by step ~96, persists == 0.0), implementing the paper&#39;s §Self-organized processes autopoiesis criterion as an AUTHORED operational-closure criterion (gated by a global binary_fill_holes topological observer, not emergent from local physics) and testing its consequences. Within this authored construction persistence tracks the internal loop, verified by the knockout (the only differing variable) and independently by a fatal-puncture viability bound (beer2024deriving) -- breaking the boundary shuts off the authored closure-gated production and the ring cannot rebuild from nothing. The MECHANISM-level v2 (protocell-autopoietic-v2, ProtocellV2) then removes the global observer entirely and reproduces closure from LOCAL physics -- production depends on a local interior precursor confined by the closed membrane -- so closure-dependence EMERGES -- the v2 closed loop sustains closure ~2451 internal steps (persists == 1.0, enclosed_area ~293 px, precursor pooled ~72) with no binary_fill_holes in the update (asserted structurally), the precursor knockout s_p=0 collapses at ~step 95, and a wedge puncture makes the interior precursor bleed out so the wedge membrane starves locally (~2 vs ~79 intact), never self-healing. EMERGE is upgraded from authored-closure (v1) to genuinely-emergent local-mechanism closure (v2). The open-system driven version (v2-open, ProtocellV2Open, F-04) is then BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT convert the metastable ring into steady self-maintenance -- it DESTABILISES it into faster runaway filling (closure lost ~step 591 vs undriven ~2451; no local drive in an ~80-point sweep reaches a bounded steady enclosed_area), with the controls confirming the drive does not rescue closure (s_p=0 collapses ~step 188, a puncture is not healed). So EMERGE stays at genuinely-emergent-but-metastable closure. Remaining boundaries are reported as limitations -- v2&#39;&#39;s plateau is still metastable on a finite closed budget and external drive does not fix it (the window also depends on seed geometry), the physics is deterministic so persistence is not seed-dependent (the multi-seed range is a degenerate single point), and this is a minimal self-maintaining boundary, not real membrane chemistry or metabolism.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="The autopoietic closed loop persists -- enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 over 1800 steps -- while the single-variable k_prod=0 vesicle control collapses (enclosed_area -&gt; 0 by step ~96, persists == 0.0), implementing the paper&#39;s §Self-organized processes autopoiesis criterion as an AUTHORED operational-closure criterion (gated by a global binary_fill_holes topological observer, not emergent from local physics) and testing its consequences. Within this authored construction persistence tracks the internal loop, verified by the knockout (the only differing variable) and independently by a fatal-puncture viability bound (beer2024deriving) -- breaking the boundary shuts off the authored closure-gated production and the ring cannot rebuild from nothing. The MECHANISM-level v2 (protocell-autopoietic-v2, ProtocellV2) then removes the global observer entirely and reproduces closure from LOCAL physics -- production depends on a local interior precursor confined by the closed membrane -- so closure-dependence EMERGES -- the v2 closed loop sustains closure ~2451 internal steps (persists == 1.0, enclosed_area ~293 px, precursor pooled ~72) with no binary_fill_holes in the update (asserted structurally), the precursor knockout s_p=0 collapses at ~step 95, and a wedge puncture makes the interior precursor bleed out so the wedge membrane starves locally (~2 vs ~79 intact), never self-healing. EMERGE is upgraded from authored-closure (v1) to genuinely-emergent local-mechanism closure (v2). The open-system driven version (v2-open, ProtocellV2Open, F-04) is then BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT convert the metastable ring into steady self-maintenance -- it DESTABILISES it into faster runaway filling (closure lost ~step 591 vs undriven ~2451; no local drive in an ~80-point sweep reaches a bounded steady enclosed_area), with the controls confirming the drive does not rescue closure (s_p=0 collapses ~step 188, a puncture is not healed). So EMERGE stays at genuinely-emergent-but-metastable closure. Remaining boundaries are reported as limitations -- v2&#39;&#39;s plateau is still metastable on a finite closed budget and external drive does not fix it (the window also depends on seed geometry), the physics is deterministic so persistence is not seed-dependent (the multi-seed range is a degenerate single point), and this is a minimal self-maintaining boundary, not real membrane chemistry or metabolism." data-edit-multiline data-edit-label="Result">The autopoietic closed loop persists -- enclosed interior area plateaus at ~149 px (homeostasis, down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 over 1800 steps -- while the single-variable k_prod=0 vesicle control collapses (enclosed_area -&gt; 0 by step ~96, persists == 0.0), implementing the paper&#39;s §Self-organized processes autopoiesis criterion as an AUTHORED operational-closure criterion (gated by a global binary_fill_holes topological observer, not emergent from local physics) and testing its consequences. Within this authored construction persistence tracks the internal loop, verified by the knockout (the only differing variable) and independently by a fatal-puncture viability bound (beer2024deriving) -- breaking the boundary shuts off the authored closure-gated production and the ring cannot rebuild from nothing. The MECHANISM-level v2 (protocell-autopoietic-v2, ProtocellV2) then removes the global observer entirely and reproduces closure from LOCAL physics -- production depends on a local interior precursor confined by the closed membrane -- so closure-dependence EMERGES -- the v2 closed loop sustains closure ~2451 internal steps (persists == 1.0, enclosed_area ~293 px, precursor pooled ~72) with no binary_fill_holes in the update (asserted structurally), the precursor knockout s_p=0 collapses at ~step 95, and a wedge puncture makes the interior precursor bleed out so the wedge membrane starves locally (~2 vs ~79 intact), never self-healing. EMERGE is upgraded from authored-closure (v1) to genuinely-emergent local-mechanism closure (v2). The open-system driven version (v2-open, ProtocellV2Open, F-04) is then BUILT AND MEASURED, and the honest verdict is that a local external drive does NOT convert the metastable ring into steady self-maintenance -- it DESTABILISES it into faster runaway filling (closure lost ~step 591 vs undriven ~2451; no local drive in an ~80-point sweep reaches a bounded steady enclosed_area), with the controls confirming the drive does not rescue closure (s_p=0 collapses ~step 188, a puncture is not healed). So EMERGE stays at genuinely-emergent-but-metastable closure. Remaining boundaries are reported as limitations -- v2&#39;&#39;s plateau is still metastable on a finite closed budget and external drive does not fix it (the window also depends on seed geometry), the physics is deterministic so persistence is not seed-dependent (the multi-seed range is a degenerate single point), and this is a minimal self-maintaining boundary, not real membrane chemistry or metabolism.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">PUNCTURE-IS-FATAL</div>
+          <div class="ov-metric-k">puncture-is-fatal</div>
         </div>
         
       </div>
@@ -612,11 +618,11 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The paper&#39;s §Self-organized processes autopoiesis criterion is implemented as an AUTHORED operational-closure criterion and consequence-tested: a scalar membrane field whose production is gated (by a global binary_fill_holes topological observer, not local physics) on the boundary staying topologically closed, and self-limited by enclosed area, PERSISTS -- enclosed interior area plateaus at ~149 px (homeostasis, throttled down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 across an 1800-step window. Under this authored criterion the membrane persists because the production loop inside the boundary maintains the organization the criterion tests for.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="The paper&#39;s §Self-organized processes autopoiesis criterion is implemented as an AUTHORED operational-closure criterion and consequence-tested: a scalar membrane field whose production is gated (by a global binary_fill_holes topological observer, not local physics) on the boundary staying topologically closed, and self-limited by enclosed area, PERSISTS -- enclosed interior area plateaus at ~149 px (homeostasis, throttled down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 across an 1800-step window. Under this authored criterion the membrane persists because the production loop inside the boundary maintains the organization the criterion tests for." data-edit-multiline data-edit-label="Finding F-01">The paper&#39;s §Self-organized processes autopoiesis criterion is implemented as an AUTHORED operational-closure criterion and consequence-tested: a scalar membrane field whose production is gated (by a global binary_fill_holes topological observer, not local physics) on the boundary staying topologically closed, and self-limited by enclosed area, PERSISTS -- enclosed interior area plateaus at ~149 px (homeostasis, throttled down from the ~465 px seed) with persists == 1.0 and collapse_tick == -1.0 across an 1800-step window. Under this authored criterion the membrane persists because the production loop inside the boundary maintains the organization the criterion tests for.</span>
             
             <span class="finding-chip">via <code>closed-loop-persists</code></span>
             
@@ -666,11 +672,11 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The consequences of the authored closure criterion are verified two independent ways -- within this construction persistence tracks the internal production loop. FIRST, the single-variable knockout -- the vesicle control (k_prod=0, identical seed and wiring, the only difference the production loop) COLLAPSES: closure is lost by step ~96, enclosed_area -&gt; 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation. SECOND, the fatal-puncture viability bound (beer2024deriving): from the closed-loop steady state, zeroing a membrane wedge so nothing is enclosed shuts off the authored closure-gated production, and the ring cannot rebuild from nothing (enclosed_area stays 0 for 1500 steps, phi -&gt; ~0).</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="The consequences of the authored closure criterion are verified two independent ways -- within this construction persistence tracks the internal production loop. FIRST, the single-variable knockout -- the vesicle control (k_prod=0, identical seed and wiring, the only difference the production loop) COLLAPSES: closure is lost by step ~96, enclosed_area -&gt; 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation. SECOND, the fatal-puncture viability bound (beer2024deriving): from the closed-loop steady state, zeroing a membrane wedge so nothing is enclosed shuts off the authored closure-gated production, and the ring cannot rebuild from nothing (enclosed_area stays 0 for 1500 steps, phi -&gt; ~0)." data-edit-multiline data-edit-label="Finding F-02">The consequences of the authored closure criterion are verified two independent ways -- within this construction persistence tracks the internal production loop. FIRST, the single-variable knockout -- the vesicle control (k_prod=0, identical seed and wiring, the only difference the production loop) COLLAPSES: closure is lost by step ~96, enclosed_area -&gt; 0, persists == 0.0. Flipping one rate constant flips persistence into dissipation. SECOND, the fatal-puncture viability bound (beer2024deriving): from the closed-loop steady state, zeroing a membrane wedge so nothing is enclosed shuts off the authored closure-gated production, and the ring cannot rebuild from nothing (enclosed_area stays 0 for 1500 steps, phi -&gt; ~0).</span>
             
             <span class="finding-chip">via <code>vesicle-control-collapses</code></span>
             
@@ -720,11 +726,11 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">MECHANISM-LEVEL EMERGE UPGRADE (v2, ProtocellV2, answering peer-review M4). Removing the global binary_fill_holes observer from the update and making production depend on a LOCAL interior precursor (k_prod*phi*p*(1-phi/phi_max); the observer survives only as a passive enclosed_area readout, asserted structurally absent from the update) yields GENUINELY EMERGENT closure-dependence. The membrane secretes precursor and is a barrier to it, so a CLOSED ring confines its self-secreted precursor (interior precursor pools ~0 -&gt; ~72 by step 1000) and SUSTAINS topological closure ~2451 internal steps (persists == 1.0, enclosed_area ~293 px at 1000 steps, collapse_tick == -1.0) -- metastable, the same order as v1&#39;s window but with no global observer in the loop. The mechanistic single-variable precursor knockout s_p=0 collapses at ~step 95 (~26x faster), as does k_prod=0. And the puncture is now a REAL LOCAL PREDICTION -- zeroing a 60-degree wedge makes interior precursor bleed out through the gap and the wedge membrane starve locally (wedge mass ~2 vs ~79 intact) with no self-heal. EMERGE is therefore upgraded from authored-closure to genuinely-emergent local-mechanism closure. The plateau remains metastable (finite closed budget); the open-system driven version is built and measured in finding F-04 (external drive DESTABILISES rather than sustains -- it does NOT reach steady self-maintenance).</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="MECHANISM-LEVEL EMERGE UPGRADE (v2, ProtocellV2, answering peer-review M4). Removing the global binary_fill_holes observer from the update and making production depend on a LOCAL interior precursor (k_prod*phi*p*(1-phi/phi_max); the observer survives only as a passive enclosed_area readout, asserted structurally absent from the update) yields GENUINELY EMERGENT closure-dependence. The membrane secretes precursor and is a barrier to it, so a CLOSED ring confines its self-secreted precursor (interior precursor pools ~0 -&gt; ~72 by step 1000) and SUSTAINS topological closure ~2451 internal steps (persists == 1.0, enclosed_area ~293 px at 1000 steps, collapse_tick == -1.0) -- metastable, the same order as v1&#39;s window but with no global observer in the loop. The mechanistic single-variable precursor knockout s_p=0 collapses at ~step 95 (~26x faster), as does k_prod=0. And the puncture is now a REAL LOCAL PREDICTION -- zeroing a 60-degree wedge makes interior precursor bleed out through the gap and the wedge membrane starve locally (wedge mass ~2 vs ~79 intact) with no self-heal. EMERGE is therefore upgraded from authored-closure to genuinely-emergent local-mechanism closure. The plateau remains metastable (finite closed budget); the open-system driven version is built and measured in finding F-04 (external drive DESTABILISES rather than sustains -- it does NOT reach steady self-maintenance)." data-edit-multiline data-edit-label="Finding F-03">MECHANISM-LEVEL EMERGE UPGRADE (v2, ProtocellV2, answering peer-review M4). Removing the global binary_fill_holes observer from the update and making production depend on a LOCAL interior precursor (k_prod*phi*p*(1-phi/phi_max); the observer survives only as a passive enclosed_area readout, asserted structurally absent from the update) yields GENUINELY EMERGENT closure-dependence. The membrane secretes precursor and is a barrier to it, so a CLOSED ring confines its self-secreted precursor (interior precursor pools ~0 -&gt; ~72 by step 1000) and SUSTAINS topological closure ~2451 internal steps (persists == 1.0, enclosed_area ~293 px at 1000 steps, collapse_tick == -1.0) -- metastable, the same order as v1&#39;s window but with no global observer in the loop. The mechanistic single-variable precursor knockout s_p=0 collapses at ~step 95 (~26x faster), as does k_prod=0. And the puncture is now a REAL LOCAL PREDICTION -- zeroing a 60-degree wedge makes interior precursor bleed out through the gap and the wedge membrane starve locally (wedge mass ~2 vs ~79 intact) with no self-heal. EMERGE is therefore upgraded from authored-closure to genuinely-emergent local-mechanism closure. The plateau remains metastable (finite closed budget); the open-system driven version is built and measured in finding F-04 (external drive DESTABILISES rather than sustains -- it does NOT reach steady self-maintenance).</span>
             
             <span class="finding-chip">via <code>v2-emergent-closure-sustains</code></span>
             
@@ -774,11 +780,11 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-novel">
+      <div class="finding-card finding-kind-biological finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">OPEN-SYSTEM STEP BUILT AND MEASURED (v2-open, ProtocellV2Open) -- the explicitly named remaining EMERGE step, and the HONEST verdict is that external drive does NOT make emergent closure sustain indefinitely; it DESTABILISES it. The v2 metastable collapse is diagnosed as a GEOMETRIC positive feedback (the secreted precursor concentrates in the shrinking enclosed pocket -- interior precursor mass climbs ~40 -&gt; ~158 while total stays ~350 -- and, because production is autocatalytic in phi and strongest where phi is small, that pooled precursor thickens the membrane inward until the centre crosses thr), not a finite-budget exhaustion. Adding a local open dissipative throughflow (uniform precursor feed f_in plus washout k_wash to an external reservoir, no global observer in the update) at the canonical drive loses closure at ~step 591 -- ~4x FASTER than the undriven ~2451 -- via runaway autocatalytic filling (membrane mass runs away ~624 -&gt; ~3092, the whole domain fills, enclosed_area -&gt; 0). This is not a one-drive artefact -- an ~80-point sweep (feed, washout, feed+washout+turnover, saturable export, substrate feed) found NO local drive reaching a bounded steady enclosed_area &gt; 0: a uniform local drive cannot tell interior from exterior, so any feed strong enough to counter decay over-drives the inward filling and any washout strong enough to prevent pooling starves the ring. The controls stay load-bearing (the drive does NOT rescue closure) -- s_p=0 still loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0). So EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance -- an honest finding about how hard steady emergent closure is, not a defect papered over.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="OPEN-SYSTEM STEP BUILT AND MEASURED (v2-open, ProtocellV2Open) -- the explicitly named remaining EMERGE step, and the HONEST verdict is that external drive does NOT make emergent closure sustain indefinitely; it DESTABILISES it. The v2 metastable collapse is diagnosed as a GEOMETRIC positive feedback (the secreted precursor concentrates in the shrinking enclosed pocket -- interior precursor mass climbs ~40 -&gt; ~158 while total stays ~350 -- and, because production is autocatalytic in phi and strongest where phi is small, that pooled precursor thickens the membrane inward until the centre crosses thr), not a finite-budget exhaustion. Adding a local open dissipative throughflow (uniform precursor feed f_in plus washout k_wash to an external reservoir, no global observer in the update) at the canonical drive loses closure at ~step 591 -- ~4x FASTER than the undriven ~2451 -- via runaway autocatalytic filling (membrane mass runs away ~624 -&gt; ~3092, the whole domain fills, enclosed_area -&gt; 0). This is not a one-drive artefact -- an ~80-point sweep (feed, washout, feed+washout+turnover, saturable export, substrate feed) found NO local drive reaching a bounded steady enclosed_area &gt; 0: a uniform local drive cannot tell interior from exterior, so any feed strong enough to counter decay over-drives the inward filling and any washout strong enough to prevent pooling starves the ring. The controls stay load-bearing (the drive does NOT rescue closure) -- s_p=0 still loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0). So EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance -- an honest finding about how hard steady emergent closure is, not a defect papered over." data-edit-multiline data-edit-label="Finding F-04">OPEN-SYSTEM STEP BUILT AND MEASURED (v2-open, ProtocellV2Open) -- the explicitly named remaining EMERGE step, and the HONEST verdict is that external drive does NOT make emergent closure sustain indefinitely; it DESTABILISES it. The v2 metastable collapse is diagnosed as a GEOMETRIC positive feedback (the secreted precursor concentrates in the shrinking enclosed pocket -- interior precursor mass climbs ~40 -&gt; ~158 while total stays ~350 -- and, because production is autocatalytic in phi and strongest where phi is small, that pooled precursor thickens the membrane inward until the centre crosses thr), not a finite-budget exhaustion. Adding a local open dissipative throughflow (uniform precursor feed f_in plus washout k_wash to an external reservoir, no global observer in the update) at the canonical drive loses closure at ~step 591 -- ~4x FASTER than the undriven ~2451 -- via runaway autocatalytic filling (membrane mass runs away ~624 -&gt; ~3092, the whole domain fills, enclosed_area -&gt; 0). This is not a one-drive artefact -- an ~80-point sweep (feed, washout, feed+washout+turnover, saturable export, substrate feed) found NO local drive reaching a bounded steady enclosed_area &gt; 0: a uniform local drive cannot tell interior from exterior, so any feed strong enough to counter decay over-drives the inward filling and any washout strong enough to prevent pooling starves the ring. The controls stay load-bearing (the drive does NOT rescue closure) -- s_p=0 still loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0). So EMERGE stays at genuinely-emergent-but-metastable closure, NOT upgraded to steady self-maintenance -- an honest finding about how hard steady emergent closure is, not a defect papered over.</span>
             
             <span class="finding-chip">via <code>v2-open-drive-does-not-sustain</code></span>
             
@@ -1128,6 +1134,12 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
   
   <div id="results-summary" data-study="autopoiesis" style="margin:0 0 16px"></div>
 
+  
+  <div id="gate-results-section" data-study="autopoiesis" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
+
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="autopoiesis">
     <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading results preview…</span></div>
@@ -1234,12 +1246,12 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
         
         data-pytest-node="closed-loop-persists"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">closed-loop-persists</strong>
         
@@ -1247,6 +1259,16 @@ These four boundaries describe the v1 SPECIFICATION-level realization. The mecha
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The autopoietic closed loop -- production gated on the membrane still enclosing an interior, self-limited by area -- self-maintains within the metastable plateau window: persists == 1.0, with membrane_mass held above its floor (the mass-held gate, so a degenerate near-zero-mass ring cannot pass as persisting).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: persists == 1.0 with membrane_mass &gt; 0 over 1800 steps -- self-maintenance inside the plateau</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1273,12 +1295,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
         data-pytest-node="closed-loop-encloses-interior"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">closed-loop-encloses-interior</strong>
         
@@ -1286,6 +1308,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The closed loop keeps a genuinely bounded interior throughout the window: the enclosed interior area plateaus well above zero (homeostasis at ~149 px, throttled down from the ~465 px seed by closure, not a filled solid blob and not runaway growth).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: enclosed_area plateaus at ~149 px (seed ~465 px) -- homeostasis, throttled by closure, not runaway growth</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1312,12 +1344,12 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "enclosed_area
         
         data-pytest-node="closed-loop-never-collapses"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">closed-loop-never-collapses</strong>
         
@@ -1325,6 +1357,16 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "enclosed_area
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Diagnostic that the closed loop never loses closure within the window: collapse_tick stays at its sentinel -1.0 (never collapsed), distinguishing genuine self-maintenance from a run that merely had not yet reached its breakdown.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: collapse_tick == -1.0 -- never lost closure within the window</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1789,7 +1831,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1884,9 +1926,9 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/13 passed</span>
+        <span class="muted small">3/13 passed</span>
       </div>
       
     </div>
@@ -1930,7 +1972,61 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+
+- The paper&#39;s §Self-organized processes autopoiesis criterion is implemented as an AUTHORED operational-closure criterion (production gated by a global binary_fill_holes topological observer, not emergent from local physics) and its consequences are tested on a 2D lattice: a scalar membrane field with production gated on topological closure and self-limited by enclosed area PERSISTS (enclosed_area plateaus ~149 px, persists == 1.0, collapse_tick == -1.0 over 1800 steps), while the single-variable k_prod=0 vesicle control COLLAPSES (enclosed_area -&gt; 0 by step ~96, persists == 0.0). Flipping one rate constant flips persistence into dissipation.
+
+- The consequences of the authored closure criterion are verified two ways -- within this construction persistence tracks the internal production loop: the knockout (the only differing variable) and independently the fatal-puncture viability bound (beer2024deriving) -- breaking the boundary so nothing is enclosed shuts off the authored closure-gated production, and the ring cannot rebuild from nothing.
+
+- MECHANISM-LEVEL EMERGE UPGRADE (v2, ProtocellV2, answering peer-review M4): removing the global binary_fill_holes observer from the update and making production depend on a LOCAL interior precursor yields GENUINELY EMERGENT closure. The v2 closed loop sustains topological closure ~2451 internal steps (persists == 1.0, enclosed_area ~293 px, precursor pooled ~72) with no global observer in the loop; the mechanistic precursor knockout s_p=0 collapses at ~step 95; and the puncture is now a real local prediction -- interior precursor bleeds out through the gap and the wedge membrane starves locally (~2 vs ~79 intact), no self-heal. EMERGE is upgraded from authored-closure to genuinely-emergent local-mechanism closure.
+
+## Evidence
+
+- **CLOSED-LOOP-PERSISTS** -- persists == 1.0, membrane_mass &gt; 0 over 1800 steps
+
+- **CLOSED-LOOP-ENCLOSES-INTERIOR** -- enclosed_area plateaus ~149 px (seed ~465 px), homeostasis
+
+- **CLOSED-LOOP-NEVER-COLLAPSES** -- collapse_tick == -1.0 within the window
+
+- **VESICLE-CONTROL-COLLAPSES** -- k_prod=0: persists == 0.0 (single-variable knockout)
+
+- **VESICLE-CONTROL-LOSES-ENCLOSURE** -- enclosed_area -&gt; 0 by step ~96
+
+- **PUNCTURE-IS-FATAL** -- after wedge puncture, enclosed_area stays 0 for 1500 steps, phi -&gt; ~0 (viability bound)
+
+- **V2-EMERGENT-CLOSURE-SUSTAINS** -- v2 (local precursor, no global observer): persists == 1.0, enclosed_area ~293 px, precursor pooled ~72, sustains closure ~2451 steps
+
+- **V2-UPDATE-HAS-NO-GLOBAL-OBSERVER** -- rd_step_v2 references no binary_fill_holes/enclosed_area (co_names) -- closure is emergent, not authored
+
+- **V2-PRECURSOR-KNOCKOUT-COLLAPSES** -- s_p=0: persists == 0.0, enclosed_area -&gt; 0 by ~step 95 (mechanistic single-variable control)
+
+- **V2-PUNCTURE-STARVES-LOCALLY** -- wedge membrane stays ~2 vs ~79 intact, precursor bleeds through the gap, no self-heal (real local prediction)
+
+- **V2-OPEN-DRIVE-DOES-NOT-SUSTAIN** -- external drive (v2-open, local throughflow): persists == 0.0, closure lost ~step 591 (vs undriven ~2451) via runaway fill, membrane_mass ~3092 -- external drive DESTABILISES, does NOT reach a steady state (no local drive in an ~80-point sweep does)
+
+- **V2-OPEN-DRIVE-OFF-RECOVERS-V2** -- with f_in=k_wash=0 the same open composite persists == 1.0 at 1000 steps -- the destabilisation is caused by the drive alone
+
+- **V2-OPEN-CONTROLS-STILL-LOAD-BEARING** -- under drive, s_p=0 still loses closure ~step 188 and a puncture is not healed (enclosed_area stays 0) -- the drive does not rescue closure
+
+## Limitations
+
+- The closure criterion is AUTHORED, not emergent: closure-dependence is hand-coded via a global binary_fill_holes topological observer, so the knockout and puncture results are consequence-tests of an implemented criterion, not evidence that a boundary made and sustained itself from local physics.
+
+- The homeostatic plateau is metastable, not eternal -- the physically-correct signature of a closed system with no external material influx (perpetual self-maintenance would need a genuine influx and would be the less physical result), not a defect.
+
+- The reaction-diffusion physics has no RNG; persistence is deterministic and NOT seed-dependent (the multi-seed range is a degenerate single point, enclosed_area == 149 at every seed), unlike this investigation&#39;s CPM/Metropolis studies.
+
+- This is a minimal self-maintaining boundary demonstrating authored operational closure (the criterion implemented, its knockout and puncture consequences verified), NOT real membrane chemistry, a metabolic network, or molecular self-production. Parameters are tuned demonstration values, not fitted to any organism.
+
+## Next steps
+
+- DONE this build -- Mechanistically-local closure (v2, ProtocellV2): the global binary_fill_holes observer is replaced by local physics in which an interior precursor is confined by a closed membrane and bleeds out through a leak, so closure-dependence follows from the local dynamics rather than an authored global topological test. Measured -- sustains closure ~2451 steps, s_p=0 knockout collapses ~step 95, puncture starves locally.
+
+- DONE this build -- External-influx / open-system autopoiesis (v2-open, ProtocellV2Open, F-04): the v2 loop is driven with a local open dissipative throughflow (a uniform precursor feed plus washout to an external reservoir, no global observer in the update) so it is no longer on a closed budget. MEASURED, and the honest verdict is the hard way -- the drive does NOT reach a non-equilibrium steady state; it DESTABILISES the metastable ring into faster runaway autocatalytic filling (closure lost ~step 591 at the canonical drive vs ~2451 undriven, membrane mass runs away ~624 -&gt; ~3092), and an ~80-point drive sweep found no local drive reaching a bounded steady enclosed_area &gt; 0 (a uniform local drive cannot tell interior from exterior -- feed over-drives the inward filling, washout starves the ring). The controls stay load-bearing (s_p=0 still collapses ~step 188, a puncture is not healed). EMERGE stays at genuinely-emergent-but-metastable closure.
+
+- Still open -- a NON-UNIFORM or geometry-aware open drive (e.g. an absorbing exterior boundary, or a feed that couples to the membrane rather than the whole domain) that might break the interior/exterior degeneracy this build shows a uniform drive cannot -- the honest next question raised by F-04&#39;s negative result.
+
+- Graded puncture self-repair: extend v2 so a partial puncture can be partially repaired (a small leak re-seals as the surrounding membrane re-confines precursor), turning the all-or-nothing viability bound into a recovery gradient." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>
 <p>The paper's §Self-organized processes autopoiesis criterion is implemented as an AUTHORED operational-closure criterion (production gated by a global binary_fill_holes topological observer, not emergent from local physics) and its consequences are tested on a 2D lattice: a scalar membrane field with production gated on topological closure and self-limited by enclosed area PERSISTS (enclosed_area plateaus ~149 px, persists == 1.0, collapse_tick == -1.0 over 1800 steps), while the single-variable k_prod=0 vesicle control COLLAPSES (enclosed_area -&gt; 0 by step ~96, persists == 0.0). Flipping one rate constant flips persistence into dissipation.</p>
@@ -2103,11 +2199,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "autopoiesis";
+window.__STUDY_INVESTIGATION__ = "draft-to-living-cell";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2236,6 +2333,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

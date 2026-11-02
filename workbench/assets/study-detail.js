@@ -54,7 +54,7 @@
   // attribution (the feedback_tracked panel below) reads identically to any
   // server-rendered attribution. Only a known LLM/automation naming TOKEN
   // (claude, gpt-4o, ci, ...) flips a recorded name to "agent" — the same
-  // category of signal viva_superpowers.investigation_close.derive_contributors
+  // category of signal discovery_engine.investigation_close.derive_contributors
   // already uses for git co-authors (there: an email's "noreply@anthropic.com"
   // / "bot" / "ci" substring). Every other non-empty name defaults to "human"
   // — a documented DEFAULT, not a claim about who that person is. Empty/None
@@ -188,6 +188,49 @@
     try { el.scrollIntoView({behavior: 'smooth', block: 'start'}); } catch (e) {}
   }
   window._gotoStudyTab = _gotoStudyTab;
+
+  // Deep-link from an investigation Narrative evidence ref to the exact item in
+  // THIS study: a ?ev=<ref> on the study URL resolves to a finding
+  // (#finding-<id>, server-rendered on Overview), a behavior test (#bt-<name>,
+  // server-rendered on Audit), or a figure (#fig-<slug>, lazily built on the
+  // Visualizations tab) — switches to the tab that holds it and scrolls there.
+  function _evSlug(s) {
+    return String(s == null ? "" : s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  function _evFlash(el) {
+    try { el.classList.remove("ev-flash"); void el.offsetWidth; el.classList.add("ev-flash"); } catch (e) { /* ignore */ }
+  }
+  function _evWaitFor(id, timeoutMs, cb) {
+    var el = document.getElementById(id); if (el) { cb(el); return; }
+    var t0 = Date.now();
+    var iv = setInterval(function () {
+      var e = document.getElementById(id);
+      if (e) { clearInterval(iv); cb(e); }
+      else if (Date.now() - t0 > timeoutMs) { clearInterval(iv); }
+    }, 120);
+  }
+  function _gotoEvidence(ref) {
+    if (!ref) return;
+    var slug = _evSlug(ref);
+    // Targets present on load (findings on Overview, tests on Audit).
+    var immediate = ["finding-" + ref, "finding-" + slug, "bt-" + ref, "bt-" + slug];
+    for (var i = 0; i < immediate.length; i++) {
+      var el = document.getElementById(immediate[i]);
+      if (el) {
+        var p = el.closest && el.closest(".study-tab-panel");
+        _gotoStudyTab(p && p.dataset.kind ? p.dataset.kind : "overview", el.id);
+        (function (hit) { setTimeout(function () { _evFlash(hit); }, 350); })(el);
+        return;
+      }
+    }
+    // Otherwise treat it as a figure (lazy-built on the Visualizations tab).
+    _setStudyTab("visualize");
+    _evWaitFor("fig-" + slug, 4000, function (fe) {
+      try { fe.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) { /* ignore */ }
+      _evFlash(fe);
+    });
+  }
+  window._gotoEvidence = _gotoEvidence;
 
   // ── Readouts panel (Design's emit CONTRACT) ──────────────────────────────
   // Fetch /api/study-readouts ONCE and render its three blocks (spec §3.1):
@@ -972,7 +1015,7 @@
             + escapeHtmlForTests(String(runId)) + ' ↗</a>'
           : '';
         host.innerHTML = names.map(function (n) {
-          return '<div class="figure-card">'
+          return '<div class="figure-card" id="fig-' + _evSlug(n) + '">'
             + '<iframe srcdoc="' + attr(panels[n]) + '" loading="lazy" '
             + 'class="figure-media-frame figure-media-frame--native"></iframe>'
             + '<div class="figure-caption-row">'
@@ -1135,8 +1178,41 @@
       + chips.join('<span class="muted">·</span>') + '</div>';
   }
 
+  // Gate results (Simulations › Results): each acceptance test's figureless
+  // readout — a derived-scalar value ("Computed scalar readout …") or an
+  // "unresolved: no measure.path" stub. These are run-derived RESULTS, split
+  // out of the Visualizations charts payload server-side (build_study_charts_
+  // payload → `gate_results`) so they no longer clutter the Visualizations tab.
+  var _gateResultsLoaded = false;
+  function _loadGateResults(force) {
+    var section = document.getElementById('gate-results-section');
+    var mount = document.getElementById('gate-results');
+    if (!section || !mount) return;
+    if (_gateResultsLoaded && !force) return;
+    _gateResultsLoaded = true;
+    window.DataSource.loadStudyCharts(studyName())
+      .then(function (d) {
+        var gr = (d && d.gate_results) || [];
+        if (!gr.length) { section.hidden = true; return; }
+        section.hidden = false;
+        mount.innerHTML = gr.map(function (g) {
+          var unresolved = g.status === 'unresolved' || g.status === 'refused';
+          var badge = unresolved
+            ? '<span style="flex:none;font-size:0.72em;font-weight:600;padding:2px 8px;border-radius:10px;background:#fef3c7;color:#92400e">unresolved</span>'
+            : '<span style="flex:none;font-size:0.72em;font-weight:600;padding:2px 8px;border-radius:10px;background:#e0e7ff;color:#3730a3">scalar readout</span>';
+          return '<div style="display:flex;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border,#eceff3)">'
+            + '<div style="min-width:0;flex:1">'
+            + '<div style="font-weight:600;font-size:0.9em">' + escapeHtmlForTests(g.title || g.key || 'gate') + '</div>'
+            + '<div class="muted" style="font-size:0.82em;line-height:1.4">' + escapeHtmlForTests(g.caption || '') + '</div>'
+            + '</div>' + badge + '</div>';
+        }).join('');
+      })
+      .catch(function () { section.hidden = true; });
+  }
+
   function _loadResults(force) {
     _loadResultsPreview(force);
+    _loadGateResults(force);
     var mount = document.getElementById('raw-data-list');
     if (!mount) return;
     if (_rawDataLoaded && !force) return;
@@ -3683,7 +3759,7 @@
   }
 
   // ── G5: Quality check group (rigor scorecard) ───────────────────────────
-  // GET /api/study-rigor?study=<slug> → viva_superpowers.rigor.study_rigor,
+  // GET /api/study-rigor?study=<slug> → discovery_engine.rigor.study_rigor,
   // already computed in CI but never rendered on the page until now. Fetched
   // client-side (same pattern as _loadReadouts / _loadAnalyses above)
   // into #check-group-quality. Study-spine reorg (spec §3.7): this mount
@@ -3736,7 +3812,7 @@
     var header = '<div class="check-group-header" style="display:flex;align-items:center;'
       + 'gap:8px;flex-wrap:wrap"><strong>Quality</strong> '
       + '<span class="muted" style="font-size:0.85em">rigor scorecard &mdash; '
-      + '<code>viva_superpowers.rigor</code></span>';
+      + '<code>discovery_engine.rigor</code></span>';
     if (!rigor || rigor.unavailable) {
       var reason = (rigor && rigor.reason) || 'could not be computed';
       return {
@@ -3802,7 +3878,7 @@
   window._loadQualityChecks = _loadQualityChecks;
 
   // ── G6: Reproducibility check group (L0-L5 study_audit) ─────────────────
-  // GET /api/study-audit?study=<slug> → viva_superpowers.study_audit
+  // GET /api/study-audit?study=<slug> → discovery_engine.study_audit
   // (audit_workspace, filtered to this slug) — already computed in CI as the
   // reproducibility gate, never rendered on the page until now. Same fetch
   // pattern as _loadQualityChecks, into #check-group-reproducibility.
@@ -3916,7 +3992,7 @@
     var header = '<div class="check-group-header" style="display:flex;align-items:center;'
       + 'gap:8px;flex-wrap:wrap"><strong>Reproducibility</strong> '
       + '<span class="muted" style="font-size:0.85em">L0&ndash;L5 audit &mdash; '
-      + '<code>viva_superpowers.study_audit</code></span>';
+      + '<code>discovery_engine.study_audit</code></span>';
     if (!audit || audit.unavailable) {
       var reason = (audit && audit.reason) || 'could not be computed';
       return {
@@ -5626,6 +5702,12 @@
     } catch (_e) { /* no URLSearchParams — keep overview */ }
     _setStudyTab(_resolved.tab);
     if (_resolved.sub) _setSimSubtab(_resolved.sub);
+    // ?ev=<ref> — a Narrative evidence ref deep-link: jump to that finding /
+    // test / figure (overrides the default tab landing).
+    try {
+      var _ev = new URLSearchParams(window.location.search).get('ev');
+      if (_ev) _gotoEvidence(_ev);
+    } catch (_e2) { /* ignore */ }
   }
 
   // ── item 69 — baseline composite select: populate from the live registry,

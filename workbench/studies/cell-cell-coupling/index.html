@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="cell-cell-coupling" data-study-kind="computational" title="cell-cell-coupling">Cell–Cell Coupling</span>
+    <span class="study-name" id="study-name" data-slug="cell-cell-coupling" data-study-kind="computational" title="cell-cell-coupling" data-edit-kind="study" data-edit-field="title" data-edit-value="Cell–Cell Coupling" data-edit-label="Title">Cell–Cell Coupling</span>
     
   </h1>
     
@@ -241,6 +241,9 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -549,13 +552,29 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
 single N-cell coupling process (`CpmColonyField`) reproduces the paper&#39;s §Cell–cell coupling
 viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
 scripted or lumped stand-in for it: over
 20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric
-growth via resource preemption between the two cells (biomass ratio 2.9-3.7x across 5 seeds,
-3.69x on the flagship seed; volume 3511 vs 81
+growth via resource preemption between the two cells (biomass ratio 3.69x, deterministic and
+seed-invariant; volume 3511 vs 81
+px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
+bound; the dividing-population lift (M7b, `cellcell-compete-div`) turns this into robust competitive DOMINANCE — fast lineage ~9x the slow&#39;s biomass, monoculture-controlled — with full exclusion only stochastic, so exclusion is earned only as a seed-dependent outcome, not deterministically, and the winner&#39;s ~97.5%-lattice swell without division is a saturation artifact), while a
+different composite over the same coupling process — a localized glucose depot, a fast-diffusing
+acetate byproduct, and an acetate-consuming role — sustains a cell that never touches glucose
+(local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass
+1.25 -&gt; 3.79). Both regimes run through the same process; only the composite&#39;s cell roles and
+field constants differ, mirroring the lumped ODE predecessor&#39;s law-4 pattern
+(two handler environments negotiate the shared-resource constraint differently over one
+interface) at real spatial, per-footprint metabolic resolution.
+" data-edit-multiline data-edit-label="Claim">Composing N real CPM cells with one shared, real spatio-flux nutrient field through a
+single N-cell coupling process (`CpmColonyField`) reproduces the paper&#39;s §Cell–cell coupling
+viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity, not a
+scripted or lumped stand-in for it: over
+20-tick runs, an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric
+growth via resource preemption between the two cells (biomass ratio 3.69x, deterministic and
+seed-invariant; volume 3511 vs 81
 px — the loser displaced but still viable, above its 1.25 seed, not driven below a viability
 bound; the dividing-population lift (M7b, `cellcell-compete-div`) turns this into robust competitive DOMINANCE — fast lineage ~9x the slow&#39;s biomass, monoculture-controlled — with full exclusion only stochastic, so exclusion is earned only as a seed-dependent outcome, not deterministically, and the winner&#39;s ~97.5%-lattice swell without division is a saturation artifact), while a
 different composite over the same coupling process — a localized glucose depot, a fast-diffusing
@@ -643,7 +662,13 @@ relational meanings across the two studies.
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Does the paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Does the paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated
+figure) hold as real spatial multicellularity — multiple CPM cells sharing one diffusing
+nutrient field, each running its own dynamic-FBA step at its own footprint, producing both
+resource preemption between two cells and cross-feeding — when the whole colony is composed from independent
+frameworks through one N-cell coupling process (`CpmColonyField`), rather than the lumped
+two-role, shared-scalar-pool stand-in a lumped, specification-stage realization used?
+" data-edit-multiline data-edit-label="Question">Does the paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated
 figure) hold as real spatial multicellularity — multiple CPM cells sharing one diffusing
 nutrient field, each running its own dynamic-FBA step at its own footprint, producing both
 resource preemption between two cells and cross-feeding — when the whole colony is composed from independent
@@ -674,7 +699,9 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over 20-tick runs, the competition regime drives a decisive spatial split from uptake- capacity asymmetry alone (biomass ratio 2.9-3.7x across 5 seeds, 3.69x on the flagship seed; 237.9 vs 64.5; CPM volume 3511 vs 81 px) -- asymmetric growth via resource preemption between the two cells, not population-level competitive exclusion in this baseline: the loser is displaced but still viable (its biomass grew ~51.6x, far above the 1.25 seed floor), never driven below a viability bound, and the winner&#39;s ~97.5%-lattice endpoint is partly a finite-size saturation artifact -- the baseline couples shared state, not a viability constraint. Peer-review M7b lifts this to DIVIDING founder lineages with a viability floor (`cellcell-compete-div`) and measures the real outcome -- robust competitive DOMINANCE (fast lineage ~9x the slow&#39;s biomass by t=40, competition-driven per the `cellcell-compete-div-slowmono` monoculture control) with full exclusion only stochastic (headline seed and 2/5 sweep seeds; the suppressed slow lineage otherwise persists in spatial refugia) -- so the earned term is dominance, not deterministic exclusion. The cross-feeding regime -- the same `CpmColonyField` process, a different composite -- sustains a consumer cell that never touches glucose (local glucose 0.0) purely via a diffusing acetate handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell), and a secretor-knockout control confirms that handoff is necessary (secretor removed, no acetate produced, the consumer held at its 1.25 seed). Peer-review M7a re-runs that handoff at the physical 2:1 acetate/glucose diffusivity (`cellcell-crossfeed-realistic`) and finds it FAILS (consumer local_acetate ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then displaced), with feeding scaling monotonically with transport acceleration -- so the flagship&#39;s accelerated transport is load-bearing for the legible handoff at this geometry, not cosmetic. The paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated figure) holds as genuine spatial multicellularity, composed from independent frameworks through one N-cell coupling process, one interface, two regimes. The cross-feeding regime also carries the paper&#39;s closing relational-molecule claim (§Cell–cell coupling): the same acetate is metabolic waste to the secretor and sole carbon food to the consumer -- and, in `disintegration`, a toxin whose accumulation crosses a cell&#39;s viability bound -- one molecule whose meaning is set relationally by each cell&#39;s interface.
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Over 20-tick runs, the competition regime drives a decisive spatial split from uptake- capacity asymmetry alone (biomass ratio 3.69x, deterministic and seed-invariant; 237.9 vs 64.5; CPM volume 3511 vs 81 px) -- asymmetric growth via resource preemption between the two cells, not population-level competitive exclusion in this baseline: the loser is displaced but still viable (its biomass grew ~51.6x, far above the 1.25 seed floor), never driven below a viability bound, and the winner&#39;s ~97.5%-lattice endpoint is partly a finite-size saturation artifact -- the baseline couples shared state, not a viability constraint. Peer-review M7b lifts this to DIVIDING founder lineages with a viability floor (`cellcell-compete-div`) and measures the real outcome -- robust competitive DOMINANCE (fast lineage ~9x the slow&#39;s biomass by t=40, competition-driven per the `cellcell-compete-div-slowmono` monoculture control) with full exclusion only stochastic (headline seed and 2/5 sweep seeds; the suppressed slow lineage otherwise persists in spatial refugia) -- so the earned term is dominance, not deterministic exclusion. The cross-feeding regime -- the same `CpmColonyField` process, a different composite -- sustains a consumer cell that never touches glucose (local glucose 0.0) purely via a diffusing acetate handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell), and a secretor-knockout control confirms that handoff is necessary (secretor removed, no acetate produced, the consumer held at its 1.25 seed). Peer-review M7a re-runs that handoff at the physical 2:1 acetate/glucose diffusivity (`cellcell-crossfeed-realistic`) and finds it FAILS (consumer local_acetate ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then displaced), with feeding scaling monotonically with transport acceleration -- so the flagship&#39;s accelerated transport is load-bearing for the legible handoff at this geometry, not cosmetic. The paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated figure) holds as genuine spatial multicellularity, composed from independent frameworks through one N-cell coupling process, one interface, two regimes. The cross-feeding regime also carries the paper&#39;s closing relational-molecule claim (§Cell–cell coupling): the same acetate is metabolic waste to the secretor and sole carbon food to the consumer -- and, in `disintegration`, a toxin whose accumulation crosses a cell&#39;s viability bound -- one molecule whose meaning is set relationally by each cell&#39;s interface.
+" data-edit-multiline data-edit-label="Result">Over 20-tick runs, the competition regime drives a decisive spatial split from uptake- capacity asymmetry alone (biomass ratio 3.69x, deterministic and seed-invariant; 237.9 vs 64.5; CPM volume 3511 vs 81 px) -- asymmetric growth via resource preemption between the two cells, not population-level competitive exclusion in this baseline: the loser is displaced but still viable (its biomass grew ~51.6x, far above the 1.25 seed floor), never driven below a viability bound, and the winner&#39;s ~97.5%-lattice endpoint is partly a finite-size saturation artifact -- the baseline couples shared state, not a viability constraint. Peer-review M7b lifts this to DIVIDING founder lineages with a viability floor (`cellcell-compete-div`) and measures the real outcome -- robust competitive DOMINANCE (fast lineage ~9x the slow&#39;s biomass by t=40, competition-driven per the `cellcell-compete-div-slowmono` monoculture control) with full exclusion only stochastic (headline seed and 2/5 sweep seeds; the suppressed slow lineage otherwise persists in spatial refugia) -- so the earned term is dominance, not deterministic exclusion. The cross-feeding regime -- the same `CpmColonyField` process, a different composite -- sustains a consumer cell that never touches glucose (local glucose 0.0) purely via a diffusing acetate handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell), and a secretor-knockout control confirms that handoff is necessary (secretor removed, no acetate produced, the consumer held at its 1.25 seed). Peer-review M7a re-runs that handoff at the physical 2:1 acetate/glucose diffusivity (`cellcell-crossfeed-realistic`) and finds it FAILS (consumer local_acetate ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then displaced), with feeding scaling monotonically with transport acceleration -- so the flagship&#39;s accelerated transport is load-bearing for the legible handoff at this geometry, not cosmetic. The paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated figure) holds as genuine spatial multicellularity, composed from independent frameworks through one N-cell coupling process, one interface, two regimes. The cross-feeding regime also carries the paper&#39;s closing relational-molecule claim (§Cell–cell coupling): the same acetate is metabolic waste to the secretor and sole carbon food to the consumer -- and, in `disintegration`, a toxin whose accumulation crosses a cell&#39;s viability bound -- one molecule whose meaning is set relationally by each cell&#39;s interface.
 </p>
       
       
@@ -682,7 +709,7 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">CROSSFEEDING-SECRETOR-KNOCKOUT-CONSUMER-FAILS-TO-GROW</div>
+          <div class="ov-metric-k">dividing-competition-slow-lineage-viable-in-monoculture</div>
         </div>
         
       </div>
@@ -702,11 +729,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (`CpmColonyField`) reproduce the paper&#39;s §Cell–cell coupling shared-resource-competition branch (no dedicated figure) as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split -- resource preemption between the two cells. Confirmed: biomass ratio 2.9-3.7x across 5 seeds (3.69x on the flagship seed; 237.9 vs 64.5), CPM volume 3511 vs 81 px, over a 20-tick run. (This is resource preemption between two single, never-dividing cells, not population-level competitive exclusion, which would need dividing populations -- the loser is displaced but stays viable; see F-04.)</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (`CpmColonyField`) reproduce the paper&#39;s §Cell–cell coupling shared-resource-competition branch (no dedicated figure) as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split -- resource preemption between the two cells. Confirmed: biomass ratio 3.69x, deterministic and seed-invariant (237.9 vs 64.5), CPM volume 3511 vs 81 px, over a 20-tick run. (This is resource preemption between two single, never-dividing cells, not population-level competitive exclusion, which would need dividing populations -- the loser is displaced but stays viable; see F-04.)" data-edit-multiline data-edit-label="Finding F-01">Multiple real CPM cells sharing one real spatio-flux nutrient field through one N-cell coupling process (`CpmColonyField`) reproduce the paper&#39;s §Cell–cell coupling shared-resource-competition branch (no dedicated figure) as genuine spatial multicellularity: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4), with each cell running its own independent dFBA solve at its own footprint on the same depleting field, drives a decisive biomass and lattice-volume split -- resource preemption between the two cells. Confirmed: biomass ratio 3.69x, deterministic and seed-invariant (237.9 vs 64.5), CPM volume 3511 vs 81 px, over a 20-tick run. (This is resource preemption between two single, never-dividing cells, not population-level competitive exclusion, which would need dividing populations -- the loser is displaced but stays viable; see F-04.)</span>
             
             <span class="finding-chip">via <code>competition-excludes-the-slower-cell</code></span>
             
@@ -756,11 +783,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-partial">
+      <div class="finding-card finding-kind-biological finding-status-partial" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◐</span>
-            <span class="finding-claim finding-statement">The competition regime reaches asymmetric growth via resource preemption between two single, never-dividing cells, NOT population-level competitive exclusion (which would need dividing populations), over the run measured. The loser&#39;s biomass GREW from its 1.25 seed to 64.5 (~51.6x) -- far above the viable-biomass floor -- while shrinking to an 81-px fragment against the winner&#39;s 3511 px: it is spatially DISPLACED, not driven below any viability bound. This study couples STATE (one shared field) but imposes no viability CONSTRAINT (no death, no viability bound), exactly the paper&#39;s §Cell–cell coupling distinction that &#34;what is coupled is not only state, but constraint&#34; -- here, only state. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20, so the endpoint is partly a finite-size lattice-saturation artifact; by t≈30 the winner fills the lattice and the still-viable loser is crowded off it (eviction, not starvation).</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The competition regime reaches asymmetric growth via resource preemption between two single, never-dividing cells, NOT population-level competitive exclusion (which would need dividing populations), over the run measured. The loser&#39;s biomass GREW from its 1.25 seed to 64.5 (~51.6x) -- far above the viable-biomass floor -- while shrinking to an 81-px fragment against the winner&#39;s 3511 px: it is spatially DISPLACED, not driven below any viability bound. This study couples STATE (one shared field) but imposes no viability CONSTRAINT (no death, no viability bound), exactly the paper&#39;s §Cell–cell coupling distinction that &#34;what is coupled is not only state, but constraint&#34; -- here, only state. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20, so the endpoint is partly a finite-size lattice-saturation artifact; by t≈30 the winner fills the lattice and the still-viable loser is crowded off it (eviction, not starvation)." data-edit-multiline data-edit-label="Finding F-04">The competition regime reaches asymmetric growth via resource preemption between two single, never-dividing cells, NOT population-level competitive exclusion (which would need dividing populations), over the run measured. The loser&#39;s biomass GREW from its 1.25 seed to 64.5 (~51.6x) -- far above the viable-biomass floor -- while shrinking to an 81-px fragment against the winner&#39;s 3511 px: it is spatially DISPLACED, not driven below any viability bound. This study couples STATE (one shared field) but imposes no viability CONSTRAINT (no death, no viability bound), exactly the paper&#39;s §Cell–cell coupling distinction that &#34;what is coupled is not only state, but constraint&#34; -- here, only state. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20, so the endpoint is partly a finite-size lattice-saturation artifact; by t≈30 the winner fills the lattice and the still-viable loser is crowded off it (eviction, not starvation).</span>
             
             <span class="finding-chip">via <code>competition-loser-displaced-not-excluded</code></span>
             
@@ -810,11 +837,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#39;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. This is the paper&#39;s §Cell–cell coupling relational-molecule claim made concrete -- the same acetate is the secretor&#39;s metabolic waste and the consumer&#39;s sole carbon food, its meaning set by each cell&#39;s interface (microbial cross-feeding, morris2013). Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#39;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. This is the paper&#39;s §Cell–cell coupling relational-molecule claim made concrete -- the same acetate is the secretor&#39;s metabolic waste and the consumer&#39;s sole carbon food, its meaning set by each cell&#39;s interface (microbial cross-feeding, morris2013). Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell." data-edit-multiline data-edit-label="Finding F-02">Over the same coupling process, a different composite -- a localized glucose depot, a fast-diffusing acetate byproduct, and an acetate-consuming cell role -- sustains a cell that never touches glucose purely via a spatial metabolic handoff: the consumer&#39;s local glucose reads 0.0 the entire run while its biomass still climbs, entirely on diffused acetate. This is the paper&#39;s §Cell–cell coupling relational-molecule claim made concrete -- the same acetate is the secretor&#39;s metabolic waste and the consumer&#39;s sole carbon food, its meaning set by each cell&#39;s interface (microbial cross-feeding, morris2013). Confirmed: consumer local_glucose 0.0, local_acetate 1.30, biomass 1.25 -&gt; 3.79, ending as a viable 65-pixel CPM cell.</span>
             
             <span class="finding-chip">via <code>crossfeeding-consumer-grows-on-acetate-alone</code></span>
             
@@ -864,11 +891,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The cross-feeding handoff is NECESSARY, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` -- the cross-feed composite with the acetate secretor cell removed so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 -&gt; 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 + observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="The cross-feeding handoff is NECESSARY, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` -- the cross-feed composite with the acetate secretor cell removed so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 -&gt; 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 + observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field." data-edit-multiline data-edit-label="Finding F-05">The cross-feeding handoff is NECESSARY, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` -- the cross-feed composite with the acetate secretor cell removed so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 -&gt; 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 + observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field.</span>
             
             <span class="finding-chip">via <code>crossfeeding-secretor-knockout-consumer-fails-to-grow</code></span>
             
@@ -918,11 +945,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The additive two-writer assumption `CpmColonyField`&#39;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The additive two-writer assumption `CpmColonyField`&#39;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks." data-edit-multiline data-edit-label="Finding F-03">The additive two-writer assumption `CpmColonyField`&#39;s N-cell field update depends on -- that disjoint per-cell footprint deltas sum losslessly into one shared field -- is runtime-verified directly and independently of any dFBA mechanism, retiring what was previously an unverified assumption in the flagship study. Confirmed structurally: two synthetic single-pixel writers on disjoint pixels each apply independently and their combined effect exactly matches the sum of the two, over repeated ticks.</span>
             
             <span class="finding-chip">via <code>two-writer-additivity-conserves-mass</code></span>
             
@@ -972,11 +999,28 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
       
       
       
-      <div class="finding-card finding-kind-methodological finding-status-partial">
+      <div class="finding-card finding-kind-methodological finding-status-partial" id="finding-F-06">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◐</span>
-            <span class="finding-claim finding-statement">INTERFACE SURROGATE CALIBRATION AT THE CELL-CELL LEVEL -- a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface `CpmColonyField`, its per-cell metabolism swapped from constraint-based dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten / Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) BEHIND THE BYTE-IDENTICAL `CpmColonyField` ports, with the two colonies compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. Confirmed: over 20 ticks the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface -- per-cell biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1% / 0.3%), total biomass 302.4 vs 287.6 (4.9%), the competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%); every colony interface observable agrees within ~6%. The MM colony additionally runs with cobra BLOCKED -- the surrogate-model payoff, a mechanism that runs where the dFBA original could not.
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="INTERFACE SURROGATE CALIBRATION AT THE CELL-CELL LEVEL -- a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface `CpmColonyField`, its per-cell metabolism swapped from constraint-based dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten / Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) BEHIND THE BYTE-IDENTICAL `CpmColonyField` ports, with the two colonies compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. Confirmed: over 20 ticks the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface -- per-cell biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1% / 0.3%), total biomass 302.4 vs 287.6 (4.9%), the competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%); every colony interface observable agrees within ~6%. The MM colony additionally runs with cobra BLOCKED -- the surrogate-model payoff, a mechanism that runs where the dFBA original could not.
+
+PRE-SATURATION TEST NOW RUN (peer-review M2) -- the named next step is done and re-levels this
+finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10
+ticks (~50% occupancy, well below the ceiling) with the mm_* params FROZEN
+(tests/test_cellcell_presaturation.py) separates real agreement from ceiling artifact. Two-sided
+result. The GROWTH / COMPETITION observables are genuinely substitutable pre-saturation -- total
+biomass dFBA 102.2 vs MM 92.7 (9.3%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume
+1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- so the headline competition
+result is NOT a ceiling artifact. But the ~0.2% ACETATE match IS an artifact -- dFBA&#39;s plume
+saturates early (~431 by ~8 ticks, flat after) while the MM overflow surrogate climbs roughly
+linearly and only catches up at the saturated endpoint; pre-saturation at 10 ticks the MM plume
+is barely half-built and diverges from dFBA by ~68% (431.5 vs 136.3). Degrees of freedom -- 2 free
+mm_* params (the vmax 10/4 uptake kinetics are shared with dFBA, not free) against ~6 colony
+observables (over-constrained), and the single observable mm_overflow directly controls (acetate)
+is exactly the one that fails pre-saturation. Honest re-level -- mechanism-independence on the
+colony GROWTH/COMPETITION interface (substitutable pre-saturation within ~9%), surrogate
+calibration only on the acetate plume (matched at the saturated endpoint, ~68% off pre-saturation)." data-edit-multiline data-edit-label="Finding F-06">INTERFACE SURROGATE CALIBRATION AT THE CELL-CELL LEVEL -- a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface `CpmColonyField`, its per-cell metabolism swapped from constraint-based dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten / Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) BEHIND THE BYTE-IDENTICAL `CpmColonyField` ports, with the two colonies compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. Confirmed: over 20 ticks the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface -- per-cell biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1% / 0.3%), total biomass 302.4 vs 287.6 (4.9%), the competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%); every colony interface observable agrees within ~6%. The MM colony additionally runs with cobra BLOCKED -- the surrogate-model payoff, a mechanism that runs where the dFBA original could not.
 
 PRE-SATURATION TEST NOW RUN (peer-review M2) -- the named next step is done and re-levels this
 finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10
@@ -1304,6 +1348,12 @@ calibration only on the acetate plume (matched at the saturated endpoint, ~68% o
   
   <div id="results-summary" data-study="cell-cell-coupling" style="margin:0 0 16px"></div>
 
+  
+  <div id="gate-results-section" data-study="cell-cell-coupling" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
+
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="cell-cell-coupling">
     <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading results preview…</span></div>
@@ -1410,12 +1460,12 @@ calibration only on the acetate plume (matched at the saturated endpoint, ~68% o
         
         data-pytest-node="competition-excludes-the-slower-cell"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">competition-excludes-the-slower-cell</strong>
         
@@ -1424,12 +1474,22 @@ calibration only on the acetate plume (matched at the saturated endpoint, ~68% o
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field), the faster competitor ends with materially more biomass and CPM lattice volume than the slower one — spatial resource preemption between the two cells (not population-level competitive exclusion, which would need dividing populations).</div>
       
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: biomass 237.9 (id 1) vs 64.5 (id 2) -- 3.69x margin</code>
+          
+        
+      </div>
+      
       
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"1\"]) / last(obs.biomass[\"2\"])", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the higher-uptake-capacity cell (glucose_vmax 10) should end with more biomass than the lower-capacity cell (vmax 4) \u2192 expect ratio \u003e 1 (pin floor 1.5). Observed: multi-seed band 2.9-3.7x (3.69x on the flagship seed; biomass 237.9 vs 64.5) over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly; tests/test_cellcell_multiseed.py for the 5-seed band)", "value": 1.5}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the higher-uptake-capacity cell (glucose_vmax 10) should end with more biomass than the lower-capacity cell (vmax 4) \u2192 expect ratio \u003e 1 (pin floor 1.5). Observed: deterministic 3.69x (seed-invariant; biomass 237.9 vs 64.5) over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly; tests/test_cellcell_multiseed.py for the 5-seed band)", "value": 1.5}</pre>
       </details>
       
       
@@ -1449,12 +1509,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="competition-volume-tracks-biomass"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">competition-volume-tracks-biomass</strong>
         
@@ -1462,6 +1522,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The faster competitor&#39;s CPM lattice volume ends larger than the slower competitor&#39;s, confirming the biomass asymmetry carries through to structural (pixel-level) dominance, not just the internal FBA state.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: CPM volume 3511 px (id 1) vs 81 px (id 2)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1488,12 +1558,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="competition-loser-displaced-not-excluded"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">competition-loser-displaced-not-excluded</strong>
         
@@ -1501,6 +1571,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Boundary on the competition claim: the LOSER is out-competed spatially but stays FAR above the viable-biomass floor (its 1.25 seed biomass) -- so it is displaced, not driven below any viability bound. This is resource preemption between two single, never-dividing cells reaching a finite-size saturation endpoint, not death of the loser and not population-level competitive exclusion (which would need dividing populations): this study couples state (a shared field) but no viability constraint (§Cell–cell coupling -- what is coupled is not only state but constraint; here, only state).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: loser (id 2) biomass 64.5 -- 51.6x above the 1.25 viable-biomass floor: displaced (81 px vs winner 3511 px), not excluded; winner endpoint is ~97.5% of the 3600-px lattice</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1644,12 +1724,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
         data-pytest-node="two-writer-additivity-conserves-mass"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">two-writer-additivity-conserves-mass</strong>
         
@@ -1657,6 +1737,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Foundational structural verification (not a negative control, and not this study&#39;s scientific claim): the additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on -- disjoint per-cell footprint deltas summed into one shared field conserve mass -- holds structurally, independent of any dFBA mechanism. It confirms a property HOLDS (mass is conserved to the expected value), so it is a positive/structural check.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: disjoint per-cell field writes sum losslessly (tests/test_cpm_colony_two_writer.py)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -2014,7 +2104,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "with cobra im
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -2109,9 +2199,9 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "with cobra im
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/14 passed</span>
+        <span class="muted small">4/14 passed</span>
       </div>
       
     </div>
@@ -2155,9 +2245,33 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "with cobra im
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+- Composing N real CPM cells with one shared, real spatio-flux nutrient field through a single N-cell coupling process (`CpmColonyField`) reproduces the paper&#39;s §Cell–cell coupling viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity. Over 20-tick runs: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric growth via resource preemption between the two cells (biomass ratio 3.69x, deterministic and seed-invariant; 237.9 vs 64.5; volume 3511 vs 81 px) -- the loser is spatially displaced but stays viable (its biomass grew ~51.6x above the 1.25 seed floor), not driven below a viability bound; this is resource preemption between two single, never-dividing cells, not population-level competitive exclusion (which would need dividing populations), and the winner&#39;s ~97.5%-lattice swell without division is a finite-size saturation artifact; a different composite over the same process -- localized glucose depot, fast-diffusing acetate byproduct, acetate-consuming role -- sustains a cell that never touches glucose (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79), and a secretor-knockout control shows that handoff is necessary (no acetate -&gt; consumer held at its 1.25 seed).
+
+## Evidence
+- **COMPETITION-EXCLUDES-THE-SLOWER-CELL** -- biomass 237.9 (id 1) vs 64.5 (id 2), 3.69x margin
+- **COMPETITION-VOLUME-TRACKS-BIOMASS** -- CPM volume 3511 px (id 1) vs 81 px (id 2)
+- **COMPETITION-LOSER-DISPLACED-NOT-EXCLUDED** -- loser biomass 64.5 (51.6x the 1.25 viable- biomass floor): displaced (81 px vs winner 3511 px ~97.5% of the lattice), not excluded
+- **CROSSFEEDING-CONSUMER-BLIND-TO-GLUCOSE** -- consumer local_glucose == 0.0
+- **CROSSFEEDING-CONSUMER-GROWS-ON-ACETATE-ALONE** -- consumer biomass 1.25 -&gt; 3.79 on acetate alone
+- **CROSSFEEDING-ACETATE-PLUME-REACHES-CONSUMER** (positive check) -- consumer local_acetate == 1.30 by t=20
+- **CROSSFEEDING-SECRETOR-KNOCKOUT-CONSUMER-FAILS-TO-GROW** (negative control) -- secretor removed, no acetate produced, consumer biomass held at its 1.25 seed (vs 1.25 -&gt; 3.79)
+- **TWO-WRITER-ADDITIVITY-CONSERVES-MASS** (structural check) -- disjoint per-cell field writes sum losslessly, runtime-verified
+
+## Limitations
+- &#34;Competitive exclusion&#34; is not literally reached in the BASELINE regime: the loser is displaced (81 px, biomass 64.5) but stays viable -- the baseline couples shared state, not a viability constraint, so no cell is driven below a viability bound (§Cell–cell coupling: what is coupled is not only state, but constraint -- here, only state). The winner&#39;s 3511-px (~97.5% of 3600) endpoint is partly a finite-size lattice-saturation artifact; at t≈30 the winner fills the lattice and the still-viable loser is crowded off it (eviction, not starvation). M7b (peer review) lifts this to dividing lineages with a viability floor (`cellcell-compete-div`) and finds robust competitive DOMINANCE (fast ~9x slow, monoculture-controlled) with full exclusion only stochastic -- so even there the earned term is dominance, not deterministic exclusion.
+- The BASELINE cross-feed&#39;s fast acetate transport (37.5x) is a legibility choice; M7a (`cellcell-crossfeed-realistic`) shows it is load-bearing -- at the physical 2:1 diffusivity the handoff FAILS (consumer biomass ~1.28 vs 3.79) before the consumer is competitively displaced.
+- e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real -- plausible, hand-tuned magnitudes, not fitted to any organism or medium.
+- The cross-feeding regime&#39;s acetate/glucose diffusion ratio (15.0 vs 0.4 = 37.5x) is a legibility choice, not a calibration: acetate does diffuse faster, but the real aqueous ratio is only ~1.5-2x, so 37.5x is roughly 20x the physical ratio (chosen, not fitted); the localized glucose depot is a deliberately engineered spatial arrangement, not a naturally arising gradient.
+- The consumer&#39;s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the run, once the acetate plume has had time to diffuse across the distance between the two cells&#39; footprints -- monotonic over the measured window, not smoothly exponential from tick 0.
+- Each CPM cell gets its own independent cobra model copy, not one shared model instance across the colony.
+- CPM-native chemotaxis (directed motion toward a sensed gradient) remains out of scope for both regimes here.
+## Next steps
+- Extend `CpmColonyField` to N &gt; 2 cells to test whether the competitive/cross-feeding pattern generalizes to population-scale spatial negotiation.
+- Add CPM-native chemotaxis so the consumer can move toward the sensed acetate plume rather than merely sitting in its path.
+- Fan out to the next spatial counterpart in the planned increments." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
-<li>Composing N real CPM cells with one shared, real spatio-flux nutrient field through a single N-cell coupling process (<code>CpmColonyField</code>) reproduces the paper's §Cell–cell coupling viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity. Over 20-tick runs: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric growth via resource preemption between the two cells (biomass ratio 2.9-3.7x across 5 seeds, 3.69x on the flagship seed; 237.9 vs 64.5; volume 3511 vs 81 px) -- the loser is spatially displaced but stays viable (its biomass grew ~51.6x above the 1.25 seed floor), not driven below a viability bound; this is resource preemption between two single, never-dividing cells, not population-level competitive exclusion (which would need dividing populations), and the winner's ~97.5%-lattice swell without division is a finite-size saturation artifact; a different composite over the same process -- localized glucose depot, fast-diffusing acetate byproduct, acetate-consuming role -- sustains a cell that never touches glucose (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79), and a secretor-knockout control shows that handoff is necessary (no acetate -&gt; consumer held at its 1.25 seed).</li>
+<li>Composing N real CPM cells with one shared, real spatio-flux nutrient field through a single N-cell coupling process (<code>CpmColonyField</code>) reproduces the paper's §Cell–cell coupling viability-negotiation pattern (no dedicated figure) as genuine spatial multicellularity. Over 20-tick runs: an uptake-capacity asymmetry alone (glucose_vmax 10 vs 4) drives asymmetric growth via resource preemption between the two cells (biomass ratio 3.69x, deterministic and seed-invariant; 237.9 vs 64.5; volume 3511 vs 81 px) -- the loser is spatially displaced but stays viable (its biomass grew ~51.6x above the 1.25 seed floor), not driven below a viability bound; this is resource preemption between two single, never-dividing cells, not population-level competitive exclusion (which would need dividing populations), and the winner's ~97.5%-lattice swell without division is a finite-size saturation artifact; a different composite over the same process -- localized glucose depot, fast-diffusing acetate byproduct, acetate-consuming role -- sustains a cell that never touches glucose (local glucose 0.0) purely via a diffusing cross-feeding handoff (local acetate 1.30, biomass 1.25 -&gt; 3.79), and a secretor-knockout control shows that handoff is necessary (no acetate -&gt; consumer held at its 1.25 seed).</li>
 </ul>
 <h2>Evidence</h2>
 <ul>
@@ -2223,7 +2337,7 @@ perturbing another&#39;s solver state, at the cost of N times the per-tick FBA s
 footprint deltas can be summed into one shared `map[array]` fields store and conserve mass — is
 no longer taken on faith; it is runtime-verified directly by
 `tests/test_cpm_colony_two_writer.py` against two synthetic single-pixel writers on disjoint
-pixels, independently of the colony process itself.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient, e.g. the consumer moving toward the secretor&#39;s acetate plume rather than merely sitting in its path) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li><li style="margin:2px 0">The &#34;viable-biomass floor&#34; this study measures the competition loser against is the 1.25 seed biomass every cell starts at: a cell above its seed biomass is metabolically viable (net- growing or holding), one that has fallen below it is in net mass-loss toward death. This is a deliberately minimal, toy-real viability notion, not a fitted maintenance/decay bound; the process emits no explicit viability flag, so viability is read off the per-cell biomass observable. The point it establishes is robust to the exact floor value: the competition loser ends at 64.5 (51.6x the floor), so it is displaced, not excluded.</li><li style="margin:2px 0">The BASELINE competition regime (`cellcell-compete`) is resource preemption between two single, never-dividing cells, NOT population-level competitive exclusion. It imposes no death and no viability constraint on a losing cell, so the loser (biomass 64.5, 81 px) is spatially displaced, not eliminated. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly spent by t=20 — a single cell swelling to fill the lattice without dividing is a finite-size saturation artifact, not physiology; extending the run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation). M7b (peer review) supplies the missing ingredients — DIVIDING founder lineages PLUS a viability floor that removes a starved cell (`cellcell-compete-div`, CpmCompeteDivision) — and measures the real outcome — robust population-level competitive DOMINANCE (fast lineage ~9x the slow&#39;s biomass by t=40), competition-driven (the slow lineage is viable in monoculture, `cellcell-compete-div-slowmono`), with full competitive EXCLUSION only stochastic (headline seed and 2/5 sweep seeds; elsewhere the suppressed slow lineage persists in spatial refugia). So even coupling a viability constraint AND dividing populations, strict deterministic exclusion is NOT robustly reached at this geometry — the earned vocabulary is competitive DOMINANCE, not exclusion — the paper&#39;s §Cell–cell coupling distinction that what is coupled is not only state but constraint.</li><li style="margin:2px 0">MULTI-SEED ROBUSTNESS (the headline is a range, not a single-seed point). The competition headline ratio (3.69x, id 1 / id 2 biomass) is a SINGLE-SEED reading of a stochastic CPM Metropolis trajectory. A 5-seed sweep (`tests/test_cellcell_multiseed.py`, seeds 1-5, CPM seed varied via the now config-overridable `CpmColonyField` seed) gives the range: ratio 2.9x-3.7x, mean ~3.2x -- the hard-coded single-seed 3.69x is the TOP of the band, not its middle. The qualitative claim is seed-robust: the faster competitor (id 1, glucose_vmax 10) wins on both biomass and lattice volume at every seed, always by &gt; 1.5x. This study establishes the multi-seed convention for the investigation (process reads `seed` from config; deep-copy the composite state, sweep the seed, assert the qualitative claim per seed and report the numeric range); studies 5/7/9 copy the pattern rather than resting on a single hard-coded seed.</li><li style="margin:2px 0">The secretor-knockout necessity control (`cellcell-crossfeed-knockout`) removes the secretor cell entirely rather than only silencing its acetate secretion in place; this is the cleanest single-variable knockout (no acetate source anywhere) and avoids a confound of the alternative (raising the secretor&#39;s O2 cap so it stops overflowing also makes it grow far faster and crowd the consumer off the lattice). The consumer is therefore the only cell in the control (id 1), and its glucose exchange stays off by role, so the slowly-diffusing glucose depot it cannot eat is harmless to the control.</li>
+pixels, independently of the colony process itself.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient, e.g. the consumer moving toward the secretor&#39;s acetate plume rather than merely sitting in its path) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li><li style="margin:2px 0">The &#34;viable-biomass floor&#34; this study measures the competition loser against is the 1.25 seed biomass every cell starts at: a cell above its seed biomass is metabolically viable (net- growing or holding), one that has fallen below it is in net mass-loss toward death. This is a deliberately minimal, toy-real viability notion, not a fitted maintenance/decay bound; the process emits no explicit viability flag, so viability is read off the per-cell biomass observable. The point it establishes is robust to the exact floor value: the competition loser ends at 64.5 (51.6x the floor), so it is displaced, not excluded.</li><li style="margin:2px 0">The BASELINE competition regime (`cellcell-compete`) is resource preemption between two single, never-dividing cells, NOT population-level competitive exclusion. It imposes no death and no viability constraint on a losing cell, so the loser (biomass 64.5, 81 px) is spatially displaced, not eliminated. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly spent by t=20 — a single cell swelling to fill the lattice without dividing is a finite-size saturation artifact, not physiology; extending the run to t≈30 fills the lattice and crowds the still-viable loser off it (eviction, not starvation). M7b (peer review) supplies the missing ingredients — DIVIDING founder lineages PLUS a viability floor that removes a starved cell (`cellcell-compete-div`, CpmCompeteDivision) — and measures the real outcome — robust population-level competitive DOMINANCE (fast lineage ~9x the slow&#39;s biomass by t=40), competition-driven (the slow lineage is viable in monoculture, `cellcell-compete-div-slowmono`), with full competitive EXCLUSION only stochastic (headline seed and 2/5 sweep seeds; elsewhere the suppressed slow lineage persists in spatial refugia). So even coupling a viability constraint AND dividing populations, strict deterministic exclusion is NOT robustly reached at this geometry — the earned vocabulary is competitive DOMINANCE, not exclusion — the paper&#39;s §Cell–cell coupling distinction that what is coupled is not only state but constraint.</li><li style="margin:2px 0">DETERMINISTIC MARGIN (seed-invariant, verified). The non-dividing two-cell competition ratio (3.69x, id 1 / id 2 biomass) is DETERMINISTIC: it is set by the deterministic uptake-capacity asymmetry (glucose_vmax 10 vs 4), which dominates any CPM boundary fluctuation, so the ratio is byte-identical across CPM seeds. A 5-seed check (`tests/test_cellcell_multiseed.py`, seeds 1-5) returns 3.69x at every seed (the `cellcell-compete` colony exposes no seed knob; injecting one, or a CPM temperature, leaves the biomass ratio unchanged). The qualitative claim is therefore trivially seed-robust: the faster competitor (id 1, glucose_vmax 10) wins on both biomass and lattice volume at every seed, always by &gt; 1.5x. Genuine per-seed variation (and the only honest home for a multi-seed band in this study) is the DIVIDING variant `cellcell-compete-div`, which exposes `temperature`+`seed` and whose lineage outcome is stochastic (full exclusion in 2/5 seeds); the earlier claim of a 2.9-3.7x stochastic band for the non-dividing competition did not reproduce and has been corrected.</li><li style="margin:2px 0">The secretor-knockout necessity control (`cellcell-crossfeed-knockout`) removes the secretor cell entirely rather than only silencing its acetate secretion in place; this is the cleanest single-variable knockout (no acetate source anywhere) and avoids a confound of the alternative (raising the secretor&#39;s O2 cap so it stops overflowing also makes it grow far faster and crowd the consumer off the lattice). The consumer is therefore the only cell in the control (id 1), and its glucose exchange stays off by role, so the slowly-diffusing glucose depot it cannot eat is harmless to the control.</li>
       </ul>
     </div>
     
@@ -2233,7 +2347,7 @@ pixels, independently of the colony process itself.</li><li style="margin:2px 0"
       <h3 class="overview-label">Limitations</h3>
       <p class="muted" style="margin:0 0 6px 0;font-size:0.85em">What this study explicitly does NOT validate (prevents overclaim).</p>
       <ul style="margin:0 0 0 18px;padding:0;font-size:0.93em">
-        <li style="margin:2px 0">The BASELINE regime (`cellcell-compete`) is resource preemption between two single, never-dividing cells, NOT population-level competitive exclusion: the competition loser is spatially displaced (ends at 81 px, biomass 64.5 -- still 51.6x above its 1.25 seed / viable-biomass floor) but is never driven below a viability bound. This study couples shared STATE (one field) but no viability CONSTRAINT (no death, no viability bound on a losing cell), so the baseline phenomenon is resource preemption, not exclusion. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20 -- a single cell swelling to fill the lattice without dividing is a finite-size saturation artifact, not physiology. M7b (peer review, `cellcell-compete-div`) adds exactly the missing ingredients -- DIVIDING founder lineages PLUS a viability floor that removes a starved cell -- and finds robust population-level competitive DOMINANCE (fast lineage ~9x the slow&#39;s biomass by t=40, competition-driven per the monoculture control) with full EXCLUSION only stochastic (headline seed and 2/5 sweep seeds; the suppressed slow lineage otherwise persists in spatial refugia). So even with a viability constraint AND dividing populations, strict deterministic exclusion is NOT robustly reached at this geometry -- the earned term is competitive DOMINANCE, not exclusion.</li><li style="margin:2px 0">The competition headline is a multi-seed band, not a single-seed point: a 5-seed robustness sweep (tests/test_cellcell_multiseed.py) puts the biomass ratio at ~2.9x-3.7x (mean ~3.2x), with the single-seed flagship 3.69x at the TOP of the band, and the faster competitor winning every seed by &gt; 1.5x. See key_assumptions for the convention this establishes for the investigation.</li><li style="margin:2px 0">e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real, hand-tuned magnitudes chosen to make both regimes legible over a short run -- not fitted to any organism or medium.</li><li style="margin:2px 0">The cross-feeding regime&#39;s acetate/glucose diffusion ratio (15.0 vs 0.4 = 37.5x) is a legibility choice, not a calibration -- acetate does diffuse faster than glucose (smaller molecule), but the real aqueous ratio is only ~1.5-2x (glucose ≈ 600 µm²/s, acetate ≈ 1100 µm²/s), so 37.5x is roughly 20x the physical ratio, chosen to make the plume legibly reach the consumer within 20 ticks, not fitted to measured diffusion coefficients; the localized glucose depot (20 model units) is likewise a deliberately engineered spatial arrangement so the consumer genuinely sees zero glucose, not a naturally arising gradient. M7a (peer review, `cellcell-crossfeed-realistic`) MEASURES the cost of that choice -- re-run at the physical 2:1 ratio the handoff FAILS (consumer local_acetate peaks ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then the consumer is displaced), and feeding scales monotonically with transport acceleration (+14%/+45%/+102%/+203% at 5x/10x/20x/37.5x) -- so the accelerated transport is load-bearing for the legible handoff at this geometry, not cosmetic.</li><li style="margin:2px 0">The consumer&#39;s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the 20-tick run, once the secretor&#39;s acetate plume has had time to diffuse across the distance separating the two cells&#39; footprints -- monotonic over the measured window, but not smoothly exponential from tick 0.</li><li style="margin:2px 0">Each CPM cell in CpmColonyField gets its own independent cobra model copy, not one shared model instance across the colony.</li><li style="margin:2px 0">The additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on is now runtime-verified directly (tests/test_cpm_colony_two_writer.py), independent of both regimes&#39; own dFBA mechanism -- previously an unverified assumption inherited from the flagship study.</li><li style="margin:2px 0">The secretor-knockout necessity control removes the secretor CELL entirely (cleanest single- variable knockout: no acetate source anywhere) rather than silencing acetate secretion in place; the alternative -- raising the secretor&#39;s O2 cap so it stops overflowing -- also makes it grow far faster and crowd the consumer off the lattice, a confound the cell-removal avoids. The control therefore establishes that acetate is necessary for the consumer&#39;s growth, but not the finer counterfactual of an in-place, same-growth secretor that merely stops secreting.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li><li style="margin:2px 0">The BASELINE shared nutrient field has no continuous supply term; the competition regime depletes a fixed initial mass, producing a finite-lattice-saturation artifact (the winner ends near full-lattice while the field is nearly exhausted). M7b (peer review, `cellcell-compete-div`) removes this confound -- a chemostat-like boundary glucose supply (Dirichlet BC) plus dividing populations and a viability floor -- and tests population-level competition at a sustained resource level rather than transient depletion; the result is robust competitive DOMINANCE (full exclusion only stochastic), reported above.</li><li style="margin:2px 0">The compete, crossfeed, and knockout composites are asserted in prose to share the same external colony interface, but this is not verified by a structural check; a diagnostic test asserting interface equality across the mechanism swaps would strengthen the substrate-independence claim from assertion to demonstration.</li>
+        <li style="margin:2px 0">The BASELINE regime (`cellcell-compete`) is resource preemption between two single, never-dividing cells, NOT population-level competitive exclusion: the competition loser is spatially displaced (ends at 81 px, biomass 64.5 -- still 51.6x above its 1.25 seed / viable-biomass floor) but is never driven below a viability bound. This study couples shared STATE (one field) but no viability CONSTRAINT (no death, no viability bound on a losing cell), so the baseline phenomenon is resource preemption, not exclusion. The winner&#39;s 3511-px endpoint is ~97.5% of the 3600-px lattice with the field nearly exhausted by t=20 -- a single cell swelling to fill the lattice without dividing is a finite-size saturation artifact, not physiology. M7b (peer review, `cellcell-compete-div`) adds exactly the missing ingredients -- DIVIDING founder lineages PLUS a viability floor that removes a starved cell -- and finds robust population-level competitive DOMINANCE (fast lineage ~9x the slow&#39;s biomass by t=40, competition-driven per the monoculture control) with full EXCLUSION only stochastic (headline seed and 2/5 sweep seeds; the suppressed slow lineage otherwise persists in spatial refugia). So even with a viability constraint AND dividing populations, strict deterministic exclusion is NOT robustly reached at this geometry -- the earned term is competitive DOMINANCE, not exclusion.</li><li style="margin:2px 0">The non-dividing competition margin is DETERMINISTIC (seed-invariant), not a stochastic band: a 5-seed check (tests/test_cellcell_multiseed.py) returns 3.69x at every seed, because the uptake asymmetry dominates CPM fluctuation. The faster competitor wins every seed by &gt; 1.5x. Genuine per-seed variation lives in the dividing variant (cellcell-compete-div); the earlier 2.9-3.7x band claim for the non-dividing competition did not reproduce and has been corrected.</li><li style="margin:2px 0">e_coli_core-derived constants (glucose_vmax, acetate_vmax, grow_per_biomass, the O2 cap) are toy-real, hand-tuned magnitudes chosen to make both regimes legible over a short run -- not fitted to any organism or medium.</li><li style="margin:2px 0">The cross-feeding regime&#39;s acetate/glucose diffusion ratio (15.0 vs 0.4 = 37.5x) is a legibility choice, not a calibration -- acetate does diffuse faster than glucose (smaller molecule), but the real aqueous ratio is only ~1.5-2x (glucose ≈ 600 µm²/s, acetate ≈ 1100 µm²/s), so 37.5x is roughly 20x the physical ratio, chosen to make the plume legibly reach the consumer within 20 ticks, not fitted to measured diffusion coefficients; the localized glucose depot (20 model units) is likewise a deliberately engineered spatial arrangement so the consumer genuinely sees zero glucose, not a naturally arising gradient. M7a (peer review, `cellcell-crossfeed-realistic`) MEASURES the cost of that choice -- re-run at the physical 2:1 ratio the handoff FAILS (consumer local_acetate peaks ~0.21 vs 1.60, biomass ~1.28 vs 3.79, then the consumer is displaced), and feeding scales monotonically with transport acceleration (+14%/+45%/+102%/+203% at 5x/10x/20x/37.5x) -- so the accelerated transport is load-bearing for the legible handoff at this geometry, not cosmetic.</li><li style="margin:2px 0">The consumer&#39;s growth under cross-feeding is back-loaded to roughly the last 5 ticks of the 20-tick run, once the secretor&#39;s acetate plume has had time to diffuse across the distance separating the two cells&#39; footprints -- monotonic over the measured window, but not smoothly exponential from tick 0.</li><li style="margin:2px 0">Each CPM cell in CpmColonyField gets its own independent cobra model copy, not one shared model instance across the colony.</li><li style="margin:2px 0">The additive two-writer assumption CpmColonyField&#39;s N-cell field-write depends on is now runtime-verified directly (tests/test_cpm_colony_two_writer.py), independent of both regimes&#39; own dFBA mechanism -- previously an unverified assumption inherited from the flagship study.</li><li style="margin:2px 0">The secretor-knockout necessity control removes the secretor CELL entirely (cleanest single- variable knockout: no acetate source anywhere) rather than silencing acetate secretion in place; the alternative -- raising the secretor&#39;s O2 cap so it stops overflowing -- also makes it grow far faster and crowd the consumer off the lattice, a confound the cell-removal avoids. The control therefore establishes that acetate is necessary for the consumer&#39;s growth, but not the finer counterfactual of an in-place, same-growth secretor that merely stops secreting.</li><li style="margin:2px 0">CPM-native chemotaxis (directed motion up a sensed gradient) remains out of scope for both regimes here, matching the flagship&#39;s own deferral.</li><li style="margin:2px 0">The BASELINE shared nutrient field has no continuous supply term; the competition regime depletes a fixed initial mass, producing a finite-lattice-saturation artifact (the winner ends near full-lattice while the field is nearly exhausted). M7b (peer review, `cellcell-compete-div`) removes this confound -- a chemostat-like boundary glucose supply (Dirichlet BC) plus dividing populations and a viability floor -- and tests population-level competition at a sustained resource level rather than transient depletion; the result is robust competitive DOMINANCE (full exclusion only stochastic), reported above.</li><li style="margin:2px 0">The compete, crossfeed, and knockout composites are asserted in prose to share the same external colony interface, but this is not verified by a structural check; a diagnostic test asserting interface equality across the mechanism swaps would strengthen the substrate-independence claim from assertion to demonstration.</li>
       </ul>
     </div>
     
@@ -2295,11 +2409,12 @@ pixels, independently of the colony process itself.</li><li style="margin:2px 0"
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "cell-cell-coupling";
+window.__STUDY_INVESTIGATION__ = "draft-to-living-cell";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2428,6 +2543,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

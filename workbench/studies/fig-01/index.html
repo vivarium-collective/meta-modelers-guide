@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-01" data-study-kind="computational" title="fig-01">fig-01: Interfaces &amp; composition</span>
+    <span class="study-name" id="study-name" data-slug="fig-01" data-study-kind="computational" title="fig-01" data-edit-kind="study" data-edit-field="title" data-edit-value="fig-01: Interfaces &amp; composition" data-edit-label="Title">fig-01: Interfaces &amp; composition</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">The paper&#39;s definitional Fig 1 is executable, not merely drawn: the minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- runs forward under the process-bigraph engine and moves quantity from source `store_a` to sink `store_b` while conserving the total. Because the transfer is fixed-rate deterministic (k=0.15, interval 1.0), the trajectory is exact: store_a[n] == 0.85^n (draining from 1.0 to ~0.0388 over 20 ticks), store_b[n] == 1 - 0.85^n (filling as its complement), the sink overtakes the source at tick 5, and store_a + store_b == 1.0 to round-off at every tick. This is the dynamics behind the figure&#39;s static signature -- a process reading and writing shared variables through ports wired to stores in a place graph -- shown to actually run.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="The paper&#39;s definitional Fig 1 is executable, not merely drawn: the minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- runs forward under the process-bigraph engine and moves quantity from source `store_a` to sink `store_b` while conserving the total. Because the transfer is fixed-rate deterministic (k=0.15, interval 1.0), the trajectory is exact: store_a[n] == 0.85^n (draining from 1.0 to ~0.0388 over 20 ticks), store_b[n] == 1 - 0.85^n (filling as its complement), the sink overtakes the source at tick 5, and store_a + store_b == 1.0 to round-off at every tick. This is the dynamics behind the figure&#39;s static signature -- a process reading and writing shared variables through ports wired to stores in a place graph -- shown to actually run." data-edit-multiline data-edit-label="Claim">The paper&#39;s definitional Fig 1 is executable, not merely drawn: the minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- runs forward under the process-bigraph engine and moves quantity from source `store_a` to sink `store_b` while conserving the total. Because the transfer is fixed-rate deterministic (k=0.15, interval 1.0), the trajectory is exact: store_a[n] == 0.85^n (draining from 1.0 to ~0.0388 over 20 ticks), store_b[n] == 1 - 0.85^n (filling as its complement), the sink overtakes the source at tick 5, and store_a + store_b == 1.0 to round-off at every tick. This is the dynamics behind the figure&#39;s static signature -- a process reading and writing shared variables through ports wired to stores in a place graph -- shown to actually run.</p>
       
       <div class="ctr-context">This study puts runnable dynamics behind the paper&#39;s definitional figure. §Interfaces and composition introduces process bigraphs as the notation for multiscale biology: a *process* is a mechanism that generates change, reading and writing *shared variables* held in *stores* through typed input/output *ports*; the *wiring* W connects each (process, port) to a store path; stores nest into a *place graph* of containment (molecules within compartments within a cell); and the *process graph* over that place graph is what makes the whole structure a process bigraph (Fig composition_framework caption: &#34;A process reads and writes data through typed input and output ports. Those ports wire to stores ... Wiring the two together -- a process graph that links processes to the stores they read and write, overlaid on a place graph that nests those stores into a hierarchy -- is what makes the structure a process bigraph&#34;). The published figure draws this structure statically. The `fig01-runnable` composite supplies the smallest honest bit of dynamics behind it: ONE real process, `StoreTransfer`, wired to TWO scalar place-graph nodes -- source `store_a` (seeded 1.0) and sink `store_b` (seeded 0.0). The process reads `store_a` through its `source` input port and writes both stores through its `source` and `sink` output ports, under a first-order transfer dA/dt = -k*A, dB/dt = +k*A with k=0.15 over interval 1.0. Running it demonstrates the core vocabulary of Table box:compositional in miniature -- paths, types, and values (two typed `float` locations with concrete seeded values); state/stores (the two shared variables); process/mechanism (the transfer rule); interface/ports (the read/write wiring W); and composition (a process coupled to stores in one typed system). Over a 20-tick run the source drains geometrically (store_a[n] = 0.85^n, from 1.0 to ~0.0388), the sink fills as its complement (store_b[n] = 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off every tick. The figure&#39;s claim -- that a process bigraph is an *executable* place-graph-plus-processes, not merely a static diagram -- is code-verified: give a process an update rule wired through ports and the connected stores evolve.</div>
       
@@ -553,7 +556,7 @@
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Is the paper&#39;s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) executable rather than merely drawn -- does the smallest honest process bigraph, one typed process wired through ports to two nested place-graph stores, actually run and move quantity from a source store to a sink store while conserving the total?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Is the paper&#39;s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) executable rather than merely drawn -- does the smallest honest process bigraph, one typed process wired through ports to two nested place-graph stores, actually run and move quantity from a source store to a sink store while conserving the total?" data-edit-multiline data-edit-label="Question">Is the paper&#39;s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) executable rather than merely drawn -- does the smallest honest process bigraph, one typed process wired through ports to two nested place-graph stores, actually run and move quantity from a source store to a sink store while conserving the total?</span></div>
         
       </div>
     </div>
@@ -577,34 +580,35 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a 20-tick run the minimal process bigraph runs forward and the wired stores genuinely evolve: source store_a drains geometrically from 1.0 to ~0.0388 (store_a[n] == 0.85^n to 1e-12), sink store_b fills as its complement from 0.0 to ~0.9612 (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off at every tick. Driven directly, the process reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer (delta -0.15 / +0.15). The paper&#39;s definitional Fig 1 (§Interfaces and composition) is therefore executable, not merely drawn -- a real typed process wired through ports to two place-graph stores moves quantity from source to sink and conserves the total, with a fully deterministic, exactly reproducible trajectory. This is a didactic / toy-real demonstration: the smallest honest process bigraph, illustrative rather than calibrated to any literature target.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Over a 20-tick run the minimal process bigraph runs forward and the wired stores genuinely evolve: source store_a drains geometrically from 1.0 to ~0.0388 (store_a[n] == 0.85^n to 1e-12), sink store_b fills as its complement from 0.0 to ~0.9612 (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off at every tick. Driven directly, the process reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer (delta -0.15 / +0.15). The paper&#39;s definitional Fig 1 (§Interfaces and composition) is therefore executable, not merely drawn -- a real typed process wired through ports to two place-graph stores moves quantity from source to sink and conserves the total, with a fully deterministic, exactly reproducible trajectory. This is a didactic / toy-real demonstration: the smallest honest process bigraph, illustrative rather than calibrated to any literature target." data-edit-multiline data-edit-label="Result">Over a 20-tick run the minimal process bigraph runs forward and the wired stores genuinely evolve: source store_a drains geometrically from 1.0 to ~0.0388 (store_a[n] == 0.85^n to 1e-12), sink store_b fills as its complement from 0.0 to ~0.9612 (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off at every tick. Driven directly, the process reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer (delta -0.15 / +0.15). The paper&#39;s definitional Fig 1 (§Interfaces and composition) is therefore executable, not merely drawn -- a real typed process wired through ports to two place-graph stores moves quantity from source to sink and conserves the total, with a fully deterministic, exactly reproducible trajectory. This is a didactic / toy-real demonstration: the smallest honest process bigraph, illustrative rather than calibrated to any literature target.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-TRANSPORT-CONSERVES-TOTAL</div>
+          <div class="ov-metric-k">mech-transport-conserves-total</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-REWIRING-REDIRECTS-FLUX</div>
+          <div class="ov-metric-k">mech-rewiring-redirects-flux</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-REVERSIBLE-REACHES-EQUILIBRIUM</div>
+          <div class="ov-metric-k">mech-reversible-reaches-equilibrium</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-TYPED-PORTS-REJECT-INCOMPATIBLE</div>
+          <div class="ov-metric-k">mech-typed-ports-reject-incompatible</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-IRREVERSIBLE-LIMIT-RECOVERS-GEOMETRIC-DECAY</div>
+          <div class="ov-metric-k">mech-irreversible-limit-recovers-geometric-decay</div>
         </div>
         
       </div>
@@ -624,11 +628,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The paper&#39;s definitional Fig 1 is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- builds and runs forward through the process-bigraph engine, and the wired stores genuinely evolve: source store_a drains from 1.0 to ~0.0388 and sink store_b fills from 0.0 to ~0.9612 over 20 ticks, both strictly monotone. This is the dynamics behind the figure&#39;s static signature (a process reading and writing shared variables through ports wired to stores) shown to actually run.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="The paper&#39;s definitional Fig 1 is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- builds and runs forward through the process-bigraph engine, and the wired stores genuinely evolve: source store_a drains from 1.0 to ~0.0388 and sink store_b fills from 0.0 to ~0.9612 over 20 ticks, both strictly monotone. This is the dynamics behind the figure&#39;s static signature (a process reading and writing shared variables through ports wired to stores) shown to actually run." data-edit-multiline data-edit-label="Finding F-01">The paper&#39;s definitional Fig 1 is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- builds and runs forward through the process-bigraph engine, and the wired stores genuinely evolve: source store_a drains from 1.0 to ~0.0388 and sink store_b fills from 0.0 to ~0.9612 over 20 ticks, both strictly monotone. This is the dynamics behind the figure&#39;s static signature (a process reading and writing shared variables through ports wired to stores) shown to actually run.</span>
             
             <span class="finding-chip">via <code>source-drains-and-sink-fills-over-the-run</code></span>
             
@@ -678,11 +682,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The transfer conserves quantity exactly, and because it is fixed-rate deterministic the trajectory is exact, not merely directional. store_a + store_b stays fixed at the seeded total 1.0 to round-off at every tick (the two port writes are equal-and-opposite by construction); store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 at every tick; and the sink overtakes the source at tick 5. The interface (ports/wiring) carries a conservative transfer, and the whole run reproduces exactly with no seed -- the toy is honest about exactly what it does.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="The transfer conserves quantity exactly, and because it is fixed-rate deterministic the trajectory is exact, not merely directional. store_a + store_b stays fixed at the seeded total 1.0 to round-off at every tick (the two port writes are equal-and-opposite by construction); store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 at every tick; and the sink overtakes the source at tick 5. The interface (ports/wiring) carries a conservative transfer, and the whole run reproduces exactly with no seed -- the toy is honest about exactly what it does." data-edit-multiline data-edit-label="Finding F-02">The transfer conserves quantity exactly, and because it is fixed-rate deterministic the trajectory is exact, not merely directional. store_a + store_b stays fixed at the seeded total 1.0 to round-off at every tick (the two port writes are equal-and-opposite by construction); store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 at every tick; and the sink overtakes the source at tick 5. The interface (ports/wiring) carries a conservative transfer, and the whole run reproduces exactly with no seed -- the toy is honest about exactly what it does.</span>
             
             <span class="finding-chip">via <code>trajectory-is-the-exact-geometric-decay</code></span>
             
@@ -732,11 +736,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The fixed-rate transfer has an exact geometric half-life that pins the crossover: the analytic half-life is n½ = ln2 / ln(1/0.85) = 4.265 ticks, so the source first falls to or below half the seeded total (0.5) at tick 5 -- which is exactly the tick at which the sink overtakes the source. The two landmarks (half-drained source, sink/source crossover) coincide because store_b = 1 - store_a, so store_b &gt; store_a precisely when store_a &lt; 0.5. Confirmed in-memory on fig01-runnable (store_a first &lt;= 0.5 at tick 5, value 0.4437 == 0.85^5; interior exactness store_a[10] == 0.85^10 == 0.196874), so the crossover is not a tuned coincidence but a deterministic consequence of the single rate constant.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The fixed-rate transfer has an exact geometric half-life that pins the crossover: the analytic half-life is n½ = ln2 / ln(1/0.85) = 4.265 ticks, so the source first falls to or below half the seeded total (0.5) at tick 5 -- which is exactly the tick at which the sink overtakes the source. The two landmarks (half-drained source, sink/source crossover) coincide because store_b = 1 - store_a, so store_b &gt; store_a precisely when store_a &lt; 0.5. Confirmed in-memory on fig01-runnable (store_a first &lt;= 0.5 at tick 5, value 0.4437 == 0.85^5; interior exactness store_a[10] == 0.85^10 == 0.196874), so the crossover is not a tuned coincidence but a deterministic consequence of the single rate constant." data-edit-multiline data-edit-label="Finding F-03">The fixed-rate transfer has an exact geometric half-life that pins the crossover: the analytic half-life is n½ = ln2 / ln(1/0.85) = 4.265 ticks, so the source first falls to or below half the seeded total (0.5) at tick 5 -- which is exactly the tick at which the sink overtakes the source. The two landmarks (half-drained source, sink/source crossover) coincide because store_b = 1 - store_a, so store_b &gt; store_a precisely when store_a &lt; 0.5. Confirmed in-memory on fig01-runnable (store_a first &lt;= 0.5 at tick 5, value 0.4437 == 0.85^5; interior exactness store_a[10] == 0.85^10 == 0.196874), so the crossover is not a tuned coincidence but a deterministic consequence of the single rate constant.</span>
             
             <span class="finding-chip">via <code>sink-overtakes-source-at-the-crossover-tick</code></span>
             
@@ -786,11 +790,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The paper&#39;s composition point is made measurable: ONE reusable, reversible, typed CompartmentTransport class, REWIRED without any code change, produces different dynamics. On a genuinely nested three-compartment place graph the SAME class on two edges gives a linear chain A↔B↔C that drives quantity out to the deep organelle (equilibrium A:B:C = 1:4:16) and a hub A↔B,A↔C that splits it evenly (1:4:4). Conservation of A+B+C holds to 2.2e-16 in both. Topology lives in the WIRING and controls the outcome — the essence of compositional modelling, shown on the engine rather than drawn.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The paper&#39;s composition point is made measurable: ONE reusable, reversible, typed CompartmentTransport class, REWIRED without any code change, produces different dynamics. On a genuinely nested three-compartment place graph the SAME class on two edges gives a linear chain A↔B↔C that drives quantity out to the deep organelle (equilibrium A:B:C = 1:4:16) and a hub A↔B,A↔C that splits it evenly (1:4:4). Conservation of A+B+C holds to 2.2e-16 in both. Topology lives in the WIRING and controls the outcome — the essence of compositional modelling, shown on the engine rather than drawn." data-edit-multiline data-edit-label="Finding F-04">The paper&#39;s composition point is made measurable: ONE reusable, reversible, typed CompartmentTransport class, REWIRED without any code change, produces different dynamics. On a genuinely nested three-compartment place graph the SAME class on two edges gives a linear chain A↔B↔C that drives quantity out to the deep organelle (equilibrium A:B:C = 1:4:16) and a hub A↔B,A↔C that splits it evenly (1:4:4). Conservation of A+B+C holds to 2.2e-16 in both. Topology lives in the WIRING and controls the outcome — the essence of compositional modelling, shown on the engine rather than drawn.</span>
             
             <span class="finding-chip">via <code>mech-rewiring-redirects-flux</code></span>
             
@@ -840,11 +844,11 @@
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Types are load-bearing, and the baseline&#39;s famous 0.85^n is re-cast honestly. The transport ports are typed `concentration`: core.check accepts a float and REJECTS a structural string, and forcing the incompatible wiring breaks the run — a schema-level negative type-compatibility control. The reversible transport relaxes to its detailed-balance equilibrium (sink/source = k_f/k_r = 4), not a one-way drain. And the exact 0.85^n geometric decay the baseline reported as &#34;novel&#34; is correctly re-labelled: it is the k_reverse→0 limit of this transport (recovered to 5.5e-9) — EQUATION-SPECIFIC solver verification, not a scientific discovery.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="Types are load-bearing, and the baseline&#39;s famous 0.85^n is re-cast honestly. The transport ports are typed `concentration`: core.check accepts a float and REJECTS a structural string, and forcing the incompatible wiring breaks the run — a schema-level negative type-compatibility control. The reversible transport relaxes to its detailed-balance equilibrium (sink/source = k_f/k_r = 4), not a one-way drain. And the exact 0.85^n geometric decay the baseline reported as &#34;novel&#34; is correctly re-labelled: it is the k_reverse→0 limit of this transport (recovered to 5.5e-9) — EQUATION-SPECIFIC solver verification, not a scientific discovery." data-edit-multiline data-edit-label="Finding F-05">Types are load-bearing, and the baseline&#39;s famous 0.85^n is re-cast honestly. The transport ports are typed `concentration`: core.check accepts a float and REJECTS a structural string, and forcing the incompatible wiring breaks the run — a schema-level negative type-compatibility control. The reversible transport relaxes to its detailed-balance equilibrium (sink/source = k_f/k_r = 4), not a one-way drain. And the exact 0.85^n geometric decay the baseline reported as &#34;novel&#34; is correctly re-labelled: it is the k_reverse→0 limit of this transport (recovered to 5.5e-9) — EQUATION-SPECIFIC solver verification, not a scientific discovery.</span>
             
             <span class="finding-chip">via <code>mech-typed-ports-reject-incompatible</code></span>
             
@@ -1001,7 +1005,7 @@
         
         
         
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=complete</span>
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
       </div>
       
     </div>
@@ -1076,6 +1080,12 @@
 <div class="overview-section" id="results-section">
   
   <div id="results-summary" data-study="fig-01" style="margin:0 0 16px"></div>
+
+  
+  <div id="gate-results-section" data-study="fig-01" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
 
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="fig-01">
@@ -1183,12 +1193,12 @@
         
         data-pytest-node="process-reads-and-writes-through-typed-ports"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">process-reads-and-writes-through-typed-ports</strong>
         
@@ -1196,6 +1206,16 @@
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The `StoreTransfer` process, driven directly, reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer -- the interface (ports/wiring W) of Table box:compositional in action, at one tick.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: delta[source] == -0.15, delta[sink] == +0.15, sum 0 (conservative transfer through the ports)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1222,12 +1242,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "cons
         
         data-pytest-node="source-drains-and-sink-fills-over-the-run"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">source-drains-and-sink-fills-over-the-run</strong>
         
@@ -1235,6 +1255,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "cons
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Over the composite run the wired stores genuinely evolve -- source store_a strictly decreases and sink store_b strictly increases, tick by tick -- demonstrating that the process bigraph is executable, not a static diagram.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: store_a 1.0 -&gt; 0.03876 (strictly decreasing), store_b 0.0 -&gt; 0.96124 (strictly increasing) over ticks 0..20</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1261,12 +1291,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "monotone", "provenance": "prior
         
         data-pytest-node="trajectory-is-the-exact-geometric-decay"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">trajectory-is-the-exact-geometric-decay</strong>
         
@@ -1274,6 +1304,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "monotone", "provenance": "prior
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Because the transfer is fixed-rate deterministic, the run reproduces the exact geometric decay store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n -- the real trajectory pinned exactly, not just its direction.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 for every tick 0..20</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1300,12 +1340,12 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
         data-pytest-node="sink-overtakes-source-at-the-crossover-tick"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">sink-overtakes-source-at-the-crossover-tick</strong>
         
@@ -1313,6 +1353,16 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The sink overtakes the source at a specific, deterministic tick -- store_b first exceeds store_a at tick 5, the drain/fill crossover.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: store_b first exceeds store_a at tick 5 (0.556 vs 0.444)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1339,12 +1389,12 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
         data-pytest-node="total-is-conserved"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">total-is-conserved</strong>
         
@@ -1352,6 +1402,16 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The transfer conserves the total -- store_a + store_b stays fixed at the seeded total (1.0) to round-off at every tick, because the sink write equals the source drain by construction.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: store_a + store_b == 1.0 to within 1e-9 at every tick</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1621,7 +1681,7 @@ pass_if: {"kind": "numerical_convergence", "op": "converges", "provenance": "NUM
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1716,9 +1776,9 @@ pass_if: {"kind": "numerical_convergence", "op": "converges", "provenance": "NUM
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/10 passed</span>
+        <span class="muted small">5/10 passed</span>
       </div>
       
     </div>
@@ -1762,7 +1822,26 @@ pass_if: {"kind": "numerical_convergence", "op": "converges", "provenance": "NUM
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+- The paper&#39;s definitional Fig 1 (§Interfaces and composition, Fig composition_framework) is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores (source store_a, sink store_b) -- runs forward through the process-bigraph engine and moves quantity from source to sink while conserving the total.
+- Over a 20-tick run the source drains geometrically (store_a[n] == 0.85^n, from 1.0 to ~0.0388), the sink fills as its complement (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and store_a + store_b stays fixed at 1.0 to round-off at every tick. The transfer is fixed-rate deterministic, so every one of these values is an exact pin that reproduces run-to-run.
+- This is the dynamics behind the figure&#39;s static signature -- a process reading and writing shared variables through typed ports wired to stores in a place graph -- shown to actually run, grounding the core vocabulary of Table box:compositional (paths/types/values, state/stores, process, interface/ports, composition) in a running composite.
+
+## Evidence
+- **PROCESS-READS-AND-WRITES-THROUGH-TYPED-PORTS** -- delta[source] == -0.15, delta[sink] == +0.15, sum 0 (conservative transfer through the ports)
+- **SOURCE-DRAINS-AND-SINK-FILLS-OVER-THE-RUN** -- store_a 1.0 -&gt; 0.03876, store_b 0.0 -&gt; 0.96124, both strictly monotone over ticks 0..20
+- **TRAJECTORY-IS-THE-EXACT-GEOMETRIC-DECAY** -- store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n to 1e-12 for every tick
+- **SINK-OVERTAKES-SOURCE-AT-THE-CROSSOVER-TICK** -- store_b first exceeds store_a at tick 5
+- **TOTAL-IS-CONSERVED** -- store_a + store_b == 1.0 to within 1e-9 at every tick
+
+## Limitations
+- This is a didactic / toy-real composite: the smallest honest process bigraph that looks like Fig 1 and plays forward, illustrative and NOT calibrated to any literature target. store_a and store_b are dimensionless scalars; k=0.15 and interval 1.0 are chosen for legibility, not fitted to a measured rate.
+- The place graph is deliberately minimal (two sibling scalar stores), enough to exhibit the process-graph-over-place-graph wiring that defines a process bigraph but not the paper&#39;s deeper containment nesting (molecules within compartments within a cell).
+- Conservation is a property of the update rule (the two port writes are equal-and-opposite by construction), not an emergent balance.
+
+## Next steps
+- Nest the stores into a genuine multi-level place graph (compartments within a cell) to demonstrate containment, not just sibling stores.
+- Compose a second process on the same stores to show orchestration across processes on shared state (the subject of Fig orchestration)." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>The paper's definitional Fig 1 (§Interfaces and composition, Fig composition_framework) is executable, not merely drawn. The minimal process bigraph -- one typed <code>StoreTransfer</code> process wired through a <code>source</code> input port and <code>source</code>/<code>sink</code> output ports to two scalar place-graph stores (source store_a, sink store_b) -- runs forward through the process-bigraph engine and moves quantity from source to sink while conserving the total.</li>
 <li>Over a 20-tick run the source drains geometrically (store_a[n] == 0.85^n, from 1.0 to ~0.0388), the sink fills as its complement (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and store_a + store_b stays fixed at 1.0 to round-off at every tick. The transfer is fixed-rate deterministic, so every one of these values is an exact pin that reproduces run-to-run.</li>
@@ -1876,11 +1955,12 @@ pass_if: {"kind": "numerical_convergence", "op": "converges", "provenance": "NUM
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "fig-01";
+window.__STUDY_INVESTIGATION__ = "paper-figures";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2009,6 +2089,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded

@@ -20,7 +20,7 @@
   <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
   <div style="display:flex; align-items:center; gap:12px; min-width:0; flex-wrap:wrap">
   <h1 class="study-title" style="margin:0">
-    <span class="study-name" id="study-name" data-slug="fig-11" data-study-kind="computational" title="fig-11">fig-11: Evolution</span>
+    <span class="study-name" id="study-name" data-slug="fig-11" data-study-kind="computational" title="fig-11" data-edit-kind="study" data-edit-field="title" data-edit-value="fig-11: Evolution" data-edit-label="Title">fig-11: Evolution</span>
     
   </h1>
     
@@ -235,6 +235,9 @@
 /* findings */
 .findings-section{padding:14px 16px;background:#fafbff;border:1px solid #c7d2fe;border-radius:8px}
 .finding-card{padding:12px 14px;margin:10px 0;border:1px solid #e2e8f0;border-left:5px solid #6366f1;border-radius:6px;background:#fff}
+/* Brief highlight when an item is reached via a ?ev= evidence deep-link. */
+.ev-flash{animation:ev-flash-kf 1.9s ease-out;scroll-margin-top:12px}
+@keyframes ev-flash-kf{0%{box-shadow:0 0 0 3px #fbbf24}70%{box-shadow:0 0 0 3px rgba(251,191,36,0.45)}100%{box-shadow:0 0 0 0 rgba(251,191,36,0)}}
 .finding-card.finding-status-confirms{border-left-color:#10b981}
 .finding-card.finding-status-partial{border-left-color:#f59e0b}
 .finding-card.finding-status-contradicts{border-left-color:#dc2626}
@@ -543,7 +546,7 @@
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Claim</h2>
-      <p class="ctr-text">Composing one `population` (`tree[node]` of identically-schema&#39;d `cell` nodes) with one `environment` niche through a single `PopulationEvolution` process reproduces the paper&#39;s §Evolution pattern (Fig 11) as a runnable place-graph rewrite: over a fixed-seed (seed=1) 40-generation run the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- the parent REPLACED by two mutated daughters -- grows to carrying capacity (12) and never exceeds it, while the selection optimum drifts monotonically from 1.0 to 1.80 and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12. The distribution shifts toward the environmental optimum via variation (mutation) + heritability + selection, and division edits the place graph (parent id gone, two fresh daughter ids present) -- the whole trajectory is deterministic and reproduces exactly run to run. This is a didactic, toy-real illustration of the Darwinian loop, not a calibrated population-genetics model.</p>
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="claim" data-edit-value="Composing one `population` (`tree[node]` of identically-schema&#39;d `cell` nodes) with one `environment` niche through a single `PopulationEvolution` process reproduces the paper&#39;s §Evolution pattern (Fig 11) as a runnable place-graph rewrite: over a fixed-seed (seed=1) 40-generation run the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- the parent REPLACED by two mutated daughters -- grows to carrying capacity (12) and never exceeds it, while the selection optimum drifts monotonically from 1.0 to 1.80 and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12. The distribution shifts toward the environmental optimum via variation (mutation) + heritability + selection, and division edits the place graph (parent id gone, two fresh daughter ids present) -- the whole trajectory is deterministic and reproduces exactly run to run. This is a didactic, toy-real illustration of the Darwinian loop, not a calibrated population-genetics model." data-edit-multiline data-edit-label="Claim">Composing one `population` (`tree[node]` of identically-schema&#39;d `cell` nodes) with one `environment` niche through a single `PopulationEvolution` process reproduces the paper&#39;s §Evolution pattern (Fig 11) as a runnable place-graph rewrite: over a fixed-seed (seed=1) 40-generation run the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- the parent REPLACED by two mutated daughters -- grows to carrying capacity (12) and never exceeds it, while the selection optimum drifts monotonically from 1.0 to 1.80 and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12. The distribution shifts toward the environmental optimum via variation (mutation) + heritability + selection, and division edits the place graph (parent id gone, two fresh daughter ids present) -- the whole trajectory is deterministic and reproduces exactly run to run. This is a didactic, toy-real illustration of the Darwinian loop, not a calibrated population-genetics model.</p>
       
       <div class="ctr-context">This is the runnable realization of the paper&#39;s §Evolution pattern (Fig 11), built on one process, `PopulationEvolution`, that reads and rewrites two `tree[node]` stores: a `population` of `cell` nodes that all share one schema -- each a heritable scalar `trait` plus a derived `division_rate` -- and an `environment` whose single `niche` node carries a `selection_optimum` that DRIFTS over the run. Each generation the process (1) shifts the optimum forward (a moving target), (2) re-scores every cell&#39;s division rate by a Gaussian fitness kernel on how close its trait sits to the current optimum, (3) performs BINARY FISSION -- a cell divides with probability `div_rate·fitness`, and on division the PARENT is deleted and REPLACED by two daughters, each inheriting the parent&#39;s trait ± Gaussian mutation, and (4) applies death by selection: once the population overflows carrying capacity, the least-fit cells (furthest from the optimum) die. This is the paper&#39;s §Evolution claim in action: evolution changes not the state of a single composition but the SPACE of compositions across generations -- new cell nodes are added and old ones removed at runtime, so the place graph itself is edited, and the trait distribution shifts toward the environmental optimum.
 One fixed-seed regime over `fig11-evolution` (`meta_modelers_guide.composites.fig11-evolution`, seed=1) demonstrates the full arc over a 40-generation run. The founder `cell_0` sits at trait 0.0, far below the niche optimum (which starts at 1.0). Playing it forward: the lone founder divides -- `cell_0` is consumed and replaced by two daughters (`cell_1`, `cell_2`) on the first generation -- and the lineage grows by binary fission to carrying capacity (12 cells, reached at generation 14) and never exceeds it (death by selection caps it). Over the same run the selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02 per generation), and the population&#39;s mean trait -- starting at 0.0, a gap of 1.0 below the optimum -- climbs to ~1.68, closing the gap to ~0.12: the trait cloud tracks the drifting target. Because the composite is fixed-seed (seed=1), the whole trajectory (population sizes, mean trait, optimum, and the daughter-node ids) reproduces exactly run to run.
@@ -555,7 +558,7 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Background</h2>
       <div class="ctr-meta">
-        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item">Does the paper&#39;s §Evolution figure (Fig 11) hold as a runnable place-graph rewrite -- a top-level population of identically-schema&#39;d cells, each exposing a scalar trait, evolving over generations toward a selection optimum set by the environmental niche, so that (Fig 11b) the trait distribution shifts toward the optimum via binary fission + heritable mutation + selection, while division itself (Fig 11a) is a discrete event that REPLACES a parent cell with two daughters?</span></div>
+        <div class="ctr-meta-row"><span class="ctr-meta-k">Question</span> <span class="ctr-meta-item" data-edit-kind="study" data-edit-field="question" data-edit-value="Does the paper&#39;s §Evolution figure (Fig 11) hold as a runnable place-graph rewrite -- a top-level population of identically-schema&#39;d cells, each exposing a scalar trait, evolving over generations toward a selection optimum set by the environmental niche, so that (Fig 11b) the trait distribution shifts toward the optimum via binary fission + heritable mutation + selection, while division itself (Fig 11a) is a discrete event that REPLACES a parent cell with two daughters?" data-edit-multiline data-edit-label="Question">Does the paper&#39;s §Evolution figure (Fig 11) hold as a runnable place-graph rewrite -- a top-level population of identically-schema&#39;d cells, each exposing a scalar trait, evolving over generations toward a selection optimum set by the environmental niche, so that (Fig 11b) the trait distribution shifts toward the optimum via binary fission + heritable mutation + selection, while division itself (Fig 11a) is a discrete event that REPLACES a parent cell with two daughters?</span></div>
         
       </div>
     </div>
@@ -579,44 +582,45 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
-      <p class="ctr-text">Over a fixed-seed (seed=1) 40-generation run, the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- cell_0 replaced by two daughters cell_1, cell_2 -- and the lineage grows to carrying capacity (12 by generation 14) and never exceeds it. The selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02/generation) and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12: the trait distribution shifts toward the environmental optimum via variation + heritability + selection. Division is a genuine place-graph rewrite throughout -- below capacity every topology change adds exactly two fresh daughters per vanished parent, ids are never reused, and death-by-selection culls the least-fit cells at capacity. The whole trajectory (sizes, mean trait, optimum, daughter ids) is deterministic and reproduces exactly across independent builds. The paper&#39;s §Evolution pattern (Fig 11) holds as a runnable place-graph rewrite at the toy-real (uncalibrated) level: evolution changes the space of compositions across generations, not the state of a single composition. The rigorous cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.</p>
+      
+      <p class="ctr-text" data-edit-kind="study" data-edit-field="result" data-edit-value="Over a fixed-seed (seed=1) 40-generation run, the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- cell_0 replaced by two daughters cell_1, cell_2 -- and the lineage grows to carrying capacity (12 by generation 14) and never exceeds it. The selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02/generation) and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12: the trait distribution shifts toward the environmental optimum via variation + heritability + selection. Division is a genuine place-graph rewrite throughout -- below capacity every topology change adds exactly two fresh daughters per vanished parent, ids are never reused, and death-by-selection culls the least-fit cells at capacity. The whole trajectory (sizes, mean trait, optimum, daughter ids) is deterministic and reproduces exactly across independent builds. The paper&#39;s §Evolution pattern (Fig 11) holds as a runnable place-graph rewrite at the toy-real (uncalibrated) level: evolution changes the space of compositions across generations, not the state of a single composition. The rigorous cousin is `development-and-evolution` in the `draft-to-living-cell` investigation." data-edit-multiline data-edit-label="Result">Over a fixed-seed (seed=1) 40-generation run, the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- cell_0 replaced by two daughters cell_1, cell_2 -- and the lineage grows to carrying capacity (12 by generation 14) and never exceeds it. The selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02/generation) and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12: the trait distribution shifts toward the environmental optimum via variation + heritability + selection. Division is a genuine place-graph rewrite throughout -- below capacity every topology change adds exactly two fresh daughters per vanished parent, ids are never reused, and death-by-selection culls the least-fit cells at capacity. The whole trajectory (sizes, mean trait, optimum, daughter ids) is deterministic and reproduces exactly across independent builds. The paper&#39;s §Evolution pattern (Fig 11) holds as a runnable place-graph rewrite at the toy-real (uncalibrated) level: evolution changes the space of compositions across generations, not the state of a single composition. The rigorous cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.</p>
       
       
       <div class="ov-metrics">
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-SELECTION-BEATS-NEUTRAL-DRIFT</div>
+          <div class="ov-metric-k">mech-selection-beats-neutral-drift</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-HERITABILITY-NEAR-ONE</div>
+          <div class="ov-metric-k">mech-heritability-near-one</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-NO-MUTATION-ERODES-VARIANCE</div>
+          <div class="ov-metric-k">mech-no-mutation-erodes-variance</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-ADAPTATION-FAILS-WHEN-OPTIMUM-TOO-FAST</div>
+          <div class="ov-metric-k">mech-adaptation-fails-when-optimum-too-fast</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-DEMOGRAPHIC-BOOKKEEPING</div>
+          <div class="ov-metric-k">mech-demographic-bookkeeping</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-REPRODUCIBILITY-NOT-ROBUSTNESS</div>
+          <div class="ov-metric-k">mech-reproducibility-not-robustness</div>
         </div>
         
         <div class="ov-metric ov-metric-pass">
           <div class="ov-metric-v">PASS</div>
-          <div class="ov-metric-k">MECH-UPTAKE-EXECUTABLE-TRAIT-OPTIMUM</div>
+          <div class="ov-metric-k">mech-uptake-executable-trait-optimum</div>
         </div>
         
       </div>
@@ -636,11 +640,11 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-01">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">A `population` of identically-schema&#39;d `cell` nodes coupled to an `environment` niche through one `PopulationEvolution` process reproduces the paper&#39;s §Evolution pattern (Fig 11b) as a runnable place-graph rewrite: under Gaussian selection for a drifting optimum, the population mean trait -- starting at 0.0, a gap of 1.0 below the niche optimum -- climbs to ~1.68 and closes the gap to ~0.12 as the optimum drifts from 1.0 to 1.80, the trait distribution shifting toward the environmental optimum via variation (mutation) + heritability + selection. Confirmed (seed=1, deterministic): optimum 1.0 -&gt; 1.80 monotone, mean trait 0.0 -&gt; ~1.68, gap 1.0 -&gt; ~0.12.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="A `population` of identically-schema&#39;d `cell` nodes coupled to an `environment` niche through one `PopulationEvolution` process reproduces the paper&#39;s §Evolution pattern (Fig 11b) as a runnable place-graph rewrite: under Gaussian selection for a drifting optimum, the population mean trait -- starting at 0.0, a gap of 1.0 below the niche optimum -- climbs to ~1.68 and closes the gap to ~0.12 as the optimum drifts from 1.0 to 1.80, the trait distribution shifting toward the environmental optimum via variation (mutation) + heritability + selection. Confirmed (seed=1, deterministic): optimum 1.0 -&gt; 1.80 monotone, mean trait 0.0 -&gt; ~1.68, gap 1.0 -&gt; ~0.12." data-edit-multiline data-edit-label="Finding F-01">A `population` of identically-schema&#39;d `cell` nodes coupled to an `environment` niche through one `PopulationEvolution` process reproduces the paper&#39;s §Evolution pattern (Fig 11b) as a runnable place-graph rewrite: under Gaussian selection for a drifting optimum, the population mean trait -- starting at 0.0, a gap of 1.0 below the niche optimum -- climbs to ~1.68 and closes the gap to ~0.12 as the optimum drifts from 1.0 to 1.80, the trait distribution shifting toward the environmental optimum via variation (mutation) + heritability + selection. Confirmed (seed=1, deterministic): optimum 1.0 -&gt; 1.80 monotone, mean trait 0.0 -&gt; ~1.68, gap 1.0 -&gt; ~0.12.</span>
             
             <span class="finding-chip">via <code>mean-trait-tracks-the-drifting-optimum</code></span>
             
@@ -690,11 +694,11 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-02">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Division is a genuine place-graph rewrite by binary fission (Fig 11a): a dividing cell is REPLACED by two fresh daughter nodes rather than duplicated in place. Confirmed (seed=1): the founder cell_0 is deleted and replaced by exactly two new nodes (cell_1, cell_2) at the first division; below carrying capacity every topology change adds exactly two daughters per vanished parent (appeared == 2*vanished); the lineage grows to capacity (12) and never exceeds it as death-by-selection culls the least-fit cells; and no retired cell id is ever reused -- each daughter is a genuinely new place-graph vertex.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-02].statement" data-edit-value="Division is a genuine place-graph rewrite by binary fission (Fig 11a): a dividing cell is REPLACED by two fresh daughter nodes rather than duplicated in place. Confirmed (seed=1): the founder cell_0 is deleted and replaced by exactly two new nodes (cell_1, cell_2) at the first division; below carrying capacity every topology change adds exactly two daughters per vanished parent (appeared == 2*vanished); the lineage grows to capacity (12) and never exceeds it as death-by-selection culls the least-fit cells; and no retired cell id is ever reused -- each daughter is a genuinely new place-graph vertex." data-edit-multiline data-edit-label="Finding F-02">Division is a genuine place-graph rewrite by binary fission (Fig 11a): a dividing cell is REPLACED by two fresh daughter nodes rather than duplicated in place. Confirmed (seed=1): the founder cell_0 is deleted and replaced by exactly two new nodes (cell_1, cell_2) at the first division; below carrying capacity every topology change adds exactly two daughters per vanished parent (appeared == 2*vanished); the lineage grows to capacity (12) and never exceeds it as death-by-selection culls the least-fit cells; and no retired cell id is ever reused -- each daughter is a genuinely new place-graph vertex.</span>
             
             <span class="finding-chip">via <code>division-is-binary-fission-place-graph-rewrite</code></span>
             
@@ -744,11 +748,11 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-03">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">The evolution run is fully deterministic under the pinned seed (seed=1): two independent builds of the composite emit byte-identical (size, mean_trait, optimum) trajectories and identical daughter-node ids. This makes the pinned integers in the behavior tests (final size 12, optimum 1.80) true regression pins rather than run-to-run-variable magnitudes.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The evolution run is fully deterministic under the pinned seed (seed=1): two independent builds of the composite emit byte-identical (size, mean_trait, optimum) trajectories and identical daughter-node ids. This makes the pinned integers in the behavior tests (final size 12, optimum 1.80) true regression pins rather than run-to-run-variable magnitudes." data-edit-multiline data-edit-label="Finding F-03">The evolution run is fully deterministic under the pinned seed (seed=1): two independent builds of the composite emit byte-identical (size, mean_trait, optimum) trajectories and identical daughter-node ids. This makes the pinned integers in the behavior tests (final size 12, optimum 1.80) true regression pins rather than run-to-run-variable magnitudes.</span>
             
             <span class="finding-chip">via <code>trajectory-is-deterministic</code></span>
             
@@ -798,11 +802,11 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
-      <div class="finding-card finding-kind-biological finding-status-confirms">
+      <div class="finding-card finding-kind-biological finding-status-confirms" id="finding-F-04">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Reading the population tree&#39;s node contents at successive snapshots shows two structural features beyond the mean-trait track: standing variation and adaptation lag. (1) The final-generation snapshot is a trait CLOUD with width, not a converged point -- its 12 cell nodes span traits 1.47 to 1.91 (range 0.44, population standard deviation 0.131) around the optimum 1.80, because the Gaussian mutation injected at each binary fission keeps replenishing heritable variation that selection then shapes. (2) The population LAGS the moving target: the derived mean-trait gap to the drifting optimum closes below 0.4 only at generation 22 (from an initial gap of 1.0) and is still 0.12 at generation 40 -- the cloud chases but never catches the continuously drifting optimum, the signature of adaptation lag. Both are read from the per-generation population snapshots; confirmed in-memory (seed=1, deterministic).</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="Reading the population tree&#39;s node contents at successive snapshots shows two structural features beyond the mean-trait track: standing variation and adaptation lag. (1) The final-generation snapshot is a trait CLOUD with width, not a converged point -- its 12 cell nodes span traits 1.47 to 1.91 (range 0.44, population standard deviation 0.131) around the optimum 1.80, because the Gaussian mutation injected at each binary fission keeps replenishing heritable variation that selection then shapes. (2) The population LAGS the moving target: the derived mean-trait gap to the drifting optimum closes below 0.4 only at generation 22 (from an initial gap of 1.0) and is still 0.12 at generation 40 -- the cloud chases but never catches the continuously drifting optimum, the signature of adaptation lag. Both are read from the per-generation population snapshots; confirmed in-memory (seed=1, deterministic)." data-edit-multiline data-edit-label="Finding F-04">Reading the population tree&#39;s node contents at successive snapshots shows two structural features beyond the mean-trait track: standing variation and adaptation lag. (1) The final-generation snapshot is a trait CLOUD with width, not a converged point -- its 12 cell nodes span traits 1.47 to 1.91 (range 0.44, population standard deviation 0.131) around the optimum 1.80, because the Gaussian mutation injected at each binary fission keeps replenishing heritable variation that selection then shapes. (2) The population LAGS the moving target: the derived mean-trait gap to the drifting optimum closes below 0.4 only at generation 22 (from an initial gap of 1.0) and is still 0.12 at generation 40 -- the cloud chases but never catches the continuously drifting optimum, the signature of adaptation lag. Both are read from the per-generation population snapshots; confirmed in-memory (seed=1, deterministic).</span>
             
             <span class="finding-chip">in run <code>fig11-evolution</code></span>
             
@@ -850,11 +854,11 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-05">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">The §Evolution (Fig 11) adaptation claim is made QUANTITATIVE and distinguished from drift, over many seeds. In a real Wright–Fisher population (N=300), viability selection tracks the drifting optimum with a small bounded lag (0.39±0.04 over 40 seeds), while the matched NEUTRAL control (selection off) drifts away to a lag of 2.38±0.23 — a separation far larger than the across-seed spread. The realized heritability (parent–offspring regression) is 0.998, so the response obeys the breeder&#39;s equation R = h²·S, and a no-mutation control shows the variance eroding (0.21 → 0.001) when the source of variation is removed. This directly answers the review&#39;s point that the baseline&#39;s single-seed mean &#34;tracking an imposed optimum&#34; was expected by design: here the tracking is a statistical, controlled, heritability-grounded result.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="The §Evolution (Fig 11) adaptation claim is made QUANTITATIVE and distinguished from drift, over many seeds. In a real Wright–Fisher population (N=300), viability selection tracks the drifting optimum with a small bounded lag (0.39±0.04 over 40 seeds), while the matched NEUTRAL control (selection off) drifts away to a lag of 2.38±0.23 — a separation far larger than the across-seed spread. The realized heritability (parent–offspring regression) is 0.998, so the response obeys the breeder&#39;s equation R = h²·S, and a no-mutation control shows the variance eroding (0.21 → 0.001) when the source of variation is removed. This directly answers the review&#39;s point that the baseline&#39;s single-seed mean &#34;tracking an imposed optimum&#34; was expected by design: here the tracking is a statistical, controlled, heritability-grounded result." data-edit-multiline data-edit-label="Finding F-05">The §Evolution (Fig 11) adaptation claim is made QUANTITATIVE and distinguished from drift, over many seeds. In a real Wright–Fisher population (N=300), viability selection tracks the drifting optimum with a small bounded lag (0.39±0.04 over 40 seeds), while the matched NEUTRAL control (selection off) drifts away to a lag of 2.38±0.23 — a separation far larger than the across-seed spread. The realized heritability (parent–offspring regression) is 0.998, so the response obeys the breeder&#39;s equation R = h²·S, and a no-mutation control shows the variance eroding (0.21 → 0.001) when the source of variation is removed. This directly answers the review&#39;s point that the baseline&#39;s single-seed mean &#34;tracking an imposed optimum&#34; was expected by design: here the tracking is a statistical, controlled, heritability-grounded result.</span>
             
             <span class="finding-chip">via <code>mech-selection-beats-neutral-drift</code></span>
             
@@ -904,11 +908,11 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-novel">
+      <div class="finding-card finding-kind-computational finding-status-novel" id="finding-F-06">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement">A first-principles failure prediction is stated and passes: because the per-generation response is bounded (R = h²·S, limited by standing variance), the tracking lag must grow with the optimum&#39;s drift rate and run away once drift exceeds what selection can supply (an adaptation-failure / evolutionary-rescue threshold). A 20-seed drift sweep confirms the lag rising monotonically 0.11 → 11.2 as drift rises 0.02 → 0.55. Honest caveats, per the review: the mean trait moving toward the optimum is EXPECTED BY DESIGN — the content is the quantitative conditions (heritability, mutation supply, drift rate) under which adaptation succeeds or fails, the stochastic spread across seeds, and the explicit failure regime. At the baseline&#39;s small N=12 the across-seed drift is large; this variant uses N=300 and many replicates precisely to separate signal from drift.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="A first-principles failure prediction is stated and passes: because the per-generation response is bounded (R = h²·S, limited by standing variance), the tracking lag must grow with the optimum&#39;s drift rate and run away once drift exceeds what selection can supply (an adaptation-failure / evolutionary-rescue threshold). A 20-seed drift sweep confirms the lag rising monotonically 0.11 → 11.2 as drift rises 0.02 → 0.55. Honest caveats, per the review: the mean trait moving toward the optimum is EXPECTED BY DESIGN — the content is the quantitative conditions (heritability, mutation supply, drift rate) under which adaptation succeeds or fails, the stochastic spread across seeds, and the explicit failure regime. At the baseline&#39;s small N=12 the across-seed drift is large; this variant uses N=300 and many replicates precisely to separate signal from drift." data-edit-multiline data-edit-label="Finding F-06">A first-principles failure prediction is stated and passes: because the per-generation response is bounded (R = h²·S, limited by standing variance), the tracking lag must grow with the optimum&#39;s drift rate and run away once drift exceeds what selection can supply (an adaptation-failure / evolutionary-rescue threshold). A 20-seed drift sweep confirms the lag rising monotonically 0.11 → 11.2 as drift rises 0.02 → 0.55. Honest caveats, per the review: the mean trait moving toward the optimum is EXPECTED BY DESIGN — the content is the quantitative conditions (heritability, mutation supply, drift rate) under which adaptation succeeds or fails, the stochastic spread across seeds, and the explicit failure regime. At the baseline&#39;s small N=12 the across-seed drift is large; this variant uses N=300 and many replicates precisely to separate signal from drift.</span>
             
             <span class="finding-chip">via <code>mech-adaptation-fails-when-optimum-too-fast</code></span>
             
@@ -958,11 +962,11 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
-      <div class="finding-card finding-kind-computational finding-status-confirms">
+      <div class="finding-card finding-kind-computational finding-status-confirms" id="finding-F-07">
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement">Fitness can be DERIVED from an executable metabolic trait rather than prescribed. In the uptake mode each individual&#39;s trait is an uptake investment a; growth is a saturating Michaelis–Menten uptake of a drifting resource minus a quadratic cost, g(a) = Vmax·a·R/(Km+a) − cost·a², whose interior optimum a* drifts endogenously with the resource. The evolved mean trait climbs and tracks a* at correlation &gt; 0.95 — the moving target is a consequence of a metabolic tradeoff, not an imposed Gaussian. Honest limits: still a single-locus asexual clonal model (no genome, recombination, epistasis), overdamped selection, and didactic rate constants; the quantitative lag in the uptake mode reflects a fast resource drift relative to the mutational supply.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-07].statement" data-edit-value="Fitness can be DERIVED from an executable metabolic trait rather than prescribed. In the uptake mode each individual&#39;s trait is an uptake investment a; growth is a saturating Michaelis–Menten uptake of a drifting resource minus a quadratic cost, g(a) = Vmax·a·R/(Km+a) − cost·a², whose interior optimum a* drifts endogenously with the resource. The evolved mean trait climbs and tracks a* at correlation &gt; 0.95 — the moving target is a consequence of a metabolic tradeoff, not an imposed Gaussian. Honest limits: still a single-locus asexual clonal model (no genome, recombination, epistasis), overdamped selection, and didactic rate constants; the quantitative lag in the uptake mode reflects a fast resource drift relative to the mutational supply." data-edit-multiline data-edit-label="Finding F-07">Fitness can be DERIVED from an executable metabolic trait rather than prescribed. In the uptake mode each individual&#39;s trait is an uptake investment a; growth is a saturating Michaelis–Menten uptake of a drifting resource minus a quadratic cost, g(a) = Vmax·a·R/(Km+a) − cost·a², whose interior optimum a* drifts endogenously with the resource. The evolved mean trait climbs and tracks a* at correlation &gt; 0.95 — the moving target is a consequence of a metabolic tradeoff, not an imposed Gaussian. Honest limits: still a single-locus asexual clonal model (no genome, recombination, epistasis), overdamped selection, and didactic rate constants; the quantitative lag in the uptake mode reflects a fast resource drift relative to the mutational supply.</span>
             
             <span class="finding-chip">via <code>mech-uptake-executable-trait-optimum</code></span>
             
@@ -1119,7 +1123,7 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
         
         
         
-        <span class="cond-pill"><span class="cond-pill-k">status</span>=complete</span>
+        <span class="cond-pill"><span class="cond-pill-k">status</span>=completed</span>
       </div>
       
     </div>
@@ -1194,6 +1198,12 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
 <div class="overview-section" id="results-section">
   
   <div id="results-summary" data-study="fig-11" style="margin:0 0 16px"></div>
+
+  
+  <div id="gate-results-section" data-study="fig-11" style="margin:0 0 22px" hidden>
+    <h4>Gate results <span class="muted" style="font-size:0.8em;font-weight:normal">— each acceptance test's value, graded from run data</span></h4>
+    <div id="gate-results"></div>
+  </div>
 
   <h4>Latest run preview <span class="muted" style="font-size:0.8em;font-weight:normal">— downsampled sparkline + first/last/min/max per store</span></h4>
   <div id="results-preview" data-study="fig-11">
@@ -1301,12 +1311,12 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
         
         data-pytest-node="population-grows-to-capacity-by-fission"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">population-grows-to-capacity-by-fission</strong>
         
@@ -1314,6 +1324,16 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The population grows from the lone founder to carrying capacity by binary fission and never exceeds it -- discrete division events (Fig 11a) expanding the composition until death-by-selection caps it.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: size 1 (t=0) -&gt; 12 by generation 14, held at 12 through t=40, max == 12</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1340,12 +1360,12 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
         data-pytest-node="selection-optimum-drifts"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">selection-optimum-drifts</strong>
         
@@ -1353,6 +1373,16 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The environmental niche&#39;s selection optimum drifts monotonically forward over the run -- a moving target the population must chase (Fig 11b).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: optimum 1.0 (t=0) -&gt; 1.80 (t=40), monotone at drift 0.02/generation</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1379,12 +1409,12 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
         data-pytest-node="mean-trait-tracks-the-drifting-optimum"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">mean-trait-tracks-the-drifting-optimum</strong>
         
@@ -1392,6 +1422,16 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">The population mean trait, starting far below the optimum, moves toward the drifting optimum and closes the gap -- the trait distribution shifting toward the environmental optimum (Fig 11b), the core adaptation claim.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: mean trait 0.0 (gap 1.0) -&gt; ~1.68 (gap ~0.12); mean climbs by &gt; 1.0</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1418,12 +1458,12 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         
         data-pytest-node="division-is-binary-fission-place-graph-rewrite"
         data-classification="primary"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #10b981; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-primary">primary</span>
         <strong style="font-size: 0.9em;">division-is-binary-fission-place-graph-rewrite</strong>
         
@@ -1431,6 +1471,16 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Division is a genuine place-graph rewrite -- a dividing cell is REPLACED by two fresh daughters (parent id gone, two new ids present), and ids are never reused (Fig 11a, the discrete variation event that edits the composition).</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: cell_0 -&gt; cell_1, cell_2 at first division; appeared == 2*vanished below capacity; no id reused</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1457,12 +1507,12 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "fiss
         
         data-pytest-node="trajectory-is-deterministic"
         data-classification="diagnostic"
-        data-result="pending"
+        data-result="PASS"
         style="margin: 0 0 10px 0; padding: 10px 12px; border-left: 4px solid #f59e0b; background: #f8fafc; border-radius: 4px;">
       
         
       <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
-        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #f1f5f9; color: #475569">⏳ pending</span>
+        <span class="bt-result" style="font-size: 0.75em; font-family: monospace; padding: 2px 8px; border-radius: 9999px; background: #d1fae5; color: #065f46">✓ PASS</span>
         <span class="classification-pill classification-diagnostic">diagnostic</span>
         <strong style="font-size: 0.9em;">trajectory-is-deterministic</strong>
         
@@ -1470,6 +1520,16 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "fiss
         
       </div>
       <div style="margin-top: 6px; font-size: 0.95em;">Foundational control: the composite is fixed-seed (seed=1), so two independent builds emit an identical (size, mean_trait, optimum) trajectory -- the pinned integers above are true regression pins, not run-to-run-variable magnitudes.</div>
+      
+      <div style="margin-top:6px;font-size:0.85em;padding:6px 10px;background:#fff;border:1px solid #e2e8f0;border-radius:3px">
+        <strong>Latest result:</strong>
+        
+        
+          
+          <code style="font-family:ui-monospace,monospace;color:#475569;margin-right:8px">detail: two independent builds emit identical trajectories and daughter ids (seed=1)</code>
+          
+        
+      </div>
       
       
       <details style="margin-top: 6px; font-size: 0.82em;">
@@ -1817,7 +1877,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "prove
         
       </span>
       
-      <span class="status-step  gate-status-blocked">
+      <span class="status-step set gate-status-passed">
         <span class="dot"></span>5 · Decision
         <span class="step-val">passed</span>
         
@@ -1912,9 +1972,9 @@ pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "prove
         evaluator's result from the behavior-test outcomes — the evaluation the
         conclusion rests on.</p>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="gate-status-blocked" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">blocked</span>
+        <span class="gate-status-passed" style="padding:2px 12px;border-radius:9999px;font-weight:700;font-size:0.85em">passed</span>
         <span class="muted small">evaluated by code</span>
-        <span class="muted small">0/12 passed</span>
+        <span class="muted small">5/12 passed</span>
       </div>
       
     </div>
@@ -1958,7 +2018,22 @@ pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "prove
     
     <div class="decide-section" style="margin-top:18px">
       <h3 class="overview-label">Conclusion</h3>
-      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5"><h2>Claims</h2>
+      <div class="conclusion-md" style="background:#f8fafc;padding:12px;border-left:3px solid #94a3b8;border-radius:3px;font-size:0.9em;line-height:1.5" data-edit-kind="study" data-edit-field="conclusion" data-edit-value="## Claims
+- Composing one `population` (`tree[node]` of identically-schema&#39;d `cell` nodes) with one `environment` niche through a single `PopulationEvolution` process reproduces the paper&#39;s §Evolution pattern (Fig 11) as a runnable place-graph rewrite. Over a fixed-seed (seed=1) 40-generation run: the founder cell (trait 0.0, gap 1.0 below the optimum) divides by binary fission, grows to carrying capacity (12) and never exceeds it; the selection optimum drifts monotonically from 1.0 to 1.80; and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12 -- the trait distribution shifting toward the environmental optimum via variation (mutation) + heritability + selection. The whole trajectory is deterministic and reproduces exactly run to run.
+- Division (Fig 11a) is a genuine place-graph rewrite: a dividing cell is REPLACED by two fresh daughter nodes (parent id gone, two new ids present, net +1 cell), ids are never reused, and death by selection culls the least-fit cells at capacity -- nodes added and removed at runtime, editing the inventory of compositions rather than mutating values in place.
+## Evidence
+- **POPULATION-GROWS-TO-CAPACITY-BY-FISSION** -- size 1 (t=0) -&gt; 12 by generation 14, held at 12 through t=40, max == 12 (never exceeds capacity)
+- **SELECTION-OPTIMUM-DRIFTS** -- optimum 1.0 -&gt; 1.80, monotone at drift 0.02/generation
+- **MEAN-TRAIT-TRACKS-THE-DRIFTING-OPTIMUM** -- mean trait 0.0 (gap 1.0) -&gt; ~1.68 (gap ~0.12); the mean climbs by &gt; 1.0
+- **DIVISION-IS-BINARY-FISSION-PLACE-GRAPH-REWRITE** -- cell_0 -&gt; {cell_1, cell_2} at first division; appeared == 2*vanished below capacity; no id reused
+- **TRAJECTORY-IS-DETERMINISTIC** -- two independent builds emit identical trajectories and daughter ids (seed=1)
+## Limitations
+- This composite is didactic / toy-real: a minimal Darwinian loop (one abstract heritable scalar trait, one Gaussian fitness kernel) with hand-tuned magnitudes, not calibrated to any organism, trait, or literature fitness landscape.
+- No genome, recombination, epistasis, or standing variation beyond mutation; asexual binary fission at one locus. Death is purely selective and capacity-triggered (no age, random death, or resource-depletion feedback -- the niche `resource` field is carried but not consumed).
+- The rigorous cousin of this figure is `development-and-evolution` in the `draft-to-living-cell` investigation; its numbers are NOT restated here.
+## Next steps
+- Sweep selection strength, mutation size, and drift rate to show the adaptation-lag trade-off (a faster drift or weaker selection leaves a larger residual gap).
+- Add standing genetic variation / recombination to move from a single-locus toy toward a population-genetics-flavored model." data-edit-multiline data-edit-label="Conclusion"><h2>Claims</h2>
 <ul>
 <li>Composing one <code>population</code> (<code>tree[node]</code> of identically-schema'd <code>cell</code> nodes) with one <code>environment</code> niche through a single <code>PopulationEvolution</code> process reproduces the paper's §Evolution pattern (Fig 11) as a runnable place-graph rewrite. Over a fixed-seed (seed=1) 40-generation run: the founder cell (trait 0.0, gap 1.0 below the optimum) divides by binary fission, grows to carrying capacity (12) and never exceeds it; the selection optimum drifts monotonically from 1.0 to 1.80; and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12 -- the trait distribution shifting toward the environmental optimum via variation (mutation) + heritability + selection. The whole trajectory is deterministic and reproduces exactly run to run.</li>
 <li>Division (Fig 11a) is a genuine place-graph rewrite: a dividing cell is REPLACED by two fresh daughter nodes (parent id gone, two new ids present, net +1 cell), ids are never reused, and death by selection culls the least-fit cells at capacity -- nodes added and removed at runtime, editing the inventory of compositions rather than mutating values in place.</li>
@@ -2036,8 +2111,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "prove
       
       
       <p class="muted" style="margin:0;font-size:0.9em">
-        <strong>7</strong> test outcomes
-        — <span style="color:#065f46;font-weight:600">7 PASS</span> ·
+        <strong>5</strong> test outcomes
+        — <span style="color:#065f46;font-weight:600">5 PASS</span> ·
         <span style="color:#991b1b;font-weight:600">0 FAIL</span>.
         Per-test outcomes (measured value · evaluator · band) are canonical on the
         <a onclick="_setStudyTab('audit')" style="cursor:pointer;color:#3b82f6;text-decoration:underline">Tests (in Audit) →</a>.
@@ -2071,11 +2146,12 @@ pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "prove
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "15d1b4b90be96540d48dbd3e8a9332525f4645fa", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/15d1b4b90be96540d48dbd3e8a9332525f4645fa", "branch": "main", "lockfile": "uv.lock@fe735b115286", "generated_at": "2026-10-28 01:26 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "3c160c622022c37853156442fc769cb56da2ef9e", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/3c160c622022c37853156442fc769cb56da2ef9e", "branch": "main", "lockfile": "uv.lock@6fb578efa319", "generated_at": "2026-11-02 20:25 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
 <script>
 window._studyName = "fig-11";
+window.__STUDY_INVESTIGATION__ = "paper-figures";  // owning investigation (feedback save routing)
 window._study = null;  // populated by _bootstrapStudy() in study-detail.js
 
 // Save handler for the Conditions → Model settings editable rows.
@@ -2204,6 +2280,8 @@ window._seedFollowupProposal = _seedFollowupProposal;
 <script src="/meta-modelers-guide/workbench/assets/progress-track.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/comparison-view.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/study-detail.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/study-feedback.js"></script>
+<script src="/meta-modelers-guide/workbench/assets/inline-edit.js"></script>
 <script>
 // Re-assert the refresh-aware seed handlers AFTER study-detail.js (which
 // defines its own navigate-away _seedFollowupStudy). The embedded
