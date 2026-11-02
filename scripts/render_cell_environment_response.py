@@ -144,15 +144,25 @@ def render():
     a.legend(frameon=False, fontsize=8.5, loc="upper left")
     _clean(a)
 
-    # (C) one interface, two mechanisms — dFBA vs MM surrogate
+    # (C) one interface, two mechanisms — agreement in-regime, O2-blind out-of-regime.
+    # The honest SWAP story: the surrogate matches dFBA where it was tuned (O2 capped),
+    # but it has no oxygen variable, so on the held-out O2-uncapped condition dFBA jumps
+    # while the O2-blind surrogate cannot follow — surrogate calibration, not mechanism-
+    # independence across the O2 axis (the study's `qualified` verdict).
+    bu = float(unc["biomass"][-1])
+    head["dfba_uncapped_biomass"] = round(bu, 3)
+    head["interface_biomass_heldout_divergence_pct"] = round(abs(bu - bm) / max(bu, 1e-9) * 100, 1)
     a = ax[1, 0]
-    a.plot(dfba["time"], dfba["biomass"], color=TEAL, lw=2.6, label="dFBA (real e_coli_core)")
+    a.plot(dfba["time"], dfba["biomass"], color=TEAL, lw=2.6, label="dFBA — O$_2$ capped (tuned regime)")
     a.plot(mm["time"], mm["biomass"], color=WARM, lw=2.2, ls="--", label="Michaelis-Menten surrogate")
-    a.annotate(f"agree to {head['interface_biomass_divergence_pct']}%\non biomass",
-               (dfba["time"][-1] * 0.5, bd * 0.35), fontsize=8.5, color="#3a4744")
-    a.set_title("one interface, two mechanisms (law 4)", color=INK, fontsize=10)
+    a.plot(unc["time"], unc["biomass"], color="#9e2b1f", lw=2.2, ls=":", label="dFBA — O$_2$ uncapped (held-out)")
+    a.annotate(f"in regime: agree {head['interface_biomass_divergence_pct']}%",
+               (dfba["time"][-1] * 0.30, bd * 1.25), fontsize=8, color=TEAL)
+    a.annotate(f"held-out O$_2$: O$_2$-blind surrogate\n{head['interface_biomass_heldout_divergence_pct']}% off",
+               (dfba["time"][-1] * 0.22, bu * 0.70), fontsize=8, color="#9e2b1f")
+    a.set_title("one interface, two mechanisms — bounded on the O$_2$ axis (law 4)", color=INK, fontsize=10)
     a.set_xlabel("time (ticks)"); a.set_ylabel("biomass")
-    a.legend(frameon=False, fontsize=8.5, loc="lower right")
+    a.legend(frameon=False, fontsize=7.6, loc="upper left")
     _clean(a)
 
     # (D) the underlying FBA law — growth vs glucose uptake, + knockout
