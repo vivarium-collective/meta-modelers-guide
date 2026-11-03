@@ -54,18 +54,6 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["meta_modelers_guide"]
 
-[tool.uv]
-# TEMPORARY upstream-compat stopgap (remove once viva-superpowers / vivarium-workbench
-# update their requirement to viva-discovery-engine): discovery-engine @ main renamed its
-# distribution to `viva-discovery-engine` (discovery-engine#38, 2026-11-02), but both
-# vivarium-workbench and viva-superpowers still pin `discovery-engine @ git+...@main` as a
-# DIRECT url, so a fresh resolve fails at build with a name mismatch. [tool.uv.sources] can't
-# remap a direct-url dep; an override forces it to the last pre-rename commit (still named
-# `discovery-engine`), which satisfies the requirement.
-override-dependencies = [
-    "discovery-engine @ git+https://github.com/vivarium-collective/discovery-engine.git@12174773a5c0d377e0ebae4d3a8e8093a515dd96",
-]
-
 [tool.uv.sources]
 vivarium-workbench = { git = "https://github.com/vivarium-collective/vivarium-workbench.git", branch = "main" }
 viva-superpowers = { git = "https://github.com/vivarium-collective/viva-superpowers.git", branch = "main" }
