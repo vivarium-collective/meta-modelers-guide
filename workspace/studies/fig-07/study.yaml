@@ -57,6 +57,8 @@ units_and_time:
   note: No quantity here is calibrated to a named cell type, organism, or literature target; "levels" are place-graph nesting depths, not physical length scales.
 behavior_tests:
 - name: composite-runs-and-emits
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   description: The fig07-runnable composite runs its default step count to completion and emits a clean trajectory of the expected length -- the figure is executable.
   measure:
@@ -71,6 +73,8 @@ behavior_tests:
     provenance: 'the composite (default_n_steps=30) runs to completion through the process-bigraph engine and emits 31 frames (30 ticks + the initial emit), final time == 30.0; deterministic across repeated runs (tests/test_fig07_nested_dynamics.py::test_composite_runs_default_n_steps_and_emits)'
   requires_simulation: fig07-runnable
 - name: transport-fills-cytoplasmic-nutrients
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Level 1 -- the membrane transporter imports nutrients across the membrane into the cytoplasm; the pool starts empty and fills monotonically because supply is on.
   measure:
@@ -84,6 +88,8 @@ behavior_tests:
     provenance: 'prior: with the transporter on, the cytoplasmic nutrient pool fills monotonically from empty -> expect a substantial rise well above a small floor. Observed: nutrients 0.0 -> 9.0, non-decreasing at every step; the > 1.0 floor is a loose pin, the monotonic fill is the a-priori prediction; deterministic (tests/test_fig07_nested_dynamics.py::test_transport_fills_the_cytoplasmic_nutrient_pool)'
   requires_simulation: fig07-runnable
 - name: metabolism-makes-metabolites-and-energy
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Level 2 -- metabolism converts imported nutrients (+ enzymes) into metabolites and energy in the cytoplasm; both rise well past their empty start.
   measure:
@@ -97,6 +103,8 @@ behavior_tests:
     provenance: 'prior: metabolism turns the imported nutrients into metabolites + energy -> both rise substantially over the run. Observed: metabolites 0.0 -> ~20.5, energy 0.0 -> ~13.1 (both start empty, both rise well past start + 1.0); deterministic (tests/test_fig07_nested_dynamics.py::test_metabolism_produces_metabolites_and_energy)'
   requires_simulation: fig07-runnable
 - name: central-dogma-transcription-and-translation-rise
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Levels 3-4 -- transcription of the six-levels-deep nested DNA makes RNA, which translation turns into protein; both downstream products rise, and protein trails RNA because translation is downstream of transcription.
   measure:
@@ -110,6 +118,8 @@ behavior_tests:
     provenance: 'prior: transcription reads the deeply-nested DNA to make RNA, translation reads RNA to make protein downstream -> both rise from empty, protein trailing RNA. Observed: rna 0.0 -> ~0.64, proteins 0.0 -> ~0.24, rna[-1] > proteins[-1]; deterministic; the rise-from-zero and RNA-leads-protein ordering are the a-priori predictions (tests/test_fig07_nested_dynamics.py::test_central_dogma_transcription_and_translation_rise)'
   requires_simulation: fig07-runnable
 - name: assembly-grows-ribosome-pool-closing-the-loop
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Level 5 -- subunit assembly consumes protein + subunits to grow the four-levels-deep ribosome pool past its bootstrap seed, the downstream observable that closes the loop back to translation.
   measure:
@@ -123,6 +133,8 @@ behavior_tests:
     provenance: 'prior: subunit assembly grows the ribosome pool from its bootstrap seed, closing the loop back to translation -> the deeply-nested ribosome count rises. Observed: ribosome 0.5 -> ~0.88 (grows past its seed); deterministic (tests/test_fig07_nested_dynamics.py::test_assembly_builds_ribosomes_closing_the_loop)'
   requires_simulation: fig07-runnable
 - name: cascade-propagates-across-multiple-levels
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The whole point -- a non-trivial change occurs at MULTIPLE levels of the nested hierarchy in one coupled run (transport, metabolism, transcription, translation, assembly), not just at the seeded input.
   measure:
@@ -137,6 +149,8 @@ behavior_tests:
     provenance: 'prior: because the handlers'' outputs feed each other''s inputs, seeding the environment drives a change at every level of the hierarchy, not just the input. Observed: all five of {nutrients, metabolites, rna, proteins, ribosome} change by more than 1e-3 over the run; deterministic (tests/test_fig07_nested_dynamics.py::test_cascade_propagates_across_multiple_levels)'
   requires_simulation: fig07-runnable
 - name: place-graph-containment-preserved
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The figure's core structural claim -- processes act on stores buried deep in the place graph WITHOUT flattening it. After a full run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling.
   measure:
@@ -151,6 +165,8 @@ behavior_tests:
     provenance: 'read the final place-graph tree after a 30-step run: every intermediate container along the six-level DNA path is still a dict (not flattened), the DNA (6 levels) and ribosome (4 levels) leaves are reachable only at full depth, and the nucleosome still contains BOTH DNA and its untouched histone sibling -- containment, not a flattened bag of species (tests/test_fig07_nested_dynamics.py::test_place_graph_containment_is_preserved_as_dynamics_run)'
   requires_simulation: fig07-runnable
 - name: process-moves-quantity-in-deep-nested-store
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The anchor -- a process acting at ONE nesting level moves quantity in a nested store. Subunit assembly grows the four-levels-deep ribosome pool (final place-graph value == last emitted frame, same store); replication / repair holds the six-levels-deep genome at its set point (conserved within tolerance).
   measure:
@@ -168,6 +184,8 @@ behavior_tests:
 # The nesting INFLUENCES FUNCTION: permeable boundaries gate a deep observable.
 # Classified by the reviewer's evidence taxonomy (pass_if.kind).
 - name: mech-transport-conserves-substrate
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig07-mechanistic
   description: 'Passive transport across the nested boundaries is CONSERVATIVE — with the reactions off, the total substrate across environment + cytoplasm + nucleus is invariant. Containment neither creates nor loses mass as substrate crosses levels.'
@@ -182,6 +200,8 @@ behavior_tests:
     provenance: 'INVARIANT. Observed total substrate 10.0→10.0, residual 1.3e-7 over the 40-tick pure-transport run (tests/test_fig07_mechanistic.py::test_transport_conserves_substrate_across_compartments)'
   requires_simulation: fig07-mechanistic
 - name: mech-boundary-permeability-gates-deep-reporter
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig07-mechanistic
   description: 'The deep (nuclear) reporter is CAUSALLY gated by boundary permeability — a boundary-level cause with a deep functional effect, not mere routing. With both boundaries open the reporter is produced; closing the plasma membrane (ε) isolates the whole interior and the reporter goes to zero.'
@@ -196,6 +216,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed reporter 8.23 (open) vs 0.0 (membrane ε) — the boundary permeability causally controls the deep observable (tests/test_fig07_mechanistic.py::test_boundary_permeability_gates_the_deep_reporter)'
   requires_simulation: fig07-mechanistic
 - name: mech-both-boundaries-gate-in-series
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig07-mechanistic
   description: 'Depth = number of permeability barriers in series. The nuclear reporter sits behind TWO boundaries; closing EITHER one (at a different depth) independently zeroes it, while both-open produces it — each level is a functional gate, distinguishing hierarchy-influences-function from nested routing.'
@@ -210,6 +232,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed reporter 8.23 both-open, 0.0 with membrane ε, 0.0 with nuclear envelope ε — each depth gates independently (tests/test_fig07_mechanistic.py::test_both_boundaries_gate_in_series)'
   requires_simulation: fig07-mechanistic
 - name: mech-higher-permeability-fills-deeper-faster
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig07-mechanistic
   description: 'A first-principles prediction: a more permeable boundary fills the deep compartment faster. Predicted before running — in pure transport, the nuclear substrate at a fixed early time is monotone increasing in the membrane permeability.'
@@ -224,6 +248,8 @@ behavior_tests:
     provenance: 'PROSPECTIVE_PREDICTION. Observed nuclear substrate at t=8 rising 1.26→2.03→2.77→3.16→3.42 across P_mem 0.05→0.8 (tests/test_fig07_mechanistic.py::test_higher_permeability_fills_deeper_compartment_faster)'
   requires_simulation: fig07-mechanistic
 - name: mech-local-metabolism-is-compartment-restricted
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig07-mechanistic
   description: 'The cytoplasmic reaction is LOCALLY RESTRICTED — it consumes substrate only in the cytoplasm, so it starves the downstream nucleus. Compartments do functionally different things (cytoplasm metabolises, nucleus reports); turning cytoplasmic metabolism off raises the deep reporter.'
@@ -456,18 +482,72 @@ visualizations:
 # fig-07 instantiates fig-01's typed source→store→sink wiring + conservation in a genuinely
 # nested place graph. (parent_studies schema allows only study+condition; relation/rationale
 # live in the investigation spine_edges.)
-parent_studies:
-- study: fig-01
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Nested containment instantiates fig-01's typed wiring recursively — a composite inside a
-    composite behind the same interface discipline.
-- study: biomolecular-complementarity
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    The nesting/cascade figure reuses the complementarity-at-an-interface idea that
-    draft-to-living-cell's biomolecular-complementarity realizes spatially.
 experiment: 'Run the `fig07-runnable` composite (six ODE handlers -- transmembrane transport, metabolism, transcription, translation, subunit assembly, replication / repair -- over one place graph nesting up to six levels deep) to completion over its default 30 steps through the process-bigraph engine, and measure whether a process acting at each nesting level moves quantity in its nested store, whether the cascade propagates across every level as one coupled cell, and whether the place-graph containment is preserved as the dynamics run.'
 result: 'Over a deterministic 30-step run (31 emitted frames), a process acting at each nesting level moves quantity in its store: transmembrane transport fills the cytoplasmic nutrient pool 0 -> 9.0 (monotonic), metabolism makes metabolites 0 -> ~20.5 and energy 0 -> ~13.1, transcription of the six-levels-deep DNA makes RNA 0 -> ~0.64, translation makes protein 0 -> ~0.24 (trailing RNA, as it is downstream), and subunit assembly grows the four-levels-deep ribosome pool 0.5 -> ~0.88, closing the loop back to translation. All five levels change in one coupled run. The place-graph containment is preserved as the dynamics run: after the run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store -- the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair. Every value reproduces exactly run to run. The paper''s §Biomolecular compositions figure (Fig molecular_compositions) is thus executable, not merely drawn -- its nested hierarchy of composites runs forward as one coupled cell. This is a didactic / toy-real composite; the calibrated molecular-complementarity cousin is `biomolecular-complementarity` in the `draft-to-living-cell` investigation.'
+readouts:
+- name: len(rows)
+  store_path: len(rows)
+  description: 'The fig07-runnable composite runs its default step count to completion and emits a clean trajectory of the expected length -- the figure is executable.'
+  status: available
+- name: nutrients
+  store_path: obs.nutrients
+  description: 'Level 1 -- the membrane transporter imports nutrients across the membrane into the cytoplasm; the pool starts empty and fills monotonically because supply is…'
+  status: available
+- name: energy
+  store_path: obs.metabolites, obs.energy
+  description: 'Level 2 -- metabolism converts imported nutrients (+ enzymes) into metabolites and energy in the cytoplasm; both rise well past their empty start.'
+  status: available
+- name: proteins
+  store_path: obs.rna, obs.proteins
+  description: 'Levels 3-4 -- transcription of the six-levels-deep nested DNA makes RNA, which translation turns into protein; both downstream products rise, and protein…'
+  status: available
+- name: ribosome
+  store_path: obs.ribosome
+  description: 'Level 5 -- subunit assembly consumes protein + subunits to grow the four-levels-deep ribosome pool past its bootstrap seed, the downstream observable that…'
+  status: available
+- name: set of changed levels
+  store_path: set of changed levels
+  description: 'The whole point -- a non-trivial change occurs at MULTIPLE levels of the nested hierarchy in one coupled run (transport, metabolism, transcription…'
+  status: available
+- name: state)
+  store_path: final place-graph tree (sim.state)
+  description: 'The figure''s core structural claim -- processes act on stores buried deep in the place graph WITHOUT flattening it. After a full run every intermediate…'
+  status: available
+- name: state) vs emitted trajectory
+  store_path: final place-graph tree (sim.state) vs emitted trajectory
+  description: 'The anchor -- a process acting at ONE nesting level moves quantity in a nested store. Subunit assembly grows the four-levels-deep ribosome pool (final…'
+  status: available
+- name: Σ(env, cyto, nuc substrate)
+  store_path: Σ(env, cyto, nuc substrate)
+  description: 'Passive transport across the nested boundaries is CONSERVATIVE — with the reactions off, the total substrate across environment + cytoplasm + nucleus is…'
+  status: available
+- name: reporter at full vs membrane-closed
+  store_path: obs.reporter at full vs membrane-closed
+  description: 'The deep (nuclear) reporter is CAUSALLY gated by boundary permeability — a boundary-level cause with a deep functional effect, not mere routing. With both…'
+  status: available
+- name: reporter at {both open, membrane ε, nucleus ε}
+  store_path: reporter at {both open, membrane ε, nucleus ε}
+  description: 'Depth = number of permeability barriers in series. The nuclear reporter sits behind TWO boundaries; closing EITHER one (at a different depth) independently…'
+  status: available
+- name: nuclear substrate @ t=8 over a P_mem sweep
+  store_path: nuclear substrate @ t=8 over a P_mem sweep
+  description: 'A first-principles prediction: a more permeable boundary fills the deep compartment faster. Predicted before running — in pure transport, the nuclear substrate…'
+  status: available
+- name: reporter with cyto metabolism ON vs OFF
+  store_path: reporter with cyto metabolism ON vs OFF
+  description: 'The cytoplasmic reaction is LOCALLY RESTRICTED — it consumes substrate only in the cytoplasm, so it starves the downstream nucleus. Compartments do…'
+  status: available
+simulation_set:
+- name: fig07-runnable
+  kind: single
+  base_model: meta_modelers_guide.composites.fig07-runnable
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: fig-01
+    condition: tests-passed
+    relation: builds-on
+  - study: biomolecular-complementarity
+    condition: tests-passed
+    relation: builds-on

@@ -49,6 +49,7 @@ units_and_time:
   note: No quantity here is calibrated to a named organism, trait, or literature fitness landscape.
 behavior_tests:
 - name: population-grows-to-capacity-by-fission
+  gate_class: regression_pin
   classification: primary
   description: The population grows from the lone founder to carrying capacity by binary fission and never exceeds it -- discrete division events (Fig 11a) expanding the composition until death-by-selection caps it.
   measure:
@@ -63,6 +64,7 @@ behavior_tests:
     provenance: 'prior: a single founder divides and the lineage grows until carrying capacity bounds it. Observed (seed=1): size 1 at t=0, rising to 12 by generation 14 and holding at 12 through t=40, with max size == 12 (never exceeds capacity). The ==12 pin is exact under the fixed seed; the grows-then-caps direction is the a-priori prediction (tests/test_fig11_dynamics.py::test_population_grows_to_capacity)'
   requires_simulation: fig11-evolution
 - name: selection-optimum-drifts
+  gate_class: regression_pin
   classification: primary
   description: The environmental niche's selection optimum drifts monotonically forward over the run -- a moving target the population must chase (Fig 11b).
   measure:
@@ -77,6 +79,8 @@ behavior_tests:
     provenance: 'prior: the niche optimum shifts each generation, so the environment is a moving target. Observed: optimum starts at 1.0, increases monotonically at drift 0.02/generation, and ends at 1.80 after 40 generations. The ==1.80 endpoint is exact (deterministic linear drift); the monotone-forward direction is the a-priori prediction (tests/test_fig11_dynamics.py::test_selection_optimum_drifts)'
   requires_simulation: fig11-evolution
 - name: mean-trait-tracks-the-drifting-optimum
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The population mean trait, starting far below the optimum, moves toward the drifting optimum and closes the gap -- the trait distribution shifting toward the environmental optimum (Fig 11b), the core adaptation claim.
   measure:
@@ -90,6 +94,8 @@ behavior_tests:
     provenance: 'prior: under Gaussian selection for the moving optimum, the trait cloud tracks the target and the trait-optimum gap shrinks. Observed (seed=1): mean trait 0.0 at t=0 (gap 1.0 below optimum 1.0), climbing to ~1.68 by t=40 (gap ~0.12 below optimum 1.80) -- gap closes from 1.0 to ~0.12 (< 0.4) and the mean trait itself climbs by > 1.0 (the cloud moves to the target). The gap-closes / mean-climbs direction is the a-priori prediction; the 0.4 bound is a loose pin (tests/test_fig11_dynamics.py::test_mean_trait_tracks_the_drifting_optimum)'
   requires_simulation: fig11-evolution
 - name: division-is-binary-fission-place-graph-rewrite
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Division is a genuine place-graph rewrite -- a dividing cell is REPLACED by two fresh daughters (parent id gone, two new ids present), and ids are never reused (Fig 11a, the discrete variation event that edits the composition).
   measure:
@@ -104,6 +110,7 @@ behavior_tests:
     provenance: 'prior: on division the parent is consumed and replaced by two mutated daughters, each a fresh place-graph node. Observed (seed=1): at the first division the founder cell_0 is deleted and replaced by exactly two new nodes cell_1, cell_2 (net +1); below capacity every topology change has appeared == 2*vanished (one parent -> two daughters); and no retired cell id ever reappears over the run (tests/test_fig11_dynamics.py::test_division_is_binary_fission_place_graph_rewrite)'
   requires_simulation: fig11-evolution
 - name: trajectory-is-deterministic
+  gate_class: regression_pin
   classification: diagnostic
   control: positive
   description: 'Foundational control: the composite is fixed-seed (seed=1), so two independent builds emit an identical (size, mean_trait, optimum) trajectory -- the pinned integers above are true regression pins, not run-to-run-variable magnitudes.'
@@ -123,6 +130,8 @@ behavior_tests:
 # over MANY seeds (a single seed verifies reproducibility, not robustness),
 # classified by the reviewer's evidence taxonomy (pass_if.kind).
 - name: mech-selection-beats-neutral-drift
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig11-mechanistic
   description: 'Over 40 independent seeds, selection tracks the drifting optimum with a small bounded lag while the matched NEUTRAL control (sel→0, pure drift) wanders far away. The separation exceeds the across-seed spread — a statistical result, not a single-seed anecdote. This is the §Evolution (Fig 11) adaptation claim made quantitative.'
@@ -137,6 +146,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION (matched neutral null) over 40 seeds. Observed selection final lag 0.39±0.04 vs neutral 2.38±0.23 — selection clearly tracks, neutral drifts away (tests/test_fig11_mechanistic.py::test_selection_beats_neutral_drift_many_seeds)'
   requires_simulation: fig11-mechanistic
 - name: mech-heritability-near-one
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig11-mechanistic
   description: 'Under clonal inheritance plus Gaussian mutation the realized narrow-sense heritability — the parent–offspring regression slope — is ≈ 1, as quantitative-genetics theory predicts. This makes the response-to-selection quantitative (R = h²·S).'
@@ -151,6 +162,8 @@ behavior_tests:
     provenance: 'EMPIRICAL_COMPARISON to quantitative-genetics theory (clonal + mutation ⇒ h²≈1). Observed parent–offspring slope 0.998 (tests/test_fig11_mechanistic.py::test_heritability_is_near_one)'
   requires_simulation: fig11-mechanistic
 - name: mech-no-mutation-erodes-variance
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig11-mechanistic
   description: 'Matched null (no-mutation): with mutation off, no new variation enters, so selection and drift erode the heritable variance toward zero and the population loses its capacity to respond. Isolates the role of mutation as the source of variation.'
@@ -165,6 +178,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION (matched null, mutation off). Observed variance eroding 0.21 → 0.001 over 30 generations without mutation (tests/test_fig11_mechanistic.py::test_no_mutation_erodes_variance)'
   requires_simulation: fig11-mechanistic
 - name: mech-adaptation-fails-when-optimum-too-fast
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig11-mechanistic
   description: 'A first-principles prediction: the per-generation response is bounded (R = h²·S, limited by standing variance), so the tracking lag must GROW with the optimum''s drift rate and run away once drift exceeds what selection can supply — an adaptation-failure / evolutionary-rescue threshold. Predicted before running; verified by a drift sweep over many seeds.'
@@ -179,6 +194,8 @@ behavior_tests:
     provenance: 'PROSPECTIVE_PREDICTION. Observed final lag rising 0.11 (drift 0.02) → 0.65 → 3.9 → 11.2 (drift 0.55) over 20-seed ensembles — monotone, with runaway at high drift (tests/test_fig11_mechanistic.py::test_adaptation_fails_when_optimum_moves_too_fast)'
   requires_simulation: fig11-mechanistic
 - name: mech-demographic-bookkeeping
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig11-mechanistic
   description: 'Newborn topology and demographics are well-formed: every generation holds exactly N individuals, and every offspring''s parent index is a valid member of the previous generation (no phantom ancestors, no id reuse).'
@@ -193,6 +210,8 @@ behavior_tests:
     provenance: 'INVARIANT. Observed population size conserved at N and all ancestry parent indices in range across 25 generations (tests/test_fig11_mechanistic.py::test_demographic_bookkeeping_conserved)'
   requires_simulation: fig11-mechanistic
 - name: mech-reproducibility-not-robustness
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig11-mechanistic
   description: 'The same seed reproduces an identical trajectory (reproducibility), but DIFFERENT seeds give different realizations whose across-seed spread is non-trivial — so a single seeded rerun verifies reproducibility, NOT robustness. This directly answers the review''s point about the baseline''s single-seed determinism control.'
@@ -207,6 +226,8 @@ behavior_tests:
     provenance: 'INVARIANT + robustness note. Same seed reproduces exactly; across-seed spread of the final mean is non-trivial — reproducibility ≠ robustness (tests/test_fig11_mechanistic.py::test_same_seed_reproduces_exactly_but_seeds_differ)'
   requires_simulation: fig11-mechanistic
 - name: mech-uptake-executable-trait-optimum
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig11-mechanistic
   description: 'Optional executable-trait fitness: when fitness is DERIVED from a Michaelis–Menten uptake minus a quadratic cost, the optimal uptake investment a* is an EMERGENT consequence of the drifting resource (not an imposed Gaussian), and the evolved mean trait climbs with it (correlation > 0.95 over generations).'
@@ -451,18 +472,56 @@ visualizations:
 # fission); fig-11 selects on the inherited trait across many such divisions over
 # generations (the edge relation/rationale is carried in the investigation spine;
 # parent_studies schema allows only study+condition).
-parent_studies:
-- study: fig-09
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Evolution requires heritable reproduction: a population evolves through dividing cells, so
-    selection response is only measurable over fig-09's division machinery.
-- study: development-and-evolution
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    The figure's single-locus Wright-Fisher selection is the reduced counterpart of
-    draft-to-living-cell's spatial development-and-evolution selection result.
 experiment: 'Run the `fig11-evolution` composite (`PopulationEvolution` over a population tree[node] of identically-schema''d cell nodes + an environment niche whose selection optimum drifts) to completion over 40 generations through the process-bigraph engine, and measure whether variation (heritable mutation at binary fission) + selection (a Gaussian fitness kernel on trait<->optimum distance, with death-by-selection at carrying capacity) is enough to shift the population''s trait distribution toward a drifting environmental optimum, while division genuinely edits the place graph (parent replaced by two daughters).'
 result: 'Over a fixed-seed (seed=1) 40-generation run, the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- cell_0 replaced by two daughters cell_1, cell_2 -- and the lineage grows to carrying capacity (12 by generation 14) and never exceeds it. The selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02/generation) and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12: the trait distribution shifts toward the environmental optimum via variation + heritability + selection. Division is a genuine place-graph rewrite throughout -- below capacity every topology change adds exactly two fresh daughters per vanished parent, ids are never reused, and death-by-selection culls the least-fit cells at capacity. The whole trajectory (sizes, mean trait, optimum, daughter ids) is deterministic and reproduces exactly across independent builds. The paper''s §Evolution pattern (Fig 11) holds as a runnable place-graph rewrite at the toy-real (uncalibrated) level: evolution changes the space of compositions across generations, not the state of a single composition. The rigorous cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.'
+readouts:
+- name: population
+  store_path: population
+  description: 'The population grows from the lone founder to carrying capacity by binary fission and never exceeds it -- discrete division events (Fig 11a) expanding the…'
+  status: available
+- name: environment
+  store_path: environment
+  description: 'The environmental niche''s selection optimum drifts monotonically forward over the run -- a moving target the population must chase (Fig 11b).'
+  status: available
+- name: final lag |mean − optimum| across 40 seeds, selection vs neutral
+  store_path: final lag |mean − optimum| across 40 seeds, selection vs neutral
+  description: 'Over 40 independent seeds, selection tracks the drifting optimum with a small bounded lag while the matched NEUTRAL control (sel→0, pure drift) wanders far…'
+  status: available
+- name: parent–offspring trait regression slope (mean over 10 seeds)
+  store_path: parent–offspring trait regression slope (mean over 10 seeds)
+  description: 'Under clonal inheritance plus Gaussian mutation the realized narrow-sense heritability — the parent–offspring regression slope — is ≈ 1, as…'
+  status: available
+- name: trait variance over 30 generations, no-mutation control
+  store_path: trait variance over 30 generations, no-mutation control
+  description: 'Matched null (no-mutation): with mutation off, no new variation enters, so selection and drift erode the heritable variance toward zero and the population…'
+  status: available
+- name: final lag vs optimum drift rate (20 seeds each)
+  store_path: final lag vs optimum drift rate (20 seeds each)
+  description: 'A first-principles prediction: the per-generation response is bounded (R = h²·S, limited by standing variance), so the tracking lag must GROW with the…'
+  status: available
+- name: population size and parent-index validity each generation
+  store_path: population size and parent-index validity each generation
+  description: 'Newborn topology and demographics are well-formed: every generation holds exactly N individuals, and every offspring''s parent index is a valid member of the…'
+  status: available
+- name: same-seed trajectory equality; across-seed spread of final mean
+  store_path: same-seed trajectory equality; across-seed spread of final mean
+  description: 'The same seed reproduces an identical trajectory (reproducibility), but DIFFERENT seeds give different realizations whose across-seed spread is non-trivial —…'
+  status: available
+- name: evolved mean trait vs derived metabolic optimum a* over 50 generations (25 seeds)
+  store_path: evolved mean trait vs derived metabolic optimum a* over 50 generations (25 seeds)
+  description: 'Optional executable-trait fitness: when fitness is DERIVED from a Michaelis–Menten uptake minus a quadratic cost, the optimal uptake investment a* is an…'
+  status: available
+simulation_set:
+- name: fig11-evolution
+  kind: single
+  base_model: meta_modelers_guide.composites.fig11-evolution
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: fig-09
+    condition: tests-passed
+    relation: builds-on
+  - study: development-and-evolution
+    condition: tests-passed
+    relation: builds-on

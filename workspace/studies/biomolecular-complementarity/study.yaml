@@ -151,6 +151,8 @@ units_and_time:
     primitives.
 behavior_tests:
 - name: sorting-heterotypic-interface-collapses
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'Under differential adhesion (homotypic J=2, heterotypic J=11, medium J=8, T=10), the mixed
     checkerboard demixes: the heterotypic-interface fraction collapses from a clearly-mixed start toward
@@ -172,6 +174,8 @@ behavior_tests:
       tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite, tests/test_cpm_sorting_spike.py::test_checkerboard_demixes_and_stays_cohesive)'
   requires_simulation: cell-sorting-spatial
 - name: sorting-clump-stays-cohesive
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'Cohesion guard: the demixing is real sorting, not dissolution. The total live-cell pixel
     count is retained (well within a 10% drift bound), so a dissolved clump is not misread as sorted.'
@@ -191,6 +195,7 @@ behavior_tests:
       tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)'
   requires_simulation: cell-sorting-spatial
 - name: sorting-conserves-cell-count
+  gate_class: regression_pin
   classification: diagnostic
   description: 'Regression check that sorting moves cells rather than creating or destroying them: the
     per-type cell counts stay exactly 32/32 throughout the run.'
@@ -208,6 +213,8 @@ behavior_tests:
       while the engine and seeding are fixed (tests/test_cpm_sorting.py::test_checkerboard_sorts_cohesively_in_composite)
   requires_simulation: cell-sorting-spatial
 - name: sorting-neutral-J-does-not-sort
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   control: negative
   description: 'Negative control isolating J-regime causality: under neutral contact energies (all J=8,
@@ -233,6 +240,8 @@ behavior_tests:
   committed_test: tests/test_sorting_neutral_control.py::test_neutral_J_does_not_sort
   requires_simulation: none
 - name: condensate-phase-separates
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'The near-critical Cahn-Hilliard composition field undergoes spinodal decomposition into
     two phases: the field variance rises from near-zero toward the coexistence variance as an interface
@@ -253,6 +262,8 @@ behavior_tests:
       tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)'
   requires_simulation: condensate-cahn-hilliard
 - name: condensate-conserves-mass
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'The phase separation redistributes composition, it does not create or destroy it: the
     field mean (total mass) is conserved across the whole run -- the mass-conservation property that distinguishes
@@ -272,6 +283,7 @@ behavior_tests:
       tests/test_cahn_hilliard.py::test_spinodal_decomposition_conserves_mass_and_stays_bounded)'
   requires_simulation: condensate-cahn-hilliard
 - name: condensate-stays-bounded
+  gate_class: regression_pin
   classification: diagnostic
   description: 'Numerical-stability guard: at the pinned dt=0.002 the stiff biharmonic scheme stays bounded
     in the physical two-phase range [-1, 1] and emits no NaN -- a larger dt would blow up instead.'
@@ -510,8 +522,8 @@ conclusion_logic:
       too high) and a false 'perfect sort' of an empty lattice is being read
     - the Cahn-Hilliard field variance does not rise (no phase separation), or mass is not conserved (the
       update is not a proper flux divergence)
-    - the field goes non-finite (dt above the biharmonic stability limit -- the process should raise,
-      not emit NaN)
+    - the field goes non-finite (dt above the biharmonic stability limit -- the process raises rather
+      than emitting NaN)
     block_downstream: Autopoiesis (a self-maintained-boundary study builds on the phase-separation.
       primitive here)
 limitations:
@@ -601,14 +613,6 @@ visualizations:
     chart: html
     caption: Condensate phase-separation variance -- phi_var climbs from ~7e-5 to ~0.38 over 10000 steps
       as the field separates into two domains, mass conserved.
-parent_studies:
-- study: cell-environment-coupling
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Reuses the spatial-composition substrate to realize complementarity by differential
-    adhesion / phase separation at a molecular interface — one level inward from the
-    whole-cell flagship.
 experiment: 'Run two independent CPM/phase-field composites to completion through the process-bigraph
   engine: cell-sorting-spatial (CpmSorting, an 8x8 checkerboard of two cell types under a differential-adhesion
   J-triple, ~600 Monte Carlo steps) and condensate-cahn-hilliard (CahnHilliard, a 64x64 near-critical
@@ -624,3 +628,44 @@ result: Differential adhesion alone demixes the mixed checkerboard -- heterotypi
   [-1, 1]. The condensate forms a boundary but does not yet do interface work (no selective concentration/exclusion
   of a second species) -- a boundary forming, not yet the functional, regulatable boundary the paper's
   central question distinguishes from a transient aggregate.
+readouts:
+- name: hetero_frac
+  store_path: obs.hetero_frac
+  description: 'Under differential adhesion (homotypic J=2, heterotypic J=11, medium J=8, T=10), the mixed checkerboard demixes: the heterotypic-interface fraction collapses…'
+  status: available
+- name: cell_pixels
+  store_path: obs.cell_pixels
+  description: 'Cohesion guard: the demixing is real sorting, not dissolution. The total live-cell pixel count is retained (well within a 10% drift bound), so a dissolved…'
+  status: available
+- name: n_type1
+  store_path: obs.n_type1
+  description: 'Regression check that sorting moves cells rather than creating or destroying them: the per-type cell counts stay exactly 32/32 throughout the run.'
+  status: available
+- name: phi_var
+  store_path: obs.phi_var
+  description: 'The near-critical Cahn-Hilliard composition field undergoes spinodal decomposition into two phases: the field variance rises from near-zero toward the…'
+  status: available
+- name: phi_mean
+  store_path: obs.phi_mean
+  description: 'The phase separation redistributes composition, it does not create or destroy it: the field mean (total mass) is conserved across the whole run -- the…'
+  status: available
+- name: phi_min
+  store_path: obs.phi_min
+  description: 'Numerical-stability guard: at the pinned dt=0.002 the stiff biharmonic scheme stays bounded in the physical two-phase range [-1, 1] and emits no NaN -- a…'
+  status: available
+simulation_set:
+- name: cell-sorting-spatial
+  kind: single
+  base_model: meta_modelers_guide.composites.cell-sorting-spatial
+  is_baseline: true
+  status: ran
+- name: condensate-cahn-hilliard
+  kind: single
+  base_model: meta_modelers_guide.composites.condensate-cahn-hilliard
+  is_baseline: false
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: cell-environment-coupling
+    condition: tests-passed
+    relation: builds-on

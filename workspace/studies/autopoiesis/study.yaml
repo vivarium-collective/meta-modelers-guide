@@ -232,6 +232,8 @@ key_assumptions:
   inside" from "the boundary is gone."'
 behavior_tests:
 - name: closed-loop-persists
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'The autopoietic closed loop -- production gated on the membrane still enclosing an
     interior, self-limited by area -- self-maintains within the metastable plateau window: persists ==
@@ -254,6 +256,7 @@ behavior_tests:
       tests/test_autopoiesis_regime.py::test_closed_loop_persists)
   requires_simulation: protocell-autopoietic
 - name: closed-loop-encloses-interior
+  gate_class: regression_pin
   classification: primary
   description: 'The closed loop keeps a genuinely bounded interior throughout the window: the enclosed
     interior area plateaus well above zero (homeostasis at ~149 px, throttled down from the ~465 px seed
@@ -272,6 +275,7 @@ behavior_tests:
       tests/test_autopoiesis_regime.py::test_persistence_is_multiseed_robust)
   requires_simulation: protocell-autopoietic
 - name: closed-loop-never-collapses
+  gate_class: regression_pin
   classification: diagnostic
   description: 'Diagnostic that the closed loop never loses closure within the window: collapse_tick
     stays at its sentinel -1.0 (never collapsed), distinguishing genuine self-maintenance from a run that
@@ -291,6 +295,8 @@ behavior_tests:
       tests/test_autopoiesis_regime.py::test_closed_loop_persists)
   requires_simulation: protocell-autopoietic
 - name: vesicle-control-collapses
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   control: negative
   description: 'Single-variable knockout: identical seed and wiring, production knocked out via k_prod=0.
@@ -315,6 +321,7 @@ behavior_tests:
       tests/test_autopoiesis_regime.py::test_vesicle_control_collapses)'
   requires_simulation: protocell-vesicle-control
 - name: vesicle-control-loses-enclosure
+  gate_class: regression_pin
   classification: primary
   control: negative
   description: 'The mechanism of the control''s collapse, made explicit: the vesicle''s enclosed interior
@@ -335,6 +342,8 @@ behavior_tests:
       tests/test_autopoiesis_regime.py::test_vesicle_control_collapses)
   requires_simulation: protocell-vesicle-control
 - name: puncture-is-fatal
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   description: 'Viability bound (beer2024deriving), the second independent proof of closure. From the closed-loop
     steady state, zero a 60-degree wedge of the membrane so nothing is enclosed. Production stays at the
@@ -358,6 +367,8 @@ behavior_tests:
       (tests/test_protocell_physics.py::test_puncture_is_fatal_no_recovery)
   requires_simulation: none
 - name: v2-emergent-closure-sustains
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'MECHANISM-LEVEL (v2, M4 answer). The local-precursor closed loop -- production
     k_prod*phi*p*(1-phi/phi_max), NO global closure observer in the update -- sustains a genuinely
@@ -381,6 +392,7 @@ behavior_tests:
       tests/test_protocell_v2.py::test_closed_loop_sustains_closure_and_pools_precursor)
   requires_simulation: protocell-autopoietic-v2
 - name: v2-update-has-no-global-observer
+  gate_class: regression_pin
   classification: primary
   description: 'The emergence guarantee, asserted structurally -- the v2 update (rd_step_v2 and its only
     helper _variable_diffusion) REFERENCES no global closure operator (binary_fill_holes / enclosed_area).
@@ -401,6 +413,8 @@ behavior_tests:
       (tests/test_protocell_v2.py::test_update_has_no_global_closure_operator)
   requires_simulation: protocell-autopoietic-v2
 - name: v2-precursor-knockout-collapses
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   control: negative
   description: 'v2 single-variable MECHANISTIC knockout (no v1 analogue): s_p=0 -- the membrane produces
@@ -424,6 +438,8 @@ behavior_tests:
       tests/test_protocell_v2.py::test_production_knockout_collapses)
   requires_simulation: protocell-autopoietic-v2
 - name: v2-puncture-starves-locally
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   description: 'The v2 puncture is a genuine LOCAL PREDICTION, not a restatement of a global gate. From
     the steady closed loop, zero a 60-degree membrane wedge -- interior precursor bleeds out through the
@@ -445,6 +461,7 @@ behavior_tests:
       (tests/test_protocell_v2.py::test_puncture_starves_locally_and_does_not_heal)
   requires_simulation: none
 - name: v2-open-drive-does-not-sustain
+  cites: [beer2024deriving]
   classification: primary
   gate_class: acceptance_criterion
   description: 'OPEN-SYSTEM LEVEL (v2-open, ProtocellV2Open -- the remaining EMERGE step, built and
@@ -496,6 +513,7 @@ behavior_tests:
       tests/test_protocell_v2_open.py::test_drive_off_reduces_exactly_to_closed_v2)
   requires_simulation: protocell-autopoietic-v2-open
 - name: v2-open-controls-still-load-bearing
+  cites: [beer2024deriving]
   classification: primary
   control: negative
   gate_class: acceptance_criterion
@@ -1020,14 +1038,6 @@ visualizations:
     chart: html
     caption: 'Autopoiesis metrics -- the enclosed interior area plateaus (homeostasis, ~149 px) with
       membrane mass held above its floor: genuine self-maintenance, not a filled blob or a ghost ring.'
-parent_studies:
-- study: biomolecular-complementarity
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Turns the molecular-interface machinery inward to produce and maintain a membrane
-    from local physics — self-maintenance presupposes the molecular complementarity that
-    forms the boundary in the first place.
 experiment: 'Run reaction-diffusion protocell composites to completion through the process-bigraph
   engine directly from their JSON specs, at TWO mechanistic grains. SPECIFICATION-level (v1):
   protocell-autopoietic (Protocell, a 64x64 Gaussian-annulus membrane field with production gated on a
@@ -1072,3 +1082,42 @@ result: The autopoietic closed loop persists -- enclosed interior area plateaus 
   closed budget and external drive does not fix it (the window also depends on seed geometry), the physics is
   deterministic so persistence is not seed-dependent (the multi-seed range is a degenerate single point), and
   this is a minimal self-maintaining boundary, not real membrane chemistry or metabolism.
+readouts:
+- name: persists
+  store_path: obs.persists
+  description: 'The autopoietic closed loop -- production gated on the membrane still enclosing an interior, self-limited by area -- self-maintains within the metastable…'
+  status: available
+- name: enclosed_area
+  store_path: obs.enclosed_area
+  description: 'The closed loop keeps a genuinely bounded interior throughout the window: the enclosed interior area plateaus well above zero (homeostasis at ~149 px…'
+  status: available
+- name: collapse_tick
+  store_path: obs.collapse_tick
+  description: 'Diagnostic that the closed loop never loses closure within the window: collapse_tick stays at its sentinel -1.0 (never collapsed), distinguishing genuine…'
+  status: available
+simulation_set:
+- name: protocell-autopoietic
+  kind: single
+  base_model: meta_modelers_guide.composites.protocell-autopoietic
+  is_baseline: true
+  status: ran
+- name: protocell-vesicle-control
+  kind: single
+  base_model: meta_modelers_guide.composites.protocell-vesicle-control
+  is_baseline: false
+  status: ran
+- name: protocell-autopoietic-v2
+  kind: single
+  base_model: meta_modelers_guide.composites.protocell-autopoietic-v2
+  is_baseline: false
+  status: ran
+- name: protocell-autopoietic-v2-open
+  kind: single
+  base_model: meta_modelers_guide.composites.protocell-autopoietic-v2-open
+  is_baseline: false
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: biomolecular-complementarity
+    condition: tests-passed
+    relation: builds-on

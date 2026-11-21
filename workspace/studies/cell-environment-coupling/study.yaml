@@ -280,6 +280,8 @@ external_anchors:
 - 'glucose uptake ≈ 10 mmol/gDW/hr (E. coli aerobic) (order-of-magnitude anchor, not a calibration target).'
 behavior_tests:
 - name: cell-metabolizes-and-grows
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'The cell runs dynamic-FBA at its own footprint and grows: biomass rises above its
 
@@ -299,6 +301,7 @@ behavior_tests:
       same pattern on a smaller 40x40 grid over 12 ticks)'
   requires_simulation: single-cell-in-a-field
 - name: cpm-volume-grows
+  gate_class: regression_pin
   classification: primary
   description: The CPM cell's own target-volume-driven growth carries through to its actual
     lattice-pixel volume — the cell occupies more pixels by the end of the run.
@@ -314,6 +317,8 @@ behavior_tests:
       60x60=3600px lattice; 40 px is a floor above the 32 px seed (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
   requires_simulation: single-cell-in-a-field
 - name: acetate-secreted-and-diffuses
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The cell secretes acetate into the shared field as a genuine byproduct of the
     O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has diffused/spread)
@@ -332,6 +337,8 @@ behavior_tests:
       plume is the third panel of the baked GIF)'
   requires_simulation: single-cell-in-a-field
 - name: net-glucose-consumed
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Net field-wide glucose falls over the run — the cell is a genuine sink on the
     shared field, not merely redistributing it.
@@ -351,6 +358,8 @@ behavior_tests:
       diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
   requires_simulation: single-cell-in-a-field
 - name: o2-cap-forces-acetate-overflow
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   control: negative
   description: 'Foundational mechanism control (not this study''s scientific claim): the acetate
@@ -380,6 +389,7 @@ behavior_tests:
       composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json)'
   requires_simulation: single-cell-in-a-field-o2uncapped
 - name: field-mass-balance-closes
+  gate_class: regression_pin
   classification: diagnostic
   control: positive
   description: 'Foundational conservation control (not this study''s scientific claim): the paper
@@ -406,6 +416,7 @@ behavior_tests:
       meta_modelers_guide/analysis/mass_balance.py)'
   requires_simulation: single-cell-in-a-field
 - name: interface-substitutable-across-mechanisms
+  gate_class: regression_pin
   classification: primary
   description: 'Surrogate calibration of the paper''s substitutability idea (the TUNED-condition
 
@@ -438,6 +449,8 @@ behavior_tests:
       match (4 knobs fit to 4 observables — exactly determined); the held-out gate below tests them frozen.'
   requires_simulation: single-cell-in-a-field-mm
 - name: interface-substitutable-held-out
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'HELD-OUT test of the surrogate (peer-review M2) — the real conversion of surrogate
 
@@ -478,6 +491,7 @@ behavior_tests:
       tuned fit was guaranteed; the held-out agreement in-regime is the real evidence.'
   requires_simulation: single-cell-in-a-field-mm
 - name: steadystate-flux-equilibrium
+  cites: [beer2024deriving]
   classification: diagnostic
   control: positive
   gate_class: acceptance_criterion
@@ -509,7 +523,7 @@ behavior_tests:
 - name: cadence-convergence
   classification: diagnostic
   control: positive
-  gate_class: rigor_check
+  gate_class: regression_pin
   description: 'M7d cadence rigor check (peer review) — the flagship''s operator-split
     CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are
     CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 ->
@@ -541,6 +555,7 @@ behavior_tests:
       cadence-converged, reading.'
   requires_simulation: single-cell-in-a-field
 - name: chemotaxis-moves-cell-up-gradient-and-helps
+  cites: [beer2024deriving]
   classification: primary
   gate_class: acceptance_criterion
   description: 'The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up
@@ -1291,15 +1306,6 @@ visualizations:
     caption: 'Synced metrics for the flagship run — local_nutrient / biomass / acetate_secreted
 
       (left axis) against CPM volume (right axis) over 20 ticks.'
-parent_studies:
-- study: cellular-interface
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Instantiates the inert interface contract from cellular-interface as a running
-    composition — the CpmCellField coupling process IS the Fig-3 contract with a real
-    mechanism installed behind it, so the flagship's sense/act loop is only meaningful
-    once the contract it conforms to is established.
 experiment: 'Run `single-cell-in-a-field.composite.json` — a real CPM cell (viva-cpm) coupled via
 
   `CpmCellField` to a real spatio-flux glucose/acetate field running `DiffusionAdvection` — to
@@ -1365,3 +1371,55 @@ discovery_implications:
       mechanism-independence extends across the O2 axis or the structural gap is irreducible. This
       is the named next step that would promote the SWAP result from surrogate calibration to a
       held-out mechanism-independence finding.
+readouts:
+- name: biomass
+  store_path: obs.biomass
+  description: 'The cell runs dynamic-FBA at its own footprint and grows: biomass rises above its initial value and CPM volume exceeds 40 px by step 20.'
+  status: available
+- name: volume
+  store_path: obs.volume
+  description: 'The CPM cell''s own target-volume-driven growth carries through to its actual lattice-pixel volume — the cell occupies more pixels by the end of the run.'
+  status: available
+- name: acetate
+  store_path: fields.acetate
+  description: 'The cell secretes acetate into the shared field as a genuine byproduct of the O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has…'
+  status: available
+- name: glucose
+  store_path: fields.glucose
+  description: 'Net field-wide glucose falls over the run — the cell is a genuine sink on the shared field, not merely redistributing it.'
+  status: available
+- name: acetate
+  store_path: fields.glucose, fields.acetate
+  description: 'Foundational conservation control (not this study''s scientific claim): the paper frames conservation laws (mass, energy balance) as interface constraints on…'
+  status: available
+- name: glucose
+  store_path: obs.biomass, obs.volume, fields.acetate, fields.glucose
+  description: 'Surrogate calibration of the paper''s substitutability idea (the TUNED-condition baseline for the held-out test below) — a tuned Michaelis-Menten twin…'
+  status: available
+- name: acetate
+  store_path: obs.biomass, fields.glucose, fields.acetate
+  description: 'M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a…'
+  status: available
+- name: local_nutrient
+  store_path: obs.biomass, obs.volume, fields.acetate, fields.glucose, obs.local_nutrient
+  description: 'M7d cadence rigor check (peer review) — the flagship''s operator-split CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are…'
+  status: available
+- name: glucose
+  store_path: obs.position, obs.local_nutrient, obs.biomass, obs.volume, fields.glucose
+  description: 'The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up the sensed glucose gradient (+x) while the non-motile flagship control barely…'
+  status: available
+- name: position
+  store_path: obs.biomass, obs.volume, obs.position
+  description: 'Byte-identical no-op control — chemotaxis_strength 0.0 (the flagship default) leaves the flagship trajectory unchanged. With the force off, CpmCellField never…'
+  status: available
+simulation_set:
+- name: single-cell-in-a-field
+  kind: single
+  base_model: meta_modelers_guide.composites.single-cell-in-a-field
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: cellular-interface
+    condition: tests-passed
+    relation: builds-on

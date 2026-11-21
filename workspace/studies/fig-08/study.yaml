@@ -55,6 +55,8 @@ units_and_time:
   note: No quantity here is calibrated to a named organism, metabolite, enzyme, or literature flux; the numbers exist to make the coupled balance legible, not to match data.
 behavior_tests:
 - name: closure-sustains-itself-every-pool-positive
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Over the full 40-tick run every observed shared pool (membrane, metabolites, enzymes, proteins, genes, energy, nucleic_acids) stays strictly positive -- the coupled organization sustains itself, nothing collapses to zero (caption a self-maintaining organization).
   measure:
@@ -68,6 +70,8 @@ behavior_tests:
     provenance: 'prior: a self-maintaining composition keeps every shared store above zero for the run. Observed (deterministic): pool minima all > 0 -- smallest is metabolites (min 0.267), largest floor genes (min 1.0); membrane 0.2 -> 2.2 monotone. The > 0 direction is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_positive)'
   requires_simulation: fig08-runnable
 - name: closure-is-bounded-nothing-explodes
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The coupled balance neither runs away nor blows up -- every pool stays well bounded over the run, the mark of a maintained far-from-equilibrium steady state rather than an unstable positive-feedback loop.
   measure:
@@ -81,6 +85,8 @@ behavior_tests:
     provenance: 'prior: a maintained balance does not explode. Observed (deterministic): the largest value any pool reaches over the run is membrane at 2.2, far under the 1e3 guard; the < 1e3 bound is a loose sanity ceiling, boundedness is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_bounded)'
   requires_simulation: fig08-runnable
 - name: template-pools-hold-a-steady-balance
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The catalytic/template pools (genes, energy, metabolites, nucleic_acids) hold a sustained steady balance across the second half of the run -- the maintained state the coupling produces, not a pool draining or accumulating.
   measure:
@@ -94,6 +100,8 @@ behavior_tests:
     provenance: 'prior: under closure the catalytic/template pools settle to a sustained balance (small second-half drift). Observed (deterministic) relative drift midpoint->end: genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25; the 0.25 threshold is a legibility bound, the "holds steady" direction is the prediction (tests/test_fig08_autopoiesis.py::test_template_pools_hold_a_steady_balance)'
   requires_simulation: fig08-runnable
 - name: structural-material-is-net-produced
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: While the template pools hold steady, the cell's structural material (membrane, proteins, enzymes) is net-produced over the run -- the organization builds itself, the far-from-equilibrium direction the paper describes.
   measure:
@@ -107,6 +115,8 @@ behavior_tests:
     provenance: 'prior: the coupling net-produces structural material. Observed (deterministic) start -> end: membrane 0.20 -> 2.20, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50 -- each end strictly above its start (the pass_if encodes end - start > 0) (tests/test_fig08_autopoiesis.py::test_structural_material_is_net_produced)'
   requires_simulation: fig08-runnable
 - name: metabolism-knockout-starves-downstream-pools
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The sustained balance is a property of the coupling, not of any pool in isolation. Remove metabolism (its sole downstream source) and metabolites collapse toward zero while energy, whose only source is metabolism, freezes exactly at its seed.
   measure:
@@ -120,6 +130,8 @@ behavior_tests:
     provenance: 'prior: removing a process opens the loop and its downstream shared pools respond. Observed (deterministic): metabolites end 0.33 (base) -> 0.011 (KO), well under half of base; energy stays exactly 0.5 with metabolism removed vs growing to 0.58 in the baseline -- the dependent pools track the coupling, not their own reserves (tests/test_fig08_autopoiesis.py::test_knocking_out_metabolism_starves_downstream_pools)'
   requires_simulation: fig08-runnable
 - name: gene-expression-sustains-the-enzymes-metabolism-depends-on
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The maintenance loop closes both ways. Gene expression is the sole source of the enzyme pool, and metabolism depends on those enzymes. Knock gene expression out and the enzyme pool freezes exactly at its seed, dragging metabolism's own metabolite output down -- each process's outputs sustain the inputs the others depend on.
   measure:
@@ -133,6 +145,7 @@ behavior_tests:
     provenance: 'prior: the coupling that sustains one process''s inputs from another''s outputs is what keeps the balance up. Observed (deterministic): with gene expression removed the enzyme pool stays exactly 0.30 across the whole run (min == max == 0.30) vs growing to 0.50 in the baseline, and metabolism''s metabolite output falls from 0.33 to 0.23 -- the partner-input coupling made concrete (tests/test_fig08_autopoiesis.py::test_gene_expression_sustains_the_enzymes_metabolism_depends_on)'
   requires_simulation: fig08-runnable
 - name: runs-default-n-steps
+  gate_class: regression_pin
   classification: diagnostic
   control: positive
   description: 'Foundational control (not the scientific claim): the composite builds and runs its declared default horizon through the process-bigraph engine, emitting one row per tick plus the t=0 emit.'
@@ -151,6 +164,8 @@ behavior_tests:
 # A self-maintaining cell with a boundary, turnover, repair and viability.
 # Classified by the reviewer's evidence taxonomy (pass_if.kind).
 - name: mech-persists-and-pools-bounded
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig08-mechanistic
   description: 'Every component stays strictly positive and bounded, and with no injury the cell grows to a far-from-equilibrium STEADY STATE and holds it (small second-half drift) — persistence through continuous replacement, not the baseline''s monotonic accumulation.'
@@ -165,6 +180,8 @@ behavior_tests:
     provenance: 'INVARIANT. Observed all pools strictly positive and bounded over 90 ticks; with perturbation off, membrane/enzymes/energy second-half drift < 0.1 — a maintained steady state, not accumulation (tests/test_fig08_mechanistic.py::test_all_pools_positive_and_bounded, ::test_persists_at_a_steady_state)'
   requires_simulation: fig08-mechanistic
 - name: mech-turnover-requires-replacement
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig08-mechanistic
   description: 'The steady-state membrane is HELD by repair balancing first-order degradation — active component REPLACEMENT. Knock out repair and the membrane decays away, so the maintained level is a dynamic balance, not an inert store.'
@@ -179,6 +196,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed membrane held at ~3.8 with repair on, decaying toward 0 with repair off (epsilon) — turnover unopposed; the steady level requires continuous replacement (tests/test_fig08_mechanistic.py::test_turnover_requires_active_replacement)'
   requires_simulation: fig08-mechanistic
 - name: mech-recovers-after-injury
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig08-mechanistic
   description: 'A one-time membrane injury at tick 45 (−60%) drops the boundary and depresses viability; the cell then REPAIRS the membrane and viability RECOVERS to its pre-injury steady state. Self-repair, not a scripted bounce — with repair off there is no recovery, and an early injury (tick 25) is also recovered.'
@@ -193,6 +212,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed injury membrane 3.75→1.50, viability dip to 0.71, recovery to membrane 3.70 / viability 0.92 by tick 90; recovery requires active repair (repair-off stays collapsed), and an early injury at tick 25 is also recovered (tests/test_fig08_mechanistic.py::test_recovers_after_membrane_injury, ::test_repeated_perturbation_persists)'
   requires_simulation: fig08-mechanistic
 - name: mech-closure-break-collapses-viability
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig08-mechanistic
   description: 'Operational closure means every edge of the loop is required. Knocking out import, metabolism, enzyme-synthesis, or repair (epsilon, not 0.0) each collapses the membrane and drives viability to ~0 — dependence on every coupling edge, demonstrated.'
@@ -207,6 +228,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION (four single knockouts, epsilon). Observed final viability 0.00 and membrane collapsed for each of k_transport / k_met / k_expr / k_repair — every edge of the operational-closure loop is load-bearing (tests/test_fig08_mechanistic.py::test_knockout_collapses_viability[*])'
   requires_simulation: fig08-mechanistic
 - name: mech-depends-on-external-input
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig08-mechanistic
   description: 'Matched external-input accounting: on a non-replenished (closed) medium the external nutrient is drawn down and the cell cannot self-maintain — viability collapses. The self-maintenance is of ORGANIZATION, not of matter/energy; it runs on a throughput the medium must supply.'
@@ -432,7 +455,7 @@ conclusion_logic:
     - a pool collapses to zero or explodes (a rate constant or yield is mistuned, breaking the balance)
     - a template pool drifts more than 25% over the second half (the coupling no longer settles to a sustained balance within the run)
     - structural material is not net-produced (containment/expression yields too low)
-    - a knockout fails to move its downstream pool (the shared-pool wiring is broken, so the processes are not actually coupled through the pools they should share)
+    - a knockout fails to move its downstream pool (the shared-pool wiring is broken, so the processes are not actually coupled through the pools they share)
     block_downstream: 'Any figure study that reuses the shared-flat-pool coupling pattern to demonstrate compositional self-maintenance.'
 limitations:
 - '`fig08-runnable` is a didactic, toy-real composite -- the ten building-block pools, the six processes'' rate constants (assembly_rate 0.05, k_cat 0.1, k_expr 0.08, k_rep 0.015, turnover_rate 0.08, k_react 0.06), and the yields are hand-chosen so the coupled balance is legible over a 40-tick run, NOT calibrated to a named organism, metabolite, enzyme, or literature flux.'
@@ -463,18 +486,68 @@ visualizations:
 # revision: fig-08 composes the molecular interfaces of fig-06 (and fig-03/fig-07)
 # into a cell whose coupled processes maintain one another (the edge relation/rationale
 # is carried in the investigation spine; parent_studies schema allows only study+condition).
-parent_studies:
-- study: fig-06
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Self-maintenance composes the cellular interface, molecular energetics (fig-06), and nested
-    containment into a coupled whole — closure presupposes the energetics fig-06 establishes.
-- study: autopoiesis
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    The lumped operational-closure figure is the non-spatial counterpart of autopoiesis's spatial
-    self-maintained membrane — same self-production claim, different level of composition.
 experiment: 'Run the `fig08-runnable` composite (six coupled processes -- containment, metabolism, gene expression, replication, diffusion, mass-action reactions -- over ten shared flat scalar building-block pools) for its declared 40 ticks through the process-bigraph engine, and measure whether the coupled processes maintain one another into a sustained, far-from-equilibrium balance: every pool positive and bounded, the catalytic/template pools holding steady while structural material is net-produced. Then open the maintenance loop with two process knockouts (metabolism; gene expression) and measure whether the downstream shared pools each depend on collapse -- showing the balance is a property of the coupling, not of any pool in isolation.'
 result: 'Over a deterministic 40-tick run the `fig08-runnable` composite holds the coupled balance: every observed pool stays strictly positive (smallest minimum metabolites 0.267) and bounded (largest value membrane 2.2), the catalytic/template pools hold a sustained steady balance (second-half drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25), and the structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). Two process knockouts confirm the balance is a property of the coupling: removing metabolism starves its downstream metabolite pool (0.33 -> 0.011) and freezes energy exactly at its 0.5 seed, and removing gene expression freezes the enzyme pool metabolism depends on exactly at its 0.3 seed and drops metabolism''s metabolite output (0.33 -> 0.23). Fig. self_organized_process is executable -- the caption''s self-maintaining composition runs and holds under test. This is a toy-real didactic demonstration; its rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation.'
+readouts:
+- name: min over run of each pool
+  store_path: min over run of each pool
+  description: 'Over the full 40-tick run every observed shared pool (membrane, metabolites, enzymes, proteins, genes, energy, nucleic_acids) stays strictly positive -- the…'
+  status: available
+- name: max over run of each pool
+  store_path: max over run of each pool
+  description: 'The coupled balance neither runs away nor blows up -- every pool stays well bounded over the run, the mark of a maintained far-from-equilibrium steady state…'
+  status: available
+- name: relative drift midpoint -> end of each template pool
+  store_path: relative drift midpoint -> end of each template pool
+  description: 'The catalytic/template pools (genes, energy, metabolites, nucleic_acids) hold a sustained steady balance across the second half of the run -- the maintained…'
+  status: available
+- name: end vs start of each structural pool
+  store_path: end vs start of each structural pool
+  description: 'While the template pools hold steady, the cell''s structural material (membrane, proteins, enzymes) is net-produced over the run -- the organization builds…'
+  status: available
+- name: baseline vs metabolism-knockout end states
+  store_path: baseline vs metabolism-knockout end states
+  description: 'The sustained balance is a property of the coupling, not of any pool in isolation. Remove metabolism (its sole downstream source) and metabolites collapse…'
+  status: available
+- name: baseline vs gene-expression-knockout end states
+  store_path: baseline vs gene-expression-knockout end states
+  description: 'The maintenance loop closes both ways. Gene expression is the sole source of the enzyme pool, and metabolism depends on those enzymes. Knock gene expression…'
+  status: available
+- name: len(emitted rows)
+  store_path: len(emitted rows)
+  description: 'Foundational control (not the scientific claim): the composite builds and runs its declared default horizon through the process-bigraph engine, emitting one…'
+  status: available
+- name: min/max of each pool; second-half relative drift
+  store_path: min/max of each pool; second-half relative drift
+  description: 'Every component stays strictly positive and bounded, and with no injury the cell grows to a far-from-equilibrium STEADY STATE and holds it (small second-half…'
+  status: available
+- name: membrane end-state, repair on vs off
+  store_path: membrane end-state, repair on vs off
+  description: 'The steady-state membrane is HELD by repair balancing first-order degradation — active component REPLACEMENT. Knock out repair and the membrane decays away, so…'
+  status: available
+- name: membrane, viability around the injury; recovery vs repair-off
+  store_path: membrane, viability around the injury; recovery vs repair-off
+  description: 'A one-time membrane injury at tick 45 (−60%) drops the boundary and depresses viability; the cell then REPAIRS the membrane and viability RECOVERS to its…'
+  status: available
+- name: final viability + membrane under each single knockout
+  store_path: final viability + membrane under each single knockout
+  description: 'Operational closure means every edge of the loop is required. Knocking out import, metabolism, enzyme-synthesis, or repair (epsilon, not 0.0) each collapses…'
+  status: available
+- name: external nutrient + viability under no replenishment
+  store_path: external nutrient + viability under no replenishment
+  description: 'Matched external-input accounting: on a non-replenished (closed) medium the external nutrient is drawn down and the cell cannot self-maintain — viability…'
+  status: available
+simulation_set:
+- name: fig08-runnable
+  kind: single
+  base_model: meta_modelers_guide.composites.fig08-runnable
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: fig-06
+    condition: tests-passed
+    relation: builds-on
+  - study: autopoiesis
+    condition: tests-passed
+    relation: builds-on

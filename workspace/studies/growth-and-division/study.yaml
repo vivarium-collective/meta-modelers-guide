@@ -186,6 +186,8 @@ key_assumptions:
   compositional resolutions -- place-graph rewrite vs. spatial pixel-level engine operation.'
 behavior_tests:
 - name: population-steps-up-by-division
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Over a 36-tick run sampled every 3 ticks, the CPM cell population steps up as
     cells' metabolism-driven volume growth repeatedly crosses vol_threshold and native
@@ -206,6 +208,8 @@ behavior_tests:
       tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics)'
   requires_simulation: growth-division-spatial
 - name: population-never-shrinks
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The n_cells trajectory is monotonic non-decreasing across the run -- division only
     adds cells; no cell is ever lost to a phantom or a scripted removal.
@@ -223,6 +227,8 @@ behavior_tests:
       (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns))'
   requires_simulation: growth-division-spatial
 - name: daughters-resume-growth-without-runaway
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Starting from a single seed cell, the population grows via division over 30 ticks,
     and daughters resume growth after being split -- no runaway single cell absorbing the
@@ -242,6 +248,7 @@ behavior_tests:
       (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)'
   requires_simulation: growth-division-spatial
 - name: per-cell-volume-stays-bounded
+  gate_class: regression_pin
   classification: primary
   description: Per-cell CPM volume sawtooths in a bounded band throughout the run -- each cell
     grows toward vol_threshold, is halved by division back near reset_target, and immediately
@@ -262,6 +269,7 @@ behavior_tests:
       tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)'
   requires_simulation: growth-division-spatial
 - name: native-division-conserves-mass
+  gate_class: regression_pin
   classification: diagnostic
   control: negative
   description: 'Foundational control (not this study''s scientific claim): the native CPM
@@ -285,6 +293,8 @@ behavior_tests:
       test_below_threshold_is_noop)'
   requires_simulation: none
 - name: division-desynchronizes-from-lockstep
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'Per §Growth and division: daughters "remain coupled through shared environmental
     state, so their interfaces are not independent ... enabling both coordination and divergence."
@@ -312,6 +322,8 @@ behavior_tests:
       (tests/test_growth_division_regime.py::test_division_desynchronizes_from_lockstep_powers_of_two)'
   requires_simulation: growth-division-spatial
 - name: lineage-compounds-into-a-tree
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The population count is a genealogy, not a tally -- every live cell's generation
     and parent id are tracked from the engine's own divide_cells return value (never scripted),
@@ -709,14 +721,6 @@ visualizations:
     chart: html
     caption: 'Synced n_cells/total_volume metrics for the growth-division run -- a monotonic
       non-decreasing population staircase, division events marked, over 36 ticks.'
-parent_studies:
-- study: disintegration
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Runs the CPM cell's viability dynamics in the constructive direction (volume gain
-    then fission) on the spatial machinery disintegration established — the counterpart
-    that lets a cell persist and reproduce rather than dissolve.
 experiment: 'Run the `growth-division-spatial` composite (`CpmGrowthDivision`, a single CPM cell
   seeded on a uniform abundant 60x60 glucose field, glucose_vmax=1.5, vol_threshold=80,
   reset_target=40) to completion over 36 ticks through the process-bigraph engine, and measure
@@ -745,3 +749,35 @@ result: 'Over a 36-tick run sampled every 3 ticks, a single founder cell compoun
   rewrite.
 
   '
+readouts:
+- name: n_cells
+  store_path: obs.n_cells
+  description: 'Over a 36-tick run sampled every 3 ticks, the CPM cell population steps up as cells'' metabolism-driven volume growth repeatedly crosses vol_threshold and…'
+  status: available
+- name: volume
+  store_path: obs.volume
+  description: 'Per-cell CPM volume sawtooths in a bounded band throughout the run -- each cell grows toward vol_threshold, is halved by division back near reset_target, and…'
+  status: available
+- name: cell_volumes
+  store_path: cell_volumes
+  description: 'Foundational control (not this study''s scientific claim): the native CPM divide_cells operation this study''s division depends on splits a grown cell into two…'
+  status: available
+- name: generation
+  store_path: obs.n_cells, obs.generation
+  description: 'Per §Growth and division: daughters "remain coupled through shared environmental state, so their interfaces are not independent ... enabling both coordination…'
+  status: available
+- name: max_generation
+  store_path: obs.max_generation
+  description: 'The population count is a genealogy, not a tally -- every live cell''s generation and parent id are tracked from the engine''s own divide_cells return value…'
+  status: available
+simulation_set:
+- name: growth-division-spatial
+  kind: single
+  base_model: meta_modelers_guide.composites.growth-division-spatial
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: disintegration
+    condition: tests-passed
+    relation: builds-on

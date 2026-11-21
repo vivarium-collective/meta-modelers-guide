@@ -58,6 +58,7 @@ units_and_time:
   note: No quantity here is calibrated to a named organism, biofilm, adhesion energetics, or ECM-secretion literature target.
 behavior_tests:
 - name: free-cells-attach-into-a-nested-biofilm
+  gate_class: regression_pin
   classification: primary
   description: Running the composite rewrites the place graph so that all four free planktonic (top-level) cells attach at once into a single nested biofilm microcolony -- caption a's "surface attachment" and caption b's cells becoming "part of a collective composite," conserving the cells (free -> 0 exactly as nested -> all).
   measure:
@@ -72,6 +73,8 @@ behavior_tests:
     provenance: 'prior: a dispersed population of free cells attaches and aggregates into one nested community, conserving cell count (free -> 0 as nested -> all). Observed on the deterministic run: free 4 through t=5, then 4 -> 0 at t=6 while a biofilm node appears holding all 4 nested cells; free stays 0 thereafter. Exact counts are regression pins, valid while the composite config is pinned (deterministic, no RNG) (tests/test_fig10_dynamics.py::test_free_cells_attach_into_a_nested_biofilm)'
   requires_simulation: fig10-emergence
 - name: attachment-nests-cells-one-level-deeper
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The fig 10b principle itself -- biofilm formation is a HIERARCHICAL REORGANIZATION, not merely more cells. The cells' place-graph depth jumps from 1 (free top-level siblings of env) to 2 (children of a NEW `biofilm` collective node that did not exist before), a genuine re-parenting that is never undone.
   measure:
@@ -86,6 +89,7 @@ behavior_tests:
     provenance: 'prior: development embeds individual cells in a collective composite with its own shared state -- a depth-increasing re-parenting, not relabelling. Observed: at t=0 the four cells are direct children of env (depth 1) and no `biofilm` key exists; a `biofilm` collective node appears exactly at t=6 with all four cells nested inside it (depth 2), and depth stays 2 with zero top-level cells for the rest of the run. Deterministic; exact tick is a pin, the depth 1 -> 2 re-parenting is the a-priori prediction (tests/test_fig10_dynamics.py::test_attachment_nests_cells_one_level_deeper)'
   requires_simulation: fig10-emergence
 - name: ecm-secreted-only-after-maturation
+  gate_class: regression_pin
   classification: primary
   description: The matured sessile community secretes an extracellular matrix -- caption a's "ECM secretion" -- strictly AFTER attachment, and ECM only ever exists while the nested community is present (secreted by a collective, never by free cells).
   measure:
@@ -100,6 +104,7 @@ behavior_tests:
     provenance: 'prior: ECM appears only after maturation (strictly after attachment) and only while the sessile community exists. Observed: ECM 0 through t=11, then 1 at t=12, 2 at t=13, 3 at t=14, holding at 3; every ECM-bearing frame has 4 nested cells. Deterministic pins; the strictly-after-attachment ordering is the a-priori prediction (tests/test_fig10_dynamics.py::test_ecm_appears_only_after_maturation)'
   requires_simulation: fig10-emergence
 - name: division-rewrites-and-partitions-the-place-graph
+  gate_class: regression_pin
   classification: primary
   description: 'Companion cell-cycle rewrite (same section, Fig division): running the composite makes the place graph change over engine steps -- a chromosome segregates 1 -> 2 while still one cell, then the cell divides into two daughters that each keep exactly one chromosome carrying its DNA (a true partition, not a copy), and the colony keeps dividing 1 -> 2 -> 4 -> 8 under a capacity cap.'
   measure:
@@ -114,6 +119,7 @@ behavior_tests:
     provenance: 'prior: division is a compositional rewrite that partitions state (DNA/biomass) into two daughters, each re-establishing a viable interface. Observed on the deterministic build: chromosome segregates 1 -> 2 while still one cell, then divides to 2 cells holding 2 chromosomes total (not 4), each daughter one chromosome with dna==1.0; a 20-step run reaches 4 then 8 cells; capacity=4 caps at 4 (tests/test_fig10_rewrite.py::test_chromosome_segregates_before_division, tests/test_fig10_rewrite.py::test_each_daughter_keeps_one_chromosome_with_dna, tests/test_fig10_rewrite.py::test_keeps_dividing_when_run_longer, tests/test_fig10_rewrite.py::test_capacity_caps_the_colony)'
   requires_simulation: fig10-cell-cycle
 - name: collectives-colonize-and-a-lineage-sweeps
+  gate_class: regression_pin
   classification: primary
   description: 'Companion collectives rewrites (same section, Fig development b and Fig evolution): a biofilm colonizes to carrying capacity then secretes ECM (never before it is full), and a mutant lineage arises and sweeps the wildtype to extinction within a bounded population -- topology reorganizing under bounds, the higher-scale echo of the biofilm emergence.'
   measure:
@@ -131,6 +137,8 @@ behavior_tests:
 # Spatially-emergent biofilm: attachment emerges from aggregation (not a clock),
 # ECM gives persistence, controls isolate each arm. Classified by pass_if.kind.
 - name: mech-identity-preserved-on-reparenting
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig10-mechanistic
   description: 'The emergent place-graph rewrite that nests the cells under the biofilm node preserves BOTH cell count and per-cell biomass — reparenting is a pure topology move (the review''s requested smoke test), it neither creates nor destroys cells or mass.'
@@ -145,6 +153,8 @@ behavior_tests:
     provenance: 'INVARIANT. Observed all 6 cells nested under the biofilm node with per-cell biomass preserved exactly (tests/test_fig10_mechanistic.py::test_cell_identity_and_biomass_preserved_on_reparenting)'
   requires_simulation: fig10-mechanistic
 - name: mech-formation-is-emergent-not-clocked
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig10-mechanistic
   description: 'Formation is triggered by the cluster geometry, so its timing depends on how fast the cells aggregate — stronger adhesion forms earlier, weaker later. A wall-clock trigger (the baseline) fires at the same tick regardless. This is the decisive refutation of the baseline''s scheduled attach_at.'
@@ -159,6 +169,8 @@ behavior_tests:
     provenance: 'PROSPECTIVE_PREDICTION. Observed formation at t=7, 6, 5 for adhesion 0.25, 0.35, 0.55 — timing set by aggregation speed, which a clock cannot reproduce (tests/test_fig10_mechanistic.py::test_formation_is_emergent_not_clocked)'
   requires_simulation: fig10-mechanistic
 - name: mech-density-hastens-formation
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig10-mechanistic
   description: 'A denser initial cluster (smaller ring) reaches quorum proximity sooner and forms earlier; cells spread beyond the sensing radius never coordinate and do not form — a quorum/density dependence, not a fixed schedule.'
@@ -173,6 +185,8 @@ behavior_tests:
     provenance: 'EMPIRICAL_COMPARISON (quorum/density). Observed earlier formation for the denser start and no formation when cells begin beyond the sensing radius (tests/test_fig10_mechanistic.py::test_density_hastens_formation)'
   requires_simulation: fig10-mechanistic
 - name: mech-no-adhesion-prevents-aggregate
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig10-mechanistic
   description: 'Matched-null control: without local adhesion (set with epsilon, not 0.0) the cells never aggregate — the cluster radius stays near its initial spread and no biofilm forms. Adhesion is necessary for the collective.'
@@ -187,6 +201,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed no formation and cluster radius held at ~4.2 (initial ring) with adhesion=epsilon (tests/test_fig10_mechanistic.py::test_no_adhesion_prevents_stable_aggregate)'
   requires_simulation: fig10-mechanistic
 - name: mech-blocked-ecm-changes-persistence
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig10-mechanistic
   description: 'Matched-null control: with ECM secretion off (epsilon) the cells still aggregate and form, but without matrix the community does not persist — sessile cells spread back apart, so the final cluster is far larger and cohesion stays ~0. ECM is necessary for persistence/morphology, not for formation.'
@@ -201,6 +217,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed full persists (radius 3.0, cohesion 0.95) while no-ECM disperses (radius 11.3, cohesion 0.0) — same formation, different persistence (tests/test_fig10_mechanistic.py::test_blocked_ecm_changes_persistence_and_morphology)'
   requires_simulation: fig10-mechanistic
 - name: mech-collective-port-only-after-organization
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig10-mechanistic
   description: 'The collective-level observables (cohesion, the biofilm node) are inert BEFORE organization and operative only AFTER: cohesion is exactly 0 pre-formation and positive post-formation, and the biofilm node is absent before and present after. Collective ports come online only once the collective exists.'
@@ -465,22 +483,60 @@ visualizations:
 # revision: fig-09's growth-and-division produces the individual cells whose spatial
 # aggregation fig-10 organizes into a collective (the edge relation/rationale is carried
 # in the investigation spine; parent_studies schema allows only study+condition).
-parent_studies:
-- study: fig-09
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Development requires reproduction: a collective forms from dividing cells, so the
-    multicellular reorganization is only meaningful over fig-09's division machinery.
-- study: development-and-evolution
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    The figure's development/collective-formation is the lumped counterpart of
-    draft-to-living-cell's spatial development-and-evolution result.
 experiment: 'Run the `fig10-emergence` composite (BiofilmEmergence over an env tree[node] of a surface and four free motile bacteria; attach_at=6, mature_at=12, ecm_count=3) 16 steps to completion through the process-bigraph engine, and measure whether it performs a genuine place-graph rewrite: free top-level cells re-parenting into a new nested biofilm collective node at attachment (depth 1 -> 2), then that matured community secreting an extracellular matrix. Cross-check the section''s principle with the companion cell-cycle (build_fig10_division) and collectives (build_fig10_biofilm, build_fig10_evolution) rewrites exercised by the same fig-10 test suite.
 
   '
 result: 'Over a deterministic 16-step run, the four free motile bacteria hold as top-level place-graph siblings through t=5, then at t=6 all four attach at once (free 4 -> 0, biofilm-nested 0 -> 4) as a new `biofilm` collective node appears and the cells'' place-graph depth increases from 1 to 2 and never reverts -- caption b''s "hierarchical reorganization where individual cells become part of a collective composite." The matured community then secretes an extracellular matrix strictly after attachment (ECM 0 through t=11, then 1/2/3 at t=12/13/14, only while the nested community is present) -- caption a''s "surface attachment, ECM secretion, growth of structured communities." Every count and timing is exact and reproduces run to run (no RNG). The companion rewrites confirm the same principle across the section: a chromosome segregates 1 -> 2 then a cell divides into two daughters that each keep one chromosome with its DNA (true partition), continuing 1 -> 2 -> 4 -> 8 under a capacity cap; a biofilm colonizes to capacity 5 then secretes ECM; and a mutant lineage arises and sweeps the wildtype to extinction within a bounded population. The §Development figure is executable, not merely drawn. The composites are toy-real and uncalibrated; the calibrated spatial cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.
 
   '
+readouts:
+- name: env
+  store_path: env
+  description: 'Running the composite rewrites the place graph so that all four free planktonic (top-level) cells attach at once into a single nested biofilm microcolony…'
+  status: available
+- name: colony
+  store_path: colony
+  description: 'Companion cell-cycle rewrite (same section, Fig division): running the composite makes the place graph change over engine steps -- a chromosome segregates 1 ->…'
+  status: available
+- name: biofilm / population
+  store_path: biofilm / population
+  description: 'Companion collectives rewrites (same section, Fig development b and Fig evolution): a biofilm colonizes to carrying capacity then secretes ECM (never before it…'
+  status: available
+- name: colony tree before vs after formation
+  store_path: colony tree before vs after formation
+  description: 'The emergent place-graph rewrite that nests the cells under the biofilm node preserves BOTH cell count and per-cell biomass — reparenting is a pure topology…'
+  status: available
+- name: formation tick vs adhesion strength
+  store_path: formation tick vs adhesion strength
+  description: 'Formation is triggered by the cluster geometry, so its timing depends on how fast the cells aggregate — stronger adhesion forms earlier, weaker later. A…'
+  status: available
+- name: formation tick vs initial ring radius
+  store_path: formation tick vs initial ring radius
+  description: 'A denser initial cluster (smaller ring) reaches quorum proximity sooner and forms earlier; cells spread beyond the sensing radius never coordinate and do not…'
+  status: available
+- name: cluster_radius, formed under adhesion=epsilon
+  store_path: cluster_radius, formed under adhesion=epsilon
+  description: 'Matched-null control: without local adhesion (set with epsilon, not 0.0) the cells never aggregate — the cluster radius stays near its initial spread and no…'
+  status: available
+- name: final cluster_radius and cohesion, full vs ecm_rate=epsilon
+  store_path: final cluster_radius and cohesion, full vs ecm_rate=epsilon
+  description: 'Matched-null control: with ECM secretion off (epsilon) the cells still aggregate and form, but without matrix the community does not persist — sessile cells…'
+  status: available
+- name: cohesion and the biofilm node, pre- vs post-formation
+  store_path: cohesion and the biofilm node, pre- vs post-formation
+  description: 'The collective-level observables (cohesion, the biofilm node) are inert BEFORE organization and operative only AFTER: cohesion is exactly 0 pre-formation and…'
+  status: available
+simulation_set:
+- name: fig10-emergence
+  kind: single
+  base_model: meta_modelers_guide.composites.fig10-emergence
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: fig-09
+    condition: tests-passed
+    relation: builds-on
+  - study: development-and-evolution
+    condition: tests-passed
+    relation: builds-on

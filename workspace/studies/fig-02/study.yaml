@@ -51,6 +51,8 @@ units_and_time:
   note: No quantity here is calibrated to a named biological process, rate, or literature target; the magnitudes are didactic.
 behavior_tests:
 - name: fast-clock-outpaces-slow-clock
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The fast process updates the shared store far more often than the slow one -- two rates coordinated through a single store, the core of Fig orchestration panel (a).
   measure:
@@ -64,6 +66,8 @@ behavior_tests:
     provenance: 'prior: a fast process (interval 1) and a slow process (interval 5) sharing one store must update it at visibly different rates -> the fast pool changes many-fold more often than the slow store. Observed: the fast pool changes on every tick (20 changes) while the slow store changes 3 times (the three visible conversions), so fast_changes (20) > 3 * slow_changes (3); the >-direction is the a-priori prediction, the exact counts are deterministic pins (tests/test_fig02_runs.py::test_fast_pool_updates_far_more_often_than_slow_biomass, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)'
   requires_simulation: fig02-runnable
 - name: fast-pool-is-a-sawtooth
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The shared fast pool rises on the fast clock and is drawn down each time the slow process converts it -- the combined trajectory reflecting both timescales in one series.
   measure:
@@ -77,6 +81,8 @@ behavior_tests:
     provenance: 'prior: the fast process fills the pool every tick while the slow process periodically draws a fraction back out -> molecules is a sawtooth. Observed: molecules ramps +1/tick (e.g. 5->9 over t=5..9) then drops at each slow firing (9->7 at t=10, 11->7.8 at t=15, 11.8->8.12 at t=20) -- both up- and down-steps present, deterministic (tests/test_fig02_runs.py::test_fast_pool_is_a_sawtooth)'
   requires_simulation: fig02-runnable
 - name: biomass-advances-monotonically-on-slow-clock
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Biomass is produced on the slow clock in a coarse staircase, never returns to the pool (non-decreasing), and ends strictly above where it started -- the slow-timescale product accumulating one way.
   measure:
@@ -91,6 +97,8 @@ behavior_tests:
     provenance: 'prior: the slow process moves mass one way (pool -> biomass) on its own clock -> biomass is non-decreasing, flat between firings, ending above start. Observed: biomass holds 0 through t=9, then steps 3.0 (t=10), 7.2 (t=15), 11.88 (t=20) -- exactly 3 slow conversions, monotone, never returning to the pool. The staircase levels are deterministic regression pins; the monotone-nondecreasing direction and end>start are the a-priori predictions (tests/test_fig02_runs.py::test_biomass_only_advances, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)'
   requires_simulation: fig02-runnable
 - name: mass-conserved-across-timescales
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Mass is conserved through the shared store across the two timescales -- at every tick the shared-store total (molecules + biomass) equals the cumulative fast injection (== elapsed time). Nothing is created or lost in crossing timescales; the slow process only moves mass within the pool.
   measure:
@@ -105,6 +113,7 @@ behavior_tests:
     provenance: 'prior: the fast process is the sole source (injects rate*dt = 1.0 per tick) and the slow process only moves mass between molecules and biomass within the one pool -> the shared-store total equals the cumulative fast injection at every tick, which for rate=1.0 equals elapsed time. Observed exactly at every tick (t=5: 5+0; t=10: 7+3; t=15: 7.8+7.2; t=20: 8.12+11.88 = 20.0). Deterministic -- no RNG; the == invariant is the a-priori prediction, the final split is a regression pin (tests/test_fig02_runs.py::test_mass_conserved_across_timescales)'
   requires_simulation: fig02-runnable
 - name: fast-process-adds-each-tick
+  gate_class: regression_pin
   classification: diagnostic
   control: unit
   description: 'Foundational unit control (not the composite-level claim): the fast process''s handler adds rate*interval to molecules on a single step, driven directly.'
@@ -120,6 +129,8 @@ behavior_tests:
     provenance: 'FastProduction (rate 1.0) returns +1.0 to molecules for a unit interval, driven directly with no composite -- an exact deterministic unit pin (tests/test_fig02_runs.py::test_fast_production_adds_each_tick)'
   requires_simulation: none
 - name: slow-conversion-conserves-what-it-moves
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   control: unit
   description: 'Foundational unit control (not the composite-level claim): the slow process''s handler moves exactly what it converts -- +converted to biomass, -converted to molecules -- so its single-step delta nets to zero.'
@@ -138,6 +149,8 @@ behavior_tests:
 # Separates multirate scheduling from numerical accuracy; reports an honest
 # input-output ledger. Classified by the reviewer's evidence taxonomy (pass_if.kind).
 - name: mech-input-output-ledger-closes
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig02-mechanistic
   description: 'The explicit input-output ledger closes exactly on every step: cumulative_input = ΔmetabolitePool + Δbiomass + Δwaste. This is the honest replacement for the baseline''s "molecules + biomass == time" — biomass is only the yield-fraction of throughput, and the waste sink (turnover + conversion loss) carries the balance, so pool+biomass is NOT the budget and NOT closed-system conservation.'
@@ -152,6 +165,7 @@ behavior_tests:
     provenance: 'INVARIANT. Observed ledger residual ≤ 1.8e-15 over the 20-time-unit run; final M+biomass ≈ 2.2 vs cumulative input 20.0 (waste carries ~17.8). The baseline "pool+biomass==time" is an input-budget artefact, not conservation (tests/test_fig02_mechanistic.py::test_input_output_ledger_closes_every_step, ::test_pool_plus_biomass_is_not_closed_conservation, ::test_no_mass_created_at_coincident_event_boundaries)'
   requires_simulation: fig02-mechanistic
 - name: mech-euler-convergence
+  gate_class: regression_pin
   classification: primary
   variant: fig02-mechanistic
   description: 'Refining the whole scheme (both clocks scaled together) converges to a fine-step reference: the stiff metabolite pool''s L1 trajectory error falls monotonically toward zero, ~O(Δt) (first-order explicit Euler). Numerical ACCURACY is thus a distinct, measurable axis from multirate scheduling.'
@@ -166,6 +180,8 @@ behavior_tests:
     provenance: 'NUMERICAL_CONVERGENCE. Observed L1 pool error 2.27 → 0.10 → 0.052 → 0.025 → 0.011 as Δt halves (roughly slope-1 O(Δt)) (tests/test_fig02_mechanistic.py::test_euler_convergence_when_both_clocks_refined)'
   requires_simulation: fig02-mechanistic
 - name: mech-multirate-is-not-accuracy
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig02-mechanistic
   description: 'Multirate scheduling (which clock fires when) is NOT the same as numerical accuracy. The pool error is controlled by the FAST clock (the stiff turnover): with a coarse fast clock (r·Δt=1.5) the pool overshoots in the transient; refining only the fast clock cuts the error even at a fixed coarse slow clock. A coarse schedule can still be accurate if the stiff process is resolved on its own clock — the point of multirate.'
@@ -180,6 +196,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed the fast clock controls the stiff-transient pool error independently of the slow clock, demonstrating scheduling ≠ accuracy (tests/test_fig02_mechanistic.py::test_resolving_fast_clock_improves_pool_accuracy)'
   requires_simulation: fig02-mechanistic
 - name: mech-schedule-order-invariant
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig02-mechanistic
   description: 'Both processes read the shared pool at the tick boundary and return summed deltas, so coincident fast/slow updates are SYNCHRONOUS: swapping their order in the schedule leaves the trajectory identical to machine precision. A well-posed scheduler, not an order-sensitive artefact.'
@@ -394,13 +412,45 @@ visualizations:
 # revision: orchestration composes fig-01's typed source→store→sink primitives across
 # timescales (edge relation/rationale carried in the investigation spine; parent_studies
 # schema allows only study+condition).
-parent_studies:
-- study: fig-01
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Orchestration instantiates fig-01's typed source->store->sink wiring and conservation
-    discipline — the scheduling layer is only meaningful over the interface contract fig-01
-    defines.
 experiment: 'Run the `fig02-runnable` composite (FastProduction interval 1.0 rate 1.0 and SlowConversion interval 5.0 yield_frac 0.6 wired to one shared pool store) to completion over 20 ticks through the process-bigraph engine, and measure whether two processes updating at different rates through a single shared store reproduce Fig orchestration panel (a): the fast clock outpacing the slow clock, a sawtooth fast pool, a coarse monotone biomass staircase, and mass conserved through the shared store across the two timescales.'
 result: 'Over the deterministic 20-tick run, the fast process updates the shared store on every tick (20 changes) while the slow process converts only 3 times (at t=10, 15, 20), so the fast clock visibly outpaces the slow clock. `molecules` is a sawtooth -- it ramps +1/tick and is drawn down at each slow firing (9->7 at t=10, 11->7.8 at t=15, 11.8->8.12 at t=20) -- while `biomass` advances monotonically in a coarse staircase on the slow clock (0 -> 3.0 -> 7.2 -> 11.88), never returning to the pool. The two rates are coordinated through the ONE shared store and mass is conserved across the timescales: at every emitted tick `molecules + biomass` equals the cumulative fast injection (== elapsed time), ending 8.12 + 11.88 = 20.0. Every value is fixed and deterministic (no RNG), so the whole trajectory reproduces exactly run to run. The paper''s multi-timescale orchestration claim (Fig orchestration, panel a) is thus executable, not merely drawn -- demonstrated here at the didactic (uncalibrated) level for the orchestration mechanism, with panels (b) workflow-DAG and (c) event rewrites left schematic.'
+readouts:
+- name: molecules
+  store_path: obs.molecules
+  description: 'The fast process updates the shared store far more often than the slow one -- two rates coordinated through a single store, the core of Fig orchestration panel…'
+  status: available
+- name: biomass
+  store_path: obs.biomass
+  description: 'Biomass is produced on the slow clock in a coarse staircase, never returns to the pool (non-decreasing), and ends strictly above where it started -- the…'
+  status: available
+- name: biomass
+  store_path: obs.molecules + obs.biomass
+  description: 'Mass is conserved through the shared store across the two timescales -- at every tick the shared-store total (molecules + biomass) equals the cumulative fast…'
+  status: available
+- name: waste
+  store_path: obs.cumulative_input, obs.metabolite, obs.biomass, obs.waste
+  description: 'The explicit input-output ledger closes exactly on every step: cumulative_input = ΔmetabolitePool + Δbiomass + Δwaste. This is the honest replacement for the…'
+  status: available
+- name: 01)
+  store_path: metabolite trajectory vs fine reference (Δt=0.01)
+  description: 'Refining the whole scheme (both clocks scaled together) converges to a fine-step reference: the stiff metabolite pool''s L1 trajectory error falls monotonically…'
+  status: available
+- name: metabolite at an early transient time (t≈2)
+  store_path: obs.metabolite at an early transient time (t≈2)
+  description: 'Multirate scheduling (which clock fires when) is NOT the same as numerical accuracy. The pool error is controlled by the FAST clock (the stiff turnover): with…'
+  status: available
+- name: trajectory with fast/slow node order swapped
+  store_path: trajectory with fast/slow node order swapped
+  description: 'Both processes read the shared pool at the tick boundary and return summed deltas, so coincident fast/slow updates are SYNCHRONOUS: swapping their order in the…'
+  status: available
+simulation_set:
+- name: fig02-runnable
+  kind: single
+  base_model: meta_modelers_guide.composites.fig02-runnable
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: fig-01
+    condition: tests-passed
+    relation: builds-on

@@ -263,6 +263,8 @@ units_and_time:
   note: No quantity here is calibrated to a named stressor, material, or literature target.
 behavior_tests:
 - name: cell-holds-coherent-before-crossing
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Before the acetate crosses viability_threshold, the CPM cell stays coherent
     (substantial area, released flag unset, no debris) -- the hold phase of the §Disintegration
@@ -283,6 +285,7 @@ behavior_tests:
       tests/test_cpm_disintegration.py::test_holds_below_threshold)'
   requires_simulation: disintegration-spatial
 - name: stressor-crosses-viability-bound
+  gate_class: regression_pin
   classification: primary
   description: The footprint-local acetate mean crosses viability_threshold and the released
     flag latches, at a specific, deterministic tick -- the level-shift trigger itself.
@@ -301,6 +304,8 @@ behavior_tests:
       tests/test_disintegration_regime.py)'
   requires_simulation: disintegration-spatial
 - name: domain-resorbs-to-zero
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Once released, the cell's target volume ramps toward zero and its CPM lattice
     footprint resorbs to full dissolution well within the run -- the domain genuinely
@@ -322,6 +327,8 @@ behavior_tests:
       tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles)'
   requires_simulation: disintegration-spatial
 - name: shed-material-becomes-debris-particles
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The cell's vacated footprint pixels appear as debris particles in the shared
     map[particle] store as it resorbs, and the CPM->particle conversion conserves mass -- the
@@ -350,6 +357,8 @@ behavior_tests:
       tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)'
   requires_simulation: disintegration-spatial
 - name: cpm-particle-mass-ledger-closes
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The CPM->particle conversion conserves mass -- every shed debris particle is a distinct
     vacated lattice pixel, so the shed count equals the distinct-vacated-pixel count and never exceeds
@@ -375,6 +384,8 @@ behavior_tests:
       tests/test_disintegration_mass.py::test_shed_particles_equal_fresh_vacated_pixels_within_per_tick_cap)'
   requires_simulation: disintegration-spatial
 - name: debris-cloud-keeps-scattering
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The debris cloud's RMS spread strictly increases after dissolution completes --
     genuine scattering under BrownianMovement, not particles piling up or stalling.
@@ -395,6 +406,7 @@ behavior_tests:
       (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)'
   requires_simulation: disintegration-spatial
 - name: particle-bridge-emits-then-scatters
+  gate_class: regression_pin
   classification: diagnostic
   control: negative
   description: 'Foundational control (not this study''s scientific claim): the CPM-to-particle
@@ -820,14 +832,6 @@ visualizations:
     chart: html
     caption: 'Synced metrics for the disintegration run -- area collapses at released_tick == 7,
       particle count climbs to 63 and holds, over 20-24 ticks.'
-parent_studies:
-- study: cell-cell-coupling
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Drives the spatially-resolved CPM cell established upstream past a viability bound;
-    disintegration is only meaningful against a cell first shown to live and compete in
-    the field.
 experiment: 'Run the `disintegration-spatial` composite (`CpmDisintegration`, a single CPM cell
   on a shared 60x60 field grid inside a radial acetate gradient, coupled to a stock
   `BrownianMovement` particle-scatter process) to completion over 20-24 ticks through the
@@ -858,3 +862,27 @@ result: 'Over a 20-24 tick run, the CPM cell holds coherent (area > 30) through
   delete the cell, whole-cell models assume viability).
 
   '
+readouts:
+- name: area
+  store_path: obs.area
+  description: 'Before the acetate crosses viability_threshold, the CPM cell stays coherent (substantial area, released flag unset, no debris) -- the hold phase of the…'
+  status: available
+- name: released_tick
+  store_path: obs.released_tick
+  description: 'The footprint-local acetate mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.'
+  status: available
+- name: particles
+  store_path: particles
+  description: 'The cell''s vacated footprint pixels appear as debris particles in the shared map[particle] store as it resorbs, and the CPM->particle conversion conserves mass…'
+  status: available
+simulation_set:
+- name: disintegration-spatial
+  kind: single
+  base_model: meta_modelers_guide.composites.disintegration-spatial
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: cell-cell-coupling
+    condition: tests-passed
+    relation: builds-on

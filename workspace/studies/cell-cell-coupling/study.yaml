@@ -398,6 +398,8 @@ external_anchors:
 - 'acetate yield under overflow ≈ 0.3-0.5 mol acetate / mol glucose; glucose uptake ≈ 10 mmol/gDW/hr (E. coli aerobic) (order-of-magnitude anchors, not calibration targets).'
 behavior_tests:
 - name: competition-excludes-the-slower-cell
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field),
     the faster competitor ends with materially more biomass and CPM lattice volume than the
@@ -419,6 +421,8 @@ behavior_tests:
       tests/test_cellcell_multiseed.py for the 5-seed band)'
   requires_simulation: cellcell-compete
 - name: competition-volume-tracks-biomass
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The faster competitor's CPM lattice volume ends larger than the slower
     competitor's, confirming the biomass asymmetry carries through to structural (pixel-level)
@@ -437,6 +441,8 @@ behavior_tests:
       than unbounded dominance (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell)'
   requires_simulation: cellcell-compete
 - name: competition-loser-displaced-not-excluded
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   control: positive
   description: 'Boundary on the competition claim: the LOSER is out-competed spatially but
@@ -463,6 +469,7 @@ behavior_tests:
       (tests/test_cellcell_regimes.py::test_competition_loser_is_displaced_not_excluded)'
   requires_simulation: cellcell-compete
 - name: crossfeeding-consumer-blind-to-glucose
+  gate_class: regression_pin
   classification: primary
   description: Under the cross-feeding regime, the consumer cell's own local glucose concentration
     is effectively zero -- it is seeded outside the localized glucose depot and genuinely cannot
@@ -480,6 +487,8 @@ behavior_tests:
       (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)'
   requires_simulation: cellcell-crossfeed
 - name: crossfeeding-consumer-grows-on-acetate-alone
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Despite never touching glucose, the consumer's biomass grows over the run --
     it is living entirely on the secretor's diffused acetate byproduct.
@@ -497,6 +506,8 @@ behavior_tests:
       (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)'
   requires_simulation: cellcell-crossfeed
 - name: crossfeeding-acetate-plume-reaches-consumer
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   control: positive
   description: 'Positive structural verification (not a negative control): the cross-feeding
@@ -517,6 +528,7 @@ behavior_tests:
       footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)'
   requires_simulation: cellcell-crossfeed
 - name: two-writer-additivity-conserves-mass
+  gate_class: regression_pin
   classification: diagnostic
   control: structural
   description: 'Foundational structural verification (not a negative control, and not this
@@ -540,6 +552,8 @@ behavior_tests:
       (tests/test_cpm_colony_two_writer.py::test_two_disjoint_writers_sum_and_conserve)'
   requires_simulation: none
 - name: crossfeeding-secretor-knockout-consumer-fails-to-grow
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   control: negative
   description: 'Genuine negative control (secretor-knockout necessity): with the acetate secretor
@@ -564,6 +578,7 @@ behavior_tests:
       (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow)'
   requires_simulation: cellcell-crossfeed-knockout
 - name: crossfeed-handoff-requires-accelerated-transport
+  cites: [beer2024deriving]
   classification: diagnostic
   control: negative
   gate_class: acceptance_criterion
@@ -592,6 +607,7 @@ behavior_tests:
       (tests/test_cellcell_m7.py::test_crossfeed_realistic_diffusivity_handoff_fails)'
   requires_simulation: cellcell-crossfeed-realistic
 - name: dividing-competition-fast-lineage-dominates
+  cites: [beer2024deriving]
   classification: primary
   gate_class: acceptance_criterion
   description: 'M7b dividing-population competition (peer review) — lift the competition regime from
@@ -618,9 +634,10 @@ behavior_tests:
       dominance, not exclusion (tests/test_cellcell_m7.py::test_dividing_competition_fast_lineage_dominates)'
   requires_simulation: cellcell-compete-div
 - name: dividing-competition-slow-lineage-viable-in-monoculture
+  cites: [beer2024deriving]
   classification: diagnostic
   control: negative
-  gate_class: rigor_check
+  gate_class: acceptance_criterion
   description: 'M7b competition necessity control (peer review) — the slow lineage ALONE under the
     byte-identical boundary supply, maintenance and viability floor survives and grows. This earns the
     competition attribution — because the slow lineage thrives in monoculture but is suppressed to a
@@ -643,6 +660,7 @@ behavior_tests:
       (tests/test_cellcell_m7.py::test_slow_lineage_viable_in_monoculture_control)'
   requires_simulation: cellcell-compete-div-slowmono
 - name: colony-interface-observables-substitutable
+  gate_class: regression_pin
   classification: primary
   description: 'Interface surrogate calibration at the CELL-CELL (colony) level: a tuned MM colony
     is fit to reproduce the dFBA colony''s observables behind the same colony
@@ -675,6 +693,8 @@ behavior_tests:
       independent evidence.'
   requires_simulation: cellcell-compete-mm
 - name: colony-substitutable-pre-saturation
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'PRE-SATURATION test of the colony surrogate (peer-review M2) -- the real conversion
 
@@ -718,6 +738,7 @@ behavior_tests:
       the one that fails pre-saturation.'
   requires_simulation: cellcell-compete-mm
 - name: mm-colony-runs-without-cobra
+  gate_class: regression_pin
   classification: diagnostic
   control: positive
   description: 'The surrogate-model payoff: the MM colony realizes the same colony<->field
@@ -1370,14 +1391,6 @@ visualizations:
     chart: html
     caption: 'Synced per-cell metrics for the cross-feeding run -- the consumer''s local_glucose
       stays at 0.0 while local_acetate and biomass rise from the diffused plume, over 20 ticks.'
-parent_studies:
-- study: cell-environment-coupling
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Extends the single-cell sense/act loop to N cells over the same coupling process
-    (CpmColonyField reuses CpmCellField's port contract), so multicellular
-    viability-negotiation is only testable once the single-cell flagship closes.
 experiment: 'Run two `CpmColonyField` composites -- `cellcell-compete` (two glucose competitors,
   glucose_vmax 10.0 vs 4.0, one shared uniform glucose field) and `cellcell-crossfeed` (a
   glucose-to-acetate secretor plus an acetate-consuming cell, a localized glucose depot, and a
@@ -1418,3 +1431,61 @@ result: 'Over 20-tick runs, the competition regime drives a decisive spatial spl
   relationally by each cell''s interface.
 
   '
+readouts:
+- name: biomass
+  store_path: obs.biomass
+  description: 'Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field), the faster competitor ends with materially more biomass and CPM lattice…'
+  status: available
+- name: volume
+  store_path: obs.volume
+  description: 'The faster competitor''s CPM lattice volume ends larger than the slower competitor''s, confirming the biomass asymmetry carries through to structural…'
+  status: available
+- name: local_glucose
+  store_path: obs.local_glucose
+  description: 'Under the cross-feeding regime, the consumer cell''s own local glucose concentration is effectively zero -- it is seeded outside the localized glucose depot and…'
+  status: available
+- name: local_acetate
+  store_path: obs.local_acetate
+  description: 'Positive structural verification (not a negative control): the cross-feeding coupling is real, not two isolated cells -- the secretor''s acetate byproduct…'
+  status: available
+- name: glucose
+  store_path: fields.glucose
+  description: 'Foundational structural verification (not a negative control, and not this study''s scientific claim): the additive two-writer assumption CpmColonyField''s…'
+  status: available
+- name: local_acetate
+  store_path: obs.biomass, obs.local_acetate
+  description: 'M7a realistic-diffusivity control (peer review) — re-run the cross-feed at the PHYSICAL 2:1 acetate/glucose diffusivity (0.8 vs 0.4) instead of the 37.5x…'
+  status: available
+- name: biomass_slow
+  store_path: obs.biomass_fast, obs.biomass_slow
+  description: 'M7b dividing-population competition (peer review) — lift the competition regime from two static cells to two DIVIDING founder lineages (fast vmax 10 vs slow…'
+  status: available
+- name: n_cells
+  store_path: obs.n_cells
+  description: 'M7b competition necessity control (peer review) — the slow lineage ALONE under the byte-identical boundary supply, maintenance and viability floor survives and…'
+  status: available
+- name: glucose
+  store_path: obs.biomass, obs.volume, fields.acetate, fields.glucose
+  description: 'Interface surrogate calibration at the CELL-CELL (colony) level: a tuned MM colony is fit to reproduce the dFBA colony''s observables behind the same colony…'
+  status: available
+simulation_set:
+- name: cellcell-compete
+  kind: single
+  base_model: meta_modelers_guide.composites.cellcell-compete
+  is_baseline: true
+  status: ran
+- name: cellcell-crossfeed
+  kind: single
+  base_model: meta_modelers_guide.composites.cellcell-crossfeed
+  is_baseline: false
+  status: ran
+- name: cellcell-crossfeed-knockout
+  kind: single
+  base_model: meta_modelers_guide.composites.cellcell-crossfeed-knockout
+  is_baseline: false
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: cell-environment-coupling
+    condition: tests-passed
+    relation: builds-on
