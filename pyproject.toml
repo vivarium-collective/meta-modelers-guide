@@ -6,7 +6,11 @@ requires-python = ">=3.12"
 dependencies = [
     "viva-compiler @ git+https://github.com/vivarium-collective/viva-compiler.git@main",
     "process-bigraph",
-    "bigraph-schema",
+    # Pin below 1.8.4: that release removed `bigraph_schema.matching`, which the
+    # resolved process-bigraph (1.11.0) still imports via `process_bigraph.holes`.
+    # An unpinned resolve grabs >=1.8.4 and process_bigraph import dies with
+    # `ModuleNotFoundError: No module named 'bigraph_schema.matching'`.
+    "bigraph-schema<1.8.4",
     "bigraph-viz>=2.0.3",
     "pyyaml>=6.0",
     "jsonschema[format-nongpl]>=4.21",

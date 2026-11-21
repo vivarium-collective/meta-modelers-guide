@@ -365,7 +365,7 @@ conclusion_logic:
     - molecules is not a sawtooth (the slow process is not drawing mass back out of the pool, or the fast process stopped filling)
     - biomass is not a monotone staircase (the slow process is returning mass to the pool, or firing on the wrong clock)
     - molecules + biomass no longer equals elapsed time (a source or sink was introduced -- mass is being created or lost across the timescales)
-    block_downstream: 'any future study reusing the multi-timestepping-through-a-shared-store pattern to demonstrate orchestration'
+    block_downstream: 'Any future study reusing the multi-timestepping-through-a-shared-store pattern to demonstrate orchestration.'
 limitations:
 - This composite is didactic / toy-real -- FastProduction (rate 1.0), SlowConversion (yield_frac 0.6), the intervals (1.0 and 5.0), and the 20-tick run length are hand-picked magnitudes chosen to make the two timescales legible in one short run, not fitted to any named biological process, rate, or measurement. molecules and biomass are abstract shared-store amounts, not calibrated concentrations or masses. It demonstrates the orchestration MECHANISM, not a biological magnitude.
 - Only panel (a) -- multi-timestepping through a shared store -- is demonstrated at runtime. Panel (b) (workflow orchestration as a dependency DAG) and panel (c) (event-driven graph rewrites -- division, engulfment, bursting) are structural / schematic in the paper and are deliberately NOT part of this runnable composite. This study makes no runtime claim about (b) or (c).
