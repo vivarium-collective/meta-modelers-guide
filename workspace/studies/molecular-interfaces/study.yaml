@@ -192,8 +192,9 @@ behavior_tests:
     (not linear-instability Turing sensu stricto) -- v_var rises above the pattern floor and the gated
     patterned flag reads 1.0.'
   measure:
-    kind: observable
-    path: obs.patterned
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.patterned)
   pass_if:
     op: ==
@@ -215,8 +216,9 @@ behavior_tests:
     than one connected v-concentration domain (~12 spots at the canonical regime), the Gray-Scott spot
     signature.'
   measure:
-    kind: observable
-    path: obs.n_domains
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.n_domains)
   pass_if:
     op: '>'
@@ -238,8 +240,9 @@ behavior_tests:
     CAUSED by the diffusion asymmetry, not the chemistry alone -- a regime-specific conclusion for this
     Gray-Scott system.'
   measure:
-    kind: observable
-    path: obs.patterned
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.patterned)
   pass_if:
     op: ==
@@ -267,8 +270,9 @@ behavior_tests:
     v_var above the floor) -- a temperature parameter modulating the chemical channel, not a chemistry
     collapse.'
   measure:
-    kind: observable
-    path: obs.patterned
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.patterned)
   pass_if:
     op: ==
@@ -288,8 +292,9 @@ behavior_tests:
     step count (~12 -> ~2), the direct signature of the temperature parameter acting on the chemical
     channel.'
   measure:
-    kind: observable
-    path: obs.n_domains
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.n_domains)
   pass_if:
     op: <
@@ -308,8 +313,9 @@ behavior_tests:
     near-uniform field; v_var stays above the floor for every seed and is reported as a range, with
     n_domains reported as a range too (seed-sensitive by nucleation-patch placement).'
   measure:
-    kind: observable
-    path: obs.v_var
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.v_var)
   pass_if:
     op: '>'

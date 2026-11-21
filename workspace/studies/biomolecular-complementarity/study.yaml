@@ -158,8 +158,9 @@ behavior_tests:
     checkerboard demixes: the heterotypic-interface fraction collapses from a clearly-mixed start toward
     a sorted low value.'
   measure:
-    kind: observable
-    path: obs.hetero_frac
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.hetero_frac)
   pass_if:
     op: <
@@ -200,8 +201,9 @@ behavior_tests:
   description: 'Regression check that sorting moves cells rather than creating or destroying them: the
     per-type cell counts stay exactly 32/32 throughout the run.'
   measure:
-    kind: observable
-    path: obs.n_type1
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.n_type1)
   pass_if:
     op: ==
@@ -247,8 +249,9 @@ behavior_tests:
     two phases: the field variance rises from near-zero toward the coexistence variance as an interface
     forms.'
   measure:
-    kind: observable
-    path: obs.phi_var
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.phi_var)
   pass_if:
     op: '>'
@@ -288,8 +291,9 @@ behavior_tests:
   description: 'Numerical-stability guard: at the pinned dt=0.002 the stiff biharmonic scheme stays bounded
     in the physical two-phase range [-1, 1] and emits no NaN -- a larger dt would blow up instead.'
   measure:
-    kind: observable
-    path: obs.phi_min
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.phi_min)
   pass_if:
     op: '>'

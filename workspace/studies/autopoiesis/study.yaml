@@ -240,8 +240,9 @@ behavior_tests:
     1.0, with membrane_mass held above its floor (the mass-held gate, so a degenerate near-zero-mass ring
     cannot pass as persisting).'
   measure:
-    kind: observable
-    path: obs.persists
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.persists)
   pass_if:
     op: ==
@@ -262,8 +263,9 @@ behavior_tests:
     interior area plateaus well above zero (homeostasis at ~149 px, throttled down from the ~465 px seed
     by closure, not a filled solid blob and not runaway growth).'
   measure:
-    kind: observable
-    path: obs.enclosed_area
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.enclosed_area)
   pass_if:
     op: '>'
@@ -281,8 +283,9 @@ behavior_tests:
     stays at its sentinel -1.0 (never collapsed), distinguishing genuine self-maintenance from a run that
     merely had not yet reached its breakdown.'
   measure:
-    kind: observable
-    path: obs.collapse_tick
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.collapse_tick)
   pass_if:
     op: ==
@@ -305,8 +308,9 @@ behavior_tests:
     closure construction, the closed loop''s persistence tracks the production loop, not the seed or
     diffusion.'
   measure:
-    kind: observable
-    path: obs.persists
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.persists)
   pass_if:
     op: ==
@@ -328,8 +332,9 @@ behavior_tests:
     area falls to exactly 0 (topological closure gone -- a gap opens and the interior leaks to the grid
     border) by step ~96, well before the run window ends.'
   measure:
-    kind: observable
-    path: obs.enclosed_area
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.enclosed_area)
   pass_if:
     op: ==
@@ -375,8 +380,9 @@ behavior_tests:
     enclosed interior well inside its metastable window, and the interior precursor GENUINELY POOLS
     (the local confinement that IS the emergent closure mechanism actually operating).'
   measure:
-    kind: observable
-    path: obs.persists
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.persists)
   pass_if:
     op: ==
@@ -400,8 +406,9 @@ behavior_tests:
     never feeds back into phi or p. This is what makes v2''s closure-dependence emergent rather than
     authored.'
   measure:
-    kind: observable
-    path: obs.persists
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.persists)
   pass_if:
     op: ==
@@ -422,8 +429,9 @@ behavior_tests:
     0.0), showing v2 persistence tracks the local precursor loop, not the seed or diffusion. k_prod=0
     collapses identically.'
   measure:
-    kind: observable
-    path: obs.persists
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.persists)
   pass_if:
     op: ==
@@ -472,8 +480,9 @@ behavior_tests:
     ~4x FASTER than the undriven ~2451, via runaway autocatalytic filling (membrane mass runs away far
     above the seed, enclosed_area -> 0), so persists flips to 0.0 within the run window.'
   measure:
-    kind: observable
-    path: obs.persists
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.persists)
   pass_if:
     op: ==
@@ -498,8 +507,9 @@ behavior_tests:
     persistence exactly (persists == 1.0 at 1000 steps, collapse_tick == -1.0), and the open update reduces
     bit-for-bit to rd_step_v2 when the drive is off.'
   measure:
-    kind: observable
-    path: obs.persists
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.persists)
   pass_if:
     op: ==
@@ -523,8 +533,9 @@ behavior_tests:
     healed -- enclosed_area stays 0 even as membrane mass runs away. So closure remains genuinely
     load-bearing under drive, not overridden by it.'
   measure:
-    kind: observable
-    path: obs.enclosed_area
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.enclosed_area)
   pass_if:
     op: ==
