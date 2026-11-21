@@ -754,18 +754,6 @@ readouts:
   store_path: obs.n_cells
   description: 'Over a 36-tick run sampled every 3 ticks, the CPM cell population steps up as cells'' metabolism-driven volume growth repeatedly crosses vol_threshold and…'
   status: available
-- name: volume
-  store_path: obs.volume
-  description: 'Per-cell CPM volume sawtooths in a bounded band throughout the run -- each cell grows toward vol_threshold, is halved by division back near reset_target, and…'
-  status: available
-- name: cell_volumes
-  store_path: cell_volumes
-  description: 'Foundational control (not this study''s scientific claim): the native CPM divide_cells operation this study''s division depends on splits a grown cell into two…'
-  status: available
-- name: generation
-  store_path: obs.n_cells, obs.generation
-  description: 'Per §Growth and division: daughters "remain coupled through shared environmental state, so their interfaces are not independent ... enabling both coordination…'
-  status: available
 - name: max_generation
   store_path: obs.max_generation
   description: 'The population count is a genealogy, not a tally -- every live cell''s generation and parent id are tracked from the engine''s own divide_cells return value…'
@@ -781,3 +769,7 @@ pipeline_gate:
   - study: disintegration
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.growth-division-spatial
+    name: growth-division-spatial

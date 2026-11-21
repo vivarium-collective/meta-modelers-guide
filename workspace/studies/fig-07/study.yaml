@@ -484,59 +484,6 @@ visualizations:
 # live in the investigation spine_edges.)
 experiment: 'Run the `fig07-runnable` composite (six ODE handlers -- transmembrane transport, metabolism, transcription, translation, subunit assembly, replication / repair -- over one place graph nesting up to six levels deep) to completion over its default 30 steps through the process-bigraph engine, and measure whether a process acting at each nesting level moves quantity in its nested store, whether the cascade propagates across every level as one coupled cell, and whether the place-graph containment is preserved as the dynamics run.'
 result: 'Over a deterministic 30-step run (31 emitted frames), a process acting at each nesting level moves quantity in its store: transmembrane transport fills the cytoplasmic nutrient pool 0 -> 9.0 (monotonic), metabolism makes metabolites 0 -> ~20.5 and energy 0 -> ~13.1, transcription of the six-levels-deep DNA makes RNA 0 -> ~0.64, translation makes protein 0 -> ~0.24 (trailing RNA, as it is downstream), and subunit assembly grows the four-levels-deep ribosome pool 0.5 -> ~0.88, closing the loop back to translation. All five levels change in one coupled run. The place-graph containment is preserved as the dynamics run: after the run every intermediate container along the six-level DNA chain is still a nested store, the deep DNA and ribosome leaves are reachable only at full depth, and the DNA leaf still sits nested alongside its untouched histone sibling. A process acting on a deeply-nested store moves the quantity IN that store -- the deep ribosome pool grew (final store == last emitted frame) and the deep genome was held at its set point (DNA == 1.0) by replication / repair. Every value reproduces exactly run to run. The paper''s §Biomolecular compositions figure (Fig molecular_compositions) is thus executable, not merely drawn -- its nested hierarchy of composites runs forward as one coupled cell. This is a didactic / toy-real composite; the calibrated molecular-complementarity cousin is `biomolecular-complementarity` in the `draft-to-living-cell` investigation.'
-readouts:
-- name: len(rows)
-  store_path: len(rows)
-  description: 'The fig07-runnable composite runs its default step count to completion and emits a clean trajectory of the expected length -- the figure is executable.'
-  status: available
-- name: nutrients
-  store_path: obs.nutrients
-  description: 'Level 1 -- the membrane transporter imports nutrients across the membrane into the cytoplasm; the pool starts empty and fills monotonically because supply is…'
-  status: available
-- name: energy
-  store_path: obs.metabolites, obs.energy
-  description: 'Level 2 -- metabolism converts imported nutrients (+ enzymes) into metabolites and energy in the cytoplasm; both rise well past their empty start.'
-  status: available
-- name: proteins
-  store_path: obs.rna, obs.proteins
-  description: 'Levels 3-4 -- transcription of the six-levels-deep nested DNA makes RNA, which translation turns into protein; both downstream products rise, and protein…'
-  status: available
-- name: ribosome
-  store_path: obs.ribosome
-  description: 'Level 5 -- subunit assembly consumes protein + subunits to grow the four-levels-deep ribosome pool past its bootstrap seed, the downstream observable that…'
-  status: available
-- name: set of changed levels
-  store_path: set of changed levels
-  description: 'The whole point -- a non-trivial change occurs at MULTIPLE levels of the nested hierarchy in one coupled run (transport, metabolism, transcription…'
-  status: available
-- name: state)
-  store_path: final place-graph tree (sim.state)
-  description: 'The figure''s core structural claim -- processes act on stores buried deep in the place graph WITHOUT flattening it. After a full run every intermediate…'
-  status: available
-- name: state) vs emitted trajectory
-  store_path: final place-graph tree (sim.state) vs emitted trajectory
-  description: 'The anchor -- a process acting at ONE nesting level moves quantity in a nested store. Subunit assembly grows the four-levels-deep ribosome pool (final…'
-  status: available
-- name: Σ(env, cyto, nuc substrate)
-  store_path: Σ(env, cyto, nuc substrate)
-  description: 'Passive transport across the nested boundaries is CONSERVATIVE — with the reactions off, the total substrate across environment + cytoplasm + nucleus is…'
-  status: available
-- name: reporter at full vs membrane-closed
-  store_path: obs.reporter at full vs membrane-closed
-  description: 'The deep (nuclear) reporter is CAUSALLY gated by boundary permeability — a boundary-level cause with a deep functional effect, not mere routing. With both…'
-  status: available
-- name: reporter at {both open, membrane ε, nucleus ε}
-  store_path: reporter at {both open, membrane ε, nucleus ε}
-  description: 'Depth = number of permeability barriers in series. The nuclear reporter sits behind TWO boundaries; closing EITHER one (at a different depth) independently…'
-  status: available
-- name: nuclear substrate @ t=8 over a P_mem sweep
-  store_path: nuclear substrate @ t=8 over a P_mem sweep
-  description: 'A first-principles prediction: a more permeable boundary fills the deep compartment faster. Predicted before running — in pure transport, the nuclear substrate…'
-  status: available
-- name: reporter with cyto metabolism ON vs OFF
-  store_path: reporter with cyto metabolism ON vs OFF
-  description: 'The cytoplasmic reaction is LOCALLY RESTRICTED — it consumes substrate only in the cytoplasm, so it starves the downstream nucleus. Compartments do…'
-  status: available
 simulation_set:
 - name: fig07-runnable
   kind: single
@@ -551,3 +498,7 @@ pipeline_gate:
   - study: biomolecular-complementarity
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig07-runnable
+    name: fig07-runnable

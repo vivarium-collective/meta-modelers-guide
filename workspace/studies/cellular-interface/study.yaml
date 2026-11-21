@@ -345,19 +345,6 @@ visualizations:
     chart: image
 experiment: Start with the Fig 3 interface as an inert specification, install a bounded-cell mechanism behind it, and run the resulting composite. The compiler must preserve the declared interface exactly, and must reject any handler whose ports don't match it (Law 1).
 result: 'The interface is preserved while the installed mechanism produces dynamics: chemical uptake drives growth and progress toward the cell''s objective (shape 1.0→4.2, objective 0.0→1.6). Law 1 conformance is confirmed mechanically by a native impostor for this figure (`NonConformingCellularInterface`, which drops the viability and objective ports), rejected at compile time with a CompileError naming those two ports.'
-readouts:
-- name: shape
-  store_path: shape
-  description: 'The conforming handler grows the cell through its interface — shape climbs well above its seed.'
-  status: available
-- name: chemical
-  store_path: chemical
-  description: 'The cell takes up chemical across its interface — net chemical flux goes negative.'
-  status: available
-- name: objective
-  store_path: objective
-  description: 'The cell pursues its declared objective — the objective readout climbs from zero.'
-  status: available
 simulation_set:
 - name: interaction-modalities
   kind: single
@@ -379,3 +366,7 @@ simulation_set:
   base_model: meta_modelers_guide.composites.cellular-interface-spatial
   is_baseline: false
   status: ran
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig03a-interaction-modalities
+    name: interaction-modalities

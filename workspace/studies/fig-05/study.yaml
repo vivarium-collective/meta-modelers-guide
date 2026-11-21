@@ -537,51 +537,6 @@ visualizations:
 # spine note (no forced builds-on edge into the 1→…→11 chain).
 experiment: 'Run the `fig05-grain-runnable` composite (StressRamp -> GrainSelector -> gated CoarseGrainProcess / FineGrainProcess sharing one biomass/energy interface) to completion over 26 steps through the process-bigraph engine, and measure whether a monotonically declining viability signal crossing a threshold is enough to flip the active grain coarse->fine at the crossing and turn the shared biomass output over from growth to decay.'
 result: 'Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse->fine at t=13 -- exactly one flip, one tick after the crossing (the composite''s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -> 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -> ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b''s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. A companion grain-comparison quantifies the swap''s consequence: the same coarse-metabolism interface realized at three grains reports biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate overflow vs 1.6 for coarse (workbench 0.4.1). The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.'
-readouts:
-- name: active_grain
-  store_path: obs.active_grain
-  description: 'While viability >= threshold, the active grain is "coarse" -- the coarse cellular process realizes the interface throughout the viable phase (the pre-crossing…'
-  status: available
-- name: update
-  store_path: process.update
-  description: 'The control string genuinely gates the two grains -- when coarse is selected only the coarse process acts (grows biomass) and the fine process is inert; when…'
-  status: available
-- name: biomass
-  store_path: obs.biomass
-  description: 'The shared biomass output turns over at the grain switch -- growing monotonically while the coarse grain is active, peaking at the flip, then decaying…'
-  status: available
-- name: energy
-  store_path: obs.energy
-  description: 'Energy is the second shared output the gate hands over -- the coarse grain builds it while viable, the fine grain drains it once dying, so it grows-then-decays…'
-  status: available
-- name: viability
-  store_path: obs.viability
-  description: 'The StressRamp is the clean driver -- viability only ever falls and is driven below the threshold, all the way to its clamped 0 floor, so the crossing (and…'
-  status: available
-- name: obs
-  store_path: obs
-  description: 'No process in the composite draws randomness, so two independent builds emit an identical viability/grain/biomass trajectory -- the pins in this study are…'
-  status: available
-- name: m_sol across modes
-  store_path: obs.stress, obs.m_sol across modes
-  description: 'The biological forcing (stress) is identical across all three modes — the grain is an algorithmic choice layered on the SAME physiology, not a different…'
-  status: available
-- name: handover_error at the switch tick
-  store_path: obs.biomass, obs.damage, obs.handover_error at the switch tick
-  description: 'The coarse→fine map conserves the mapped state: prolongation is identity on the shared damage pools, so neither biomass nor total damage jumps at the switch…'
-  status: available
-- name: switch time vs inadequacy_tol
-  store_path: switch time vs inadequacy_tol
-  description: 'Refinement fires when the computable inadequacy estimator crosses tolerance — raising the tolerance DELAYS the switch and lowering it ADVANCES it, which a…'
-  status: available
-- name: biomass across modes
-  store_path: obs.viability, obs.m_agg, obs.biomass across modes
-  description: 'The fine grain resolves an autocatalytic aggregation runaway that collapses viability — a phenotype the always-coarse model structurally cannot produce (it…'
-  status: available
-- name: two identical adaptive runs
-  store_path: two identical adaptive runs
-  description: 'Honesty guard: two identical runs are byte-identical. This is REPRODUCIBILITY, not mechanistic support — the mechanistic evidence comes from the ablations…'
-  status: available
 simulation_set:
 - name: fig05-grain-runnable
   kind: single
@@ -593,3 +548,7 @@ pipeline_gate:
   - study: disintegration
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig05-grain-runnable
+    name: fig05-grain-runnable

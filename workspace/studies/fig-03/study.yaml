@@ -439,14 +439,6 @@ visualizations:
 experiment: 'Run the `fig03-runnable` composite (`CellularInterfaceHandler`, one bounded cell wired to a four-driver environment: chemical supply 1.0, thermal driver 45 C above the 37 C optimum) for 24 steps through the process-bigraph engine, and additionally drive a fresh handler at paired chemical supplies (0.2 vs 1.0) and paired temperatures (45 C vs 37 C), to measure whether each typed interface port''s value responds to its driving environmental input as Fig cell_interface asserts.'
 result: 'Fig cell_interface is executable. A 5x chemical supply (0.2 -> 1.0) gives exactly a 5x uptake flux (-0.16 -> -0.80) and a strictly larger Monod growth rate (0.171 -> 0.400); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver (force 0.2, current 0.15, heat flux 0.2) and read zero when it is off; the higher-level shape (volume) port accretes strictly from 1.0 to 10.6 over the 24-step run; and with the thermal driver held at 45 C above the 37 C optimum, viability falls strictly monotonically from 1.0 to 0.175 by Arrhenius thermal death, whereas at the optimum it barely moves (ends 0.911, decline < 0.1) -- a 0.736 gap in final viability isolating temperature as the cause. Every number is a deterministic function of the handler''s response laws and reproduces exactly run to run. The composite is didactic / toy-real (uncalibrated); the rigorous, mechanism-independent treatment of this same interface is the cousin `cellular-interface` in the `draft-to-living-cell` investigation.'
 readouts:
-- name: growth_rate
-  store_path: cell.chemical, cell.growth_rate
-  description: 'A higher chemical supply drives a proportionally larger uptake flux and a strictly larger Monod growth rate -- the chemical exchange port and the growth port…'
-  status: available
-- name: thermal
-  store_path: cell.mechanical, cell.electrical, cell.thermal
-  description: 'Each typed physical exchange port (mechanical force, electrical current, thermal heat flux) responds to its OWN driver linearly and in isolation, and reads…'
-  status: available
 - name: shape
   store_path: interface.shape
   description: 'The higher-level `shape` (volume) port accretes strictly monotonically as the cell takes up chemical and grows over the run -- a higher-level cellular variable…'
@@ -455,25 +447,9 @@ readouts:
   store_path: interface.viability
   description: 'With the thermal driver held ABOVE the 37 C optimum (45 C in the runnable composite), the `viability` port falls strictly monotonically by first-order…'
   status: available
-- name: viability around t=12
-  store_path: obs.enzyme_activity, obs.uptake, obs.growth_rate, obs.viability around t=12
-  description: 'A single temperature step (37→48 °C at t=12) propagates through the SHARED enzyme/ATP state to EVERY downstream port — enzyme activity, uptake, ATP, growth AND…'
-  status: available
 - name: viability
   store_path: obs.growth_rate, obs.atp, obs.viability
   description: 'A nutrient step-down (2.0→0.03 at t=12) propagates through uptake → ATP → growth AND, as ATP starves below the maintenance demand, to viability. The nutrient…'
-  status: available
-- name: biomass with catalytic_capacity=ε
-  store_path: obs.growth_rate, obs.biomass with catalytic_capacity=ε
-  description: 'Matched-null control (catalytic_capacity = ε): with metabolism disabled the cell cannot turn nutrient into ATP, so NOTHING propagates — growth stays ~0 and…'
-  status: available
-- name: growth_rate
-  store_path: obs.atp, obs.viability, obs.biomass, obs.growth_rate
-  description: 'The shared state stays well-posed and growth is paid out of ATP: the ATP pool stays ≥ 0, viability stays in [0,1], biomass is non-decreasing, and when the ATP…'
-  status: available
-- name: uptake at c far above vs far below Km
-  store_path: uptake at c far above vs far below Km
-  description: 'The uptake transporter saturates (Michaelis–Menten in nutrient at full enzyme activity). This is kept as a FORMULA VERIFICATION of the rate law only — NOT…'
   status: available
 simulation_set:
 - name: fig03-runnable
@@ -488,3 +464,7 @@ pipeline_gate:
     relation: builds-on
   - study: cellular-interface
     condition: tests-passed
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig03-runnable
+    name: fig03-runnable

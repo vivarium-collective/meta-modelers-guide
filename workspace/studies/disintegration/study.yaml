@@ -871,10 +871,6 @@ readouts:
   store_path: obs.released_tick
   description: 'The footprint-local acetate mean crosses viability_threshold and the released flag latches, at a specific, deterministic tick -- the level-shift trigger itself.'
   status: available
-- name: particles
-  store_path: particles
-  description: 'The cell''s vacated footprint pixels appear as debris particles in the shared map[particle] store as it resorbs, and the CPM->particle conversion conserves mass…'
-  status: available
 simulation_set:
 - name: disintegration-spatial
   kind: single
@@ -886,3 +882,7 @@ pipeline_gate:
   - study: cell-cell-coupling
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.disintegration-spatial
+    name: disintegration-spatial

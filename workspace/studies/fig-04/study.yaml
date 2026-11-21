@@ -452,43 +452,6 @@ visualizations:
 # only study+condition).
 experiment: 'Run the `fig04-runnable` composite (SpatialDiffusion on a length-9 map[float] chemical grid seeded as a 0→1 nutrient gradient, a MechanicalRelax field, and a single SingleCellSpatial cell at interior index 4 wired to the shared environment store) for 24 ticks through the process-bigraph engine, and measure whether the environmental field drives the cell''s interface ports and the cell acts back on the shared field — env field → sensed value → uptake → mass gain, plus up-gradient chemotactic drift, with the loop closing through a shared store. Drive the SingleCellSpatial handler directly at two field levels and at a flat zero field to establish the causal env→port relationship.'
 result: 'Over a deterministic 24-tick run, the environmental field drives every leg of the control loop and the cell acts back on the shared field. Uptake is linear in the local sensed field (uptake(0.8)/uptake(0.2) == 4.0) and per-step uptake tracks the local sensed field at correlation 1.0; a flat zero field gives exactly zero drive on every port (the environment is the causal driver). Mass grows monotonically 1.0 → 1.432152, the cell drifts up-gradient from index 4.0 to 4.195695 (chemotaxis), and the cell''s uptake is written back into the shared environment store (cumulative uptake_flux 0.0 → 0.864305, monotone) with the mass↔uptake ledger closing exactly (Δmass 0.432152 == 0.5 × 0.864305). The paper''s §Cell-environment coupling figure (Fig cell_environment) is thus executable, not merely drawn — the caption''s "minimal structure required for control" runs as measured simulation output. These are toy-real, uncalibrated magnitudes; the rigorous spatial cousin is `cell-environment-coupling` in the `draft-to-living-cell` investigation.'
-readouts:
-- name: uptake
-  store_path: obs.uptake
-  description: 'A higher local chemical field drives a larger `uptake` output, and because uptake is linear in the sensed field, exactly 4× the field gives 4× the uptake — the…'
-  status: available
-- name: mass
-  store_path: obs.mass
-  description: 'With nutrient present throughout, the cell''s mass increases monotonically over the run (net growth, never falling) — the sensed field → uptake → biomass leg of…'
-  status: available
-- name: uptake_flux
-  store_path: obs.uptake_flux
-  description: 'Per-step uptake rises and falls WITH the local sensed concentration over the actual run — the environment→port coupling, tick by tick, not just at endpoints.'
-  status: available
-- name: location
-  store_path: obs.location
-  description: 'The cell drifts UP the concentration gradient over the run (net location displacement positive, toward the higher-field side) — chemotaxis, the cell…'
-  status: available
-- name: uptake_total; Σfield
-  store_path: obs.source_total, obs.decay_total, obs.uptake_total; Σfield
-  description: 'With Neumann edges the field mass ledger closes exactly: Σfield change = Σsource − Σdecay − Σuptake, and the cell''s biomass change = yield·Σuptake. Nothing is…'
-  status: available
-- name: field(full) vs field(no-uptake) over space×time
-  store_path: field(full) vs field(no-uptake) over space×time
-  description: 'The cell''s uptake is a REAL sink on the shared field: the field under the cell is drawn below the no-uptake control (a depletion well that diffuses), and the…'
-  status: available
-- name: biomass, position under {no-uptake, no-motility, zero-gradient}
-  store_path: biomass, position under {no-uptake, no-motility, zero-gradient}
-  description: 'Matched-null controls (set with an epsilon, not 0.0) cleanly isolate each arm of the loop: NO-UPTAKE preserves the field and keeps biomass constant (no sink…'
-  status: available
-- name: local_conc
-  store_path: obs.position, obs.local_conc
-  description: 'The full cell moves UP the local gradient toward the in-domain source (lattice position falls 16 → ~1) and the nutrient it senses rises as it climbs. The…'
-  status: available
-- name: uptake at c far above vs far below Km
-  store_path: uptake at c far above vs far below Km
-  description: 'Uptake follows saturating Michaelis–Menten kinetics v = Vmax·c/(Km+c) — bounded by Vmax at high concentration and ~linear at low concentration — not the…'
-  status: available
 simulation_set:
 - name: fig04-runnable
   kind: single
@@ -503,3 +466,7 @@ pipeline_gate:
   - study: cell-environment-coupling
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig04-runnable
+    name: fig04-runnable

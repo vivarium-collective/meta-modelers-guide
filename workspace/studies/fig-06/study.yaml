@@ -491,55 +491,6 @@ visualizations:
 # is carried in the investigation spine; parent_studies schema allows only study+condition).
 experiment: 'Run the `fig06-runnable` composite (MolecularMechanismHandler -- the F₁Fₒ ATP synthase as a four-channel transducer -- driven by a ProtonMotiveRamp charging the substrate/proton drive linearly) to completion over 20 ticks through the process-bigraph engine, and measure whether one coupled proton flux drives four TYPED physical channels (chemical ATP flux, electrical proton current, mechanical rotary torque, thermal heat) with matter, charge, angular momentum, and energy conserved across a molecular interface that has no cell-level boundary.'
 result: 'Over a deterministic 20-tick run, the F₁Fₒ ATP synthase transducer drives four TYPED physical channels from ONE ramped proton flux, with no cell-level boundary in the state. The chemical channel (ATP synthesis flux) scales linearly with the drive -- 4× activity gives exactly 4× flux (30.0 at activity 0.3, 120.0 at 1.2), rising monotonically 20.0 → 128.0 over the run. The four channels are one coupled quantity: the proton current is the ATP flux carried as charge (I = J_ATP·n·e), the ATP:H⁺ stoichiometry holds at 1/3.3 exactly on every step, the rotary torque holds constant at 4×10⁻²⁰ N·m (torque, not force/power -- the drive sets speed, not torque), and the dissipated heat equals (1−η)·PMF power = 25 % of input, useful work 75 %, both non-negative. All coupling identities hold to 1e-30 on the live run and every readout reproduces exactly. A zero drive produces zero flux on all three driven channels (negative control), and the un-driven bare draft fig06-executable reports a flat chemical_out of 100.0 (= k_cat) whereas the ramp-driven fig06-runnable sweeps 20.0 -> 128.0 -- confirming the sweep is the drive coupling, not the rate law (workbench 0.4.1). The paper''s §Molecular interfaces figure (Fig molecular_interface) holds as a runnable process: a molecular mechanism exposing typed, coupled chemical/electrical/mechanical/thermal channels over molecular structure, matter/charge/ angular-momentum/energy conserved across the interface, with no cell boundary -- executable, not merely drawn. The rigorous molecular-scale cousin is `molecular-interfaces` in the `draft-to-living-cell` investigation.'
-readouts:
-- name: chemical_out
-  store_path: obs.chemical_out
-  description: 'The chemical channel (ATP synthesis flux) is strictly positive under drive, scales linearly with the substrate/proton activity (4× activity ⇒ 4× flux), and…'
-  status: available
-- name: thermal_out
-  store_path: obs.chemical_out, obs.electrical_out, obs.mechanical_out, obs.thermal_out
-  description: 'The four typed channels are ONE coupled quantity, not four free knobs -- the electrical channel is the chemical channel carried as charge (I = J_ATP·n·e…'
-  status: available
-- name: electrical_out / e)
-  store_path: obs.chemical_out / (obs.electrical_out / e)
-  description: 'The ATP:H⁺ stoichiometry holds at 1/n_protons_per_atp (1/3.3 ≈ 0.30303) on every active step -- matter (chemical) and charge (electrical) conserved together…'
-  status: available
-- name: mechanical_out
-  store_path: obs.mechanical_out
-  description: 'The mechanical channel carries a strictly positive rotary TORQUE (N·m, not force or power) that holds near-constant at the configured 4×10⁻²⁰ N·m (40 pN·nm)…'
-  status: available
-- name: electrical_out
-  store_path: obs.thermal_out vs obs.electrical_out
-  description: 'The dissipated heat (thermal channel) equals (1−η)·input PMF power = 25 % of the electrical PMF work rate, the useful work is the conserved η-fraction, and…'
-  status: available
-- name: thermal_out
-  store_path: obs.chemical_out, obs.electrical_out, obs.thermal_out
-  description: 'Negative control (not the figure''s scientific claim, a soundness check): with zero substrate/proton drive the mechanism transduces nothing -- the chemical…'
-  status: available
-- name: power_heat
-  store_path: obs.power_in, obs.power_atp, obs.power_ext, obs.power_heat
-  description: 'The full power budget closes exactly on every step: the proton-motive input power equals the chemical power stored in ATP plus the mechanical work done against…'
-  status: available
-- name: drive_torque
-  store_path: obs.drive_torque
-  description: 'The rotary drive torque is DERIVED from the proton-motive force, τ_drive = n_c·e·Δp/2π, and at Δp = 150 mV lands at ≈ 38 pN·nm — reproducing the ~40 pN·nm the…'
-  status: available
-- name: proton_current
-  store_path: obs.omega, obs.atp_flux, obs.proton_current
-  description: 'As the external load ramps, the rotor turns forward (synthesising ATP), slows, STALLS when τ_ext = τ_drive − τ_chem (≈ tick 11), then REVERSES (ω < 0) —…'
-  status: available
-- name: omega over a Δp sweep (20–300 mV)
-  store_path: obs.omega over a Δp sweep (20–300 mV)
-  description: 'A first-principles prediction: synthesis proceeds iff n_c·e·Δp > n_ATP·ΔG_ATP, so the stall gradient Δp* = n_ATP·ΔG_ATP/(n_c·e) can be computed BEFORE running.…'
-  status: available
-- name: efficiency at two Δp values
-  store_path: obs.efficiency at two Δp values
-  description: 'The chemical efficiency η = P_ATP/P_in = τ_chem/τ_drive is a DERIVED outcome that varies with the operating point — a higher proton-motive force gives a lower…'
-  status: available
-- name: dg_atp over an 80-tick unbuffered run
-  store_path: obs.omega, obs.dg_atp over an 80-tick unbuffered run
-  description: 'With the ADP/ATP/Pi pools unbuffered, synthesised ATP accumulates, the reaction quotient and ΔG_ATP climb, and the rotor slows monotonically under its own…'
-  status: available
 simulation_set:
 - name: fig06-runnable
   kind: single
@@ -554,3 +505,7 @@ pipeline_gate:
   - study: molecular-interfaces
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig06-runnable
+    name: fig06-runnable

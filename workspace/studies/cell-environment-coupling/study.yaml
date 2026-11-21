@@ -1400,17 +1400,9 @@ readouts:
   store_path: obs.biomass, fields.glucose, fields.acetate
   description: 'M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a…'
   status: available
-- name: local_nutrient
-  store_path: obs.biomass, obs.volume, fields.acetate, fields.glucose, obs.local_nutrient
-  description: 'M7d cadence rigor check (peer review) — the flagship''s operator-split CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are…'
-  status: available
 - name: glucose
   store_path: obs.position, obs.local_nutrient, obs.biomass, obs.volume, fields.glucose
   description: 'The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up the sensed glucose gradient (+x) while the non-motile flagship control barely…'
-  status: available
-- name: position
-  store_path: obs.biomass, obs.volume, obs.position
-  description: 'Byte-identical no-op control — chemotaxis_strength 0.0 (the flagship default) leaves the flagship trajectory unchanged. With the force off, CpmCellField never…'
   status: available
 simulation_set:
 - name: single-cell-in-a-field
@@ -1423,3 +1415,7 @@ pipeline_gate:
   - study: cellular-interface
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.single-cell-in-a-field
+    name: single-cell-in-a-field

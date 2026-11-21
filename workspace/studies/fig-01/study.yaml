@@ -411,38 +411,13 @@ visualizations:
 # spine_edges). It therefore has no parent of its own — parent_studies is empty by design.
 experiment: 'Run the `fig01-runnable` composite (StoreTransfer, rate k=0.15, interval 1.0, source store_a seeded 1.0, sink store_b seeded 0.0) for default_n_steps=20 to completion through the process-bigraph engine, and measure whether a single typed process wired through ports to two place-graph stores actually moves quantity from the source store to the sink store while conserving the total -- i.e. whether the definitional Fig 1 is executable, not merely drawn.'
 result: 'Over a 20-tick run the minimal process bigraph runs forward and the wired stores genuinely evolve: source store_a drains geometrically from 1.0 to ~0.0388 (store_a[n] == 0.85^n to 1e-12), sink store_b fills as its complement from 0.0 to ~0.9612 (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off at every tick. Driven directly, the process reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer (delta -0.15 / +0.15). The paper''s definitional Fig 1 (§Interfaces and composition) is therefore executable, not merely drawn -- a real typed process wired through ports to two place-graph stores moves quantity from source to sink and conserves the total, with a fully deterministic, exactly reproducible trajectory. This is a didactic / toy-real demonstration: the smallest honest process bigraph, illustrative rather than calibrated to any literature target.'
-readouts:
-- name: delta
-  store_path: delta
-  description: 'The `StoreTransfer` process, driven directly, reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite…'
-  status: available
-- name: store_b
-  store_path: obs.store_a, obs.store_b
-  description: 'Over the composite run the wired stores genuinely evolve -- source store_a strictly decreases and sink store_b strictly increases, tick by tick…'
-  status: available
-- name: C
-  store_path: obs.A, obs.B, obs.C
-  description: 'With no external source/sink, the reversible transport only MOVES quantity: A+B+C is conserved to round-off on every step, in BOTH the chain and the hub…'
-  status: available
-- name: final A,B,C for chain vs star composites
-  store_path: final A,B,C for chain vs star composites
-  description: 'The SAME CompartmentTransport class with IDENTICAL configs gives DIFFERENT dynamics purely from REWIRING — no change to the process implementation. The chain…'
-  status: available
-- name: C (hub)
-  store_path: obs.A, obs.B, obs.C (hub)
-  description: 'The transport is REVERSIBLE: each edge relaxes toward its detailed-balance equilibrium sink/source = k_forward/k_reverse = 4, rather than the baseline''s…'
-  status: available
-- name: check + forced bad wiring
-  store_path: core.check + forced bad wiring
-  description: 'Negative type-compatibility control: the transport ports are typed `concentration`, so a numeric store is accepted but a structural string is REJECTED by the…'
-  status: available
-- name: store_a (k_reverse=1e-9)
-  store_path: obs.store_a (k_reverse=1e-9)
-  description: 'Solver verification (NOT a discovery): in the k_reverse→0 limit the reversible transport reduces to the baseline''s first-order decay, so a single edge at…'
-  status: available
 simulation_set:
 - name: fig01-runnable
   kind: single
   base_model: meta_modelers_guide.composites.fig01-runnable
   is_baseline: true
   status: ran
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig01-runnable
+    name: fig01-runnable

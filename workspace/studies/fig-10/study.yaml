@@ -489,43 +489,6 @@ experiment: 'Run the `fig10-emergence` composite (BiofilmEmergence over an env t
 result: 'Over a deterministic 16-step run, the four free motile bacteria hold as top-level place-graph siblings through t=5, then at t=6 all four attach at once (free 4 -> 0, biofilm-nested 0 -> 4) as a new `biofilm` collective node appears and the cells'' place-graph depth increases from 1 to 2 and never reverts -- caption b''s "hierarchical reorganization where individual cells become part of a collective composite." The matured community then secretes an extracellular matrix strictly after attachment (ECM 0 through t=11, then 1/2/3 at t=12/13/14, only while the nested community is present) -- caption a''s "surface attachment, ECM secretion, growth of structured communities." Every count and timing is exact and reproduces run to run (no RNG). The companion rewrites confirm the same principle across the section: a chromosome segregates 1 -> 2 then a cell divides into two daughters that each keep one chromosome with its DNA (true partition), continuing 1 -> 2 -> 4 -> 8 under a capacity cap; a biofilm colonizes to capacity 5 then secretes ECM; and a mutant lineage arises and sweeps the wildtype to extinction within a bounded population. The §Development figure is executable, not merely drawn. The composites are toy-real and uncalibrated; the calibrated spatial cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.
 
   '
-readouts:
-- name: env
-  store_path: env
-  description: 'Running the composite rewrites the place graph so that all four free planktonic (top-level) cells attach at once into a single nested biofilm microcolony…'
-  status: available
-- name: colony
-  store_path: colony
-  description: 'Companion cell-cycle rewrite (same section, Fig division): running the composite makes the place graph change over engine steps -- a chromosome segregates 1 ->…'
-  status: available
-- name: biofilm / population
-  store_path: biofilm / population
-  description: 'Companion collectives rewrites (same section, Fig development b and Fig evolution): a biofilm colonizes to carrying capacity then secretes ECM (never before it…'
-  status: available
-- name: colony tree before vs after formation
-  store_path: colony tree before vs after formation
-  description: 'The emergent place-graph rewrite that nests the cells under the biofilm node preserves BOTH cell count and per-cell biomass — reparenting is a pure topology…'
-  status: available
-- name: formation tick vs adhesion strength
-  store_path: formation tick vs adhesion strength
-  description: 'Formation is triggered by the cluster geometry, so its timing depends on how fast the cells aggregate — stronger adhesion forms earlier, weaker later. A…'
-  status: available
-- name: formation tick vs initial ring radius
-  store_path: formation tick vs initial ring radius
-  description: 'A denser initial cluster (smaller ring) reaches quorum proximity sooner and forms earlier; cells spread beyond the sensing radius never coordinate and do not…'
-  status: available
-- name: cluster_radius, formed under adhesion=epsilon
-  store_path: cluster_radius, formed under adhesion=epsilon
-  description: 'Matched-null control: without local adhesion (set with epsilon, not 0.0) the cells never aggregate — the cluster radius stays near its initial spread and no…'
-  status: available
-- name: final cluster_radius and cohesion, full vs ecm_rate=epsilon
-  store_path: final cluster_radius and cohesion, full vs ecm_rate=epsilon
-  description: 'Matched-null control: with ECM secretion off (epsilon) the cells still aggregate and form, but without matrix the community does not persist — sessile cells…'
-  status: available
-- name: cohesion and the biofilm node, pre- vs post-formation
-  store_path: cohesion and the biofilm node, pre- vs post-formation
-  description: 'The collective-level observables (cohesion, the biofilm node) are inert BEFORE organization and operative only AFTER: cohesion is exactly 0 pre-formation and…'
-  status: available
 simulation_set:
 - name: fig10-emergence
   kind: single
@@ -540,3 +503,7 @@ pipeline_gate:
   - study: development-and-evolution
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig10-emergence
+    name: fig10-emergence

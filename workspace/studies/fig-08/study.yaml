@@ -488,55 +488,6 @@ visualizations:
 # is carried in the investigation spine; parent_studies schema allows only study+condition).
 experiment: 'Run the `fig08-runnable` composite (six coupled processes -- containment, metabolism, gene expression, replication, diffusion, mass-action reactions -- over ten shared flat scalar building-block pools) for its declared 40 ticks through the process-bigraph engine, and measure whether the coupled processes maintain one another into a sustained, far-from-equilibrium balance: every pool positive and bounded, the catalytic/template pools holding steady while structural material is net-produced. Then open the maintenance loop with two process knockouts (metabolism; gene expression) and measure whether the downstream shared pools each depend on collapse -- showing the balance is a property of the coupling, not of any pool in isolation.'
 result: 'Over a deterministic 40-tick run the `fig08-runnable` composite holds the coupled balance: every observed pool stays strictly positive (smallest minimum metabolites 0.267) and bounded (largest value membrane 2.2), the catalytic/template pools hold a sustained steady balance (second-half drift genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all < 0.25), and the structural material is net-produced (membrane 0.2 -> 2.2, proteins 0.30 -> 0.88, enzymes 0.30 -> 0.50). Two process knockouts confirm the balance is a property of the coupling: removing metabolism starves its downstream metabolite pool (0.33 -> 0.011) and freezes energy exactly at its 0.5 seed, and removing gene expression freezes the enzyme pool metabolism depends on exactly at its 0.3 seed and drops metabolism''s metabolite output (0.33 -> 0.23). Fig. self_organized_process is executable -- the caption''s self-maintaining composition runs and holds under test. This is a toy-real didactic demonstration; its rigorous cousin is the `autopoiesis` study in the `draft-to-living-cell` investigation.'
-readouts:
-- name: min over run of each pool
-  store_path: min over run of each pool
-  description: 'Over the full 40-tick run every observed shared pool (membrane, metabolites, enzymes, proteins, genes, energy, nucleic_acids) stays strictly positive -- the…'
-  status: available
-- name: max over run of each pool
-  store_path: max over run of each pool
-  description: 'The coupled balance neither runs away nor blows up -- every pool stays well bounded over the run, the mark of a maintained far-from-equilibrium steady state…'
-  status: available
-- name: relative drift midpoint -> end of each template pool
-  store_path: relative drift midpoint -> end of each template pool
-  description: 'The catalytic/template pools (genes, energy, metabolites, nucleic_acids) hold a sustained steady balance across the second half of the run -- the maintained…'
-  status: available
-- name: end vs start of each structural pool
-  store_path: end vs start of each structural pool
-  description: 'While the template pools hold steady, the cell''s structural material (membrane, proteins, enzymes) is net-produced over the run -- the organization builds…'
-  status: available
-- name: baseline vs metabolism-knockout end states
-  store_path: baseline vs metabolism-knockout end states
-  description: 'The sustained balance is a property of the coupling, not of any pool in isolation. Remove metabolism (its sole downstream source) and metabolites collapse…'
-  status: available
-- name: baseline vs gene-expression-knockout end states
-  store_path: baseline vs gene-expression-knockout end states
-  description: 'The maintenance loop closes both ways. Gene expression is the sole source of the enzyme pool, and metabolism depends on those enzymes. Knock gene expression…'
-  status: available
-- name: len(emitted rows)
-  store_path: len(emitted rows)
-  description: 'Foundational control (not the scientific claim): the composite builds and runs its declared default horizon through the process-bigraph engine, emitting one…'
-  status: available
-- name: min/max of each pool; second-half relative drift
-  store_path: min/max of each pool; second-half relative drift
-  description: 'Every component stays strictly positive and bounded, and with no injury the cell grows to a far-from-equilibrium STEADY STATE and holds it (small second-half…'
-  status: available
-- name: membrane end-state, repair on vs off
-  store_path: membrane end-state, repair on vs off
-  description: 'The steady-state membrane is HELD by repair balancing first-order degradation — active component REPLACEMENT. Knock out repair and the membrane decays away, so…'
-  status: available
-- name: membrane, viability around the injury; recovery vs repair-off
-  store_path: membrane, viability around the injury; recovery vs repair-off
-  description: 'A one-time membrane injury at tick 45 (−60%) drops the boundary and depresses viability; the cell then REPAIRS the membrane and viability RECOVERS to its…'
-  status: available
-- name: final viability + membrane under each single knockout
-  store_path: final viability + membrane under each single knockout
-  description: 'Operational closure means every edge of the loop is required. Knocking out import, metabolism, enzyme-synthesis, or repair (epsilon, not 0.0) each collapses…'
-  status: available
-- name: external nutrient + viability under no replenishment
-  store_path: external nutrient + viability under no replenishment
-  description: 'Matched external-input accounting: on a non-replenished (closed) medium the external nutrient is drawn down and the cell cannot self-maintain — viability…'
-  status: available
 simulation_set:
 - name: fig08-runnable
   kind: single
@@ -551,3 +502,7 @@ pipeline_gate:
   - study: autopoiesis
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig08-runnable
+    name: fig08-runnable

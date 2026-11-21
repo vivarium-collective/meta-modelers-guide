@@ -1432,37 +1432,9 @@ result: 'Over 20-tick runs, the competition regime drives a decisive spatial spl
 
   '
 readouts:
-- name: biomass
-  store_path: obs.biomass
-  description: 'Under the competition regime (glucose_vmax 10.0 vs 4.0, one shared glucose field), the faster competitor ends with materially more biomass and CPM lattice…'
-  status: available
-- name: volume
-  store_path: obs.volume
-  description: 'The faster competitor''s CPM lattice volume ends larger than the slower competitor''s, confirming the biomass asymmetry carries through to structural…'
-  status: available
-- name: local_glucose
-  store_path: obs.local_glucose
-  description: 'Under the cross-feeding regime, the consumer cell''s own local glucose concentration is effectively zero -- it is seeded outside the localized glucose depot and…'
-  status: available
-- name: local_acetate
-  store_path: obs.local_acetate
-  description: 'Positive structural verification (not a negative control): the cross-feeding coupling is real, not two isolated cells -- the secretor''s acetate byproduct…'
-  status: available
 - name: glucose
   store_path: fields.glucose
   description: 'Foundational structural verification (not a negative control, and not this study''s scientific claim): the additive two-writer assumption CpmColonyField''s…'
-  status: available
-- name: local_acetate
-  store_path: obs.biomass, obs.local_acetate
-  description: 'M7a realistic-diffusivity control (peer review) — re-run the cross-feed at the PHYSICAL 2:1 acetate/glucose diffusivity (0.8 vs 0.4) instead of the 37.5x…'
-  status: available
-- name: biomass_slow
-  store_path: obs.biomass_fast, obs.biomass_slow
-  description: 'M7b dividing-population competition (peer review) — lift the competition regime from two static cells to two DIVIDING founder lineages (fast vmax 10 vs slow…'
-  status: available
-- name: n_cells
-  store_path: obs.n_cells
-  description: 'M7b competition necessity control (peer review) — the slow lineage ALONE under the byte-identical boundary supply, maintenance and viability floor survives and…'
   status: available
 - name: glucose
   store_path: obs.biomass, obs.volume, fields.acetate, fields.glucose
@@ -1489,3 +1461,7 @@ pipeline_gate:
   - study: cell-environment-coupling
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.cellcell-compete
+    name: cellcell-compete

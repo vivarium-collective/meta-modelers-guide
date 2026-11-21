@@ -364,39 +364,6 @@ visualizations:
     caption: 'Mechanistic (the decisive figure): division is now an OUTCOME of growth, energy and size — not a clock. What to look for: (A) cell count rises 1→2→4→8→16 under full nutrient but stays flat at 1 under STARVATION — division is delayed, not scheduled. (B) the lineage tree (parent→daughter), coloured by generation. (C) the conserved-state ledger — total volume / DNA / biomass evolve smoothly across every division rewrite, with no jumps. (D) nucleotide accounting — ΣDNA rises only as the Σnucleotide pool is drawn down, so DNA is built from precursors, not created from nothing. (E) one lineage: volume grows and resets at each division while the chromosome count steps 1→2 at replication. (F) the founder''s cycle with the V_rep (replicate) and V_div (divide) size checkpoints marked. From scripts/build_fig09_mechanistic.py.'
 experiment: 'Run the `fig09-rewrite` composite (`CellCycleDivision` over a colony `tree[node]` store, cycle=3, built via build_fig10_division) to completion over 12 ticks through the process-bigraph engine, capturing the whole colony subtree each tick, and measure whether a genuine place-graph rewrite realizes the paper''s Fig. division caption b -- whether the boundary count doubles at each division while the DNA store is copied at replication and then conserved and equipartitioned across each division.'
 result: 'Over a deterministic 12-tick run the founder cell (1 cell, dna 1.0) replicates its chromosome at t=3 (1 cell, 2 chromosomes, dna 2.0), then divides at t=6 into 2 cells with dna 1.0 each (total conserved at 2.0), replicates again at t=9 (2 cells, 4 chromosomes, dna 4.0), and divides at t=12 into 4 cells with dna 1.0 each (total conserved at 4.0). At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite, and each daughter inherits exactly half of a parent cell''s DNA -- caption b''s "division ... partitions state variables such as DNA ... into two cells." Replication always precedes division (caption a''s replicate-then-separate ordering). Every value is an exact, run-to-run-reproducible pin because the composite has no randomness. This is a toy-real, uncalibrated didactic realization whose point is to make "division is a compositional rewrite" literally executable at the place-graph level -- one boundary becoming two, its stores partitioned across daughters, steppable frame by frame -- not to reproduce division kinetics; the rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell` investigation.'
-readouts:
-- name: n_cells
-  store_path: colony.n_cells
-  description: 'The colony grows from one founder cell to at least four over the run, and the cell count never falls -- division genuinely adds place-graph nodes at runtime…'
-  status: available
-- name: n_chromosomes
-  store_path: colony.n_chromosomes
-  description: 'The chromosome (DNA) count doubles while the cell count is still one -- DNA is copied BEFORE the cell partitions it into two daughters, the…'
-  status: available
-- name: total_dna
-  store_path: colony.total_dna
-  description: 'The total DNA store doubles at each replication event -- 1.0 -> 2.0 -> 4.0 -- the DNA-copy step of caption a made quantitative.'
-  status: available
-- name: colony
-  store_path: colony
-  description: 'At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite (nothing created or destroyed), and each…'
-  status: available
-- name: cell_count under full vs starved nutrient
-  store_path: obs.cell_count under full vs starved nutrient
-  description: 'Division is gated by growth, not a clock: with a full nutrient the colony grows 1→2→4→8→16 as cells cross the size checkpoint, but under STARVATION (nutrient ≈…'
-  status: available
-- name: cell_count after one tick under {energy<div_cost} and {no nucleotides}
-  store_path: cell_count after one tick under {energy<div_cost} and {no nucleotides}
-  description: 'The checkpoint needs more than size. A big cell with energy below div_cost does NOT divide; and a big cell that cannot replicate (no nucleotide precursors)…'
-  status: available
-- name: tot_nucleotides during a replication (growth off)
-  store_path: obs.tot_dna, obs.tot_nucleotides during a replication (growth off)
-  description: 'DNA is not created from nothing: during replication the DNA synthesised equals the nucleotides consumed, so DNA + nucleotides is conserved (the bookkeeping gap…'
-  status: available
-- name: daughter state vs parent state across a division
-  store_path: daughter state vs parent state across a division
-  description: 'Across the division rewrite, volume / nucleotides / biomass / DNA sum over the two daughters equals the parent''s, and energy equals the parent''s minus the…'
-  status: available
 simulation_set:
 - name: fig09-rewrite
   kind: single
@@ -410,3 +377,7 @@ pipeline_gate:
     relation: builds-on
   - study: growth-and-division
     condition: tests-passed
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig09-rewrite
+    name: fig09-rewrite

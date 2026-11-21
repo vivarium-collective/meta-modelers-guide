@@ -766,10 +766,6 @@ readouts:
   store_path: obs.rim_core_ratio
   description: 'DEVELOPMENT -- the colony develops emergent core-vs-rim physiological heterogeneity. `rim_core_ratio` starts near its 1.0 floor (few cells, no readable…'
   status: available
-- name: p
-  store_path: mannwhitney.p
-  description: 'EVOLUTION -- under selection (trait feeds dFBA uptake, mutation ON), the population mean `vmax` shifts UP relative to the no-selection (neutral drift) control…'
-  status: available
 - name: var_vmax
   store_path: obs.var_vmax
   description: 'The evolution crux is wired correctly: across division events, |vmax[daughter] - vmax[parent]| is ~N(0,sigma)-distributed -- the same creation-order…'
@@ -799,3 +795,7 @@ pipeline_gate:
   - study: growth-and-division
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.development-evolution-spatial
+    name: development-evolution-spatial

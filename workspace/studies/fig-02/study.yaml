@@ -414,35 +414,6 @@ visualizations:
 # schema allows only study+condition).
 experiment: 'Run the `fig02-runnable` composite (FastProduction interval 1.0 rate 1.0 and SlowConversion interval 5.0 yield_frac 0.6 wired to one shared pool store) to completion over 20 ticks through the process-bigraph engine, and measure whether two processes updating at different rates through a single shared store reproduce Fig orchestration panel (a): the fast clock outpacing the slow clock, a sawtooth fast pool, a coarse monotone biomass staircase, and mass conserved through the shared store across the two timescales.'
 result: 'Over the deterministic 20-tick run, the fast process updates the shared store on every tick (20 changes) while the slow process converts only 3 times (at t=10, 15, 20), so the fast clock visibly outpaces the slow clock. `molecules` is a sawtooth -- it ramps +1/tick and is drawn down at each slow firing (9->7 at t=10, 11->7.8 at t=15, 11.8->8.12 at t=20) -- while `biomass` advances monotonically in a coarse staircase on the slow clock (0 -> 3.0 -> 7.2 -> 11.88), never returning to the pool. The two rates are coordinated through the ONE shared store and mass is conserved across the timescales: at every emitted tick `molecules + biomass` equals the cumulative fast injection (== elapsed time), ending 8.12 + 11.88 = 20.0. Every value is fixed and deterministic (no RNG), so the whole trajectory reproduces exactly run to run. The paper''s multi-timescale orchestration claim (Fig orchestration, panel a) is thus executable, not merely drawn -- demonstrated here at the didactic (uncalibrated) level for the orchestration mechanism, with panels (b) workflow-DAG and (c) event rewrites left schematic.'
-readouts:
-- name: molecules
-  store_path: obs.molecules
-  description: 'The fast process updates the shared store far more often than the slow one -- two rates coordinated through a single store, the core of Fig orchestration panel…'
-  status: available
-- name: biomass
-  store_path: obs.biomass
-  description: 'Biomass is produced on the slow clock in a coarse staircase, never returns to the pool (non-decreasing), and ends strictly above where it started -- the…'
-  status: available
-- name: biomass
-  store_path: obs.molecules + obs.biomass
-  description: 'Mass is conserved through the shared store across the two timescales -- at every tick the shared-store total (molecules + biomass) equals the cumulative fast…'
-  status: available
-- name: waste
-  store_path: obs.cumulative_input, obs.metabolite, obs.biomass, obs.waste
-  description: 'The explicit input-output ledger closes exactly on every step: cumulative_input = ΔmetabolitePool + Δbiomass + Δwaste. This is the honest replacement for the…'
-  status: available
-- name: 01)
-  store_path: metabolite trajectory vs fine reference (Δt=0.01)
-  description: 'Refining the whole scheme (both clocks scaled together) converges to a fine-step reference: the stiff metabolite pool''s L1 trajectory error falls monotonically…'
-  status: available
-- name: metabolite at an early transient time (t≈2)
-  store_path: obs.metabolite at an early transient time (t≈2)
-  description: 'Multirate scheduling (which clock fires when) is NOT the same as numerical accuracy. The pool error is controlled by the FAST clock (the stiff turnover): with…'
-  status: available
-- name: trajectory with fast/slow node order swapped
-  store_path: trajectory with fast/slow node order swapped
-  description: 'Both processes read the shared pool at the tick boundary and return summed deltas, so coincident fast/slow updates are SYNCHRONOUS: swapping their order in the…'
-  status: available
 simulation_set:
 - name: fig02-runnable
   kind: single
@@ -454,3 +425,7 @@ pipeline_gate:
   - study: fig-01
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig02-runnable
+    name: fig02-runnable

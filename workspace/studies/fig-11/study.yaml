@@ -474,43 +474,6 @@ visualizations:
 # parent_studies schema allows only study+condition).
 experiment: 'Run the `fig11-evolution` composite (`PopulationEvolution` over a population tree[node] of identically-schema''d cell nodes + an environment niche whose selection optimum drifts) to completion over 40 generations through the process-bigraph engine, and measure whether variation (heritable mutation at binary fission) + selection (a Gaussian fitness kernel on trait<->optimum distance, with death-by-selection at carrying capacity) is enough to shift the population''s trait distribution toward a drifting environmental optimum, while division genuinely edits the place graph (parent replaced by two daughters).'
 result: 'Over a fixed-seed (seed=1) 40-generation run, the founder cell (trait 0.0, a gap of 1.0 below the niche optimum) divides by binary fission -- cell_0 replaced by two daughters cell_1, cell_2 -- and the lineage grows to carrying capacity (12 by generation 14) and never exceeds it. The selection optimum drifts monotonically from 1.0 to 1.80 (drift 0.02/generation) and the population mean trait climbs from 0.0 to ~1.68, closing the trait-optimum gap from 1.0 to ~0.12: the trait distribution shifts toward the environmental optimum via variation + heritability + selection. Division is a genuine place-graph rewrite throughout -- below capacity every topology change adds exactly two fresh daughters per vanished parent, ids are never reused, and death-by-selection culls the least-fit cells at capacity. The whole trajectory (sizes, mean trait, optimum, daughter ids) is deterministic and reproduces exactly across independent builds. The paper''s §Evolution pattern (Fig 11) holds as a runnable place-graph rewrite at the toy-real (uncalibrated) level: evolution changes the space of compositions across generations, not the state of a single composition. The rigorous cousin is `development-and-evolution` in the `draft-to-living-cell` investigation.'
-readouts:
-- name: population
-  store_path: population
-  description: 'The population grows from the lone founder to carrying capacity by binary fission and never exceeds it -- discrete division events (Fig 11a) expanding the…'
-  status: available
-- name: environment
-  store_path: environment
-  description: 'The environmental niche''s selection optimum drifts monotonically forward over the run -- a moving target the population must chase (Fig 11b).'
-  status: available
-- name: final lag |mean − optimum| across 40 seeds, selection vs neutral
-  store_path: final lag |mean − optimum| across 40 seeds, selection vs neutral
-  description: 'Over 40 independent seeds, selection tracks the drifting optimum with a small bounded lag while the matched NEUTRAL control (sel→0, pure drift) wanders far…'
-  status: available
-- name: parent–offspring trait regression slope (mean over 10 seeds)
-  store_path: parent–offspring trait regression slope (mean over 10 seeds)
-  description: 'Under clonal inheritance plus Gaussian mutation the realized narrow-sense heritability — the parent–offspring regression slope — is ≈ 1, as…'
-  status: available
-- name: trait variance over 30 generations, no-mutation control
-  store_path: trait variance over 30 generations, no-mutation control
-  description: 'Matched null (no-mutation): with mutation off, no new variation enters, so selection and drift erode the heritable variance toward zero and the population…'
-  status: available
-- name: final lag vs optimum drift rate (20 seeds each)
-  store_path: final lag vs optimum drift rate (20 seeds each)
-  description: 'A first-principles prediction: the per-generation response is bounded (R = h²·S, limited by standing variance), so the tracking lag must GROW with the…'
-  status: available
-- name: population size and parent-index validity each generation
-  store_path: population size and parent-index validity each generation
-  description: 'Newborn topology and demographics are well-formed: every generation holds exactly N individuals, and every offspring''s parent index is a valid member of the…'
-  status: available
-- name: same-seed trajectory equality; across-seed spread of final mean
-  store_path: same-seed trajectory equality; across-seed spread of final mean
-  description: 'The same seed reproduces an identical trajectory (reproducibility), but DIFFERENT seeds give different realizations whose across-seed spread is non-trivial —…'
-  status: available
-- name: evolved mean trait vs derived metabolic optimum a* over 50 generations (25 seeds)
-  store_path: evolved mean trait vs derived metabolic optimum a* over 50 generations (25 seeds)
-  description: 'Optional executable-trait fitness: when fitness is DERIVED from a Michaelis–Menten uptake minus a quadratic cost, the optimal uptake investment a* is an…'
-  status: available
 simulation_set:
 - name: fig11-evolution
   kind: single
@@ -525,3 +488,7 @@ pipeline_gate:
   - study: development-and-evolution
     condition: tests-passed
     relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig11-evolution
+    name: fig11-evolution
