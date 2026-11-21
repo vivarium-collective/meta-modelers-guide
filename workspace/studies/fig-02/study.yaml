@@ -287,7 +287,7 @@ findings:
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'The cross-timescale conservation invariant holds at EVERY one of the 21 emitted ticks, not merely at the four sampled slow-firing landmarks: re-run in-memory, molecules + biomass == elapsed time to within 1e-9 for all ticks 0..20 (checked exhaustively, not spot-checked). Each slow firing converts exactly yield_frac (0.6) of the pool sampled at the start of its 5-tick window -- molecules at t=5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 0.6x5.0=3.0, 0.6x7.0=4.2, 0.6x7.8=4.68 and the staircase levels [0.0, 3.0, 7.2, 11.88]. The invariant and the increment rule are therefore properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled.'
+  statement: 'The cross-timescale mass identity holds at every one of the 21 emitted ticks (0..20), not only at the four sampled slow-firing landmarks: on an in-memory re-run, molecules + biomass equals elapsed time to within 1e-9 at all 21 ticks, checked exhaustively rather than spot-checked. Each slow firing converts exactly yield_frac = 0.6 of the pool sampled at the start of its 5-tick window -- molecules at t = 5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 3.0, 4.2, 4.68 and the staircase levels 0.0, 3.0, 7.2, 11.88, with the final split 8.12 + 11.88 = 20.0. The identity and the increment rule are structural properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled.'
   evidence:
     from_test: mass-conserved-across-timescales
     from_run: fig02-runnable
@@ -296,6 +296,7 @@ findings:
     run_ids:
     - fig02-runnable
     analysis_script: in-memory Composite build from fig02-runnable.composite.json + gather_emitter_results, all-ticks conservation check (workbench 0.4.1)
+  explanation: "Read as support for the orchestration claim, this is mechanism-tier computational evidence, not biological calibration. It shows that panel (a)'s picture -- two processes on different clocks coordinated through one shared store -- is reproducible as an exact, deterministic invariant of the composite, independent of sampling cadence. The identity molecules + biomass == elapsed time is a cumulative-input bookkeeping identity, not a thermodynamic conservation law: the fast process is the sole source, injecting one unit per tick so cumulative input equals elapsed time, while the slow process only relocates mass within the shared pool, so the two quantities must sum to the total injected. The genuine input-output ledger lives in the mechanistic variant (fig02-mechanistic), where cumulative_input = delta-M + delta-biomass + delta-waste closes to about 1e-15 with waste carrying most of the throughput. Scope is deliberately didactic and uncalibrated -- the rates, intervals, and yield_frac are illustrative -- so the finding speaks to the orchestration mechanism and the exactness of its bookkeeping, not to any biological magnitude."
 - id: F-04
   kind: computational
   tier: mechanism
@@ -309,6 +310,7 @@ findings:
   provenance:
     run_ids:
     - fig02-mechanistic
+  explanation: "Read against the review's central objection, this is the honest correction to the baseline's conservation language, and it is mechanism-tier computational evidence, not biological calibration. The baseline reported molecules + biomass == elapsed time as if it were mass conservation; the mechanistic variant adds a genuine first-order turnover that routes mass to a waste sink and tracks the full ledger cumulative_input = ΔmetabolitePool + Δbiomass + Δwaste. That ledger closes to a residual of 1.8e-15 on every step -- machine epsilon -- and that is the real conservation statement: the scheduler neither creates nor destroys mass as it combines updates across the two clocks. It also shows the baseline's summed total is not the conserved quantity. Pool + biomass reaches only about 2.2 of the 20.0 cumulative input, with waste carrying the remaining ~17.8, so the quantity that 'equals elapsed time' is the external input, not an internal conserved total, and biomass is simply the yield fraction of throughput. Scope stays didactic and uncalibrated -- the influx, turnover rate, and yield are illustrative -- so the finding speaks to the exactness and honesty of the orchestration's cross-timescale bookkeeping, not to any biological magnitude."
 - id: F-05
   kind: computational
   tier: mechanism

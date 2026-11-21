@@ -286,6 +286,7 @@ findings:
   provenance:
     run_ids:
     - fig03-runnable
+  explanation: "These measurements establish the claim at the level of typed-interface correctness: each port drawn in Fig cell_interface is realized as a runnable connection whose value is a graded function of its own driving shared variable. The exactly-5.0 uptake-flux ratio shows the chemical port scaling linearly with supply; the mechanical, electrical, and thermal ports each move with their own driver and read zero when it is off, isolating each typed cell to shared-variable connection; and the shape port's strict accretion shows a higher-level cellular variable tracking sustained growth. The evidence class is computational and regression-pinned: every value is a deterministic function of the handler's response laws, recorded from the registered fig03-runnable run and reproducing exactly across runs, not an authored number. Scope: because each baseline port responds only to its own driver, this shows that the ports respond, not that they form a coupled physiology. The shared-state coupling is demonstrated separately by the mechanistic variant (findings F-04 and F-05), and the response-law constants here are didactic and toy-real, not calibrated to a named cell type."
 - id: F-02
   kind: biological
   tier: mechanism
@@ -311,6 +312,7 @@ findings:
     run_ids:
     - fig03-runnable
     analysis_script: in-memory CellularInterfaceHandler driven at paired supplies 0.2 vs 1.0 (workbench 0.4.1)
+  explanation: "Recovering both Monod constants exactly from two measured growth points establishes the growth port as a genuine saturating response rather than a linear stand-in: the curvature is read back from the run, not assumed. The decisive contrast is that over the same chemical change the uptake-flux ratio stays exactly linear while growth saturates, so the one chemical driver is shown to feed two measurably different functional forms, each a separately recoverable response law rather than a shared gain reused across ports. The evidence class is computational and deterministic: the values are recovered in-memory from a fresh CellularInterfaceHandler at paired supplies and reproduce exactly, so this is a recovery of the handler's own constants, not a fit to external data. Scope: it certifies the functional form of the baseline growth law, not its calibration — growth_max and km are didactic, toy-real magnitudes — and coherent physiology across coupled ports is demonstrated separately by the mechanistic variant (F-04, F-05)."
 - id: F-04
   kind: computational
   tier: mechanism
@@ -324,6 +326,7 @@ findings:
   provenance:
     run_ids:
     - fig03-mechanistic
+  explanation: "This finding raises the claim from typed-interface correctness to coupled physiology. In the mechanistic variant a single environmental perturbation does not stay confined to its own port: the heat shock enters at the thermal port, collapses enzyme activity, and that one change cascades through uptake and the ATP pool so that growth and viability fall together — the signature of ports wired to a common energetic node rather than nine independent response laws. The nutrient step-down reproduces the pattern from the other end of the network, moving growth, ATP, and viability through the same shared pool. The evidence class is a mechanistic ablation read from the live fig03-mechanistic run: the cross-port response matrix is dense (one driver moves every measured output) rather than diagonal, which is the measurable difference between genuine coupling and the baseline's isolated ports. This is what answers the scientific review's objection that the baseline interface shows only that ports respond, not that they cohere. Scope: the coupling is genuine and mechanism-mediated, but the rate laws that carry it are didactic and toy-real — a single lumped ATP pool, a Gaussian enzyme-activity window, and a basal maintenance drain — pinned for legibility rather than fitted to a measured respiration, maintenance coefficient, or growth-rate curve. The finding therefore certifies that the ports form a coupled physiology, not that the physiology is calibrated; the companion matched-null ablation (F-05) localizes that coupling to the shared ATP node."
 - id: F-05
   kind: computational
   tier: mechanism
@@ -337,6 +340,7 @@ findings:
   provenance:
     run_ids:
     - fig03-mechanistic
+  explanation: 'The baseline already established that each typed port responds to its own driver, and F-04 established that in the mechanistic variant one perturbation moves every downstream port. F-05 isolates why that propagation happens: it is a matched-null ablation that removes the shared ATP node and watches the coupling disappear. With metabolism disabled by setting catalytic_capacity to a small epsilon rather than to zero, so the control differs from the live run in one mechanism and not in its structure, the cell can no longer turn nutrient into ATP; growth holds near zero and biomass stays flat at 1.0 even as nutrient supply is changed, with the nutrient step moving biomass by less than 1e-3. The propagation F-04 recorded breaks at exactly the step where the energy currency is taken away, which localizes the coupling to the shared ATP pool rather than to direct port-to-port wiring. The same run confirms that growth is paid out of ATP, falling to zero at the ATP minimum, and that the shared state stays well-posed: ATP never goes negative, viability stays within [0,1], and biomass is monotone. The evidence class is a matched-null control read from the live fig03-mechanistic run, so the claim rests on the measured contrast between the disabled and intact cells, not on an asserted mechanism. Scope: this certifies where the coupling runs, not that the physiology is calibrated. The lumped ATP pool, the Gaussian enzyme-activity window, and the basal maintenance drain remain didactic, toy-real constants, not fitted to a measured respiration rate, maintenance coefficient, or growth-rate curve; calibrating them against such data is the stated next step.'
 ontology_provenance:
   note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kind -- a MIRIAM-style annotation map, not ontology reasoning.'
   interface_quantities:
