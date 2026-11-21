@@ -196,6 +196,6 @@ shows) and refreshed by CI. Regenerate with `vivarium-workbench gen-readme --wor
 
 | Investigation | Research question |
 |---|---|
-| [From Draft to Living Cell _(running)_](https://vivarium-collective.github.io/meta-modelers-guide/investigations/draft-to-living-cell.html) | The paper treats a biological interface as a scientific object — something you can compose with other entities, swap the mechanism behind, and watch emerge from the inside. |
-| [Executable Figures _(running)_](https://vivarium-collective.github.io/meta-modelers-guide/investigations/paper-figures.html) | The meta-modeler's guide argues its case through eleven figures — each a BioRender illustration (panel a) paired with a process-bigraph diagram (panel b) that names the composition behind the biology. |
+| [From Draft to Living Cell _(running)_](https://vivarium-collective.github.io/meta-modelers-guide/workbench/reports/investigation-draft-to-living-cell.html) | The paper treats a biological interface as a scientific object — something you can compose with other entities, swap the mechanism behind, and watch emerge from the inside. |
+| [Executable Figures _(running)_](https://vivarium-collective.github.io/meta-modelers-guide/workbench/reports/investigation-paper-figures.html) | The meta-modeler's guide argues its case through eleven figures — each a BioRender illustration (panel a) paired with a process-bigraph diagram (panel b) that names the composition behind the biology. |
 <!-- END:investigations -->
