@@ -4,7 +4,7 @@
 
 **Goal:** Restructure the `draft-to-living-cell` investigation into 9 studies, one per composition-pattern section of the paper, each authored as a typed contract compiled to an executable, with the 5-laws apparatus re-homed to where the paper actually argues each law.
 
-**Architecture:** The composite/handler/env/test code is already figure-numbered correctly, so the work is (A) build the one genuinely-missing pattern — cell–cell coupling — as a new draft + handlers + env + composite + BUILD entry + law test; (B) re-author the study layer 6→9 via the `/viva-study` skill, re-homing the three metabolisms into `disintegration`/`autopoiesis` and the impostor into `cellular-interface`; (C) re-anchor `investigation.yaml`, `README.md`, and regenerate reports. The paper's Fig 6 is Disintegration (not a fabricated "metabolism" figure) and the existing `fig05-disintegration` composite already models the cell↔molecular-network grain-swap — the fix is narrative + study placement, not new metabolism code.
+**Architecture:** The composite/handler/env/test code is already figure-numbered correctly, so the work is (A) build the one genuinely-missing pattern — cell–cell coupling — as a new draft + handlers + env + composite + BUILD entry + law test; (B) re-author the study layer 6→9 via the `/viva:study` skill, re-homing the three metabolisms into `disintegration`/`autopoiesis` and the impostor into `cellular-interface`; (C) re-anchor `investigation.yaml`, `README.md`, and regenerate reports. The paper's Fig 6 is Disintegration (not a fabricated "metabolism" figure) and the existing `fig05-disintegration` composite already models the cell↔molecular-network grain-swap — the fix is narrative + study placement, not new metabolism code.
 
 **Tech Stack:** Python, `process_bigraph`, `viva_compiler` (the compiler + laws), pytest, the `/viva-*` workbench skills, COBRApy (optional, guarded).
 
@@ -14,7 +14,7 @@
 
 - **Worktree discipline:** all work happens in the worktree `~/code/meta-modelers-guide--paper-aligned` on branch `paper-aligned-studies`. Never `git checkout`/commit in the canonical `~/code/meta-modelers-guide`. Verify `git branch --show-current` before each commit.
 - **Editable install points at the canonical checkout.** Run every test/script with the worktree prepended: `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned pytest …`. Verify once with `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python -c "import meta_modelers_guide, os; print(meta_modelers_guide.__file__)"` — the path must contain `--paper-aligned`.
-- **Study writes go through `/viva-study`** (canonicalization + provenance), not hand-edited YAML. Requires the workbench running (`/viva-workbench start`; `workspace.yaml` has `server.enabled: false`).
+- **Study writes go through `/viva:study`** (canonicalization + provenance), not hand-edited YAML. Requires the workbench running (`/viva:workbench start`; `workspace.yaml` has `server.enabled: false`).
 - **Composites the compiler owns are generated,** not hand-edited: after touching handlers/envs/semantic drafts, regenerate with `PYTHONPATH=… python scripts/build_executables.py`.
 - **COBRApy-dependent tests stay guarded** (`pytest.importorskip("cobra")` / graceful skip), as in commit #32.
 - **Study naming:** kebab-case slug matching the study dir; `schema_version: 4`; `required: [name, baseline]`; baseline is a non-empty list of `{name, composite, params}` with package-qualified composite ids (`meta_modelers_guide.composites.<stem>`).
@@ -40,7 +40,7 @@
 - `scripts/build_executables.py` — add the two cell–cell BUILD rows.
 - `workspace/investigations/draft-to-living-cell/investigation.yaml` — full re-author (order, at_a_glance, executive, scientific_argument, capstone, caveats).
 - `README.md` — remove the "Fig 6 = metabolism" flagship; re-anchor to the paper's arc; fix the composite table.
-- `workspace/studies/*` — 6 studies re-authored into 9 (via `/viva-study`).
+- `workspace/studies/*` — 6 studies re-authored into 9 (via `/viva:study`).
 
 ---
 
@@ -561,7 +561,7 @@ if __name__ == "__main__":
 Run:
 ```bash
 PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_disintegration.py
-PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/viva-run-check.py 2>/dev/null || \
+PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/viva:run-check.py 2>/dev/null || \
   PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python -c "import json,meta_modelers_guide.core as c; from process_bigraph import Composite; s=json.load(open('meta_modelers_guide/composites/fig05-disintegration-dynamics.composite.json')); Composite(s, core=c.build_core()).run(20); print('plays OK')"
 ```
 Expected: composite written; a 20-step run completes ("plays OK"). Later, in Task 14, verify visually with `/viva-explore fig05-disintegration-dynamics` (Composite Explorer play) — viability curve drops, debris rises.
@@ -578,9 +578,9 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 
 ---
 
-## Phase B — Re-author the study layer 6 → 9 (via `/viva-study`)
+## Phase B — Re-author the study layer 6 → 9 (via `/viva:study`)
 
-**Precondition for all Phase B tasks:** `/viva-workbench start` (workbench up). Each task ends by running `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/lint-workspace.py` and confirming no errors for the touched study, then a commit. Use `/viva-study` for the writes (canonicalization + provenance); do not hand-edit `study.yaml`. Content below is the material to author — figure citation, question, claim, baseline composite ids (package-qualified), law home, caveats. Detailed multi-section prose is expanded by `/viva-study` + `/viva-biology-forward` during authoring.
+**Precondition for all Phase B tasks:** `/viva:workbench start` (workbench up). Each task ends by running `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/lint-workspace.py` and confirming no errors for the touched study, then a commit. Use `/viva:study` for the writes (canonicalization + provenance); do not hand-edit `study.yaml`. Content below is the material to author — figure citation, question, claim, baseline composite ids (package-qualified), law home, caveats. Detailed multi-section prose is expanded by `/viva:study` + `/viva-biology-forward` during authoring.
 
 ### Task 2: Retire `gallery` and `the-living-atlas` as standalone studies
 
@@ -597,7 +597,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 
 **Files:** rename `workspace/studies/typed-interface/` → author `workspace/studies/cellular-interface/` (Fig 4 half only).
 
-**Content to author (`/viva-study`):**
+**Content to author (`/viva:study`):**
 - **title:** The Cellular Interface
 - **figure:** Fig 4 (`cellular_interface.pdf`)
 - **baseline:** `meta_modelers_guide.composites.fig03a-interaction-modalities`, `meta_modelers_guide.composites.fig03b-cellular-interface`, `meta_modelers_guide.composites.fig03b-executable`
@@ -606,8 +606,8 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **law home:** Law 1 (conformance) + the impostor `NonConformingMetabolism` → `CompileError`. Reference `tests/test_fba.py::test_impostor_handler_rejected_by_compiler` and note the impostor breaks a *cell interface* contract (renames/drops ports), not a fabricated metabolism figure.
 - **caveats:** conformance is STRUCTURAL (port names/types/wiring), not units/dimensions/behavior; ports are unit-labeled but units are name-only.
 
-- [ ] **Step 1:** With the workbench up, author the study via `/viva-study` with the fields above; slug `cellular-interface`.
-- [ ] **Step 2:** Remove the old `typed-interface` dir if `/viva-study` created a fresh one (`git rm -r workspace/studies/typed-interface` — its Fig 5 content moves to Task 4).
+- [ ] **Step 1:** With the workbench up, author the study via `/viva:study` with the fields above; slug `cellular-interface`.
+- [ ] **Step 2:** Remove the old `typed-interface` dir if `/viva:study` created a fresh one (`git rm -r workspace/studies/typed-interface` — its Fig 5 content moves to Task 4).
 - [ ] **Step 3:** Run `PYTHONPATH=… python scripts/lint-workspace.py`; confirm `cellular-interface` resolves and its baseline composites exist.
 - [ ] **Step 4:** Commit: `git commit -m "studies: cellular-interface (Fig 4) + Law 1/impostor home"`.
 
@@ -621,7 +621,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **claim:** Compiling the Fig 5 draft installs a real Laplacian-diffusion field + single-cell uptake; the cell depletes nutrient locally, diffusion refills it, and the cell reshapes the very gradient it depends on (niche construction) — interface preserved (**Law 2**).
 - **caveats:** toy-real constants; niche construction shown as pattern.
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `cell-environment-coupling`, fields above.
+- [ ] **Step 1:** Author via `/viva:study`, slug `cell-environment-coupling`, fields above.
 - [ ] **Step 2:** Lint; confirm resolves.
 - [ ] **Step 3:** Commit: `git commit -m "studies: cell-environment-coupling (Fig 5)"`.
 
@@ -635,7 +635,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **claim:** Two cells over one shared-nutrient interface negotiate viability: under competition the weaker cell (lower uptake capacity) starves below its viable band while the stronger persists; under cross-feeding both stay viable — two handler environments over one coupling interface (**Law 4**).
 - **caveats:** pairwise, toy-real; population-scale negotiation not modeled.
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `cell-cell-coupling`, fields above; cite `tests/test_cellcell.py`.
+- [ ] **Step 1:** Author via `/viva:study`, slug `cell-cell-coupling`, fields above; cite `tests/test_cellcell.py`.
 - [ ] **Step 2:** Lint; confirm baseline composites (from Task 1) resolve.
 - [ ] **Step 3:** Commit: `git commit -m "studies: cell-cell-coupling (viability negotiation, law 4)"`.
 
@@ -652,7 +652,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **falsifiability:** overturned if, played through, viability never leaves the viable band / never collapses, or biomass never converts to debris (no level shift), or the three grains fail to share one interface.
 - **caveats:** the playable dynamics composite is assembled in the figures' style (`wholecell.py`), not compiler-emitted (same honesty as the capstone); its thermal shock is scripted (hard-coded onset), not emergent; FBA requires optional `cobra` (guarded skip); grain equivalence is structural, not a fitted reduction.
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `disintegration`, fields above; cite `tests/test_disintegration_dynamics.py`, `tests/test_compilation.py::test_fig6_handler_independence`, and `tests/test_fba.py`. Record the playable composite as the headline baseline and add a `behavior_tests`/`falsifiability` entry for the viability-collapse trajectory.
+- [ ] **Step 1:** Author via `/viva:study`, slug `disintegration`, fields above; cite `tests/test_disintegration_dynamics.py`, `tests/test_compilation.py::test_fig6_handler_independence`, and `tests/test_fba.py`. Record the playable composite as the headline baseline and add a `behavior_tests`/`falsifiability` entry for the viability-collapse trajectory.
 - [ ] **Step 2:** Remove the retired `workspace/studies/one-interface-three-mechanisms/` (`git rm -r`).
 - [ ] **Step 3:** Lint; confirm resolves and no dangling `one-interface-three-mechanisms` refs remain (outside investigation.yaml).
 - [ ] **Step 4:** Commit: `git commit -m "studies: disintegration (Fig 6) — playable level-shift + grain-swap + law 4; retire one-interface-three-mechanisms"`.
@@ -667,7 +667,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **claim:** The molecular interface's four typed channels + specialized enzymatic ports compile to a running ATP-synthase mechanism — the molecular level the disintegration study drops into, made concrete.
 - **caveats:** one mechanism, toy-real kinetics.
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `molecular-interfaces`, fields above.
+- [ ] **Step 1:** Author via `/viva:study`, slug `molecular-interfaces`, fields above.
 - [ ] **Step 2:** Lint; confirm resolves.
 - [ ] **Step 3:** Commit: `git commit -m "studies: molecular-interfaces (Fig 7)"`.
 
@@ -682,7 +682,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **caveats:** complementarity/selectivity (which partners bind) is narrated as the organizing principle but the executable demonstrates hierarchical assembly, not fitted binding selectivity — noted honestly.
 - **note:** Task 6 of the old `the-nested-cell` study split: Fig 7 → Task 7, Fig 8 → here. Remove `workspace/studies/the-nested-cell/` after both are authored.
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `biomolecular-complementarity`, fields above.
+- [ ] **Step 1:** Author via `/viva:study`, slug `biomolecular-complementarity`, fields above.
 - [ ] **Step 2:** Remove `workspace/studies/the-nested-cell/` (`git rm -r`) now that Fig 7 + Fig 8 are split out.
 - [ ] **Step 3:** Lint; confirm both new studies resolve and no dangling `the-nested-cell` refs (outside investigation.yaml).
 - [ ] **Step 4:** Commit: `git commit -m "studies: biomolecular-complementarity (Fig 8); retire the-nested-cell (split into Fig 7 + Fig 8)"`.
@@ -698,7 +698,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **caveats (honest):** this illustrates the Maturana–Varela closure *pattern*, not validated autopoiesis; the loop's self-maintenance is demonstrated qualitatively.
 - **note:** promoted from the retired `gallery` (fig08a/09b were deflated there).
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `autopoiesis`, fields above.
+- [ ] **Step 1:** Author via `/viva:study`, slug `autopoiesis`, fields above.
 - [ ] **Step 2:** Lint; confirm resolves.
 - [ ] **Step 3:** Commit: `git commit -m "studies: autopoiesis (Fig 9) — closure pattern + grain-swap (law 4, 2nd home)"`.
 
@@ -713,7 +713,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **law home:** Law 2′ primary. Reuse `tests/test_compilation.py::test_fig10_division_is_event_driven`, `tests/test_fig10_rewrite.py`.
 - **note:** largely a rename + reframe of the existing strong `divide` study to add the *growth* framing (env-coupled uptake grows the stores that cross the threshold).
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `growth-and-division`, reusing `divide`'s content + growth framing.
+- [ ] **Step 1:** Author via `/viva:study`, slug `growth-and-division`, reusing `divide`'s content + growth framing.
 - [ ] **Step 2:** Remove `workspace/studies/divide/` (`git rm -r`).
 - [ ] **Step 3:** Lint; confirm resolves.
 - [ ] **Step 4:** Commit: `git commit -m "studies: growth-and-division (Fig 10a,b, law 2′); rename from divide"`.
@@ -729,7 +729,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - **caveats (explicit, per paper line 580 "an open and substantial challenge"):** these are pattern demonstrations, not validated results — selection is an ODE, the "new port" is a config-driven ramp; the biofilm nesting is pre-declared post-structure, not runtime node insertion.
 - **note:** promoted from the retired `gallery`; biofilm (Fig 10c,d) lives here, not in `cell-cell-coupling`.
 
-- [ ] **Step 1:** Author via `/viva-study`, slug `development-and-evolution`, fields + explicit caveats above.
+- [ ] **Step 1:** Author via `/viva:study`, slug `development-and-evolution`, fields + explicit caveats above.
 - [ ] **Step 2:** Lint; confirm resolves.
 - [ ] **Step 3:** Commit: `git commit -m "studies: development-and-evolution (Fig 10c–f) — caveated pattern demos (law 2′)"`.
 
@@ -739,7 +739,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 
 ### Task 12: Re-author `investigation.yaml`
 
-**Files:** Modify `workspace/investigations/draft-to-living-cell/investigation.yaml` (via `/viva-investigation` where it writes; prose fields may be set through the skill).
+**Files:** Modify `workspace/investigations/draft-to-living-cell/investigation.yaml` (via `/viva:investigate` where it writes; prose fields may be set through the skill).
 
 - [ ] **Step 1:** Set `studies:` to the 9 slugs in paper order: `cellular-interface, cell-environment-coupling, cell-cell-coupling, disintegration, molecular-interfaces, biomolecular-complementarity, autopoiesis, growth-and-division, development-and-evolution`.
 - [ ] **Step 2:** Rewrite `at_a_glance:` — one `{study, role}` per new study, role lines matching the table in the spec (each names its figure + what its executable shows + its law home).
@@ -768,7 +768,7 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 - [ ] **Step 1:** Regenerate ONLY the branch's own composites, and protect baked viz. NOTE (discovered in Task 1): `scripts/build_executables.py` recompiles *every* executable from scratch and silently strips the `dynamics_viz` step baked into fig03b/05/06/07/08/09/10 executables by commit `89f2e95`. Do NOT blanket-commit its output. Procedure: run `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_executables.py`, then `git -C ~/code/meta-modelers-guide--paper-aligned checkout -- meta_modelers_guide/composites/fig0*-executable*.composite.json meta_modelers_guide/composites/fig10-*-executable.composite.json` to restore the baked-viz figures, keeping only the two `cellcell-executable-*` files new. Then `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/build_disintegration.py` (writes only `fig05-disintegration-dynamics.composite.json`). Verify with `git status` that no fig0*/fig10 executable shows a viz-stripping diff before committing.
 - [ ] **Step 2:** Full test suite: `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned pytest -v`. Expected: all pass (FBA/cobra tests skip gracefully if `cobra` absent). Fix any regressions.
 - [ ] **Step 3:** Workspace lint: `PYTHONPATH=~/code/meta-modelers-guide--paper-aligned python scripts/lint-workspace.py`. Expected: clean; no dangling study/composite references.
-- [ ] **Step 4:** Visually confirm the playable disintegration: `/viva-explore fig05-disintegration-dynamics`, step through the play, and confirm the viability curve collapses and debris rises (the requirement: disintegration is *visible* when played). Then run `/viva-report` (workbench up) — the reviewer-readiness audit (Pass A) + structural lint (Pass B), then regenerate the dashboard + investigation report. Resolve any verdict↔chart drift or stale-framing flags it raises.
+- [ ] **Step 4:** Visually confirm the playable disintegration: `/viva-explore fig05-disintegration-dynamics`, step through the play, and confirm the viability curve collapses and debris rises (the requirement: disintegration is *visible* when played). Then run `/viva:report` (workbench up) — the reviewer-readiness audit (Pass A) + structural lint (Pass B), then regenerate the dashboard + investigation report. Resolve any verdict↔chart drift or stale-framing flags it raises.
 - [ ] **Step 5:** Commit any regenerated report/dashboard artifacts: `git commit -m "report: regenerate dashboard + draft-to-living-cell report for the 9-study realignment"`.
 - [ ] **Step 6:** Final verification statement: confirm (a) 9 study dirs exist and lint clean, (b) `pytest` green, (c) no "Fig 6 = metabolism" flagship anywhere (`grep -rn "Fig 6 — metabolism" README.md workspace/`), (d) investigation references exactly the 9 studies.
 
@@ -778,6 +778,6 @@ git commit -m "feat(disintegration): playable Fig 6a level-shift composite — t
 
 **Spec coverage:** every spec section maps to a task — 9 studies (Tasks 3–11), framework-as-primer + capstone + coverage (Task 12), 5-laws homes (Tasks 3/6/9/10/11), cell–cell new science (Task 1), the **playable disintegration** requirement (Task 1B → surfaced in Task 6 as the headline baseline and verified in Task 14 via `/viva-explore`), migration/salvage (Tasks 2,6,8,10 retirements + Task 12 salvage), README fix (Task 13), mechanics/report (Task 14). Complementarity-selectivity was deliberately descoped (YAGNI — Fig 8 is nesting, which exists); Task 8 notes it honestly.
 
-**Placeholder scan:** code steps carry real code; study tasks carry exact composite ids + questions + claims (prose expansion is the `/viva-study` skill's job, called out explicitly, not a hidden TODO).
+**Placeholder scan:** code steps carry real code; study tasks carry exact composite ids + questions + claims (prose expansion is the `/viva:study` skill's job, called out explicitly, not a hidden TODO).
 
 **Type consistency:** draft names `CellAgent`/`SharedNutrientEnv`, handlers `CompetingCell`/`CrossFeedingCell`/`NutrientPool`, envs `cellcell-compete`/`cellcell-crossfeed`, composite stems `cellcell-coupling`/`cellcell-executable-{compete,crossfeed}` are used consistently across Task 1 and referenced identically in Task 5. The one flagged risk (env↔node keying convention) has an explicit alignment step (Task 1 Step 8).

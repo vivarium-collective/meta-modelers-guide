@@ -87,7 +87,7 @@ for env in ("fig05-coarse", "fig05-kinetic"):
 ```
 
 Materialize every figure's executable with `python scripts/build_executables.py`
-(writes `composites/*-executable*.composite.json`, discoverable + `/viva-run`-able).
+(writes `composites/*-executable*.composite.json`, discoverable + `/viva:run`-able).
 
 ## Adding a handler
 

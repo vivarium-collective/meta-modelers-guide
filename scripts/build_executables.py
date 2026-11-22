@@ -2,7 +2,7 @@
 """Materialize each figure's EXECUTABLE composite by running the semantic→executable
 compiler (compile.py) over the semantic composite + its handler environment, and
 writing the result to composites/<output>.composite.json — discoverable by the
-workbench and runnable via /viva-run. compile.py is the single source of truth.
+workbench and runnable via /viva:run. compile.py is the single source of truth.
 
 Re-run after editing handlers / envs / semantic composites.
 """
