@@ -98,7 +98,7 @@ init}}`. `fig05-coarse` handles `CoarseGrainedMetabolism`; `fig05-kinetic` handl
 `scripts/build_executables.py` runs `compile_composite(load(semantic), ENVS[k])`
 and writes `composites/<name>.composite.json`:
 `fig03b-executable`, `fig04-executable`, `fig05-executable-coarse`,
-`fig05-executable-kinetic`, `fig08b-executable`. Discoverable + `/viva-run`-able.
+`fig05-executable-kinetic`, `fig08b-executable`. Discoverable + `/viva:run`-able.
 
 ## Study
 `workspace/studies/fig-compilation/` in `paper-figures`: baseline = a semantic

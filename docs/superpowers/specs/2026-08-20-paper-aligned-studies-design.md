@@ -108,11 +108,11 @@ level-shift (cell-metabolism ↔ molecular-network rewrite) genuinely built, not
 ## Mechanics
 
 - Precondition: workbench running. `workspace.yaml` has `server.enabled: false` → run
-  `/viva-workbench start` first.
-- `/viva-study` — create the 9 studies, retire/rename the 6 old ones.
-- `/viva-investigation` — investigation overview, study order, status, capstone synthesis.
-- `/viva-viz` — regenerate figures where the mechanism changed.
-- `/viva-report` — reviewer-readiness audit + regenerate dashboard/report before hand-off.
+  `/viva:workbench start` first.
+- `/viva:study` — create the 9 studies, retire/rename the 6 old ones.
+- `/viva:investigate` — investigation overview, study order, status, capstone synthesis.
+- `/viva:viz` — regenerate figures where the mechanism changed.
+- `/viva:report` — reviewer-readiness audit + regenerate dashboard/report before hand-off.
 - All study writes go through the skills (canonicalization + provenance), not direct YAML edits.
 
 ## Out of scope

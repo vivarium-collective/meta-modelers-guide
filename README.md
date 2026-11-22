@@ -80,7 +80,7 @@ Scaffolded from [viva-template](https://github.com/vivarium-collective/viva-temp
 compilation from interface contract to executable is described in
 [`docs/concepts/semantic-to-executable-compilation.md`](docs/concepts/semantic-to-executable-compilation.md).
 The [viva-superpowers](https://github.com/vivarium-collective/viva-superpowers) skills
-(`/viva-study`, `/viva-investigation`, `/viva-expert`, `/viva-viz`, `/viva-report`) drive the
+(`/viva:study`, `/viva:investigate`, `/viva:model`, `/viva:viz`, `/viva:report`) drive the
 study → investigation → report → PR flow. Research state lives under `workspace/`, with
 locations set by `layout:` in `workspace.yaml`.
 
