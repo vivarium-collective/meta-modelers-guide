@@ -606,6 +606,21 @@ What is demonstrated, and what is not. FIRST, this is a strict UPGRADE over the 
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -914,6 +929,12 @@ What is demonstrated, and what is not. FIRST, this is a strict UPGRADE over the 
                 data-baseline-name="development-evolution-spatial">Set composite</button>
       </div>
       <div class="baseline-composite-status muted" data-baseline-name="development-evolution-spatial" style="font-size:0.8em;margin-top:2px"></div>
+      
+      
+      
+      
+      
+      
       
       
       
@@ -1288,7 +1309,8 @@ What is demonstrated, and what is not. FIRST, this is a strict UPGRADE over the 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mean over N=30 selection-ON seeds of last(obs.rim_core_ratio)", "kind": "observable", "path": "obs.rim_core_ratio"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -- a growing colony on a shared depleting field should form core-vs-rim heterogeneity, so rim_core_ratio should rise above 1.0 (core more depleted than rim); the 1.2 floor is a loose pin on that a-priori direction. Confirmed -- rim_core_ratio grows 1.0 (5 ticks) upward as the colony develops; now reported as an ENSEMBLE BAND across N=30 seeds: mean 1.283, sd 0.159, range [1.062, 1.815] (flagship seed 3 ends 1.445), with the per-cell core/rim local-glucose split recorded as the scatter behind the scalar. This REPLACES the single-seed reading; every seed clears the 1.0 no-gradient floor (scripts/run_dev_evo_ensemble.py, tests/test_dev_evo_ensemble.py::test_rim_core_ratio_band, tests/test_dev_evo_regime.py::test_development_heterogeneity_emerges, tests/test_cpm_evolution.py::test_rim_core_ratio_shows_heterogeneity)", "value": 1.2}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -- a growing colony on a shared depleting field should form core-vs-rim heterogeneity, so rim_core_ratio should rise above 1.0 (core more depleted than rim); the 1.2 floor is a loose pin on that a-priori direction. Confirmed -- rim_core_ratio grows 1.0 (5 ticks) upward as the colony develops; now reported as an ENSEMBLE BAND across N=30 seeds: mean 1.283, sd 0.159, range [1.062, 1.815] (flagship seed 3 ends 1.445), with the per-cell core/rim local-glucose split recorded as the scatter behind the scalar. This REPLACES the single-seed reading; every seed clears the 1.0 no-gradient floor (scripts/run_dev_evo_ensemble.py, tests/test_dev_evo_ensemble.py::test_rim_core_ratio_band, tests/test_dev_evo_regime.py::test_development_heterogeneity_emerges, tests/test_cpm_evolution.py::test_rim_core_ratio_shows_heterogeneity)", "value": 1.2}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1337,7 +1359,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mannwhitneyu(selection_ON_deltas, no_selection_deltas, two-sided).pvalue over N=30 seeds", "kind": "ensemble_statistic", "path": "mannwhitney.p"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior -- if the heritable trait feeds each cell\u0027s dFBA uptake, selection through differential division should shift the population-mean vmax UP relative to the no-selection neutral-drift control, so a rank test on the per-seed deltas should be significant (p \u003c 0.05) in the selection-ON direction. Confirmed -- N=30 seeds: Mann-Whitney U=685, p=5.3e-4, rank-biserial r=+0.52 (CLES 0.76); selection-ON mean delta +0.233 (up 22/30) vs no-selection -0.026 (up 13/30); the drift-null Wilcoxon (selection-ON deltas above the no-selection median) rejects neutral drift at p=1.2e-5. This REPLACES the earlier flagship-seed-3 gate (mean_vmax \u003e 1.6), retained below only as a regression_pin. The gating test runs N=20 (p~1e-2, ~4x margin) for CI affordability; the N=30 run is the reported headline (scripts/run_dev_evo_ensemble.py, tests/test_dev_evo_ensemble.py::test_selection_significant_vs_drift_null, tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection)", "value": 0.05}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior -- if the heritable trait feeds each cell\u0027s dFBA uptake, selection through differential division should shift the population-mean vmax UP relative to the no-selection neutral-drift control, so a rank test on the per-seed deltas should be significant (p \u003c 0.05) in the selection-ON direction. Confirmed -- N=30 seeds: Mann-Whitney U=685, p=5.3e-4, rank-biserial r=+0.52 (CLES 0.76); selection-ON mean delta +0.233 (up 22/30) vs no-selection -0.026 (up 13/30); the drift-null Wilcoxon (selection-ON deltas above the no-selection median) rejects neutral drift at p=1.2e-5. This REPLACES the earlier flagship-seed-3 gate (mean_vmax \u003e 1.6), retained below only as a regression_pin. The gating test runs N=20 (p~1e-2, ~4x margin) for CI affordability; the N=30 run is the reported headline (scripts/run_dev_evo_ensemble.py, tests/test_dev_evo_ensemble.py::test_selection_significant_vs_drift_null, tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection)", "value": 0.05}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1425,7 +1448,8 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "wiring-correc
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.mean_vmax)", "kind": "observable", "path": "obs.mean_vmax"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior -- with the trait unable to vary (mutate=false), there is no raw material for selection, so the population mean should stay exactly at the founder 1.500 with zero variance. Confirmed -- mutate=false: mean_vmax == 1.500 exactly and var_vmax == 0.0 in every seed 1-5 (0/5 shift) -- the BOOLEAN-flag control that genuinely reaches the process. The == 1.500 is exact because no mutation occurs (a deterministic pin) -- exact only while the engine build is fixed (tests/test_dev_evo_regime.py::test_no_mutation_control_is_static, tests/test_cpm_evolution.py::test_no_mutation_control_is_static, tests/test_cpm_evolution_spike.py::test_no_mutation_control_is_static)", "value": 1.5}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior -- with the trait unable to vary (mutate=false), there is no raw material for selection, so the population mean should stay exactly at the founder 1.500 with zero variance. Confirmed -- mutate=false: mean_vmax == 1.500 exactly and var_vmax == 0.0 in every seed 1-5 (0/5 shift) -- the BOOLEAN-flag control that genuinely reaches the process. The == 1.500 is exact because no mutation occurs (a deterministic pin) -- exact only while the engine build is fixed (tests/test_dev_evo_regime.py::test_no_mutation_control_is_static, tests/test_cpm_evolution.py::test_no_mutation_control_is_static, tests/test_cpm_evolution_spike.py::test_no_mutation_control_is_static)", "value": 1.5}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1464,7 +1488,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.var_vmax)", "kind": "observable", "path": "obs.var_vmax"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -- with selection off but mutation on, the trait should still mutate (var_vmax \u003e 0) while conferring no fitness, so the mean should drift undirected rather than shifting up. Confirmed -- selection=false: var_vmax \u003e 0 (still mutates) but the mean drifts undirected and near-zero -- N=30 seeds mean delta -0.026 (sd 0.200), up 13/30, median -0.021, range [-0.455, +0.326]. This is the neutral-drift envelope the selection-ON arm is compared against: the Mann-Whitney U rank test on selection-ON vs no-selection deltas is significant (p=5.3e-4) and the drift-null Wilcoxon rejects neutral drift (p=1.2e-5) (tests/test_dev_evo_ensemble.py::test_no_selection_is_centered_near_zero, tests/test_dev_evo_ensemble.py::test_selection_significant_vs_drift_null, tests/test_dev_evo_regime.py::test_no_selection_control_does_not_directionally_shift)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -- with selection off but mutation on, the trait should still mutate (var_vmax \u003e 0) while conferring no fitness, so the mean should drift undirected rather than shifting up. Confirmed -- selection=false: var_vmax \u003e 0 (still mutates) but the mean drifts undirected and near-zero -- N=30 seeds mean delta -0.026 (sd 0.200), up 13/30, median -0.021, range [-0.455, +0.326]. This is the neutral-drift envelope the selection-ON arm is compared against: the Mann-Whitney U rank test on selection-ON vs no-selection deltas is significant (p=5.3e-4) and the drift-null Wilcoxon rejects neutral drift (p=1.2e-5) (tests/test_dev_evo_ensemble.py::test_no_selection_is_centered_near_zero, tests/test_dev_evo_ensemble.py::test_selection_significant_vs_drift_null, tests/test_dev_evo_regime.py::test_no_selection_control_does_not_directionally_shift)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1773,6 +1798,20 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;growth-and-division&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -1935,7 +1974,7 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

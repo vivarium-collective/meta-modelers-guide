@@ -606,6 +606,21 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1101,6 +1116,12 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1413,7 +1434,8 @@ The composite is a pure clock-driven rewrite with NO randomness, so the whole tr
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "cell count per emitted frame over a 12-tick run", "kind": "observable", "path": "colony.n_cells"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: a genuine division rewrite ADDS cell nodes, so the count rises from the one founder and never falls. Observed (deterministic, no RNG): cells 1 (t=0-5) -\u003e 2 (t=6-11) -\u003e 4 (t=12); count monotone non-decreasing throughout. The \u003e= 4 endpoint is the a-priori prediction, exact because the composite is clock-driven and deterministic (tests/test_fig09_dynamics.py::test_cell_count_increases_division_happened)", "value": 4.0}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: a genuine division rewrite ADDS cell nodes, so the count rises from the one founder and never falls. Observed (deterministic, no RNG): cells 1 (t=0-5) -\u003e 2 (t=6-11) -\u003e 4 (t=12); count monotone non-decreasing throughout. The \u003e= 4 endpoint is the a-priori prediction, exact because the composite is clock-driven and deterministic (tests/test_fig09_dynamics.py::test_cell_count_increases_division_happened)", "value": 4.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1462,7 +1484,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "first tick at which chromosome count exceeds its initial value, vs first tick at which cell count exceeds its initial value", "kind": "observable", "path": "colony.n_chromosomes"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: replication (DNA copied) must precede division (DNA partitioned). Observed: chromosome count first doubles at t=3 while the cell count is still 1; the cell count first doubles at t=6 -- replication strictly precedes division, and the cell has not yet divided at the replication tick. Deterministic (tests/test_fig09_dynamics.py::test_replication_precedes_division)", "value": "first_replication_tick (3) \u003c first_division_tick (6)"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: replication (DNA copied) must precede division (DNA partitioned). Observed: chromosome count first doubles at t=3 while the cell count is still 1; the cell count first doubles at t=6 -- replication strictly precedes division, and the cell has not yet divided at the replication tick. Deterministic (tests/test_fig09_dynamics.py::test_replication_precedes_division)", "value": "first_replication_tick (3) \u003c first_division_tick (6)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1511,7 +1534,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "total DNA summed over all chromosomes per frame; initial and maximum over the run", "kind": "observable", "path": "colony.total_dna"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: replication copies DNA, so the total DNA store doubles each replication. Observed: total DNA 1.0 (founder) -\u003e 2.0 (t=3, first replication) -\u003e 4.0 (t=9, second replication); starts at exactly 1.0 and reaches 4.0. Deterministic (tests/test_fig09_dynamics.py::test_total_dna_doubles_at_replication)", "value": 4.0}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: replication copies DNA, so the total DNA store doubles each replication. Observed: total DNA 1.0 (founder) -\u003e 2.0 (t=3, first replication) -\u003e 4.0 (t=9, second replication); starts at exactly 1.0 and reaches 4.0. Deterministic (tests/test_fig09_dynamics.py::test_total_dna_doubles_at_replication)", "value": 4.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1560,7 +1584,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "at each division tick: cells_after vs cells_before, total_dna_after vs total_dna_before, and per-daughter DNA vs (parent DNA / 2)", "kind": "derived", "path": "colony"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "conservation_and_equipartition", "provenance": "prior: a division rewrite that partitions stores conserves them and splits them evenly. Observed at both division events (deterministic): t=6, 1 cell -\u003e 2, total DNA 2.0 -\u003e 2.0 (conserved), each daughter dna 1.0 == (2.0/1)/2; t=12, 2 cells -\u003e 4, total DNA 4.0 -\u003e 4.0 (conserved), each daughter dna 1.0 == (4.0/2)/2. Boundary count doubles, DNA store conserved, equipartitioned, at every division (tests/test_fig09_dynamics.py::test_division_conserves_and_equipartitions_dna)", "value": "cells_after == 2 * cells_before AND total_dna_after == total_dna_before AND each daughter_dna == (total_dna_before / cells_before) / 2, at every division event"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "conservation_and_equipartition", "provenance": "prior: a division rewrite that partitions stores conserves them and splits them evenly. Observed at both division events (deterministic): t=6, 1 cell -\u003e 2, total DNA 2.0 -\u003e 2.0 (conserved), each daughter dna 1.0 == (2.0/1)/2; t=12, 2 cells -\u003e 4, total DNA 4.0 -\u003e 4.0 (conserved), each daughter dna 1.0 == (4.0/2)/2. Boundary count doubles, DNA store conserved, equipartitioned, at every division (tests/test_fig09_dynamics.py::test_division_conserves_and_equipartitions_dna)", "value": "cells_after == 2 * cells_before AND total_dna_after == total_dna_before AND each daughter_dna == (total_dna_before / cells_before) / 2, at every division event"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1599,7 +1624,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "cons
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "full reaches 16 cells; starved stays 1 (0 divisions)", "kind": "derived", "path": "obs.cell_count under full vs starved nutrient"}
-pass_if: {"kind": "prospective_prediction", "op": "gated", "provenance": "PROSPECTIVE_PREDICTION. Observed full 1\u219216 over 20 ticks; starved (substrate 1e-9) stays 1 cell with 0 divisions over 40 ticks \u2014 division is an outcome of growth (tests/test_fig09_mechanistic.py::test_division_is_delayed_under_starvation)", "value": "full cell_count \u2192 16; starved cell_count == 1 and divisions == 0"}</pre>
+pass_if: {"kind": "prospective_prediction", "op": "gated", "provenance": "PROSPECTIVE_PREDICTION. Observed full 1\u219216 over 20 ticks; starved (substrate 1e-9) stays 1 cell with 0 divisions over 40 ticks \u2014 division is an outcome of growth (tests/test_fig09_mechanistic.py::test_division_is_delayed_under_starvation)", "value": "full cell_count \u2192 16; starved cell_count == 1 and divisions == 0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1638,7 +1664,8 @@ pass_if: {"kind": "prospective_prediction", "op": "gated", "provenance": "PROSPE
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "no division when energy insufficient; no division when replication blocked", "kind": "derived", "path": "cell_count after one tick under {energy\u003cdiv_cost} and {no nucleotides}"}
-pass_if: {"kind": "mechanistic_ablation", "op": "checkpoint", "provenance": "MECHANISTIC_ABLATION. A grown, replicated cell with energy 1.0 \u003c div_cost 5.0 does not divide; a grown cell with no nucleotide precursors cannot replicate and does not divide (tests/test_fig09_mechanistic.py::test_division_requires_energy, ::test_division_requires_replication)", "value": "cells == 1 when energy \u003c div_cost; cells == 1 and DNA \u003c 1.5 when nucleotides \u2248 0"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "checkpoint", "provenance": "MECHANISTIC_ABLATION. A grown, replicated cell with energy 1.0 \u003c div_cost 5.0 does not divide; a grown cell with no nucleotide precursors cannot replicate and does not divide (tests/test_fig09_mechanistic.py::test_division_requires_energy, ::test_division_requires_replication)", "value": "cells == 1 when energy \u003c div_cost; cells == 1 and DNA \u003c 1.5 when nucleotides \u2248 0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1677,7 +1704,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "checkpoint", "provenance": "MEC
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u0394(DNA) == \u2212\u0394(nucleotides) across a replication event", "kind": "derived", "path": "obs.tot_dna, obs.tot_nucleotides during a replication (growth off)"}
-pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. With growth off, a replicating cell\u0027s DNA increase equals its nucleotide decrease to \u003c1e-9; across the run the \u03a3Nucleotide pool is drawn down at each replication as \u03a3DNA rises (tests/test_fig09_mechanistic.py::test_replication_draws_dna_from_nucleotide_pool)", "value": 1e-09}</pre>
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. With growth off, a replicating cell\u0027s DNA increase equals its nucleotide decrease to \u003c1e-9; across the run the \u03a3Nucleotide pool is drawn down at each replication as \u03a3DNA rises (tests/test_fig09_mechanistic.py::test_replication_draws_dna_from_nucleotide_pool)", "value": 1e-09}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1716,7 +1744,8 @@ pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. With gr
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03a3daughter {vol,nuc,biomass,DNA} == parent; \u03a3energy == parent \u2212 div_cost; equal chromosomes", "kind": "derived", "path": "daughter state vs parent state across a division"}
-pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volume/nucleotides/biomass/DNA conserved across the rewrite to \u003c1e-9, energy = parent \u2212 div_cost, each daughter exactly one chromosome with equal DNA, distinct ids + parent ref + generation+1 (tests/test_fig09_mechanistic.py::test_division_conserves_every_material_partition, ::test_dna_equipartitions_one_chromosome_each, ::test_daughters_have_independent_ports_and_lineage)", "value": "all partition residuals \u003c 1e-9; each daughter DNA equal"}</pre>
+pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volume/nucleotides/biomass/DNA conserved across the rewrite to \u003c1e-9, energy = parent \u2212 div_cost, each daughter exactly one chromosome with equal DNA, distinct ids + parent ref + generation+1 (tests/test_fig09_mechanistic.py::test_division_conserves_every_material_partition, ::test_dna_equipartitions_one_chromosome_each, ::test_daughters_have_independent_ports_and_lineage)", "value": "all partition residuals \u003c 1e-9; each daughter DNA equal"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2015,6 +2044,20 @@ pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volu
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-08&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code> · <code>{&#39;study&#39;: &#39;growth-and-division&#39;, &#39;condition&#39;: &#39;tests-passed&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2149,7 +2192,7 @@ pass_if: {"kind": "invariant", "op": "conserves", "provenance": "INVARIANT. Volu
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

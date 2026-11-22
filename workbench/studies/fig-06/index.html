@@ -600,6 +600,21 @@ The literature constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1162,6 +1177,12 @@ The literature constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1474,7 +1495,8 @@ The literature constants (k_cat ≈ 100 ATP·s⁻¹, H⁺/ATP ≈ 3.3, |Δp| ≈
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "J_ATP driven directly at activity 0.3 vs 1.2, and over the ramped run", "kind": "observable", "path": "obs.chemical_out"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a driven molecular mechanism produces a strictly positive matter-exchange flux that scales with the drive. Observed deterministically: J_ATP = k_cat\u00b7activity exactly (30.0 at activity 0.3, 120.0 at 1.2 -- ratio exactly 4.0); over the ramped run ATP flux rises monotonically from 20.0 (tick 1, chemical_in 0.2) to 128.0 (tick 19), never decreasing. The \u003e-direction and the 4\u00d7 linear-scaling are the a-priori predictions; the exact values are deterministic pins (tests/test_fig06_atp_synthase.py::test_higher_drive_scales_atp_flux, tests/test_fig06_atp_synthase.py::test_atp_flux_rises_with_the_proton_drive)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a driven molecular mechanism produces a strictly positive matter-exchange flux that scales with the drive. Observed deterministically: J_ATP = k_cat\u00b7activity exactly (30.0 at activity 0.3, 120.0 at 1.2 -- ratio exactly 4.0); over the ramped run ATP flux rises monotonically from 20.0 (tick 1, chemical_in 0.2) to 128.0 (tick 19), never decreasing. The \u003e-direction and the 4\u00d7 linear-scaling are the a-priori predictions; the exact values are deterministic pins (tests/test_fig06_atp_synthase.py::test_higher_drive_scales_atp_flux, tests/test_fig06_atp_synthase.py::test_atp_flux_rises_with_the_proton_drive)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1523,7 +1545,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "I == J_ATP\u00b7n\u00b7e and Q == (1\u2212\u03b7)\u00b7I\u00b7pmf on every active step, all four channels \u003e 0", "kind": "derived", "path": "obs.chemical_out, obs.electrical_out, obs.mechanical_out, obs.thermal_out"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "coupling_holds", "provenance": "the four output channels are one coupled quantity by construction; asserted exactly on the live 20-tick run (tolerance 1e-30): the proton current equals the ATP flux carried as charge (matter\u21d2charge) and heat equals the fixed 25 % remainder of the electrical PMF power (charge\u21d2energy), with all four channels strictly positive and co-firing under drive (tests/test_fig06_atp_synthase.py::test_four_channels_all_derive_from_the_single_proton_flux)", "value": "I == chemical_out\u00b73.3\u00b71.602e-19 and thermal_out == 0.25\u00b7(I\u00b70.15), exactly, every step"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "coupling_holds", "provenance": "the four output channels are one coupled quantity by construction; asserted exactly on the live 20-tick run (tolerance 1e-30): the proton current equals the ATP flux carried as charge (matter\u21d2charge) and heat equals the fixed 25 % remainder of the electrical PMF power (charge\u21d2energy), with all four channels strictly positive and co-firing under drive (tests/test_fig06_atp_synthase.py::test_four_channels_all_derive_from_the_single_proton_flux)", "value": "I == chemical_out\u00b73.3\u00b71.602e-19 and thermal_out == 0.25\u00b7(I\u00b70.15), exactly, every step"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1572,7 +1595,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "coup
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "J_ATP / J_H on every active step", "kind": "observable", "path": "obs.chemical_out / (obs.electrical_out / e)"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: matter and charge are coupled through a fixed stoichiometry. Observed: J_ATP/J_H == 1/3.3 == 0.30303 exactly on every active step of the run (tolerance 1e-6), independent of the drive level -- the a-priori coupling, deterministic while n_protons_per_atp is pinned at 3.3 (tests/test_fig06_atp_synthase.py::test_atp_proton_stoichiometry)", "value": "0.30303030..."}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: matter and charge are coupled through a fixed stoichiometry. Observed: J_ATP/J_H == 1/3.3 == 0.30303 exactly on every active step of the run (tolerance 1e-6), independent of the drive level -- the a-priori coupling, deterministic while n_protons_per_atp is pinned at 3.3 (tests/test_fig06_atp_synthase.py::test_atp_proton_stoichiometry)", "value": "0.30303030..."}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1621,7 +1645,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "rotary torque on every active step", "kind": "observable", "path": "obs.mechanical_out"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the mechanical channel carries torque (a fixed motor property), not a drive-scaled force. Observed: mechanical_out == 4.0\u00d710\u207b\u00b2\u2070 N\u00b7m exactly on every active step (tolerance 1e-24), strictly positive and constant while the chemical/electrical/thermal channels scale with the drive -- confirming the port is torque, not power (tests/test_fig06_atp_synthase.py::test_rotary_torque_holds_at_configured_value)", "value": 4e-20}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the mechanical channel carries torque (a fixed motor property), not a drive-scaled force. Observed: mechanical_out == 4.0\u00d710\u207b\u00b2\u2070 N\u00b7m exactly on every active step (tolerance 1e-24), strictly positive and constant while the chemical/electrical/thermal channels scale with the drive -- confirming the port is torque, not power (tests/test_fig06_atp_synthase.py::test_rotary_torque_holds_at_configured_value)", "value": 4e-20}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1670,7 +1695,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "heat == (1\u2212\u03b7)\u00b7(I\u00b7pmf); useful == \u03b7\u00b7(I\u00b7pmf); both \u2265 0", "kind": "derived", "path": "obs.thermal_out vs obs.electrical_out"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the PMF input power splits into a conserved useful fraction and a dissipated remainder (energy conserved). Observed: heat == (1\u22120.75)\u00b7input_power exactly (tolerance 1e-24) -- e.g. at tick 10 input_power 5.87\u00d710\u207b\u00b9\u2078 W, heat 1.47\u00d710\u207b\u00b9\u2078 W = 25 %, useful 4.40\u00d710\u207b\u00b9\u2078 W = 75 %, both non-negative on every step (tests/test_fig06_atp_synthase.py::test_energy_balance_heat_equals_input_minus_useful)", "value": "heat == 0.25\u00b7(I\u00b70.15), useful == 0.75\u00b7(I\u00b70.15), both \u2265 0"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the PMF input power splits into a conserved useful fraction and a dissipated remainder (energy conserved). Observed: heat == (1\u22120.75)\u00b7input_power exactly (tolerance 1e-24) -- e.g. at tick 10 input_power 5.87\u00d710\u207b\u00b9\u2078 W, heat 1.47\u00d710\u207b\u00b9\u2078 W = 25 %, useful 4.40\u00d710\u207b\u00b9\u2078 W = 75 %, both non-negative on every step (tests/test_fig06_atp_synthase.py::test_energy_balance_heat_equals_input_minus_useful)", "value": "heat == 0.25\u00b7(I\u00b70.15), useful == 0.75\u00b7(I\u00b70.15), both \u2265 0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1719,7 +1745,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "outputs at chemical_in == 0.0", "kind": "observable", "path": "obs.chemical_out, obs.electrical_out, obs.thermal_out"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "driving the handler at zero activity yields chemical_out == electrical_out == thermal_out == 0.0 exactly -- a driven transducer, not a spontaneous source; the constant mechanical torque leaf is a fixed port property and is deliberately excluded (tests/test_fig06_atp_synthase.py::test_zero_drive_yields_zero_flux_on_every_channel)", "value": 0.0}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "driving the handler at zero activity yields chemical_out == electrical_out == thermal_out == 0.0 exactly -- a driven transducer, not a spontaneous source; the constant mechanical torque leaf is a fixed port property and is deliberately excluded (tests/test_fig06_atp_synthase.py::test_zero_drive_yields_zero_flux_on_every_channel)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1758,7 +1785,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |P_in \u2212 (P_ATP + P_ext + P_heat)| over the 20-tick run", "kind": "derived", "path": "obs.power_in, obs.power_atp, obs.power_ext, obs.power_heat"}
-pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed max residual 3.1e-33 W over the live 20-tick fig06-mechanistic run \u2014 machine precision. Unlike the baseline\u0027s imposed 75/25 split, here the useful fraction is an outcome of the operating point (tests/test_fig06_mechanistic.py::test_power_budget_closes_every_step, ::test_dissipated_heat_is_nonnegative, ::test_charge_current_identity_holds_every_step)", "value": 1e-30}</pre>
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed max residual 3.1e-33 W over the live 20-tick fig06-mechanistic run \u2014 machine precision. Unlike the baseline\u0027s imposed 75/25 split, here the useful fraction is an outcome of the operating point (tests/test_fig06_mechanistic.py::test_power_budget_closes_every_step, ::test_dissipated_heat_is_nonnegative, ::test_charge_current_identity_holds_every_step)", "value": 1e-30}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1797,7 +1825,8 @@ pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observe
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03c4_drive at \u0394p = 150 mV vs the n_c\u00b7e\u00b7\u0394p/2\u03c0 prediction, and the \u03c4(2\u0394p)/\u03c4(\u0394p) ratio", "kind": "observable", "path": "obs.drive_torque"}
-pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRICAL_COMPARISON against the measured F\u2092 stall torque of the bacterial/chloroplast synthase (~40 pN\u00b7nm; Junge \u0026 Nelson 2015). Observed 38.2 pN\u00b7nm exactly equal to n_c\u00b7e\u00b7\u0394p/2\u03c0, and \u03c4(0.2V)/\u03c4(0.1V) = 2.000 (tests/test_fig06_mechanistic.py::test_drive_torque_derived_matches_literature, ::test_drive_torque_scales_with_pmf_not_fixed)", "value": "38.2e-21 N\u00b7m (35\u201342 pN\u00b7nm literature band); linear-in-\u0394p ratio = 2.0"}</pre>
+pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRICAL_COMPARISON against the measured F\u2092 stall torque of the bacterial/chloroplast synthase (~40 pN\u00b7nm; Junge \u0026 Nelson 2015). Observed 38.2 pN\u00b7nm exactly equal to n_c\u00b7e\u00b7\u0394p/2\u03c0, and \u03c4(0.2V)/\u03c4(0.1V) = 2.000 (tests/test_fig06_mechanistic.py::test_drive_torque_derived_matches_literature, ::test_drive_torque_scales_with_pmf_not_fixed)", "value": "38.2e-21 N\u00b7m (35\u201342 pN\u00b7nm literature band); linear-in-\u0394p ratio = 2.0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1836,7 +1865,8 @@ pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRIC
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sign(\u03c9) over the load ramp; co-sign of \u03c9 and J_ATP; reversal pumps J_H \u003c 0", "kind": "derived", "path": "obs.omega, obs.atp_flux, obs.proton_current"}
-pass_if: {"kind": "mechanistic_ablation", "op": "stall_then_reversal", "provenance": "MECHANISTIC_ABLATION (counterfactual on the shaft load). Observed forward \u03c9 peak +654, stall at tick 11, reversal to \u03c9 \u2212597 by tick 20; at \u03c4_ext = 1.2e-20 N\u00b7m the rotor runs backward with J_ATP \u003c 0 (hydrolysis) and proton current \u003c 0 (pumping) together (tests/test_fig06_mechanistic.py::test_load_ramp_drives_forward_stall_reversal, ::test_reversal_pumps_protons_and_hydrolyses_atp)", "value": "\u03c9 crosses 0 at ~tick 11 and goes \u003c \u2212100; in reversal J_ATP \u003c 0 and J_H \u003c 0"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "stall_then_reversal", "provenance": "MECHANISTIC_ABLATION (counterfactual on the shaft load). Observed forward \u03c9 peak +654, stall at tick 11, reversal to \u03c9 \u2212597 by tick 20; at \u03c4_ext = 1.2e-20 N\u00b7m the rotor runs backward with J_ATP \u003c 0 (hydrolysis) and proton current \u003c 0 (pumping) together (tests/test_fig06_mechanistic.py::test_load_ramp_drives_forward_stall_reversal, ::test_reversal_pumps_protons_and_hydrolyses_atp)", "value": "\u03c9 crosses 0 at ~tick 11 and goes \u003c \u2212100; in reversal J_ATP \u003c 0 and J_H \u003c 0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1875,7 +1905,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "stall_then_reversal", "provenan
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sign(\u03c9) vs the predicted threshold \u0394p* = n_ATP\u00b7\u0394G_ATP/(n_c\u00b7e)", "kind": "derived", "path": "obs.omega over a \u0394p sweep (20\u2013300 mV)"}
-pass_if: {"kind": "prospective_prediction", "op": "threshold_predicted", "provenance": "PROSPECTIVE_PREDICTION. \u0394p* = 125 mV computed from the pool thermodynamics before the run; the \u0394p sweep then shows \u03c9 \u003c 0 at 95 mV, |\u03c9| \u003c 1 at 125 mV, \u03c9 \u003e 0 at 155 mV \u2014 direction set by the gradient, as predicted (tests/test_fig06_mechanistic.py::test_pmf_threshold_sets_direction)", "value": "\u0394p* \u2248 125 mV; \u03c9\u003c0 below, \u03c9\u22480 at, \u03c9\u003e0 above"}</pre>
+pass_if: {"kind": "prospective_prediction", "op": "threshold_predicted", "provenance": "PROSPECTIVE_PREDICTION. \u0394p* = 125 mV computed from the pool thermodynamics before the run; the \u0394p sweep then shows \u03c9 \u003c 0 at 95 mV, |\u03c9| \u003c 1 at 125 mV, \u03c9 \u003e 0 at 155 mV \u2014 direction set by the gradient, as predicted (tests/test_fig06_mechanistic.py::test_pmf_threshold_sets_direction)", "value": "\u0394p* \u2248 125 mV; \u03c9\u003c0 below, \u03c9\u22480 at, \u03c9\u003e0 above"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1914,7 +1945,8 @@ pass_if: {"kind": "prospective_prediction", "op": "threshold_predicted", "proven
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03b7(\u0394p=150mV) vs \u03b7(\u0394p=300mV); distance from the imposed 0.75", "kind": "derived", "path": "obs.efficiency at two \u0394p values"}
-pass_if: {"kind": "mechanistic_ablation", "op": "varies_with_operating_point", "provenance": "MECHANISTIC_ABLATION. Observed \u03b7 = 0.833 at 150 mV, falling at 300 mV (more of the proton power spent as kinetic/viscous rather than stored) \u2014 bounded, operating-point dependent, and distinct from the imposed 0.75 baseline constant (tests/test_fig06_mechanistic.py::test_efficiency_is_derived_and_varies_with_pmf)", "value": "0 \u003c \u03b7(300mV) \u003c \u03b7(150mV) \u003c 1 and |\u03b7 \u2212 0.75| \u003e 0.02"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "varies_with_operating_point", "provenance": "MECHANISTIC_ABLATION. Observed \u03b7 = 0.833 at 150 mV, falling at 300 mV (more of the proton power spent as kinetic/viscous rather than stored) \u2014 bounded, operating-point dependent, and distinct from the imposed 0.75 baseline constant (tests/test_fig06_mechanistic.py::test_efficiency_is_derived_and_varies_with_pmf)", "value": "0 \u003c \u03b7(300mV) \u003c \u03b7(150mV) \u003c 1 and |\u03b7 \u2212 0.75| \u003e 0.02"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1953,7 +1985,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "varies_with_operating_point", "
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "\u03c9 monotone non-increasing while \u0394G_ATP and [ATP] rise", "kind": "derived", "path": "obs.omega, obs.dg_atp over an 80-tick unbuffered run"}
-pass_if: {"kind": "mechanistic_ablation", "op": "monotone_slowdown", "provenance": "MECHANISTIC_ABLATION (product inhibition). Observed \u03c9 falling monotonically as ATP accumulates and \u0394G_ATP rises across an 80-tick unbuffered run \u2014 real thermodynamic back-pressure, absent from the algebraic baseline (tests/test_fig06_mechanistic.py::test_atp_backpressure_slows_rotor)", "value": "\u03c9[-1] \u003c \u03c9[0], \u0394G_ATP rises, [ATP] accumulates, \u03c9 non-increasing"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "monotone_slowdown", "provenance": "MECHANISTIC_ABLATION (product inhibition). Observed \u03c9 falling monotonically as ATP accumulates and \u0394G_ATP rises across an 80-tick unbuffered run \u2014 real thermodynamic back-pressure, absent from the algebraic baseline (tests/test_fig06_mechanistic.py::test_atp_backpressure_slows_rotor)", "value": "\u03c9[-1] \u003c \u03c9[0], \u0394G_ATP rises, [ATP] accumulates, \u03c9 non-increasing"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2222,6 +2255,20 @@ pass_if: {"kind": "mechanistic_ablation", "op": "monotone_slowdown", "provenance
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-01&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code> · <code>{&#39;study&#39;: &#39;molecular-interfaces&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2361,7 +2408,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "monotone_slowdown", "provenance
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

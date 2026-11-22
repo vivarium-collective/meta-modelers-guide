@@ -611,6 +611,21 @@ These composites are deliberately DIDACTIC / toy-real: small, illustrative place
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1175,6 +1190,12 @@ These composites are deliberately DIDACTIC / toy-real: small, illustrative place
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1536,7 +1557,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "place-graph depth of the cell nodes, and presence of the `biofilm` collective node, per frame", "kind": "derived", "path": "env"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "depth_increases_and_persists", "provenance": "prior: development embeds individual cells in a collective composite with its own shared state -- a depth-increasing re-parenting, not relabelling. Observed: at t=0 the four cells are direct children of env (depth 1) and no `biofilm` key exists; a `biofilm` collective node appears exactly at t=6 with all four cells nested inside it (depth 2), and depth stays 2 with zero top-level cells for the rest of the run. Deterministic; exact tick is a pin, the depth 1 -\u003e 2 re-parenting is the a-priori prediction (tests/test_fig10_dynamics.py::test_attachment_nests_cells_one_level_deeper)", "value": "depth 1 -\u003e 2 at attach; no `biofilm` node before attach, present after; no cell left at top level once nested"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "depth_increases_and_persists", "provenance": "prior: development embeds individual cells in a collective composite with its own shared state -- a depth-increasing re-parenting, not relabelling. Observed: at t=0 the four cells are direct children of env (depth 1) and no `biofilm` key exists; a `biofilm` collective node appears exactly at t=6 with all four cells nested inside it (depth 2), and depth stays 2 with zero top-level cells for the rest of the run. Deterministic; exact tick is a pin, the depth 1 -\u003e 2 re-parenting is the a-priori prediction (tests/test_fig10_dynamics.py::test_attachment_nests_cells_one_level_deeper)", "value": "depth 1 -\u003e 2 at attach; no `biofilm` node before attach, present after; no cell left at top level once nested"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1702,7 +1724,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "nested cell count == N and every nested biomass == 1.0", "kind": "derived", "path": "colony tree before vs after formation"}
-pass_if: {"kind": "invariant", "op": "==", "provenance": "INVARIANT. Observed all 6 cells nested under the biofilm node with per-cell biomass preserved exactly (tests/test_fig10_mechanistic.py::test_cell_identity_and_biomass_preserved_on_reparenting)", "value": "6 cells nested, all biomass preserved"}</pre>
+pass_if: {"kind": "invariant", "op": "==", "provenance": "INVARIANT. Observed all 6 cells nested under the biofilm node with per-cell biomass preserved exactly (tests/test_fig10_mechanistic.py::test_cell_identity_and_biomass_preserved_on_reparenting)", "value": "6 cells nested, all biomass preserved"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1741,7 +1764,8 @@ pass_if: {"kind": "invariant", "op": "==", "provenance": "INVARIANT. Observed al
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "t(form) strictly decreases as adhesion increases", "kind": "derived", "path": "formation tick vs adhesion strength"}
-pass_if: {"kind": "prospective_prediction", "op": "monotone_decreasing", "provenance": "PROSPECTIVE_PREDICTION. Observed formation at t=7, 6, 5 for adhesion 0.25, 0.35, 0.55 \u2014 timing set by aggregation speed, which a clock cannot reproduce (tests/test_fig10_mechanistic.py::test_formation_is_emergent_not_clocked)", "value": "t(0.25) \u003e t(0.35) \u003e t(0.55)"}</pre>
+pass_if: {"kind": "prospective_prediction", "op": "monotone_decreasing", "provenance": "PROSPECTIVE_PREDICTION. Observed formation at t=7, 6, 5 for adhesion 0.25, 0.35, 0.55 \u2014 timing set by aggregation speed, which a clock cannot reproduce (tests/test_fig10_mechanistic.py::test_formation_is_emergent_not_clocked)", "value": "t(0.25) \u003e t(0.35) \u003e t(0.55)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1780,7 +1804,8 @@ pass_if: {"kind": "prospective_prediction", "op": "monotone_decreasing", "proven
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "t(form) smaller for denser start; None when spread beyond sense_radius", "kind": "derived", "path": "formation tick vs initial ring radius"}
-pass_if: {"kind": "empirical_comparison", "op": "density_dependent", "provenance": "EMPIRICAL_COMPARISON (quorum/density). Observed earlier formation for the denser start and no formation when cells begin beyond the sensing radius (tests/test_fig10_mechanistic.py::test_density_hastens_formation)", "value": "t(ring=2.5) \u003c t(ring=4.2); no formation at ring=9 (\u003e sense_radius 6)"}</pre>
+pass_if: {"kind": "empirical_comparison", "op": "density_dependent", "provenance": "EMPIRICAL_COMPARISON (quorum/density). Observed earlier formation for the denser start and no formation when cells begin beyond the sensing radius (tests/test_fig10_mechanistic.py::test_density_hastens_formation)", "value": "t(ring=2.5) \u003c t(ring=4.2); no formation at ring=9 (\u003e sense_radius 6)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1819,7 +1844,8 @@ pass_if: {"kind": "empirical_comparison", "op": "density_dependent", "provenance
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "no formation; cluster radius stays large", "kind": "derived", "path": "cluster_radius, formed under adhesion=epsilon"}
-pass_if: {"kind": "mechanistic_ablation", "op": "no_aggregate", "provenance": "MECHANISTIC_ABLATION. Observed no formation and cluster radius held at ~4.2 (initial ring) with adhesion=epsilon (tests/test_fig10_mechanistic.py::test_no_adhesion_prevents_stable_aggregate)", "value": "formed == never and min cluster radius \u003e 3.5"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "no_aggregate", "provenance": "MECHANISTIC_ABLATION. Observed no formation and cluster radius held at ~4.2 (initial ring) with adhesion=epsilon (tests/test_fig10_mechanistic.py::test_no_adhesion_prevents_stable_aggregate)", "value": "formed == never and min cluster radius \u003e 3.5"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1858,7 +1884,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "no_aggregate", "provenance": "M
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "no-ECM final radius \u226b full; no-ECM cohesion ~0", "kind": "derived", "path": "final cluster_radius and cohesion, full vs ecm_rate=epsilon"}
-pass_if: {"kind": "mechanistic_ablation", "op": "disperses", "provenance": "MECHANISTIC_ABLATION. Observed full persists (radius 3.0, cohesion 0.95) while no-ECM disperses (radius 11.3, cohesion 0.0) \u2014 same formation, different persistence (tests/test_fig10_mechanistic.py::test_blocked_ecm_changes_persistence_and_morphology)", "value": "radius(no-ECM) \u003e radius(full) + 3; cohesion(full) \u003e 0.5 and cohesion(no-ECM) \u003c 0.1"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "disperses", "provenance": "MECHANISTIC_ABLATION. Observed full persists (radius 3.0, cohesion 0.95) while no-ECM disperses (radius 11.3, cohesion 0.0) \u2014 same formation, different persistence (tests/test_fig10_mechanistic.py::test_blocked_ecm_changes_persistence_and_morphology)", "value": "radius(no-ECM) \u003e radius(full) + 3; cohesion(full) \u003e 0.5 and cohesion(no-ECM) \u003c 0.1"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1897,7 +1924,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "disperses", "provenance": "MECH
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "cohesion==0 before formation, \u003e0 after; biofilm node absent\u2192present", "kind": "derived", "path": "cohesion and the biofilm node, pre- vs post-formation"}
-pass_if: {"kind": "mechanistic_ablation", "op": "operative_after_only", "provenance": "MECHANISTIC_ABLATION. Observed cohesion exactly 0 until formation then rising to 0.95, and the biofilm node created at formation (tests/test_fig10_mechanistic.py::test_collective_port_operative_only_after_organization)", "value": "cohesion 0 for all t\u003cformation, \u003e0.5 at end; biofilm node absent at t\u003cform, present at end"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "operative_after_only", "provenance": "MECHANISTIC_ABLATION. Observed cohesion exactly 0 until formation then rising to 0.95, and the biofilm node created at formation (tests/test_fig10_mechanistic.py::test_collective_port_operative_only_after_organization)", "value": "cohesion 0 for all t\u003cformation, \u003e0.5 at end; biofilm node absent at t\u003cform, present at end"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2156,6 +2184,20 @@ pass_if: {"kind": "mechanistic_ablation", "op": "operative_after_only", "provena
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-09&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code> · <code>{&#39;study&#39;: &#39;development-and-evolution&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2295,7 +2337,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "operative_after_only", "provena
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

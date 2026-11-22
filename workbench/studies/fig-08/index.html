@@ -606,6 +606,21 @@ This is a didactic, toy-real realization: the pools, rate constants, and yields 
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1106,6 +1121,12 @@ This is a didactic, toy-real realization: the pools, rate constants, and yields 
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1418,7 +1439,8 @@ This is a didactic, toy-real realization: the pools, rate constants, and yields 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "min(series[k]) for k in the seven emitted pools", "kind": "observable", "path": "min over run of each pool"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a self-maintaining composition keeps every shared store above zero for the run. Observed (deterministic): pool minima all \u003e 0 -- smallest is metabolites (min 0.267), largest floor genes (min 1.0); membrane 0.2 -\u003e 2.2 monotone. The \u003e 0 direction is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_positive)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a self-maintaining composition keeps every shared store above zero for the run. Observed (deterministic): pool minima all \u003e 0 -- smallest is metabolites (min 0.267), largest floor genes (min 1.0); membrane 0.2 -\u003e 2.2 monotone. The \u003e 0 direction is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_positive)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1467,7 +1489,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(series[k]) for k in the seven emitted pools", "kind": "observable", "path": "max over run of each pool"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: a maintained balance does not explode. Observed (deterministic): the largest value any pool reaches over the run is membrane at 2.2, far under the 1e3 guard; the \u003c 1e3 bound is a loose sanity ceiling, boundedness is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_bounded)", "value": 1000.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: a maintained balance does not explode. Observed (deterministic): the largest value any pool reaches over the run is membrane at 2.2, far under the 1e3 guard; the \u003c 1e3 bound is a loose sanity ceiling, boundedness is the a-priori prediction (tests/test_fig08_autopoiesis.py::test_every_pool_stays_bounded)", "value": 1000.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1516,7 +1539,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "abs(s[-1] - s[mid]) / max(s[mid], 1e-9) for k in (genes, energy, metabolites, nucleic_acids)", "kind": "observable", "path": "relative drift midpoint -\u003e end of each template pool"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: under closure the catalytic/template pools settle to a sustained balance (small second-half drift). Observed (deterministic) relative drift midpoint-\u003eend: genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all \u003c 0.25; the 0.25 threshold is a legibility bound, the \"holds steady\" direction is the prediction (tests/test_fig08_autopoiesis.py::test_template_pools_hold_a_steady_balance)", "value": 0.25}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: under closure the catalytic/template pools settle to a sustained balance (small second-half drift). Observed (deterministic) relative drift midpoint-\u003eend: genes 0.034, energy 0.083, metabolites 0.203, nucleic_acids 0.000 -- all \u003c 0.25; the 0.25 threshold is a legibility bound, the \"holds steady\" direction is the prediction (tests/test_fig08_autopoiesis.py::test_template_pools_hold_a_steady_balance)", "value": 0.25}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1565,7 +1589,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "s[-1] \u003e s[0] for k in (membrane, proteins, enzymes)", "kind": "observable", "path": "end vs start of each structural pool"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the coupling net-produces structural material. Observed (deterministic) start -\u003e end: membrane 0.20 -\u003e 2.20, proteins 0.30 -\u003e 0.88, enzymes 0.30 -\u003e 0.50 -- each end strictly above its start (the pass_if encodes end - start \u003e 0) (tests/test_fig08_autopoiesis.py::test_structural_material_is_net_produced)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the coupling net-produces structural material. Observed (deterministic) start -\u003e end: membrane 0.20 -\u003e 2.20, proteins 0.30 -\u003e 0.88, enzymes 0.30 -\u003e 0.50 -- each end strictly above its start (the pass_if encodes end - start \u003e 0) (tests/test_fig08_autopoiesis.py::test_structural_material_is_net_produced)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1614,7 +1639,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "metabolites_ko / metabolites_base at end; energy_ko drift; energy_base growth", "kind": "derived", "path": "baseline vs metabolism-knockout end states"}
-pass_if: {"kind": "acceptance_criterion", "op": "starves_downstream", "provenance": "prior: removing a process opens the loop and its downstream shared pools respond. Observed (deterministic): metabolites end 0.33 (base) -\u003e 0.011 (KO), well under half of base; energy stays exactly 0.5 with metabolism removed vs growing to 0.58 in the baseline -- the dependent pools track the coupling, not their own reserves (tests/test_fig08_autopoiesis.py::test_knocking_out_metabolism_starves_downstream_pools)", "value": "metabolites_ko(0.011) \u003c 0.5 * metabolites_base(0.33) and energy frozen at 0.5 (base grows 0.50 -\u003e 0.58)"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "starves_downstream", "provenance": "prior: removing a process opens the loop and its downstream shared pools respond. Observed (deterministic): metabolites end 0.33 (base) -\u003e 0.011 (KO), well under half of base; energy stays exactly 0.5 with metabolism removed vs growing to 0.58 in the baseline -- the dependent pools track the coupling, not their own reserves (tests/test_fig08_autopoiesis.py::test_knocking_out_metabolism_starves_downstream_pools)", "value": "metabolites_ko(0.011) \u003c 0.5 * metabolites_base(0.33) and energy frozen at 0.5 (base grows 0.50 -\u003e 0.58)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1663,7 +1689,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "starves_downstream", "provenanc
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "enzymes_ko drift; enzymes_base growth; metabolites_ko vs metabolites_base at end", "kind": "derived", "path": "baseline vs gene-expression-knockout end states"}
-pass_if: {"kind": "acceptance_criterion", "op": "sustains_partner_inputs", "provenance": "prior: the coupling that sustains one process\u0027s inputs from another\u0027s outputs is what keeps the balance up. Observed (deterministic): with gene expression removed the enzyme pool stays exactly 0.30 across the whole run (min == max == 0.30) vs growing to 0.50 in the baseline, and metabolism\u0027s metabolite output falls from 0.33 to 0.23 -- the partner-input coupling made concrete (tests/test_fig08_autopoiesis.py::test_gene_expression_sustains_the_enzymes_metabolism_depends_on)", "value": "enzymes frozen at 0.30 in KO (base grows 0.30 -\u003e 0.50) and metabolites_ko(0.23) \u003c metabolites_base(0.33)"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "sustains_partner_inputs", "provenance": "prior: the coupling that sustains one process\u0027s inputs from another\u0027s outputs is what keeps the balance up. Observed (deterministic): with gene expression removed the enzyme pool stays exactly 0.30 across the whole run (min == max == 0.30) vs growing to 0.50 in the baseline, and metabolism\u0027s metabolite output falls from 0.33 to 0.23 -- the partner-input coupling made concrete (tests/test_fig08_autopoiesis.py::test_gene_expression_sustains_the_enzymes_metabolism_depends_on)", "value": "enzymes frozen at 0.30 in KO (base grows 0.30 -\u003e 0.50) and metabolites_ko(0.23) \u003c metabolites_base(0.33)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1751,7 +1778,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "min(pool) \u003e 0, max(pool) bounded; |s[-1]-s[60]|/s[60] small", "kind": "observable", "path": "min/max of each pool; second-half relative drift"}
-pass_if: {"kind": "invariant", "op": "persists", "provenance": "INVARIANT. Observed all pools strictly positive and bounded over 90 ticks; with perturbation off, membrane/enzymes/energy second-half drift \u003c 0.1 \u2014 a maintained steady state, not accumulation (tests/test_fig08_mechanistic.py::test_all_pools_positive_and_bounded, ::test_persists_at_a_steady_state)", "value": "all pools \u003e 0 and bounded; steady-state drift \u003c 0.1"}</pre>
+pass_if: {"kind": "invariant", "op": "persists", "provenance": "INVARIANT. Observed all pools strictly positive and bounded over 90 ticks; with perturbation off, membrane/enzymes/energy second-half drift \u003c 0.1 \u2014 a maintained steady state, not accumulation (tests/test_fig08_mechanistic.py::test_all_pools_positive_and_bounded, ::test_persists_at_a_steady_state)", "value": "all pools \u003e 0 and bounded; steady-state drift \u003c 0.1"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1790,7 +1818,8 @@ pass_if: {"kind": "invariant", "op": "persists", "provenance": "INVARIANT. Obser
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "membrane(repair on) held; membrane(repair off) \u2192 ~0", "kind": "derived", "path": "membrane end-state, repair on vs off"}
-pass_if: {"kind": "mechanistic_ablation", "op": "replacement_required", "provenance": "MECHANISTIC_ABLATION. Observed membrane held at ~3.8 with repair on, decaying toward 0 with repair off (epsilon) \u2014 turnover unopposed; the steady level requires continuous replacement (tests/test_fig08_mechanistic.py::test_turnover_requires_active_replacement)", "value": "membrane(repair on) \u003e 2.0 and membrane(repair off) \u003c 0.3\u00d7 that"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "replacement_required", "provenance": "MECHANISTIC_ABLATION. Observed membrane held at ~3.8 with repair on, decaying toward 0 with repair off (epsilon) \u2014 turnover unopposed; the steady level requires continuous replacement (tests/test_fig08_mechanistic.py::test_turnover_requires_active_replacement)", "value": "membrane(repair on) \u003e 2.0 and membrane(repair off) \u003c 0.3\u00d7 that"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1829,7 +1858,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "replacement_required", "provena
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "injury drop; viability dip; end recovers to pre-injury; no recovery if repair off", "kind": "derived", "path": "membrane, viability around the injury; recovery vs repair-off"}
-pass_if: {"kind": "mechanistic_ablation", "op": "recovers", "provenance": "MECHANISTIC_ABLATION. Observed injury membrane 3.75\u21921.50, viability dip to 0.71, recovery to membrane 3.70 / viability 0.92 by tick 90; recovery requires active repair (repair-off stays collapsed), and an early injury at tick 25 is also recovered (tests/test_fig08_mechanistic.py::test_recovers_after_membrane_injury, ::test_repeated_perturbation_persists)", "value": "mem[45] \u003c 0.6\u00b7mem[44]; viability dips; mem[end] \u003e 0.9\u00b7mem[44]; repair-off stays collapsed"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "recovers", "provenance": "MECHANISTIC_ABLATION. Observed injury membrane 3.75\u21921.50, viability dip to 0.71, recovery to membrane 3.70 / viability 0.92 by tick 90; recovery requires active repair (repair-off stays collapsed), and an early injury at tick 25 is also recovered (tests/test_fig08_mechanistic.py::test_recovers_after_membrane_injury, ::test_repeated_perturbation_persists)", "value": "mem[45] \u003c 0.6\u00b7mem[44]; viability dips; mem[end] \u003e 0.9\u00b7mem[44]; repair-off stays collapsed"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1868,7 +1898,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "recovers", "provenance": "MECHA
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability \u2192 ~0 and membrane \u2192 ~0 for each of the four knockouts", "kind": "derived", "path": "final viability + membrane under each single knockout"}
-pass_if: {"kind": "mechanistic_ablation", "op": "closure_required", "provenance": "MECHANISTIC_ABLATION (four single knockouts, epsilon). Observed final viability 0.00 and membrane collapsed for each of k_transport / k_met / k_expr / k_repair \u2014 every edge of the operational-closure loop is load-bearing (tests/test_fig08_mechanistic.py::test_knockout_collapses_viability[*])", "value": "final viability \u003c 0.1 and membrane \u003c 0.5 for KO transport/met/expr/repair"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "closure_required", "provenance": "MECHANISTIC_ABLATION (four single knockouts, epsilon). Observed final viability 0.00 and membrane collapsed for each of k_transport / k_met / k_expr / k_repair \u2014 every edge of the operational-closure loop is load-bearing (tests/test_fig08_mechanistic.py::test_knockout_collapses_viability[*])", "value": "final viability \u003c 0.1 and membrane \u003c 0.5 for KO transport/met/expr/repair"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1907,7 +1938,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "closure_required", "provenance"
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "nutrient_ext \u2192 ~0 and viability \u2192 ~0", "kind": "derived", "path": "external nutrient + viability under no replenishment"}
-pass_if: {"kind": "mechanistic_ablation", "op": "throughput_required", "provenance": "MECHANISTIC_ABLATION. Observed the medium depletes and viability collapses to 0.00 with replenishment off (epsilon) \u2014 the cell maintains organization on a required external throughput, it does not create matter/energy (tests/test_fig08_mechanistic.py::test_depends_on_external_input)", "value": "nutrient_ext \u003c 0.2 and viability \u003c 0.3 without replenishment"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "throughput_required", "provenance": "MECHANISTIC_ABLATION. Observed the medium depletes and viability collapses to 0.00 with replenishment off (epsilon) \u2014 the cell maintains organization on a required external throughput, it does not create matter/energy (tests/test_fig08_mechanistic.py::test_depends_on_external_input)", "value": "nutrient_ext \u003c 0.2 and viability \u003c 0.3 without replenishment"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2101,7 +2133,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "throughput_required", "provenan
         <strong>✗ If primary tests fail:</strong>
         
         <div style="margin-top:4px"><em>Diagnose:</em>
-          <ul style="margin:4px 0 0 18px"><li>a pool collapses to zero or explodes (a rate constant or yield is mistuned, breaking the balance)</li><li>a template pool drifts more than 25% over the second half (the coupling no longer settles to a sustained balance within the run)</li><li>structural material is not net-produced (containment/expression yields too low)</li><li>a knockout fails to move its downstream pool (the shared-pool wiring is broken, so the processes are not actually coupled through the pools they should share)</li></ul>
+          <ul style="margin:4px 0 0 18px"><li>a pool collapses to zero or explodes (a rate constant or yield is mistuned, breaking the balance)</li><li>a template pool drifts more than 25% over the second half (the coupling no longer settles to a sustained balance within the run)</li><li>structural material is not net-produced (containment/expression yields too low)</li><li>a knockout fails to move its downstream pool (the shared-pool wiring is broken, so the processes are not actually coupled through the pools they share)</li></ul>
         </div>
         
         
@@ -2175,6 +2207,20 @@ pass_if: {"kind": "mechanistic_ablation", "op": "throughput_required", "provenan
   
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
+    
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-06&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code> · <code>{&#39;study&#39;: &#39;autopoiesis&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
     
 
     
@@ -2310,7 +2356,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "throughput_required", "provenan
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

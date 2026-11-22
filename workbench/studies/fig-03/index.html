@@ -600,6 +600,21 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -655,7 +670,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="Fig cell_interface is executable, not merely drawn: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so each responds to its driving input. The chemical exchange port and the growth port respond to chemical supply (a 5x supply gives exactly 5x uptake flux and a strictly larger Monod growth rate); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; and the higher-level shape (volume) port accretes strictly (1.0 -&gt; 10.6) as the cell grows. Each is a deterministic typed cell -&gt; shared-variable connection." data-edit-multiline data-edit-label="Finding F-01">Fig cell_interface is executable, not merely drawn: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so each responds to its driving input. The chemical exchange port and the growth port respond to chemical supply (a 5x supply gives exactly 5x uptake flux and a strictly larger Monod growth rate); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; and the higher-level shape (volume) port accretes strictly (1.0 -&gt; 10.6) as the cell grows. Each is a deterministic typed cell -&gt; shared-variable connection.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-01].statement" data-edit-value="The typed ports drawn in figure cell_interface are executable. Composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite makes each port respond to its own driving input. Chemical supply drives the chemical exchange port and the growth port together: a 5x increase in supply gives exactly 5x uptake flux and a strictly larger Monod growth rate. The mechanical, electrical, and thermal exchange ports each move with their own driver and read zero when it is off. The shape (volume) port rises strictly from 1.0 to 10.6 as the cell grows. Each port is a deterministic connection from a typed cell to a shared variable." data-edit-multiline data-edit-label="Finding F-01">The typed ports drawn in figure cell_interface are executable. Composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite makes each port respond to its own driving input. Chemical supply drives the chemical exchange port and the growth port together: a 5x increase in supply gives exactly 5x uptake flux and a strictly larger Monod growth rate. The mechanical, electrical, and thermal exchange ports each move with their own driver and read zero when it is off. The shape (volume) port rises strictly from 1.0 to 10.6 as the cell grows. Each port is a deterministic connection from a typed cell to a shared variable.</span>
             
             <span class="finding-chip">via <code>physical-ports-respond-to-their-drivers</code></span>
             
@@ -693,7 +708,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> Each port in figure cell_interface is realized as a runnable connection whose value is a graded function of its own driving variable. The uptake-flux ratio of exactly 5.0 shows the chemical port scaling linearly with supply; the mechanical, electrical, and thermal ports each track their own driver and fall to zero when it is off, isolating each port to a single typed cell-to-shared-variable connection; and the shape port&#39;s strict rise shows a higher-level cellular variable following sustained growth. The evidence is computational and deterministic: every value is fixed by the handler&#39;s response laws, recorded from the registered fig03-runnable run, and reproduces exactly across runs. Scope: each baseline port responds only to its own driver, so this establishes that the ports respond, not that they form a coupled physiology. Shared-state coupling is shown separately by the mechanistic variant (findings F-04 and F-05), and the response-law constants here are didactic and toy-real, not calibrated to a named cell type.</div>
             
             
           </div>
@@ -750,7 +765,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> The viability bound drawn in figure cell_interface b is realized as a runnable port whose value is driven by temperature, and this finding reads back what that port does when the thermal driver is held above the physiological optimum. With the temperature pinned at 45 C the cell&#39;s viability falls strictly monotonically from 1.0 to 0.175 under first-order Arrhenius thermal death, whereas the paired run held at the 37 C optimum barely moves, ending at 0.911 with a decline under 0.1. The two runs are matched except in the single held temperature, so the final viability gap of 0.736 isolates temperature as the cause and shows the viability bound behaving as a driver-responsive port rather than a drawn label. The evidence class is a paired, deterministic driver-response read from the registered fig03-runnable run: both trajectories are fixed by the handler&#39;s death law and reproduce exactly across runs. Scope: this certifies that the viability port responds to its thermal driver with the correct qualitative shape — monotone kill above the optimum, near-flat at it — not that the kill kinetics are calibrated; the death constants are pinned to an E. coli reference D-value, toy-real and not fitted to a measured survival curve. The baseline establishes only that each port responds to its own driver, while coherent coupling across ports, where a thermal perturbation also moves growth and ATP through the shared energy pool, is demonstrated separately by the mechanistic variant (findings F-04 and F-05).</div>
             
             
           </div>
@@ -807,7 +822,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> Recovering both Monod constants exactly from two measured growth points establishes the growth port as a genuine saturating response rather than a linear stand-in: the curvature is read back from the run, not assumed. The decisive contrast is that over the same chemical change the uptake-flux ratio stays exactly linear while growth saturates, so the one chemical driver is shown to feed two measurably different functional forms, each a separately recoverable response law rather than a shared gain reused across ports. The evidence class is computational and deterministic: the values are recovered in-memory from a fresh CellularInterfaceHandler at paired supplies and reproduce exactly, so this is a recovery of the handler&#39;s own constants, not a fit to external data. Scope: it certifies the functional form of the baseline growth law, not its calibration — growth_max and km are didactic, toy-real magnitudes — and coherent physiology across coupled ports is demonstrated separately by the mechanistic variant (F-04, F-05).</div>
             
             
           </div>
@@ -864,7 +879,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> This finding raises the claim from typed-interface correctness to coupled physiology. In the mechanistic variant a single environmental perturbation does not stay confined to its own port: the heat shock enters at the thermal port, collapses enzyme activity, and that one change cascades through uptake and the ATP pool so that growth and viability fall together — the signature of ports wired to a common energetic node rather than nine independent response laws. The nutrient step-down reproduces the pattern from the other end of the network, moving growth, ATP, and viability through the same shared pool. The evidence class is a mechanistic ablation read from the live fig03-mechanistic run: the cross-port response matrix is dense (one driver moves every measured output) rather than diagonal, which is the measurable difference between genuine coupling and the baseline&#39;s isolated ports. This is what answers the scientific review&#39;s objection that the baseline interface shows only that ports respond, not that they cohere. Scope: the coupling is genuine and mechanism-mediated, but the rate laws that carry it are didactic and toy-real — a single lumped ATP pool, a Gaussian enzyme-activity window, and a basal maintenance drain — pinned for legibility rather than fitted to a measured respiration, maintenance coefficient, or growth-rate curve. The finding therefore certifies that the ports form a coupled physiology, not that the physiology is calibrated; the companion matched-null ablation (F-05) localizes that coupling to the shared ATP node.</div>
             
             
           </div>
@@ -921,7 +936,7 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> The baseline already established that each typed port responds to its own driver, and F-04 established that in the mechanistic variant one perturbation moves every downstream port. F-05 isolates why that propagation happens: it is a matched-null ablation that removes the shared ATP node and watches the coupling disappear. With metabolism disabled by setting catalytic_capacity to a small epsilon rather than to zero, so the control differs from the live run in one mechanism and not in its structure, the cell can no longer turn nutrient into ATP; growth holds near zero and biomass stays flat at 1.0 even as nutrient supply is changed, with the nutrient step moving biomass by less than 1e-3. The propagation F-04 recorded breaks at exactly the step where the energy currency is taken away, which localizes the coupling to the shared ATP pool rather than to direct port-to-port wiring. The same run confirms that growth is paid out of ATP, falling to zero at the ATP minimum, and that the shared state stays well-posed: ATP never goes negative, viability stays within [0,1], and biomass is monotone. The evidence class is a matched-null control read from the live fig03-mechanistic run, so the claim rests on the measured contrast between the disabled and intact cells, not on an asserted mechanism. Scope: this certifies where the coupling runs, not that the physiology is calibrated. The lumped ATP pool, the Gaussian enzyme-activity window, and the basal maintenance drain remain didactic, toy-real constants, not fitted to a measured respiration rate, maintenance coefficient, or growth-rate curve; calibrating them against such data is the stated next step.</div>
             
             
           </div>
@@ -1042,6 +1057,12 @@ The interface here is DIDACTIC / toy-real: the response laws (uptake_rate, Monod
                 data-baseline-name="fig03-runnable">Set composite</button>
       </div>
       <div class="baseline-composite-status muted" data-baseline-name="fig03-runnable" style="font-size:0.8em;margin-top:2px"></div>
+      
+      
+      
+      
+      
+      
       
       
       
@@ -1455,7 +1476,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "shape (volume) trajectory over the 24-step runnable composite", "kind": "observable", "path": "interface.shape"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: shape is an accumulating volume pool driven by growth, so it rises monotonically while growth_rate \u003e 0. Observed (deterministic): shape strictly increases from 1.0 (seeded) to 10.6 by the final step, with max growth_rate 0.40 \u003e 0 (tests/test_fig03_interface_responds.py::test_shape_accretes_as_the_cell_grows)", "value": "shape strictly increasing, 1.0 -\u003e 10.6 over the run"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: shape is an accumulating volume pool driven by growth, so it rises monotonically while growth_rate \u003e 0. Observed (deterministic): shape strictly increases from 1.0 (seeded) to 10.6 by the final step, with max growth_rate 0.40 \u003e 0 (tests/test_fig03_interface_responds.py::test_shape_accretes_as_the_cell_grows)", "value": "shape strictly increasing, 1.0 -\u003e 10.6 over the run"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1504,7 +1526,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability trajectory over the 24-step run with thermal_ext == 45 C", "kind": "observable", "path": "interface.viability"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: above optimum the Arrhenius death rate is nonzero, so viability decays strictly monotonically and ends well below its start. Observed (deterministic): the thermal driver is held at 45 C \u003e 37 C throughout, viability starts \u003e 0.99 and falls strictly step by step to 0.17493 (\u003c 0.5) by the final step (tests/test_fig03_interface_responds.py::test_above_optimum_drives_viability_strictly_down)", "value": "viability strictly decreasing, 1.0 -\u003e 0.175 (ends \u003c 0.5)"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: above optimum the Arrhenius death rate is nonzero, so viability decays strictly monotonically and ends well below its start. Observed (deterministic): the thermal driver is held at 45 C \u003e 37 C throughout, viability starts \u003e 0.99 and falls strictly step by step to 0.17493 (\u003c 0.5) by the final step (tests/test_fig03_interface_responds.py::test_above_optimum_drives_viability_strictly_down)", "value": "viability strictly decreasing, 1.0 -\u003e 0.175 (ends \u003c 0.5)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1553,7 +1576,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability at the end of the run with thermal_ext overridden to 37 C", "kind": "observable", "path": "interface.viability"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: at optimum the thermal-death D-value is ~10 h, so the loss over a 24-min run is small. Observed (deterministic): with thermal_ext == 37 C viability ends at 0.91073 (\u003e 0.9) with a total decline of 0.089 (\u003c 0.1), in stark contrast to the 45 C run (tests/test_fig03_interface_responds.py::test_at_optimum_viability_barely_changes)", "value": "viability stays \u003e 0.9 (1.0 -\u003e 0.911, decline \u003c 0.1)"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: at optimum the thermal-death D-value is ~10 h, so the loss over a 24-min run is small. Observed (deterministic): with thermal_ext == 37 C viability ends at 0.91073 (\u003e 0.9) with a total decline of 0.089 (\u003c 0.1), in stark contrast to the 45 C run (tests/test_fig03_interface_responds.py::test_at_optimum_viability_barely_changes)", "value": "viability stays \u003e 0.9 (1.0 -\u003e 0.911, decline \u003c 0.1)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1602,7 +1626,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "final viability at 45 C vs final viability at 37 C", "kind": "derived", "path": "interface.viability"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: if temperature is the cause, the hot run ends far below the optimum run. Observed (deterministic): final viability 0.17493 (45 C) vs 0.91073 (37 C), a gap of 0.736 \u003e 0.5, with hot \u003c opt (tests/test_fig03_interface_responds.py::test_hotter_kills_faster_than_optimum)", "value": "opt - hot \u003e 0.5 (0.911 - 0.175 == 0.736)"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: if temperature is the cause, the hot run ends far below the optimum run. Observed (deterministic): final viability 0.17493 (45 C) vs 0.91073 (37 C), a gap of 0.736 \u003e 0.5, with hot \u003c opt (tests/test_fig03_interface_responds.py::test_hotter_kills_faster_than_optimum)", "value": "opt - hot \u003e 0.5 (0.911 - 0.175 == 0.736)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1641,7 +1666,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "\u00
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "enzyme, growth drop sharply and viability declines after one heat step", "kind": "derived", "path": "obs.enzyme_activity, obs.uptake, obs.growth_rate, obs.viability around t=12"}
-pass_if: {"kind": "mechanistic_ablation", "op": "cascade", "provenance": "MECHANISTIC_ABLATION. Observed on the live run: enzyme 1.00\u21920.22, growth 0.43\u21920.07, ATP drains to 0, viability 1.00\u21920.43 \u2014 one input perturbation hitting every downstream port through the shared state (tests/test_fig03_mechanistic.py::test_heat_shock_cascades_through_shared_state)", "value": "enzyme[13] \u003c 0.4\u00b7enzyme[11]; growth[16] \u003c 0.4\u00b7growth[11]; viability declines"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "cascade", "provenance": "MECHANISTIC_ABLATION. Observed on the live run: enzyme 1.00\u21920.22, growth 0.43\u21920.07, ATP drains to 0, viability 1.00\u21920.43 \u2014 one input perturbation hitting every downstream port through the shared state (tests/test_fig03_mechanistic.py::test_heat_shock_cascades_through_shared_state)", "value": "enzyme[13] \u003c 0.4\u00b7enzyme[11]; growth[16] \u003c 0.4\u00b7growth[11]; viability declines"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1680,7 +1706,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "cascade", "provenance": "MECHAN
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "growth and ATP collapse, viability declines after the nutrient step", "kind": "derived", "path": "obs.growth_rate, obs.atp, obs.viability"}
-pass_if: {"kind": "mechanistic_ablation", "op": "propagates", "provenance": "MECHANISTIC_ABLATION. Observed growth 0.43\u21920.07, ATP pool 2.56\u21920, viability\u21920.24 under starvation (tests/test_fig03_mechanistic.py::test_nutrient_starvation_propagates_to_growth_and_viability)", "value": "growth[16] \u003c 0.4\u00b7growth[11]; atp[16] \u003c 0.3\u00b7atp[11]; viability declines"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "propagates", "provenance": "MECHANISTIC_ABLATION. Observed growth 0.43\u21920.07, ATP pool 2.56\u21920, viability\u21920.24 under starvation (tests/test_fig03_mechanistic.py::test_nutrient_starvation_propagates_to_growth_and_viability)", "value": "growth[16] \u003c 0.4\u00b7growth[11]; atp[16] \u003c 0.3\u00b7atp[11]; viability declines"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1719,7 +1746,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "propagates", "provenance": "MEC
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "growth ~0 and biomass flat; nutrient changes do not move biomass", "kind": "derived", "path": "obs.growth_rate, obs.biomass with catalytic_capacity=\u03b5"}
-pass_if: {"kind": "mechanistic_ablation", "op": "breaks", "provenance": "MECHANISTIC_ABLATION (matched null, \u03b5 not 0.0). Observed disabled cell: growth \u2248 0, biomass flat at 1.0, and a nutrient change moves biomass by \u003c1e-3 \u2014 the off-diagonal coupling is the shared state (tests/test_fig03_mechanistic.py::test_disabled_metabolism_breaks_propagation, ::test_cross_port_coupling_off_diagonal)", "value": "max growth \u003c 1e-3; |biomass_end \u2212 biomass_0| \u003c 1e-3; nutrient-response \u2248 0"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "breaks", "provenance": "MECHANISTIC_ABLATION (matched null, \u03b5 not 0.0). Observed disabled cell: growth \u2248 0, biomass flat at 1.0, and a nutrient change moves biomass by \u003c1e-3 \u2014 the off-diagonal coupling is the shared state (tests/test_fig03_mechanistic.py::test_disabled_metabolism_breaks_propagation, ::test_cross_port_coupling_off_diagonal)", "value": "max growth \u003c 1e-3; |biomass_end \u2212 biomass_0| \u003c 1e-3; nutrient-response \u2248 0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1758,7 +1786,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "breaks", "provenance": "MECHANI
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "atp\u22650; viability\u2208[0,1]; biomass monotone; growth\u21920 at min ATP", "kind": "derived", "path": "obs.atp, obs.viability, obs.biomass, obs.growth_rate"}
-pass_if: {"kind": "invariant", "op": "bounded_and_consistent", "provenance": "INVARIANT. Observed over the run: ATP \u2265 0, viability \u2208 [0,1], biomass monotone, and growth falls below a quarter of its peak at the ATP minimum \u2014 growth consumes the shared ATP pool (tests/test_fig03_mechanistic.py::test_state_variables_stay_bounded, ::test_growth_requires_atp_energy_consistency)", "value": "atp\u22650, viability\u2208[0,1], biomass non-decreasing, growth\u003c0.25\u00b7max at min ATP"}</pre>
+pass_if: {"kind": "invariant", "op": "bounded_and_consistent", "provenance": "INVARIANT. Observed over the run: ATP \u2265 0, viability \u2208 [0,1], biomass monotone, and growth falls below a quarter of its peak at the ATP minimum \u2014 growth consumes the shared ATP pool (tests/test_fig03_mechanistic.py::test_state_variables_stay_bounded, ::test_growth_requires_atp_energy_consistency)", "value": "atp\u22650, viability\u2208[0,1], biomass non-decreasing, growth\u003c0.25\u00b7max at min ATP"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1797,7 +1826,8 @@ pass_if: {"kind": "invariant", "op": "bounded_and_consistent", "provenance": "IN
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "uptake(c=100)\u2192vmax; uptake(c\u226aKm) \u226a vmax", "kind": "observable", "path": "uptake at c far above vs far below Km"}
-pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPIRICAL_COMPARISON / formula verification (Michaelis\u2013Menten). Kept explicitly as a rate-law check, not a physiology claim (tests/test_fig03_mechanistic.py::test_uptake_saturates_formula_only)", "value": "uptake(100) \u003e 0.98\u00b7vmax; uptake(0.05) \u003c 0.2\u00b7uptake(100)"}</pre>
+pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPIRICAL_COMPARISON / formula verification (Michaelis\u2013Menten). Kept explicitly as a rate-law check, not a physiology claim (tests/test_fig03_mechanistic.py::test_uptake_saturates_formula_only)", "value": "uptake(100) \u003e 0.98\u00b7vmax; uptake(0.05) \u003c 0.2\u00b7uptake(100)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2064,6 +2094,20 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-01&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code> · <code>{&#39;study&#39;: &#39;cellular-interface&#39;, &#39;condition&#39;: &#39;tests-passed&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2127,7 +2171,7 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
       
       <li style="display:flex;align-items:flex-start;gap:8px">
         <button type="button" class="action-btn study-finding-del" data-id="F-01" title="Delete finding" style="font-size:0.72em;line-height:1;padding:2px 6px">✕</button>
-        <span>Fig cell_interface is executable, not merely drawn: composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite exercises the caption&#39;s typed interface ports so each responds to its driving input. The chemical exchange port and the growth port respond to chemical supply (a 5x supply gives exactly 5x uptake flux and a strictly larger Monod growth rate); the mechanical, electrical, and thermal exchange ports each respond linearly to their own driver and read zero when it is off; and the higher-level shape (volume) port accretes strictly (1.0 -&gt; 10.6) as the cell grows. Each is a deterministic typed cell -&gt; shared-variable connection. <span class="muted small">(confirms)</span></span>
+        <span>The typed ports drawn in figure cell_interface are executable. Composing one bounded cell (`CellularInterfaceHandler`) with a four-driver environment through the `fig03-runnable` composite makes each port respond to its own driving input. Chemical supply drives the chemical exchange port and the growth port together: a 5x increase in supply gives exactly 5x uptake flux and a strictly larger Monod growth rate. The mechanical, electrical, and thermal exchange ports each move with their own driver and read zero when it is off. The shape (volume) port rises strictly from 1.0 to 10.6 as the cell grows. Each port is a deterministic connection from a typed cell to a shared variable. <span class="muted small">(confirms)</span></span>
       </li>
       
       <li style="display:flex;align-items:flex-start;gap:8px">
@@ -2193,7 +2237,7 @@ pass_if: {"kind": "empirical_comparison", "op": "saturates", "provenance": "EMPI
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

@@ -724,6 +724,21 @@ bound, its domain resorbing while its shed material becomes scattering physical 
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1123,6 +1138,12 @@ BrownianMovement.</span>
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1416,7 +1437,8 @@ BrownianMovement.</span>
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.area at tick 6", "kind": "observable", "path": "obs.area"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a coherent CPM cell holds its structure (substantial footprint area) while the diffusing acetate stays below its footprint-local viability bound -\u003e expect area well above a small floor before the crossing. Observed: area 61-66 through tick 6, released stays False, n_particles == 0 (the 30.0 floor is a post-hoc pin, the \u003e-direction is the a-priori prediction) (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_holds_below_threshold)", "value": 30.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a coherent CPM cell holds its structure (substantial footprint area) while the diffusing acetate stays below its footprint-local viability bound -\u003e expect area well above a small floor before the crossing. Observed: area 61-66 through tick 6, released stays False, n_particles == 0 (the 30.0 floor is a post-hoc pin, the \u003e-direction is the a-priori prediction) (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_holds_below_threshold)", "value": 30.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1514,7 +1536,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.area at tick 16", "kind": "observable", "path": "obs.area"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: once the viability bound is crossed the target volume ramps down and the domain resorbs to full dissolution (area -\u003e 0) within the run. Observed: area falls monotonically from 56 (tick 7) to 0 by tick 16, and stays 0 through tick 20. The == 0.0 endpoint is the a-priori prediction; the exact tick (16) is a pin, exact only while the fixed-seed CPM engine is pinned (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles)", "value": 0.0}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: once the viability bound is crossed the target volume ramps down and the domain resorbs to full dissolution (area -\u003e 0) within the run. Observed: area falls monotonically from 56 (tick 7) to 0 by tick 16, and stays 0 through tick 20. The == 0.0 endpoint is the a-priori prediction; the exact tick (16) is a pin, exact only while the fixed-seed CPM engine is pinned (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris, tests/test_cpm_disintegration.py::test_releases_and_disintegrates_into_particles)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1563,7 +1586,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "len(particles) once area reaches 0", "kind": "observable", "path": "particles"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: as the domain resorbs, its vacated footprint pixels are emitted as debris particles that accumulate in the shared store -\u003e expect a substantial, growing particle count. Observed: exactly 63 debris particles shed by tick 16 (up to 8/tick capped, deterministic across repeated runs), staying at 63 for the remainder of the run; the \u003e= 20.0 floor is a loose pin, the accumulation is the a-priori prediction. The CPM-\u003eparticle mass ledger closes: 63 shed particles == 63 distinct vacated pixels (no double-count) \u003c= 69 unique vacated pixels; the 63-vs-56px gap is legitimate footprint drift, not manufactured mass (tests/test_disintegration_ledger.py::test_cpm_particle_ledger_closes_and_double_count_is_fixed, tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 20.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior: as the domain resorbs, its vacated footprint pixels are emitted as debris particles that accumulate in the shared store -\u003e expect a substantial, growing particle count. Observed: exactly 63 debris particles shed by tick 16 (up to 8/tick capped, deterministic across repeated runs), staying at 63 for the remainder of the run; the \u003e= 20.0 floor is a loose pin, the accumulation is the a-priori prediction. The CPM-\u003eparticle mass ledger closes: 63 shed particles == 63 distinct vacated pixels (no double-count) \u003c= 69 unique vacated pixels; the 63-vs-56px gap is legitimate footprint drift, not manufactured mass (tests/test_disintegration_ledger.py::test_cpm_particle_ledger_closes_and_double_count_is_fixed, tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 20.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1612,7 +1636,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior:
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "n_particles_shed vs distinct-vacated-pixels vs unique-vacated-pixels over the release phase", "kind": "derived", "path": "particles"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledger_closes", "provenance": "built an external CPM-\u003eparticle mass ledger (never reading the process\u0027s private state or the movement-scrambled particle positions) that replays the footprint diff vacated = prev_fp \u0026 ~curr_fp tick by tick. Measured on the fixed-seed run: 75 per-tick vacation events over 69 unique pixels; the pre-fix policy min(vacated, cap) shed 68 particles over only 62 distinct pixels -- 6 re-vacated pixels double-shed (6 units of manufactured mass, exactly the M5 68-vs-56 gap). An already-shed-pixel guard now sheds 63 particles at 63 distinct pixels, equal to the live particle-store growth and \u003c= 69 unique vacated; the ledger closes -- shed material, not deleted-then-recreated mass (tests/test_disintegration_ledger.py::test_cpm_particle_ledger_closes_and_double_count_is_fixed, tests/test_disintegration_mass.py::test_shed_particles_equal_fresh_vacated_pixels_within_per_tick_cap)", "value": "n_particles_shed (63) == distinct_vacated_pixels (63) and \u003c= unique_vacated_pixels (69)"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledger_closes", "provenance": "built an external CPM-\u003eparticle mass ledger (never reading the process\u0027s private state or the movement-scrambled particle positions) that replays the footprint diff vacated = prev_fp \u0026 ~curr_fp tick by tick. Measured on the fixed-seed run: 75 per-tick vacation events over 69 unique pixels; the pre-fix policy min(vacated, cap) shed 68 particles over only 62 distinct pixels -- 6 re-vacated pixels double-shed (6 units of manufactured mass, exactly the M5 68-vs-56 gap). An already-shed-pixel guard now sheds 63 particles at 63 distinct pixels, equal to the live particle-store growth and \u003c= 69 unique vacated; the ledger closes -- shed material, not deleted-then-recreated mass (tests/test_disintegration_ledger.py::test_cpm_particle_ledger_closes_and_double_count_is_fixed, tests/test_disintegration_mass.py::test_shed_particles_equal_fresh_vacated_pixels_within_per_tick_cap)", "value": "n_particles_shed (63) == distinct_vacated_pixels (63) and \u003c= unique_vacated_pixels (69)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1661,7 +1686,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "ledg
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "RMS radius of particle positions, tick 22 vs tick 16", "kind": "observable", "path": "particles"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: once the domain has dissolved, its shed debris drifts under Brownian scatter, so the cloud\u0027s RMS spread strictly increases (does not stall or pile against a wall). Observed: RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3 (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact magnitudes vary run-to-run (representative values shown); the strict INCREASE is the a-priori prediction and the robust, test-asserted claim (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: once the domain has dissolved, its shed debris drifts under Brownian scatter, so the cloud\u0027s RMS spread strictly increases (does not stall or pile against a wall). Observed: RMS spread grows monotonically over an 8-tick post-dissolution window from ~5.3 (tick 16, dissolution complete) to ~7.6 (tick 24). BrownianMovement is unseeded, so the exact magnitudes vary run-to-run (representative values shown); the strict INCREASE is the a-priori prediction and the robust, test-asserted claim (tests/test_disintegration_regime.py::test_cell_holds_then_disintegrates_into_scattering_debris)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1996,6 +2022,20 @@ through the engine over a deterministic 20-24 tick run.</div>
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;cell-cell-coupling&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2174,7 +2214,7 @@ BrownianMovement. <span class="muted small">(confirms)</span></span>
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

@@ -729,6 +729,21 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -918,7 +933,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> What the measurement establishes: the consumer cell clears its acceptance band (biomass passes &gt; 1.25, reaching 3.79) while its local glucose reads 0.0 for the entire run, so the only carbon available to it is the secretor&#39;s diffused acetate. This is an existence proof of the paper&#39;s relational-molecule claim at the cell-cell interface -- one and the same acetate is the secretor&#39;s metabolic waste and the consumer&#39;s sole carbon food, its meaning fixed by each cell&#39;s metabolism rather than by the molecule itself.
+
+Evidence class: a code-graded pass on a primary acceptance criterion (crossfeeding-consumer-grows-on-acetate-alone) computed from the registered run cellcell-crossfeed, not an authored value. It is reinforced by the secretor-knockout necessity control in F-05, where the same consumer fails to grow once no acetate is produced anywhere. Taken together the pair shows the acetate handoff is both sufficient (growth with the secretor present) and necessary (no growth without it).
+
+Scope and caveats: this is a single secretor-consumer pair over one 20-tick run with fixed diffusion coefficients and no viability constraint, so it demonstrates that a spatial metabolic handoff can sustain a cell on another cell&#39;s byproduct, not how robust that handoff is to parameters, replication, or a steady state. It is a mechanism-tier demonstration, not a population-level or multi-seed result.</div>
             
             
           </div>
@@ -937,7 +956,7 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="The cross-feeding handoff is NECESSARY, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` -- the cross-feed composite with the acetate secretor cell removed so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 -&gt; 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 + observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field." data-edit-multiline data-edit-label="Finding F-05">The cross-feeding handoff is NECESSARY, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` -- the cross-feed composite with the acetate secretor cell removed so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 -&gt; 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 + observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-05].statement" data-edit-value="The cross-feeding handoff is necessary, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` — the cross-feed composite with the acetate secretor cell removed, so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 → 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 plus observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field." data-edit-multiline data-edit-label="Finding F-05">The cross-feeding handoff is necessary, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` — the cross-feed composite with the acetate secretor cell removed, so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 → 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 plus observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field.</span>
             
             <span class="finding-chip">via <code>crossfeeding-secretor-knockout-consumer-fails-to-grow</code></span>
             
@@ -975,7 +994,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> What the measurement establishes: with the acetate secretor removed from the cross-feed composite, the otherwise-identical consumer sits at local acetate 0.0 and its biomass never leaves the 1.25 seed (final biomass clears the &lt;= 1.2500001 acceptance band), against the 1.25 → 3.79 growth the same consumer shows when the secretor is present (F-02). Removing the one upstream source of acetate removes the consumer&#39;s growth, so the growth seen in the cross-feed regime is caused by the secretor&#39;s acetate — not by residual glucose, a field artifact, or anything intrinsic to the consumer.
+
+Evidence class: a code-graded pass on a negative-control acceptance criterion (crossfeeding-secretor-knockout-consumer-fails-to-grow) computed from the registered run cellcell-crossfeed-knockout, not an authored value. Paired with F-02&#39;s sufficiency pass (growth with the secretor present), it completes a two-sided necessity-and-sufficiency argument for the acetate handoff that the flagship left resting on local_glucose == 0.0 plus observed growth alone.
+
+Scope and caveats: this is a single consumer over one 20-tick run at the same fixed field and diffusion settings as the cross-feed regime, with the secretor deleted rather than metabolically silenced in place — the cleanest single-variable knockout, but a knockout of the whole cell, not of acetate secretion alone. It shows the handoff is necessary at this geometry and horizon, not how the result scales with parameters, replication, or a steady state; the consumer persists on the lattice (~35 px) without dying, since this study couples state but imposes no viability constraint. A mechanism-tier control, not a population-level or multi-seed result.</div>
             
             
           </div>
@@ -1051,41 +1074,11 @@ two-role, shared-scalar-pool stand-in a lumped, specification-stage realization 
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◐</span>
-            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="INTERFACE SURROGATE CALIBRATION AT THE CELL-CELL LEVEL -- a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface `CpmColonyField`, its per-cell metabolism swapped from constraint-based dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten / Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) BEHIND THE BYTE-IDENTICAL `CpmColonyField` ports, with the two colonies compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. Confirmed: over 20 ticks the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface -- per-cell biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1% / 0.3%), total biomass 302.4 vs 287.6 (4.9%), the competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%); every colony interface observable agrees within ~6%. The MM colony additionally runs with cobra BLOCKED -- the surrogate-model payoff, a mechanism that runs where the dFBA original could not.
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-06].statement" data-edit-value="Interface surrogate calibration at the cell-cell level: a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface (`CpmColonyField`). Each cell&#39;s per-cell metabolism is swapped from constraint-based dynamic FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten/Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) behind the byte-identical `CpmColonyField` ports, and the two colonies are compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. At the saturated endpoint (20 ticks, ~99.8% lattice occupancy) the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface within ~6% on every observable: per-cell biomass 237.9/64.5 (dFBA) vs 223.3/64.3 (MM) (6.1%/0.3%), total biomass 302.4 vs 287.6 (4.9%), competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%). The MM colony additionally runs with cobra blocked -- the surrogate-model payoff: a mechanism that runs where the dFBA original could not.
 
-PRE-SATURATION TEST NOW RUN (peer-review M2) -- the named next step is done and re-levels this
-finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10
-ticks (~50% occupancy, well below the ceiling) with the mm_* params FROZEN
-(tests/test_cellcell_presaturation.py) separates real agreement from ceiling artifact. Two-sided
-result. The GROWTH / COMPETITION observables are genuinely substitutable pre-saturation -- total
-biomass dFBA 102.2 vs MM 92.7 (9.3%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume
-1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- so the headline competition
-result is NOT a ceiling artifact. But the ~0.2% ACETATE match IS an artifact -- dFBA&#39;s plume
-saturates early (~431 by ~8 ticks, flat after) while the MM overflow surrogate climbs roughly
-linearly and only catches up at the saturated endpoint; pre-saturation at 10 ticks the MM plume
-is barely half-built and diverges from dFBA by ~68% (431.5 vs 136.3). Degrees of freedom -- 2 free
-mm_* params (the vmax 10/4 uptake kinetics are shared with dFBA, not free) against ~6 colony
-observables (over-constrained), and the single observable mm_overflow directly controls (acetate)
-is exactly the one that fails pre-saturation. Honest re-level -- mechanism-independence on the
-colony GROWTH/COMPETITION interface (substitutable pre-saturation within ~9%), surrogate
-calibration only on the acetate plume (matched at the saturated endpoint, ~68% off pre-saturation)." data-edit-multiline data-edit-label="Finding F-06">INTERFACE SURROGATE CALIBRATION AT THE CELL-CELL LEVEL -- a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface `CpmColonyField`, its per-cell metabolism swapped from constraint-based dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten / Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) BEHIND THE BYTE-IDENTICAL `CpmColonyField` ports, with the two colonies compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. Confirmed: over 20 ticks the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface -- per-cell biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1% / 0.3%), total biomass 302.4 vs 287.6 (4.9%), the competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%); every colony interface observable agrees within ~6%. The MM colony additionally runs with cobra BLOCKED -- the surrogate-model payoff, a mechanism that runs where the dFBA original could not.
+A pre-saturation test (peer-review M2) re-levels this finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10 ticks (~50% occupancy, well below the ceiling) with the mm_* params frozen (`tests/test_cellcell_presaturation.py`) separates real agreement from a ceiling artifact, and the result is two-sided. The growth/competition observables are genuinely substitutable pre-saturation -- total biomass 102.2 vs 92.7 (9.3%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume 1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- so the headline competition result is not a ceiling artifact. But the ~0.2% acetate match is an artifact: dFBA&#39;s plume saturates early (~431 by ~8 ticks, flat after) while the MM overflow surrogate climbs roughly linearly and only catches up at the saturated endpoint; pre-saturation at 10 ticks the MM plume is barely half-built and diverges from dFBA by ~68% (431.5 vs 136.3). With 2 free mm_* params (the vmax 10/4 uptake kinetics are shared with dFBA, not free) against ~6 colony observables the fit is over-constrained, and the single observable mm_overflow directly controls -- acetate -- is exactly the one that fails pre-saturation. Honest re-level: mechanism-independence on the colony growth/competition interface (substitutable pre-saturation within ~9%), surrogate calibration only on the acetate plume (matched at the saturated endpoint, ~68% off pre-saturation)." data-edit-multiline data-edit-label="Finding F-06">Interface surrogate calibration at the cell-cell level: a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface (`CpmColonyField`). Each cell&#39;s per-cell metabolism is swapped from constraint-based dynamic FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten/Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) behind the byte-identical `CpmColonyField` ports, and the two colonies are compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. At the saturated endpoint (20 ticks, ~99.8% lattice occupancy) the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface within ~6% on every observable: per-cell biomass 237.9/64.5 (dFBA) vs 223.3/64.3 (MM) (6.1%/0.3%), total biomass 302.4 vs 287.6 (4.9%), competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%). The MM colony additionally runs with cobra blocked -- the surrogate-model payoff: a mechanism that runs where the dFBA original could not.
 
-PRE-SATURATION TEST NOW RUN (peer-review M2) -- the named next step is done and re-levels this
-finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10
-ticks (~50% occupancy, well below the ceiling) with the mm_* params FROZEN
-(tests/test_cellcell_presaturation.py) separates real agreement from ceiling artifact. Two-sided
-result. The GROWTH / COMPETITION observables are genuinely substitutable pre-saturation -- total
-biomass dFBA 102.2 vs MM 92.7 (9.3%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume
-1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- so the headline competition
-result is NOT a ceiling artifact. But the ~0.2% ACETATE match IS an artifact -- dFBA&#39;s plume
-saturates early (~431 by ~8 ticks, flat after) while the MM overflow surrogate climbs roughly
-linearly and only catches up at the saturated endpoint; pre-saturation at 10 ticks the MM plume
-is barely half-built and diverges from dFBA by ~68% (431.5 vs 136.3). Degrees of freedom -- 2 free
-mm_* params (the vmax 10/4 uptake kinetics are shared with dFBA, not free) against ~6 colony
-observables (over-constrained), and the single observable mm_overflow directly controls (acetate)
-is exactly the one that fails pre-saturation. Honest re-level -- mechanism-independence on the
-colony GROWTH/COMPETITION interface (substitutable pre-saturation within ~9%), surrogate
-calibration only on the acetate plume (matched at the saturated endpoint, ~68% off pre-saturation).</span>
+A pre-saturation test (peer-review M2) re-levels this finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10 ticks (~50% occupancy, well below the ceiling) with the mm_* params frozen (`tests/test_cellcell_presaturation.py`) separates real agreement from a ceiling artifact, and the result is two-sided. The growth/competition observables are genuinely substitutable pre-saturation -- total biomass 102.2 vs 92.7 (9.3%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume 1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- so the headline competition result is not a ceiling artifact. But the ~0.2% acetate match is an artifact: dFBA&#39;s plume saturates early (~431 by ~8 ticks, flat after) while the MM overflow surrogate climbs roughly linearly and only catches up at the saturated endpoint; pre-saturation at 10 ticks the MM plume is barely half-built and diverges from dFBA by ~68% (431.5 vs 136.3). With 2 free mm_* params (the vmax 10/4 uptake kinetics are shared with dFBA, not free) against ~6 colony observables the fit is over-constrained, and the single observable mm_overflow directly controls -- acetate -- is exactly the one that fails pre-saturation. Honest re-level: mechanism-independence on the colony growth/competition interface (substitutable pre-saturation within ~9%), surrogate calibration only on the acetate plume (matched at the saturated endpoint, ~68% off pre-saturation).</span>
             
             <span class="finding-chip">via <code>colony-substitutable-pre-saturation</code></span>
             
@@ -1123,7 +1116,11 @@ calibration only on the acetate plume (matched at the saturated endpoint, ~68% o
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> What the measurement establishes: behind the byte-identical `CpmColonyField` interface, a two-parameter Michaelis-Menten colony reproduces the dFBA colony&#39;s growth and competition observables to within ~9% pre-saturation (total biomass 9.3%, competition ratio 0.5%, lattice volume 1.6%, net glucose depleted 1.1%), so those readouts are genuinely mechanism-independent at the colony&lt;-&gt;field interface -- the coarse-grained competition result does not depend on whether each cell runs constraint-based FBA or a lumped Monod kinetics. The acetate plume is the one exception: its tight endpoint match (~0.2%) is a saturation coincidence, not substitutability -- pre-saturation the MM overflow surrogate is ~68% off the dFBA plume (431.5 vs 136.3).
+
+Evidence class: a code-graded pass on a pre-saturation acceptance criterion (colony-substitutable-pre-saturation) computed from the registered runs cellcell-compete (dFBA) and cellcell-compete-mm (MM), not an authored value. The pre-saturation re-measurement with the mm_* params frozen is what lets the two-sided verdict be read off the run rather than asserted: substitutable on growth/competition, calibration-only on acetate.
+
+Scope and caveats: this is a single two-cell colony compared head-to-head across mechanisms over 10- and 20-tick runs at one geometry, with 2 free mm_* parameters tuned against ~6 colony observables -- an over-constrained fit, and the one observable mm_overflow directly sets (acetate) is exactly the one that fails pre-saturation. The result supports mechanism-independence of the growth/competition interface and surrogate calibration of the acetate plume, not a general claim that MM can stand in for dFBA on every observable or at every horizon. The payoff is concrete: the MM colony runs with cobra blocked, so it executes where the dFBA original cannot. A methodological, mechanism-tier result, not a population-level or multi-seed one.</div>
             
             
           </div>
@@ -1244,6 +1241,12 @@ calibration only on the acetate plume (matched at the saturated endpoint, ~68% o
                 data-baseline-name="cellcell-compete">Set composite</button>
       </div>
       <div class="baseline-composite-status muted" data-baseline-name="cellcell-compete" style="font-size:0.8em;margin-top:2px"></div>
+      
+      
+      
+      
+      
+      
       
       
       
@@ -1688,7 +1691,8 @@ calibration only on the acetate plume (matched at the saturated endpoint, ~68% o
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"1\"]) / last(obs.biomass[\"2\"])", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the higher-uptake-capacity cell (glucose_vmax 10) should end with more biomass than the lower-capacity cell (vmax 4) \u2192 expect ratio \u003e 1 (pin floor 1.5). Observed: deterministic 3.69x (seed-invariant; biomass 237.9 vs 64.5) over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly; tests/test_cellcell_multiseed.py for the 5-seed band)", "value": 1.5}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the higher-uptake-capacity cell (glucose_vmax 10) should end with more biomass than the lower-capacity cell (vmax 4) \u2192 expect ratio \u003e 1 (pin floor 1.5). Observed: deterministic 3.69x (seed-invariant; biomass 237.9 vs 64.5) over 20 ticks (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell, tests/test_cpm_colony_field.py::test_two_cells_metabolize_grow_and_deplete_disjointly; tests/test_cellcell_multiseed.py for the 5-seed band)", "value": 1.5}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1737,7 +1741,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.volume[\"1\"]) \u003e last(obs.volume[\"2\"])", "kind": "observable", "path": "obs.volume"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the biomass winner should also hold more lattice volume \u2192 expect volume(id1) \u003e volume(id2). Observed: 3511 px (id 1) vs 81 px (id 2) over 20 ticks; the winner\u0027s 3511 px is ~97.5% of the 3600-px lattice, a finite-size saturation endpoint rather than unbounded dominance (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the biomass winner should also hold more lattice volume \u2192 expect volume(id1) \u003e volume(id2). Observed: 3511 px (id 1) vs 81 px (id 2) over 20 ticks; the winner\u0027s 3511 px is ~97.5% of the 3600-px lattice, a finite-size saturation endpoint rather than unbounded dominance (tests/test_cellcell_regimes.py::test_competition_excludes_the_slower_cell)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1786,7 +1791,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"2\"])   # loser final biomass, vs the 1.25 viable-biomass floor", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: this study couples shared state but imposes no viability constraint, so the loser should stay above its 1.25 seed (displaced, not excluded). Observed: loser (id 2) ends at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits far above the viable-biomass floor, while holding only 81 px against the winner\u0027s 3511 px (~97.5% of the 3600-px lattice): spatially displaced, not excluded. Extending the run to t\u224830 fills the lattice and crowds the still-viable loser off it (eviction, not starvation) (tests/test_cellcell_regimes.py::test_competition_loser_is_displaced_not_excluded)", "value": 1.25}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: this study couples shared state but imposes no viability constraint, so the loser should stay above its 1.25 seed (displaced, not excluded). Observed: loser (id 2) ends at biomass 64.5 -- it GREW ~51.6x from its 1.25 seed and sits far above the viable-biomass floor, while holding only 81 px against the winner\u0027s 3511 px (~97.5% of the 3600-px lattice): spatially displaced, not excluded. Extending the run to t\u224830 fills the lattice and crowds the still-viable loser off it (eviction, not starvation) (tests/test_cellcell_regimes.py::test_competition_loser_is_displaced_not_excluded)", "value": 1.25}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1864,7 +1870,8 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "by constructi
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"2\"])", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: an acetate-consuming cell fed only the secretor\u0027s diffused acetate should grow above its 1.25 seed. Observed: consumer (id 2) biomass 1.25 -\u003e 3.79 (roughly 3x, back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 1.25}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: an acetate-consuming cell fed only the secretor\u0027s diffused acetate should grow above its 1.25 seed. Observed: consumer (id 2) biomass 1.25 -\u003e 3.79 (roughly 3x, back-loaded to the last ~5 ticks once the acetate plume arrives) over 20 ticks (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 1.25}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1903,7 +1910,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.local_acetate[\"2\"])", "kind": "observable", "path": "obs.local_acetate"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the fast-diffusing acetate plume should reach the consumer\u0027s footprint \u2192 expect local_acetate \u003e 0. Observed: consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose\u0027s 0.4) acetate plume reaches the consumer\u0027s footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: the fast-diffusing acetate plume should reach the consumer\u0027s footprint \u2192 expect local_acetate \u003e 0. Observed: consumer (id 2) local_acetate == 1.30 by t=20, confirming the fast-diffusing (coefficient 15.0 vs glucose\u0027s 0.4) acetate plume reaches the consumer\u0027s footprint (tests/test_cellcell_regimes.py::test_crossfeeding_keeps_the_consumer_viable)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1991,7 +1999,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass[\"1\"])   # consumer-alone final biomass; expected to stay at the seed", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior: remove the secretor so no acetate is produced anywhere, and the consumer should fail to grow \u2014 biomass stays at its 1.25 seed. Observed: consumer (id 1) biomass stays at its 1.25 seed and local_acetate stays 0.0 over 20 ticks with the secretor removed -- it persists on the lattice (~35 px) but flatly fails to grow, versus 1.25 -\u003e 3.79 in the full cross-feed regime (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow)", "value": 1.2500001}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior: remove the secretor so no acetate is produced anywhere, and the consumer should fail to grow \u2014 biomass stays at its 1.25 seed. Observed: consumer (id 1) biomass stays at its 1.25 seed and local_acetate stays 0.0 over 20 ticks with the secretor removed -- it persists on the lattice (~35 px) but flatly fails to grow, versus 1.25 -\u003e 3.79 in the full cross-feed regime (tests/test_cellcell_regimes.py::test_crossfeeding_knockout_consumer_fails_to_grow)", "value": 1.2500001}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2030,7 +2039,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior:
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "peak consumer (id 2) biomass and peak consumer local_acetate over the 20-tick run", "kind": "observable", "path": "obs.biomass, obs.local_acetate"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior \u2014 at the physical 2:1 diffusivity the acetate handoff should NOT feed the consumer within a legible horizon (contrast the 37.5x legibility regime that lifts the same consumer to biomass 3.79). Observed \u2014 peak consumer biomass ~1.28 (\u003c 1.4 pin; essentially the 1.25 seed, versus 3.79 at 37.5x) and peak consumer local_acetate ~0.21 (\u003c 0.5, versus 1.60 at 37.5x); the consumer is then displaced off the lattice by ~t=20. Feeding scales monotonically with transport acceleration \u2014 consumer biomass gain +14%/+45%/+102%/+203% at 5x/10x/20x/37.5x (tests/test_cellcell_m7.py::test_crossfeed_realistic_diffusivity_handoff_fails)", "value": 1.4}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior \u2014 at the physical 2:1 diffusivity the acetate handoff should NOT feed the consumer within a legible horizon (contrast the 37.5x legibility regime that lifts the same consumer to biomass 3.79). Observed \u2014 peak consumer biomass ~1.28 (\u003c 1.4 pin; essentially the 1.25 seed, versus 3.79 at 37.5x) and peak consumer local_acetate ~0.21 (\u003c 0.5, versus 1.60 at 37.5x); the consumer is then displaced off the lattice by ~t=20. Feeding scales monotonically with transport acceleration \u2014 consumer biomass gain +14%/+45%/+102%/+203% at 5x/10x/20x/37.5x (tests/test_cellcell_m7.py::test_crossfeed_realistic_diffusivity_handoff_fails)", "value": 1.4}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2069,7 +2079,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior \
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass_fast) / last(obs.biomass_slow)", "kind": "observable", "path": "obs.biomass_fast, obs.biomass_slow"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior \u2014 over dividing populations the faster-uptake lineage should dominate the shared glucose. Observed \u2014 by t=40 the fast lineage holds ~9x the slow lineage\u0027s biomass (seed 1 \u2014 fast 122 in 48 cells vs slow 13 in 5 cells; pin floor 3x), robust across seeds. Full extinction of the slow lineage is seed-dependent (2/5 seeds by t~56), so the study leads with dominance, not exclusion (tests/test_cellcell_m7.py::test_dividing_competition_fast_lineage_dominates)", "value": 3.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior \u2014 over dividing populations the faster-uptake lineage should dominate the shared glucose. Observed \u2014 by t=40 the fast lineage holds ~9x the slow lineage\u0027s biomass (seed 1 \u2014 fast 122 in 48 cells vs slow 13 in 5 cells; pin floor 3x), robust across seeds. Full extinction of the slow lineage is seed-dependent (2/5 seeds by t~56), so the study leads with dominance, not exclusion (tests/test_cellcell_m7.py::test_dividing_competition_fast_lineage_dominates)", "value": 3.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2108,7 +2119,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior \
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_cells)   # slow lineage standing population in monoculture", "kind": "observable", "path": "obs.n_cells"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior \u2014 remove the fast competitor and the slow lineage should be viable on its own, proving the co-culture collapse is competition-driven. Observed \u2014 the slow lineage alone grows and divides to ~22-33 cells by t=40 (\u003e 5 pin; standing biomass well above zero), versus suppression to ~5 cells (headline-seed extinction) with the fast lineage present (tests/test_cellcell_m7.py::test_slow_lineage_viable_in_monoculture_control)", "value": 5.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior \u2014 remove the fast competitor and the slow lineage should be viable on its own, proving the co-culture collapse is competition-driven. Observed \u2014 the slow lineage alone grows and divides to ~22-33 cells by t=40 (\u003e 5 pin; standing biomass well above zero), versus suppression to ~5 cells (headline-seed extinction) with the fast lineage present (tests/test_cellcell_m7.py::test_slow_lineage_viable_in_monoculture_control)", "value": 5.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2196,7 +2208,8 @@ tuned mm_overflow matched the saturated endpoint, not the trajectory.</div>
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "per-observable abs(dFBA - MM) / dFBA at 10 ticks (~50% occupancy), mm_* params frozen", "kind": "observable", "path": "obs.biomass, obs.volume, fields.acetate, fields.glucose"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "PRE-SATURATION, mm_* params frozen, 10 ticks ~50% occupancy (tests/test_cellcell_presaturation.py::test_presaturation_growth_observables_substitutable). GATE on the growth/competition observables -- total biomass dFBA 102.2 vs MM 92.7 (9.3%), per-cell 89.6/12.6 vs 81.3/11.4 (9.3%/9.7%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume 1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- worst 9.7%, within the 0.15 band. ARTIFACT (diagnostic, ::test_acetate_match_is_a_saturation_artifact) -- acetate agrees \u003c 5% only at the saturated 20-tick endpoint (431.5 vs 430.8); pre-saturation at 10 ticks it diverges 68% (dFBA 431.5 vs MM 136.3), so the ~0.2% endpoint match is a saturation artifact. Degrees of freedom -- 2 free mm_* params (uptake kinetics shared with dFBA) vs ~6 colony observables (over-constrained); the one observable mm_overflow directly controls (acetate) is the one that fails pre-saturation.", "value": 0.15}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "PRE-SATURATION, mm_* params frozen, 10 ticks ~50% occupancy (tests/test_cellcell_presaturation.py::test_presaturation_growth_observables_substitutable). GATE on the growth/competition observables -- total biomass dFBA 102.2 vs MM 92.7 (9.3%), per-cell 89.6/12.6 vs 81.3/11.4 (9.3%/9.7%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume 1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- worst 9.7%, within the 0.15 band. ARTIFACT (diagnostic, ::test_acetate_match_is_a_saturation_artifact) -- acetate agrees \u003c 5% only at the saturated 20-tick endpoint (431.5 vs 430.8); pre-saturation at 10 ticks it diverges 68% (dFBA 431.5 vs MM 136.3), so the ~0.2% endpoint match is a saturation artifact. Degrees of freedom -- 2 free mm_* params (uptake kinetics shared with dFBA) vs ~6 colony observables (over-constrained); the one observable mm_overflow directly controls (acetate) is the one that fails pre-saturation.", "value": 0.15}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2511,6 +2524,20 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "with cobra im
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;cell-environment-coupling&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2609,7 +2636,7 @@ pixels, independently of the colony process itself.</li><li style="margin:2px 0"
       
       <li style="display:flex;align-items:flex-start;gap:8px">
         <button type="button" class="action-btn study-finding-del" data-id="F-05" title="Delete finding" style="font-size:0.72em;line-height:1;padding:2px 6px">✕</button>
-        <span>The cross-feeding handoff is NECESSARY, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` -- the cross-feed composite with the acetate secretor cell removed so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 -&gt; 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 + observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field. <span class="muted small">(confirms)</span></span>
+        <span>The cross-feeding handoff is necessary, not incidental: a secretor-knockout control (`cellcell-crossfeed-knockout` — the cross-feed composite with the acetate secretor cell removed, so no acetate is produced anywhere) leaves the otherwise-identical consumer unable to grow. It sits at local acetate 0.0 and its biomass never climbs off its 1.25 seed (persisting on the lattice at ~35 px), against the 1.25 → 3.79 growth the same consumer shows when the secretor is present. This closes the handoff-necessity argument the flagship left resting only on local_glucose == 0.0 plus observed growth: the consumer&#39;s growth is genuinely caused by the secretor&#39;s acetate, not by anything intrinsic to the consumer or the field. <span class="muted small">(confirms)</span></span>
       </li>
       
       <li style="display:flex;align-items:flex-start;gap:8px">
@@ -2619,24 +2646,9 @@ pixels, independently of the colony process itself.</li><li style="margin:2px 0"
       
       <li style="display:flex;align-items:flex-start;gap:8px">
         <button type="button" class="action-btn study-finding-del" data-id="F-06" title="Delete finding" style="font-size:0.72em;line-height:1;padding:2px 6px">✕</button>
-        <span>INTERFACE SURROGATE CALIBRATION AT THE CELL-CELL LEVEL -- a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface `CpmColonyField`, its per-cell metabolism swapped from constraint-based dynamic-FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten / Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) BEHIND THE BYTE-IDENTICAL `CpmColonyField` ports, with the two colonies compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. Confirmed: over 20 ticks the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface -- per-cell biomass dFBA 237.9/64.5 vs MM 223.3/64.3 (6.1% / 0.3%), total biomass 302.4 vs 287.6 (4.9%), the competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%); every colony interface observable agrees within ~6%. The MM colony additionally runs with cobra BLOCKED -- the surrogate-model payoff, a mechanism that runs where the dFBA original could not.
+        <span>Interface surrogate calibration at the cell-cell level: a tuned Michaelis-Menten colony reproduces the dFBA colony&#39;s interface observables behind the same colony interface (`CpmColonyField`). Each cell&#39;s per-cell metabolism is swapped from constraint-based dynamic FBA (cobra e_coli_core, O2-capped) to a lumped, cobra-free Michaelis-Menten/Monod metabolism (`cellcell-compete-mm`, `mechanism: mm`) behind the byte-identical `CpmColonyField` ports, and the two colonies are compared head-to-head. This lifts the flagship single-cell dFBA&lt;-&gt;MM surrogate calibration one composition level up, to the multi-cell colony: each competitor keeps its own saturating glucose uptake (so the vmax 10-vs-4 resource-preemption asymmetry is preserved by construction), while growth becomes a fixed biomass yield and acetate a fixed overflow fraction. At the saturated endpoint (20 ticks, ~99.8% lattice occupancy) the tuned MM colony reproduces the coarse-grained colony&lt;-&gt;field interface within ~6% on every observable: per-cell biomass 237.9/64.5 (dFBA) vs 223.3/64.3 (MM) (6.1%/0.3%), total biomass 302.4 vs 287.6 (4.9%), competition ratio 3.69x vs 3.47x (5.9%), total CPM lattice volume 3592 vs 3600 px (0.2%), field acetate plume 431.5 vs 430.8 (0.2%), net glucose depleted 10677 vs 10764 (0.8%). The MM colony additionally runs with cobra blocked -- the surrogate-model payoff: a mechanism that runs where the dFBA original could not.
 
-PRE-SATURATION TEST NOW RUN (peer-review M2) -- the named next step is done and re-levels this
-finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10
-ticks (~50% occupancy, well below the ceiling) with the mm_* params FROZEN
-(tests/test_cellcell_presaturation.py) separates real agreement from ceiling artifact. Two-sided
-result. The GROWTH / COMPETITION observables are genuinely substitutable pre-saturation -- total
-biomass dFBA 102.2 vs MM 92.7 (9.3%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume
-1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- so the headline competition
-result is NOT a ceiling artifact. But the ~0.2% ACETATE match IS an artifact -- dFBA&#39;s plume
-saturates early (~431 by ~8 ticks, flat after) while the MM overflow surrogate climbs roughly
-linearly and only catches up at the saturated endpoint; pre-saturation at 10 ticks the MM plume
-is barely half-built and diverges from dFBA by ~68% (431.5 vs 136.3). Degrees of freedom -- 2 free
-mm_* params (the vmax 10/4 uptake kinetics are shared with dFBA, not free) against ~6 colony
-observables (over-constrained), and the single observable mm_overflow directly controls (acetate)
-is exactly the one that fails pre-saturation. Honest re-level -- mechanism-independence on the
-colony GROWTH/COMPETITION interface (substitutable pre-saturation within ~9%), surrogate
-calibration only on the acetate plume (matched at the saturated endpoint, ~68% off pre-saturation). <span class="muted small">(partial)</span></span>
+A pre-saturation test (peer-review M2) re-levels this finding honestly. The 20-tick match is measured at ~99.8% lattice occupancy; re-measuring at 10 ticks (~50% occupancy, well below the ceiling) with the mm_* params frozen (`tests/test_cellcell_presaturation.py`) separates real agreement from a ceiling artifact, and the result is two-sided. The growth/competition observables are genuinely substitutable pre-saturation -- total biomass 102.2 vs 92.7 (9.3%), competition ratio 7.09x vs 7.12x (0.5%), total CPM volume 1805 vs 1777 px (1.6%), net glucose depleted 3675 vs 3634 (1.1%) -- so the headline competition result is not a ceiling artifact. But the ~0.2% acetate match is an artifact: dFBA&#39;s plume saturates early (~431 by ~8 ticks, flat after) while the MM overflow surrogate climbs roughly linearly and only catches up at the saturated endpoint; pre-saturation at 10 ticks the MM plume is barely half-built and diverges from dFBA by ~68% (431.5 vs 136.3). With 2 free mm_* params (the vmax 10/4 uptake kinetics are shared with dFBA, not free) against ~6 colony observables the fit is over-constrained, and the single observable mm_overflow directly controls -- acetate -- is exactly the one that fails pre-saturation. Honest re-level: mechanism-independence on the colony growth/competition interface (substitutable pre-saturation within ~9%), surrogate calibration only on the acetate plume (matched at the saturated endpoint, ~68% off pre-saturation). <span class="muted small">(partial)</span></span>
       </li>
       
     </ul>
@@ -2682,7 +2694,7 @@ calibration only on the acetate plume (matched at the saturated endpoint, ~68% o
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

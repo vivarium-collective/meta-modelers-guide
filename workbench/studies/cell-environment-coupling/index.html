@@ -731,6 +731,21 @@ modification), and secretes a diffusing acetate plume.
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -839,7 +854,7 @@ runs dynamic-FBA at its own footprint and grows both biologically (biomass) and 
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> Both acceptance checks behind this finding pass on the single-cell-in-a-field run, but they carry different evidential weight. The biomass check tests a biological prior — a cell metabolizing at its footprint should finish above its 0.1 seed — so clearing it is genuine evidence that dynamic-FBA is doing spatial-metabolic work. The CPM-volume check is a regression pin set after the run (a floor above the seed volume), so it guards against drift rather than confirming an independently calibrated prediction. Read together they establish the mechanism the paper&#39;s cell–environment coupling section calls for: the CpmCellField process runs metabolism at the cell&#39;s own lattice footprint and lets that metabolism drive structural growth, closing the sense → metabolize → secrete loop rather than replaying a scripted trajectory. The scope is deliberately narrow — one seed, one 60x60 lattice, 20 ticks, the cell still occupying only a few percent of the field at the end. The loop is closed and measured here; directed, up-gradient control is demonstrated separately in the chemotaxis variant (F-08), not by this run.</div>
             
             
           </div>
@@ -1480,6 +1495,12 @@ evidence, and the O2-axis collapse is the load-bearing limitation.</span>
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1827,7 +1848,8 @@ initial value and CPM volume exceeds 40 px by step 20.</div>
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.biomass)", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a cell metabolizing at its footprint should end with more biomass than its 0.1 seed (growth under nutrients) \u2192 expect final biomass \u003e 0.1. Observed over 20 ticks: biomass 0.1 -\u003e ~0.37 (tests/test_flagship_field.py::test_flagship_sense_act_loop; tests/test_cpm_cell_field.py::test_cell_metabolizes_grows_and_reshapes_field asserts the same pattern on a smaller 40x40 grid over 12 ticks)", "value": 0.1}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a cell metabolizing at its footprint should end with more biomass than its 0.1 seed (growth under nutrients) \u2192 expect final biomass \u003e 0.1. Observed over 20 ticks: biomass 0.1 -\u003e ~0.37 (tests/test_flagship_field.py::test_flagship_sense_act_loop; tests/test_cpm_cell_field.py::test_cell_metabolizes_grows_and_reshapes_field asserts the same pattern on a smaller 40x40 grid over 12 ticks)", "value": 0.1}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1925,7 +1947,8 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "pin set after
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sum(fields.acetate)", "kind": "observable", "path": "fields.acetate"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: overflow metabolism under an O2 cap secretes acetate \u2192 expect field-wide acetate \u003e 0. Observed: field-wide acetate 0 -\u003e ~47.0 over 20 ticks, spreading into a plume around the cell\u0027s footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the plume is the third panel of the baked GIF)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: overflow metabolism under an O2 cap secretes acetate \u2192 expect field-wide acetate \u003e 0. Observed: field-wide acetate 0 -\u003e ~47.0 over 20 ticks, spreading into a plume around the cell\u0027s footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the plume is the third panel of the baked GIF)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1974,7 +1997,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sum(fields.glucose)", "kind": "observable", "path": "fields.glucose"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: a metabolizing cell is a net sink on the shared field \u2192 expect total glucose to fall below its 5940.0 initial. Observed: field-wide glucose total 5940.0 -\u003e ~5908.4 over 20 ticks (~32 units net consumed); the local footprint drawdown is much sharper \u2014 ~18% peak-to-trough (the peak is created by diffusion inflow after t=0) and ~6% from the initial condition \u2014 than the field-wide total, because only the cell\u0027s footprint and its immediate diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop)", "value": 5940.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: a metabolizing cell is a net sink on the shared field \u2192 expect total glucose to fall below its 5940.0 initial. Observed: field-wide glucose total 5940.0 -\u003e ~5908.4 over 20 ticks (~32 units net consumed); the local footprint drawdown is much sharper \u2014 ~18% peak-to-trough (the peak is created by diffusion inflow after t=0) and ~6% from the initial condition \u2014 than the field-wide total, because only the cell\u0027s footprint and its immediate diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop)", "value": 5940.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2013,7 +2037,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sum(fields.acetate) with oxygen uncapped vs capped", "kind": "observable", "path": "fields.acetate"}
-pass_if: {"kind": "acceptance_criterion", "op": "approx_equal", "provenance": "prior: lifting the O2 cap removes the overflow driver, so unconstrained e_coli_core respires fully \u2192 expect uncapped acetate \u2248 0. Observed field-wide acetate over 20 ticks: capped flagship 0 -\u003e ~47.0, O2-uncapped 0 -\u003e 0.0 (exactly), a \u003e100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow; composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json)", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "approx_equal", "provenance": "prior: lifting the O2 cap removes the overflow driver, so unconstrained e_coli_core respires fully \u2192 expect uncapped acetate \u2248 0. Observed field-wide acetate over 20 ticks: capped flagship 0 -\u003e ~47.0, O2-uncapped 0 -\u003e 0.0 (exactly), a \u003e100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow; composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json)", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2156,7 +2181,8 @@ spot and the honest boundary of the swap.</div>
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "per-observable abs(dFBA - MM) / dFBA on held-out conditions, MM params frozen", "kind": "observable", "path": "obs.biomass, obs.volume, fields.acetate, fields.glucose"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "HELD-OUT, MM params frozen (tests/test_substitutability_heldout.py). GATE \u2014 held-out glucose field flat 3.0 over 20 ticks \u2014 biomass dFBA 0.531 vs MM 0.480 (9.7%), CPM volume 160 vs 141 (11.9%), acetate 74.9 vs 73.8 (1.4%), net glucose depleted 49.1 vs 52.7 (7.3%) \u2014 worst 11.9%, within the 0.15 band (::test_heldout_glucose_field_substitutable). CORROBORATION \u2014 40-tick run \u2014 biomass 1.282 vs 1.123 (12.4%), volume 383 vs 335 (12.5%), acetate 207 vs 199 (4.1%), glucose 139 vs 142 (2.0%) \u2014 worst 12.5% (::test_heldout_longer_run_substitutable). BOUNDARY (diagnostic, not gated small) \u2014 held-out O2 cap 2.5\u21925.0 diverges 73-74% on biomass/volume (dFBA 1.282/382 vs frozen MM 0.342/99): the surrogate is blind to O2 (::test_surrogate_is_blind_to_oxygen_heldout). Degrees of freedom \u2014 4 free MM params vs 4 interface observables (exactly determined), so the tuned fit was guaranteed; the held-out agreement in-regime is the real evidence.", "value": 0.15}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "HELD-OUT, MM params frozen (tests/test_substitutability_heldout.py). GATE \u2014 held-out glucose field flat 3.0 over 20 ticks \u2014 biomass dFBA 0.531 vs MM 0.480 (9.7%), CPM volume 160 vs 141 (11.9%), acetate 74.9 vs 73.8 (1.4%), net glucose depleted 49.1 vs 52.7 (7.3%) \u2014 worst 11.9%, within the 0.15 band (::test_heldout_glucose_field_substitutable). CORROBORATION \u2014 40-tick run \u2014 biomass 1.282 vs 1.123 (12.4%), volume 383 vs 335 (12.5%), acetate 207 vs 199 (4.1%), glucose 139 vs 142 (2.0%) \u2014 worst 12.5% (::test_heldout_longer_run_substitutable). BOUNDARY (diagnostic, not gated small) \u2014 held-out O2 cap 2.5\u21925.0 diverges 73-74% on biomass/volume (dFBA 1.282/382 vs frozen MM 0.342/99): the surrogate is blind to O2 (::test_surrogate_is_blind_to_oxygen_heldout). Degrees of freedom \u2014 4 free MM params vs 4 interface observables (exactly determined), so the tuned fit was guaranteed; the held-out agreement in-regime is the real evidence.", "value": 0.15}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2195,7 +2221,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "HELD-OU
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max per-tick relative change of biomass and of each field total over the final 10 of 120 ticks", "kind": "observable", "path": "obs.biomass, fields.glucose, fields.acetate"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "STEADY STATE REACHED. Criterion \u2014 over the final 10 of 120 ticks the max per-tick relative change of biomass and of both field totals is \u003c 0.1%. Measured (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state) \u2014 biomass 0.0015%/tick, field glucose 0.0001%/tick, field acetate 0.014%/tick, all three below the 0.1% tolerance. Standing steady-state values \u2014 biomass ~0.500 (the biomass_capacity ceiling), CPM volume ~147 px (stable to CPM thermal noise ~3 px), local footprint glucose ~1.356, field glucose total ~5372 (uptake balanced by source), field acetate total ~31.5 (secretion balanced by decay). The cell is alive and metabolizing at the fixed point, not a dead/zeroed field.", "value": 0.001}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "STEADY STATE REACHED. Criterion \u2014 over the final 10 of 120 ticks the max per-tick relative change of biomass and of both field totals is \u003c 0.1%. Measured (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state) \u2014 biomass 0.0015%/tick, field glucose 0.0001%/tick, field acetate 0.014%/tick, all three below the 0.1% tolerance. Standing steady-state values \u2014 biomass ~0.500 (the biomass_capacity ceiling), CPM volume ~147 px (stable to CPM thermal noise ~3 px), local footprint glucose ~1.356, field glucose total ~5372 (uptake balanced by source), field acetate total ~31.5 (secretion balanced by decay). The cell is alive and metabolizing at the fixed point, not a dead/zeroed field.", "value": 0.001}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2273,7 +2300,8 @@ pass_if: {"kind": "rigor_check", "op": "\u003c", "provenance": "MEASURED drift b
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "chemotaxis vs flagship-control COM-x displacement + nutrient/growth deltas over 20 ticks", "kind": "observable", "path": "obs.position, obs.local_nutrient, obs.biomass, obs.volume, fields.glucose"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "MEASURED, deterministic fixed-seed run (tests/test_chemotaxis_field.py::test_chemotaxis_moves_cell_up_gradient_and_helps_growth). DIRECTED MOTION \u2014 chemotaxis COM x 18.5 \u2192 39.3 (+20.8 px up-gradient) vs flagship control 18.5 \u2192 18.73 (+0.2 px thermal drift), ~90\u00d7 \u2014 pass_if value 10.0 is the up-gradient displacement floor the migrating cell clears (+20.8) and the control does not (+0.2). REACHES RICHER REGION \u2014 sensed local glucose 1.95 vs 0.94 (~2.1\u00d7). HELPS \u2014 net glucose acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs 110 px (+36%). Directed up-gradient motion is genuinely achieved and measurably improves nutrient acquisition and growth versus the non-motile flagship on the same field.", "value": 10.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "MEASURED, deterministic fixed-seed run (tests/test_chemotaxis_field.py::test_chemotaxis_moves_cell_up_gradient_and_helps_growth). DIRECTED MOTION \u2014 chemotaxis COM x 18.5 \u2192 39.3 (+20.8 px up-gradient) vs flagship control 18.5 \u2192 18.73 (+0.2 px thermal drift), ~90\u00d7 \u2014 pass_if value 10.0 is the up-gradient displacement floor the migrating cell clears (+20.8) and the control does not (+0.2). REACHES RICHER REGION \u2014 sensed local glucose 1.95 vs 0.94 (~2.1\u00d7). HELPS \u2014 net glucose acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs 110 px (+36%). Directed up-gradient motion is genuinely achieved and measurably improves nutrient acquisition and growth versus the non-motile flagship on the same field.", "value": 10.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2623,6 +2651,20 @@ not a process-bigraph store, and no other process reads or writes it.</li>
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;cellular-interface&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2918,7 +2960,7 @@ evidence, and the O2-axis collapse is the load-bearing limitation. <span class="
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

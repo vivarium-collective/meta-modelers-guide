@@ -600,6 +600,21 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1162,6 +1177,12 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1474,7 +1495,8 @@ Observed over a deterministic 26-step run (27 emitted frames): viability decline
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "active_grain at every tick where viability \u003e= threshold", "kind": "observable", "path": "obs.active_grain"}
-pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: while the cell is viable the cheap coarse description suffices -\u003e expect active_grain == \"coarse\" for every frame with viability \u003e= 0.5. Observed: coarse for all frames t=0..12 (viability 1.0 down to 0.505 at t=11, 0.46 at t=12 still emitted coarse -- the flip lags one tick); no frame with viability \u003e= 0.5 ever reads \"fine\" (tests/test_fig05_grain_swap.py::test_coarse_grain_while_viable)", "value": "coarse"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: while the cell is viable the cheap coarse description suffices -\u003e expect active_grain == \"coarse\" for every frame with viability \u003e= 0.5. Observed: coarse for all frames t=0..12 (viability 1.0 down to 0.505 at t=11, 0.46 at t=12 still emitted coarse -- the flip lags one tick); no frame with viability \u003e= 0.5 ever reads \"fine\" (tests/test_fig05_grain_swap.py::test_coarse_grain_while_viable)", "value": "coarse"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1523,7 +1545,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: whil
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "number of grain transitions and their direction over the run", "kind": "observable", "path": "obs.active_grain"}
-pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: crossing the viability bound replaces the coarse description with the finer one, and (with viability monotonically falling) it never reverts -\u003e expect exactly one coarse-\u003efine switch and fine for all subsequent frames. Observed: grain[0]==\"coarse\", a single flip at t=13, \"fine\" for every frame t=13..26 (tests/test_fig05_grain_swap.py::test_flips_to_fine_and_stays)", "value": "exactly one transition, coarse-\u003efine, fine thereafter"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: crossing the viability bound replaces the coarse description with the finer one, and (with viability monotonically falling) it never reverts -\u003e expect exactly one coarse-\u003efine switch and fine for all subsequent frames. Observed: grain[0]==\"coarse\", a single flip at t=13, \"fine\" for every frame t=13..26 (tests/test_fig05_grain_swap.py::test_flips_to_fine_and_stays)", "value": "exactly one transition, coarse-\u003efine, fine thereafter"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1572,7 +1595,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "==", "provenance": "prior: cros
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "|flip_tick - first_tick_below_threshold|", "kind": "observable", "path": "obs.active_grain"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior: the viability signal drives the control, so the flip must coincide with the crossing up to the composite\u0027s one-tick scheduling latency. Observed: viability first \u003c 0.5 at t=12; grain flips coarse-\u003efine at t=13; |13-12| == 1 (tests/test_fig05_grain_swap.py::test_switch_at_threshold_crossing)", "value": 1}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior: the viability signal drives the control, so the flip must coincide with the crossing up to the composite\u0027s one-tick scheduling latency. Observed: viability first \u003c 0.5 at t=12; grain flips coarse-\u003efine at t=13; |13-12| == 1 (tests/test_fig05_grain_swap.py::test_switch_at_threshold_crossing)", "value": 1}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1621,7 +1645,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c=", "provenance": "prior:
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "sign of each grain\u0027s biomass update when selected vs not selected", "kind": "derived", "path": "process.update"}
-pass_if: {"kind": "acceptance_criterion", "op": "opposite_signs_and_gated", "provenance": "driven the two process objects directly with a standing biomass/energy/inflow: coarse selected -\u003e biomass update +0.3 (\u003e0), fine selected -\u003e biomass update \u003c0 (decay); each returns an empty dict when it is not the active grain; coarse (grows) and fine (decays) act in opposite directions on the shared biomass output (tests/test_fig05_grain_swap.py::test_gate_hands_control_to_the_active_grain)", "value": "coarse.update\u003e0 when active, fine.update\u003c0 when active, each == {} when not active"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "opposite_signs_and_gated", "provenance": "driven the two process objects directly with a standing biomass/energy/inflow: coarse selected -\u003e biomass update +0.3 (\u003e0), fine selected -\u003e biomass update \u003c0 (decay); each returns an empty dict when it is not the active grain; coarse (grows) and fine (decays) act in opposite directions on the shared biomass output (tests/test_fig05_grain_swap.py::test_gate_hands_control_to_the_active_grain)", "value": "coarse.update\u003e0 when active, fine.update\u003c0 when active, each == {} when not active"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1670,7 +1695,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "opposite_signs_and_gated", "pro
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "biomass monotone up before flip, peak at flip, monotone down after", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "provenance": "prior: the coarse (alive) grain grows biomass, the fine (dying) grain decays it, so the trajectory must turn over at the switch. Observed: biomass rises linearly 0 -\u003e 3.9 through t=13 (0.3/tick), peaks at 3.9 exactly at the flip tick (t=13), then decays first-order to ~1.14 by t=26; peak index == flip index (|peak-flip| == 0 \u003c= 1) (tests/test_fig05_grain_swap.py::test_biomass_grows_then_decays_at_the_switch)", "value": "biomass grows to a peak at the flip tick then strictly declines"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "provenance": "prior: the coarse (alive) grain grows biomass, the fine (dying) grain decays it, so the trajectory must turn over at the switch. Observed: biomass rises linearly 0 -\u003e 3.9 through t=13 (0.3/tick), peaks at 3.9 exactly at the flip tick (t=13), then decays first-order to ~1.14 by t=26; peak index == flip index (|peak-flip| == 0 \u003c= 1) (tests/test_fig05_grain_swap.py::test_biomass_grows_then_decays_at_the_switch)", "value": "biomass grows to a peak at the flip tick then strictly declines"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1719,7 +1745,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "pr
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "energy monotone up before flip, peak at flip, monotone down after", "kind": "observable", "path": "obs.energy"}
-pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "provenance": "prior: both interface outputs are gated by the same control, so energy must mirror biomass. Observed: energy rises 0 -\u003e 2.6 through t=13 (0.2/tick), peaks at 2.6 at the flip tick, then drains first-order to ~0.76 by t=26 (tests/test_fig05_grain_swap.py::test_energy_mirrors_biomass_across_the_switch)", "value": "energy grows to a peak at the flip tick then strictly declines"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "provenance": "prior: both interface outputs are gated by the same control, so energy must mirror biomass. Observed: energy rises 0 -\u003e 2.6 through t=13 (0.2/tick), peaks at 2.6 at the flip tick, then drains first-order to ~0.76 by t=26 (tests/test_fig05_grain_swap.py::test_energy_mirrors_biomass_across_the_switch)", "value": "energy grows to a peak at the flip tick then strictly declines"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1768,7 +1795,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "peaks_at_flip_then_decays", "pr
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "viability non-increasing every tick, min \u003c threshold, ends at 0", "kind": "observable", "path": "obs.viability"}
-pass_if: {"kind": "acceptance_criterion", "op": "monotone_nonincreasing_to_zero", "provenance": "prior: the StressRamp returns a non-positive delta clamped so viability never goes below 0 -\u003e expect a monotone non-increasing trajectory that reaches the 0 floor. Observed: viability 1.0 falling by 0.045/tick, never rising, below 0.5 from t=12, reaching 0.0 by t=23 and held there through t=26 (tests/test_fig05_grain_swap.py::test_viability_declines_monotonically_to_zero)", "value": "viability[0]==1.0, never rises, min\u003c0.5, viability[-1]==0.0"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "monotone_nonincreasing_to_zero", "provenance": "prior: the StressRamp returns a non-positive delta clamped so viability never goes below 0 -\u003e expect a monotone non-increasing trajectory that reaches the 0 floor. Observed: viability 1.0 falling by 0.045/tick, never rising, below 0.5 from t=12, reaching 0.0 by t=23 and held there through t=26 (tests/test_fig05_grain_swap.py::test_viability_declines_monotonically_to_zero)", "value": "viability[0]==1.0, never rises, min\u003c0.5, viability[-1]==0.0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1856,7 +1884,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "set of active_grain values over the run \u2286 {0, 1}", "kind": "observable", "path": "obs.active_grain"}
-pass_if: {"kind": "invariant", "op": "in_set", "provenance": "INVARIANT. active_grain \u2208 {0,1} on every step of the live run (tests/test_fig05_mechanistic.py::test_one_active_grain_at_a_time)", "value": "{0, 1}"}</pre>
+pass_if: {"kind": "invariant", "op": "in_set", "provenance": "INVARIANT. active_grain \u2208 {0,1} on every step of the live run (tests/test_fig05_mechanistic.py::test_one_active_grain_at_a_time)", "value": "{0, 1}"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1895,7 +1924,8 @@ pass_if: {"kind": "invariant", "op": "in_set", "provenance": "INVARIANT. active_
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "stress identical across modes; coarse\u2261adaptive damage before the switch", "kind": "derived", "path": "obs.stress, obs.m_sol across modes"}
-pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Stress trajectory identical across adaptive/coarse/fine to 1e-12; coarse and adaptive m_sol coincide to 1e-12 before the switch (tests/test_fig05_mechanistic.py::test_biological_forcing_is_grain_independent)", "value": 1e-12}</pre>
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Stress trajectory identical across adaptive/coarse/fine to 1e-12; coarse and adaptive m_sol coincide to 1e-12 before the switch (tests/test_fig05_mechanistic.py::test_biological_forcing_is_grain_independent)", "value": 1e-12}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1934,7 +1964,8 @@ pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Stress 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "|\u0394biomass| at switch \u003c 1.5\u00d7 typical; handover_error = 0", "kind": "derived", "path": "obs.biomass, obs.damage, obs.handover_error at the switch tick"}
-pass_if: {"kind": "invariant", "op": "no_jump", "provenance": "INVARIANT. Observed biomass step at the switch 0.98\u00d7 the typical per-tick step (no artificial jump) and handover_error = 0 exactly; total damage continuous too (tests/test_fig05_mechanistic.py::test_no_artificial_jump_at_the_switch)", "value": "biomass step ratio \u003c 1.5 and handover_error \u003c 1e-12"}</pre>
+pass_if: {"kind": "invariant", "op": "no_jump", "provenance": "INVARIANT. Observed biomass step at the switch 0.98\u00d7 the typical per-tick step (no artificial jump) and handover_error = 0 exactly; total damage continuous too (tests/test_fig05_mechanistic.py::test_no_artificial_jump_at_the_switch)", "value": "biomass step ratio \u003c 1.5 and handover_error \u003c 1e-12"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1973,7 +2004,8 @@ pass_if: {"kind": "invariant", "op": "no_jump", "provenance": "INVARIANT. Observ
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "switch(tol=0.45) \u003e switch(tol=0.20) \u003e switch(tol=0.08)", "kind": "derived", "path": "switch time vs inadequacy_tol"}
-pass_if: {"kind": "prospective_prediction", "op": "threshold_moves_switch", "provenance": "PROSPECTIVE_PREDICTION. Observed the switch time moves monotonically with the inadequacy tolerance (default switch t=11; lower tol advances it, higher tol delays/removes it) \u2014 proving the trigger is the quantified signal, not a wall-clock (tests/test_fig05_mechanistic.py::test_inadequacy_signal_triggers_refinement_not_wall_clock)", "value": "higher tol delays, lower tol advances the switch"}</pre>
+pass_if: {"kind": "prospective_prediction", "op": "threshold_moves_switch", "provenance": "PROSPECTIVE_PREDICTION. Observed the switch time moves monotonically with the inadequacy tolerance (default switch t=11; lower tol advances it, higher tol delays/removes it) \u2014 proving the trigger is the quantified signal, not a wall-clock (tests/test_fig05_mechanistic.py::test_inadequacy_signal_triggers_refinement_not_wall_clock)", "value": "higher tol delays, lower tol advances the switch"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2012,7 +2044,8 @@ pass_if: {"kind": "prospective_prediction", "op": "threshold_moves_switch", "pro
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "fine/adaptive viability\u21920 with m_agg\u003e0.2; coarse viability\u003e0.5, m_agg=0; |adaptive\u2212fine| \u226a |coarse\u2212fine|", "kind": "derived", "path": "obs.viability, obs.m_agg, obs.biomass across modes"}
-pass_if: {"kind": "mechanistic_ablation", "op": "phenotype_and_tracking", "provenance": "MECHANISTIC_ABLATION. Observed final viability: coarse 0.74 (misses collapse) vs fine 0.00 vs adaptive 0.00; m_agg coarse 0.0 vs fine 0.63; biomass divergence |coarse\u2212fine| 1.09 vs |adaptive\u2212fine| 0.023 (tests/test_fig05_mechanistic.py::test_refinement_predicts_phenotype_coarse_misses, ::test_adaptive_tracks_fine_not_coarse)", "value": "fine/adaptive viab\u003c0.1, coarse viab\u003e0.5; |adaptive\u2212fine| \u003c 0.2\u00b7|coarse\u2212fine|"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "phenotype_and_tracking", "provenance": "MECHANISTIC_ABLATION. Observed final viability: coarse 0.74 (misses collapse) vs fine 0.00 vs adaptive 0.00; m_agg coarse 0.0 vs fine 0.63; biomass divergence |coarse\u2212fine| 1.09 vs |adaptive\u2212fine| 0.023 (tests/test_fig05_mechanistic.py::test_refinement_predicts_phenotype_coarse_misses, ::test_adaptive_tracks_fine_not_coarse)", "value": "fine/adaptive viab\u003c0.1, coarse viab\u003e0.5; |adaptive\u2212fine| \u003c 0.2\u00b7|coarse\u2212fine|"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2326,6 +2359,20 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "REGRESSION_PI
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;disintegration&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2465,7 +2512,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "REGRESSION_PI
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

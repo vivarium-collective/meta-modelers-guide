@@ -618,6 +618,21 @@ Does this hold spatially -- a single CPM cell whose metabolism (dFBA solved at i
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1075,6 +1090,12 @@ Does this hold spatially -- a single CPM cell whose metabolism (dFBA solved at i
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1368,7 +1389,8 @@ Does this hold spatially -- a single CPM cell whose metabolism (dFBA solved at i
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(obs.n_cells) over the 36-tick run", "kind": "observable", "path": "obs.n_cells"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- metabolism-driven growth crossing vol_threshold should fire division and grow the population across at least 3 generations from one seed cell; expect n_cells \u003e= 8. Confirmed -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence 3) -- steps 1 -\u003e 2 -\u003e 4 -\u003e 8 -\u003e 18. The 8 is a threshold pin on the a-priori direction, not a golden value (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics)", "value": 8.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- metabolism-driven growth crossing vol_threshold should fire division and grow the population across at least 3 generations from one seed cell; expect n_cells \u003e= 8. Confirmed -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 over 36 ticks (12 samples, cadence 3) -- steps 1 -\u003e 2 -\u003e 4 -\u003e 8 -\u003e 18. The 8 is a threshold pin on the a-priori direction, not a golden value (tests/test_growth_division_regime.py::test_population_steps_up_by_division, tests/test_growth_division_viz.py::test_growth_division_gif_and_metrics)", "value": 8.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1417,7 +1439,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.n_cells == sorted(obs.n_cells) over the 36-tick run", "kind": "observable", "path": "obs.n_cells"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -- division only adds cells, so the population should be monotonic non-decreasing (never lose a cell to a phantom or scripted removal). Confirmed -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns))", "value": 0.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -- division only adds cells, so the population should be monotonic non-decreasing (never lose a cell to a phantom or scripted removal). Confirmed -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 is monotonic non-decreasing over the full 36-tick run (tests/test_growth_division_regime.py::test_population_steps_up_by_division asserts ns == sorted(ns))", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1466,7 +1489,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior -
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "obs.n_cells after run(30) from a single seed cell (n0 = 1)", "kind": "observable", "path": "obs.n_cells"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- daughters should resume growth after being split, so from one seed cell the population should grow past 1 with no runaway single cell and no zero-volume phantom daughters; expect n_cells \u003e= 3 after 30 ticks. Confirmed -- starting from n0 = 1, n_cells \u003e= 3 after 30 ticks (at least 1 -\u003e 2 -\u003e ~4), with every per-cell volume bounded in (5, 200) (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)", "value": 3.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- daughters should resume growth after being split, so from one seed cell the population should grow past 1 with no runaway single cell and no zero-volume phantom daughters; expect n_cells \u003e= 3 after 30 ticks. Confirmed -- starting from n0 = 1, n_cells \u003e= 3 after 30 ticks (at least 1 -\u003e 2 -\u003e ~4), with every per-cell volume bounded in (5, 200) (tests/test_cpm_growth_division.py::test_cell_grows_and_divides_into_a_population)", "value": 3.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1613,7 +1637,8 @@ pass_if: {"kind": "regression_pin", "op": "\u003c=", "provenance": "foundational
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "count of n_cells samples not in {1,2,4,8,16,32}, and number of distinct generation values present among live cells at the final sampled tick", "kind": "observable", "path": "obs.n_cells, obs.generation"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- siblings coupled through one shared glucose field should grow at different local rates as the colony crowds, so the staircase should depart from clean powers of two rather than staying in lockstep; expect at least one off-power-of-two sample. Confirmed -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 departs from powers of two starting at tick 21 (5 cells) and stays desynchronized through 11, 14, 18; at the final tick, live cells span 5 distinct generations (0 through 4) simultaneously in the same 18-cell colony (tests/test_growth_division_regime.py::test_division_desynchronizes_from_lockstep_powers_of_two)", "value": 1.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- siblings coupled through one shared glucose field should grow at different local rates as the colony crowds, so the staircase should depart from clean powers of two rather than staying in lockstep; expect at least one off-power-of-two sample. Confirmed -- n_cells trajectory 1,2,2,2,4,4,5,8,8,11,14,18 departs from powers of two starting at tick 21 (5 cells) and stays desynchronized through 11, 14, 18; at the final tick, live cells span 5 distinct generations (0 through 4) simultaneously in the same 18-cell colony (tests/test_growth_division_regime.py::test_division_desynchronizes_from_lockstep_powers_of_two)", "value": 1.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1662,7 +1687,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max(obs.max_generation) over the 36-tick run", "kind": "observable", "path": "obs.max_generation"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- repeated division should compound a single founder into a genuine multi-generation lineage tree, so max_generation should grow several generations deep; expect max_generation \u003e= 3. Confirmed -- max_generation reaches 4 by the end of the 36-tick run (trajectory 0,1,1,1,2,2,2,3,3,3,3,4 across the 12 sampled ticks); founder id 1 stays generation 0 throughout; every daughter\u0027s generation == its recorded parent\u0027s generation + 1 (tests/test_growth_division_regime.py::test_lineage_compounds_into_a_multigeneration_tree)", "value": 3.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior -- repeated division should compound a single founder into a genuine multi-generation lineage tree, so max_generation should grow several generations deep; expect max_generation \u003e= 3. Confirmed -- max_generation reaches 4 by the end of the 36-tick run (trajectory 0,1,1,1,2,2,2,3,3,3,3,4 across the 12 sampled ticks); founder id 1 stays generation 0 throughout; every daughter\u0027s generation == its recorded parent\u0027s generation + 1 (tests/test_growth_division_regime.py::test_lineage_compounds_into_a_multigeneration_tree)", "value": 3.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1931,6 +1957,20 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior 
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;disintegration&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2060,7 +2100,7 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e=", "provenance": "prior 
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

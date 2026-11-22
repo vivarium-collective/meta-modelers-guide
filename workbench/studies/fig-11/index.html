@@ -600,6 +600,21 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1167,6 +1182,12 @@ Every one of these is a genuine place-graph rewrite: the daughter nodes are fres
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1577,7 +1598,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "|mean_trait - optimum| at t=0 vs t=40, and mean_trait climb", "kind": "observable", "path": "population"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: under Gaussian selection for the moving optimum, the trait cloud tracks the target and the trait-optimum gap shrinks. Observed (seed=1): mean trait 0.0 at t=0 (gap 1.0 below optimum 1.0), climbing to ~1.68 by t=40 (gap ~0.12 below optimum 1.80) -- gap closes from 1.0 to ~0.12 (\u003c 0.4) and the mean trait itself climbs by \u003e 1.0 (the cloud moves to the target). The gap-closes / mean-climbs direction is the a-priori prediction; the 0.4 bound is a loose pin (tests/test_fig11_dynamics.py::test_mean_trait_tracks_the_drifting_optimum)", "value": 0.4}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: under Gaussian selection for the moving optimum, the trait cloud tracks the target and the trait-optimum gap shrinks. Observed (seed=1): mean trait 0.0 at t=0 (gap 1.0 below optimum 1.0), climbing to ~1.68 by t=40 (gap ~0.12 below optimum 1.80) -- gap closes from 1.0 to ~0.12 (\u003c 0.4) and the mean trait itself climbs by \u003e 1.0 (the cloud moves to the target). The gap-closes / mean-climbs direction is the a-priori prediction; the 0.4 bound is a loose pin (tests/test_fig11_dynamics.py::test_mean_trait_tracks_the_drifting_optimum)", "value": 0.4}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1626,7 +1648,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003c", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "cell-id set transitions across generations (parents removed vs daughters added)", "kind": "observable", "path": "population"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "fission_replaces_parent", "provenance": "prior: on division the parent is consumed and replaced by two mutated daughters, each a fresh place-graph node. Observed (seed=1): at the first division the founder cell_0 is deleted and replaced by exactly two new nodes cell_1, cell_2 (net +1); below capacity every topology change has appeared == 2*vanished (one parent -\u003e two daughters); and no retired cell id ever reappears over the run (tests/test_fig11_dynamics.py::test_division_is_binary_fission_place_graph_rewrite)", "value": "founder cell_0 replaced by exactly two daughters (cell_1, cell_2) at first division; appeared == 2*vanished below capacity; no id ever reused"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "fission_replaces_parent", "provenance": "prior: on division the parent is consumed and replaced by two mutated daughters, each a fresh place-graph node. Observed (seed=1): at the first division the founder cell_0 is deleted and replaced by exactly two new nodes cell_1, cell_2 (net +1); below capacity every topology change has appeared == 2*vanished (one parent -\u003e two daughters); and no retired cell id ever reappears over the run (tests/test_fig11_dynamics.py::test_division_is_binary_fission_place_graph_rewrite)", "value": "founder cell_0 replaced by exactly two daughters (cell_1, cell_2) at first division; appeared == 2*vanished below capacity; no id ever reused"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1714,7 +1737,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mean(lag_selection) vs mean(lag_neutral); separation vs pooled spread", "kind": "derived", "path": "final lag |mean \u2212 optimum| across 40 seeds, selection vs neutral"}
-pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANISTIC_ABLATION (matched neutral null) over 40 seeds. Observed selection final lag 0.39\u00b10.04 vs neutral 2.38\u00b10.23 \u2014 selection clearly tracks, neutral drifts away (tests/test_fig11_mechanistic.py::test_selection_beats_neutral_drift_many_seeds)", "value": "mean(lag_sel) \u003c 0.4\u00b7mean(lag_neutral); separation \u003e 3\u00b7(\u03c3_sel+\u03c3_neu)"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANISTIC_ABLATION (matched neutral null) over 40 seeds. Observed selection final lag 0.39\u00b10.04 vs neutral 2.38\u00b10.23 \u2014 selection clearly tracks, neutral drifts away (tests/test_fig11_mechanistic.py::test_selection_beats_neutral_drift_many_seeds)", "value": "mean(lag_sel) \u003c 0.4\u00b7mean(lag_neutral); separation \u003e 3\u00b7(\u03c3_sel+\u03c3_neu)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1753,7 +1777,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANI
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "slope \u2248 1", "kind": "derived", "path": "parent\u2013offspring trait regression slope (mean over 10 seeds)"}
-pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRICAL_COMPARISON to quantitative-genetics theory (clonal + mutation \u21d2 h\u00b2\u22481). Observed parent\u2013offspring slope 0.998 (tests/test_fig11_mechanistic.py::test_heritability_is_near_one)", "value": "|h\u00b2 \u2212 1| \u003c 0.05"}</pre>
+pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRICAL_COMPARISON to quantitative-genetics theory (clonal + mutation \u21d2 h\u00b2\u22481). Observed parent\u2013offspring slope 0.998 (tests/test_fig11_mechanistic.py::test_heritability_is_near_one)", "value": "|h\u00b2 \u2212 1| \u003c 0.05"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1792,7 +1817,8 @@ pass_if: {"kind": "empirical_comparison", "op": "approx", "provenance": "EMPIRIC
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "var[-1] \u226a var[0]", "kind": "observable", "path": "trait variance over 30 generations, no-mutation control"}
-pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANISTIC_ABLATION (matched null, mutation off). Observed variance eroding 0.21 \u2192 0.001 over 30 generations without mutation (tests/test_fig11_mechanistic.py::test_no_mutation_erodes_variance)", "value": "var_final \u003c 0.1\u00b7var_initial"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANISTIC_ABLATION (matched null, mutation off). Observed variance eroding 0.21 \u2192 0.001 over 30 generations without mutation (tests/test_fig11_mechanistic.py::test_no_mutation_erodes_variance)", "value": "var_final \u003c 0.1\u00b7var_initial"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1831,7 +1857,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003c", "provenance": "MECHANI
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "lag monotone increasing in drift; runs away at high drift", "kind": "derived", "path": "final lag vs optimum drift rate (20 seeds each)"}
-pass_if: {"kind": "prospective_prediction", "op": "monotone_runaway", "provenance": "PROSPECTIVE_PREDICTION. Observed final lag rising 0.11 (drift 0.02) \u2192 0.65 \u2192 3.9 \u2192 11.2 (drift 0.55) over 20-seed ensembles \u2014 monotone, with runaway at high drift (tests/test_fig11_mechanistic.py::test_adaptation_fails_when_optimum_moves_too_fast)", "value": "lag(drift) strictly increasing; lag(0.55) \u003e 5\u00b7lag(0.02)"}</pre>
+pass_if: {"kind": "prospective_prediction", "op": "monotone_runaway", "provenance": "PROSPECTIVE_PREDICTION. Observed final lag rising 0.11 (drift 0.02) \u2192 0.65 \u2192 3.9 \u2192 11.2 (drift 0.55) over 20-seed ensembles \u2014 monotone, with runaway at high drift (tests/test_fig11_mechanistic.py::test_adaptation_fails_when_optimum_moves_too_fast)", "value": "lag(drift) strictly increasing; lag(0.55) \u003e 5\u00b7lag(0.02)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1870,7 +1897,8 @@ pass_if: {"kind": "prospective_prediction", "op": "monotone_runaway", "provenanc
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "size == N every generation; 0 \u2264 parent idx \u003c N", "kind": "derived", "path": "population size and parent-index validity each generation"}
-pass_if: {"kind": "invariant", "op": "bookkeeping_valid", "provenance": "INVARIANT. Observed population size conserved at N and all ancestry parent indices in range across 25 generations (tests/test_fig11_mechanistic.py::test_demographic_bookkeeping_conserved)", "value": "size==N each gen; all parent indices in [0,N)"}</pre>
+pass_if: {"kind": "invariant", "op": "bookkeeping_valid", "provenance": "INVARIANT. Observed population size conserved at N and all ancestry parent indices in range across 25 generations (tests/test_fig11_mechanistic.py::test_demographic_bookkeeping_conserved)", "value": "size==N each gen; all parent indices in [0,N)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1909,7 +1937,8 @@ pass_if: {"kind": "invariant", "op": "bookkeeping_valid", "provenance": "INVARIA
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "same seed identical; std across 20 seeds \u003e 0", "kind": "derived", "path": "same-seed trajectory equality; across-seed spread of final mean"}
-pass_if: {"kind": "invariant", "op": "reproducible_but_variable", "provenance": "INVARIANT + robustness note. Same seed reproduces exactly; across-seed spread of the final mean is non-trivial \u2014 reproducibility \u2260 robustness (tests/test_fig11_mechanistic.py::test_same_seed_reproduces_exactly_but_seeds_differ)", "value": "same-seed allclose; std(final mean over 20 seeds) \u003e 1e-3"}</pre>
+pass_if: {"kind": "invariant", "op": "reproducible_but_variable", "provenance": "INVARIANT + robustness note. Same seed reproduces exactly; across-seed spread of the final mean is non-trivial \u2014 reproducibility \u2260 robustness (tests/test_fig11_mechanistic.py::test_same_seed_reproduces_exactly_but_seeds_differ)", "value": "same-seed allclose; std(final mean over 20 seeds) \u003e 1e-3"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1948,7 +1977,8 @@ pass_if: {"kind": "invariant", "op": "reproducible_but_variable", "provenance": 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "mean trait climbs; corr(mean, a*) \u003e 0.95", "kind": "derived", "path": "evolved mean trait vs derived metabolic optimum a* over 50 generations (25 seeds)"}
-pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "provenance": "MECHANISTIC_ABLATION (fitness from an executable metabolic tradeoff). Observed the evolved mean climbing and tracking the endogenous optimum a* at correlation \u003e 0.95 (tests/test_fig11_mechanistic.py::test_uptake_mode_tracks_derived_optimum)", "value": "\u0394mean \u003e 0.3 and corr(mean, a*) \u003e 0.95"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "provenance": "MECHANISTIC_ABLATION (fitness from an executable metabolic tradeoff). Observed the evolved mean climbing and tracking the endogenous optimum a* at correlation \u003e 0.95 (tests/test_fig11_mechanistic.py::test_uptake_mode_tracks_derived_optimum)", "value": "\u0394mean \u003e 0.3 and corr(mean, a*) \u003e 0.95"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2208,6 +2238,20 @@ pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "prove
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-09&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code> · <code>{&#39;study&#39;: &#39;development-and-evolution&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2347,7 +2391,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "tracks_derived_optimum", "prove
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

@@ -608,6 +608,21 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -1051,6 +1066,12 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
       
       
       
+      
+      
+      
+      
+      
+      
       <div class="model-config-mount" style="margin-top:8px">
         <div class="viv-loading"><span class="viv-loading-spin" aria-hidden="true"></span><span>Loading configuration…</span></div></div>
       
@@ -1363,7 +1384,8 @@ This is a didactic / toy-real composite: the ODE rate constants, yields, and poo
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "number of emitted frames and final time value", "kind": "observable", "path": "len(rows)"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "the composite (default_n_steps=30) runs to completion through the process-bigraph engine and emits 31 frames (30 ticks + the initial emit), final time == 30.0; deterministic across repeated runs (tests/test_fig07_nested_dynamics.py::test_composite_runs_default_n_steps_and_emits)", "value": "default_n_steps + 1 frames (31), final time == 30.0"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "the composite (default_n_steps=30) runs to completion through the process-bigraph engine and emits 31 frames (30 ticks + the initial emit), final time == 30.0; deterministic across repeated runs (tests/test_fig07_nested_dynamics.py::test_composite_runs_default_n_steps_and_emits)", "value": "default_n_steps + 1 frames (31), final time == 30.0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1412,7 +1434,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "nutrients over the run", "kind": "observable", "path": "obs.nutrients"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: with the transporter on, the cytoplasmic nutrient pool fills monotonically from empty -\u003e expect a substantial rise well above a small floor. Observed: nutrients 0.0 -\u003e 9.0, non-decreasing at every step; the \u003e 1.0 floor is a loose pin, the monotonic fill is the a-priori prediction; deterministic (tests/test_fig07_nested_dynamics.py::test_transport_fills_the_cytoplasmic_nutrient_pool)", "value": 1.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: with the transporter on, the cytoplasmic nutrient pool fills monotonically from empty -\u003e expect a substantial rise well above a small floor. Observed: nutrients 0.0 -\u003e 9.0, non-decreasing at every step; the \u003e 1.0 floor is a loose pin, the monotonic fill is the a-priori prediction; deterministic (tests/test_fig07_nested_dynamics.py::test_transport_fills_the_cytoplasmic_nutrient_pool)", "value": 1.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1461,7 +1484,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "metabolites and energy over the run", "kind": "observable", "path": "obs.metabolites, obs.energy"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: metabolism turns the imported nutrients into metabolites + energy -\u003e both rise substantially over the run. Observed: metabolites 0.0 -\u003e ~20.5, energy 0.0 -\u003e ~13.1 (both start empty, both rise well past start + 1.0); deterministic (tests/test_fig07_nested_dynamics.py::test_metabolism_produces_metabolites_and_energy)", "value": "start + 1.0"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: metabolism turns the imported nutrients into metabolites + energy -\u003e both rise substantially over the run. Observed: metabolites 0.0 -\u003e ~20.5, energy 0.0 -\u003e ~13.1 (both start empty, both rise well past start + 1.0); deterministic (tests/test_fig07_nested_dynamics.py::test_metabolism_produces_metabolites_and_energy)", "value": "start + 1.0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1510,7 +1534,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "rna and proteins over the run", "kind": "observable", "path": "obs.rna, obs.proteins"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: transcription reads the deeply-nested DNA to make RNA, translation reads RNA to make protein downstream -\u003e both rise from empty, protein trailing RNA. Observed: rna 0.0 -\u003e ~0.64, proteins 0.0 -\u003e ~0.24, rna[-1] \u003e proteins[-1]; deterministic; the rise-from-zero and RNA-leads-protein ordering are the a-priori predictions (tests/test_fig07_nested_dynamics.py::test_central_dogma_transcription_and_translation_rise)", "value": "rna[-1] \u003e proteins[-1] \u003e 0, both from 0"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: transcription reads the deeply-nested DNA to make RNA, translation reads RNA to make protein downstream -\u003e both rise from empty, protein trailing RNA. Observed: rna 0.0 -\u003e ~0.64, proteins 0.0 -\u003e ~0.24, rna[-1] \u003e proteins[-1]; deterministic; the rise-from-zero and RNA-leads-protein ordering are the a-priori predictions (tests/test_fig07_nested_dynamics.py::test_central_dogma_transcription_and_translation_rise)", "value": "rna[-1] \u003e proteins[-1] \u003e 0, both from 0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1559,7 +1584,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "ribosome over the run", "kind": "observable", "path": "obs.ribosome"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: subunit assembly grows the ribosome pool from its bootstrap seed, closing the loop back to translation -\u003e the deeply-nested ribosome count rises. Observed: ribosome 0.5 -\u003e ~0.88 (grows past its seed); deterministic (tests/test_fig07_nested_dynamics.py::test_assembly_builds_ribosomes_closing_the_loop)", "value": "ribosome[0] (0.5 bootstrap seed)"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: subunit assembly grows the ribosome pool from its bootstrap seed, closing the loop back to translation -\u003e the deeply-nested ribosome count rises. Observed: ribosome 0.5 -\u003e ~0.88 (grows past its seed); deterministic (tests/test_fig07_nested_dynamics.py::test_assembly_builds_ribosomes_closing_the_loop)", "value": "ribosome[0] (0.5 bootstrap seed)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1608,7 +1634,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "which of {nutrients, metabolites, rna, proteins, ribosome} change by \u003e 1e-3", "kind": "derived", "path": "set of changed levels"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: because the handlers\u0027 outputs feed each other\u0027s inputs, seeding the environment drives a change at every level of the hierarchy, not just the input. Observed: all five of {nutrients, metabolites, rna, proteins, ribosome} change by more than 1e-3 over the run; deterministic (tests/test_fig07_nested_dynamics.py::test_cascade_propagates_across_multiple_levels)", "value": "all five levels change"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: because the handlers\u0027 outputs feed each other\u0027s inputs, seeding the environment drives a change at every level of the hierarchy, not just the input. Observed: all five of {nutrients, metabolites, rna, proteins, ribosome} change by more than 1e-3 over the run; deterministic (tests/test_fig07_nested_dynamics.py::test_cascade_propagates_across_multiple_levels)", "value": "all five levels change"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1657,7 +1684,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "nested containers along cytoplasm/nucleus/chromosome/chromatin/nucleosome/DNA still present; histone still nested beside DNA", "kind": "structural", "path": "final place-graph tree (sim.state)"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "containment_preserved", "provenance": "read the final place-graph tree after a 30-step run: every intermediate container along the six-level DNA path is still a dict (not flattened), the DNA (6 levels) and ribosome (4 levels) leaves are reachable only at full depth, and the nucleosome still contains BOTH DNA and its untouched histone sibling -- containment, not a flattened bag of species (tests/test_fig07_nested_dynamics.py::test_place_graph_containment_is_preserved_as_dynamics_run)", "value": "six-level DNA chain + four-level ribosome chain intact, DNA nested beside histone"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "containment_preserved", "provenance": "read the final place-graph tree after a 30-step run: every intermediate container along the six-level DNA path is still a dict (not flattened), the DNA (6 levels) and ribosome (4 levels) leaves are reachable only at full depth, and the nucleosome still contains BOTH DNA and its untouched histone sibling -- containment, not a flattened bag of species (tests/test_fig07_nested_dynamics.py::test_place_graph_containment_is_preserved_as_dynamics_run)", "value": "six-level DNA chain + four-level ribosome chain intact, DNA nested beside histone"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1706,7 +1734,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "cont
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "deep ribosome value grew and equals emitted ribosome[-1]; deep DNA held at set point across the run and equals emitted dna[-1]", "kind": "structural", "path": "final place-graph tree (sim.state) vs emitted trajectory"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "read the four-levels-deep ribosome store and six-levels-deep DNA store from the final place graph: ribosome grew 0.5 -\u003e ~0.88 and its final nested-store value == the last emitted ribosome frame (same store); DNA held at its set point (dna_init == 1.0) at every emitted frame, within 1e-6, and its final nested-store value == the last emitted dna frame; deterministic (tests/test_fig07_nested_dynamics.py::test_process_at_a_deep_level_moves_quantity_in_its_nested_store)", "value": "ribosome grew and final store == emitted last frame; DNA == 1.0 set point throughout"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "read the four-levels-deep ribosome store and six-levels-deep DNA store from the final place graph: ribosome grew 0.5 -\u003e ~0.88 and its final nested-store value == the last emitted ribosome frame (same store); DNA held at its set point (dna_init == 1.0) at every emitted frame, within 1e-6, and its final nested-store value == the last emitted dna frame; deterministic (tests/test_fig07_nested_dynamics.py::test_process_at_a_deep_level_moves_quantity_in_its_nested_store)", "value": "ribosome grew and final store == emitted last frame; DNA == 1.0 set point throughout"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1745,7 +1774,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |\u03a3substrate(t) \u2212 \u03a3substrate(0)| over the run", "kind": "derived", "path": "\u03a3(env, cyto, nuc substrate)"}
-pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed total substrate 10.0\u219210.0, residual 1.3e-7 over the 40-tick pure-transport run (tests/test_fig07_mechanistic.py::test_transport_conserves_substrate_across_compartments)", "value": 1e-06}</pre>
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed total substrate 10.0\u219210.0, residual 1.3e-7 over the 40-tick pure-transport run (tests/test_fig07_mechanistic.py::test_transport_conserves_substrate_across_compartments)", "value": 1e-06}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1784,7 +1814,8 @@ pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observe
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "reporter(both open) \u003e 1 and reporter(membrane \u03b5) \u2248 0", "kind": "derived", "path": "obs.reporter at full vs membrane-closed"}
-pass_if: {"kind": "mechanistic_ablation", "op": "gates", "provenance": "MECHANISTIC_ABLATION. Observed reporter 8.23 (open) vs 0.0 (membrane \u03b5) \u2014 the boundary permeability causally controls the deep observable (tests/test_fig07_mechanistic.py::test_boundary_permeability_gates_the_deep_reporter)", "value": "reporter_open \u003e 1.0 and reporter_membrane_closed \u003c 1e-6"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "gates", "provenance": "MECHANISTIC_ABLATION. Observed reporter 8.23 (open) vs 0.0 (membrane \u03b5) \u2014 the boundary permeability causally controls the deep observable (tests/test_fig07_mechanistic.py::test_boundary_permeability_gates_the_deep_reporter)", "value": "reporter_open \u003e 1.0 and reporter_membrane_closed \u003c 1e-6"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1823,7 +1854,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "gates", "provenance": "MECHANIS
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "both-open \u003e 1; membrane-\u03b5 \u2248 0; nucleus-\u03b5 \u2248 0", "kind": "derived", "path": "reporter at {both open, membrane \u03b5, nucleus \u03b5}"}
-pass_if: {"kind": "mechanistic_ablation", "op": "series_gating", "provenance": "MECHANISTIC_ABLATION. Observed reporter 8.23 both-open, 0.0 with membrane \u03b5, 0.0 with nuclear envelope \u03b5 \u2014 each depth gates independently (tests/test_fig07_mechanistic.py::test_both_boundaries_gate_in_series)", "value": "reporter \u003e 1 both-open; \u003c 1e-6 when either boundary \u03b5"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "series_gating", "provenance": "MECHANISTIC_ABLATION. Observed reporter 8.23 both-open, 0.0 with membrane \u03b5, 0.0 with nuclear envelope \u03b5 \u2014 each depth gates independently (tests/test_fig07_mechanistic.py::test_both_boundaries_gate_in_series)", "value": "reporter \u003e 1 both-open; \u003c 1e-6 when either boundary \u03b5"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1862,7 +1894,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "series_gating", "provenance": "
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "monotone increasing in P_mem", "kind": "observable", "path": "nuclear substrate @ t=8 over a P_mem sweep"}
-pass_if: {"kind": "prospective_prediction", "op": "monotone", "provenance": "PROSPECTIVE_PREDICTION. Observed nuclear substrate at t=8 rising 1.26\u21922.03\u21922.77\u21923.16\u21923.42 across P_mem 0.05\u21920.8 (tests/test_fig07_mechanistic.py::test_higher_permeability_fills_deeper_compartment_faster)", "value": "nuc_substrate(t=8) monotone \u2191 in P_mem (0.05\u21920.8)"}</pre>
+pass_if: {"kind": "prospective_prediction", "op": "monotone", "provenance": "PROSPECTIVE_PREDICTION. Observed nuclear substrate at t=8 rising 1.26\u21922.03\u21922.77\u21923.16\u21923.42 across P_mem 0.05\u21920.8 (tests/test_fig07_mechanistic.py::test_higher_permeability_fills_deeper_compartment_faster)", "value": "nuc_substrate(t=8) monotone \u2191 in P_mem (0.05\u21920.8)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1901,7 +1934,8 @@ pass_if: {"kind": "prospective_prediction", "op": "monotone", "provenance": "PRO
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "reporter(OFF) \u003e reporter(ON)", "kind": "derived", "path": "reporter with cyto metabolism ON vs OFF"}
-pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANISTIC_ABLATION. Observed nuclear reporter 13.0 (cyto metabolism OFF) vs 1.49 (ON) \u2014 compartment-restricted consumption controls the deep observable (tests/test_fig07_mechanistic.py::test_local_metabolism_is_compartment_restricted)", "value": "reporter_off \u2212 reporter_on \u003e 1.0"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANISTIC_ABLATION. Observed nuclear reporter 13.0 (cyto metabolism OFF) vs 1.49 (ON) \u2014 compartment-restricted consumption controls the deep observable (tests/test_fig07_mechanistic.py::test_local_metabolism_is_compartment_restricted)", "value": "reporter_off \u2212 reporter_on \u003e 1.0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2168,6 +2202,20 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANI
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-01&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code> · <code>{&#39;study&#39;: &#39;biomolecular-complementarity&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2297,7 +2345,7 @@ pass_if: {"kind": "mechanistic_ablation", "op": "\u003e", "provenance": "MECHANI
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

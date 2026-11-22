@@ -606,6 +606,21 @@ Scope -- the four-modality finding. This study spatializes ONE of the molecular 
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -971,6 +986,12 @@ Scope -- the four-modality finding. This study spatializes ONE of the molecular 
                 data-baseline-name="molecular-turing-pattern">Set composite</button>
       </div>
       <div class="baseline-composite-status muted" data-baseline-name="molecular-turing-pattern" style="font-size:0.8em;margin-top:2px"></div>
+      
+      
+      
+      
+      
+      
       
       
       
@@ -1344,8 +1365,9 @@ Scope -- the four-modality finding. This study spatializes ONE of the molecular 
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the canonical Gray-Scott spot regime (Du \u003e Dv) destabilizes a near-uniform seed into a finite-amplitude spot pattern -\u003e expect patterned == 1.0. Observed: patterned == 1.0 with v_var rising ~0.0011 -\u003e ~0.0119 over 8000 internal steps (16 ticks x steps_per_tick=500). The == 1.0 is a gated 0/1 flag, exact only while the engine and seed draw are fixed (tests/test_molecular_regime.py::test_turing_pattern_forms, tests/test_gray_scott.py, tests/test_gray_scott_physics.py)", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "derived", "path": "expr_scalar"}
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the canonical Gray-Scott spot regime (Du \u003e Dv) destabilizes a near-uniform seed into a finite-amplitude spot pattern -\u003e expect patterned == 1.0. Observed: patterned == 1.0 with v_var rising ~0.0011 -\u003e ~0.0119 over 8000 internal steps (16 ticks x steps_per_tick=500). The == 1.0 is a gated 0/1 flag, exact only while the engine and seed draw are fixed (tests/test_molecular_regime.py::test_turing_pattern_forms, tests/test_gray_scott.py, tests/test_gray_scott_physics.py)", "value": 1.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1393,8 +1415,9 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "observable", "path": "obs.n_domains"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a genuine spot pattern resolves into MANY discrete domains, not one blob -\u003e expect n_domains \u003e 1. Observed: n_domains ~= 12 at 8000 steps (loose \u003e 1 floor, not the exact 12, so the bound is not a golden-value pin); multi-seed band n_domains in [8, 12] (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)", "value": 1.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "derived", "path": "expr_scalar"}
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a genuine spot pattern resolves into MANY discrete domains, not one blob -\u003e expect n_domains \u003e 1. Observed: n_domains ~= 12 at 8000 steps (loose \u003e 1 floor, not the exact 12, so the bound is not a golden-value pin); multi-seed band n_domains in [8, 12] (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)", "value": 1.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1432,8 +1455,9 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: Gray-Scott patterning requires differential diffusion (Dv \u003c Du); removing the asymmetry (Du = Dv) removes the pattern -\u003e expect the control to stay uniform, patterned == 0.0. Observed: Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6). The == 0.0 flag is exact only while the engine and seed are fixed; the \"differential diffusion is the cause\" conclusion is regime-specific for this Gray-Scott system (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform). Q8 -- the single-variable claim is now proven at the byte level: tests/test_equal_diffusion_control_t0.py asserts the control and flagship composites carry BYTE-IDENTICAL t=0 u/v fields (same seed_uv(n=128, seed=1) draw, same nucleation patches -- verified np.array.tobytes() equal) and that their GrayScott configs differ in EXACTLY {Du, Dv} and nothing else, so the diffusion coefficient is provably the only varied variable.", "value": 0.0}</pre>
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "derived", "path": "expr_scalar"}
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: Gray-Scott patterning requires differential diffusion (Dv \u003c Du); removing the asymmetry (Du = Dv) removes the pattern -\u003e expect the control to stay uniform, patterned == 0.0. Observed: Du=Dv=0.12 (the only differing variable): patterned == 0.0, v_var ~= 0 (exactly 0.0 to 1e-6). The == 0.0 flag is exact only while the engine and seed are fixed; the \"differential diffusion is the cause\" conclusion is regime-specific for this Gray-Scott system (tests/test_molecular_regime.py::test_equal_diffusion_control_stays_uniform). Q8 -- the single-variable claim is now proven at the byte level: tests/test_equal_diffusion_control_t0.py asserts the control and flagship composites carry BYTE-IDENTICAL t=0 u/v fields (same seed_uv(n=128, seed=1) draw, same nucleation patches -- verified np.array.tobytes() equal) and that their GrayScott configs differ in EXACTLY {Du, Dv} and nothing else, so the diffusion coefficient is provably the only varied variable.", "value": 0.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1471,7 +1495,7 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "observable", "path": "obs.patterned"}
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.patterned)", "kind": "derived", "path": "expr_scalar"}
 pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "provenance": "thermal run patterned == 1.0, v_var ~= 0.0096 (still well above PATTERN_FLOOR); this graded setting was TUNED after a hotter Ea=1.0/T=1.5 setting was verified to OVERSHOOT into near-uniform collapse -- so the pass is a pin on the retuned setting, exact only while the engine and seed are fixed (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)", "value": 1.0}</pre>
       </details>
       
@@ -1510,7 +1534,7 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "observable", "path": "obs.n_domains"}
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.n_domains)", "kind": "derived", "path": "expr_scalar"}
 pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "thermal n_domains ~= 2 versus the flagship\u0027s ~12 at the same 8000 steps; loose \u003c 8 bound (well above the observed 2, below the flagship band floor of 8) so it is a coarsening gate set after observing the run, not a golden-value pin (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)", "value": 8.0}</pre>
       </details>
       
@@ -1549,7 +1573,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003c", "provenance": "thermal n_dom
       <details style="margin-top: 6px; font-size: 0.82em;">
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
-        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.v_var)", "kind": "observable", "path": "obs.v_var"}
+        <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "last(obs.v_var)", "kind": "derived", "path": "expr_scalar"}
 pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "v_var in [0.01157, 0.01193] across seeds 1-5 (every seed patterns), n_domains in [8, 12]; the gate is \u003e 2*PATTERN_FLOOR = 0.004, the observed band floor with margin, set after the run (tests/test_molecular_regime.py::test_pattern_is_multiseed_robust)", "value": 0.004}</pre>
       </details>
       
@@ -1859,6 +1883,20 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "v_var in [0.0
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;biomolecular-complementarity&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -1983,7 +2021,7 @@ pass_if: {"kind": "regression_pin", "op": "\u003e", "provenance": "v_var in [0.0
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>

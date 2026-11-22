@@ -604,6 +604,21 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
     
     
     
+    <div class="ctr-block ov-prov">
+      <h2 class="overview-label ctr-h">Provenance &amp; sources</h2>
+      <div class="ctr-meta-k" style="margin-top:12px">Sources (1)</div>
+      <div class="ov-sources">
+      
+        
+        <div class="ov-src" id="sref-beer2024deriving">
+          <b class="ov-src-t">Beer 2024</b> <span class="ov-src-k">beer2024deriving</span>
+          <div class="ov-src-t">Deriving the intrinsic viability constraint of an emergent individual from first principles</div>
+          <div class="ctr-meta-k" style="text-transform:none">Beer, Randall D. and McShaffrey, Connor and Gaul, Thomas M. · 2024 · <a href="https://doi.org/10.1162/isal_a_00739" target="_blank" rel="noopener">source ↗</a></div>
+        </div>
+      
+      </div>
+    </div>
+    
 
     <div class="ctr-block">
       <h2 class="overview-label ctr-h">Result</h2>
@@ -692,7 +707,7 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> Read as support for the orchestration claim, this is mechanism-tier computational evidence, not biological calibration. The measured trajectory shows that panel (a)&#39;s picture -- two processes on different clocks coordinated through one shared pool store -- runs as a deterministic composite rather than a static drawing: the fast clock visibly outpaces the slow one, molecules carries the fast process&#39;s sawtooth while biomass accumulates in a coarse monotone staircase on the slow clock, and the single combined series carries both timescales at once. That the fast process changes the shared store on every tick while the slow process converts only a handful of times is the signature of genuine multi-timestepping through a shared variable, not of two processes sharing one clock. Scope is deliberately didactic and uncalibrated -- the rates, intervals, and yield fraction are illustrative regression pins over the current process configs -- so the finding speaks to the orchestration mechanism being executable and reproducible run to run, not to any biological magnitude. The cross-timescale conservation and exact-bookkeeping that accompany this trajectory are stated and bounded separately in F-02 and F-03 as a cumulative-input identity, and corrected against closed-system conservation in the mechanistic variant (F-04, F-05).</div>
             
             
           </div>
@@ -749,7 +764,7 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> Read as support for the orchestration claim, this is mechanism-tier computational evidence, not biological calibration. It shows that the two clocks are coordinated through one shared store without mass being created or lost as updates are combined across timescales: the fast process is the sole source, injecting one unit per tick, while the slow process only relocates mass between molecules and biomass within the same pool, so at every emitted tick the shared-store total equals the cumulative fast injection. Because rate is 1.0, that cumulative injection equals elapsed time, which is why molecules + biomass reads 5, 10, 15, 20 at the sampled landmarks and the run ends 8.12 + 11.88 = 20.0. The identity is therefore a cumulative-input bookkeeping relation, not a thermodynamic conservation law -- the quantity that equals elapsed time is the external input, and the summed pool holds all of it only because this didactic composite carries no loss term. The genuine input-output ledger, where first-order turnover routes most of the throughput to a waste sink and cumulative_input = delta-metabolite + delta-biomass + delta-waste closes to about 1e-15, lives in the mechanistic variant and is stated in F-04. Scope here is deliberately didactic and uncalibrated -- the rate, yield_frac, and intervals are illustrative regression pins -- so the finding speaks to coordination through a shared variable that conserves what it holds, not to any biological magnitude.</div>
             
             
           </div>
@@ -768,7 +783,7 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">✓</span>
-            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The cross-timescale conservation invariant holds at EVERY one of the 21 emitted ticks, not merely at the four sampled slow-firing landmarks: re-run in-memory, molecules + biomass == elapsed time to within 1e-9 for all ticks 0..20 (checked exhaustively, not spot-checked). Each slow firing converts exactly yield_frac (0.6) of the pool sampled at the start of its 5-tick window -- molecules at t=5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 0.6x5.0=3.0, 0.6x7.0=4.2, 0.6x7.8=4.68 and the staircase levels [0.0, 3.0, 7.2, 11.88]. The invariant and the increment rule are therefore properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled." data-edit-multiline data-edit-label="Finding F-03">The cross-timescale conservation invariant holds at EVERY one of the 21 emitted ticks, not merely at the four sampled slow-firing landmarks: re-run in-memory, molecules + biomass == elapsed time to within 1e-9 for all ticks 0..20 (checked exhaustively, not spot-checked). Each slow firing converts exactly yield_frac (0.6) of the pool sampled at the start of its 5-tick window -- molecules at t=5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 0.6x5.0=3.0, 0.6x7.0=4.2, 0.6x7.8=4.68 and the staircase levels [0.0, 3.0, 7.2, 11.88]. The invariant and the increment rule are therefore properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-03].statement" data-edit-value="The cross-timescale mass identity holds at every one of the 21 emitted ticks (0..20), not only at the four sampled slow-firing landmarks: on an in-memory re-run, molecules + biomass equals elapsed time to within 1e-9 at all 21 ticks, checked exhaustively rather than spot-checked. Each slow firing converts exactly yield_frac = 0.6 of the pool sampled at the start of its 5-tick window -- molecules at t = 5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 3.0, 4.2, 4.68 and the staircase levels 0.0, 3.0, 7.2, 11.88, with the final split 8.12 + 11.88 = 20.0. The identity and the increment rule are structural properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled." data-edit-multiline data-edit-label="Finding F-03">The cross-timescale mass identity holds at every one of the 21 emitted ticks (0..20), not only at the four sampled slow-firing landmarks: on an in-memory re-run, molecules + biomass equals elapsed time to within 1e-9 at all 21 ticks, checked exhaustively rather than spot-checked. Each slow firing converts exactly yield_frac = 0.6 of the pool sampled at the start of its 5-tick window -- molecules at t = 5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 3.0, 4.2, 4.68 and the staircase levels 0.0, 3.0, 7.2, 11.88, with the final split 8.12 + 11.88 = 20.0. The identity and the increment rule are structural properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled.</span>
             
             <span class="finding-chip">via <code>mass-conserved-across-timescales</code></span>
             
@@ -806,7 +821,7 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> Read as support for the orchestration claim, this is mechanism-tier computational evidence, not biological calibration. It shows that panel (a)&#39;s picture -- two processes on different clocks coordinated through one shared store -- is reproducible as an exact, deterministic invariant of the composite, independent of sampling cadence. The identity molecules + biomass == elapsed time is a cumulative-input bookkeeping identity, not a thermodynamic conservation law: the fast process is the sole source, injecting one unit per tick so cumulative input equals elapsed time, while the slow process only relocates mass within the shared pool, so the two quantities must sum to the total injected. The genuine input-output ledger lives in the mechanistic variant (fig02-mechanistic), where cumulative_input = delta-M + delta-biomass + delta-waste closes to about 1e-15 with waste carrying most of the throughput. Scope is deliberately didactic and uncalibrated -- the rates, intervals, and yield_frac are illustrative -- so the finding speaks to the orchestration mechanism and the exactness of its bookkeeping, not to any biological magnitude.</div>
             
             
           </div>
@@ -825,7 +840,7 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
         <details class="finding-details">
           <summary class="finding-row">
             <span class="finding-status-glyph">◆</span>
-            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The baseline&#39;s &#34;molecules + biomass == elapsed time&#34; is a CUMULATIVE EXTERNAL-INPUT budget, not closed-system mass conservation — the mechanistic variant makes this explicit and honest. With a genuine first-order turnover routing mass to a waste sink, the full ledger cumulative_input = ΔpoolMetabolite + Δbiomass + Δwaste closes to 1.8e-15 on every step, while pool+biomass reaches only ~2.2 of the 20.0 input (waste carries ~17.8). So the quantity that &#34;equals time&#34; in the baseline is the input, not a conserved internal total; biomass is merely the yield-fraction of throughput." data-edit-multiline data-edit-label="Finding F-04">The baseline&#39;s &#34;molecules + biomass == elapsed time&#34; is a CUMULATIVE EXTERNAL-INPUT budget, not closed-system mass conservation — the mechanistic variant makes this explicit and honest. With a genuine first-order turnover routing mass to a waste sink, the full ledger cumulative_input = ΔpoolMetabolite + Δbiomass + Δwaste closes to 1.8e-15 on every step, while pool+biomass reaches only ~2.2 of the 20.0 input (waste carries ~17.8). So the quantity that &#34;equals time&#34; in the baseline is the input, not a conserved internal total; biomass is merely the yield-fraction of throughput.</span>
+            <span class="finding-claim finding-statement" data-edit-kind="study" data-edit-field="findings[F-04].statement" data-edit-value="The baseline&#39;s &#34;molecules + biomass == elapsed time&#34; is a cumulative external-input budget, not closed-system mass conservation, and the mechanistic variant makes that explicit. With a first-order turnover routing mass to a waste sink, the full ledger cumulative_input = Δmetabolite_pool + Δbiomass + Δwaste closes to 1.8e-15 on every step, while pool + biomass reaches only about 2.2 of the 20.0 cumulative input and waste carries the remaining ~17.8. The quantity that equals elapsed time in the baseline is therefore the external input, not a conserved internal total; biomass is the yield fraction of throughput." data-edit-multiline data-edit-label="Finding F-04">The baseline&#39;s &#34;molecules + biomass == elapsed time&#34; is a cumulative external-input budget, not closed-system mass conservation, and the mechanistic variant makes that explicit. With a first-order turnover routing mass to a waste sink, the full ledger cumulative_input = Δmetabolite_pool + Δbiomass + Δwaste closes to 1.8e-15 on every step, while pool + biomass reaches only about 2.2 of the 20.0 cumulative input and waste carries the remaining ~17.8. The quantity that equals elapsed time in the baseline is therefore the external input, not a conserved internal total; biomass is the yield fraction of throughput.</span>
             
             <span class="finding-chip">via <code>mech-input-output-ledger-closes</code></span>
             
@@ -863,7 +878,7 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
             
             
             
-            
+            <div class="finding-explanation"><em>Why:</em> This is the honest correction to the baseline&#39;s conservation language, and it is mechanism-tier computational evidence rather than biological calibration. The baseline reported molecules + biomass == elapsed time as though it were mass conservation; the mechanistic variant adds a genuine first-order turnover that routes mass to a waste sink and tracks the full ledger cumulative_input = Δmetabolite_pool + Δbiomass + Δwaste. That ledger closes to a residual of 1.8e-15 on every step, at the level of machine epsilon, and that is the real conservation statement: the scheduler neither creates nor destroys mass as it combines updates across the two clocks. It also shows the baseline&#39;s summed total is not the conserved quantity — pool + biomass reaches only about 2.2 of the 20.0 cumulative input, with waste carrying the remaining ~17.8, so the quantity that equals elapsed time is the external input, not an internal conserved total, and biomass is the yield fraction of throughput. Scope stays didactic and uncalibrated: the influx, turnover rate, and yield are illustrative, so the finding speaks to the exactness of the orchestration&#39;s cross-timescale bookkeeping, not to any biological magnitude.</div>
             
             
           </div>
@@ -1041,6 +1056,12 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
                 data-baseline-name="fig02-runnable">Set composite</button>
       </div>
       <div class="baseline-composite-status muted" data-baseline-name="fig02-runnable" style="font-size:0.8em;margin-top:2px"></div>
+      
+      
+      
+      
+      
+      
       
       
       
@@ -1356,7 +1377,8 @@ Run together on the process-bigraph engine&#39;s discrete-event scheduler, the t
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "n_changes(molecules) vs n_changes(biomass) over the 20-tick run", "kind": "observable", "path": "obs.molecules"}
-pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a fast process (interval 1) and a slow process (interval 5) sharing one store must update it at visibly different rates -\u003e the fast pool changes many-fold more often than the slow store. Observed: the fast pool changes on every tick (20 changes) while the slow store changes 3 times (the three visible conversions), so fast_changes (20) \u003e 3 * slow_changes (3); the \u003e-direction is the a-priori prediction, the exact counts are deterministic pins (tests/test_fig02_runs.py::test_fast_pool_updates_far_more_often_than_slow_biomass, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)", "value": 3.0}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: a fast process (interval 1) and a slow process (interval 5) sharing one store must update it at visibly different rates -\u003e the fast pool changes many-fold more often than the slow store. Observed: the fast pool changes on every tick (20 changes) while the slow store changes 3 times (the three visible conversions), so fast_changes (20) \u003e 3 * slow_changes (3); the \u003e-direction is the a-priori prediction, the exact counts are deterministic pins (tests/test_fig02_runs.py::test_fast_pool_updates_far_more_often_than_slow_biomass, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)", "value": 3.0}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1405,7 +1427,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "\u003e", "provenance": "prior: 
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "molecules both rises (some y\u003ex) and falls (some y\u003cx) across the run", "kind": "observable", "path": "obs.molecules"}
-pass_if: {"kind": "acceptance_criterion", "op": "rises_and_falls", "provenance": "prior: the fast process fills the pool every tick while the slow process periodically draws a fraction back out -\u003e molecules is a sawtooth. Observed: molecules ramps +1/tick (e.g. 5-\u003e9 over t=5..9) then drops at each slow firing (9-\u003e7 at t=10, 11-\u003e7.8 at t=15, 11.8-\u003e8.12 at t=20) -- both up- and down-steps present, deterministic (tests/test_fig02_runs.py::test_fast_pool_is_a_sawtooth)", "value": "molecules has both up-steps (fast fill) and down-steps (slow draw)"}</pre>
+pass_if: {"kind": "acceptance_criterion", "op": "rises_and_falls", "provenance": "prior: the fast process fills the pool every tick while the slow process periodically draws a fraction back out -\u003e molecules is a sawtooth. Observed: molecules ramps +1/tick (e.g. 5-\u003e9 over t=5..9) then drops at each slow firing (9-\u003e7 at t=10, 11-\u003e7.8 at t=15, 11.8-\u003e8.12 at t=20) -- both up- and down-steps present, deterministic (tests/test_fig02_runs.py::test_fast_pool_is_a_sawtooth)", "value": "molecules has both up-steps (fast fill) and down-steps (slow draw)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1454,7 +1477,8 @@ pass_if: {"kind": "acceptance_criterion", "op": "rises_and_falls", "provenance":
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "biomass is non-decreasing, changes only 3 times, ends \u003e start", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "monotone_nondecreasing", "provenance": "prior: the slow process moves mass one way (pool -\u003e biomass) on its own clock -\u003e biomass is non-decreasing, flat between firings, ending above start. Observed: biomass holds 0 through t=9, then steps 3.0 (t=10), 7.2 (t=15), 11.88 (t=20) -- exactly 3 slow conversions, monotone, never returning to the pool. The staircase levels are deterministic regression pins; the monotone-nondecreasing direction and end\u003estart are the a-priori predictions (tests/test_fig02_runs.py::test_biomass_only_advances, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)", "value": "biomass staircase levels [0.0, 3.0, 7.2, 11.88]; bio[-1] (11.88) \u003e bio[0] (0.0)"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "monotone_nondecreasing", "provenance": "prior: the slow process moves mass one way (pool -\u003e biomass) on its own clock -\u003e biomass is non-decreasing, flat between firings, ending above start. Observed: biomass holds 0 through t=9, then steps 3.0 (t=10), 7.2 (t=15), 11.88 (t=20) -- exactly 3 slow conversions, monotone, never returning to the pool. The staircase levels are deterministic regression pins; the monotone-nondecreasing direction and end\u003estart are the a-priori predictions (tests/test_fig02_runs.py::test_biomass_only_advances, tests/test_fig02_runs.py::test_biomass_is_a_coarse_slow_clock_staircase)", "value": "biomass staircase levels [0.0, 3.0, 7.2, 11.88]; bio[-1] (11.88) \u003e bio[0] (0.0)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1503,7 +1527,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "mono
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "molecules + biomass vs elapsed time at every emitted tick; final split", "kind": "derived", "path": "obs.molecules + obs.biomass"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the fast process is the sole source (injects rate*dt = 1.0 per tick) and the slow process only moves mass between molecules and biomass within the one pool -\u003e the shared-store total equals the cumulative fast injection at every tick, which for rate=1.0 equals elapsed time. Observed exactly at every tick (t=5: 5+0; t=10: 7+3; t=15: 7.8+7.2; t=20: 8.12+11.88 = 20.0). Deterministic -- no RNG; the == invariant is the a-priori prediction, the final split is a regression pin (tests/test_fig02_runs.py::test_mass_conserved_across_timescales)", "value": "molecules + biomass == time at every tick; final 8.12 + 11.88 == 20.0"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "prior: the fast process is the sole source (injects rate*dt = 1.0 per tick) and the slow process only moves mass between molecules and biomass within the one pool -\u003e the shared-store total equals the cumulative fast injection at every tick, which for rate=1.0 equals elapsed time. Observed exactly at every tick (t=5: 5+0; t=10: 7+3; t=15: 7.8+7.2; t=20: 8.12+11.88 = 20.0). Deterministic -- no RNG; the == invariant is the a-priori prediction, the final split is a regression pin (tests/test_fig02_runs.py::test_mass_conserved_across_timescales)", "value": "molecules + biomass == time at every tick; final 8.12 + 11.88 == 20.0"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1601,7 +1626,8 @@ pass_if: {"deterministic_pin": true, "kind": "regression_pin", "op": "==", "prov
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "SlowConversion.update delta[biomass] + delta[molecules]", "kind": "observable", "path": "obs.biomass"}
-pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "SlowConversion (yield_frac 0.6) on molecules=10 moves +6.0 to biomass and -6.0 from molecules -- what leaves the pool exactly equals what arrives as biomass, so the per-step delta nets to zero. This is the unit-level root of the composite mass-conservation invariant (tests/test_fig02_runs.py::test_slow_conversion_conserves_what_it_moves)", "value": "delta[biomass] + delta[molecules] == 0 (biomass \u003e 0)"}</pre>
+pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==", "provenance": "SlowConversion (yield_frac 0.6) on molecules=10 moves +6.0 to biomass and -6.0 from molecules -- what leaves the pool exactly equals what arrives as biomass, so the per-step delta nets to zero. This is the unit-level root of the composite mass-conservation invariant (tests/test_fig02_runs.py::test_slow_conversion_conserves_what_it_moves)", "value": "delta[biomass] + delta[molecules] == 0 (biomass \u003e 0)"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1640,7 +1666,8 @@ pass_if: {"deterministic_pin": true, "kind": "acceptance_criterion", "op": "==",
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |cumulative_input \u2212 (\u0394M + \u0394biomass + \u0394waste)| over the run; and (M+biomass) \u226a cumulative_input", "kind": "derived", "path": "obs.cumulative_input, obs.metabolite, obs.biomass, obs.waste"}
-pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed ledger residual \u2264 1.8e-15 over the 20-time-unit run; final M+biomass \u2248 2.2 vs cumulative input 20.0 (waste carries ~17.8). The baseline \"pool+biomass==time\" is an input-budget artefact, not conservation (tests/test_fig02_mechanistic.py::test_input_output_ledger_closes_every_step, ::test_pool_plus_biomass_is_not_closed_conservation, ::test_no_mass_created_at_coincident_event_boundaries)", "value": 1e-09}</pre>
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed ledger residual \u2264 1.8e-15 over the 20-time-unit run; final M+biomass \u2248 2.2 vs cumulative input 20.0 (waste carries ~17.8). The baseline \"pool+biomass==time\" is an input-budget artefact, not conservation (tests/test_fig02_mechanistic.py::test_input_output_ledger_closes_every_step, ::test_pool_plus_biomass_is_not_closed_conservation, ::test_no_mass_created_at_coincident_event_boundaries)", "value": 1e-09}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1718,7 +1745,8 @@ pass_if: {"kind": "numerical_convergence", "op": "monotone_decrease", "provenanc
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "|M(\u0394t_fast=1.0) \u2212 M_ref| vs |M(\u0394t_fast=0.1) \u2212 M_ref|, slow clock fixed", "kind": "observable", "path": "obs.metabolite at an early transient time (t\u22482)"}
-pass_if: {"kind": "mechanistic_ablation", "op": "fast_clock_improves", "provenance": "MECHANISTIC_ABLATION. Observed the fast clock controls the stiff-transient pool error independently of the slow clock, demonstrating scheduling \u2260 accuracy (tests/test_fig02_mechanistic.py::test_resolving_fast_clock_improves_pool_accuracy)", "value": "refining the fast clock reduces the transient pool error at fixed \u0394t_slow"}</pre>
+pass_if: {"kind": "mechanistic_ablation", "op": "fast_clock_improves", "provenance": "MECHANISTIC_ABLATION. Observed the fast clock controls the stiff-transient pool error independently of the slow clock, demonstrating scheduling \u2260 accuracy (tests/test_fig02_mechanistic.py::test_resolving_fast_clock_improves_pool_accuracy)", "value": "refining the fast clock reduces the transient pool error at fixed \u0394t_slow"}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -1757,7 +1785,8 @@ pass_if: {"kind": "mechanistic_ablation", "op": "fast_clock_improves", "provenan
         <summary class="muted" style="cursor: pointer;">Assertion</summary>
         
         <pre style="background:#fff; padding:8px; margin:4px 0 0 0; border:1px solid #e2e8f0; border-radius:3px; overflow-x:auto;">measure: {"expr": "max |traj(order A) \u2212 traj(order B)| over metabolite/biomass/waste", "kind": "derived", "path": "trajectory with fast/slow node order swapped"}
-pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed identical trajectories (\u003c 1e-12) under swapped process order \u2014 synchronous summed deltas commute (tests/test_fig02_mechanistic.py::test_schedule_order_is_invariant)", "value": 1e-12}</pre>
+pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observed identical trajectories (\u003c 1e-12) under swapped process order \u2014 synchronous summed deltas commute (tests/test_fig02_mechanistic.py::test_schedule_order_is_invariant)", "value": 1e-12}
+cites:   ["beer2024deriving"]</pre>
       </details>
       
       
@@ -2018,6 +2047,20 @@ pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observe
   <div class="overview-section"><h2 class="overview-label">Plan &amp; assumptions</h2>
 
     
+    <div class="overview-section">
+      <h3 class="overview-label">Pipeline gate</h3>
+      <p class="muted" style="margin: 0 0 8px 0;font-size:0.88em">
+        Each study is a model-building gate: it answers <em>"Can we safely build the next layer?"</em>
+      </p>
+      
+      <div style="margin-bottom:6px"><strong>Prerequisites:</strong>
+        <code>{&#39;study&#39;: &#39;fig-01&#39;, &#39;condition&#39;: &#39;tests-passed&#39;, &#39;relation&#39;: &#39;builds-on&#39;}</code>
+      </div>
+      
+      
+      
+    </div>
+    
 
     
     <div class="overview-section">
@@ -2091,12 +2134,12 @@ pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observe
       
       <li style="display:flex;align-items:flex-start;gap:8px">
         <button type="button" class="action-btn study-finding-del" data-id="F-03" title="Delete finding" style="font-size:0.72em;line-height:1;padding:2px 6px">✕</button>
-        <span>The cross-timescale conservation invariant holds at EVERY one of the 21 emitted ticks, not merely at the four sampled slow-firing landmarks: re-run in-memory, molecules + biomass == elapsed time to within 1e-9 for all ticks 0..20 (checked exhaustively, not spot-checked). Each slow firing converts exactly yield_frac (0.6) of the pool sampled at the start of its 5-tick window -- molecules at t=5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 0.6x5.0=3.0, 0.6x7.0=4.2, 0.6x7.8=4.68 and the staircase levels [0.0, 3.0, 7.2, 11.88]. The invariant and the increment rule are therefore properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled. <span class="muted small">(confirms)</span></span>
+        <span>The cross-timescale mass identity holds at every one of the 21 emitted ticks (0..20), not only at the four sampled slow-firing landmarks: on an in-memory re-run, molecules + biomass equals elapsed time to within 1e-9 at all 21 ticks, checked exhaustively rather than spot-checked. Each slow firing converts exactly yield_frac = 0.6 of the pool sampled at the start of its 5-tick window -- molecules at t = 5, 10, 15 are 5.0, 7.0, 7.8, giving biomass increments 3.0, 4.2, 4.68 and the staircase levels 0.0, 3.0, 7.2, 11.88, with the final split 8.12 + 11.88 = 20.0. The identity and the increment rule are structural properties of the composition itself -- one source process plus one mass-moving process on a shared store -- not artifacts of where the series was sampled. <span class="muted small">(confirms)</span></span>
       </li>
       
       <li style="display:flex;align-items:flex-start;gap:8px">
         <button type="button" class="action-btn study-finding-del" data-id="F-04" title="Delete finding" style="font-size:0.72em;line-height:1;padding:2px 6px">✕</button>
-        <span>The baseline&#39;s &#34;molecules + biomass == elapsed time&#34; is a CUMULATIVE EXTERNAL-INPUT budget, not closed-system mass conservation — the mechanistic variant makes this explicit and honest. With a genuine first-order turnover routing mass to a waste sink, the full ledger cumulative_input = ΔpoolMetabolite + Δbiomass + Δwaste closes to 1.8e-15 on every step, while pool+biomass reaches only ~2.2 of the 20.0 input (waste carries ~17.8). So the quantity that &#34;equals time&#34; in the baseline is the input, not a conserved internal total; biomass is merely the yield-fraction of throughput. <span class="muted small">(novel)</span></span>
+        <span>The baseline&#39;s &#34;molecules + biomass == elapsed time&#34; is a cumulative external-input budget, not closed-system mass conservation, and the mechanistic variant makes that explicit. With a first-order turnover routing mass to a waste sink, the full ledger cumulative_input = Δmetabolite_pool + Δbiomass + Δwaste closes to 1.8e-15 on every step, while pool + biomass reaches only about 2.2 of the 20.0 cumulative input and waste carries the remaining ~17.8. The quantity that equals elapsed time in the baseline is therefore the external input, not a conserved internal total; biomass is the yield fraction of throughput. <span class="muted small">(novel)</span></span>
       </li>
       
       <li style="display:flex;align-items:flex-start;gap:8px">
@@ -2147,7 +2190,7 @@ pass_if: {"kind": "invariant", "op": "\u003c", "provenance": "INVARIANT. Observe
 </section>
 
 </main>
-<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/4af834a19e9e1a5767e8d0d47dae1ccdb79237ab", "branch": "main", "lockfile": "uv.lock@1d7079edbbe6", "generated_at": "2026-11-21 18:16 UTC"} };</script>
+<script>window.__DASH_CONFIG__ = { mode: "snapshot", interactiveUrl: "https://github.com/vivarium-collective/meta-modelers-guide", basePath: "/meta-modelers-guide/workbench", inputsDownloadBase: "https://github.com/vivarium-collective/meta-modelers-guide/raw/main/workspace", provenance: {"repo_slug": "vivarium-collective/meta-modelers-guide", "repo_url": "https://github.com/vivarium-collective/meta-modelers-guide", "commit": "1d205238f59e616338975028ca4644762610a033", "commit_url": "https://github.com/vivarium-collective/meta-modelers-guide/commit/1d205238f59e616338975028ca4644762610a033", "branch": "main", "lockfile": "uv.lock@e5301ce98efd", "generated_at": "2026-11-22 00:51 UTC"} };</script>
 <script src="/meta-modelers-guide/workbench/assets/data-source.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/backend-features.js"></script>
 <script src="/meta-modelers-guide/workbench/assets/toast.js"></script>
