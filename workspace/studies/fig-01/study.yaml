@@ -46,6 +46,8 @@ units_and_time:
   note: No quantity here is calibrated to a measured transport rate, concentration, or literature target -- the magnitudes are chosen for legibility.
 behavior_tests:
 - name: process-reads-and-writes-through-typed-ports
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The `StoreTransfer` process, driven directly, reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer -- the interface (ports/wiring W) of Table box:compositional in action, at one tick.
   measure:
@@ -60,6 +62,8 @@ behavior_tests:
     provenance: 'the update rule flux = k*source*interval writes -flux to source and +flux to sink; with k=0.15, source=1.0, interval=1.0 that is exactly delta[source] == -0.15, delta[sink] == +0.15, sum 0 to round-off -- an exact deterministic pin (tests/test_fig01_runs.py::test_transfer_moves_from_source_to_sink)'
   requires_simulation: none
 - name: source-drains-and-sink-fills-over-the-run
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Over the composite run the wired stores genuinely evolve -- source store_a strictly decreases and sink store_b strictly increases, tick by tick -- demonstrating that the process bigraph is executable, not a static diagram.
   measure:
@@ -73,6 +77,7 @@ behavior_tests:
     provenance: 'prior: a first-order transfer drains the source into the sink, so store_a decreases monotonically and store_b increases monotonically. Observed: store_a 1.0 -> 0.03876, store_b 0.0 -> 0.96124 over ticks 0..20, both strictly monotone step by step (tests/test_fig01_runs.py::test_source_drains_and_sink_fills_over_the_run)'
   requires_simulation: fig01-runnable
 - name: trajectory-is-the-exact-geometric-decay
+  gate_class: regression_pin
   classification: primary
   description: Because the transfer is fixed-rate deterministic, the run reproduces the exact geometric decay store_a[n] == 0.85^n and store_b[n] == 1 - 0.85^n -- the real trajectory pinned exactly, not just its direction.
   measure:
@@ -87,6 +92,7 @@ behavior_tests:
     provenance: 'each step multiplies the source by (1-k) = 0.85, so store_a[n] == 0.85^n exactly and store_b[n] == 1 - 0.85^n exactly; verified for every tick 0..20 to 1e-12. Deterministic (no seed), reproduces run-to-run (tests/test_fig01_runs.py::test_trajectory_is_the_exact_geometric_decay)'
   requires_simulation: fig01-runnable
 - name: sink-overtakes-source-at-the-crossover-tick
+  gate_class: regression_pin
   classification: primary
   description: The sink overtakes the source at a specific, deterministic tick -- store_b first exceeds store_a at tick 5, the drain/fill crossover.
   measure:
@@ -101,6 +107,8 @@ behavior_tests:
     provenance: '0.85^n crosses below 0.5 first at n=5 (0.85^4 = 0.522 > 0.5, 0.85^5 = 0.444 < 0.5), so the sink overtakes the source at tick 5: store_b[4] < store_a[4] and store_b[5] > store_a[5]. Exact deterministic pin (tests/test_fig01_runs.py::test_sink_overtakes_source_at_the_crossover_tick)'
   requires_simulation: fig01-runnable
 - name: total-is-conserved
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The transfer conserves the total -- store_a + store_b stays fixed at the seeded total (1.0) to round-off at every tick, because the sink write equals the source drain by construction.
   measure:
@@ -118,6 +126,8 @@ behavior_tests:
 # Reusable reversible typed transport; topology set by wiring (not code); schema
 # rejects incompatible types. Classified by the reviewer's evidence taxonomy.
 - name: mech-transport-conserves-total
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig01-mechanistic
   description: 'With no external source/sink, the reversible transport only MOVES quantity: A+B+C is conserved to round-off on every step, in BOTH the chain and the hub topology. Conservation is a property of the equal-and-opposite port writes, demonstrated across a nested three-compartment place graph.'
@@ -132,6 +142,8 @@ behavior_tests:
     provenance: 'INVARIANT. Observed max residual 2.2e-16 (machine precision) in both chain and hub (tests/test_fig01_mechanistic.py::test_transport_conserves_total)'
   requires_simulation: fig01-mechanistic
 - name: mech-rewiring-redirects-flux
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig01-mechanistic
   description: 'The SAME CompartmentTransport class with IDENTICAL configs gives DIFFERENT dynamics purely from REWIRING — no change to the process implementation. The chain A↔B↔C drives quantity out to the deep compartment C (C ≫ B; equilibrium 1:4:16); the hub A↔B,A↔C splits it evenly (B ≈ C; 1:4:4). This is the paper''s composition point made measurable: topology lives in the wiring and controls the outcome.'
@@ -146,6 +158,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION (topology counterfactual). Observed chain final A:B:C = 0.049:0.191:0.760, hub = 0.111:0.444:0.444 — same class, different wiring, different distribution (tests/test_fig01_mechanistic.py::test_rewiring_redirects_flux_same_class, ::test_same_class_reused_on_every_edge)'
   requires_simulation: fig01-mechanistic
 - name: mech-reversible-reaches-equilibrium
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig01-mechanistic
   description: 'The transport is REVERSIBLE: each edge relaxes toward its detailed-balance equilibrium sink/source = k_forward/k_reverse = 4, rather than the baseline''s one-way drain to zero. In the hub both leaves equilibrate at 4:1 against the centre.'
@@ -160,6 +174,8 @@ behavior_tests:
     provenance: 'EMPIRICAL_COMPARISON to the detailed-balance ratio k_f/k_r. Observed hub B/A = 4.0 and C/A = 4.0 (tests/test_fig01_mechanistic.py::test_reversible_reaches_equilibrium_ratio)'
   requires_simulation: fig01-mechanistic-star
 - name: mech-typed-ports-reject-incompatible
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   variant: fig01-mechanistic
   control: negative
@@ -175,6 +191,7 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION (negative control). core.check rejects a string for a concentration port while accepting a float, and wiring the port to a structure store raises at run (tests/test_fig01_mechanistic.py::test_typed_ports_reject_incompatible_store)'
   requires_simulation: none
 - name: mech-irreversible-limit-recovers-geometric-decay
+  gate_class: regression_pin
   classification: diagnostic
   variant: fig01-mechanistic
   description: 'Solver verification (NOT a discovery): in the k_reverse→0 limit the reversible transport reduces to the baseline''s first-order decay, so a single edge at k_forward=0.15 reproduces store_a[n] ≈ 0.85^n. This re-casts the baseline''s exact 0.85^n pin as equation-specific numerical verification.'
@@ -240,7 +257,7 @@ findings:
   kind: computational
   tier: mechanism
   status: confirms
-  statement: 'The paper''s definitional Fig 1 is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- builds and runs forward through the process-bigraph engine, and the wired stores genuinely evolve: source store_a drains from 1.0 to ~0.0388 and sink store_b fills from 0.0 to ~0.9612 over 20 ticks, both strictly monotone. This is the dynamics behind the figure''s static signature (a process reading and writing shared variables through ports wired to stores) shown to actually run.'
+  statement: 'The paper''s definitional Fig 1 is executable, not merely drawn. The minimal process bigraph -- one typed `StoreTransfer` process wired through a `source` input port and `source`/`sink` output ports to two scalar place-graph stores -- builds and runs forward through the process-bigraph engine, and the wired stores genuinely evolve: source store_a drains from 1.0 to 0.03876 and sink store_b fills from 0.0 to 0.96124 over 20 ticks, both strictly monotone. This is the dynamics behind the figure''s static signature (a process reading and writing shared variables through ports wired to stores) shown to actually run.'
   evidence:
     from_test: source-drains-and-sink-fills-over-the-run
     from_run: fig01-runnable
@@ -248,6 +265,7 @@ findings:
   provenance:
     run_ids:
     - fig01-runnable
+  explanation: "The acceptance test grades a direction, not a magnitude: the monotone criterion 'source-drains-and-sink-fills-over-the-run'. Once an update rule is carried across typed ports the connected stores move -- store_a falls to 0.03876 and store_b rises to 0.96124 over the 20-tick run -- which is exactly the claim that a process bigraph is a place-graph-plus-processes that runs rather than a static diagram. The evidence class is a behavioral demonstration on a dimensionless didactic toy: it establishes executability and the direction of transport, not a calibrated transport rate or a biological quantity, since the compartments carry no physical units and the rate constant is chosen for legibility. F-01 is the 'it runs' half of the figure. F-02 and F-03 then pin the same behavior quantitatively (exact conservation of the seeded total and the 0.85^n trajectory, with the sink overtaking the source at tick 5), and F-04 extends it to composition by rewiring one reusable typed process."
 - id: F-02
   kind: computational
   tier: mechanism
@@ -260,6 +278,7 @@ findings:
   provenance:
     run_ids:
     - fig01-runnable
+  explanation: 'What this measures is whether the transfer carried across the typed ports is conservative and exactly reproducible, not merely directional. Two quantities are read off the run. First, the seeded total: store_a + store_b stays pinned at 1.0 to round-off (1e-9) at every tick, because the process writes equal-and-opposite increments to its source and sink ports by construction, so nothing is created or destroyed as quantity moves across the interface. Second, the trajectory itself: store_a[n] matches 0.85^n and store_b[n] matches 1 - 0.85^n to 1e-12 at every tick, and the sink overtakes the source at tick 5. Because the rule is fixed-rate and deterministic with no random seed, this is not a statistical tendency but the exact arithmetic of the hand-written transfer rule, reproduced by the engine run for run. The evidence class is a conservation-and-regression pin on a dimensionless didactic toy: it verifies an invariant (the conserved total) and an exact closed form (the geometric decay), not a calibrated transport rate or a biological quantity -- the compartments carry no physical units and the rate constant is chosen for legibility. Read alongside F-01, which shows the figure runs, F-02 is the exactness-and-conservation half: the same wiring that produces movement is shown to conserve quantity and to follow a trajectory predictable in closed form, which is what lets F-03 pin the sink/source crossover at tick 5 as a deterministic consequence of that conservation rather than a tuned coincidence.'
 - id: F-03
   kind: computational
   tier: mechanism
@@ -273,12 +292,13 @@ findings:
     run_ids:
     - fig01-runnable
     analysis_script: in-memory Composite build from fig01-runnable.composite.json + gather_emitter_results (workbench 0.4.1)
+  explanation: 'What this measures is the tick at which the sink store overtakes the source, and it lands at tick 5 -- a fixed landmark, not a fitted one. Because the transfer conserves the seeded total, store_b = 1 - store_a at every tick, so the sink exceeds the source exactly when the source has fallen below half the total (0.5). The source follows the geometric decay 0.85^n, whose analytic half-life is ln2 / ln(1/0.85) = 4.265 ticks; the first integer tick past that half-life is 5, which is why the crossover sits there and nowhere else. The crossover is therefore a deterministic consequence of the single rate constant (k = 0.15), not a tuned coincidence: change the rate and the crossover tick tracks the half-life. The evidence class is a regression pin on a dimensionless didactic toy -- it verifies that the engine reproduces the exact arithmetic of the hand-written transfer rule (store_a[10] = 0.85^10 to round-off), not a calibrated or biological quantity. Read that way, the finding is a determinism-and-conservation check behind the definitional figure: it shows that two independent landmarks (the half-drained source and the sink/source crossover) must coincide once conservation holds, which is what makes Fig 1 executable rather than merely drawn.'
 - id: F-04
   kind: computational
   tier: mechanism
   status: novel
   variant: fig01-mechanistic
-  statement: 'The paper''s composition point is made measurable: ONE reusable, reversible, typed CompartmentTransport class, REWIRED without any code change, produces different dynamics. On a genuinely nested three-compartment place graph the SAME class on two edges gives a linear chain A↔B↔C that drives quantity out to the deep organelle (equilibrium A:B:C = 1:4:16) and a hub A↔B,A↔C that splits it evenly (1:4:4). Conservation of A+B+C holds to 2.2e-16 in both. Topology lives in the WIRING and controls the outcome — the essence of compositional modelling, shown on the engine rather than drawn.'
+  statement: 'The paper''s composition point is made measurable: one reusable, reversible, typed CompartmentTransport class, rewired without any code change, produces different dynamics. On a genuinely nested three-compartment place graph the same class on two edges gives a linear chain A↔B↔C that drives quantity out to the deep organelle (equilibrium A:B:C = 1:4:16, measured 0.049:0.191:0.760), while a hub A↔B, A↔C splits it evenly (1:4:4, measured 0.111:0.444:0.444). The total A+B+C is conserved to a residual of 2.2e-16 in both runs. Topology lives in the wiring and controls the outcome — the essence of compositional modelling, shown on the engine rather than drawn.'
   evidence:
     from_test: mech-rewiring-redirects-flux
     from_run: fig01-mechanistic
@@ -286,12 +306,13 @@ findings:
   provenance:
     run_ids:
     - fig01-mechanistic
+  explanation: "What this measures is where quantity settles across the three nested compartments (A, B, C) once the same reversible CompartmentTransport class relaxes to equilibrium — read twice, under two wirings of that one class. In the linear chain A↔B↔C the quantity is pumped out to the deepest organelle: the equilibrium ratio A:B:C = 1:4:16 (0.049:0.191:0.760), each edge multiplying the next compartment by its forward/reverse ratio k_f/k_r = 4. Rewiring the identical class into a hub A↔B, A↔C — no edit to its implementation, only a change in the wiring W — splits the quantity evenly between the two leaves: A:B:C = 1:4:4 (0.111:0.444:0.444). The two runs differ only in topology, so the different endpoints are caused by the wiring and nothing else, which is the paper's composition point made measurable rather than drawn. Conservation holds in both: A+B+C stays at the seeded total to round-off (residual 2.2e-16), because the port writes are equal-and-opposite by construction regardless of topology. The evidence class is a determinism-and-invariant pin on a dimensionless didactic toy: it verifies that reusing and rewiring one typed process redirects flux as the compositional semantics predict, and that the total is conserved — it is not a calibrated transport model, and the rate constants and compartment quantities carry no physical units. Read that way, F-04 is the composition half of the figure: where the baseline shows that a process bigraph runs, this shows that rewiring one reusable typed process — without reimplementing it — controls the dynamics, which is what makes the paper's 'interfaces and composition' claim executable rather than drawn."
 - id: F-05
   kind: computational
   tier: mechanism
   status: confirms
   variant: fig01-mechanistic
-  statement: 'Types are load-bearing, and the baseline''s famous 0.85^n is re-cast honestly. The transport ports are typed `concentration`: core.check accepts a float and REJECTS a structural string, and forcing the incompatible wiring breaks the run — a schema-level negative type-compatibility control. The reversible transport relaxes to its detailed-balance equilibrium (sink/source = k_f/k_r = 4), not a one-way drain. And the exact 0.85^n geometric decay the baseline reported as "novel" is correctly re-labelled: it is the k_reverse→0 limit of this transport (recovered to 5.5e-9) — EQUATION-SPECIFIC solver verification, not a scientific discovery.'
+  statement: 'Types are load-bearing, and the baseline''s 0.85^n decay is re-cast honestly. The transport ports are typed `concentration`: core.check accepts a float but rejects a structural string, and forcing the incompatible wiring breaks the run — a schema-level negative control on type compatibility. The reversible transport relaxes to its detailed-balance equilibrium (sink/source = k_f/k_r = 4.0) rather than draining one way. And the exact 0.85^n geometric decay the baseline reported as novel is the k_reverse→0 limit of this transport, recovered to 5.5e-9 in the irreversible limit — equation-specific solver verification, not a scientific discovery.'
   evidence:
     from_test: mech-typed-ports-reject-incompatible
     from_run: fig01-mechanistic
@@ -299,6 +320,7 @@ findings:
   provenance:
     run_ids:
     - fig01-mechanistic
+  explanation: 'Three checks, all read off the one fig01-mechanistic run. First, the transport ports are typed `concentration`, and the type is enforced: core.check accepts a float but returns False for a structural string, and wiring the incompatible value aborts the run — a negative control that passes only because the schema is actually checked rather than decorative. Second, the transport is reversible, so it relaxes to detailed-balance equilibrium instead of draining one way; the sink/source ratio settles at k_f/k_r = 4.0, the value the forward and reverse rate constants predict. Third, the 0.85^n geometric decay the baseline reported as its headline result is recovered as the k_reverse→0 limit of this same reversible transport, matching the closed form to 5.5e-9 in the irreversible limit. The evidence class is equation-specific solver verification on a dimensionless didactic model, not a scientific discovery: 0.85^n is the arithmetic of a fixed-rate one-way transfer, so reproducing it to 5.5e-9 confirms the solver rather than a fact about the world, and the rate constants and quantities carry no physical units. Read that way, F-05 is the honesty pass over the baseline: it demotes the novel-looking geometric decay to one limiting case of a typed, reversible transport, and shows that the types carrying the composition are actually enforced — the schema rejects what it should, the reversible dynamics reach the equilibrium their constants predict, and the celebrated 0.85^n falls out as a special case of that larger, properly typed mechanism.'
 ontology_provenance:
   note: 'Curated ontology labels (meta_modelers_guide/ontology.py) for this study''s interface quantities and process kind -- a MIRIAM-style annotation map, not ontology reasoning (it records which curated term each quantity is labelled with, it does not verify the labelling against an ontology service).'
   interface_quantities:
@@ -392,6 +414,15 @@ visualizations:
 # fig-01 is the SPINE ROOT: it defines the typed process↔store wiring + conservation
 # discipline that fig-02/03/06/07 build on (edge relations live in the investigation
 # spine_edges). It therefore has no parent of its own — parent_studies is empty by design.
-parent_studies: []
 experiment: 'Run the `fig01-runnable` composite (StoreTransfer, rate k=0.15, interval 1.0, source store_a seeded 1.0, sink store_b seeded 0.0) for default_n_steps=20 to completion through the process-bigraph engine, and measure whether a single typed process wired through ports to two place-graph stores actually moves quantity from the source store to the sink store while conserving the total -- i.e. whether the definitional Fig 1 is executable, not merely drawn.'
 result: 'Over a 20-tick run the minimal process bigraph runs forward and the wired stores genuinely evolve: source store_a drains geometrically from 1.0 to ~0.0388 (store_a[n] == 0.85^n to 1e-12), sink store_b fills as its complement from 0.0 to ~0.9612 (store_b[n] == 1 - 0.85^n), the sink overtakes the source at tick 5, and the total store_a + store_b stays fixed at 1.0 to round-off at every tick. Driven directly, the process reads its `source` input port and writes both `source` and `sink` output ports with an equal-and-opposite conservative transfer (delta -0.15 / +0.15). The paper''s definitional Fig 1 (§Interfaces and composition) is therefore executable, not merely drawn -- a real typed process wired through ports to two place-graph stores moves quantity from source to sink and conserves the total, with a fully deterministic, exactly reproducible trajectory. This is a didactic / toy-real demonstration: the smallest honest process bigraph, illustrative rather than calibrated to any literature target.'
+simulation_set:
+- name: fig01-runnable
+  kind: single
+  base_model: meta_modelers_guide.composites.fig01-runnable
+  is_baseline: true
+  status: ran
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig01-runnable
+    name: fig01-runnable

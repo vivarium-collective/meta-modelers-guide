@@ -196,21 +196,7 @@ variants:
     mm_overflow: 1.4
 - name: steadystate
   composite: meta_modelers_guide.composites.single-cell-in-a-field-steadystate
-  description: 'M7d steady-state regime (peer review) — the flagship is a pure transient
-    (no source terms — every flagship claim is a transient reading, never a source/sink
-    equilibrium). This variant adds three cell-INDEPENDENT terms behind the same
-    `CpmCellField` ports so the composite becomes a chemostat-like regime with a genuine
-    flux fixed point — a first-order glucose SOURCE (grid-wide relaxation toward a setpoint,
-    `glucose_source_rate` 0.15 toward `glucose_source_target` 1.5), a first-order acetate
-    DECAY sink (`acetate_decay_rate` 0.2), and a logistic biomass carrying capacity
-    (`biomass_capacity` 0.5) that halts exponential growth at a stationary-phase ceiling.
-    A biomass dilution term alone gives NO interior fixed point in this coupling — the
-    cell''s per-pixel uptake scales with biomass/footprint-area (both grow together), so
-    local glucose equilibrates at a biomass-independent value and mu never falls to a
-    dilution rate — the logistic cap is what forces biomass, and hence every flux, to a
-    steady state. Field mass is deliberately NOT conserved here (open-system source/sink);
-    that is the point of a steady state. Run ~120 ticks it reaches a verified steady state
-    (see the `steadystate-flux-equilibrium` acceptance criterion below).'
+  description: 'M7d steady-state regime (peer review) — the flagship is a pure transient (no source terms — every flagship claim is a transient reading, never a source/sink equilibrium). This variant adds three cell-INDEPENDENT terms behind the same `CpmCellField` ports so the composite becomes a chemostat-like regime with a genuine flux fixed point — a first-order glucose SOURCE (grid-wide relaxation toward a setpoint, `glucose_source_rate` 0.15 toward `glucose_source_target` 1.5), a first-order acetate DECAY sink (`acetate_decay_rate` 0.2), and a logistic biomass carrying capacity (`biomass_capacity` 0.5) that halts exponential growth at a stationary-phase ceiling. A biomass dilution term alone gives NO interior fixed point in this coupling — the cell''s per-pixel uptake scales with biomass/footprint-area (both grow together), so local glucose equilibrates at a biomass-independent value and mu never falls to a dilution rate — the logistic cap is what forces biomass, and hence every flux, to a steady state. Field mass is deliberately NOT conserved here (open-system source/sink); that is the point of a steady state. Run ~120 ticks it reaches a verified steady state (see the `steadystate-flux-equilibrium` acceptance criterion below).'
   params:
     glucose_source_rate: 0.15
     glucose_source_target: 1.5
@@ -218,22 +204,7 @@ variants:
     biomass_capacity: 0.5
 - name: chemotaxis
   composite: meta_modelers_guide.composites.single-cell-in-a-field-chemotaxis
-  description: 'CHEMOTAXIS variant (the deferred half of the paper''s loop, now BUILT and
-    MEASURED) — the same flagship cell in the same left-low-to-right-high glucose field, but
-    now the cell ACTS on what it senses. `chemotaxis_strength` 50.0 turns on directed motion
-    up the SENSED glucose gradient behind the same `CpmCellField` ports — each tick the
-    coupling process takes grad(glucose) of the SHARED spatio-flux field over the cell''s
-    footprint and sets viva-cpm''s per-type external-potential force f = strength·grad(glucose),
-    so the Metropolis pixel-copy is biased up-gradient via U(r) = −f·r (the linearized form of
-    CC3D chemotaxis ΔH = −λ·Δc, driven by the external shared field rather than a viva-cpm
-    internal one, which has no write path here). RESULT — directed up-gradient motion is
-    genuinely achieved and it helps — over 20 ticks the cell migrates from COM x ≈ 18.5 to
-    ≈ 39.3 (+20.8 px up-gradient) versus the non-motile flagship''s +0.2 px thermal drift on
-    the identical field (~90×), reaching a ~2.1× richer local glucose region (sensed local
-    glucose 1.95 vs 0.94) and for it acquiring ~16% more glucose (net 36.8 vs 31.6), building
-    ~13% more biomass (0.418 vs 0.370), and growing ~36% more CPM volume (150 vs 110 px).
-    Deterministic (fixed CPM seed). `chemotaxis_strength` 0.0 is the flagship default — the
-    force is never set, so the base flagship run is byte-identical.'
+  description: 'CHEMOTAXIS variant (the deferred half of the paper''s loop, now BUILT and MEASURED) — the same flagship cell in the same left-low-to-right-high glucose field, but now the cell ACTS on what it senses. `chemotaxis_strength` 50.0 turns on directed motion up the SENSED glucose gradient behind the same `CpmCellField` ports — each tick the coupling process takes grad(glucose) of the SHARED spatio-flux field over the cell''s footprint and sets viva-cpm''s per-type external-potential force f = strength·grad(glucose), so the Metropolis pixel-copy is biased up-gradient via U(r) = −f·r (the linearized form of CC3D chemotaxis ΔH = −λ·Δc, driven by the external shared field rather than a viva-cpm internal one, which has no write path here). RESULT — directed up-gradient motion is genuinely achieved and it helps — over 20 ticks the cell migrates from COM x ≈ 18.5 to ≈ 39.3 (+20.8 px up-gradient) versus the non-motile flagship''s +0.2 px thermal drift on the identical field (~90×), reaching a ~2.1× richer local glucose region (sensed local glucose 1.95 vs 0.94) and for it acquiring ~16% more glucose (net 36.8 vs 31.6), building ~13% more biomass (0.418 vs 0.370), and growing ~36% more CPM volume (150 vs 110 px). Deterministic (fixed CPM seed). `chemotaxis_strength` 0.0 is the flagship default — the force is never set, so the base flagship run is byte-identical.'
   params:
     chemotaxis_strength: 50.0
 key_assumptions:
@@ -257,16 +228,8 @@ key_assumptions:
   own internal field concept (`field_at_cell`, `secretory_types`, `receptor_coupling`) is
 
   separate machinery this composite does not use.'
-- Growth is roughly exponential in this coupling (biomass compounds each tick), so the run is
-  deliberately bounded to ~20-25 ticks — a longer run would need either a saturating growth term
-  or a much larger field to stay spatially legible rather than filling the lattice.
-- Chemotaxis toward the sensed field (directed up-gradient motion) is BUILT and MEASURED in the
-  `chemotaxis` variant (finding F-08) — the FLAGSHIP itself remains non-motile by design (its
-  modest position drift, COM x ≈ 18.5 → 18.7 over 20 ticks, is CPM thermal fluctuation under the
-  configured temperature, not directed motion), and the `chemotaxis` variant adds a
-  gradient-directed external-potential force behind the same ports that produces genuine directed
-  up-gradient migration (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship''s thermal drift) with a
-  measured nutrient/growth advantage.
+- Growth is roughly exponential in this coupling (biomass compounds each tick), so the run is deliberately bounded to ~20-25 ticks — a longer run would need either a saturating growth term or a much larger field to stay spatially legible rather than filling the lattice.
+- Chemotaxis toward the sensed field (directed up-gradient motion) is BUILT and MEASURED in the `chemotaxis` variant (finding F-08) — the FLAGSHIP itself remains non-motile by design (its modest position drift, COM x ≈ 18.5 → 18.7 over 20 ticks, is CPM thermal fluctuation under the configured temperature, not directed motion), and the `chemotaxis` variant adds a gradient-directed external-potential force behind the same ports that produces genuine directed up-gradient migration (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship''s thermal drift) with a measured nutrient/growth advantage.
 acceptance_criteria:
 - A cell metabolizing at its footprint should end with more biomass than it started — growth under nutrients.
 - Under an O2 cap, overflow metabolism should secrete acetate ( > 0 ); lifting the cap should remove that secretion (uncapped acetate ≈ 0).
@@ -280,6 +243,8 @@ external_anchors:
 - 'glucose uptake ≈ 10 mmol/gDW/hr (E. coli aerobic) (order-of-magnitude anchor, not a calibration target).'
 behavior_tests:
 - name: cell-metabolizes-and-grows
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'The cell runs dynamic-FBA at its own footprint and grows: biomass rises above its
 
@@ -292,16 +257,12 @@ behavior_tests:
     kind: acceptance_criterion
     op: '>'
     value: 0.1
-    provenance: 'prior: a cell metabolizing at its footprint should end with more biomass than its
-      0.1 seed (growth under nutrients) → expect final biomass > 0.1. Observed over 20 ticks:
-      biomass 0.1 -> ~0.37 (tests/test_flagship_field.py::test_flagship_sense_act_loop;
-      tests/test_cpm_cell_field.py::test_cell_metabolizes_grows_and_reshapes_field asserts the
-      same pattern on a smaller 40x40 grid over 12 ticks)'
+    provenance: 'prior: a cell metabolizing at its footprint should end with more biomass than its 0.1 seed (growth under nutrients) → expect final biomass > 0.1. Observed over 20 ticks: biomass 0.1 -> ~0.37 (tests/test_flagship_field.py::test_flagship_sense_act_loop; tests/test_cpm_cell_field.py::test_cell_metabolizes_grows_and_reshapes_field asserts the same pattern on a smaller 40x40 grid over 12 ticks)'
   requires_simulation: single-cell-in-a-field
 - name: cpm-volume-grows
+  gate_class: regression_pin
   classification: primary
-  description: The CPM cell's own target-volume-driven growth carries through to its actual
-    lattice-pixel volume — the cell occupies more pixels by the end of the run.
+  description: The CPM cell's own target-volume-driven growth carries through to its actual lattice-pixel volume — the cell occupies more pixels by the end of the run.
   measure:
     kind: observable
     path: obs.volume
@@ -310,14 +271,13 @@ behavior_tests:
     kind: regression_pin
     op: '>'
     value: 40.0
-    provenance: 'pin set after the run — CPM volume 32 -> 110 px over 20 ticks (~3.4x), ~3% of the
-      60x60=3600px lattice; 40 px is a floor above the 32 px seed (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
+    provenance: 'pin set after the run — CPM volume 32 -> 110 px over 20 ticks (~3.4x), ~3% of the 60x60=3600px lattice; 40 px is a floor above the 32 px seed (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
   requires_simulation: single-cell-in-a-field
 - name: acetate-secreted-and-diffuses
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
-  description: The cell secretes acetate into the shared field as a genuine byproduct of the
-    O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has diffused/spread)
-    by the end of the run.
+  description: The cell secretes acetate into the shared field as a genuine byproduct of the O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has diffused/spread) by the end of the run.
   measure:
     kind: observable
     path: fields.acetate
@@ -326,15 +286,13 @@ behavior_tests:
     kind: acceptance_criterion
     op: '>'
     value: 0.0
-    provenance: 'prior: overflow metabolism under an O2 cap secretes acetate → expect field-wide
-      acetate > 0. Observed: field-wide acetate 0 -> ~47.0 over 20 ticks, spreading into a plume
-      around the cell''s footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the
-      plume is the third panel of the baked GIF)'
+    provenance: 'prior: overflow metabolism under an O2 cap secretes acetate → expect field-wide acetate > 0. Observed: field-wide acetate 0 -> ~47.0 over 20 ticks, spreading into a plume around the cell''s footprint (tests/test_flagship_field.py::test_flagship_sense_act_loop; the plume is the third panel of the baked GIF)'
   requires_simulation: single-cell-in-a-field
 - name: net-glucose-consumed
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
-  description: Net field-wide glucose falls over the run — the cell is a genuine sink on the
-    shared field, not merely redistributing it.
+  description: Net field-wide glucose falls over the run — the cell is a genuine sink on the shared field, not merely redistributing it.
   measure:
     kind: observable
     path: fields.glucose
@@ -343,27 +301,14 @@ behavior_tests:
     kind: acceptance_criterion
     op: <
     value: 5940.0
-    provenance: 'prior: a metabolizing cell is a net sink on the shared field → expect total glucose
-      to fall below its 5940.0 initial. Observed: field-wide glucose total 5940.0 -> ~5908.4 over 20
-      ticks (~32 units net consumed); the local footprint drawdown is much sharper — ~18%
-      peak-to-trough (the peak is created by diffusion inflow after t=0) and ~6% from the initial
-      condition — than the field-wide total, because only the cell''s footprint and its immediate
-      diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
+    provenance: 'prior: a metabolizing cell is a net sink on the shared field → expect total glucose to fall below its 5940.0 initial. Observed: field-wide glucose total 5940.0 -> ~5908.4 over 20 ticks (~32 units net consumed); the local footprint drawdown is much sharper — ~18% peak-to-trough (the peak is created by diffusion inflow after t=0) and ~6% from the initial condition — than the field-wide total, because only the cell''s footprint and its immediate diffusive neighborhood are touched (tests/test_flagship_field.py::test_flagship_sense_act_loop)'
   requires_simulation: single-cell-in-a-field
 - name: o2-cap-forces-acetate-overflow
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: diagnostic
   control: negative
-  description: 'Foundational mechanism control (not this study''s scientific claim): the acetate
-    the flagship secretes is CAUSED BY the O2 cap, not an artifact of the coupling. This runs a
-    second composite (`single-cell-in-a-field-o2uncapped`) identical to the flagship except the
-    oxygen bound is lifted (`oxygen_vmax` 2.5 -> 1000, EX_o2_e effectively unbounded). With
-    respiration no longer capacity-limited, unconstrained e_coli_core takes pure aerobic
-    respiration as growth-optimal and EX_ac_e sits at 0 — so the cell secretes ~0 acetate (and
-    grows faster: biomass ~2.35 vs the capped ~0.37), while the capped flagship secretes a real
-    plume. This turns the study''s overflow claim ("the O2 cap is what forces the optimizer into
-    mixed-acid overflow") from a code assertion into a demonstrated experiment. The flagship
-    was built first and, unlike the later studies, had no such foundational control until this
-    pass; this is it.'
+  description: 'Foundational mechanism control (not this study''s scientific claim): the acetate the flagship secretes is CAUSED BY the O2 cap, not an artifact of the coupling. This runs a second composite (`single-cell-in-a-field-o2uncapped`) identical to the flagship except the oxygen bound is lifted (`oxygen_vmax` 2.5 -> 1000, EX_o2_e effectively unbounded). With respiration no longer capacity-limited, unconstrained e_coli_core takes pure aerobic respiration as growth-optimal and EX_ac_e sits at 0 — so the cell secretes ~0 acetate (and grows faster: biomass ~2.35 vs the capped ~0.37), while the capped flagship secretes a real plume. This turns the study''s overflow claim ("the O2 cap is what forces the optimizer into mixed-acid overflow") from a code assertion into a demonstrated experiment. The flagship was built first and, unlike the later studies, had no such foundational control until this pass; this is it.'
   measure:
     kind: observable
     path: fields.acetate
@@ -372,26 +317,13 @@ behavior_tests:
     kind: acceptance_criterion
     op: approx_equal
     value: 0.0
-    provenance: 'prior: lifting the O2 cap removes the overflow driver, so unconstrained e_coli_core
-      respires fully → expect uncapped acetate ≈ 0. Observed field-wide acetate over 20 ticks: capped
-      flagship 0 -> ~47.0, O2-uncapped 0 -> 0.0 (exactly), a >100x collapse; uncapped biomass ~2.35 vs
-      capped ~0.37 (the cell respires fully instead of overflowing)
-      (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow;
-      composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json)'
+    provenance: 'prior: lifting the O2 cap removes the overflow driver, so unconstrained e_coli_core respires fully → expect uncapped acetate ≈ 0. Observed field-wide acetate over 20 ticks: capped flagship 0 -> ~47.0, O2-uncapped 0 -> 0.0 (exactly), a >100x collapse; uncapped biomass ~2.35 vs capped ~0.37 (the cell respires fully instead of overflowing) (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow; composite meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json)'
   requires_simulation: single-cell-in-a-field-o2uncapped
 - name: field-mass-balance-closes
+  gate_class: regression_pin
   classification: diagnostic
   control: positive
-  description: 'Foundational conservation control (not this study''s scientific claim): the paper
-    frames conservation laws (mass, energy balance) as interface constraints on any coupling. This
-    runs the flagship composite through a closed per-species ledger — for glucose and acetate,
-    initial_field_mass + Σ(every writer''s own reported net exchange) == final_field_mass — where
-    the writer''s reported delta and what actually accumulates in the shared grid travel through two
-    independent code paths (the process''s per-tick arithmetic vs process-bigraph''s additive
-    `apply` for a `map[array]` port), so a clamp that manufactures mass, a double-write, or a
-    schema `apply` that concatenates instead of sums surfaces as a nonzero residual. The ledger
-    also shows the cell nets a glucose sink and an acetate source while DiffusionAdvection under
-    Neumann BC nets ~0.'
+  description: 'Foundational conservation control (not this study''s scientific claim): the paper frames conservation laws (mass, energy balance) as interface constraints on any coupling. This runs the flagship composite through a closed per-species ledger — for glucose and acetate, initial_field_mass + Σ(every writer''s own reported net exchange) == final_field_mass — where the writer''s reported delta and what actually accumulates in the shared grid travel through two independent code paths (the process''s per-tick arithmetic vs process-bigraph''s additive `apply` for a `map[array]` port), so a clamp that manufactures mass, a double-write, or a schema `apply` that concatenates instead of sums surfaces as a nonzero residual. The ledger also shows the cell nets a glucose sink and an acetate source while DiffusionAdvection under Neumann BC nets ~0.'
   measure:
     kind: observable
     path: fields.glucose, fields.acetate
@@ -400,12 +332,10 @@ behavior_tests:
     kind: regression_pin
     op: <
     value: 1.0e-06
-    provenance: 'both glucose and acetate ledgers close to < 1e-6 over 15 ticks; cell net glucose
-      < 0 (sink) and net acetate > 0 (source), diff net ~0 for both
-      (tests/test_mass_balance.py::test_flagship_field_mass_balance_closes;
-      meta_modelers_guide/analysis/mass_balance.py)'
+    provenance: 'both glucose and acetate ledgers close to < 1e-6 over 15 ticks; cell net glucose < 0 (sink) and net acetate > 0 (source), diff net ~0 for both (tests/test_mass_balance.py::test_flagship_field_mass_balance_closes; meta_modelers_guide/analysis/mass_balance.py)'
   requires_simulation: single-cell-in-a-field
 - name: interface-substitutable-across-mechanisms
+  gate_class: regression_pin
   classification: primary
   description: 'Surrogate calibration of the paper''s substitutability idea (the TUNED-condition
 
@@ -430,14 +360,11 @@ behavior_tests:
     kind: regression_pin
     op: <
     value: 0.30
-    provenance: 'over 20 ticks (tests/test_substitutability.py::test_interface_observables_substitutable):
-      biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 (10%), field-wide acetate 47.02 vs
-      47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — every interface observable within ~10%;
-      the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the surrogate-model
-      payoff. The 4 MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to
-      match (4 knobs fit to 4 observables — exactly determined); the held-out gate below tests them frozen.'
+    provenance: 'over 20 ticks (tests/test_substitutability.py::test_interface_observables_substitutable): biomass dFBA 0.370 vs MM 0.342 (7.5%), CPM volume 110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — every interface observable within ~10%; the MM path also runs with NO cobra (test_mm_mechanism_runs_without_cobra), the surrogate-model payoff. The 4 MM params (mm_vmax 4.0, mm_km 0.5, mm_yield 0.024, mm_overflow 1.4) were tuned to match (4 knobs fit to 4 observables — exactly determined); the held-out gate below tests them frozen.'
   requires_simulation: single-cell-in-a-field-mm
 - name: interface-substitutable-held-out
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'HELD-OUT test of the surrogate (peer-review M2) — the real conversion of surrogate
 
@@ -466,28 +393,14 @@ behavior_tests:
     kind: acceptance_criterion
     op: <
     value: 0.15
-    provenance: 'HELD-OUT, MM params frozen (tests/test_substitutability_heldout.py). GATE — held-out
-      glucose field flat 3.0 over 20 ticks — biomass dFBA 0.531 vs MM 0.480 (9.7%), CPM volume 160 vs
-      141 (11.9%), acetate 74.9 vs 73.8 (1.4%), net glucose depleted 49.1 vs 52.7 (7.3%) — worst 11.9%,
-      within the 0.15 band (::test_heldout_glucose_field_substitutable). CORROBORATION — 40-tick run —
-      biomass 1.282 vs 1.123 (12.4%), volume 383 vs 335 (12.5%), acetate 207 vs 199 (4.1%), glucose
-      139 vs 142 (2.0%) — worst 12.5% (::test_heldout_longer_run_substitutable). BOUNDARY (diagnostic,
-      not gated small) — held-out O2 cap 2.5→5.0 diverges 73-74% on biomass/volume (dFBA 1.282/382 vs
-      frozen MM 0.342/99): the surrogate is blind to O2 (::test_surrogate_is_blind_to_oxygen_heldout).
-      Degrees of freedom — 4 free MM params vs 4 interface observables (exactly determined), so the
-      tuned fit was guaranteed; the held-out agreement in-regime is the real evidence.'
+    provenance: 'HELD-OUT, MM params frozen (tests/test_substitutability_heldout.py). GATE — held-out glucose field flat 3.0 over 20 ticks — biomass dFBA 0.531 vs MM 0.480 (9.7%), CPM volume 160 vs 141 (11.9%), acetate 74.9 vs 73.8 (1.4%), net glucose depleted 49.1 vs 52.7 (7.3%) — worst 11.9%, within the 0.15 band (::test_heldout_glucose_field_substitutable). CORROBORATION — 40-tick run — biomass 1.282 vs 1.123 (12.4%), volume 383 vs 335 (12.5%), acetate 207 vs 199 (4.1%), glucose 139 vs 142 (2.0%) — worst 12.5% (::test_heldout_longer_run_substitutable). BOUNDARY (diagnostic, not gated small) — held-out O2 cap 2.5→5.0 diverges 73-74% on biomass/volume (dFBA 1.282/382 vs frozen MM 0.342/99): the surrogate is blind to O2 (::test_surrogate_is_blind_to_oxygen_heldout). Degrees of freedom — 4 free MM params vs 4 interface observables (exactly determined), so the tuned fit was guaranteed; the held-out agreement in-regime is the real evidence.'
   requires_simulation: single-cell-in-a-field-mm
 - name: steadystate-flux-equilibrium
+  cites: [beer2024deriving]
   classification: diagnostic
   control: positive
   gate_class: acceptance_criterion
-  description: 'M7d steady-state check (peer review) — the flagship is a pure transient with
-    no source terms, so every flagship number is a transient reading, never a source/sink
-    equilibrium. The `single-cell-in-a-field-steadystate` variant adds a first-order glucose
-    source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and
-    is run ~120 ticks to a VERIFIED flux steady state — d(biomass)/dt and both field fluxes
-    fall below tolerance while the cell keeps metabolizing at maintenance. This answers the
-    limitation the flagship itself flags (the field has no continuous source or decay term).'
+  description: 'M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a source/sink equilibrium. The `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and is run ~120 ticks to a VERIFIED flux steady state — d(biomass)/dt and both field fluxes fall below tolerance while the cell keeps metabolizing at maintenance. This answers the limitation the flagship itself flags (the field has no continuous source or decay term).'
   measure:
     kind: observable
     path: obs.biomass, fields.glucose, fields.acetate
@@ -496,28 +409,13 @@ behavior_tests:
     kind: acceptance_criterion
     op: <
     value: 0.001
-    provenance: 'STEADY STATE REACHED. Criterion — over the final 10 of 120 ticks the max
-      per-tick relative change of biomass and of both field totals is < 0.1%. Measured
-      (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state) —
-      biomass 0.0015%/tick, field glucose 0.0001%/tick, field acetate 0.014%/tick, all three
-      below the 0.1% tolerance. Standing steady-state values — biomass ~0.500 (the
-      biomass_capacity ceiling), CPM volume ~147 px (stable to CPM thermal noise ~3 px),
-      local footprint glucose ~1.356, field glucose total ~5372 (uptake balanced by source),
-      field acetate total ~31.5 (secretion balanced by decay). The cell is alive and
-      metabolizing at the fixed point, not a dead/zeroed field.'
+    provenance: 'STEADY STATE REACHED. Criterion — over the final 10 of 120 ticks the max per-tick relative change of biomass and of both field totals is < 0.1%. Measured (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state) — biomass 0.0015%/tick, field glucose 0.0001%/tick, field acetate 0.014%/tick, all three below the 0.1% tolerance. Standing steady-state values — biomass ~0.500 (the biomass_capacity ceiling), CPM volume ~147 px (stable to CPM thermal noise ~3 px), local footprint glucose ~1.356, field glucose total ~5372 (uptake balanced by source), field acetate total ~31.5 (secretion balanced by decay). The cell is alive and metabolizing at the fixed point, not a dead/zeroed field.'
   requires_simulation: single-cell-in-a-field-steadystate
 - name: cadence-convergence
   classification: diagnostic
   control: positive
-  gate_class: rigor_check
-  description: 'M7d cadence rigor check (peer review) — the flagship''s operator-split
-    CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are
-    CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 ->
-    0.5 -> 0.25) and measuring the drift in the four gated observables between the two finest
-    levels tests whether the pinned trajectories are cadence-converged. Convergence band is
-    <= 10%. HONEST two-sided result — the three TIME-INTEGRATED gated observables converge
-    tightly, but the INSTANTANEOUS local-footprint glucose does NOT (it is the one pinned
-    trajectory that moves under refinement, flagged on F-02 below).'
+  gate_class: regression_pin
+  description: 'M7d cadence rigor check (peer review) — the flagship''s operator-split CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are CFL-guarded today. Halving then quartering the coupling cadence (sub-step interval 1 -> 0.5 -> 0.25) and measuring the drift in the four gated observables between the two finest levels tests whether the pinned trajectories are cadence-converged. Convergence band is <= 10%. HONEST two-sided result — the three TIME-INTEGRATED gated observables converge tightly, but the INSTANTANEOUS local-footprint glucose does NOT (it is the one pinned trajectory that moves under refinement, flagged on F-02 below).'
   measure:
     kind: observable
     path: obs.biomass, obs.volume, fields.acetate, fields.glucose, obs.local_nutrient
@@ -526,28 +424,13 @@ behavior_tests:
     kind: rigor_check
     op: <
     value: 0.10
-    provenance: 'MEASURED drift between the finest two cadences (0.25 vs 0.5), deterministic
-      fixed-seed run (tests/test_flagship_field.py::test_flagship_cadence_convergence).
-      CONVERGED within the 10% band — final biomass 1.6%, CPM volume 2.6%, net glucose
-      depleted 1.8%, field-wide acetate 1.7% (values — biomass 0.375 vs 0.381, volume 111 vs
-      114, net glucose 32.3 vs 32.9, acetate 48.1 vs 49.0). NOT CONVERGED — the instantaneous
-      local-footprint glucose (obs.local_nutrient) drifts 15.7% (0.864 vs 1.025), EXCEEDING
-      the band, because it is a single-tick snapshot over a stochastically-shifting CPM
-      footprint and the CPM''s fixed mcs_per_update is NOT interval-scaled (halving the
-      cadence doubles the total Monte-Carlo relaxation the lattice receives). Finding — the
-      integrated flagship claims (biomass/volume growth, acetate plume, net glucose sink)
-      are cadence-robust; the local-depletion pin (F-02''s 0.94 / ~18% peak-to-trough / ~6%
-      from initial) is cadence-sensitive and is re-levelled to an approximate, not
-      cadence-converged, reading.'
+    provenance: 'MEASURED drift between the finest two cadences (0.25 vs 0.5), deterministic fixed-seed run (tests/test_flagship_field.py::test_flagship_cadence_convergence). CONVERGED within the 10% band — final biomass 1.6%, CPM volume 2.6%, net glucose depleted 1.8%, field-wide acetate 1.7% (values — biomass 0.375 vs 0.381, volume 111 vs 114, net glucose 32.3 vs 32.9, acetate 48.1 vs 49.0). NOT CONVERGED — the instantaneous local-footprint glucose (obs.local_nutrient) drifts 15.7% (0.864 vs 1.025), EXCEEDING the band, because it is a single-tick snapshot over a stochastically-shifting CPM footprint and the CPM''s fixed mcs_per_update is NOT interval-scaled (halving the cadence doubles the total Monte-Carlo relaxation the lattice receives). Finding — the integrated flagship claims (biomass/volume growth, acetate plume, net glucose sink) are cadence-robust; the local-depletion pin (F-02''s 0.94 / ~18% peak-to-trough / ~6% from initial) is cadence-sensitive and is re-levelled to an approximate, not cadence-converged, reading.'
   requires_simulation: single-cell-in-a-field
 - name: chemotaxis-moves-cell-up-gradient-and-helps
+  cites: [beer2024deriving]
   classification: primary
   gate_class: acceptance_criterion
-  description: 'The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up
-    the sensed glucose gradient (+x) while the non-motile flagship control barely drifts on the
-    identical field, and by reaching the richer region it acquires more glucose and grows more.
-    Measured head-to-head over 20 ticks — up-gradient displacement (chemo vs control), sensed
-    local glucose, net glucose acquired, biomass, and CPM volume.'
+  description: 'The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up the sensed glucose gradient (+x) while the non-motile flagship control barely drifts on the identical field, and by reaching the richer region it acquires more glucose and grows more. Measured head-to-head over 20 ticks — up-gradient displacement (chemo vs control), sensed local glucose, net glucose acquired, biomass, and CPM volume.'
   measure:
     kind: observable
     path: obs.position, obs.local_nutrient, obs.biomass, obs.volume, fields.glucose
@@ -556,24 +439,13 @@ behavior_tests:
     kind: acceptance_criterion
     op: '>'
     value: 10.0
-    provenance: 'MEASURED, deterministic fixed-seed run (tests/test_chemotaxis_field.py::test_chemotaxis_moves_cell_up_gradient_and_helps_growth).
-      DIRECTED MOTION — chemotaxis COM x 18.5 → 39.3 (+20.8 px up-gradient) vs flagship control
-      18.5 → 18.73 (+0.2 px thermal drift), ~90× — pass_if value 10.0 is the up-gradient
-      displacement floor the migrating cell clears (+20.8) and the control does not (+0.2).
-      REACHES RICHER REGION — sensed local glucose 1.95 vs 0.94 (~2.1×). HELPS — net glucose
-      acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs 110 px
-      (+36%). Directed up-gradient motion is genuinely achieved and measurably improves nutrient
-      acquisition and growth versus the non-motile flagship on the same field.'
+    provenance: 'MEASURED, deterministic fixed-seed run (tests/test_chemotaxis_field.py::test_chemotaxis_moves_cell_up_gradient_and_helps_growth). DIRECTED MOTION — chemotaxis COM x 18.5 → 39.3 (+20.8 px up-gradient) vs flagship control 18.5 → 18.73 (+0.2 px thermal drift), ~90× — pass_if value 10.0 is the up-gradient displacement floor the migrating cell clears (+20.8) and the control does not (+0.2). REACHES RICHER REGION — sensed local glucose 1.95 vs 0.94 (~2.1×). HELPS — net glucose acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs 110 px (+36%). Directed up-gradient motion is genuinely achieved and measurably improves nutrient acquisition and growth versus the non-motile flagship on the same field.'
   requires_simulation: single-cell-in-a-field-chemotaxis
 - name: chemotaxis-off-is-byte-identical-to-flagship
   classification: diagnostic
   control: negative
   gate_class: regression_pin
-  description: 'Byte-identical no-op control — chemotaxis_strength 0.0 (the flagship default)
-    leaves the flagship trajectory unchanged. With the force off, CpmCellField never calls
-    set_external_potential, so the world''s external potential stays all-zero and a run with the
-    flag EXPLICITLY 0.0 is identical, to the bit, to a run with the flag ABSENT. This proves the
-    chemotaxis term is a pure add-on that does not perturb the existing flagship.'
+  description: 'Byte-identical no-op control — chemotaxis_strength 0.0 (the flagship default) leaves the flagship trajectory unchanged. With the force off, CpmCellField never calls set_external_potential, so the world''s external potential stays all-zero and a run with the flag EXPLICITLY 0.0 is identical, to the bit, to a run with the flag ABSENT. This proves the chemotaxis term is a pure add-on that does not perturb the existing flagship.'
   measure:
     kind: observable
     path: obs.biomass, obs.volume, obs.position
@@ -582,10 +454,7 @@ behavior_tests:
     kind: regression_pin
     op: approx_equal
     value: 0.0
-    provenance: 'MEASURED (tests/test_chemotaxis_field.py::test_chemotaxis_off_is_byte_identical_to_flagship)
-      — flag-absent and flag-explicitly-0.0 runs return bit-identical (biomass, volume, COM-x,
-      COM-y); the flagship endpoints are unchanged (biomass ~0.369, CPM volume 110, only thermal
-      up-gradient drift). The chemotaxis term is off-by-default and byte-identical to the flagship.'
+    provenance: 'MEASURED (tests/test_chemotaxis_field.py::test_chemotaxis_off_is_byte_identical_to_flagship) — flag-absent and flag-explicitly-0.0 runs return bit-identical (biomass, volume, COM-x, COM-y); the flagship endpoints are unchanged (biomass ~0.369, CPM volume 110, only thermal up-gradient drift). The chemotaxis term is off-by-default and byte-identical to the flagship.'
   requires_simulation: single-cell-in-a-field
 runs:
 - name: single-cell-in-a-field
@@ -593,11 +462,7 @@ runs:
   emitter: RAMEmitter
   id: single-cell-in-a-field
   status: completed
-  provenance: 'tests/test_flagship_field.py, tests/test_cpm_cell_field.py, tests/test_cpm_viz.py —
-    single-cell-in-a-field.composite.json run to completion through the process-bigraph engine
-    (20 ticks, cadence 1); the baked GIF + metrics panel in viz/ were re-rendered directly via
-    meta_modelers_guide.cpm.viz.run_flagship_frames/frames_to_gif/metrics_panel over the same
-    20-tick run for this study.'
+  provenance: 'tests/test_flagship_field.py, tests/test_cpm_cell_field.py, tests/test_cpm_viz.py — single-cell-in-a-field.composite.json run to completion through the process-bigraph engine (20 ticks, cadence 1); the baked GIF + metrics panel in viz/ were re-rendered directly via meta_modelers_guide.cpm.viz.run_flagship_frames/frames_to_gif/metrics_panel over the same 20-tick run for this study.'
   params: {}
   outcomes:
     cell-metabolizes-and-grows:
@@ -611,42 +476,27 @@ runs:
       detail: field-wide acetate 0 -> ~47.0 as the plume spreads
     net-glucose-consumed:
       result: PASS
-      detail: field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown ~18% peak-to-trough
-        (~6% from initial)
+      detail: field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown ~18% peak-to-trough (~6% from initial)
     field-mass-balance-closes:
       result: PASS
-      detail: 'both glucose and acetate ledgers close to < 1e-6 (|final_mass - (initial_mass + Σ
-        writer_net_exchange)|) over the run; cell net glucose < 0 (sink), net acetate > 0 (source)
-        — verified by tests/test_mass_balance.py::test_flagship_field_mass_balance_closes (now runs
-        under the viva_cpm guard; previously skipped)'
+      detail: 'both glucose and acetate ledgers close to < 1e-6 (|final_mass - (initial_mass + Σ writer_net_exchange)|) over the run; cell net glucose < 0 (sink), net acetate > 0 (source) — verified by tests/test_mass_balance.py::test_flagship_field_mass_balance_closes (now runs under the viva_cpm guard; previously skipped)'
 - name: single-cell-in-a-field-o2uncapped
   composite: single-cell-in-a-field-o2uncapped
   emitter: RAMEmitter
   id: single-cell-in-a-field-o2uncapped
   status: completed
-  provenance: 'O2-uncapped mechanism control (foundational, not the scientific claim):
-    meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json — identical to
-    the flagship except oxygen_vmax 2.5 -> 1000 — run 20 ticks through the process-bigraph engine
-    (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow) head-to-head with
-    the capped flagship.'
+  provenance: 'O2-uncapped mechanism control (foundational, not the scientific claim): meta_modelers_guide/composites/single-cell-in-a-field-o2uncapped.composite.json — identical to the flagship except oxygen_vmax 2.5 -> 1000 — run 20 ticks through the process-bigraph engine (tests/test_flagship_field.py::test_o2_cap_is_what_forces_acetate_overflow) head-to-head with the capped flagship.'
   params: {}
   outcomes:
     o2-cap-forces-acetate-overflow:
       result: PASS
-      detail: 'uncapped field-wide acetate 0 -> 0.0 (exactly) vs capped 0 -> ~47.0; uncapped
-        biomass ~2.35 vs capped ~0.37 — full respiration, no overflow'
+      detail: 'uncapped field-wide acetate 0 -> 0.0 (exactly) vs capped 0 -> ~47.0; uncapped biomass ~2.35 vs capped ~0.37 — full respiration, no overflow'
 - name: single-cell-in-a-field-mm
   composite: single-cell-in-a-field-mm
   emitter: RAMEmitter
   id: single-cell-in-a-field-mm
   status: completed
-  provenance: 'Interface surrogate-calibration twin (a tuned MM stand-in testing the paper''s
-    §2 / §Cellular interface substitutability idea at the level of surrogate calibration): meta_modelers_guide/composites/single-cell-in-a-field-mm.composite.json
-    — identical to the flagship except the cell''s internal metabolism is swapped from dFBA to a
-    lumped, cobra-free Michaelis–Menten metabolism (mechanism: mm) behind the byte-identical
-    CpmCellField ports — run 20 ticks through the process-bigraph engine head-to-head with the dFBA
-    flagship (tests/test_substitutability.py::test_interface_observables_substitutable and
-    ::test_mm_mechanism_runs_without_cobra).'
+  provenance: 'Interface surrogate-calibration twin (a tuned MM stand-in testing the paper''s §2 / §Cellular interface substitutability idea at the level of surrogate calibration): meta_modelers_guide/composites/single-cell-in-a-field-mm.composite.json — identical to the flagship except the cell''s internal metabolism is swapped from dFBA to a lumped, cobra-free Michaelis–Menten metabolism (mechanism: mm) behind the byte-identical CpmCellField ports — run 20 ticks through the process-bigraph engine head-to-head with the dFBA flagship (tests/test_substitutability.py::test_interface_observables_substitutable and ::test_mm_mechanism_runs_without_cobra).'
   params:
     mechanism: mm
     mm_vmax: 4.0
@@ -656,26 +506,16 @@ runs:
   outcomes:
     interface-substitutable-across-mechanisms:
       result: PASS
-      detail: 'dFBA vs MM over 20 ticks (tuned condition): biomass 0.370 vs 0.342 (7.5%), CPM volume
-        110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6
-        (6.2%) — a tuned surrogate reproduces the coarse-grained interface'
+      detail: 'dFBA vs MM over 20 ticks (tuned condition): biomass 0.370 vs 0.342 (7.5%), CPM volume 110 vs 99 (10%), field-wide acetate 47.02 vs 47.02 (~0%), net glucose depleted 31.6 vs 33.6 (6.2%) — a tuned surrogate reproduces the coarse-grained interface'
     interface-substitutable-held-out:
       result: PASS
-      detail: 'HELD-OUT, MM params frozen — flat-3.0 glucose field within 11.9%, 40-tick run within
-        12.5% (mechanism-independent in-regime); but a held-out O2 cap 2.5→5.0 diverges ~74% —
-        the MM surrogate is blind to oxygen (the honest boundary of the swap)'
+      detail: 'HELD-OUT, MM params frozen — flat-3.0 glucose field within 11.9%, 40-tick run within 12.5% (mechanism-independent in-regime); but a held-out O2 cap 2.5→5.0 diverges ~74% — the MM surrogate is blind to oxygen (the honest boundary of the swap)'
 - name: single-cell-in-a-field-steadystate
   composite: single-cell-in-a-field-steadystate
   emitter: RAMEmitter
   id: single-cell-in-a-field-steadystate
   status: completed
-  provenance: 'M7d steady-state variant (peer review):
-    meta_modelers_guide/composites/single-cell-in-a-field-steadystate.composite.json —
-    identical to the flagship except the CpmCellField adds a first-order glucose source
-    (rate 0.15 toward setpoint 1.5), a first-order acetate decay sink (rate 0.2), and a
-    logistic biomass carrying capacity (0.5) — run ~120 ticks to a verified flux steady
-    state through the process-bigraph engine
-    (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state).'
+  provenance: 'M7d steady-state variant (peer review): meta_modelers_guide/composites/single-cell-in-a-field-steadystate.composite.json — identical to the flagship except the CpmCellField adds a first-order glucose source (rate 0.15 toward setpoint 1.5), a first-order acetate decay sink (rate 0.2), and a logistic biomass carrying capacity (0.5) — run ~120 ticks to a verified flux steady state through the process-bigraph engine (tests/test_flagship_field.py::test_steadystate_regime_reaches_flux_steady_state).'
   params:
     glucose_source_rate: 0.15
     glucose_source_target: 1.5
@@ -684,20 +524,13 @@ runs:
   outcomes:
     steadystate-flux-equilibrium:
       result: PASS
-      detail: 'verified steady state by ~t=100-120 — per-tick relative change biomass
-        0.0015%, glucose 0.0001%, acetate 0.014% (all < 0.1%); standing values biomass
-        ~0.500, volume ~147 px, local glucose ~1.356, field glucose ~5372, field acetate
-        ~31.5 (uptake balanced by source, secretion balanced by decay)'
+      detail: 'verified steady state by ~t=100-120 — per-tick relative change biomass 0.0015%, glucose 0.0001%, acetate 0.014% (all < 0.1%); standing values biomass ~0.500, volume ~147 px, local glucose ~1.356, field glucose ~5372, field acetate ~31.5 (uptake balanced by source, secretion balanced by decay)'
 - name: single-cell-in-a-field-cadence
   composite: single-cell-in-a-field
   emitter: RAMEmitter
   id: single-cell-in-a-field-cadence
   status: completed
-  provenance: 'M7d cadence convergence (peer review): the flagship composite
-    (single-cell-in-a-field.composite.json) run over 20 ticks at coupling cadence 1, 0.5,
-    and 0.25 (CpmCellField + DiffusionAdvection sub-step interval), comparing the drift in
-    the four gated observables between the two finest levels
-    (tests/test_flagship_field.py::test_flagship_cadence_convergence).'
+  provenance: 'M7d cadence convergence (peer review): the flagship composite (single-cell-in-a-field.composite.json) run over 20 ticks at coupling cadence 1, 0.5, and 0.25 (CpmCellField + DiffusionAdvection sub-step interval), comparing the drift in the four gated observables between the two finest levels (tests/test_flagship_field.py::test_flagship_cadence_convergence).'
   params:
     cadences:
     - 1.0
@@ -706,35 +539,22 @@ runs:
   outcomes:
     cadence-convergence:
       result: PASS
-      detail: 'integrated observables converge within the 10% band (biomass 1.6%, volume
-        2.6%, net glucose 1.8%, acetate 1.7% between cadence 0.25 and 0.5); but instantaneous
-        local-footprint glucose drifts 15.7% — NOT cadence-converged (F-02''s local-depletion
-        pin re-levelled to approximate)'
+      detail: 'integrated observables converge within the 10% band (biomass 1.6%, volume 2.6%, net glucose 1.8%, acetate 1.7% between cadence 0.25 and 0.5); but instantaneous local-footprint glucose drifts 15.7% — NOT cadence-converged (F-02''s local-depletion pin re-levelled to approximate)'
 - name: single-cell-in-a-field-chemotaxis
   composite: single-cell-in-a-field-chemotaxis
   emitter: RAMEmitter
   id: single-cell-in-a-field-chemotaxis
   status: completed
-  provenance: 'Chemotaxis variant (the deferred half of the paper''s loop, now built and
-    measured): meta_modelers_guide/composites/single-cell-in-a-field-chemotaxis.composite.json —
-    identical to the flagship except CpmCellField adds a gradient-directed external-potential
-    force (chemotaxis_strength 50.0) behind the same ports — run 20 ticks through the
-    process-bigraph engine head-to-head with the non-motile flagship control on the identical
-    field (tests/test_chemotaxis_field.py::test_chemotaxis_moves_cell_up_gradient_and_helps_growth
-    and ::test_chemotaxis_off_is_byte_identical_to_flagship). Deterministic (fixed CPM seed).'
+  provenance: 'Chemotaxis variant (the deferred half of the paper''s loop, now built and measured): meta_modelers_guide/composites/single-cell-in-a-field-chemotaxis.composite.json — identical to the flagship except CpmCellField adds a gradient-directed external-potential force (chemotaxis_strength 50.0) behind the same ports — run 20 ticks through the process-bigraph engine head-to-head with the non-motile flagship control on the identical field (tests/test_chemotaxis_field.py::test_chemotaxis_moves_cell_up_gradient_and_helps_growth and ::test_chemotaxis_off_is_byte_identical_to_flagship). Deterministic (fixed CPM seed).'
   params:
     chemotaxis_strength: 50.0
   outcomes:
     chemotaxis-moves-cell-up-gradient-and-helps:
       result: PASS
-      detail: 'directed up-gradient motion achieved and it helps — COM x 18.5 → 39.3 (+20.8 px)
-        vs flagship control +0.2 px (~90×); sensed local glucose 1.95 vs 0.94 (~2.1×); net
-        glucose acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs
-        110 px (+36%)'
+      detail: 'directed up-gradient motion achieved and it helps — COM x 18.5 → 39.3 (+20.8 px) vs flagship control +0.2 px (~90×); sensed local glucose 1.95 vs 0.94 (~2.1×); net glucose acquired 36.8 vs 31.6 (+16%), biomass 0.418 vs 0.370 (+13%), CPM volume 150 vs 110 px (+36%)'
     chemotaxis-off-is-byte-identical-to-flagship:
       result: PASS
-      detail: 'chemotaxis_strength 0.0 is a bit-exact no-op — flag-absent and flag-explicitly-0.0
-        runs are identical; the flagship trajectory (biomass ~0.369, volume 110) is unchanged'
+      detail: 'chemotaxis_strength 0.0 is a bit-exact no-op — flag-absent and flag-explicitly-0.0 runs are identical; the flagship trajectory (biomass ~0.369, volume 110) is unchanged'
 findings:
 - id: F-01
   kind: biological
@@ -768,6 +588,7 @@ findings:
     - 'GO:0040007 -- growth (biomass driving CPM target-volume growth; QUANTITY_TERMS growth_rate)'
     - 'PATO:0000918 -- volume (the CPM lattice-pixel volume, 32 -> 110 px; QUANTITY_TERMS volume)'
     ontology_note: 'Terms from meta_modelers_guide/ontology.py -- a curated keyword->term label map (QUANTITY_TERMS / PROCESS_KEYWORDS), not an ontology reasoner: it labels the interface quantities and process kinds, it does not resolve or verify them against an ontology service. Cross-references re-confirmed against workbench 0.4.1.'
+  explanation: "Both acceptance checks behind this finding pass on the single-cell-in-a-field run, but they carry different evidential weight. The biomass check tests a biological prior — a cell metabolizing at its footprint should finish above its 0.1 seed — so clearing it is genuine evidence that dynamic-FBA is doing spatial-metabolic work. The CPM-volume check is a regression pin set after the run (a floor above the seed volume), so it guards against drift rather than confirming an independently calibrated prediction. Read together they establish the mechanism the paper's cell–environment coupling section calls for: the CpmCellField process runs metabolism at the cell's own lattice footprint and lets that metabolism drive structural growth, closing the sense → metabolize → secrete loop rather than replaying a scripted trajectory. The scope is deliberately narrow — one seed, one 60x60 lattice, 20 ticks, the cell still occupying only a few percent of the field at the end. The loop is closed and measured here; directed, up-gradient control is demonstrated separately in the chemotaxis variant (F-08), not by this run."
 - id: F-02
   kind: biological
   tier: mechanism
@@ -807,9 +628,7 @@ findings:
   evidence:
     from_test: net-glucose-consumed
     from_run: single-cell-in-a-field
-    observed: local footprint glucose 1.15 -> 0.94 (~18% peak-to-trough, ~6% from initial — approximate,
-      NOT cadence-converged — see cadence-convergence, ~16% drift under cadence halving); field-wide glucose
-      5940.0 -> ~5908.4 (net consumption cadence-converged < 2%)
+    observed: local footprint glucose 1.15 -> 0.94 (~18% peak-to-trough, ~6% from initial — approximate, NOT cadence-converged — see cadence-convergence, ~16% drift under cadence halving); field-wide glucose 5940.0 -> ~5908.4 (net consumption cadence-converged < 2%)
   provenance:
     run_ids:
     - single-cell-in-a-field
@@ -948,9 +767,7 @@ findings:
   evidence:
     from_test: interface-substitutable-held-out
     from_run: single-cell-in-a-field-mm
-    observed: 'TUNED (20 ticks): biomass 0.370 vs 0.342 (7.5%), volume 110 vs 99 (10%), acetate 47.02
-      vs 47.02 (~0%), glucose 31.6 vs 33.6 (6.2%). HELD-OUT frozen: flat-3.0 field within 11.9%,
-      40-tick within 12.5%; held-out O2 cap 2.5→5.0 diverges ~74% (MM blind to O2). MM runs cobra-free'
+    observed: 'TUNED (20 ticks): biomass 0.370 vs 0.342 (7.5%), volume 110 vs 99 (10%), acetate 47.02 vs 47.02 (~0%), glucose 31.6 vs 33.6 (6.2%). HELD-OUT frozen: flat-3.0 field within 11.9%, 40-tick within 12.5%; held-out O2 cap 2.5→5.0 diverges ~74% (MM blind to O2). MM runs cobra-free'
   provenance:
     run_ids:
     - single-cell-in-a-field
@@ -965,27 +782,11 @@ findings:
   kind: methodological
   tier: mechanism
   status: confirms
-  statement: 'STEADY-STATE REGIME (M7d, peer review) — the flagship is a pure transient (no
-    source terms), so every flagship number is a transient reading, never a source/sink
-    equilibrium, and the study itself flags this as a limitation. Adding three cell-independent
-    terms behind the same `CpmCellField` ports — a first-order glucose source (grid-wide
-    relaxation toward a setpoint), a first-order acetate decay sink, and a logistic biomass
-    carrying capacity — turns the composite into a chemostat-like regime that reaches a VERIFIED
-    flux steady state. Confirmed — over the final 10 of 120 ticks the per-tick relative change of
-    biomass (0.0015%), field glucose (0.0001%), and field acetate (0.014%) all fall below the
-    0.1% steady-state tolerance, with standing values biomass ~0.500, CPM volume ~147 px, local
-    glucose ~1.356, field glucose ~5372 (uptake balanced by source), field acetate ~31.5
-    (secretion balanced by decay); the cell is alive and metabolizing at the fixed point. Note —
-    a biomass dilution term alone gives NO interior fixed point in this coupling (per-pixel uptake
-    scales with biomass/footprint-area, so local glucose equilibrates biomass-independently and mu
-    never falls to a dilution rate); the logistic carrying capacity is what forces every flux to a
-    steady state. This demonstrates the source/sink-equilibrium regime the flagship deferred.'
+  statement: 'STEADY-STATE REGIME (M7d, peer review) — the flagship is a pure transient (no source terms), so every flagship number is a transient reading, never a source/sink equilibrium, and the study itself flags this as a limitation. Adding three cell-independent terms behind the same `CpmCellField` ports — a first-order glucose source (grid-wide relaxation toward a setpoint), a first-order acetate decay sink, and a logistic biomass carrying capacity — turns the composite into a chemostat-like regime that reaches a VERIFIED flux steady state. Confirmed — over the final 10 of 120 ticks the per-tick relative change of biomass (0.0015%), field glucose (0.0001%), and field acetate (0.014%) all fall below the 0.1% steady-state tolerance, with standing values biomass ~0.500, CPM volume ~147 px, local glucose ~1.356, field glucose ~5372 (uptake balanced by source), field acetate ~31.5 (secretion balanced by decay); the cell is alive and metabolizing at the fixed point. Note — a biomass dilution term alone gives NO interior fixed point in this coupling (per-pixel uptake scales with biomass/footprint-area, so local glucose equilibrates biomass-independently and mu never falls to a dilution rate); the logistic carrying capacity is what forces every flux to a steady state. This demonstrates the source/sink-equilibrium regime the flagship deferred.'
   evidence:
     from_test: steadystate-flux-equilibrium
     from_run: single-cell-in-a-field-steadystate
-    observed: 'per-tick relative flux < 0.1% over the final 10 of 120 ticks (biomass 0.0015%,
-      glucose 0.0001%, acetate 0.014%); standing values biomass ~0.500, volume ~147 px, local
-      glucose ~1.356, field glucose ~5372, field acetate ~31.5'
+    observed: 'per-tick relative flux < 0.1% over the final 10 of 120 ticks (biomass 0.0015%, glucose 0.0001%, acetate 0.014%); standing values biomass ~0.500, volume ~147 px, local glucose ~1.356, field glucose ~5372, field acetate ~31.5'
   provenance:
     run_ids:
     - single-cell-in-a-field-steadystate
@@ -998,26 +799,11 @@ findings:
   kind: methodological
   tier: mechanism
   status: partial
-  statement: 'CADENCE CONVERGENCE (M7d, peer review) — the flagship''s operator-split
-    CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are
-    CFL-guarded. Halving then quartering the coupling cadence and measuring the drift in the four
-    gated observables between the two finest levels gives an HONEST two-sided result. The three
-    TIME-INTEGRATED gated observables are cadence-robust — between cadence 0.25 and 0.5 final
-    biomass drifts 1.6%, CPM volume 2.6%, net glucose depleted 1.8%, and field-wide acetate 1.7%,
-    all inside the 10% convergence band. But the INSTANTANEOUS local-footprint glucose does NOT
-    converge — it drifts 15.7% (0.864 vs 1.025), exceeding the band, because it is a single-tick
-    snapshot over a stochastically-shifting CPM footprint and the CPM''s fixed mcs_per_update is
-    not interval-scaled (halving the cadence doubles the total Monte-Carlo relaxation the lattice
-    receives). Re-level — the integrated flagship claims (biomass/volume growth, acetate plume, net
-    glucose sink) are cadence-converged and stand as-is; F-02''s LOCAL-DEPLETION pin (the 0.94
-    endpoint, ~18% peak-to-trough, ~6%-from-initial depths) is cadence-sensitive and is re-levelled
-    to an approximate, cadence-1 reading — the one pinned trajectory the cadence check moves.'
+  statement: 'CADENCE CONVERGENCE (M7d, peer review) — the flagship''s operator-split CPM<->dFBA<->diffusion loop runs at coupling cadence 1, and only the PDE substeps are CFL-guarded. Halving then quartering the coupling cadence and measuring the drift in the four gated observables between the two finest levels gives an HONEST two-sided result. The three TIME-INTEGRATED gated observables are cadence-robust — between cadence 0.25 and 0.5 final biomass drifts 1.6%, CPM volume 2.6%, net glucose depleted 1.8%, and field-wide acetate 1.7%, all inside the 10% convergence band. But the INSTANTANEOUS local-footprint glucose does NOT converge — it drifts 15.7% (0.864 vs 1.025), exceeding the band, because it is a single-tick snapshot over a stochastically-shifting CPM footprint and the CPM''s fixed mcs_per_update is not interval-scaled (halving the cadence doubles the total Monte-Carlo relaxation the lattice receives). Re-level — the integrated flagship claims (biomass/volume growth, acetate plume, net glucose sink) are cadence-converged and stand as-is; F-02''s LOCAL-DEPLETION pin (the 0.94 endpoint, ~18% peak-to-trough, ~6%-from-initial depths) is cadence-sensitive and is re-levelled to an approximate, cadence-1 reading — the one pinned trajectory the cadence check moves.'
   evidence:
     from_test: cadence-convergence
     from_run: single-cell-in-a-field
-    observed: 'drift between finest two cadences (0.25 vs 0.5) — biomass 1.6%, volume 2.6%, net
-      glucose 1.8%, acetate 1.7% (all < 10% band); local-footprint glucose 15.7% (exceeds band —
-      NOT converged)'
+    observed: 'drift between finest two cadences (0.25 vs 0.5) — biomass 1.6%, volume 2.6%, net glucose 1.8%, acetate 1.7% (all < 10% band); local-footprint glucose 15.7% (exceeds band — NOT converged)'
   provenance:
     run_ids:
     - single-cell-in-a-field
@@ -1025,30 +811,11 @@ findings:
   kind: biological
   tier: mechanism
   status: confirms
-  statement: 'CHEMOTAXIS — DIRECTED UP-GRADIENT MOTION, BUILT AND MEASURED. The flagship senses,
-    metabolizes, grows, and secretes but does NOT act on what it senses — directed control
-    (chemotaxis up the sensed gradient) was the deferred half of the paper''s sense → metabolize →
-    act loop. The `chemotaxis` variant closes it behind the same `CpmCellField` ports — each tick
-    the coupling process takes grad(glucose) of the SHARED spatio-flux field over the cell''s
-    footprint and sets viva-cpm''s per-type external-potential force f = chemotaxis_strength·grad(glucose),
-    so the Metropolis pixel-copy is biased up-gradient via U(r) = −f·r (the linearized form of
-    CC3D chemotaxis ΔH = −λ·Δc, driven by the external shared field the cell already senses, not a
-    viva-cpm-internal PDE field — which has no write path in this coupling). RESULT — directed
-    up-gradient motion is genuinely achieved and it measurably helps. Over 20 ticks on the identical
-    field the chemotaxis cell migrates from COM x ≈ 18.5 to ≈ 39.3 — a +20.8 px up-gradient
-    displacement versus the non-motile flagship control''s +0.2 px thermal drift (~90×) — reaching a
-    ~2.1× richer local glucose region (sensed local glucose 1.95 vs 0.94) and, for it, acquiring ~16%
-    more glucose (net 36.8 vs 31.6), building ~13% more biomass (0.418 vs 0.370), and growing ~36%
-    more CPM volume (150 vs 110 px). The term is off by default (chemotaxis_strength 0.0 never sets
-    the force → flagship byte-identical). Confirmed — the "chemotaxis is deferred" limitation the
-    flagship flagged is now built and measured, and the honest result is positive on both axes
-    (directed motion AND a nutrient/growth advantage).'
+  statement: 'CHEMOTAXIS — DIRECTED UP-GRADIENT MOTION, BUILT AND MEASURED. The flagship senses, metabolizes, grows, and secretes but does NOT act on what it senses — directed control (chemotaxis up the sensed gradient) was the deferred half of the paper''s sense → metabolize → act loop. The `chemotaxis` variant closes it behind the same `CpmCellField` ports — each tick the coupling process takes grad(glucose) of the SHARED spatio-flux field over the cell''s footprint and sets viva-cpm''s per-type external-potential force f = chemotaxis_strength·grad(glucose), so the Metropolis pixel-copy is biased up-gradient via U(r) = −f·r (the linearized form of CC3D chemotaxis ΔH = −λ·Δc, driven by the external shared field the cell already senses, not a viva-cpm-internal PDE field — which has no write path in this coupling). RESULT — directed up-gradient motion is genuinely achieved and it measurably helps. Over 20 ticks on the identical field the chemotaxis cell migrates from COM x ≈ 18.5 to ≈ 39.3 — a +20.8 px up-gradient displacement versus the non-motile flagship control''s +0.2 px thermal drift (~90×) — reaching a ~2.1× richer local glucose region (sensed local glucose 1.95 vs 0.94) and, for it, acquiring ~16% more glucose (net 36.8 vs 31.6), building ~13% more biomass (0.418 vs 0.370), and growing ~36% more CPM volume (150 vs 110 px). The term is off by default (chemotaxis_strength 0.0 never sets the force → flagship byte-identical). Confirmed — the "chemotaxis is deferred" limitation the flagship flagged is now built and measured, and the honest result is positive on both axes (directed motion AND a nutrient/growth advantage).'
   evidence:
     from_test: chemotaxis-moves-cell-up-gradient-and-helps
     from_run: single-cell-in-a-field-chemotaxis
-    observed: 'COM x 18.5 → 39.3 (+20.8 px up-gradient) vs control +0.2 px (~90×); local glucose
-      1.95 vs 0.94 (~2.1×); net glucose 36.8 vs 31.6 (+16%); biomass 0.418 vs 0.370 (+13%); CPM
-      volume 150 vs 110 px (+36%)'
+    observed: 'COM x 18.5 → 39.3 (+20.8 px up-gradient) vs control +0.2 px (~90×); local glucose 1.95 vs 0.94 (~2.1×); net glucose 36.8 vs 31.6 (+16%); biomass 0.418 vs 0.370 (+13%); CPM volume 150 vs 110 px (+36%)'
   provenance:
     run_ids:
     - single-cell-in-a-field
@@ -1062,59 +829,45 @@ findings:
 conclusion_verdicts:
   regression_compatibility:
     result: PASS
-    basis: 'single-cell-in-a-field.composite.json (and its O2-uncapped control sibling
-      single-cell-in-a-field-o2uncapped.composite.json) build and run to completion through the
-      process-bigraph engine (tests/test_flagship_field.py, tests/test_cpm_cell_field.py,
-      tests/test_cpm_viz.py, tests/test_mass_balance.py, tests/test_composites_build.py); guarded
-      skip when the optional cobra dependency is absent, matching this investigation''s FBA-grain
-      convention.'
+    basis: 'single-cell-in-a-field.composite.json (and its O2-uncapped control sibling single-cell-in-a-field-o2uncapped.composite.json) build and run to completion through the process-bigraph engine (tests/test_flagship_field.py, tests/test_cpm_cell_field.py, tests/test_cpm_viz.py, tests/test_mass_balance.py, tests/test_composites_build.py); guarded skip when the optional cobra dependency is absent, matching this investigation''s FBA-grain convention.'
   biological_validation:
     result: PASS
-    basis: 'All four primary behavior tests pass on measured readouts from a real 20-tick run — the
-      cell metabolizes and grows (biomass, CPM volume), depletes its own local nutrient before
-      diffusion resupplies it (environmental modification), and secretes a diffusing acetate plume — and
-      the two foundational controls hold. The O2-uncapped control demonstrates the overflow is
-      caused by the O2 cap (uncapped acetate ~0), and the closed field mass-balance ledger closes
-      to < 1e-6 for glucose and acetate.'
+    basis: 'All four primary behavior tests pass on measured readouts from a real 20-tick run — the cell metabolizes and grows (biomass, CPM volume), depletes its own local nutrient before diffusion resupplies it (environmental modification), and secretes a diffusing acetate plume — and the two foundational controls hold. The O2-uncapped control demonstrates the overflow is caused by the O2 cap (uncapped acetate ~0), and the closed field mass-balance ledger closes to < 1e-6 for glucose and acetate.'
   explanatory_gain:
     result: POSITIVE
-    basis: Composing a real Cellular Potts cell with a real spatial dFBA+diffusion simulator
-      through one typed process makes the paper's cell-environment coupling claim concrete at a level of
-      mechanistic resolution a coarser, lumped 9-cell grid could not reach — genuine
-      cell shape, genuine flux-balance optimization, genuine PDE diffusion, all talking through
-      one interface neither framework was built with the other in mind for.
+    basis: Composing a real Cellular Potts cell with a real spatial dFBA+diffusion simulator through one typed process makes the paper's cell-environment coupling claim concrete at a level of mechanistic resolution a coarser, lumped 9-cell grid could not reach — genuine cell shape, genuine flux-balance optimization, genuine PDE diffusion, all talking through one interface neither framework was built with the other in mind for.
 conclusion: '## Claims
 
   - A single cell reshapes the very nutrient gradient it depends on — environmental modification
 
-    (local resource depletion + secretion), realized spatially. Composing a real CPM cell with a real spatio-flux nutrient
+  (local resource depletion + secretion), realized spatially. Composing a real CPM cell with a real spatio-flux nutrient
 
-    field through one typed coupling process (`CpmCellField`) reproduces the paper''s
+  field through one typed coupling process (`CpmCellField`) reproduces the paper''s
 
-    §Cell–environment coupling sense → metabolize → secrete loop (Fig 4) as genuine spatial
+  §Cell–environment coupling sense → metabolize → secrete loop (Fig 4) as genuine spatial
 
-    metabolism — the loop closed (depletion → uptake feedback), with directed control (chemotaxis)
+  metabolism — the loop closed (depletion → uptake feedback), with directed control (chemotaxis)
 
-    the flagship''s non-motile-by-design other half, now built and measured in the `chemotaxis`
+  the flagship''s non-motile-by-design other half, now built and measured in the `chemotaxis`
 
-    variant (finding F-08 — directed up-gradient migration with a nutrient/growth advantage).
+  variant (finding F-08 — directed up-gradient migration with a nutrient/growth advantage).
 
-    Over 20 ticks the cell grows ~3.4x in CPM volume (32 -> 110 px, ~3% of a 60x60 lattice it does
+  Over 20 ticks the cell grows ~3.4x in CPM volume (32 -> 110 px, ~3% of a 60x60 lattice it does
 
-    not come close to filling), depletes its own local glucose by ~18% peak-to-trough (~6% from the
+  not come close to filling), depletes its own local glucose by ~18% peak-to-trough (~6% from the
 
-    initial condition) before diffusion partially resupplies it (environmental modification), and
+  initial condition) before diffusion partially resupplies it (environmental modification), and
 
-    secretes a diffusing acetate plume from an
+  secretes a diffusing acetate plume from an
 
-    O2-capped dynamic-FBA overflow mechanism.
+  O2-capped dynamic-FBA overflow mechanism.
 
 
   ## Evidence
 
   - **CELL-METABOLIZES-AND-GROWS** — biomass 0.1 -> ~0.37 via dynamic-FBA at the cell''s own
 
-    footprint
+  footprint
 
   - **CPM-VOLUME-GROWS** — CPM lattice volume 32 -> 110 px (~3.4x), ~3% lattice coverage
 
@@ -1122,116 +875,68 @@ conclusion: '## Claims
 
   - **NET-GLUCOSE-CONSUMED** — field-wide glucose 5940.0 -> ~5908.4; local footprint drawdown
 
-    ~18% peak-to-trough (~6% from initial)
+  ~18% peak-to-trough (~6% from initial)
 
   - **O2-CAP-FORCES-ACETATE-OVERFLOW** (foundational control) — O2-uncapped acetate 0 -> 0.0
 
-    (exactly) vs capped 0 -> ~47.0: the overflow is caused by the O2 cap, shown by experiment
+  (exactly) vs capped 0 -> ~47.0: the overflow is caused by the O2 cap, shown by experiment
 
   - **FIELD-MASS-BALANCE-CLOSES** (foundational control) — glucose and acetate ledgers close to
 
-    < 1e-6 (cell nets a glucose sink + acetate source; diffusion nets ~0)
+  < 1e-6 (cell nets a glucose sink + acetate source; diffusion nets ~0)
 
 
   ## Limitations
 
   - e_coli_core constants (`glucose_km`, `glucose_vmax`, `oxygen_vmax`, `box_volume_L`,
 
-    `grow_per_biomass`) are toy-real — plausible, hand-tuned magnitudes, not fitted to any
+  `grow_per_biomass`) are toy-real — plausible, hand-tuned magnitudes, not fitted to any
 
-    organism or medium.
+  organism or medium.
 
-  - Chemotaxis toward the sensed field is now BUILT and MEASURED in the `chemotaxis` variant
-    (finding F-08) — the FLAGSHIP itself stays non-motile by design (its modest position drift is
-    CPM thermal fluctuation, not directed motion), and the variant adds a gradient-directed
-    external-potential force behind the same ports that produces genuine directed up-gradient
-    migration (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship''s thermal drift) with a measured
-    nutrient/growth advantage (local glucose ~2.1×, net glucose +16%, biomass +13%, volume +36%).
+  - Chemotaxis toward the sensed field is now BUILT and MEASURED in the `chemotaxis` variant (finding F-08) — the FLAGSHIP itself stays non-motile by design (its modest position drift is CPM thermal fluctuation, not directed motion), and the variant adds a gradient-directed external-potential force behind the same ports that produces genuine directed up-gradient migration (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship''s thermal drift) with a measured nutrient/growth advantage (local glucose ~2.1×, net glucose +16%, biomass +13%, volume +36%).
 
   - Growth is roughly exponential in this coupling, so the run is deliberately bounded to
 
-    ~20-25 ticks to stay spatially legible; a longer run was not attempted.
+  ~20-25 ticks to stay spatially legible; a longer run was not attempted.
 
   - The metabolized field is exclusively the spatio-flux `fields` store; the CPM cell''s own
 
-    internal lattice/world is a private, write-protected object inside viva-cpm''s Rust engine,
+  internal lattice/world is a private, write-protected object inside viva-cpm''s Rust engine,
 
-    not a process-bigraph store, and no other process reads or writes it.
+  not a process-bigraph store, and no other process reads or writes it.
 
   ## Next steps
 
-  - Directed chemotaxis (motion up the sensed gradient) is now built and measured as the
-    `chemotaxis` variant (finding F-08) — directed up-gradient migration with a nutrient/growth
-    advantage. A natural follow-up is chemotaxis under the steady-state / multi-cell regimes.
+  - Directed chemotaxis (motion up the sensed gradient) is now built and measured as the `chemotaxis` variant (finding F-08) — directed up-gradient migration with a nutrient/growth advantage. A natural follow-up is chemotaxis under the steady-state / multi-cell regimes.
 
   - Multi-cell competition over one shared field is realized in `cell-cell-coupling`, which reuses
 
-    `CpmCellField` for each competing cell.'
+  `CpmCellField` for each competing cell.'
 conclusion_logic:
   if_primary_tests_pass:
     implementation_status: 'single-cell-in-a-field.composite.json builds and runs to completion
 
       through the engine over 20 ticks.'
-    biological_validation: The spatial §Cell–environment coupling sense → metabolize → secrete
-      pattern (Fig 4) is demonstrated at the toy-real (uncalibrated) level, with genuine CPM shape
-      dynamics and dynamic-FBA optimization behind the coupling rather than a scripted trajectory
-      (directed control/chemotaxis remains the deferred half of the paper's loop).
+    biological_validation: The spatial §Cell–environment coupling sense → metabolize → secrete pattern (Fig 4) is demonstrated at the toy-real (uncalibrated) level, with genuine CPM shape dynamics and dynamic-FBA optimization behind the coupling rather than a scripted trajectory (directed control/chemotaxis remains the deferred half of the paper's loop).
     pipeline_unblocks:
     - cell-cell-coupling
   if_primary_tests_fail:
     diagnose:
     - the cell's biomass or CPM volume never rises (metabolism or growth-coupling broken)
     - local footprint glucose never depletes despite consumption (mass-balance/clamp bug)
-    - acetate never appears in the field (O2 cap not forcing overflow, or the secretion write
-      is not reaching the shared field store)
+    - acetate never appears in the field (O2 cap not forcing overflow, or the secretion write is not reaching the shared field store)
     - net field-wide glucose does not fall (the cell is not acting as a genuine sink)
-    block_downstream: 'The other eight studies, now all built, most of which reuse
-      CpmCellField or its coupling pattern.'
+    block_downstream: 'The other eight studies, now all built, most of which reuse CpmCellField or its coupling pattern.'
 limitations:
-- e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass)
-  are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not
-  fitted to any organism or medium.
-- Chemotaxis toward the external field is now BUILT and MEASURED (finding F-08, the `chemotaxis`
-  variant). The FLAGSHIP cell stays non-motile by design — it senses, metabolizes, grows, and
-  secretes but does not move directionally up-gradient — while the variant biases the CPM
-  Metropolis pixel-copy up the SHARED glucose gradient via a gradient-directed external-potential
-  force (f = chemotaxis_strength·grad(glucose), U(r) = −f·r) behind the same `CpmCellField` ports.
-  Directed up-gradient motion is genuinely achieved (COM x 18.5 → 39.3, +20.8 px, ~90× the
-  flagship''s +0.2 px thermal drift) and it measurably helps — the migrating cell reaches a ~2.1×
-  richer glucose region and acquires ~16% more glucose, ~13% more biomass, and ~36% more CPM
-  volume than the stationary control on the identical field. Off by default (strength 0.0 →
-  flagship byte-identical). The variant is single-cell on a static-gradient field; chemotaxis
-  under the steady-state or multi-cell regimes is the follow-up.
-- Growth is roughly exponential in this coupling, so the run is deliberately bounded to
-  ~20-25 ticks to stay spatially legible.
-- 'The metabolized nutrient field is exclusively the spatio-flux ``fields`` store; the CPM cell''s
-  own internal lattice/world lives inside viva-cpm''s Rust engine as a private, write-protected
-  object the coupling process owns, not a process-bigraph store — no other process in the
-  composite reads or writes it, and viva-cpm''s own internal field concept
-  (field_at_cell/secretory_types) is separate machinery this composite does not use.'
-- The cell's only channel for acting back on its environment here is metabolic (uptake and
-  secretion). A second, non-metabolic sense/act channel — mechanical stress / traction, where the
-  cell pushes on its surroundings and reads the reaction force — is not modeled; it is a candidate
-  future coupling process alongside chemotaxis.
-- 'The FLAGSHIP nutrient field has no continuous source or decay term — its 20-tick dynamics are
-  transient depletion plus diffusion, not a source/sink equilibrium. M7d (peer review) now
-  ADDRESSES this — the `single-cell-in-a-field-steadystate` variant adds a first-order glucose
-  source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and reaches a
-  verified flux steady state by ~t=100-120 (finding F-06). The flagship itself remains a transient
-  by design; the steady-state regime is the standing-field extension.'
-- 'CADENCE (M7d, peer review) — the operator-split CPM<->dFBA<->diffusion loop runs at coupling
-  cadence 1 and only the PDE substeps are CFL-guarded. A cadence-halving/quartering convergence
-  check (finding F-07) shows the time-integrated gated observables (biomass/volume growth, acetate
-  plume, net glucose sink) are cadence-converged (< 3% drift between cadence 0.25 and 0.5), but the
-  INSTANTANEOUS local-footprint glucose is NOT (~16% drift) because the CPM''s fixed mcs_per_update
-  is not interval-scaled. F-02''s local-depletion depths (0.94 / ~18% / ~6%) are therefore
-  approximate cadence-1 readings, not converged quantities; a cadence-invariant local reading would
-  require interval-scaling the CPM Monte-Carlo sweeps, a follow-up.'
-falsifiability: Overturned if the cell's biomass or CPM lattice volume never rise over the run,
-  if local footprint glucose never depletes despite ongoing consumption, if acetate never appears
-  in the shared field (the O2 cap failing to force overflow, or the secretion write not reaching
-  the field store), or if net field-wide glucose does not fall (the cell failing to act as a
-  genuine sink on the shared field).
+- e_coli_core constants (glucose_km, glucose_vmax, oxygen_vmax, box_volume_L, grow_per_biomass) are toy-real, hand-tuned magnitudes chosen for gradual, legible dynamics over a short run — not fitted to any organism or medium.
+- Chemotaxis toward the external field is now BUILT and MEASURED (finding F-08, the `chemotaxis` variant). The FLAGSHIP cell stays non-motile by design — it senses, metabolizes, grows, and secretes but does not move directionally up-gradient — while the variant biases the CPM Metropolis pixel-copy up the SHARED glucose gradient via a gradient-directed external-potential force (f = chemotaxis_strength·grad(glucose), U(r) = −f·r) behind the same `CpmCellField` ports. Directed up-gradient motion is genuinely achieved (COM x 18.5 → 39.3, +20.8 px, ~90× the flagship''s +0.2 px thermal drift) and it measurably helps — the migrating cell reaches a ~2.1× richer glucose region and acquires ~16% more glucose, ~13% more biomass, and ~36% more CPM volume than the stationary control on the identical field. Off by default (strength 0.0 → flagship byte-identical). The variant is single-cell on a static-gradient field; chemotaxis under the steady-state or multi-cell regimes is the follow-up.
+- Growth is roughly exponential in this coupling, so the run is deliberately bounded to ~20-25 ticks to stay spatially legible.
+- 'The metabolized nutrient field is exclusively the spatio-flux ``fields`` store; the CPM cell''s own internal lattice/world lives inside viva-cpm''s Rust engine as a private, write-protected object the coupling process owns, not a process-bigraph store — no other process in the composite reads or writes it, and viva-cpm''s own internal field concept (field_at_cell/secretory_types) is separate machinery this composite does not use.'
+- The cell's only channel for acting back on its environment here is metabolic (uptake and secretion). A second, non-metabolic sense/act channel — mechanical stress / traction, where the cell pushes on its surroundings and reads the reaction force — is not modeled; it is a candidate future coupling process alongside chemotaxis.
+- 'The FLAGSHIP nutrient field has no continuous source or decay term — its 20-tick dynamics are transient depletion plus diffusion, not a source/sink equilibrium. M7d (peer review) now ADDRESSES this — the `single-cell-in-a-field-steadystate` variant adds a first-order glucose source, a first-order acetate decay sink, and a logistic biomass carrying capacity, and reaches a verified flux steady state by ~t=100-120 (finding F-06). The flagship itself remains a transient by design; the steady-state regime is the standing-field extension.'
+- 'CADENCE (M7d, peer review) — the operator-split CPM<->dFBA<->diffusion loop runs at coupling cadence 1 and only the PDE substeps are CFL-guarded. A cadence-halving/quartering convergence check (finding F-07) shows the time-integrated gated observables (biomass/volume growth, acetate plume, net glucose sink) are cadence-converged (< 3% drift between cadence 0.25 and 0.5), but the INSTANTANEOUS local-footprint glucose is NOT (~16% drift) because the CPM''s fixed mcs_per_update is not interval-scaled. F-02''s local-depletion depths (0.94 / ~18% / ~6%) are therefore approximate cadence-1 readings, not converged quantities; a cadence-invariant local reading would require interval-scaling the CPM Monte-Carlo sweeps, a follow-up.'
+falsifiability: Overturned if the cell's biomass or CPM lattice volume never rise over the run, if local footprint glucose never depletes despite ongoing consumption, if acetate never appears in the shared field (the O2 cap failing to force overflow, or the secretion write not reaching the field store), or if net field-wide glucose does not fall (the cell failing to act as a genuine sink on the shared field).
 visualizations:
 - name: cell-environment-coupling-response
   address: image:visualizations/cell-environment-coupling-response.svg
@@ -1291,15 +996,6 @@ visualizations:
     caption: 'Synced metrics for the flagship run — local_nutrient / biomass / acetate_secreted
 
       (left axis) against CPM volume (right axis) over 20 ticks.'
-parent_studies:
-- study: cellular-interface
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Instantiates the inert interface contract from cellular-interface as a running
-    composition — the CpmCellField coupling process IS the Fig-3 contract with a real
-    mechanism installed behind it, so the flagship's sense/act loop is only meaningful
-    once the contract it conforms to is established.
 experiment: 'Run `single-cell-in-a-field.composite.json` — a real CPM cell (viva-cpm) coupled via
 
   `CpmCellField` to a real spatio-flux glucose/acetate field running `DiffusionAdvection` — to
@@ -1365,3 +1061,51 @@ discovery_implications:
       mechanism-independence extends across the O2 axis or the structural gap is irreducible. This
       is the named next step that would promote the SWAP result from surrogate calibration to a
       held-out mechanism-independence finding.
+readouts:
+- name: biomass
+  store_path: obs.biomass
+  description: 'The cell runs dynamic-FBA at its own footprint and grows: biomass rises above its initial value and CPM volume exceeds 40 px by step 20.'
+  status: available
+- name: volume
+  store_path: obs.volume
+  description: 'The CPM cell''s own target-volume-driven growth carries through to its actual lattice-pixel volume — the cell occupies more pixels by the end of the run.'
+  status: available
+- name: acetate
+  store_path: fields.acetate
+  description: 'The cell secretes acetate into the shared field as a genuine byproduct of the O2-capped dFBA overflow mechanism, and it is present in the field (i.e. has…'
+  status: available
+- name: glucose
+  store_path: fields.glucose
+  description: 'Net field-wide glucose falls over the run — the cell is a genuine sink on the shared field, not merely redistributing it.'
+  status: available
+- name: acetate
+  store_path: fields.glucose, fields.acetate
+  description: 'Foundational conservation control (not this study''s scientific claim): the paper frames conservation laws (mass, energy balance) as interface constraints on…'
+  status: available
+- name: glucose
+  store_path: obs.biomass, obs.volume, fields.acetate, fields.glucose
+  description: 'Surrogate calibration of the paper''s substitutability idea (the TUNED-condition baseline for the held-out test below) — a tuned Michaelis-Menten twin…'
+  status: available
+- name: acetate
+  store_path: obs.biomass, fields.glucose, fields.acetate
+  description: 'M7d steady-state check (peer review) — the flagship is a pure transient with no source terms, so every flagship number is a transient reading, never a…'
+  status: available
+- name: glucose
+  store_path: obs.position, obs.local_nutrient, obs.biomass, obs.volume, fields.glucose
+  description: 'The chemotaxis variant closes the sense → act loop — the cell moves DIRECTED up the sensed glucose gradient (+x) while the non-motile flagship control barely…'
+  status: available
+simulation_set:
+- name: single-cell-in-a-field
+  kind: single
+  base_model: meta_modelers_guide.composites.single-cell-in-a-field
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: cellular-interface
+    condition: tests-passed
+    relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.single-cell-in-a-field
+    name: single-cell-in-a-field

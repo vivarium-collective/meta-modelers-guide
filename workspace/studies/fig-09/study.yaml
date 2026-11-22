@@ -55,6 +55,8 @@ units_and_time:
   note: No quantity here is calibrated to a named organism, replication rate, or genome size -- all magnitudes are toy-real, chosen for didactic legibility.
 behavior_tests:
 - name: cell-count-increases-division-happened
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The colony grows from one founder cell to at least four over the run, and the cell count never falls -- division genuinely adds place-graph nodes at runtime (caption a's separation into daughters), the boundary count only ever increasing.
   measure:
@@ -69,6 +71,8 @@ behavior_tests:
     provenance: 'prior: a genuine division rewrite ADDS cell nodes, so the count rises from the one founder and never falls. Observed (deterministic, no RNG): cells 1 (t=0-5) -> 2 (t=6-11) -> 4 (t=12); count monotone non-decreasing throughout. The >= 4 endpoint is the a-priori prediction, exact because the composite is clock-driven and deterministic (tests/test_fig09_dynamics.py::test_cell_count_increases_division_happened)'
   requires_simulation: fig09-rewrite
 - name: replication-precedes-division
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The chromosome (DNA) count doubles while the cell count is still one -- DNA is copied BEFORE the cell partitions it into two daughters, the replicate-then-divide ordering of caption a.
   measure:
@@ -83,6 +87,8 @@ behavior_tests:
     provenance: 'prior: replication (DNA copied) must precede division (DNA partitioned). Observed: chromosome count first doubles at t=3 while the cell count is still 1; the cell count first doubles at t=6 -- replication strictly precedes division, and the cell has not yet divided at the replication tick. Deterministic (tests/test_fig09_dynamics.py::test_replication_precedes_division)'
   requires_simulation: fig09-rewrite
 - name: total-dna-doubles-at-replication
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The total DNA store doubles at each replication event -- 1.0 -> 2.0 -> 4.0 -- the DNA-copy step of caption a made quantitative.
   measure:
@@ -97,6 +103,8 @@ behavior_tests:
     provenance: 'prior: replication copies DNA, so the total DNA store doubles each replication. Observed: total DNA 1.0 (founder) -> 2.0 (t=3, first replication) -> 4.0 (t=9, second replication); starts at exactly 1.0 and reaches 4.0. Deterministic (tests/test_fig09_dynamics.py::test_total_dna_doubles_at_replication)'
   requires_simulation: fig09-rewrite
 - name: division-conserves-and-equipartitions-dna
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite (nothing created or destroyed), and each daughter inherits exactly half of a parent cell's DNA -- caption b's "division ... partitions state variables such as DNA ... into two cells."
   measure:
@@ -114,6 +122,8 @@ behavior_tests:
 # Division as an outcome of growth/energy/size, with nucleotide-accounted replication;
 # classified by the reviewer's evidence taxonomy (pass_if.kind).
 - name: mech-division-gated-by-growth
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig09-mechanistic
   description: 'Division is gated by growth, not a clock: with a full nutrient the colony grows 1→2→4→8→16 as cells cross the size checkpoint, but under STARVATION (nutrient ≈ 0) the cell cannot grow past the checkpoint and division NEVER fires. Predicted before the run; verified over a long window.'
@@ -128,6 +138,8 @@ behavior_tests:
     provenance: 'PROSPECTIVE_PREDICTION. Observed full 1→16 over 20 ticks; starved (substrate 1e-9) stays 1 cell with 0 divisions over 40 ticks — division is an outcome of growth (tests/test_fig09_mechanistic.py::test_division_is_delayed_under_starvation)'
   requires_simulation: fig09-mechanistic
 - name: mech-division-requires-energy-and-replication
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig09-mechanistic
   description: 'The checkpoint needs more than size. A big cell with energy below div_cost does NOT divide; and a big cell that cannot replicate (no nucleotide precursors) stays at one chromosome and does not divide. Size, S-phase completion, and energy all gate M-phase.'
@@ -142,6 +154,8 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. A grown, replicated cell with energy 1.0 < div_cost 5.0 does not divide; a grown cell with no nucleotide precursors cannot replicate and does not divide (tests/test_fig09_mechanistic.py::test_division_requires_energy, ::test_division_requires_replication)'
   requires_simulation: fig09-mechanistic
 - name: mech-replication-draws-dna-from-nucleotides
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig09-mechanistic
   description: 'DNA is not created from nothing: during replication the DNA synthesised equals the nucleotides consumed, so DNA + nucleotides is conserved (the bookkeeping gap the review flagged in the baseline, where the duplicated chromosome appeared for free).'
@@ -156,6 +170,8 @@ behavior_tests:
     provenance: 'INVARIANT. With growth off, a replicating cell''s DNA increase equals its nucleotide decrease to <1e-9; across the run the ΣNucleotide pool is drawn down at each replication as ΣDNA rises (tests/test_fig09_mechanistic.py::test_replication_draws_dna_from_nucleotide_pool)'
   requires_simulation: fig09-mechanistic
 - name: mech-division-conserves-every-partition
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig09-mechanistic
   description: 'Across the division rewrite, volume / nucleotides / biomass / DNA sum over the two daughters equals the parent''s, and energy equals the parent''s minus the one-time division cost. Each daughter gets exactly one chromosome (DNA equipartition) and is a distinct node carrying the parent ref and an incremented generation — independent cells, not aliases.'
@@ -346,17 +362,22 @@ visualizations:
     decisive: true
     variant: fig09-mechanistic
     caption: 'Mechanistic (the decisive figure): division is now an OUTCOME of growth, energy and size — not a clock. What to look for: (A) cell count rises 1→2→4→8→16 under full nutrient but stays flat at 1 under STARVATION — division is delayed, not scheduled. (B) the lineage tree (parent→daughter), coloured by generation. (C) the conserved-state ledger — total volume / DNA / biomass evolve smoothly across every division rewrite, with no jumps. (D) nucleotide accounting — ΣDNA rises only as the Σnucleotide pool is drawn down, so DNA is built from precursors, not created from nothing. (E) one lineage: volume grows and resets at each division while the chromosome count steps 1→2 at replication. (F) the founder''s cycle with the V_rep (replicate) and V_div (divide) size checkpoints marked. From scripts/build_fig09_mechanistic.py.'
-parent_studies:
-# Spine edge fig-08 → fig-09 (builds-on) per the scientific-review revision: division
-# acts on a self-maintaining cell (fig-08) — a maintained interior is what gets partitioned.
-# fig-09 is in turn parent of fig-10/fig-11. (parent_studies schema allows only study+condition.)
-- study: fig-08
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Division (fig-09) acts on a self-maintaining cell (fig-08): a maintained interior is what gets
-    partitioned.
-- study: growth-and-division
-  condition: tests-passed
 experiment: 'Run the `fig09-rewrite` composite (`CellCycleDivision` over a colony `tree[node]` store, cycle=3, built via build_fig10_division) to completion over 12 ticks through the process-bigraph engine, capturing the whole colony subtree each tick, and measure whether a genuine place-graph rewrite realizes the paper''s Fig. division caption b -- whether the boundary count doubles at each division while the DNA store is copied at replication and then conserved and equipartitioned across each division.'
 result: 'Over a deterministic 12-tick run the founder cell (1 cell, dna 1.0) replicates its chromosome at t=3 (1 cell, 2 chromosomes, dna 2.0), then divides at t=6 into 2 cells with dna 1.0 each (total conserved at 2.0), replicates again at t=9 (2 cells, 4 chromosomes, dna 4.0), and divides at t=12 into 4 cells with dna 1.0 each (total conserved at 4.0). At every division event the boundary count exactly doubles, the total DNA store is conserved across the rewrite, and each daughter inherits exactly half of a parent cell''s DNA -- caption b''s "division ... partitions state variables such as DNA ... into two cells." Replication always precedes division (caption a''s replicate-then-separate ordering). Every value is an exact, run-to-run-reproducible pin because the composite has no randomness. This is a toy-real, uncalibrated didactic realization whose point is to make "division is a compositional rewrite" literally executable at the place-graph level -- one boundary becoming two, its stores partitioned across daughters, steppable frame by frame -- not to reproduce division kinetics; the rigorous spatial cousin is `growth-and-division` in the `draft-to-living-cell` investigation.'
+simulation_set:
+- name: fig09-rewrite
+  kind: single
+  base_model: meta_modelers_guide.composites.fig09-rewrite
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: fig-08
+    condition: tests-passed
+    relation: builds-on
+  - study: growth-and-division
+    condition: tests-passed
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig09-rewrite
+    name: fig09-rewrite

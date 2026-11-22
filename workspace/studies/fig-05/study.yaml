@@ -48,6 +48,8 @@ units_and_time:
   note: No quantity here is calibrated to a named stressor, molecule, or literature target.
 behavior_tests:
 - name: coarse-grain-while-viable
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: While viability >= threshold, the active grain is "coarse" -- the coarse cellular process realizes the interface throughout the viable phase (the pre-crossing hold of Fig 5b).
   measure:
@@ -61,6 +63,8 @@ behavior_tests:
     provenance: 'prior: while the cell is viable the cheap coarse description suffices -> expect active_grain == "coarse" for every frame with viability >= 0.5. Observed: coarse for all frames t=0..12 (viability 1.0 down to 0.505 at t=11, 0.46 at t=12 still emitted coarse -- the flip lags one tick); no frame with viability >= 0.5 ever reads "fine" (tests/test_fig05_grain_swap.py::test_coarse_grain_while_viable)'
   requires_simulation: fig05-grain-runnable
 - name: flips-to-fine-and-stays
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Once viability drops below threshold the active grain flips to "fine" and stays fine for the rest of the run -- exactly one grain switch, coarse->fine, never reverting. The compositional rewrite of Fig 5b (coarse description replaced by the finer one).
   measure:
@@ -74,6 +78,8 @@ behavior_tests:
     provenance: 'prior: crossing the viability bound replaces the coarse description with the finer one, and (with viability monotonically falling) it never reverts -> expect exactly one coarse->fine switch and fine for all subsequent frames. Observed: grain[0]=="coarse", a single flip at t=13, "fine" for every frame t=13..26 (tests/test_fig05_grain_swap.py::test_flips_to_fine_and_stays)'
   requires_simulation: fig05-grain-runnable
 - name: switch-at-threshold-crossing
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The grain switch tracks the viability-threshold crossing -- the flip happens within one tick of the tick where viability first drops below threshold (the scheduling handover lag).
   measure:
@@ -87,6 +93,8 @@ behavior_tests:
     provenance: 'prior: the viability signal drives the control, so the flip must coincide with the crossing up to the composite''s one-tick scheduling latency. Observed: viability first < 0.5 at t=12; grain flips coarse->fine at t=13; |13-12| == 1 (tests/test_fig05_grain_swap.py::test_switch_at_threshold_crossing)'
   requires_simulation: fig05-grain-runnable
 - name: gate-hands-control-to-the-active-grain
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The control string genuinely gates the two grains -- when coarse is selected only the coarse process acts (grows biomass) and the fine process is inert; when fine is selected only the fine process acts (decays biomass) and the coarse process is inert; the two act in OPPOSITE directions on the shared biomass output. Unit-level test on the process objects, independent of the full run.
   measure:
@@ -100,6 +108,8 @@ behavior_tests:
     provenance: 'driven the two process objects directly with a standing biomass/energy/inflow: coarse selected -> biomass update +0.3 (>0), fine selected -> biomass update <0 (decay); each returns an empty dict when it is not the active grain; coarse (grows) and fine (decays) act in opposite directions on the shared biomass output (tests/test_fig05_grain_swap.py::test_gate_hands_control_to_the_active_grain)'
   requires_simulation: none
 - name: biomass-turns-over-at-the-switch
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The shared biomass output turns over at the grain switch -- growing monotonically while the coarse grain is active, peaking at the flip, then decaying monotonically once the fine grain takes over. The on-screen signature of the level shift.
   measure:
@@ -113,6 +123,8 @@ behavior_tests:
     provenance: 'prior: the coarse (alive) grain grows biomass, the fine (dying) grain decays it, so the trajectory must turn over at the switch. Observed: biomass rises linearly 0 -> 3.9 through t=13 (0.3/tick), peaks at 3.9 exactly at the flip tick (t=13), then decays first-order to ~1.14 by t=26; peak index == flip index (|peak-flip| == 0 <= 1) (tests/test_fig05_grain_swap.py::test_biomass_grows_then_decays_at_the_switch)'
   requires_simulation: fig05-grain-runnable
 - name: energy-mirrors-biomass
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: Energy is the second shared output the gate hands over -- the coarse grain builds it while viable, the fine grain drains it once dying, so it grows-then-decays with the same turn-over as biomass, confirming the gate acts on the whole interface, not just biomass.
   measure:
@@ -126,6 +138,8 @@ behavior_tests:
     provenance: 'prior: both interface outputs are gated by the same control, so energy must mirror biomass. Observed: energy rises 0 -> 2.6 through t=13 (0.2/tick), peaks at 2.6 at the flip tick, then drains first-order to ~0.76 by t=26 (tests/test_fig05_grain_swap.py::test_energy_mirrors_biomass_across_the_switch)'
   requires_simulation: fig05-grain-runnable
 - name: viability-declines-monotonically
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: The StressRamp is the clean driver -- viability only ever falls and is driven below the threshold, all the way to its clamped 0 floor, so the crossing (and thus the grain swap) is guaranteed rather than incidental.
   measure:
@@ -139,6 +153,7 @@ behavior_tests:
     provenance: 'prior: the StressRamp returns a non-positive delta clamped so viability never goes below 0 -> expect a monotone non-increasing trajectory that reaches the 0 floor. Observed: viability 1.0 falling by 0.045/tick, never rising, below 0.5 from t=12, reaching 0.0 by t=23 and held there through t=26 (tests/test_fig05_grain_swap.py::test_viability_declines_monotonically_to_zero)'
   requires_simulation: fig05-grain-runnable
 - name: trajectory-is-deterministic
+  gate_class: regression_pin
   classification: diagnostic
   description: 'No process in the composite draws randomness, so two independent builds emit an identical viability/grain/biomass trajectory -- the pins in this study are exact, not representative.'
   measure:
@@ -156,6 +171,8 @@ behavior_tests:
 # Biology separated from grain; quantified inadequacy trigger; conserving handover;
 # always-coarse/fine/adaptive comparison. Classified by the reviewer's taxonomy.
 - name: mech-one-active-grain
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig05-mechanistic
   description: 'Exactly one grain is active per step — the grain indicator only ever takes the values 0 (coarse) or 1 (fine), never both or neither. The structural invariant of a grain switch.'
@@ -170,6 +187,8 @@ behavior_tests:
     provenance: 'INVARIANT. active_grain ∈ {0,1} on every step of the live run (tests/test_fig05_mechanistic.py::test_one_active_grain_at_a_time)'
   requires_simulation: fig05-mechanistic
 - name: mech-biology-separate-from-grain
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig05-mechanistic
   description: 'The biological forcing (stress) is identical across all three modes — the grain is an algorithmic choice layered on the SAME physiology, not a different biology — and before the adaptive switch the coarse and adaptive damage trajectories coincide (the coarse approximation is valid there). Directly answers the review''s ask to show the biological damage state independently of the grain change.'
@@ -184,6 +203,8 @@ behavior_tests:
     provenance: 'INVARIANT. Stress trajectory identical across adaptive/coarse/fine to 1e-12; coarse and adaptive m_sol coincide to 1e-12 before the switch (tests/test_fig05_mechanistic.py::test_biological_forcing_is_grain_independent)'
   requires_simulation: fig05-mechanistic
 - name: mech-conserving-handover-no-jump
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig05-mechanistic
   description: 'The coarse→fine map conserves the mapped state: prolongation is identity on the shared damage pools, so neither biomass nor total damage jumps at the switch (the step at the switch is within the normal per-tick change) and handover_error = 0. The baseline''s bare grain flip has no such guarantee.'
@@ -198,6 +219,8 @@ behavior_tests:
     provenance: 'INVARIANT. Observed biomass step at the switch 0.98× the typical per-tick step (no artificial jump) and handover_error = 0 exactly; total damage continuous too (tests/test_fig05_mechanistic.py::test_no_artificial_jump_at_the_switch)'
   requires_simulation: fig05-mechanistic
 - name: mech-inadequacy-triggers-refinement
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig05-mechanistic
   description: 'Refinement fires when the computable inadequacy estimator crosses tolerance — raising the tolerance DELAYS the switch and lowering it ADVANCES it, which a wall-clock trigger could not do. The refinement is a quantified, state-dependent decision, not a scripted time.'
@@ -212,6 +235,8 @@ behavior_tests:
     provenance: 'PROSPECTIVE_PREDICTION. Observed the switch time moves monotonically with the inadequacy tolerance (default switch t=11; lower tol advances it, higher tol delays/removes it) — proving the trigger is the quantified signal, not a wall-clock (tests/test_fig05_mechanistic.py::test_inadequacy_signal_triggers_refinement_not_wall_clock)'
   requires_simulation: fig05-mechanistic
 - name: mech-refinement-predicts-phenotype-coarse-misses
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   variant: fig05-mechanistic
   description: 'The fine grain resolves an autocatalytic aggregation runaway that collapses viability — a phenotype the always-coarse model structurally cannot produce (it never forms aggregates). Fine and adaptive reach ~zero viability with substantial aggregate; always-coarse stays viable with no aggregate. And the adaptive run tracks the always-fine reference far better than always-coarse does.'
@@ -226,6 +251,7 @@ behavior_tests:
     provenance: 'MECHANISTIC_ABLATION. Observed final viability: coarse 0.74 (misses collapse) vs fine 0.00 vs adaptive 0.00; m_agg coarse 0.0 vs fine 0.63; biomass divergence |coarse−fine| 1.09 vs |adaptive−fine| 0.023 (tests/test_fig05_mechanistic.py::test_refinement_predicts_phenotype_coarse_misses, ::test_adaptive_tracks_fine_not_coarse)'
   requires_simulation: fig05-mechanistic
 - name: mech-deterministic-rerun-is-reproducibility
+  gate_class: regression_pin
   classification: diagnostic
   variant: fig05-mechanistic
   description: 'Honesty guard: two identical runs are byte-identical. This is REPRODUCIBILITY, not mechanistic support — the mechanistic evidence comes from the ablations above (phenotype coarse misses, inadequacy-triggered refinement, conserving handover), not from a deterministic rerun matching itself.'
@@ -509,13 +535,20 @@ visualizations:
 # fig-05 is a METHODOLOGICAL BRANCH (changing grain / resolution), not a step in the
 # linear biological chain — its parent_studies are left as-is per the scientific-review
 # spine note (no forced builds-on edge into the 1→…→11 chain).
-parent_studies:
-- study: disintegration
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    The grain-switch (coarse<->fine resolution change) is demonstrated on the spatial
-    dissolution scenario disintegration establishes — a methodological branch about model
-    resolution layered on an existing biological composition.
 experiment: 'Run the `fig05-grain-runnable` composite (StressRamp -> GrainSelector -> gated CoarseGrainProcess / FineGrainProcess sharing one biomass/energy interface) to completion over 26 steps through the process-bigraph engine, and measure whether a monotonically declining viability signal crossing a threshold is enough to flip the active grain coarse->fine at the crossing and turn the shared biomass output over from growth to decay.'
 result: 'Over a deterministic 26-step run (27 emitted frames): viability declines monotonically from 1.0 by 0.045/tick to its clamped 0 floor by t=23, first dropping below the 0.5 threshold at t=12 (v=0.46). The active grain flips coarse->fine at t=13 -- exactly one flip, one tick after the crossing (the composite''s scheduling handover), fine for the rest of the run. Exactly one grain acts per tick, and the shared biomass output turns over at the switch: it grows linearly 0 -> 3.9 through the flip (peaking at 3.9 at t=13, the flip tick), then decays first-order to ~1.14 by t=26, with energy mirroring it (peak 2.6 -> ~0.76). No process draws randomness, so the whole trajectory is bit-reproducible and every pin is exact. This realizes Fig 5b''s viability-driven grain swap as a runnable temporal study -- the coarse cellular description being replaced by the finer molecular one as the cell crosses its viability bound -- at the toy-real, uncalibrated level. A companion grain-comparison quantifies the swap''s consequence: the same coarse-metabolism interface realized at three grains reports biomass 4.0 (coarse) / 2.6667 (kinetic) / 6.2936 (FBA), the FBA grain secreting 30.4478 of acetate overflow vs 1.6 for coarse (workbench 0.4.1). The rigorous spatial cousin is `disintegration` in the `draft-to-living-cell` investigation.'
+simulation_set:
+- name: fig05-grain-runnable
+  kind: single
+  base_model: meta_modelers_guide.composites.fig05-grain-runnable
+  is_baseline: true
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: disintegration
+    condition: tests-passed
+    relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.fig05-grain-runnable
+    name: fig05-grain-runnable

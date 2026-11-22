@@ -205,6 +205,8 @@ key_assumptions:
   this study mutates a parameter of a fixed coupling.'
 behavior_tests:
 - name: development-heterogeneity-emerges
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'DEVELOPMENT -- the colony develops emergent core-vs-rim physiological heterogeneity.
     `rim_core_ratio` starts near its 1.0 floor (few cells, no readable gradient) and ends clearly
@@ -232,6 +234,8 @@ behavior_tests:
       tests/test_cpm_evolution.py::test_rim_core_ratio_shows_heterogeneity)'
   requires_simulation: development-evolution-spatial
 - name: selection-shifts-mean-trait-up
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'EVOLUTION -- under selection (trait feeds dFBA uptake, mutation ON), the population
     mean `vmax` shifts UP relative to the no-selection (neutral drift) control -- selection through
@@ -270,6 +274,7 @@ behavior_tests:
       tests/test_cpm_evolution_spike.py::test_selection_shifts_mean_trait_up)'
   requires_simulation: development-evolution-spatial
 - name: trait-inheritance-within-3-sigma
+  gate_class: regression_pin
   classification: diagnostic
   description: 'The evolution crux is wired correctly: across division events, |vmax[daughter] -
     vmax[parent]| is ~N(0,sigma)-distributed -- the same creation-order parent<->daughter pairing
@@ -291,6 +296,8 @@ behavior_tests:
       tests/test_dev_evo_regime.py::test_evolution_shifts_trait_under_selection)'
   requires_simulation: none
 - name: no-mutation-control-static
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   control: negative
   description: 'The no-mutation control, half of the dual control: with `mutate: false` (a BOOLEAN
@@ -317,6 +324,8 @@ behavior_tests:
       tests/test_cpm_evolution_spike.py::test_no_mutation_control_is_static)'
   requires_simulation: development-evolution-no-mutation
 - name: no-selection-control-mutates-undirected
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   control: negative
   description: 'The no-selection control, the other half of the dual control -- with
@@ -698,14 +707,6 @@ visualizations:
     chart: html
     caption: 'Development-evolution metrics -- mean_vmax rising (evolution) alongside rim_core_ratio
       climbing above 1.0 (development), with var_vmax and n_cells, over 45 ticks on one colony.'
-parent_studies:
-- study: growth-and-division
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Closes the arc: selection acts over the dividing population from
-    growth-and-division, so a heritable-trait shift is measurable only once division
-    produces a lineage to select over.
 experiment: 'Run three development-evolution composites to completion through the process-bigraph
   engine directly from their JSON specs, each a growing CPM colony (CpmEvolution, study 8''s
   CpmGrowthDivision reused unchanged) on a shared 60x60 glucose field with a heritable per-cell
@@ -760,3 +761,41 @@ discovery_implications:
       history and feeds back on an uptake or motility parameter, and measure whether a trained
       cell outlives a naive control under a novel stressor. This is the single open rung named in
       executive.decisions_needed.
+readouts:
+- name: rim_core_ratio
+  store_path: obs.rim_core_ratio
+  description: 'DEVELOPMENT -- the colony develops emergent core-vs-rim physiological heterogeneity. `rim_core_ratio` starts near its 1.0 floor (few cells, no readable…'
+  status: available
+- name: var_vmax
+  store_path: obs.var_vmax
+  description: 'The evolution crux is wired correctly: across division events, |vmax[daughter] - vmax[parent]| is ~N(0,sigma)-distributed -- the same creation-order…'
+  status: available
+- name: mean_vmax
+  store_path: obs.mean_vmax
+  description: 'The no-mutation control, half of the dual control: with `mutate: false` (a BOOLEAN flag, not a `mut_sigma: 0.0` float override -- which bigraph_schema silently…'
+  status: available
+simulation_set:
+- name: development-evolution-spatial
+  kind: single
+  base_model: meta_modelers_guide.composites.development-evolution-spatial
+  is_baseline: true
+  status: ran
+- name: development-evolution-no-mutation
+  kind: single
+  base_model: meta_modelers_guide.composites.development-evolution-no-mutation
+  is_baseline: false
+  status: ran
+- name: development-evolution-no-selection
+  kind: single
+  base_model: meta_modelers_guide.composites.development-evolution-no-selection
+  is_baseline: false
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: growth-and-division
+    condition: tests-passed
+    relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.development-evolution-spatial
+    name: development-evolution-spatial

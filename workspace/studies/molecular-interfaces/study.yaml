@@ -184,14 +184,17 @@ units_and_time:
   note: No literature acceptance band is claimed; these are tuned demonstration values, not fitted.
 behavior_tests:
 - name: pattern-forms
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16,
     Dv=0.08) destabilizes the near-uniform seed into an emergent finite-amplitude Gray-Scott spot pattern
     (not linear-instability Turing sensu stricto) -- v_var rises above the pattern floor and the gated
     patterned flag reads 1.0.'
   measure:
-    kind: observable
-    path: obs.patterned
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.patterned)
   pass_if:
     op: ==
@@ -206,13 +209,16 @@ behavior_tests:
       tests/test_gray_scott.py, tests/test_gray_scott_physics.py)'
   requires_simulation: molecular-turing-pattern
 - name: pattern-has-multiple-domains
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   description: 'The pattern is genuine spatial structure, not a single blob: the field resolves into more
     than one connected v-concentration domain (~12 spots at the canonical regime), the Gray-Scott spot
     signature.'
   measure:
-    kind: observable
-    path: obs.n_domains
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.n_domains)
   pass_if:
     op: '>'
@@ -224,6 +230,8 @@ behavior_tests:
       (tests/test_molecular_regime.py::test_turing_pattern_forms, ::test_pattern_is_multiseed_robust)'
   requires_simulation: molecular-turing-pattern
 - name: equal-diffusion-control-uniform
+  cites: [beer2024deriving]
+  gate_class: acceptance_criterion
   classification: primary
   control: negative
   description: 'Single-variable causal control: identical chemistry and seed, but equal diffusion
@@ -232,8 +240,9 @@ behavior_tests:
     CAUSED by the diffusion asymmetry, not the chemistry alone -- a regime-specific conclusion for this
     Gray-Scott system.'
   measure:
-    kind: observable
-    path: obs.patterned
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.patterned)
   pass_if:
     op: ==
@@ -253,6 +262,7 @@ behavior_tests:
   committed_test: tests/test_equal_diffusion_control_t0.py
   requires_simulation: molecular-equal-diffusion-control
 - name: thermal-channel-still-patterns
+  gate_class: regression_pin
   classification: primary
   description: 'The temperature parameter GRADES rather than destroys: with a static uniform temperature
     field (Ea=0.15, Tref=1.0, T=1.2) acting as an Arrhenius rate multiplier on the reaction (no heat
@@ -260,8 +270,9 @@ behavior_tests:
     v_var above the floor) -- a temperature parameter modulating the chemical channel, not a chemistry
     collapse.'
   measure:
-    kind: observable
-    path: obs.patterned
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.patterned)
   pass_if:
     op: ==
@@ -274,14 +285,16 @@ behavior_tests:
       seed are fixed (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)'
   requires_simulation: molecular-thermal-graded
 - name: thermal-channel-coarsens
+  gate_class: regression_pin
   classification: primary
   description: 'The mechanism of the thermal grading, made explicit: the raised static temperature field
     coarsens the pattern to markedly fewer, larger domains than the no-temperature flagship at the same
     step count (~12 -> ~2), the direct signature of the temperature parameter acting on the chemical
     channel.'
   measure:
-    kind: observable
-    path: obs.n_domains
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.n_domains)
   pass_if:
     op: <
@@ -293,14 +306,16 @@ behavior_tests:
       (tests/test_molecular_regime.py::test_thermal_channel_grades_the_pattern)'
   requires_simulation: molecular-thermal-graded
 - name: pattern-is-multiseed-robust
+  gate_class: regression_pin
   classification: diagnostic
   description: 'The Gray-Scott pattern forms across seeds 1-5, not just the seed=1 draw baked into the
     composite. Because the physics is deterministic (no RNG), the seed is re-drawn into the INITIAL
     near-uniform field; v_var stays above the floor for every seed and is reported as a range, with
     n_domains reported as a range too (seed-sensitive by nucleation-patch placement).'
   measure:
-    kind: observable
-    path: obs.v_var
+    kind: derived
+    path: expr_scalar
+
     expr: last(obs.v_var)
   pass_if:
     op: '>'
@@ -675,14 +690,6 @@ visualizations:
     chart: html
     caption: 'Molecular metrics -- v_var rises from ~0.0011 to the patterned plateau ~0.0119 while the
       field resolves into ~12 connected domains: the chemical channel genuinely patterns.'
-parent_studies:
-- study: biomolecular-complementarity
-  condition: tests-passed
-  relation: builds-on
-  rationale: >-
-    Drops to reaction-diffusion with an explicit thermal channel behind the same
-    interface discipline, deepening the molecular-scale complementarity result into a
-    pattern-forming mechanism.
 experiment: 'Run three Gray-Scott reaction-diffusion composites to completion through the process-bigraph
   engine directly from their JSON specs: molecular-turing-pattern (GrayScott, a 128x128 near-uniform seed
   under the canonical differential-diffusion spot regime Du=0.16/Dv=0.08, 8000 internal steps),
@@ -707,3 +714,41 @@ result: 'The chemical channel patterns -- the near-uniform Gray-Scott seed desta
   is a toy reaction-diffusion demonstration and not real molecular structure, and the databases claim is
   realized as illustrative typed-port annotation over the Gray-Scott species rather than a resolved mapping.
   Multi-seed: v_var in [0.01157, 0.01193], n_domains in [8, 12] across seeds 1-5, reported as a range.'
+readouts:
+- name: patterned
+  store_path: obs.patterned
+  description: 'The chemical channel patterns: the canonical differential-diffusion regime (Du=0.16, Dv=0.08) destabilizes the near-uniform seed into an emergent…'
+  status: available
+- name: n_domains
+  store_path: obs.n_domains
+  description: 'The pattern is genuine spatial structure, not a single blob: the field resolves into more than one connected v-concentration domain (~12 spots at the canonical…'
+  status: available
+- name: v_var
+  store_path: obs.v_var
+  description: 'The Gray-Scott pattern forms across seeds 1-5, not just the seed=1 draw baked into the composite. Because the physics is deterministic (no RNG), the seed is…'
+  status: available
+simulation_set:
+- name: molecular-turing-pattern
+  kind: single
+  base_model: meta_modelers_guide.composites.molecular-turing-pattern
+  is_baseline: true
+  status: ran
+- name: molecular-equal-diffusion-control
+  kind: single
+  base_model: meta_modelers_guide.composites.molecular-equal-diffusion-control
+  is_baseline: false
+  status: ran
+- name: molecular-thermal-graded
+  kind: single
+  base_model: meta_modelers_guide.composites.molecular-thermal-graded
+  is_baseline: false
+  status: ran
+pipeline_gate:
+  prerequisites:
+  - study: biomolecular-complementarity
+    condition: tests-passed
+    relation: builds-on
+conditions:
+  baseline:
+    composite: meta_modelers_guide.composites.molecular-turing-pattern
+    name: molecular-turing-pattern
